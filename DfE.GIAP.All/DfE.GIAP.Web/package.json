@@ -14,7 +14,7 @@
     "sass": "^1.32.2"
   },
   "devDependencies": {
-    "gulp": "^5.0.0",
+    "gulp": "^5.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^5.1.0",
