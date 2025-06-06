@@ -6,7 +6,7 @@
 
 <h1 class="govuk-heading-xl" id="archive--heading--text">News archive</h1>
 
-@if (Model is null || Model.Articles.Any() is false)
+@if (Model is null || Model.NewsArticles.Any() is false)
 {
     <p class="govuk-body">
         No archived news articles found.
@@ -15,25 +15,22 @@
 else
 {
     int index = 1;
-    @foreach (var article in Model.Articles)
+    @foreach (var article in Model.NewsArticles)
     {
-        @if (article.Published)
-        {
-            <div id=@($"news--articles--container{index}")>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-full">
-                        <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id=@($"archive--sub-heading--text {index}")>
-                            @Html.Raw(article.Title)
-                        </h2>
-                        <div class="govuk-body govuk-!-text-break-word" id=@($"archive--body--text {index}")>
-                            @Html.Raw(article.Body)
-                        </div>
+        <div id=@($"news--articles--container{index}")>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id=@($"archive--sub-heading--text {index}")>
+                        @Html.Raw(article.Title)
+                    </h2>
+                    <div class="govuk-body govuk-!-text-break-word" id=@($"archive--body--text {index}")>
+                        @Html.Raw(article.Body)
                     </div>
                 </div>
             </div>
+        </div>
 
-            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        }
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
         index++;
     }
 }

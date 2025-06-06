@@ -90,11 +90,16 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     /// Logs critical errors if a Cosmos DB exception is encountered.
     /// </remarks>
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isDraft)
     {
         try
         {
-            string publishedFilter = isDraft ? "c.Published=false" : "c.Published=true";
+            string publishedFilter = isDraft switch
+            {
+                true => "c.Published=false",
+                false => "c.Published=true",
+                null => "(c.Published=true OR c.Published=false)"
+            };
             string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
             string query = $"SELECT * FROM c WHERE {archivedFilter} And {publishedFilter}";
 

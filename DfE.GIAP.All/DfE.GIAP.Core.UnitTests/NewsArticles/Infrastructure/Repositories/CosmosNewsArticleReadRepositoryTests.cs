@@ -237,7 +237,9 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     [InlineData(true, false, "c.Archived=true", "c.Published=true")]
     [InlineData(false, true, "c.Archived=false", "c.Published=false")]
     [InlineData(true, true, "c.Archived=true", "c.Published=false")]
-    public async Task GetNewsArticlesAsync_QueryConstructedCorrectly_When_Parameters_Passed_And_Handler_And_Mapper_Called(bool inputIsArchived, bool inputIsDraft, string expectedArchived, string expectedPublished)
+    [InlineData(false, null, "c.Archived=false", "(c.Published=true OR c.Published=false)")]
+    [InlineData(true, null, "c.Archived=true", "(c.Published=true OR c.Published=false)")]
+    public async Task GetNewsArticlesAsync_QueryConstructedCorrectly_When_Parameters_Passed_And_Handler_And_Mapper_Called(bool inputIsArchived, bool? inputIsDraft, string expectedArchived, string expectedPublished)
     {
         // Arrange        
         const string ExpectedContainerName = "news";

@@ -37,12 +37,16 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
         ArgumentNullException.ThrowIfNull(request);
 
         // Retrieve news articles based on the specified filters
-        IEnumerable<NewsArticle> newsArticlesResult = await _newsArticleReadRepository.GetNewsArticlesAsync(request.IsArchived, request.IsDraft);
+        IEnumerable<NewsArticle> newsArticlesResult = await _newsArticleReadRepository
+            .GetNewsArticlesAsync(isArchived: request.IsArchived, isDraft: request.IsDraft);
 
-        // Order articles: Pinned first, then by last modified date in descending order
-        IOrderedEnumerable<NewsArticle> orderedNewsArticles = newsArticlesResult
-            .OrderByDescending(newsArticle => newsArticle.Pinned)
-            .ThenByDescending(newsArticle => newsArticle.ModifiedDate);
+        // Order articles based on the request's IsArchived flag
+        IOrderedEnumerable<NewsArticle> orderedNewsArticles;
+        if (request.IsArchived)
+            orderedNewsArticles = newsArticlesResult.OrderByDescending(x => x.ModifiedDate);
+        else
+            orderedNewsArticles = newsArticlesResult.OrderByDescending(x => x.Pinned)
+                                                    .ThenByDescending(x => x.ModifiedDate);
 
         // Return the response containing the ordered list of articles
         return new GetNewsArticlesResponse(orderedNewsArticles);

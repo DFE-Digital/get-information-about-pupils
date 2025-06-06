@@ -111,6 +111,38 @@ public sealed class GetNewsArticlesUseCaseTests
         Assert.Equivalent(expectedOrderArticles, response.NewsArticles);
     }
 
+    [Fact]
+    public async Task HandleRequest_ReturnsArticles_OrderedBy_ModifiedDate_Desc_When_IsArchived_True()
+    {
+        // Arrange
+        NewsArticle articleOldest = NewsArticleTestDoubles.Create();
+        articleOldest.ModifiedDate = new DateTime(2021, 1, 1);
+
+        NewsArticle articleMiddle = NewsArticleTestDoubles.Create();
+        articleMiddle.ModifiedDate = new DateTime(2023, 6, 6);
+
+        NewsArticle articleNewest = NewsArticleTestDoubles.Create();
+        articleNewest.ModifiedDate = new DateTime(2025, 1, 1);
+
+        // Pinned status should not affect order when IsArchived is true
+        articleOldest.Pinned = true;
+        articleMiddle.Pinned = false;
+        articleNewest.Pinned = true;
+
+        List<NewsArticle> unorderedArticles = [articleMiddle, articleOldest, articleNewest];
+
+        Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => unorderedArticles);
+        GetNewsArticlesUseCase sut = new(repo.Object);
+        GetNewsArticlesRequest request = new(IsArchived: true, IsDraft: false);
+
+        // Act
+        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+
+        // Assert
+        List<NewsArticle> expectedOrder = [articleNewest, articleMiddle, articleOldest];
+        Assert.Equivalent(expectedOrder, response.NewsArticles);
+    }
+
     [Theory]
     [InlineData(true, true)]
     [InlineData(true, false)]

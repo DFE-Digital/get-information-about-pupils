@@ -11,9 +11,9 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
-using DfE.GIAP.Core.Models.News;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Content;
@@ -46,6 +46,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly Mock<IManageDocumentsService> _mockDocRepo = new();
     private readonly Mock<INewsService> _mockNewsService = new();
     private readonly Mock<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>> _mockGetNewsArticleByIdUseCase = new();
+    private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
     private readonly ILogger<ManageDocumentsController> _mockLogger = Substitute.For<ILogger<ManageDocumentsController>>();
     private readonly ICookieManager _mockCookieManager = Substitute.For<ICookieManager>();
     private readonly Mock<ICommonService> _commonService = new Mock<ICommonService>();
@@ -65,10 +66,12 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     public async Task LoadListOfDocuments_When_ManageDocuments_MethodIsCalled()
     {
         // Arrange
-        List<Document> expectedDocumentsList = new List<Document>();
-        expectedDocumentsList.Add(new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true });
-        expectedDocumentsList.Add(new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true });
-        expectedDocumentsList.Add(new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true });
+        List<Document> expectedDocumentsList = new()
+        {
+            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
+            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
+            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true },
+        };
 
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
@@ -90,23 +93,16 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     public async Task LoadNewsDocuments_When_ManageDocuments_Posted_MethodIsCalled_And_User_Has_Selected_News_article()
     {
         // Arrange
-        List<Document> expectedDocumentsList = new List<Document>
+        List<Document> expectedDocumentsList = new()
         {
-            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
-        };
-
-        List<Article> newsList = new List<Article>
-        {
-            new Article { Title = "Some Test", Body = "Somebody", Id = "1"}
+            new() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
+            new() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
+            new() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
         };
 
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-
         _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
-        _mockNewsService.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(newsList);
 
         var model = new ManageDocumentsViewModel { DocumentList = new Document { Id = 1, DocumentName = "Test title", DocumentId = "NewsArticle" } };
 
@@ -155,20 +151,15 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
             new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
         };
 
-        List<Article> newsList = new List<Article>
-        {
-            new Article { Title = "Some Test", Body = "Somebody", Id = "1"}
-        };
-
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
         _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(documentsList);
-        _mockNewsService.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(newsList);
 
         var controller = GetManageDocumentsController();
         var model = _manageDocumentsResultsFake.GetDocumentDetails();
         var discard = "Discard";
         var editDocument = "EditDocument";
+
         // Act
         var result = await controller.ManageDocuments(model, discard, editDocument).ConfigureAwait(false);
 
@@ -336,7 +327,12 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         };
         _ = _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
 
-        ManageDocumentsController controller = new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object);
+        ManageDocumentsController controller = new ManageDocumentsController(
+            _mockNewsService.Object,
+            _mockDocRepo.Object,
+            _mockContentService.Object,
+            _mockGetNewsArticleByIdUseCase.Object,
+            _mockGetNewsArticlesUseCase.Object);
 
         // Act
         string saveAsDraft = "SaveAsDraft";
@@ -955,6 +951,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
     public ManageDocumentsController GetManageDocumentsController()
     {
-        return new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object);
+        return new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object, _mockGetNewsArticlesUseCase.Object);
     }
 }
