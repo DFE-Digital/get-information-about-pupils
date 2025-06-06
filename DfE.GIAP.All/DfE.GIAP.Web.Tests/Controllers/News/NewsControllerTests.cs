@@ -2,22 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers.CookieManager;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using NSubstitute;
 using Xunit;
@@ -27,7 +21,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.News;
 [Trait("Category", "News Controller Unit Tests")]
 public class NewsControllerTests
 {
-    private readonly IOptions<AzureAppSettings> _mockAzureAppSettings = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
     private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
 
@@ -42,11 +35,7 @@ public class NewsControllerTests
         var articleData2 = new NewsArticle() { Id = "2", Title = "Title 2", Body = "Test body 2", DraftTitle = string.Empty, DraftBody = string.Empty, CreatedDate = new DateTime(2020, 1, 1) };
         var listArticleData = new List<NewsArticle>() { articleData1, articleData2 };
 
-        var mockRepo = new Mock<INewsService>();
         var mockContentService = new Mock<IContentService>();
-        var mockLogger = new Mock<ILogger<NewsController>>();
-        var mockUserService = new Mock<ICommonService>();
-        var mockCookieManager = new Mock<ICookieManager>();
 
         var newsViewModel = new NewsViewModel();
         newsViewModel.NewsPublication = listPublicationData;
@@ -58,7 +47,7 @@ public class NewsControllerTests
         _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequest(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArticleData));
 
-        var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
+        var controller = new NewsController(mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
 
         // Act
         var result = await controller.Index().ConfigureAwait(false);
@@ -87,11 +76,7 @@ public class NewsControllerTests
         var archivedArticleData2 = new NewsArticle() { Id = "2", Title = "Title 2", Body = "Test body 2", DraftTitle = string.Empty, DraftBody = string.Empty, ModifiedDate = new DateTime(2020, 1, 2), Archived = false };
         var listArchivedArticleData = new List<NewsArticle>() { archivedArticleData1, archivedArticleData2 };
 
-        var mockRepo = new Mock<INewsService>();
-        var mockLogger = new Mock<ILogger<NewsController>>();
-        var mockUserService = new Mock<ICommonService>();
         var mockContentService = new Mock<IContentService>();
-        var mockCookieManager = new Mock<ICookieManager>();
         var newsViewModel = new NewsViewModel();
 
         newsViewModel.NewsArticles = listArchivedArticleData;
@@ -99,7 +84,7 @@ public class NewsControllerTests
         _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequest(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArchivedArticleData));
 
-        var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
+        var controller = new NewsController(mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
 
         // Act
         var result = await controller.Archive().ConfigureAwait(false);
@@ -125,13 +110,9 @@ public class NewsControllerTests
     public async Task DismissNewsBanner_redirects_to_ProvidedURL()
     {
         // Arrange
-        var mockRepo = new Mock<INewsService>();
-        var mockLogger = new Mock<ILogger<NewsController>>();
-        var mockUserService = new Mock<ICommonService>();
         var mockContentService = new Mock<IContentService>();
-        var mockCookieManager = new Mock<ICookieManager>();
 
-        var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
+        var controller = new NewsController(mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
 
         // Act
         var result = await controller.DismissNewsBanner("testURL");

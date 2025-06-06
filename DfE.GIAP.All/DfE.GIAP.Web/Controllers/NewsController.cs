@@ -2,7 +2,6 @@
 using DfE.GIAP.Common.Constants.Routes;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -17,19 +16,15 @@ namespace DfE.GIAP.Web.Controllers;
 [Route(ApplicationRoute.News)]
 public class NewsController : Controller
 {
-    private readonly INewsService _newsService;
     private readonly IContentService _contentService;
     private readonly ILatestNewsBanner _newsBanner;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public NewsController(
-        INewsService newsService,
         IContentService contentService,
         ILatestNewsBanner newsBanner,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticleUseCase)
     {
-        _newsService = newsService ??
-            throw new ArgumentNullException(nameof(newsService));
         _contentService = contentService ??
             throw new ArgumentNullException(nameof(contentService));
         _newsBanner = newsBanner ??
@@ -60,7 +55,7 @@ public class NewsController : Controller
     [Route("archive")]
     public async Task<IActionResult> Archive()
     {
-        GetNewsArticlesRequest request = new(IsArchived: true, IsDraft: true);
+        GetNewsArticlesRequest request = new(IsArchived: true, IsDraft: false);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
         NewsViewModel model = new()

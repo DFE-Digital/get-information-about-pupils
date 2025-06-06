@@ -21,11 +21,14 @@ public interface INewsArticleReadRepository
     /// will be retrieved.</remarks>
     /// <param name="isArchived">A value indicating whether to include archived articles.  Specify <see langword="true"/> to retrieve
     /// archived articles; otherwise, <see langword="false"/>.</param>
-    /// <param name="isDraft">A value indicating whether to include draft articles.  Specify <see langword="true"/> to retrieve draft
-    /// articles; otherwise, <see langword="false"/>.</param>
+    /// <param name="isDraft">
+    /// A value indicating whether to include draft articles.
+    /// Specify <see langword="true"/> to retrieve draft articles; <see langword="false"/> to retrieve only published articles.
+    /// If <see langword="null"/>, both published and draft articles will be returned.
+    /// </param>
     /// <returns>A task that represents the asynchronous operation. The task result contains an  <see cref="IEnumerable{T}"/>
     /// of <see cref="NewsArticle"/> objects that match the specified criteria.</returns>
-    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft);
+    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isDraft);
 
     /// <summary>
     /// Asynchronously retrieves a news article by its unique identifier.

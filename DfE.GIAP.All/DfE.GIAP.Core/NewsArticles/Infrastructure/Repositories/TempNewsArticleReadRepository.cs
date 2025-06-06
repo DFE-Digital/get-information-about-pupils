@@ -62,13 +62,18 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         }
     }
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isDraft)
     {
         try
         {
-            string publishedFilter = isDraft ? "c.Published=false" : "c.Published=true";
             string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter} And {publishedFilter}";
+            string publishedFilter = isDraft switch
+            {
+                true => "c.Published=false",
+                false => "c.Published=true",
+                null => "(c.Published=true OR c.Published=false)"
+            };
+            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter} AND {publishedFilter}";
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
             using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
