@@ -34,9 +34,6 @@ jobs:
       run: npm install
       working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
 
-    - name: Add DfEDigital NuGet Feed
-      run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
-
     - name: Restore NuGet packages
       run: dotnet restore *.sln
       working-directory: ${{ env.solutionDirectory }}
