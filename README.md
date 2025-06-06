@@ -6,7 +6,16 @@ GIAP (Get Information about pupils) is a replacement of the existing KtS (Key to
 
 GIAP-Web relies on a set of Azure Functions in the GIAP.AzureFunctions application, these then query Azure Cognitive Services/CosmosDB for data. The initial access is granted via [DSI](https://services.signin.education.gov.uk/) which provides authentication and authorisation to the application.
 
-![Diagram image](docs/giap-mermaid.png)
+```mermaid
+graph TD
+X[DFE Sign-in] --> A
+A --> X
+A[GIAP Web] --- B[GIAP Azure Function]
+B --- E[Azure BLOB storage]
+B --- D[Azure Cognitive Search]
+B --- C[Azure CosmosDB]
+D --- C
+```
 
 ## Getting Started / Setup
 
