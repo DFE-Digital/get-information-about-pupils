@@ -18,6 +18,9 @@ jobs:
   build_unittest:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build
         uses: ./.github/actions/build
 
@@ -70,6 +73,9 @@ jobs:
           AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build
         uses: ./.github/actions/build
 
