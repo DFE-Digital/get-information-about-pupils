@@ -30,11 +30,11 @@ runs:
       shell: bash
 
     - name: Restore NuGet packages
-      run: dotnet restore ./DfE.GIAP.All/*.sln
+      run: dotnet restore ./DfE.GIAP.All/*.sln --configuration ${{ env.buildConfiguration }}
       shell: bash
 
     - name: Build
-      run: dotnet build ./DfE.GIAP.All/*.sln --no-restore
+      run: dotnet build ./DfE.GIAP.All/*.sln --no-restore --configuration ${{ env.buildConfiguration }}
       shell: bash
 
     - name: Cache NuGet packages
