@@ -48,7 +48,7 @@ jobs:
         working-directory: ${{ env.solutionDirectory }}
 
       - name: Generate test coverage reports
-        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests;-DfE.GIAP.Core.SharedTests;"
         working-directory: ${{ env.solutionDirectory }}
 
       - name: Upload test coverage reports
