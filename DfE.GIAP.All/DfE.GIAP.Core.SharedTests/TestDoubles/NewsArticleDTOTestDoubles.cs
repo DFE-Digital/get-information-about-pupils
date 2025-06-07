@@ -1,13 +1,11 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.UnitTests.Extensions;
 
-namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories.TestDoubles;
+namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 
-internal static class NewsArticleDTOTestDoubles
+public static class NewsArticleDTOTestDoubles
 {
     private const int NEWS_ARTICLES_DOCUMENT_TYPE = 7;
-    internal static List<NewsArticleDTO> Generate(int count = 10)
+    public static List<NewsArticleDTO> Generate(int count = 10)
     {
         int randomSeed = new Random().Next();
         List<NewsArticleDTO> articles = [];
