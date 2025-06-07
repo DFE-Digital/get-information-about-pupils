@@ -30,8 +30,8 @@
 ## ✅ Checklist
 - [ ] Code compiles
 - [ ] Tests added or updated
-- [ ] Documentation updated (if needed)
-- [ ] All checks pass
+- [ ] Documentation updated (if not needed cross out)
+- [ ] CI pass (tests, codecov, lint)
 
 ## 📎 Additional Notes
 
