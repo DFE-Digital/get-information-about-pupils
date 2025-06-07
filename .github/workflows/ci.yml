@@ -52,6 +52,7 @@ jobs:
           npm install -g gulp
           gulp default --gulpfile DfE.GIAP.Web/gulpfile.js --cwd DfE.GIAP.Web 
         working-directory: ${{ env.solutionDirectory }}
+
 #    - name: Upload build artifact
 #      uses: actions/upload-artifact@v4
 #      with:
@@ -60,7 +61,7 @@ jobs:
 
       - name: Verify formatting
         run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
-        working-directory: ./DfE.GIAP.All
+        working-directory: ${{ env.solutionDirectory }}
 
   integration_tests:
     runs-on: ubuntu-latest
