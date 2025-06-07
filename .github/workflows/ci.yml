@@ -28,9 +28,14 @@ jobs:
 
       - name: Run unit tests
         run: |
-          for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
+          for proj in \
+            ./DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
+            ./DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
+            ./DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj \
+            ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
+          do
+            echo "Running tests for $proj"
             dotnet test "$proj" \
-              --no-build \
               --verbosity normal \
               --collect:"XPlat Code Coverage" \
               -p:CoverletOutputFormat=cobertura \
