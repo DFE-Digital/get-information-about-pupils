@@ -101,4 +101,4 @@ jobs:
           sudo update-ca-certificates
 
       - name: Run Integration Tests
-        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --no-build --verbosity normal
+        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --verbosity normal
