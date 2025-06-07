@@ -29,9 +29,10 @@ jobs:
       - name: Run unit tests
         run: |
           for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
-            dotnet test "$proj" --verbosity normal 
+            dotnet test "$proj" --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./TestResults/
           done
-
+        working-directory: ${{ env.solutionDirectory }}
+        
       - name: Install ReportGenerator tool
         run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
         working-directory: ${{ env.solutionDirectory }}
