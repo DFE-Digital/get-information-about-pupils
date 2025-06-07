@@ -30,7 +30,7 @@ runs:
       shell: bash
 
     - name: Restore NuGet packages
-      run: dotnet restore *.sln
+      run: dotnet restore ./DfE.GIAP.All/*.sln
       shell: bash
 
     - name: Cache NuGet packages
