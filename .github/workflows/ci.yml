@@ -29,7 +29,7 @@ jobs:
       - name: Run unit tests
         run: |
           for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
-            dotnet test "$proj" --verbosity normal --collect:"XPlat Code Coverage" -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/
+            dotnet test "$proj" --no-build --verbosity normal --collect:"XPlat Code Coverage" -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/
           done
         working-directory: ${{ env.solutionDirectory }}
 
@@ -101,4 +101,4 @@ jobs:
           sudo update-ca-certificates
 
       - name: Run Integration Tests
-        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --verbosity normal
+        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --no-build --verbosity normal
