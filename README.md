@@ -19,7 +19,7 @@ D --- C
 
 ## Getting Started / Setup
 
-###	Installation process
+### Installation process
 
 Clone the repository on your local machine in a suitable location
 
@@ -29,25 +29,141 @@ git clone https://github.com/DFE-Digital/get-information-about-pupils
 
 GIAP has been developed using .NET Core so you will need an appropriate IDE (or text file browser if you wish). Either Visual Studio Code (with .NET C# support) or Visual Studio would be preferable, this was developed using Visual Studio 2019/2022. 
 
-Load the solution and build it (F5 or use the menu). Ensure Dfe.GIAP.WEB project is set as default and run the application. 
+Load the solution and build it (F5 or use the menu). Ensure Dfe.GIAP.WEB project is set as default and run the application.
 
-###	Project dependencies
+### Project dependencies
 
 GIAP web has a number of dependancies listed below, some are closed source, others are open.
 
-* .net 6
-* npm
+* .NET 8
+* node
 * gulp
-* DataDirectorate-Common-Feed (Nuget feed) 
-* GDSHelpers
 * DSI (DfE sign-in)
+* [CosmosDb Infrastructure library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
 
 ### Build and Test
 
-Press Ctrl+Shift+B (if you are using Visual Studio) to build the project. To run all tests in Visaul Studio, select Tests from top menu and run all unit tests. 
-Unit tests live in the Unit Test project folder and use XUnit, NSubstitute, and Moq. There exists testing projects for Common Layer, Service Layer, and Web Layer. There are currently over 850 tests.
-
+Press Ctrl+Shift+B (if you are using Visual Studio) to build the project. To run all tests in Visaul Studio, select Tests from top menu and run all unit tests.
+Unit tests live in the Unit Test project folder and use XUnit, NSubstitute, and Moq. There exists testing projects for Common Layer, Service Layer, and Web Layer.
 Unit tests should be written in the form {TARGET CLASS OR MODULE}_{EXPECTED_OUTCOME}_WHEN_{CONDITION}
+
+### Settings
+
+There are a number of key settings contained in the `appsettings.json` file. It is recommended to create an `appsettings.local.json` file to store values as they won't be checked into source control as `.gitignore`. An example is provided for reference, additionally a launchSettings.json is required in Properties.
+
+> launchSettings.json
+
+```json
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "https://localhost:44378",
+      "sslPort": 44378
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local"
+      }
+    },
+    "DfE.GIAP.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local"
+      },
+      "applicationUrl": "https://localhost:44378;http://localhost:5000"
+    }
+  }
+}
+```
+
+> appsettings.local.json
+
+```json
+
+{
+  "AppVersion": "2.Local",
+  "SessionTimeout": 20,
+  "IsSessionIdStoredInCookie": true,
+  "MaximumNonUPNResults": 100,
+  "MaximumNonULNResults": 100,
+  "MaximumUPNsPerSearch": 4000,
+  "DsiClientId": "dsi-client-id",
+  "DsiClientSecret": "dsi-client-secret",
+  "DsiApiClientSecret": "dsi-api-client-secret",
+  "DsiMetadataAddress": "dsi-metadata-address",
+  "DsiAuthorisationUrl": "dsi-authorisation-url",
+  "DsiRedirectUrlAfterSignout": "dsi-redirect-url-after-signout",
+  "DsiServiceId": "dsi-service-id",
+  "DsiAudience": "dsi-audience",
+  "StorageAccountName": "account-name",
+  "StorageAccountKey": "account-key",
+  "StorageContainerName": "container-name",
+  "NonUpnPPLimit": 4000,
+  "NonUpnNPDMyPupilListLimit": 100,
+  "UpnPPMyPupilListLimit": 4000,
+  "UpnNPDMyPupilListLimit": 4000,
+  "MaximumULNsPerSearch": 4000,
+  "CommonTransferFileUPNLimit": 10,
+  "MetaDataDownloadListDirectory": "AllUsers/Metadata",
+  "DownloadOptionsCheckLimit": 500,
+  "UseLAColumn": true,
+  "NpdUseGender": true,
+  "PpUseGender": false,
+  "FeUseGender": false,
+  "FeatureManagement": {
+    "FurtherEducation": true
+  },
+  "SecurityHeaders": {
+    "Remove": [
+      "Server",
+      "X-Powered-By"
+    ],
+    "Add": {
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+      "X-XSS-Protection": "0",
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "Content-Security-Policy": "default-src 'self';"
+    }
+  },
+  "GetUserProfileUrl": "http://localhost:7071/api/get-user-profile?code=",
+  "GetLatestNewsStatusUrl": "http://localhost:7071/api/get-latest-news-status?code=",
+  "DeleteNewsArticleUrl": "http://localhost:7071/api/delete-news-article?code=",
+  "DownloadPupilsByUPNsCSVUrl": "http://localhost:7071/api/download-pupils-by-upns-csv?code=",
+  "DownloadPupilsByUPNsTABUrl": "http://localhost:7071/api/download-pupils-by-upns-tab?code=",
+  "DownloadPupilPremiumByUPNFforCSVUrl": "http://localhost:7071/api/download-pupil-premium-by-upns-csv?code=",
+  "GetContentByIDUrl": "http://localhost:7071/api/get-content-by-id?code=",
+  "QueryLAByCodeUrl": "http://localhost:7071/api/get-la-by-code?code=",
+  "QueryLAGetAllUrl": "http://localhost:7071/api/get-la-all?code=",
+  "GetAcademiesURL": "http://localhost:7071/api/get-academies?code=",
+  "QueryNewsArticleUrl": "http://localhost:7071/api/get-news-article-by-id?code=",
+  "QueryNewsArticlesUrl": "http://localhost:7071/api/get-news-articles?code=",
+  "UpdateNewsDocumentUrl": "http://localhost:7071/api/update-news-document?code=",
+  "UpdateNewsPropertyUrl": "http://localhost:7071/api/update-news-article-property?code=",
+  "LoggingEventUrl": "http://localhost:7071/api/logging-event?code=",
+  "CreateOrUpdateUserProfileUrl": "http://localhost:7071/api/create-or-update-user-profile?code=",
+  "DownloadCommonTransferFileUrl": "http://localhost:7071/api/download-common-transfer-file?code=",
+  "DownloadSecurityReportByUpnUrl": "http://localhost:7071/api/download-security-report-by-upn-searches?code=",
+  "DownloadSecurityReportByUlnUrl": "http://localhost:7071/api/download-security-report-by-uln-searches?code=",
+  "DownloadSecurityReportDetailedSearchesUrl": "http://localhost:7071/api/download-detailed-searches?code=",
+  "DownloadSecurityReportLoginDetailsUrl": "http://localhost:7071/api/download-login-details?code=",
+  "DownloadPupilsByULNsUrl": "http://localhost:7071/api/download-further-education?code=",
+  "DownloadPrepreparedFilesUrl": "http://localhost:7071/api/pre-prepared-downloads?code=",
+  "PaginatedSearchUrl": "http://localhost:7071/api/get-page/{indexType}/{queryType}?code=",
+  "GetAllFurtherEducationURL": "http://localhost:7071/api/get-all-fe?code=",
+  "GetFurtherEducationByCodeURL": "http://localhost:7071/api/get-fe-by-code?code=",
+  "SetLatestNewsStatusUrl": "http://localhost:7071/api/set-latest-news-status?code=",
+  "FeatureFlagAppConfigUrl": "Endpoint="
+}
+
+```
 
 ### Continual Integration (CI)
 
@@ -69,10 +185,6 @@ dotnet format
 ### Logging
 
 GIAP uses Application Insights to log auditing, warnings, and errors.
-
-### Settings
-
-There are a number of key settings contained in the AppSettings.json file, it is recommended to create an AppSettings.local.json file to store values for these keys as they won't be checked into source control. An example is provided for reference, additionally a launchSettings.json is required in Properties.
 
 ### Gulp Runner
 
