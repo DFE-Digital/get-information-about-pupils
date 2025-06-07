@@ -29,7 +29,7 @@ jobs:
       - name: Run unit tests
         run: |
           for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
-            dotnet test "$proj" --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/
+            dotnet test "$proj" --verbosity normal --collect:"XPlat Code Coverage" -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/
           done
         working-directory: ${{ env.solutionDirectory }}
 
@@ -38,7 +38,7 @@ jobs:
         working-directory: ${{ env.solutionDirectory }}
 
       - name: Generate test coverage reports
-        run: ./tools/reportgenerator "-reports:${{ env.solutionDirectory }}/**/coverage.cobertura.xml" "-targetdir:${{ env.solutionDirectory }}/coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.solutionDirectory }}
 
       - name: Upload test coverage reports
