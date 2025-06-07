@@ -70,7 +70,7 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
             string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
             string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter} And {publishedFilter}";
 
-            Container container = _cosmosClient.GetContainer(ContainerName, DatabaseId);
+            Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
             using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
 
             List<NewsArticleDTO> responseArticles = [];

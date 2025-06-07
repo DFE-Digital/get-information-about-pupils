@@ -1,13 +1,11 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.UnitTests.Extensions;
 
-namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories.TestDoubles;
+namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 
-internal static class NewsArticleDTOTestDoubles
+public static class NewsArticleDTOTestDoubles
 {
     private const int NEWS_ARTICLES_DOCUMENT_TYPE = 7;
-    internal static List<NewsArticleDTO> Generate(int count = 10)
+    public static List<NewsArticleDTO> Generate(int count = 10)
     {
         int randomSeed = new Random().Next();
         List<NewsArticleDTO> articles = [];
@@ -31,7 +29,7 @@ internal static class NewsArticleDTOTestDoubles
             .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
             .RuleFor(t => t.Archived, (f) => f.Random.Bool())
             .RuleFor(t => t.Published, (f) => f.Random.Bool())
-            .RuleFor(t => t.ID, (f) => f.Lorem.Word())
+            .RuleFor(t => t.ID, (f) => f.Random.Guid().ToString())
             .RuleFor(t => t.DraftBody, (f) => f.Lorem.Words().Merge())
             .RuleFor(t => t.DraftTitle, (f) => f.Lorem.Words().Merge())
             .RuleFor(t => t.ModifiedDate, (f) => f.Date.Recent())

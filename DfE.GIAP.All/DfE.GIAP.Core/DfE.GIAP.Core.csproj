@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<RootNamespace>DfE.GIAP.Core</RootNamespace>
 		<TargetFramework>net8.0</TargetFramework>
@@ -16,5 +16,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="DfE.GIAP.Core.UnitTests" />
+		<InternalsVisibleTo Include="DfE.GIAP.Core.SharedTests" />
+		<InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
 	</ItemGroup>
 </Project>

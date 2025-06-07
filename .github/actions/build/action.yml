@@ -1,0 +1,54 @@
+name: Build web
+description: Shared setup steps to build giap-web
+
+inputs:
+  github_token:
+    required: true
+    description: GitHub token for DfE-Digital NuGet feed authentication
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '12'
+
+    - name: Setup .NET SDK from global.json
+      uses: actions/setup-dotnet@v4
+
+    - name: Install NuGet tools
+      uses: NuGet/setup-nuget@v1
+
+    - name: npm install
+      run: npm install
+      shell: bash
+      working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
+
+    - name: Add DfEDigital NuGet Feed
+      run: dotnet nuget add source --username USERNAME --password ${{ inputs.github_token }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+      shell: bash
+
+    - name: Restore NuGet packages
+      run: dotnet restore ./DfE.GIAP.All/*.sln
+      shell: bash
+
+    - name: Build
+      run: dotnet build ./DfE.GIAP.All/*.sln --no-restore
+      shell: bash
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Cache npm
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-npm-

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -25,6 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\DfE.GIAP.Core.SharedTests\DfE.GIAP.Core.SharedTests.csproj" />
 		<ProjectReference Include="..\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
 	</ItemGroup>
 
