@@ -1,10 +1,9 @@
-using DfE.GIAP.Core.NewsArticles;
-using DfE.GIAP.Core.SharedTests;
+using DfE.GIAP.Core.Common.CrossCutting;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
 
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class GetNewsArticlesUseCaseIntegrationTests
+public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 {
     private readonly CosmosDbFixture _fixture;
 
@@ -13,12 +12,18 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests
         _fixture = fixture;
     }
 
+    public async Task InitializeAsync() => await _fixture.Database.ClearDatabaseAsync();
+    public Task DisposeAsync() => Task.CompletedTask;
+
+
     [Theory]
     [InlineData(true, true)]
     [InlineData(false, false)]
     public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(bool isArchived, bool isDraft)
     {
         // Arrange
+        await _fixture.Database.ClearDatabaseAsync();
+
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
                 .AddTestServices()
@@ -27,10 +32,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
 
-        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut =
-            scope.ServiceProvider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
-
-        List<NewsArticleDTO> seededDTOs = NewsArticleDTOTestDoubles.Generate();
+        List<NewsArticleDTO> seededDTOs = NewsArticleDTOTestDoubles.Generate(count: 10);
 
         await Parallel.ForEachAsync(seededDTOs, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
 
@@ -39,37 +41,23 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests
             IsDraft: isDraft);
 
         // Act
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut =
+            scope.ServiceProvider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
 
         // Assert
-        Assert.NotNull(response);
+        IMapper<NewsArticleDTO, NewsArticle> testMapper = TestMapNewsArticleDTOToArticle.Create();
 
-        List<NewsArticle> expectedOutput =
-            MapDTOToApplicationModel(seededDTOs)
+        List<NewsArticle> expectedArticlesOutput =
+            seededDTOs.Select(testMapper.Map)
                 .FilterRequestedArticles(request.IsArchived, request.IsDraft)
                 .OrderArticles()
                 .ToList();
 
-        Assert.Equal(expectedOutput, response.NewsArticles);
-    }
-
-    private static List<NewsArticle> MapDTOToApplicationModel(IEnumerable<NewsArticleDTO> input)
-    {
-        return input.Select(Map).ToList();
-
-        static NewsArticle Map(NewsArticleDTO input) => new()
-        {
-            Id = input.ID,
-            Title = input.Title,
-            Body = input.Body,
-            Archived = input.Archived,
-            Pinned = input.Pinned,
-            Published = input.Published,
-            DraftTitle = input.DraftTitle,
-            DraftBody = input.DraftBody,
-            CreatedDate = input.CreatedDate,
-            ModifiedDate = input.ModifiedDate
-        };
+        Assert.NotNull(response);
+        Assert.NotNull(response.NewsArticles);
+        Assert.NotEmpty(response.NewsArticles);
+        Assert.Equal(expectedArticlesOutput, response.NewsArticles);
     }
 }
 
@@ -78,11 +66,11 @@ internal static class GetNewsArticleUseCaseNewsArticleExtensions
 
     internal static IEnumerable<NewsArticle> FilterRequestedArticles(this IEnumerable<NewsArticle> input, bool requestIsArchived, bool requestIsDraft)
         => input
-            .Where(t => t.Archived = requestIsArchived) // if requested archived include
-            .Where(t => t.Published = !requestIsDraft); // if requested draft then include
+            .Where(t => t.Archived == requestIsArchived) // if requested archived include
+            .Where(t => t.Published != requestIsDraft); // if requested draft then include
     
     internal static IEnumerable<NewsArticle> OrderArticles(this IEnumerable<NewsArticle> input)
         => input
                 .OrderByDescending(t => t.Pinned)
-                .ThenBy(t => t.ModifiedDate);
+                .ThenByDescending(t => t.ModifiedDate);
 }

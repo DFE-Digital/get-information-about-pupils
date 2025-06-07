@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json.Linq;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture;
 public sealed class CosmosDbTestDatabase : IAsyncDisposable
@@ -48,15 +49,9 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
                 foreach (dynamic item in queriedItem)
                 {
                     string id = item.id.ToString();
-                    PartitionKey partitionKey = new(item.DOCTYPE); // TODO currently hardcoded to application-data partitionKey.
+                    PartitionKey partitionKey = new((int)item.DOCTYPE); // TODO currently hardcoded to application-data partitionKey.
 
-                    // Verify item existence before deletion, else will throw
-                    dynamic itemExists = await container.Container.ReadItemAsync<dynamic>(id, partitionKey);
-
-                    if (itemExists.StatusCode == HttpStatusCode.OK)
-                    {
-                        deleteTasks.Add(container.Container.DeleteItemAsync<dynamic>(id, partitionKey));
-                    }
+                    deleteTasks.Add(container.Container.DeleteItemAsync<dynamic>(id, partitionKey));
                 }
             }
             await Task.WhenAll(deleteTasks);
@@ -70,6 +65,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     {
         DatabaseResponse db = await CreateDatabase(_cosmosClient);
         List<ContainerResponse> containers = await CreateAllContainers(db);
+
         ContainerResponse targetContainer =
             containers.Single(
                 (container) => container.Container.Id == ApplicationDataContainerName);

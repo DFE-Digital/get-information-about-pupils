@@ -1,5 +1,4 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
-using DfE.GIAP.Core.SharedTests;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture;
 public sealed class CosmosDbFixture : IAsyncLifetime
