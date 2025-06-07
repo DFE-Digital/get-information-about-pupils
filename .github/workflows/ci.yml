@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build
-        uses: .github/actions/build
+        uses: ./.github/actions/build
 
       - name: Run unit tests
         run: |
@@ -71,7 +71,7 @@ jobs:
 
     steps:
       - name: Build
-        uses: .github/actions/build
+        uses: ./.github/actions/build
 
       - name: Install CosmosDb Emulator TLS certificate
         run: |
