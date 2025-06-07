@@ -29,7 +29,7 @@ jobs:
       - name: Run unit tests
         run: |
           for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
-            dotnet test "$proj" --no-build --verbosity normal 
+            dotnet test "$proj" --verbosity normal 
           done
 
       - name: Install ReportGenerator tool
@@ -82,7 +82,7 @@ jobs:
         uses: ./.github/actions/build
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Install CosmosDb Emulator TLS certificate
         run: |
           retry_count=0
