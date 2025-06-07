@@ -57,6 +57,19 @@ jobs:
           name: coverage-report
           path: ${{ env.solutionDirectory }}/coverlet/reports/Cobertura.xml
 
+      - name: Summarise code coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ${{ env.solutionDirectory }}/coverlet/reports/Cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
       - name: Run gulp
         run: |
           npm install -g gulp
