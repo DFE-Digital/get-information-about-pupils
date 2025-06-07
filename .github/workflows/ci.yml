@@ -6,72 +6,45 @@ permissions:
 
 on:
   push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  buildConfiguration: Release
+  solutionDirectory: ./DfE.GIAP.All
 
 jobs:
-  build:
+  build_unittest:
     runs-on: ubuntu-latest
-
-    env:
-      buildConfiguration: Release
-      solutionDirectory: ./DfE.GIAP.All
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Build
+        uses: ./.github/actions/build
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '12'
+      - name: Run unit tests
+        run: |
+          for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
+            dotnet test "$proj" --no-build --verbosity normal 
+          done
 
-    - name: Setup .NET SDK from global.json
-      uses: actions/setup-dotnet@v4
+      - name: Install ReportGenerator tool
+        run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
+        working-directory: ${{ env.solutionDirectory }}
 
-    - name: Install NuGet
-      uses: NuGet/setup-nuget@v1
+      - name: Generate test coverage reports
+        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        working-directory: ${{ env.solutionDirectory }}
 
-    - name: npm install
-      run: npm install
-      working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
+      - name: Upload test coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ env.solutionDirectory }}/coverlet/reports/Cobertura.xml
 
-    - name: Add DfEDigital NuGet Feed
-      run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
-
-    - name: Restore NuGet packages
-      run: dotnet restore *.sln
-      working-directory: ${{ env.solutionDirectory }}
-      
-    - name: Build solution
-      run: dotnet build *.sln --configuration ${{ env.buildConfiguration }} --no-restore -p:SkipInvalidConfigurations=true 
-       
-      # These are specific to windows-latest msdeploy so have been removed temporarily
-      #-p:DesktopBuildPackageLocation="${{ github.workspace }}\WebApp.zip"
-      # -p:DeployOnBuild=true -p:WebPublishMethod=Package -p:PackageAsSingleFile=true -p:DeployIisAppPath="Default Web Site"
-      working-directory: ${{ env.solutionDirectory }}
-      
-    - name: Run unit tests
-      run: dotnet test *.sln --configuration ${{ env.buildConfiguration }} --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true
-      working-directory: ${{ env.solutionDirectory }}
-      
-    - name: Install ReportGenerator tool
-      run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
-      working-directory: ${{ env.solutionDirectory }}
-
-    - name: Generate test coverage reports
-      run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
-      working-directory: ${{ env.solutionDirectory }}
-
-    - name: Upload test coverage reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: ${{ env.solutionDirectory }}/coverlet/reports/Cobertura.xml
-
-    - name: Run gulp
-      run: |
-        npm install -g gulp
-        gulp default --gulpfile DfE.GIAP.Web/gulpfile.js --cwd DfE.GIAP.Web 
-      working-directory: ${{ env.solutionDirectory }}
+      - name: Run gulp
+        run: |
+          npm install -g gulp
+          gulp default --gulpfile ./DfE.GIAP.All/DfE.GIAP.Web/gulpfile.js --cwd DfE.GIAP.Web 
       
 #    - name: Upload build artifact
 #      uses: actions/upload-artifact@v4
@@ -79,6 +52,41 @@ jobs:
 #        name: WebApp
 #        path: WebApp.zip
 
-    - name: Verify formatting
-      run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
-      working-directory: ./DfE.GIAP.All
+      - name: Verify formatting
+        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
+        working-directory: ./DfE.GIAP.All
+
+  integration_tests:
+    runs-on: ubuntu-latest
+    needs: build_unittest
+    services:
+      cosmosdb:
+        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+        ports:
+          - 8081:8081
+          - 10250-10255:10250-10255
+        env:
+          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
+          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
+
+    steps:
+      - name: Build
+        uses: ./.github/actions/build
+
+      - name: Install CosmosDb Emulator TLS certificate
+        run: |
+          retry_count=0
+          max_retry_count=10
+          until sudo curl --insecure --silent --fail --show-error "https://localhost:8081/_explorer/emulator.pem" --output "/usr/local/share/ca-certificates/cosmos-db-emulator.crt"; do
+            if [ $retry_count -eq $max_retry_count ]; then
+              echo "Failed to download certificate after $retry_count attempts."
+              exit 1
+            fi
+            echo "Failed to download certificate. Retrying in 5 seconds..."
+            sleep 5
+            retry_count=$((retry_count+1))
+          done
+          sudo update-ca-certificates
+
+      - name: Run Integration Tests
+        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --no-build --verbosity normal

@@ -1,0 +1,28 @@
+name: Build web
+description: Shared setup steps to build giap-web
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '12'
+
+    - name: Setup .NET SDK from global.json
+      uses: actions/setup-dotnet@v4
+
+    - name: Install NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: npm install
+      run: npm install
+      working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
+
+    - name: Add DfEDigital NuGet Feed
+      run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+
+    - name: Restore NuGet packages
+      run: dotnet restore *.sln
