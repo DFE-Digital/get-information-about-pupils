@@ -23,6 +23,8 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run unit tests
         run: |
@@ -78,7 +80,9 @@ jobs:
 
       - name: Build
         uses: ./.github/actions/build
-
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Install CosmosDb Emulator TLS certificate
         run: |
           retry_count=0

@@ -1,5 +1,11 @@
 name: Build web
 description: Shared setup steps to build giap-web
+
+inputs:
+  github_token:
+    required: true
+    description: GitHub token for DfE-Digital NuGet feed authentication
+
 runs:
   using: "composite"
   steps:
@@ -20,7 +26,7 @@ runs:
       working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
 
     - name: Add DfEDigital NuGet Feed
-      run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+      run: dotnet nuget add source --username USERNAME --password ${{ inputs.github_token }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
       shell: bash
 
     - name: Restore NuGet packages
