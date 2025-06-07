@@ -29,7 +29,12 @@ jobs:
       - name: Run unit tests
         run: |
           for proj in $(find . -name '*.csproj' | grep -v 'IntegrationTests'); do
-            dotnet test "$proj" --no-build --verbosity normal --collect:"XPlat Code Coverage" -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/
+            dotnet test "$proj" \
+              --no-build \
+              --verbosity normal \
+              --collect:"XPlat Code Coverage" \
+              -p:CoverletOutputFormat=cobertura \
+              -p:CoverletOutput=./TestResults/
           done
         working-directory: ${{ env.solutionDirectory }}
 
