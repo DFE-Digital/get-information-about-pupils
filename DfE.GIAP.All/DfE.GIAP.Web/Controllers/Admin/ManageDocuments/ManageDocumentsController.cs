@@ -16,6 +16,7 @@ using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Core.Models.News;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.ManageDocument;
@@ -38,12 +39,14 @@ public class ManageDocumentsController : Controller
     private readonly IContentService _contentService;
     private readonly INewsService _newsService;
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
+    private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public ManageDocumentsController(
         INewsService newsService,
         IManageDocumentsService manageDocumentsService,
         IContentService contentService,
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase)
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase)
     {
         _newsService = newsService ??
             throw new ArgumentNullException(nameof(newsService));
@@ -53,6 +56,8 @@ public class ManageDocumentsController : Controller
             throw new ArgumentNullException(nameof(contentService));
         _getNewsArticleByIdUseCase = getNewsArticleByIdUseCase ??
             throw new ArgumentNullException(nameof(getNewsArticleByIdUseCase));
+        _getNewsArticlesUseCase = getNewsArticlesUseCase ??
+            throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
     }
 
     [HttpGet]
@@ -610,11 +615,12 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadNewsList()
     {
-        IList<Document> newsList = new List<Document>();
-        var requestBody = new RequestBody() { ARCHIVED = false, DRAFTS = true };
-        var result = await _newsService.GetNewsArticles(requestBody).ConfigureAwait(false);
+        List<Document> newsList = [];
+        FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.All();
+        GetNewsArticlesRequest request = new(stateFilterRequest);
+        GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
-        foreach (var news in result)
+        foreach (var news in result.NewsArticles)
         {
             var status = news.Published ? "Published" : "Draft";
             var pinned = news.Pinned ? " | Pinned" : "";
@@ -635,11 +641,12 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadArchivedNewsList()
     {
-        IList<Document> newsList = new List<Document>();
-        var requestBody = new RequestBody() { ARCHIVED = true, DRAFTS = true };
-        var result = await _newsService.GetNewsArticles(requestBody).ConfigureAwait(false);
+        List<Document> newsList = [];
+        FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.Archived();
+        GetNewsArticlesRequest request = new(stateFilterRequest);
+        GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
-        foreach (var news in result)
+        foreach (var news in result.NewsArticles)
         {
             var status = news.Published ? "Published" : "Draft";
             var pinned = news.Pinned ? " | Pinned" : "";

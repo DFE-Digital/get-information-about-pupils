@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using System;
 using DfE.GIAP.Core.Models.Common;
 using System.Collections.Generic;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.Common.Application;
+using System.Linq;
 
 namespace DfE.GIAP.Web.Controllers
 {
@@ -20,8 +23,8 @@ namespace DfE.GIAP.Web.Controllers
         private readonly INewsService _newsService;
         private readonly IContentService _contentService;
         private readonly ILatestNewsBanner _newsBanner;
-
-        public NewsController(INewsService newsService, IContentService contentService, ILatestNewsBanner newsBanner)
+        private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
+        public NewsController(INewsService newsService, IContentService contentService, ILatestNewsBanner newsBanner, IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase)
         {
             _newsService = newsService ??
                 throw new ArgumentNullException(nameof(newsService));
@@ -29,6 +32,8 @@ namespace DfE.GIAP.Web.Controllers
                 throw new ArgumentNullException(nameof(contentService));
             _newsBanner = newsBanner ??
                 throw new ArgumentNullException(nameof(newsBanner));
+            _getNewsArticlesUseCase = getNewsArticlesUseCase
+                ?? throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
         }
 
         [Route("")]
@@ -42,13 +47,11 @@ namespace DfE.GIAP.Web.Controllers
                 NewsPublication = newsPublication
             };
 
+            FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.Published();
+            GetNewsArticlesRequest request = new(stateFilterRequest);
+            GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
-            var requestBody = new RequestBody() { ARCHIVED = false, DRAFTS = false };
-            List<Article> newsArticles = await _newsService.GetNewsArticles(requestBody).ConfigureAwait(false);
-
-            model.Articles = newsArticles;
-
-
+            model.Articles = result.NewsArticles.ToList();
             await _newsBanner.RemoveLatestNewsStatus();
             return View(model);
         }
@@ -56,10 +59,13 @@ namespace DfE.GIAP.Web.Controllers
         [Route("archive")]
         public async Task<IActionResult> Archive()
         {
-            var archivedArticles = await _newsService.GetNewsArticles(new RequestBody() { ARCHIVED = true, DRAFTS = true }).ConfigureAwait(false);
+            FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.Archived();
+            GetNewsArticlesRequest request = new(stateFilterRequest);
+            GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
+
             var model = new NewsViewModel
             {
-                Articles = archivedArticles
+                Articles = result.NewsArticles.ToList()
             };
 
             return View(model);

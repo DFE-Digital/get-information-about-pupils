@@ -1,6 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Factory;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
@@ -13,16 +15,21 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
     /// Repository for reading news articles.
     /// </summary>
     private readonly INewsArticleReadRepository _newsArticleReadRepository;
+    private readonly IFilterNewsArticleSpecificationFactory _filterNewsArticleSpecificationFactory;
 
     /// <summary>
     /// Initializes the use case with a news article repository.
     /// </summary>
     /// <param name="newsArticleReadRepository">Repository used to retrieve news articles.</param>
     /// <exception cref="ArgumentNullException">Thrown if the repository is null.</exception>
-    public GetNewsArticlesUseCase(INewsArticleReadRepository newsArticleReadRepository)
+    public GetNewsArticlesUseCase(
+        INewsArticleReadRepository newsArticleReadRepository,
+        IFilterNewsArticleSpecificationFactory filterNewsArticleSpecificationFactory)
     {
         _newsArticleReadRepository = newsArticleReadRepository ??
             throw new ArgumentNullException(nameof(newsArticleReadRepository));
+        _filterNewsArticleSpecificationFactory = filterNewsArticleSpecificationFactory ??
+            throw new ArgumentNullException(nameof(filterNewsArticleSpecificationFactory));
     }
 
     /// <summary>
@@ -37,7 +44,8 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
         ArgumentNullException.ThrowIfNull(request);
 
         // Retrieve news articles based on the specified filters
-        IEnumerable<NewsArticle> newsArticlesResult = await _newsArticleReadRepository.GetNewsArticlesAsync(request.IsArchived, request.IsDraft);
+        IFilterSpecification<NewsArticle> filterSpecification = _filterNewsArticleSpecificationFactory.Create(request.FilterRequest.States);
+        IEnumerable<NewsArticle> newsArticlesResult = await _newsArticleReadRepository.GetNewsArticlesAsync(filterSpecification);
 
         // Order articles: Pinned first, then by last modified date in descending order
         IOrderedEnumerable<NewsArticle> orderedNewsArticles = newsArticlesResult

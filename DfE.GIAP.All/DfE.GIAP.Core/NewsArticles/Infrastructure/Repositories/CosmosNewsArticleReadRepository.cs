@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Extensions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
@@ -90,16 +91,16 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     /// Logs critical errors if a Cosmos DB exception is encountered.
     /// </remarks>
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(IFilterSpecification<NewsArticle> filterSpecification)
     {
         try
         {
-            string publishedFilter = isDraft ? "c.Published=false" : "c.Published=true";
-            string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string query = $"SELECT * FROM c WHERE {archivedFilter} And {publishedFilter}";
+            // TODO move to using Expression<Func<NewsArticle, bool>> but need to make compatible with Expression<Func<NewsArticleDTO, bool>> with mapping?
+            string query = filterSpecification.ToNewsArticlesQuery();
 
             IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
-                .ReadItemsAsync<NewsArticleDTO>(ContainerName, query);
+                .ReadItemsAsync<NewsArticleDTO>(
+                    containerKey: ContainerName, query);
 
             IEnumerable<NewsArticle> mappedResponse = queryResponse.Select(_dtoToEntityMapper.Map);
             return mappedResponse;

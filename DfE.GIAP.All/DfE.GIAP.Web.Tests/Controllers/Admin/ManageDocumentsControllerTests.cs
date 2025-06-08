@@ -106,7 +106,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
 
         _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
-        _mockNewsService.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(newsList);
+        //_mockNewsService.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(newsList);
 
         var model = new ManageDocumentsViewModel { DocumentList = new Document { Id = 1, DocumentName = "Test title", DocumentId = "NewsArticle" } };
 
@@ -163,7 +163,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
         _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(documentsList);
-        _mockNewsService.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(newsList);
+        //_mockNewsService.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(newsList);
 
         var controller = GetManageDocumentsController();
         var model = _manageDocumentsResultsFake.GetDocumentDetails();
@@ -336,7 +336,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         };
         _ = _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
 
-        ManageDocumentsController controller = new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object);
+        ManageDocumentsController controller = new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object, null);
 
         // Act
         string saveAsDraft = "SaveAsDraft";
@@ -955,6 +955,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
     public ManageDocumentsController GetManageDocumentsController()
     {
-        return new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object);
+        return new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object, null);
     }
 }

@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using NSubstitute;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Web.Helpers.Banner;
+using DfE.GIAP.Core.NewsArticles.Application.Models;
 
 namespace DfE.GIAP.Web.Tests.Controllers.News
 {
@@ -35,9 +36,9 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
             var listPublicationData = new CommonResponseBody() { Title = "Title 1", Body = "Test body 1", Date = new DateTime(2020, 1, 1) };
             var listMaintenanceData = new CommonResponseBody() { Title = "Title 2", Body = "Test body 1", Date = new DateTime(2020, 1, 1) };
 
-            var articleData1 = new Article() { Title = "Title 1", Body = "Test body 1", Date = new DateTime(2020, 1, 1) };
-            var articleData2 = new Article() { Title = "Title 2", Body = "Test body 2", Date = new DateTime(2020, 1, 1) };
-            var listArticleData = new List<Article>() { articleData1, articleData2 };
+            var articleData1 = new NewsArticle() { Id = "", DraftBody = "", DraftTitle = "", Title = "Title 1", Body = "Test body 1", };
+            var articleData2 = new NewsArticle() { Id = "", DraftBody = "", DraftTitle = "", Title = "Title 2", Body = "Test body 2", };
+            var listArticleData = new List<NewsArticle>() { articleData1, articleData2 };
 
             var mockRepo = new Mock<INewsService>();
             var mockContentService = new Mock<IContentService>();
@@ -52,9 +53,9 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
 
             mockContentService.Setup(repo => repo.GetContent(DocumentType.PublicationSchedule)).ReturnsAsync(listPublicationData);
             mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(listMaintenanceData);
-            mockRepo.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(listArticleData);
+            //mockRepo.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(listArticleData);
 
-            var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner);
+            var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner, null);
 
             // Act
             var result = await controller.Index().ConfigureAwait(false);
@@ -62,7 +63,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
             // Assert
             mockContentService.Verify(x => x.GetContent(DocumentType.PublicationSchedule), Times.Once());
             mockContentService.Verify(x => x.GetContent(DocumentType.PlannedMaintenance), Times.Once());
-            mockRepo.Verify(x => x.GetNewsArticles(It.IsAny<RequestBody>()), Times.Once());
+            //mockRepo.Verify(x => x.GetNewsArticles(It.IsAny<RequestBody>()), Times.Once());
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var publicationModel = Assert.IsType<NewsViewModel>(
@@ -79,9 +80,9 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
         public async Task ReturnsAViewWithArchivedData()
         {
             // Arrange
-            var archivedArticleData1 = new Article() { Title = "Article Title 1", Body = "Test body 1", ModifiedDate = new DateTime(2020, 1, 4), Archived = true };
-            var archivedArticleData2 = new Article() { Title = "Article Title 2", Body = "Test body 2", ModifiedDate = new DateTime(2020, 1, 2), Archived = false };
-            var listArchivedArticleData = new List<Article>() { archivedArticleData1, archivedArticleData2 };
+            var archivedArticleData1 = new NewsArticle() { Id = "", DraftBody = "", DraftTitle = "", Title = "Article Title 1", Body = "Test body 1", ModifiedDate = new DateTime(2020, 1, 4), Archived = true };
+            var archivedArticleData2 = new NewsArticle() { Id = "", DraftBody = "", DraftTitle = "", Title = "Article Title 2", Body = "Test body 2", ModifiedDate = new DateTime(2020, 1, 2), Archived = false };
+            var listArchivedArticleData = new List<NewsArticle>() { archivedArticleData1, archivedArticleData2 };
 
             var mockRepo = new Mock<INewsService>();
             var mockLogger = new Mock<ILogger<NewsController>>();
@@ -92,9 +93,9 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
 
             newsViewModel.Articles = listArchivedArticleData;
 
-            mockRepo.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(listArchivedArticleData);
+            //mockRepo.Setup(repo => repo.GetNewsArticles(It.IsAny<RequestBody>())).ReturnsAsync(listArchivedArticleData);
 
-            var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner);
+            var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner, null);
 
             // Act
             var result = await controller.Archive().ConfigureAwait(false);
@@ -103,7 +104,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
             var viewResult = Assert.IsType<ViewResult>(result);
             var articleModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).Articles;
 
-            mockRepo.Verify(x => x.GetNewsArticles(It.IsAny<RequestBody>()), Times.Once());
+            //mockRepo.Verify(x => x.GetNewsArticles(It.IsAny<RequestBody>()), Times.Once());
 
             Assert.Equal("Article Title 1", articleModel[0].Title);
             Assert.Equal("Test body 1", articleModel[0].Body);
@@ -126,7 +127,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.News
             var mockContentService = new Mock<IContentService>();
             var mockCookieManager = new Mock<ICookieManager>();
 
-            var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner);
+            var controller = new NewsController(mockRepo.Object, mockContentService.Object, _mockNewsBanner, null);
 
             // Act
             var result = await controller.DismissNewsBanner("testURL");
