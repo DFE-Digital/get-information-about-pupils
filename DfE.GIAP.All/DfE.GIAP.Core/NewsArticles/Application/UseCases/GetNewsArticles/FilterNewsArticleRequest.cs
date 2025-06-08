@@ -23,20 +23,13 @@ public sealed class FilterNewsArticleRequest
         // Consistent default request states
         List<NewsArticleStateFilter> appendStates = [];
 
-        if (!states.Contains(NewsArticleStateFilter.ArchivedOnly))
-        {
-            appendStates.Add(NewsArticleStateFilter.NotArchived);
-        }
-
-        States = states.Concat(appendStates)
-            .Distinct()
-            .ToArray()
+        States = states.ToArray()
             .AsReadOnly();
     }
 
     internal IReadOnlyCollection<NewsArticleStateFilter> States { get; }
 
-    public static FilterNewsArticleRequest All() => new([NewsArticleStateFilter.PublishedIncludeDrafts]);
+    public static FilterNewsArticleRequest All() => new([NewsArticleStateFilter.PublishedIncludeDrafts, NewsArticleStateFilter.NotArchived]);
     public static FilterNewsArticleRequest Archived() => new([NewsArticleStateFilter.ArchivedOnly]);
-    public static FilterNewsArticleRequest Published() => new([NewsArticleStateFilter.PublishedOnly]);
+    public static FilterNewsArticleRequest Published() => new([NewsArticleStateFilter.PublishedOnly, NewsArticleStateFilter.NotArchived]);
 }
