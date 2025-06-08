@@ -45,5 +45,27 @@ public sealed class AndSpecificaton<T> : IFilterSpecification<T>
     }
 
 
-    public string ToFilterQuery(string alias = "c") => $"{_left.ToFilterQuery(alias)} AND {_right.ToFilterQuery(alias)}";
+    public string ToFilterQuery(string alias = "c")
+    {
+        string leftQuery = _left.ToFilterQuery(alias);
+        string rightQuery = _right.ToFilterQuery(alias);
+
+        // to avoid "" AND or AND ""
+        if(string.IsNullOrEmpty(leftQuery) && string.IsNullOrEmpty(rightQuery))
+        {
+            return string.Empty;
+        }
+        // to avoid "" AND c.Property= 
+        if (string.IsNullOrEmpty(leftQuery))
+        {
+            return rightQuery;
+        }
+        // to avoid c.Property= AND "" 
+        if (string.IsNullOrEmpty(rightQuery))
+        {
+            return leftQuery;
+        }
+
+        return $"{leftQuery} AND {rightQuery}";
+    } 
 }
