@@ -6,6 +6,7 @@ using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Factory;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
 using Microsoft.Azure.Cosmos;
@@ -30,7 +31,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
         return services
-            .RegisterApplicationUseCases();
+            .RegisterApplicationUseCases()
+            .AddSingleton<IFilterNewsArticleSpecificationFactory, FilterNewsArticleSpecificationFactory>();
     }
 
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
