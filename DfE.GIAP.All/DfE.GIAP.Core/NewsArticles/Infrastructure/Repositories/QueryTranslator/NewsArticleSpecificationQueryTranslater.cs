@@ -5,7 +5,7 @@ using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification
 namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.QueryTranslator;
 internal sealed class NewsArticleFilterSpecificationQueryTranslator : IFilterSpecificationQueryTranslator<NewsArticle>
 {
-    public string TranslateSpecificationToQueryString(IFilterSpecification<NewsArticle> specification)
+    public string TranslateSpecificationToQueryString(ISpecification<NewsArticle> specification)
     {
         // Type match each specification to translate to a SQL Query clause
         string filter = specification switch

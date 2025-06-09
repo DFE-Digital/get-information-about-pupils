@@ -3,5 +3,5 @@
 namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.QueryTranslator;
 public interface IFilterSpecificationQueryTranslator<T>
 {
-    string TranslateSpecificationToQueryString(IFilterSpecification<T> specification);
+    string TranslateSpecificationToQueryString(ISpecification<T> specification);
 }

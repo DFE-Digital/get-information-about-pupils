@@ -32,7 +32,7 @@ internal static class NewsArticleReadOnlyRepositoryTestDoubles
         Mock<INewsArticleReadRepository> mock = CreateMock();
 
         mock.Setup(
-                (repository) => repository.GetNewsArticlesAsync(It.IsAny<IFilterSpecification<NewsArticle>>()))
+                (repository) => repository.GetNewsArticlesAsync(It.IsAny<ISpecification<NewsArticle>>()))
             .ReturnsAsync(repositoryResponse)
             .Verifiable();
 

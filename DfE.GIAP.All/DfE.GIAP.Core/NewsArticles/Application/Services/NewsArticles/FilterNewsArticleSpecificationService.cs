@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
 internal sealed class FilterNewsArticleSpecificationService : IFilterNewsArticleSpecificationService
 {
 
-    private static readonly Dictionary<NewsArticleStateFilter, Func<IFilterSpecification<NewsArticle>>> _map =
+    private static readonly Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> _map =
         new()
         {
              { NewsArticleStateFilter.PublishedIncludeDrafts, () => new PublishedArticleSpecification(false) },
@@ -16,17 +16,17 @@ internal sealed class FilterNewsArticleSpecificationService : IFilterNewsArticle
              { NewsArticleStateFilter.ArchivedOnly, () => new ArchivedArticleSpecification(true) }
         };
 
-    public IFilterSpecification<NewsArticle> Create(IEnumerable<NewsArticleStateFilter> state)
+    public ISpecification<NewsArticle> Create(IEnumerable<NewsArticleStateFilter> state)
     {
-        List<IFilterSpecification<NewsArticle>> specificationFilters = [];
+        List<ISpecification<NewsArticle>> specificationFilters = [];
 
         state.ToList().ForEach((currentState) =>
         {
-            if (!_map.TryGetValue(currentState, out Func<IFilterSpecification<NewsArticle>>? specificationHandler))
+            if (!_map.TryGetValue(currentState, out Func<ISpecification<NewsArticle>>? specificationHandler))
             {
                 throw new ArgumentException($"unable to find state {currentState}");
             }
-            IFilterSpecification<NewsArticle> spec = specificationHandler.Invoke();
+            ISpecification<NewsArticle> spec = specificationHandler.Invoke();
             specificationFilters.Add(spec);
         });
 
