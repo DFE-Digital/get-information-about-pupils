@@ -2,16 +2,14 @@
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
+namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification.Specifications;
 public sealed class ArchivedArticleSpecification : ISpecification<NewsArticle>
 {
-    private readonly bool _isArchived;
-
     public ArchivedArticleSpecification(bool isArchived)
     {
-        _isArchived = isArchived;
+        IsArchived = isArchived;
     }
-    public bool IsArchived => _isArchived;
+    public bool IsArchived { get; }
     public bool IsSatisfiedBy(NewsArticle article) => ToExpression().Compile().Invoke(article);
-    public Expression<Func<NewsArticle, bool>> ToExpression() => (article) => article.Archived == _isArchived;
+    public Expression<Func<NewsArticle, bool>> ToExpression() => (article) => article.Archived == IsArchived;
 }

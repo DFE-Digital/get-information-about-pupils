@@ -4,7 +4,6 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
-using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
@@ -32,7 +31,7 @@ public static class CompositionRoot
     {
         return services
             .RegisterApplicationUseCases()
-            .AddSingleton<IFilterNewsArticleSpecificationService, FilterNewsArticleSpecificationService>()
+            .AddSingleton<INewsArticleSpecificationService, FilterNewsArticleSpecificationService>()
             .AddSingleton<IFilterNewsArticleSpecificationFactory>(sp =>
             {
                 Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> config = new()

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification.Specifications;
 
 namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.QueryTranslator;
 internal sealed class NewsArticleFilterSpecificationQueryTranslator : IFilterSpecificationQueryTranslator<NewsArticle>
@@ -11,7 +11,7 @@ internal sealed class NewsArticleFilterSpecificationQueryTranslator : IFilterSpe
         string filter = specification switch
         {
             PublishedArticleSpecification published =>
-                published.IncludeOnlyPublished ?
+                published.OnlyPublished ?
                     $"c.Published = true" :
                         string.Empty,
 

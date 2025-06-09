@@ -2,8 +2,8 @@
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
-public interface IFilterNewsArticleSpecificationService
+namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
+public interface INewsArticleSpecificationService
 {
     ISpecification<NewsArticle> CreateSpecification(IEnumerable<NewsArticleStateFilter> states);
 }

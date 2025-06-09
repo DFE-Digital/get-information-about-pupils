@@ -3,12 +3,12 @@ using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification.Factory;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
-internal sealed class FilterNewsArticleSpecificationService : IFilterNewsArticleSpecificationService
+namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
+internal sealed class NewsArticleSpecificationService : INewsArticleSpecificationService
 {
     private readonly IFilterNewsArticleSpecificationFactory _factory;
 
-    public FilterNewsArticleSpecificationService(IFilterNewsArticleSpecificationFactory factory)
+    public NewsArticleSpecificationService(IFilterNewsArticleSpecificationFactory factory)
     {
         ArgumentNullException.ThrowIfNull(factory);
         _factory = factory;
@@ -25,7 +25,3 @@ internal sealed class FilterNewsArticleSpecificationService : IFilterNewsArticle
                 specificationFilters.Aggregate((a, b) => a.And(b));
     }
 }
-
-
-
-
