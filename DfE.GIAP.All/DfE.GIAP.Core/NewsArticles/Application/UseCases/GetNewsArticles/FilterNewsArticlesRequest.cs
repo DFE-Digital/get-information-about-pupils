@@ -29,7 +29,7 @@ public sealed class FilterNewsArticlesRequest
 
     internal IReadOnlyCollection<NewsArticleStateFilter> States { get; }
 
-    public static FilterNewsArticlesRequest All() => new([NewsArticleStateFilter.PublishedIncludeDrafts, NewsArticleStateFilter.NotArchived]);
-    public static FilterNewsArticlesRequest Archived() => new([NewsArticleStateFilter.ArchivedOnly]);
-    public static FilterNewsArticlesRequest Published() => new([NewsArticleStateFilter.PublishedOnly, NewsArticleStateFilter.NotArchived]);
+    public static FilterNewsArticlesRequest AllActiveArticles() => new([NewsArticleStateFilter.PublishedIncludeDrafts, NewsArticleStateFilter.NotArchived]);
+    public static FilterNewsArticlesRequest OnlyArchived() => new([NewsArticleStateFilter.ArchivedOnly]);
+    public static FilterNewsArticlesRequest OnlyPublished() => new([NewsArticleStateFilter.PublishedOnly, NewsArticleStateFilter.NotArchived]);
 }

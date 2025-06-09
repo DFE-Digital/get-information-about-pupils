@@ -67,7 +67,7 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         }
     }
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(IFilterSpecification<NewsArticle> filterSpecification)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(ISpecification<NewsArticle> filterSpecification)
     {
         try
         {

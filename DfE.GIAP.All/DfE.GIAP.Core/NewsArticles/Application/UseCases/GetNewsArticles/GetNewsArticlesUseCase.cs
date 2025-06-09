@@ -43,7 +43,7 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
         ArgumentNullException.ThrowIfNull(request);
 
         // Retrieve news articles based on the specified filters
-        IFilterSpecification<NewsArticle> filterSpecification = _filterNewsArticleSpecificationFactory.Create(request.FilterRequest.States);
+        ISpecification<NewsArticle> filterSpecification = _filterNewsArticleSpecificationFactory.CreateSpecification(request.FilterRequest.States);
         IEnumerable<NewsArticle> newsArticlesResult = await _newsArticleReadRepository.GetNewsArticlesAsync(filterSpecification);
 
         // Order articles: Pinned first, then by last modified date in descending order

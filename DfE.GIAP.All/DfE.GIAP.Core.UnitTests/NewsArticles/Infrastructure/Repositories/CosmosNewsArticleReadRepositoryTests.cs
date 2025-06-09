@@ -201,7 +201,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
             dtoToEntityMapper: mockMapper.Object);
 
         // Act
-        IEnumerable<NewsArticle> response = await sut.GetNewsArticlesAsync(It.IsAny<IFilterSpecification<NewsArticle>>());
+        IEnumerable<NewsArticle> response = await sut.GetNewsArticlesAsync(It.IsAny<ISpecification<NewsArticle>>());
 
         // Assert
         Assert.Empty(response);

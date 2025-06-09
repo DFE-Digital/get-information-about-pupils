@@ -5,15 +5,15 @@ using DfE.GIAP.Core.NewsArticles.Application.Models;
 namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
 public sealed class PublishedArticleSpecification : ISpecification<NewsArticle>
 {
-    private readonly bool _includeOnlyPublished;
+    private readonly bool onlyPublished;
 
-    public PublishedArticleSpecification(bool includeOnlyPublished)
+    public PublishedArticleSpecification(bool onlyPublished)
     {
-        _includeOnlyPublished = includeOnlyPublished;
+        this.onlyPublished = onlyPublished;
     }
 
-    public bool IncludeOnlyPublished => _includeOnlyPublished;
+    public bool IncludeOnlyPublished => onlyPublished;
 
     public bool IsSatisfiedBy(NewsArticle article) => ToExpression().Compile().Invoke(article);
-    public Expression<Func<NewsArticle, bool>> ToExpression() => (article) => !_includeOnlyPublished || article.Published;
+    public Expression<Func<NewsArticle, bool>> ToExpression() => (article) => !onlyPublished || article.Published;
 }

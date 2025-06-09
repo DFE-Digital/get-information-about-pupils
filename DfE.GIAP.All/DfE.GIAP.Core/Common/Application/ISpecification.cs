@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Common.Application;
 
-public interface IFilterSpecification<T>
+public interface ISpecification<T>
 {
     Expression<Func<T, bool>> ToExpression();
     bool IsSatisfiedBy(T input);

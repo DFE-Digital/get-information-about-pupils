@@ -20,17 +20,21 @@ internal sealed class NewsArticleFilterSpecificationQueryTranslator : IFilterSpe
 
             AndSpecificaton<NewsArticle> andSpec
                 // to avoid "" AND or AND ""
-                when string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Left)) && string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Right)) => string.Empty,
+                when string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Left)) && string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Right))
+                    => string.Empty,
 
             // to avoid "" AND c.Property= 
             AndSpecificaton<NewsArticle> andSpec
-                when string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Left)) => TranslateSpecificationToQueryString(andSpec.Right),
+                when string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Left))
+                    => TranslateSpecificationToQueryString(andSpec.Right),
 
             // to avoid "" AND c.Property= 
             AndSpecificaton<NewsArticle> andSpec
-                when string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Right)) => TranslateSpecificationToQueryString(andSpec.Left),
+                when string.IsNullOrEmpty(TranslateSpecificationToQueryString(andSpec.Right))
+                    => TranslateSpecificationToQueryString(andSpec.Left),
 
-            AndSpecificaton<NewsArticle> andSpec => $"{TranslateSpecificationToQueryString(andSpec.Left)} AND {TranslateSpecificationToQueryString(andSpec.Right)}",
+            AndSpecificaton<NewsArticle> andSpec
+                => $"{TranslateSpecificationToQueryString(andSpec.Left)} AND {TranslateSpecificationToQueryString(andSpec.Right)}",
 
             _ => throw new NotSupportedException($"Specification type {specification.GetType().Name} is not supported.")
         };

@@ -26,7 +26,7 @@ public interface INewsArticleReadRepository
     /// articles; otherwise, <see langword="false"/>.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains an  <see cref="IEnumerable{T}"/>
     /// of <see cref="NewsArticle"/> objects that match the specified criteria.</returns>
-    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(IFilterSpecification<NewsArticle> filter);
+    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(ISpecification<NewsArticle> filter);
 
     /// <summary>
     /// Asynchronously retrieves a news article by its unique identifier.

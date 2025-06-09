@@ -1,37 +1,56 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
 internal sealed class FilterNewsArticleSpecificationService : IFilterNewsArticleSpecificationService
 {
+    private readonly IFilterNewsArticleSpecificationFactory _factory;
 
-    private static readonly Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> _map =
-        new()
-        {
-             { NewsArticleStateFilter.PublishedIncludeDrafts, () => new PublishedArticleSpecification(false) },
-             { NewsArticleStateFilter.PublishedOnly, () => new PublishedArticleSpecification(true) },
-             { NewsArticleStateFilter.NotArchived, () => new ArchivedArticleSpecification(false) },
-             { NewsArticleStateFilter.ArchivedOnly, () => new ArchivedArticleSpecification(true) }
-        };
-
-    public ISpecification<NewsArticle> Create(IEnumerable<NewsArticleStateFilter> state)
+    public FilterNewsArticleSpecificationService(IFilterNewsArticleSpecificationFactory factory)
     {
-        List<ISpecification<NewsArticle>> specificationFilters = [];
+        ArgumentNullException.ThrowIfNull(factory);
+        _factory = factory;
+    }
 
-        state.ToList().ForEach((currentState) =>
-        {
-            if (!_map.TryGetValue(currentState, out Func<ISpecification<NewsArticle>>? specificationHandler))
-            {
-                throw new ArgumentException($"unable to find state {currentState}");
-            }
-            ISpecification<NewsArticle> spec = specificationHandler.Invoke();
-            specificationFilters.Add(spec);
-        });
+    public ISpecification<NewsArticle> CreateSpecification(IEnumerable<NewsArticleStateFilter> state)
+    {
+        List<ISpecification<NewsArticle>> specificationFilters =
+            state.Select(t => _factory.Create(t))
+                .ToList();
 
         return specificationFilters.Count == 1 ?
             specificationFilters.Single() :
                 specificationFilters.Aggregate((a, b) => new AndSpecificaton<NewsArticle>(a, b));
+    }
+}
+
+
+internal interface IFilterNewsArticleSpecificationFactory
+{
+    ISpecification<NewsArticle> Create(NewsArticleStateFilter filter);
+}
+
+internal class FilterNewsArticleSpecificationFactory : IFilterNewsArticleSpecificationFactory
+{
+    private readonly Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> _map;
+
+    public FilterNewsArticleSpecificationFactory(Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> map)
+    {
+        ArgumentNullException.ThrowIfNull(map);
+        if (map.Count == 0)
+        {
+            throw new ArgumentException($"Configuration is empty for {nameof(FilterNewsArticleSpecificationFactory)}");
+        }
+        _map = map;
+    }
+
+    public ISpecification<NewsArticle> Create(NewsArticleStateFilter filter)
+    {
+        if (!_map.TryGetValue(filter, out Func<ISpecification<NewsArticle>>? specificationHandler))
+        {
+            throw new ArgumentException($"unable to find state {filter}");
+        }
+        return specificationHandler.Invoke();
     }
 }

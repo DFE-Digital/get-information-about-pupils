@@ -5,13 +5,13 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Fluent;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -32,7 +32,18 @@ public static class CompositionRoot
     {
         return services
             .RegisterApplicationUseCases()
-            .AddSingleton<IFilterNewsArticleSpecificationService, FilterNewsArticleSpecificationService>();
+            .AddSingleton<IFilterNewsArticleSpecificationService, FilterNewsArticleSpecificationService>()
+            .AddSingleton<IFilterNewsArticleSpecificationFactory>(sp =>
+            {
+                Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> config = new()
+                {
+                    { NewsArticleStateFilter.PublishedIncludeDrafts, () => new PublishedArticleSpecification(false) },
+                    { NewsArticleStateFilter.PublishedOnly, () => new PublishedArticleSpecification(true) },
+                    { NewsArticleStateFilter.NotArchived, () => new ArchivedArticleSpecification(false) },
+                    { NewsArticleStateFilter.ArchivedOnly, () => new ArchivedArticleSpecification(true) }
+                };
+                return new FilterNewsArticleSpecificationFactory(config);
+            });
     }
 
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)

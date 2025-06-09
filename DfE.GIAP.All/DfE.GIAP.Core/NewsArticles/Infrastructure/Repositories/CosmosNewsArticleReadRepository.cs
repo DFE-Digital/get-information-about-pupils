@@ -96,7 +96,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     /// Logs critical errors if a Cosmos DB exception is encountered.
     /// </remarks>
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(IFilterSpecification<NewsArticle> filterSpecification)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(ISpecification<NewsArticle> filterSpecification)
     {
         try
         {

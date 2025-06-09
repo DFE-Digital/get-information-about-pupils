@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 
 namespace DfE.GIAP.Core.Common.Application;
-public sealed class AndSpecificaton<T> : IFilterSpecification<T>
+public sealed class AndSpecificaton<T> : ISpecification<T>
 {
-    public AndSpecificaton(IFilterSpecification<T> left, IFilterSpecification<T> right)
+    public AndSpecificaton(ISpecification<T> left, ISpecification<T> right)
     {
         Left = left;
         Right = right;
@@ -11,8 +11,8 @@ public sealed class AndSpecificaton<T> : IFilterSpecification<T>
 
     public bool IsSatisfiedBy(T input) => Left.IsSatisfiedBy(input) && Right.IsSatisfiedBy(input);
 
-    public IFilterSpecification<T> Left { get; }
-    public IFilterSpecification<T> Right { get; }
+    public ISpecification<T> Left { get; }
+    public ISpecification<T> Right { get; }
 
     public Expression<Func<T, bool>> ToExpression()
     {

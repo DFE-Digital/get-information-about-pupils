@@ -5,5 +5,5 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
 public interface IFilterNewsArticleSpecificationService
 {
-    ISpecification<NewsArticle> Create(IEnumerable<NewsArticleStateFilter> state);
+    ISpecification<NewsArticle> CreateSpecification(IEnumerable<NewsArticleStateFilter> states);
 }
