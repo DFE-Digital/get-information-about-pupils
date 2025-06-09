@@ -5,23 +5,30 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.FilterFact
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Factory;
 internal sealed class FilterNewsArticleSpecificationFactory : IFilterNewsArticleSpecificationFactory
 {
+
+    private static readonly Dictionary<NewsArticleStateFilter, Func<IFilterSpecification<NewsArticle>>> _map =
+        new()
+        {
+             { NewsArticleStateFilter.PublishedIncludeDrafts, () => new PublishedArticleSpecification(false) },
+             { NewsArticleStateFilter.PublishedOnly, () => new PublishedArticleSpecification(true) },
+             { NewsArticleStateFilter.NotArchived, () => new ArchivedArticleSpecification(false) },
+             { NewsArticleStateFilter.ArchivedOnly, () => new ArchivedArticleSpecification(true) }
+        };
+
     public IFilterSpecification<NewsArticle> Create(IEnumerable<NewsArticleStateFilter> state)
     {
         List<IFilterSpecification<NewsArticle>> specificationFilters = [];
 
-        state.ToList().ForEach(newsArticleFilterState =>
+        state.ToList().ForEach((currentState) =>
         {
-            specificationFilters.Add(
-                newsArticleFilterState switch
-                {
-                    NewsArticleStateFilter.PublishedIncludeDrafts => new PublishedArticleSpecification(includeOnlyPublished: false),
-                    NewsArticleStateFilter.PublishedOnly => new PublishedArticleSpecification(includeOnlyPublished: true),
-                    NewsArticleStateFilter.NotArchived => new ArchivedArticleSpecification(isArchived: false),
-                    NewsArticleStateFilter.ArchivedOnly => new ArchivedArticleSpecification(isArchived: true),
-                    _ => throw new NotImplementedException()
-                });
+            if (!_map.TryGetValue(currentState, out Func<IFilterSpecification<NewsArticle>>? specificationHandler))
+            {
+                throw new ArgumentException($"unable to find state {currentState}");
+            }
+            IFilterSpecification<NewsArticle> spec = specificationHandler.Invoke();
+            specificationFilters.Add(spec);
         });
-
+        
         return specificationFilters.Count == 1 ?
             specificationFilters.Single() :
                 specificationFilters.Aggregate((a, b) => new AndSpecificaton<NewsArticle>(a, b));
