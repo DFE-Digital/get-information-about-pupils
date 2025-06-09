@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.FilterFactory.Specification;
+namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Filter;
 public sealed class ArchivedArticleSpecification : IFilterSpecification<NewsArticle>
 {
     private readonly bool _isArchived;

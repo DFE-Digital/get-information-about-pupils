@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.FilterFactory.Specification;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Filter;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Factory;
 internal sealed class FilterNewsArticleSpecificationFactory : IFilterNewsArticleSpecificationFactory

@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.FilterFactory;
-
-namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+﻿namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
 /// <summary>
 /// Represents a request for retrieving news articles.

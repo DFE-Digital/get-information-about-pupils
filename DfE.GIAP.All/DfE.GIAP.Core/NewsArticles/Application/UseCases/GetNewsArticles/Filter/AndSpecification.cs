@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using DfE.GIAP.Core.Common.CrossCutting;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.FilterFactory.Specification;
+namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Filter;
 public sealed class AndSpecificaton<T> : IFilterSpecification<T>
 {
     private readonly IFilterSpecification<T> _left;
@@ -51,7 +51,7 @@ public sealed class AndSpecificaton<T> : IFilterSpecification<T>
         string rightQuery = _right.ToFilterQuery(alias);
 
         // to avoid "" AND or AND ""
-        if(string.IsNullOrEmpty(leftQuery) && string.IsNullOrEmpty(rightQuery))
+        if (string.IsNullOrEmpty(leftQuery) && string.IsNullOrEmpty(rightQuery))
         {
             return string.Empty;
         }
@@ -67,5 +67,5 @@ public sealed class AndSpecificaton<T> : IFilterSpecification<T>
         }
 
         return $"{leftQuery} AND {rightQuery}";
-    } 
+    }
 }
