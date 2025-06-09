@@ -26,7 +26,7 @@ public static class CompositionRoot
     {
         return services
             .AddScoped<IUseCase<GetContentByKeyUseCaseRequest, GetContentByKeyUseCaseResponse>, GetContentByKeyUseCase>()
-            .AddScoped<IUseCase<GetMultipleContentByKeyUseCaseRequest, GetMultipleContentByKeyUseCaseResponse>, GetMultipleContentByKeyUseCase>();
+            .AddScoped<IUseCase<GetMultipleContentByKeysUseCaseRequest, GetMultipleContentByKeysUseCaseResponse>, GetMultipleContentByKeysUseCase>();
     }
 
     // Infrastructure 

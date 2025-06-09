@@ -3,4 +3,4 @@
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
 public record ContentItem(string Key, Model.Content? Content);
 
-public record GetMultipleContentByKeyUseCaseResponse(IEnumerable<ContentItem> Items);
+public record GetMultipleContentByKeysUseCaseResponse(IEnumerable<ContentItem> Items);

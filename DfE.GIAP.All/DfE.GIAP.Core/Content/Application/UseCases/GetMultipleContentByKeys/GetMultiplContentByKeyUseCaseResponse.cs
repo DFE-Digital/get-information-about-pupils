@@ -2,10 +2,10 @@
 using DfE.GIAP.Core.Content.Application.Model;
 
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
-public record GetMultipleContentByKeyUseCaseRequest : IUseCaseRequest<GetMultipleContentByKeyUseCaseResponse>
+public record GetMultipleContentByKeysUseCaseRequest : IUseCaseRequest<GetMultipleContentByKeysUseCaseResponse>
 {
 
-    public GetMultipleContentByKeyUseCaseRequest(IEnumerable<string> contentKeys)
+    public GetMultipleContentByKeysUseCaseRequest(IEnumerable<string> contentKeys)
     {
         ArgumentNullException.ThrowIfNull(contentKeys);
         ContentKeys = contentKeys.Select(ContentKey.Create);

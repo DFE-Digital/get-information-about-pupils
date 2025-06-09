@@ -2,17 +2,17 @@
 using DfE.GIAP.Core.Content.Application.Repository;
 
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
-internal sealed class GetMultipleContentByKeyUseCase : IUseCase<GetMultipleContentByKeyUseCaseRequest, GetMultipleContentByKeyUseCaseResponse>
+internal sealed class GetMultipleContentByKeysUseCase : IUseCase<GetMultipleContentByKeysUseCaseRequest, GetMultipleContentByKeysUseCaseResponse>
 {
     private readonly IContentReadOnlyRepository _contentReadOnlyRepository;
 
-    public GetMultipleContentByKeyUseCase(IContentReadOnlyRepository contentReadOnlyRepository)
+    public GetMultipleContentByKeysUseCase(IContentReadOnlyRepository contentReadOnlyRepository)
     {
         ArgumentNullException.ThrowIfNull(contentReadOnlyRepository);
         _contentReadOnlyRepository = contentReadOnlyRepository;
     }
 
-    public async Task<GetMultipleContentByKeyUseCaseResponse> HandleRequest(GetMultipleContentByKeyUseCaseRequest request)
+    public async Task<GetMultipleContentByKeysUseCaseResponse> HandleRequest(GetMultipleContentByKeysUseCaseRequest request)
     {
         var getContentFromContentKeysTasks = request.ContentKeys
             .Distinct()
