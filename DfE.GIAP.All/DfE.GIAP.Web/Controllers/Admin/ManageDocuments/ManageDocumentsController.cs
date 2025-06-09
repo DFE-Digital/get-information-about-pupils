@@ -7,7 +7,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Common.Constants.Routes;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
@@ -28,10 +27,11 @@ using DfE.GIAP.Web.ViewModels.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
-[Route(ApplicationRoute.Admin)]
+[Route(Routes.Application.Admin)]
 [Authorize(Roles = Role.Admin)]
 public class ManageDocumentsController : Controller
 {
@@ -61,7 +61,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpGet]
-    [Route(ManageDocument.ManageDocuments)]
+    [Route(Routes.ManageDocument.ManageDocuments)]
     public async Task<IActionResult> ManageDocuments(string docType, string docAction, string newsArticleId)
     {
         LoadDocumentsList();
@@ -105,7 +105,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocuments)]
+    [Route(Routes.ManageDocument.ManageDocuments)]
     public async Task<IActionResult> ManageDocuments(ManageDocumentsViewModel manageDocumentsModel, string discard, string edit)
     {
         LoadDocumentsList();
@@ -178,18 +178,20 @@ public class ManageDocumentsController : Controller
         return await ManageDocuments(manageDocumentsModel, null, null).ConfigureAwait(false);
     }
 
-    [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleAdd)]
+    [HttpGet]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleAdd)]
     public IActionResult CreateNewsArticle()
     {
-        var manageDocumentsModel = new ManageDocumentsViewModel();
-        manageDocumentsModel.BackButton = new(true, "ManageDocuments", "ManageDocuments");
+        ManageDocumentsViewModel manageDocumentsModel = new()
+        {
+            BackButton = new(isBackButtonEnabled: true, previousController: "ManageDocuments", previousAction: "ManageDocuments")
+        };
 
         return View("../Admin/ManageDocuments/CreateNewsArticle", manageDocumentsModel);
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleDelete)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleDelete)]
     public async Task<IActionResult> DeleteNews(ManageDocumentsViewModel manageDocumentsModel)
     {
         var result = await _newsService.DeleteNewsArticle(manageDocumentsModel.SelectedNewsId).ConfigureAwait(false);
@@ -210,7 +212,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsArchivedNewsArticleDelete)]
+    [Route(Routes.ManageDocument.ManageDocumentsArchivedNewsArticleDelete)]
     public async Task<IActionResult> DeleteArchiveNews(ManageDocumentsViewModel manageDocumentsModel)
     {
         var result = await _newsService.DeleteNewsArticle(manageDocumentsModel.DocumentData.Id).ConfigureAwait(false);
@@ -230,7 +232,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleArchived)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleArchived)]
     public async Task<IActionResult> ArchivedNews(ManageDocumentsViewModel manageDocumentsModel)
     {
         if (string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId))
@@ -248,7 +250,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleArchive)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleArchive)]
     public async Task<IActionResult> ArchiveNews(ManageDocumentsViewModel manageDocumentsModel)
     {
         var result = await UnarchiveOrArchiveNewsDocument(manageDocumentsModel, ActionTypes.Archive).ConfigureAwait(false);
@@ -268,7 +270,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleUnarchive)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleUnarchive)]
     public async Task<IActionResult> UnarchiveNews(ManageDocumentsViewModel manageDocumentsModel)
     {
         var result = await UnarchiveOrArchiveNewsDocument(manageDocumentsModel, ActionTypes.Unarchive).ConfigureAwait(false);
@@ -288,7 +290,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleEdit)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleEdit)]
     public async Task<IActionResult> EditNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string edit)
     {
         if (manageDocumentsModel.DocumentData != null)
@@ -303,7 +305,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticlePreview)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticlePreview)]
     public async Task<IActionResult> PreviewNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string create, string preview)
     {
         if (ModelState.IsValid)
@@ -346,7 +348,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsPreview)]
+    [Route(Routes.ManageDocument.ManageDocumentsPreview)]
     public async Task<IActionResult> PreviewChanges(ManageDocumentsViewModel manageDocumentsModel, string preview)
     {
         if (ModelState.IsValid)
@@ -370,7 +372,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticlePublish)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticlePublish)]
     public async Task<IActionResult> PublishNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string publish)
     {
         if (manageDocumentsModel != null)
@@ -392,7 +394,7 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsNewsArticleSaveAsDraft)]
+    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleSaveAsDraft)]
     public async Task<IActionResult> SaveArticleAsDraft(ManageDocumentsViewModel manageDocumentsModel, string publish)
     {
         if (manageDocumentsModel != null)
@@ -423,7 +425,7 @@ public class ManageDocumentsController : Controller
 
 
     [HttpPost]
-    [Route(ManageDocument.ManageDocumentsPublish)]
+    [Route(Routes.ManageDocument.ManageDocumentsPublish)]
     public async Task<IActionResult> PublishChanges(ManageDocumentsViewModel manageDocumentsModel, string publish)
     {
         if (manageDocumentsModel != null)

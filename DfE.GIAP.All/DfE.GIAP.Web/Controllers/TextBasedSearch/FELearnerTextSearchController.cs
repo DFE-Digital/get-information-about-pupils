@@ -2,13 +2,13 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Messages.Downloads;
 using DfE.GIAP.Common.Constants.Messages.Search;
-using DfE.GIAP.Common.Constants.Routes;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -21,268 +21,251 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch
+namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
+
+[Route(Routes.Application.Search)]
+public class FELearnerTextSearchController : BaseLearnerTextSearchController
 {
-    [Route(ApplicationRoute.Search)]
-    public class FELearnerTextSearchController : BaseLearnerTextSearchController
+    public override string PageHeading => ApplicationLabel.SearchFEWithoutUlnPageHeading;
+    public override string SearchSessionKey => Global.FENonUlnSearchSessionKey;
+    public override string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
+    public override string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
+    public override string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
+    public override string DownloadLinksPartial => Global.FENonUlnDownloadLinksView;
+    public override string SearchLearnerNumberAction => Routes.FurtherEducation.LearnerNumberSearch;
+    public override string RedirectUrlFormAction => Global.FELearnerTextSearchAction;
+    public override string LearnerTextDatabaseAction => Global.FELearnerTextSearchAction;
+    public override string LearnerTextDatabaseName => Global.FELearnerTextSearchAction;
+    public override string RedirectFrom => Routes.FurtherEducation.LearnerTextSearch;
+
+    public override string SurnameFilterUrl => Routes.FurtherEducation.NonULNSurnameFilter;
+    public override string DobFilterUrl => Routes.FurtherEducation.NonULNDobFilter;
+    public override string ForenameFilterUrl => Routes.FurtherEducation.NonULNForenameFilter;
+    public override string MiddlenameFilterUrl => "";
+    public override string GenderFilterUrl => Routes.FurtherEducation.NonULNGenderFilter;
+    public override string SexFilterUrl => Routes.FurtherEducation.NonULNSexFilter;
+
+    public override string FormAction => Routes.FurtherEducation.LearnerTextSearch;
+    public override string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.FurtherEducation.LearnerTextSearch}";
+    public override AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
+    public override string SearchView => Global.NonUpnSearchView;
+
+    public override string SearchLearnerNumberController => Routes.Application.Search;
+    public override int MyPupilListLimit => _appSettings.NonUpnNPDMyPupilListLimit; //Not valid for FE so arbitrarily set to default non UPN limit
+    public override string SearchAction => Global.FELearnerTextSearchAction;
+    public override string SearchController => Global.FELearnerTextSearchController;
+    public override ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
+    public override string LearnerTextSearchController => Global.FELearnerTextSearchController;
+    public override string LearnerTextSearchAction => Global.FELearnerTextSearchAction;
+    public override string LearnerNumberAction => Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
+
+    public override bool ShowGender => _appSettings.FeUseGender;
+    public override bool ShowLocalAuthority => false;
+    public override string InvalidUPNsConfirmationAction => "";
+    public override string LearnerNumberLabel => Global.FELearnerNumberLabel;
+    public override bool ShowMiddleNames => false;
+
+    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedFurtherEducationLink;
+
+
+    private readonly IDownloadService _downloadService;
+    private readonly AzureAppSettings _appSettings;
+    private readonly ILogger<FELearnerTextSearchController> _logger;
+
+    public FELearnerTextSearchController(ILogger<FELearnerTextSearchController> logger,
+       IPaginatedSearchService paginatedSearch,
+       IMyPupilListService mplService,
+       ITextSearchSelectionManager selectionManager,
+       IContentService contentService,
+       IDownloadService downloadService,
+       IOptions<AzureAppSettings> azureAppSettings)
+       : base(logger,
+             paginatedSearch,
+             mplService,
+             selectionManager,
+             contentService,
+             azureAppSettings)
     {
-        #region abstract property implementation
+        _logger = logger ??
+            throw new ArgumentNullException(nameof(logger));
+        _downloadService = downloadService ??
+            throw new ArgumentNullException(nameof(downloadService));
+        _appSettings = azureAppSettings.Value;
+    }
 
-        public override string PageHeading => ApplicationLabel.SearchFEWithoutUlnPageHeading;
-        public override string SearchSessionKey => Global.FurtherEducationNonUlnSearchSessionKey;
-        public override string SearchFiltersSessionKey => Global.FurtherEducationNonUlnSearchFiltersSessionKey;
-        public override string SortDirectionKey => Global.FurtherEducationNonUlnSortDirectionSessionKey;
-        public override string SortFieldKey => Global.FurtherEducationNonUlnSortFieldSessionKey;
-        public override string DownloadLinksPartial => Global.FurtherEducationNonUlnDownloadLinksView;
-        public override string SearchLearnerNumberAction => Route.FurtherEducation.LearnerNumberSearch;
-        public override string RedirectUrlFormAction => Global.FurtherEducationLearnerTextSearchAction;
-        public override string LearnerTextDatabaseAction => Global.FurtherEducationLearnerTextSearchAction;
-        public override string LearnerTextDatabaseName => Global.FurtherEducationLearnerTextSearchAction;
-        public override string RedirectFrom => Route.FurtherEducation.LearnerTextSearch;
 
-        #region Search Filter Properties
+    [Route(Routes.FurtherEducation.LearnerTextSearch)]
+    [HttpGet]
+    public async Task<IActionResult> FurtherEducationNonUlnSearch(bool? returnToSearch)
+    {
+        _logger.LogInformation("Further education non ULN search GET method called");
+        return await Search(returnToSearch);
+    }
 
-        public override string SurnameFilterUrl => Route.FurtherEducation.NonULNSurnameFilter;
-        public override string DobFilterUrl => Route.FurtherEducation.NonULNDobFilter;
-        public override string ForenameFilterUrl => Route.FurtherEducation.NonULNForenameFilter;
-        public override string MiddlenameFilterUrl => "";
-        public override string GenderFilterUrl => Route.FurtherEducation.NonULNGenderFilter;
-        public override string SexFilterUrl => Route.FurtherEducation.NonULNSexFilter;
+    [Route(Routes.FurtherEducation.LearnerTextSearch)]
+    [HttpPost]
+    public async Task<IActionResult> FurtherEducationNonUlnSearch(
+        LearnerTextSearchViewModel model,
+        string surnameFilter,
+        string middlenameFilter,
+        string forenameFilter,
+        string searchByRemove,
+        [FromQuery] string sortField,
+        [FromQuery] string sortDirection,
+        bool calledByController = false)
+    {
+        _logger.LogInformation("Further education non ULN search POST method called");
+        model.ShowHiddenUPNWarningMessage = false;
+        return await Search(model, surnameFilter, middlenameFilter, forenameFilter,
+                                 searchByRemove, model.PageNumber,
+                                 ControllerContext.HttpContext.Request.Query.ContainsKey("pageNumber"),
+                                 calledByController, sortField, sortDirection,
+                                 ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
+    }
 
-        public override string FormAction => Route.FurtherEducation.LearnerTextSearch;
-        public override string RemoveActionUrl => $"/{ApplicationRoute.Search}/{Route.FurtherEducation.LearnerTextSearch}";
-        public override AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
-        public override string SearchView => Global.NonUpnSearchView;
 
-        #endregion Search Filter Properties
+    [Route(Routes.FurtherEducation.NonULNDobFilter)]
+    [HttpPost]
+    public async Task<IActionResult> DobFilter(LearnerTextSearchViewModel model)
+    {
+        return await DobSearchFilter(model);
+    }
 
-        public override string SearchLearnerNumberController => ApplicationRoute.Search;
-        public override int MyPupilListLimit => _appSettings.NonUpnNPDMyPupilListLimit; //Not valid for FE so arbitrarily set to default non UPN limit
-        public override string SearchAction => Global.FurtherEducationLearnerTextSearchAction;
-        public override string SearchController => Global.FurtherEducationLearnerTextSearchController;
-        public override ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
-        public override string LearnerTextSearchController => Global.FurtherEducationLearnerTextSearchController;
-        public override string LearnerTextSearchAction => Global.FurtherEducationLearnerTextSearchAction;
-        public override string LearnerNumberAction => Route.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
+    [Route(Routes.FurtherEducation.NonULNSurnameFilter)]
+    [HttpPost]
+    public async Task<IActionResult> SurnameFilter(LearnerTextSearchViewModel model, string surnameFilter)
+    {
+        return await SurnameSearchFilter(model, surnameFilter);
+    }
 
-        public override bool ShowGender => _appSettings.FeUseGender;
-        public override bool ShowLocalAuthority => false;
-        public override string InvalidUPNsConfirmationAction => "";
-        public override string LearnerNumberLabel => Global.FurtherEducationLearnerNumberLabel;
-        public override bool ShowMiddleNames => false;
+    [Route(Routes.FurtherEducation.NonULNForenameFilter)]
+    [HttpPost]
+    public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
+    {
+        return await ForenameSearchFilter(model, forenameFilter);
+    }
 
-        public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedFurtherEducationLink;
+    [Route(Routes.FurtherEducation.NonULNGenderFilter)]
+    [HttpPost]
+    public async Task<IActionResult> GenderFilter(LearnerTextSearchViewModel model)
+    {
+        return await GenderSearchFilter(model);
+    }
 
-        #endregion abstract property implementation
+    [Route(Routes.FurtherEducation.NonULNSexFilter)]
+    [HttpPost]
+    public async Task<IActionResult> SexFilter(LearnerTextSearchViewModel model)
+    {
+        return await SexSearchFilter(model);
+    }
 
-        private readonly IDownloadService _downloadService;
-        private readonly AzureAppSettings _appSettings;
-        private readonly ILogger<FELearnerTextSearchController> _logger;
-
-        public FELearnerTextSearchController(ILogger<FELearnerTextSearchController> logger,
-           IPaginatedSearchService paginatedSearch,
-           IMyPupilListService mplService,
-           ITextSearchSelectionManager selectionManager,
-           IContentService contentService,
-           IDownloadService downloadService,
-           IOptions<AzureAppSettings> azureAppSettings)
-           : base(logger,
-                 paginatedSearch,
-                 mplService,
-                 selectionManager,
-                 contentService,
-                 azureAppSettings)
+    [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
+    [HttpPost]
+    public async Task<IActionResult> DownloadSelectedFurtherEducationData(
+        string selectedPupil,
+        string searchText)
+    {
+        var searchDownloadViewModel = new LearnerDownloadViewModel
         {
-            _logger = logger ??
-                throw new ArgumentNullException(nameof(logger));
-            _downloadService = downloadService ??
-                throw new ArgumentNullException(nameof(downloadService));
-            _appSettings = azureAppSettings.Value;
+            SelectedPupils = selectedPupil,
+            LearnerNumber = selectedPupil,
+            ErrorDetails = (string)TempData["ErrorDetails"],
+            SelectedPupilsCount = 1,
+            DownloadFileType = DownloadFileType.CSV,
+            ShowTABDownloadType = false
+        };
+
+        if (IndexType == AzureSearchIndexType.FurtherEducation)
+        {
+            SearchDownloadHelper.AddUlnDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationHighAge(), User.IsDfeUser());
+        }
+        else
+        {
+            SearchDownloadHelper.AddDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationLowAge(), User.GetOrganisationHighAge(), User.IsOrganisationLocalAuthority(), User.IsOrganisationAllAges());
         }
 
-        #region Search
+        ModelState.Clear();
 
-        [Route(Route.FurtherEducation.LearnerTextSearch)]
-        [HttpGet]
-        public async Task<IActionResult> FurtherEducationNonUlnSearch(bool? returnToSearch)
+        searchDownloadViewModel.TextSearchViewModel.PageLearnerNumbers = selectedPupil;
+        searchDownloadViewModel.SearchAction = Global.FELearnerTextSearchAction;
+        searchDownloadViewModel.DownloadRoute = Routes.FurtherEducation.DownloadNonUlnFile;
+        searchDownloadViewModel.RedirectRoute = Routes.FurtherEducation.LearnerTextSearch;
+        searchDownloadViewModel.TextSearchViewModel = new LearnerTextSearchViewModel() { LearnerNumberLabel = LearnerNumberLabel, SearchText = searchText };
+        PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
+
+        var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
+        var disabledTypes = await _downloadService.CheckForFENoDataAvailable(new string[] { selectedPupil }, downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
+        SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
+
+        searchDownloadViewModel.SearchResultPageHeading = PageHeading;
+        return View(Global.NonLearnerNumberDownloadOptionsView, searchDownloadViewModel);
+    }
+
+    [Route(Routes.FurtherEducation.DownloadNonUlnFile)]
+    [HttpPost]
+    public async Task<IActionResult> DownloadFurtherEducationFile(LearnerDownloadViewModel model)
+    {
+        if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
-            _logger.LogInformation("Further education non ULN search GET method called");
-            return await Search(returnToSearch);
-        }
+            var selectedPupils = model.LearnerNumber.Split(',');
 
-        [Route(Route.FurtherEducation.LearnerTextSearch)]
-        [HttpPost]
-        public async Task<IActionResult> FurtherEducationNonUlnSearch(
-            LearnerTextSearchViewModel model,
-            string surnameFilter,
-            string middlenameFilter,
-            string forenameFilter,
-            string searchByRemove,
-            [FromQuery] string sortField,
-            [FromQuery] string sortDirection,
-            bool calledByController = false)
-        {
-            _logger.LogInformation("Further education non ULN search POST method called");
-            model.ShowHiddenUPNWarningMessage = false;
-            return await Search(model, surnameFilter, middlenameFilter, forenameFilter,
-                                     searchByRemove, model.PageNumber,
-                                     ControllerContext.HttpContext.Request.Query.ContainsKey("pageNumber"),
-                                     calledByController, sortField, sortDirection,
-                                     ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
-        }
-
-        #endregion Search
-
-        #region Search Filters
-
-        [Route(Route.FurtherEducation.NonULNDobFilter)]
-        [HttpPost]
-        public async Task<IActionResult> DobFilter(LearnerTextSearchViewModel model)
-        {
-            return await DobSearchFilter(model);
-        }
-
-        [Route(Route.FurtherEducation.NonULNSurnameFilter)]
-        [HttpPost]
-        public async Task<IActionResult> SurnameFilter(LearnerTextSearchViewModel model, string surnameFilter)
-        {
-            return await SurnameSearchFilter(model, surnameFilter);
-        }
-
-        [Route(Route.FurtherEducation.NonULNForenameFilter)]
-        [HttpPost]
-        public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
-        {
-            return await ForenameSearchFilter(model, forenameFilter);
-        }
-
-        [Route(Route.FurtherEducation.NonULNGenderFilter)]
-        [HttpPost]
-        public async Task<IActionResult> GenderFilter(LearnerTextSearchViewModel model)
-        {
-            return await GenderSearchFilter(model);
-        }
-
-        [Route(Route.FurtherEducation.NonULNSexFilter)]
-        [HttpPost]
-        public async Task<IActionResult> SexFilter(LearnerTextSearchViewModel model)
-        {
-            return await SexSearchFilter(model);
-        }
-        #endregion Search Filters
-
-        #region Download
-
-        [Route(Route.DownloadSelectedNationalPupilDatabaseData)]
-        [HttpPost]
-        public async Task<IActionResult> DownloadSelectedFurtherEducationData(
-            string selectedPupil,
-            string searchText)
-        {
-            var searchDownloadViewModel = new LearnerDownloadViewModel
+            if (model.SelectedDownloadOptions == null)
             {
-                SelectedPupils = selectedPupil,
-                LearnerNumber = selectedPupil,
-                ErrorDetails = (string)TempData["ErrorDetails"],
-                SelectedPupilsCount = 1,
-                DownloadFileType = DownloadFileType.CSV,
-                ShowTABDownloadType = false
-            };
-
-            if (IndexType == AzureSearchIndexType.FurtherEducation)
-            {
-                SearchDownloadHelper.AddUlnDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationHighAge(), User.IsDfeUser());
+                model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
             }
-            else
+            else if (model.DownloadFileType != DownloadFileType.None)
             {
-                SearchDownloadHelper.AddDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationLowAge(), User.GetOrganisationHighAge(), User.IsOrganisationLocalAuthority(), User.IsOrganisationAllAges());
-            }
+                var downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
 
-            ModelState.Clear();
-
-            searchDownloadViewModel.TextSearchViewModel.PageLearnerNumbers = selectedPupil;
-            searchDownloadViewModel.SearchAction = Global.FurtherEducationLearnerTextSearchAction;
-            searchDownloadViewModel.DownloadRoute = Route.FurtherEducation.DownloadNonUlnFile;
-            searchDownloadViewModel.RedirectRoute = Route.FurtherEducation.LearnerTextSearch;
-            searchDownloadViewModel.TextSearchViewModel = new LearnerTextSearchViewModel() { LearnerNumberLabel = LearnerNumberLabel, SearchText = searchText };
-            PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
-
-            var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-            var disabledTypes = await _downloadService.CheckForFENoDataAvailable(new string[] { selectedPupil }, downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-            SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
-
-            searchDownloadViewModel.SearchResultPageHeading = PageHeading;
-            return View(Global.NonLearnerNumberDownloadOptionsView, searchDownloadViewModel);
-        }
-
-        [Route(Route.FurtherEducation.DownloadNonUlnFile)]
-        [HttpPost]
-        public async Task<IActionResult> DownloadFurtherEducationFile(LearnerDownloadViewModel model)
-        {
-            if (!string.IsNullOrEmpty(model.LearnerNumber))
-            {
-                var selectedPupils = model.LearnerNumber.Split(',');
-
-                if (model.SelectedDownloadOptions == null)
+                if (downloadFile == null)
                 {
-                    model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
+                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
                 }
-                else if (model.DownloadFileType != DownloadFileType.None)
+
+                if (downloadFile.Bytes != null)
                 {
-                    var downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
-
-                    if (downloadFile == null)
-                    {
-                        return RedirectToAction(ApplicationRoute.Error, ApplicationRoute.Home);
-                    }
-
-                    if (downloadFile.Bytes != null)
-                    {
-                        model.ErrorDetails = null;
-                        return SearchDownloadHelper.DownloadFile(downloadFile);
-                    }
-                    else
-                    {
-                        model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
-                    }
+                    model.ErrorDetails = null;
+                    return SearchDownloadHelper.DownloadFile(downloadFile);
                 }
                 else
                 {
-                    model.ErrorDetails = SearchErrorMessages.SelectFileType;
+                    model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
                 }
-
-                TempData["ErrorDetails"] = model.ErrorDetails;
-
-                if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-                    model.TextSearchViewModel.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
-
-                return await DownloadSelectedFurtherEducationData(model.SelectedPupils, model.TextSearchViewModel?.SearchText);
             }
-
-            return RedirectToAction(Global.FurtherEducationLearnerTextSearchAction, Global.FurtherEducationLearnerTextSearchController);
-        }
-
-        [Route(Route.FurtherEducation.DownloadNonUlnRequest)]
-        [HttpPost]
-        public async Task<IActionResult> ToDownloadSelectedFEDataULN(LearnerTextSearchViewModel model)
-        {
-            SetSelections(
-                model.PageLearnerNumbers.Split(','),
-                model.SelectedPupil);
-
-            var selectedPupil = GetSelected();
-
-            if (string.IsNullOrEmpty(selectedPupil))
+            else
             {
-                model.NoPupil = true;
-                model.NoPupilSelected = true;
-                model.ErrorDetails = DownloadErrorMessages.NoLearnerSelected;
-                return await FurtherEducationNonUlnSearch(model, null, null, null, null, null, null);
+                model.ErrorDetails = SearchErrorMessages.SelectFileType;
             }
 
-            return await DownloadSelectedFurtherEducationData(selectedPupil, model.SearchText);
+            TempData["ErrorDetails"] = model.ErrorDetails;
+
+            if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
+                model.TextSearchViewModel.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
+
+            return await DownloadSelectedFurtherEducationData(model.SelectedPupils, model.TextSearchViewModel?.SearchText);
         }
 
-        #endregion Download
+        return RedirectToAction(Global.FELearnerTextSearchAction, Global.FELearnerTextSearchController);
+    }
+
+    [Route(Routes.FurtherEducation.DownloadNonUlnRequest)]
+    [HttpPost]
+    public async Task<IActionResult> ToDownloadSelectedFEDataULN(LearnerTextSearchViewModel model)
+    {
+        SetSelections(
+            model.PageLearnerNumbers.Split(','),
+            model.SelectedPupil);
+
+        var selectedPupil = GetSelected();
+
+        if (string.IsNullOrEmpty(selectedPupil))
+        {
+            model.NoPupil = true;
+            model.NoPupilSelected = true;
+            model.ErrorDetails = DownloadErrorMessages.NoLearnerSelected;
+            return await FurtherEducationNonUlnSearch(model, null, null, null, null, null, null);
+        }
+
+        return await DownloadSelectedFurtherEducationData(selectedPupil, model.SearchText);
     }
 }

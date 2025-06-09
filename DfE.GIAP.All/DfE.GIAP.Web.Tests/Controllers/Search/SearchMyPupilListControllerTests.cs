@@ -1,16 +1,23 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Routes;
+using DfE.GIAP.Common.Constants.Messages.Downloads;
+using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.Search;
 using DfE.GIAP.Web.Helpers.Banner;
@@ -24,14 +31,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
-using DfE.GIAP.Domain.Models.MPL;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search
 {
@@ -83,7 +83,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             // assert
 
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(model.Upn, upns);
             Assert.Equal(0, model.PageNumber);
@@ -371,7 +371,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(expectedUPNs, model.Upn);
             Assert.Equal(1, model.PageNumber);
@@ -405,7 +405,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             // assert
 
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             model.Learners.AssertSelected(true);
@@ -442,7 +442,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             model.Learners.AssertSelected(false);
@@ -478,7 +478,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             _mockSelectionManager.DidNotReceive().RemoveAll(Arg.Any<string[]>());
@@ -507,7 +507,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             // assert
 
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Equal(AzureSearchFields.Forename, model.SortField);
@@ -537,7 +537,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             _mockSelectionManager.Received().AddAll(
@@ -561,7 +561,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Null(model.ErrorDetails);
@@ -582,7 +582,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Null(model.ErrorDetails);
@@ -609,7 +609,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Single(model.Invalid);
@@ -638,7 +638,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Equal(2, model.Learners.Count());
@@ -665,7 +665,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Single(model.Learners);
@@ -691,7 +691,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Single(model.Learners);
@@ -776,7 +776,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.False(model.NoPupil);
@@ -809,7 +809,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.True(model.Removed);
@@ -847,7 +847,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.SortField, model.SortField);
             Assert.Equal(inputModel.SortDirection, model.SortDirection);
@@ -875,7 +875,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.PageNumber, model.PageNumber);
             Assert.Empty(model.Learners);
@@ -905,7 +905,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.SortField, model.SortField);
             Assert.Equal(inputModel.SortDirection, model.SortDirection);
@@ -935,7 +935,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.SortField, model.SortField);
             Assert.Equal(inputModel.SortDirection, model.SortDirection);
@@ -966,7 +966,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(expectedPageNumber, model.PageNumber);
             Assert.Empty(model.Learners);
@@ -994,7 +994,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.PageNumber, model.PageNumber);
             Assert.True(expectedList.SequenceEqual(model.Learners));
@@ -1023,7 +1023,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.PageNumber, model.PageNumber);
             Assert.Equal(inputModel.PageNumber, model.PageNumber);
@@ -1053,7 +1053,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.True(model.NoPupilSelected);
         }
@@ -1080,7 +1080,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.True(model.NoPupilSelected);
         }
@@ -1143,7 +1143,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.False(model.NoPupil);
@@ -1170,7 +1170,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(DownloadErrorMessages.UPNLimitExceeded, model.ErrorDetails);
         }
@@ -1209,7 +1209,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.True(model.ErrorDetails.Equals(DownloadErrorMessages.NoDataForSelectedPupils));
@@ -1256,7 +1256,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.SortField, model.SortField);
             Assert.Equal(inputModel.SortDirection, model.SortDirection);
@@ -1351,7 +1351,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.False(model.NoPupil);
@@ -1533,8 +1533,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             // assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
 
-            Assert.True(redirectResult.ActionName.Equals(ApplicationRoute.Error));
-            Assert.True(redirectResult.ControllerName.Equals(ApplicationRoute.Home));
+            Assert.True(redirectResult.ActionName.Equals(Routes.Application.Error));
+            Assert.True(redirectResult.ControllerName.Equals(Routes.Application.Home));
         }
 
         [Fact]
@@ -1707,7 +1707,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(DownloadErrorMessages.NoDataForSelectedPupils, model.ErrorDetails);
             Assert.Equal(Global.LearnerNumberLabel, model.LearnerNumberLabel);
@@ -1746,7 +1746,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.Equal(inputModel.SortField, model.SortField);
             Assert.Equal(inputModel.SortDirection, model.SortDirection);
@@ -1773,7 +1773,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             Assert.False(model.NoPupil);
             Assert.True(model.NoPupilSelected);
@@ -1794,8 +1794,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
-            Assert.True(redirectResult.ActionName.Equals(ApplicationRoute.Error));
-            Assert.True(redirectResult.ControllerName.Equals(ApplicationRoute.Home));
+            Assert.True(redirectResult.ActionName.Equals(Routes.Application.Error));
+            Assert.True(redirectResult.ControllerName.Equals(Routes.Application.Home));
         }
 
         [Fact]
@@ -1846,7 +1846,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Single(model.Invalid);
@@ -1881,7 +1881,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
 
             Assert.Single(model.Invalid);
@@ -1913,7 +1913,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.True(viewResult.ViewName.Equals(Route.SearchMyPupilList.MyPupilListView));
+            Assert.True(viewResult.ViewName.Equals(Routes.SearchMyPupilList.MyPupilListView));
             var model = Assert.IsType<SearchMyPupilListViewModel>(viewResult.Model);
             //invalid upn must be included in page learner numbers to be passed to selection manager on any action
             Assert.Contains(_paginatedResultsFake.GetInvalidUpn(), model.PageLearnerNumbers);

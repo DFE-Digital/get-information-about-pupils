@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Routes;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Web.Helpers.Banner;
@@ -8,17 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System;
 using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-using DfE.GIAP.Core.Common.Application;
+using System.Collections.Generic;
+using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Controllers;
 
-[Route(ApplicationRoute.News)]
+[Route(Routes.Application.News)]
 public class NewsController : Controller
 {
+    private readonly INewsService _newsService;
     private readonly IContentService _contentService;
     private readonly ILatestNewsBanner _newsBanner;
-    private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public NewsController(
         IContentService contentService,

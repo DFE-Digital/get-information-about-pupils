@@ -4,7 +4,7 @@
     ViewData["Title"] = Model.SearchResultPageHeading;
 }
 
-<form action=@Route.NationalPupilDatabase.LearnerNumberDownloadFile method="POST">
+<form action=@Routes.NationalPupilDatabase.LearnerNumberDownloadFile method="POST">
 
     <input type="hidden" name="SelectedPupils" value="@Model.SelectedPupils" />
     <input type="hidden" name="LearnerNumber" value="@Model.LearnerNumber" />

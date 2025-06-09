@@ -20,7 +20,7 @@
         </button>
         <a class="govuk-link" id="link-search-again" asp-controller="@Model.LearnerTextSearchController" asp-action="@Model.LearnerTextSearchAction" asp-route-reset="true"
            value="SearchAgain" name="searchAgain">Search again</a>
-        <a class="govuk-link" id="search-learnernumber--link" asp-controller="@ApplicationRoute.Search" asp-action="@Model.LearnerNumberAction"
+        <a class="govuk-link" id="search-learnernumber--link" asp-controller="@Routes.Application.Search" asp-action="@Model.LearnerNumberAction"
            value="SearchLearnerNumber" name="SearchLearnerNumber">Search using @Model.LearnerNumberLabel only</a>
     </div>
 </form>
