@@ -28,7 +28,7 @@ jobs:
       uses: actions/setup-dotnet@v4
 
     - name: Install NuGet
-      uses: NuGet/setup-nuget@v1
+      uses: NuGet/setup-nuget@v2
 
     - name: npm install
       run: npm install
