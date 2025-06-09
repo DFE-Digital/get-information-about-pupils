@@ -1,8 +1,9 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Extensions;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.QueryTranslator;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
@@ -18,11 +19,13 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     private readonly ILogger<CosmosNewsArticleReadRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDTO, NewsArticle> _dtoToEntityMapper;
+    private readonly IFilterSpecificationQueryTranslator<NewsArticle> _filterSpecificationQueryTranslator;
 
     public CosmosNewsArticleReadRepository(
         ILogger<CosmosNewsArticleReadRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper)
+        IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper,
+        IFilterSpecificationQueryTranslator<NewsArticle> filterSpecificationQueryTranslator)
     {
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));
@@ -30,6 +33,8 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
             throw new ArgumentNullException(nameof(cosmosDbQueryHandler));
         _dtoToEntityMapper = dtoToEntityMapper ??
             throw new ArgumentNullException(nameof(dtoToEntityMapper));
+        _filterSpecificationQueryTranslator = filterSpecificationQueryTranslator ??
+            throw new ArgumentNullException(nameof(filterSpecificationQueryTranslator)); ;
     }
 
 
@@ -96,7 +101,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
         try
         {
             // TODO move to using Expression<Func<NewsArticle, bool>> but need to make compatible with Expression<Func<NewsArticleDTO, bool>> with mapping?
-            string query = filterSpecification.ToNewsArticlesQuery();
+            string query = _filterSpecificationQueryTranslator.TranslateSpecificationToQueryString(filterSpecification);
 
             IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
                 .ReadItemsAsync<NewsArticleDTO>(

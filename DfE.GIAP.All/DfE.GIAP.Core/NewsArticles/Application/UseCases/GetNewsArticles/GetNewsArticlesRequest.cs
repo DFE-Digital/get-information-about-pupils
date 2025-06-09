@@ -7,4 +7,4 @@
 /// <param name="IsDraft">Indicates whether to fetch draft news articles.</param>
 ///
 // TODO UPDATE CODECOMMENTS
-public record GetNewsArticlesRequest(FilterNewsArticleRequest FilterRequest);
+public record GetNewsArticlesRequest(FilterNewsArticlesRequest FilterRequest);

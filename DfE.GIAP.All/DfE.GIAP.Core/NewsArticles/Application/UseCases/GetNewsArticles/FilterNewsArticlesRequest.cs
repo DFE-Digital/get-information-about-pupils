@@ -1,7 +1,7 @@
 ﻿namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-public sealed class FilterNewsArticleRequest
+public sealed class FilterNewsArticlesRequest
 {
-    private FilterNewsArticleRequest(IEnumerable<NewsArticleStateFilter> states)
+    private FilterNewsArticlesRequest(IEnumerable<NewsArticleStateFilter> states)
     {
         // Validate the states
         ArgumentNullException.ThrowIfNull(states);
@@ -29,7 +29,7 @@ public sealed class FilterNewsArticleRequest
 
     internal IReadOnlyCollection<NewsArticleStateFilter> States { get; }
 
-    public static FilterNewsArticleRequest All() => new([NewsArticleStateFilter.PublishedIncludeDrafts, NewsArticleStateFilter.NotArchived]);
-    public static FilterNewsArticleRequest Archived() => new([NewsArticleStateFilter.ArchivedOnly]);
-    public static FilterNewsArticleRequest Published() => new([NewsArticleStateFilter.PublishedOnly, NewsArticleStateFilter.NotArchived]);
+    public static FilterNewsArticlesRequest All() => new([NewsArticleStateFilter.PublishedIncludeDrafts, NewsArticleStateFilter.NotArchived]);
+    public static FilterNewsArticlesRequest Archived() => new([NewsArticleStateFilter.ArchivedOnly]);
+    public static FilterNewsArticlesRequest Published() => new([NewsArticleStateFilter.PublishedOnly, NewsArticleStateFilter.NotArchived]);
 }

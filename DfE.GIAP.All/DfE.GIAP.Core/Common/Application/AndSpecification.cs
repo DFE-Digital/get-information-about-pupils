@@ -1,24 +1,23 @@
 ﻿using System.Linq.Expressions;
-using DfE.GIAP.Core.Common.CrossCutting;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Filter;
+namespace DfE.GIAP.Core.Common.Application;
 public sealed class AndSpecificaton<T> : IFilterSpecification<T>
 {
-    private readonly IFilterSpecification<T> _left;
-    private readonly IFilterSpecification<T> _right;
-
     public AndSpecificaton(IFilterSpecification<T> left, IFilterSpecification<T> right)
     {
-        _left = left;
-        _right = right;
+        Left = left;
+        Right = right;
     }
 
-    public bool IsSatisfiedBy(T input) => _left.IsSatisfiedBy(input) && _right.IsSatisfiedBy(input);
+    public bool IsSatisfiedBy(T input) => Left.IsSatisfiedBy(input) && Right.IsSatisfiedBy(input);
+
+    public IFilterSpecification<T> Left { get; }
+    public IFilterSpecification<T> Right { get; }
 
     public Expression<Func<T, bool>> ToExpression()
     {
-        Expression<Func<T, bool>> leftExpr = _left.ToExpression();
-        Expression<Func<T, bool>> rightExpr = _right.ToExpression();
+        Expression<Func<T, bool>> leftExpr = Left.ToExpression();
+        Expression<Func<T, bool>> rightExpr = Right.ToExpression();
 
         // Required to replace parameter to include the original expression else LINQ-to-SQL providers like EFCore complain, as the expression "member" is different so inject one in.
         ParameterExpression parameter = Expression.Parameter(type: typeof(T), name: "x");
@@ -42,30 +41,5 @@ public sealed class AndSpecificaton<T> : IFilterSpecification<T>
         }
 
         protected override Expression VisitParameter(ParameterExpression node) => node == _oldParam ? _newParam : base.VisitParameter(node);
-    }
-
-
-    public string ToFilterQuery(string alias = "c")
-    {
-        string leftQuery = _left.ToFilterQuery(alias);
-        string rightQuery = _right.ToFilterQuery(alias);
-
-        // to avoid "" AND or AND ""
-        if (string.IsNullOrEmpty(leftQuery) && string.IsNullOrEmpty(rightQuery))
-        {
-            return string.Empty;
-        }
-        // to avoid "" AND c.Property= 
-        if (string.IsNullOrEmpty(leftQuery))
-        {
-            return rightQuery;
-        }
-        // to avoid c.Property= AND "" 
-        if (string.IsNullOrEmpty(rightQuery))
-        {
-            return leftQuery;
-        }
-
-        return $"{leftQuery} AND {rightQuery}";
     }
 }

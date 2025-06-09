@@ -1,8 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Factory;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
@@ -15,7 +14,7 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
     /// Repository for reading news articles.
     /// </summary>
     private readonly INewsArticleReadRepository _newsArticleReadRepository;
-    private readonly IFilterNewsArticleSpecificationFactory _filterNewsArticleSpecificationFactory;
+    private readonly IFilterNewsArticleSpecificationService _filterNewsArticleSpecificationFactory;
 
     /// <summary>
     /// Initializes the use case with a news article repository.
@@ -24,7 +23,7 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
     /// <exception cref="ArgumentNullException">Thrown if the repository is null.</exception>
     public GetNewsArticlesUseCase(
         INewsArticleReadRepository newsArticleReadRepository,
-        IFilterNewsArticleSpecificationFactory filterNewsArticleSpecificationFactory)
+        IFilterNewsArticleSpecificationService filterNewsArticleSpecificationFactory)
     {
         _newsArticleReadRepository = newsArticleReadRepository ??
             throw new ArgumentNullException(nameof(newsArticleReadRepository));

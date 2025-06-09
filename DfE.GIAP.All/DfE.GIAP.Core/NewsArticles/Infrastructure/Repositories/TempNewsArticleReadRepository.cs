@@ -1,7 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Extensions;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.QueryTranslator;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Container = Microsoft.Azure.Cosmos.Container;
@@ -15,11 +16,13 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
     private readonly ILogger<TempNewsArticleReadRepository> _logger;
     private readonly CosmosClient _cosmosClient;
     private readonly IMapper<NewsArticleDTO, NewsArticle> _dtoToEntityMapper;
+    private readonly IFilterSpecificationQueryTranslator<NewsArticle> _filterSpecificationQueryTranslator;
 
     public TempNewsArticleReadRepository(
         ILogger<TempNewsArticleReadRepository> logger,
         CosmosClient cosmosClient,
-        IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper)
+        IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper,
+        IFilterSpecificationQueryTranslator<NewsArticle> filterSpecificationQueryTranslator)
     {
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));
@@ -27,6 +30,7 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
             throw new ArgumentNullException(nameof(cosmosClient));
         _dtoToEntityMapper = dtoToEntityMapper ??
             throw new ArgumentNullException(nameof(dtoToEntityMapper));
+        _filterSpecificationQueryTranslator = filterSpecificationQueryTranslator;
     }
 
     public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)
@@ -67,7 +71,7 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
     {
         try
         {
-            string query = filterSpecification.ToNewsArticlesQuery();
+            string query = _filterSpecificationQueryTranslator.TranslateSpecificationToQueryString(filterSpecification);
             Container container = _cosmosClient.GetContainer(ContainerName, DatabaseId);
             using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
 

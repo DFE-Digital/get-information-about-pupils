@@ -1,9 +1,10 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Filter;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
-namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles.Factory;
-internal sealed class FilterNewsArticleSpecificationFactory : IFilterNewsArticleSpecificationFactory
+namespace DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles;
+internal sealed class FilterNewsArticleSpecificationService : IFilterNewsArticleSpecificationService
 {
 
     private static readonly Dictionary<NewsArticleStateFilter, Func<IFilterSpecification<NewsArticle>>> _map =
@@ -28,7 +29,7 @@ internal sealed class FilterNewsArticleSpecificationFactory : IFilterNewsArticle
             IFilterSpecification<NewsArticle> spec = specificationHandler.Invoke();
             specificationFilters.Add(spec);
         });
-        
+
         return specificationFilters.Count == 1 ?
             specificationFilters.Single() :
                 specificationFilters.Aggregate((a, b) => new AndSpecificaton<NewsArticle>(a, b));

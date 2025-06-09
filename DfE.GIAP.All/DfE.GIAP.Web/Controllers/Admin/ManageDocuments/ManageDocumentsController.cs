@@ -616,7 +616,7 @@ public class ManageDocumentsController : Controller
     private async Task LoadNewsList()
     {
         List<Document> newsList = [];
-        FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.All();
+        FilterNewsArticlesRequest stateFilterRequest = FilterNewsArticlesRequest.All();
         GetNewsArticlesRequest request = new(stateFilterRequest);
         GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
@@ -642,7 +642,7 @@ public class ManageDocumentsController : Controller
     private async Task LoadArchivedNewsList()
     {
         List<Document> newsList = [];
-        FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.Archived();
+        FilterNewsArticlesRequest stateFilterRequest = FilterNewsArticlesRequest.Archived();
         GetNewsArticlesRequest request = new(stateFilterRequest);
         GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 

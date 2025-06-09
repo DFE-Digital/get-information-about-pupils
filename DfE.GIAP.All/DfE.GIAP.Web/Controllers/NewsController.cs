@@ -47,7 +47,7 @@ namespace DfE.GIAP.Web.Controllers
                 NewsPublication = newsPublication
             };
 
-            FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.Published();
+            FilterNewsArticlesRequest stateFilterRequest = FilterNewsArticlesRequest.Published();
             GetNewsArticlesRequest request = new(stateFilterRequest);
             GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
@@ -59,7 +59,7 @@ namespace DfE.GIAP.Web.Controllers
         [Route("archive")]
         public async Task<IActionResult> Archive()
         {
-            FilterNewsArticleRequest stateFilterRequest = FilterNewsArticleRequest.Archived();
+            FilterNewsArticlesRequest stateFilterRequest = FilterNewsArticlesRequest.Archived();
             GetNewsArticlesRequest request = new(stateFilterRequest);
             GetNewsArticlesResponse result = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
