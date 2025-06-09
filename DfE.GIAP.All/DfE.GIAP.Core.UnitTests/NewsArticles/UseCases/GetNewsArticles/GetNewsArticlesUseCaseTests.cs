@@ -1,5 +1,6 @@
+using DfE.GIAP.Core.Common.Application.Specification;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticles;
 
@@ -9,7 +10,21 @@ public sealed class GetNewsArticlesUseCaseTests
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
         // Arrange
-        Action construct = () => new GetNewsArticlesUseCase(newsArticleReadRepository: null);
+        Action construct = () => new GetNewsArticlesUseCase(
+            newsArticleReadRepository: null,
+            new Mock<INewsArticleSpecificationService>().Object);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_ThrowsNullException_When_CreatedWithNullFilterExpressionFactory()
+    {
+        // Arrange
+        Action construct = () => new GetNewsArticlesUseCase(
+            newsArticleReadRepository: NewsArticleReadOnlyRepositoryTestDoubles.Default().Object,
+            filterNewsArticleSpecificationFactory: null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -20,7 +35,8 @@ public sealed class GetNewsArticlesUseCaseTests
     {
         // Arrange
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
-        GetNewsArticlesUseCase sut = new(mockRepository.Object);
+        Mock<INewsArticleSpecificationService> mockFilterSpecificationFactory = new Mock<INewsArticleSpecificationService>();
+        GetNewsArticlesUseCase sut = new(mockRepository.Object, mockFilterSpecificationFactory.Object);
         Func<Task> act = () => sut.HandleRequest(request: null);
 
         // Act Assert
@@ -34,8 +50,10 @@ public sealed class GetNewsArticlesUseCaseTests
         const string expectedExceptionMessage = "Error occurs";
         Mock<INewsArticleReadRepository> mockRepository =
             NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => throw new Exception(expectedExceptionMessage));
-        GetNewsArticlesUseCase sut = new(mockRepository.Object);
-        GetNewsArticlesRequest request = new(It.IsAny<bool>(), It.IsAny<bool>());
+        Mock<INewsArticleSpecificationService> mockFilterSpecificationFactory = new Mock<INewsArticleSpecificationService>();
+        mockFilterSpecificationFactory.Setup(t => t.CreateSpecification(It.IsAny<IEnumerable<NewsArticleStateFilter>>())).Returns(It.IsAny<ISpecification<NewsArticle>>());
+        GetNewsArticlesUseCase sut = new(mockRepository.Object, mockFilterSpecificationFactory.Object);
+        GetNewsArticlesRequest request = new(FilterNewsArticlesRequest.AllActiveArticles());
         Func<Task> act = () => sut.HandleRequest(request);
 
         // Act Assert
@@ -48,8 +66,11 @@ public sealed class GetNewsArticlesUseCaseTests
     {
         // Arrange
         Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(Enumerable.Empty<NewsArticle>);
-        GetNewsArticlesUseCase sut = new(repo.Object);
-        GetNewsArticlesRequest request = new(It.IsAny<bool>(), It.IsAny<bool>());
+        Mock<INewsArticleSpecificationService> mockFilterSpecificationFactory = new Mock<INewsArticleSpecificationService>();
+        mockFilterSpecificationFactory.Setup(t => t.CreateSpecification(It.IsAny<IEnumerable<NewsArticleStateFilter>>())).Returns(It.IsAny<ISpecification<NewsArticle>>());
+
+        GetNewsArticlesUseCase sut = new(repo.Object, mockFilterSpecificationFactory.Object);
+        GetNewsArticlesRequest request = new(FilterNewsArticlesRequest.AllActiveArticles());
 
         // Act
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
@@ -90,9 +111,11 @@ public sealed class GetNewsArticlesUseCaseTests
 
         List<NewsArticle> unorderedUnpinnedArticles = [unpinnedOldest, pinnedMiddle, unpinnedNewest, pinnedOldest, pinnedNewest, unpinnedMiddle];
 
+        Mock<INewsArticleSpecificationService> mockFilterSpecificationFactory = new Mock<INewsArticleSpecificationService>();
+        mockFilterSpecificationFactory.Setup(t => t.CreateSpecification(It.IsAny<IEnumerable<NewsArticleStateFilter>>())).Returns(It.IsAny<ISpecification<NewsArticle>>());
         Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => unorderedUnpinnedArticles);
-        GetNewsArticlesUseCase sut = new(repo.Object);
-        GetNewsArticlesRequest request = new(It.IsAny<bool>(), It.IsAny<bool>());
+        GetNewsArticlesUseCase sut = new(repo.Object, mockFilterSpecificationFactory.Object);
+        GetNewsArticlesRequest request = new(FilterNewsArticlesRequest.AllActiveArticles());
 
         // Act
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
@@ -119,8 +142,11 @@ public sealed class GetNewsArticlesUseCaseTests
     public async Task HandleRequest_CallsQueryHandler_Once_With_IsArchived_IsDraft(bool isArchived, bool isDraft)
     {
         Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => []);
-        GetNewsArticlesUseCase sut = new(repo.Object);
-        GetNewsArticlesRequest request = new(isArchived, isDraft);
+        Mock<INewsArticleSpecificationService> mockFilterSpecificationFactory = new Mock<INewsArticleSpecificationService>();
+        mockFilterSpecificationFactory.Setup(t => t.CreateSpecification(It.IsAny<IEnumerable<NewsArticleStateFilter>>())).Returns(It.IsAny<ISpecification<NewsArticle>>());
+
+        GetNewsArticlesUseCase sut = new(repo.Object, mockFilterSpecificationFactory.Object);
+        GetNewsArticlesRequest request = new(FilterNewsArticlesRequest.AllActiveArticles());
 
         // Act
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
@@ -128,6 +154,6 @@ public sealed class GetNewsArticlesUseCaseTests
         // Assert
         Assert.NotNull(response);
         repo.Verify(
-            (useCase) => useCase.GetNewsArticlesAsync(isArchived, isDraft), Times.Once());
+            (useCase) => useCase.GetNewsArticlesAsync(It.IsAny<ISpecification<NewsArticle>>()), Times.Once());
     }
 }

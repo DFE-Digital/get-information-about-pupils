@@ -5,4 +5,6 @@
 /// </summary>
 /// <param name="IsArchived">Indicates whether to fetch archived news articles.</param>
 /// <param name="IsDraft">Indicates whether to fetch draft news articles.</param>
-public record GetNewsArticlesRequest(bool IsArchived, bool IsDraft);
+///
+// TODO UPDATE CODECOMMENTS
+public record GetNewsArticlesRequest(FilterNewsArticlesRequest FilterRequest);

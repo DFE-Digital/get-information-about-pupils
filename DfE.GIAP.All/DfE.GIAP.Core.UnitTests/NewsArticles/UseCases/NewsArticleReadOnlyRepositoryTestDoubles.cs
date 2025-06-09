@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;
+﻿using DfE.GIAP.Core.Common.Application.Specification;
+
+namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 
 internal static class NewsArticleReadOnlyRepositoryTestDoubles
 {
@@ -30,7 +32,7 @@ internal static class NewsArticleReadOnlyRepositoryTestDoubles
         Mock<INewsArticleReadRepository> mock = CreateMock();
 
         mock.Setup(
-                (repository) => repository.GetNewsArticlesAsync(It.IsAny<bool>(), It.IsAny<bool>()))
+                (repository) => repository.GetNewsArticlesAsync(It.IsAny<ISpecification<NewsArticle>>()))
             .ReturnsAsync(repositoryResponse)
             .Verifiable();
 

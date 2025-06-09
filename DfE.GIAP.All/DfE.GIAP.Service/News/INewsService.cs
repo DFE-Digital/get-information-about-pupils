@@ -7,7 +7,7 @@ namespace DfE.GIAP.Service.News;
 
 public interface INewsService
 {
-    Task<List<Article>> GetNewsArticles(RequestBody requestBody);
+    
     Task<Article> UpdateNewsArticle(UpdateNewsRequestBody requestBody);
     Task<Article> UpdateNewsDocument(UpdateNewsDocumentRequestBody requestBody);
     Task<HttpStatusCode> DeleteNewsArticle(string newsId);
