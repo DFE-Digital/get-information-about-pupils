@@ -94,14 +94,14 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     {
         try
         {
+            string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
             string publishedFilter = isDraft switch
             {
-                true => "c.Published=false",
-                false => "c.Published=true",
-                null => "(c.Published=true OR c.Published=false)"
+                true => " AND c.Published=false",
+                false => " AND c.Published=true",
+                null => string.Empty
             };
-            string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string query = $"SELECT * FROM c WHERE {archivedFilter} And {publishedFilter}";
+            string query = $"SELECT * FROM c WHERE {archivedFilter}{publishedFilter}";
 
             IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
                 .ReadItemsAsync<NewsArticleDTO>(ContainerName, query);

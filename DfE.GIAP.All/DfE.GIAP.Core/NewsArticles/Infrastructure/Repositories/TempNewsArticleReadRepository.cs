@@ -69,11 +69,11 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
             string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
             string publishedFilter = isDraft switch
             {
-                true => "c.Published=false",
-                false => "c.Published=true",
-                null => "(c.Published=true OR c.Published=false)"
+                true => " AND c.Published=false",
+                false => " AND c.Published=true",
+                null => string.Empty
             };
-            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter} AND {publishedFilter}";
+            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter}{publishedFilter}";
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
             using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
