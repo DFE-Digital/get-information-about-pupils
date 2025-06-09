@@ -615,7 +615,7 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadNewsList()
     {
-        GetNewsArticlesRequest request = new(IsArchived: false, IsDraft: null);
+        GetNewsArticlesRequest request = new(IsArchived: false, IsPublished: null);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
         IList<Document> newsList = new List<Document>();
@@ -640,7 +640,7 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadArchivedNewsList()
     {
-        GetNewsArticlesRequest request = new(IsArchived: true, IsDraft: null);
+        GetNewsArticlesRequest request = new(IsArchived: true, IsPublished: null);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
         IList<Document> newsList = new List<Document>();

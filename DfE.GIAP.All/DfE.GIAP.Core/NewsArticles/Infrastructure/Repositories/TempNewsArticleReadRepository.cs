@@ -62,15 +62,15 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         }
     }
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isDraft)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isPublished)
     {
         try
         {
             string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string publishedFilter = isDraft switch
+            string publishedFilter = isPublished switch
             {
-                true => " AND c.Published=false",
-                false => " AND c.Published=true",
+                true => " AND c.Published=true",
+                false => " AND c.Published=false",
                 null => string.Empty
             };
             string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter}{publishedFilter}";
