@@ -86,7 +86,7 @@ namespace DfE.GIAP.Web.Tests.Controllers
 
             // Assert
             var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.Equal(Global.NationalPupilDatabaseAction, viewResult.ActionName);
+            Assert.Equal(Global.NPDAction, viewResult.ActionName);
             Assert.Equal(Global.NPDLearnerNumberSearchController, viewResult.ControllerName);
         }
 
@@ -101,8 +101,8 @@ namespace DfE.GIAP.Web.Tests.Controllers
 
             // Assert
             var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.Equal(Global.FurtherEducationLearnerNumberSearchAction, viewResult.ActionName);
-            Assert.Equal(Global.FurtherEducationLearnerNumberSearchController, viewResult.ControllerName);
+            Assert.Equal(Global.FELearnerNumberSearchAction, viewResult.ActionName);
+            Assert.Equal(Global.FELearnerNumberSearchController, viewResult.ControllerName);
         }
 
         private LandingController GetLandingController(bool feUser = false)

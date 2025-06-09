@@ -7,30 +7,29 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Web.Controllers
+namespace DfE.GIAP.Web.Controllers;
+
+public class TermsController : Controller
 {
-    public class TermsController : Controller
+    private readonly IContentService _contentService;
+
+    public TermsController(IContentService contentService)
     {
-        private readonly IContentService _contentService;
+        _contentService = contentService ??
+            throw new ArgumentNullException(nameof(contentService));
+    }
 
-        public TermsController(IContentService contentService)
+    [AllowWithoutConsent]
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        CommonResponseBody results = await _contentService.GetContent(DocumentType.TermOfUse).ConfigureAwait(false);
+
+        var model = new TermsOfUseViewModel
         {
-            _contentService = contentService ??
-                throw new ArgumentNullException(nameof(contentService));
-        }
+            Response = results
+        };
 
-        [AllowWithoutConsent]
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            CommonResponseBody results = await _contentService.GetContent(DocumentType.TermOfUse).ConfigureAwait(false);
-
-            var model = new TermsOfUseViewModel
-            {
-                Response = results
-            };
-
-            return View(model);
-        }
+        return View(model);
     }
 }

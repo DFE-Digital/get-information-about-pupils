@@ -8,44 +8,43 @@ using System.Threading.Tasks;
 using System;
 using DfE.GIAP.Core.Models.Common;
 
-namespace DfE.GIAP.Web.Controllers
+namespace DfE.GIAP.Web.Controllers;
+
+public class AccessibilityController : Controller
 {
-    public class AccessibilityController : Controller
+    private readonly IContentService _contentService;
+
+    public AccessibilityController(IContentService contentService)
     {
-        private readonly IContentService _contentService;
+        _contentService = contentService ??
+            throw new ArgumentNullException(nameof(contentService));
+    }
 
-        public AccessibilityController(IContentService contentService)
+
+    [AllowWithoutConsent]
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        CommonResponseBody results = await _contentService.GetContent(DocumentType.Accessibility).ConfigureAwait(false);
+
+        var model = new AccessibilityViewModel
         {
-            _contentService = contentService ??
-                throw new ArgumentNullException(nameof(contentService));
-        }
+            Response = results.ConvertToViewModel()
+        };
 
+        return View(model);
+    }
 
-        [AllowWithoutConsent]
-        [HttpGet]
-        public async Task<IActionResult> Index()
+    [HttpGet]
+    public async Task<IActionResult> Report()
+    {
+        var results = await _contentService.GetContent(DocumentType.AccessibilityReport).ConfigureAwait(false);
+
+        var model = new AccessibilityViewModel
         {
-            CommonResponseBody results = await _contentService.GetContent(DocumentType.Accessibility).ConfigureAwait(false);
+            Response = results.ConvertToViewModel()
+        };
 
-            var model = new AccessibilityViewModel
-            {
-                Response = results.ConvertToViewModel()
-            };
-
-            return View(model);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Report()
-        {
-            var results = await _contentService.GetContent(DocumentType.AccessibilityReport).ConfigureAwait(false);
-
-            var model = new AccessibilityViewModel
-            {
-                Response = results.ConvertToViewModel()
-            };
-
-            return View(model);
-        }
+        return View(model);
     }
 }

@@ -7,29 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Web.Controllers
+namespace DfE.GIAP.Web.Controllers;
+
+public class PrivacyController : Controller
 {
-    public class PrivacyController : Controller
+    private readonly IContentService _contentService;
+
+    public PrivacyController(IContentService contentService)
     {
-        private readonly IContentService _contentService;
+        _contentService = contentService ??
+            throw new ArgumentNullException(nameof(contentService));
+    }
 
-        public PrivacyController(IContentService contentService)
+    [AllowWithoutConsent]
+    public async Task<IActionResult> Index()
+    {
+        CommonResponseBody results = await _contentService.GetContent(DocumentType.PrivacyNotice).ConfigureAwait(false);
+
+        var model = new PrivacyViewModel
         {
-            _contentService = contentService ??
-                throw new ArgumentNullException(nameof(contentService));
-        }
+            Response = results
+        };
 
-        [AllowWithoutConsent]
-        public async Task<IActionResult> Index()
-        {
-            CommonResponseBody results = await _contentService.GetContent(DocumentType.PrivacyNotice).ConfigureAwait(false);
-
-            var model = new PrivacyViewModel
-            {
-                Response = results
-            };
-
-            return View(model);
-        }
+        return View(model);
     }
 }

@@ -48,7 +48,7 @@
             @if (Model?.DocumentList?.DocumentId == DocumentType.Article.ToString())
             {
                 <p class="govuk-body">
-                    <button asp-controller="ManageDocuments" asp-action="CreateNewsArticle" id="create-new-article--button" value="Create" name="create" class="govuk-button govuk-button--secondary">Create new article</button>
+                    <button formmethod="get" asp-controller="ManageDocuments" asp-action="CreateNewsArticle" id="create-new-article--button" value="Create" name="create" class="govuk-button govuk-button--secondary">Create new article</button>
                 </p>
             }
 

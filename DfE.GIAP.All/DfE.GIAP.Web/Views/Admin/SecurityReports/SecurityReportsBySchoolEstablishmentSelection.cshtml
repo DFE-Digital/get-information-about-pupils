@@ -80,8 +80,8 @@
         {
             <div id="security-reports--download-container"
                  data-process-download="true"
-                 data-url="@Url.RouteUrl(SecurityReports.Names.GetSecurityReportDownload, new { httproute = "", reportType = Model.SelectedReportType, estabCode = Model.SelectedEstablishmentCode, estabType = Model.SelectedOrganisationOption })"
-                 data-confirmation-url="@Url.RouteUrl(SecurityReports.Names.SRConfirmation)">
+                 data-url="@Url.RouteUrl(Routes.SecurityReports.Names.GetSecurityReportDownload, new { httproute = "", reportType = Model.SelectedReportType, estabCode = Model.SelectedEstablishmentCode, estabType = Model.SelectedOrganisationOption })"
+                 data-confirmation-url="@Url.RouteUrl(Routes.SecurityReports.Names.SRConfirmation)">
                 <p class="govuk-body">Preparing your download. Please wait.</p>
             </div>
         }
@@ -105,7 +105,7 @@
     </noscript>
 
     <noscript>
-        <iframe id="downloader" class="display-none" title="Your download is being processed" src="@Url.RouteUrl(SecurityReports.Names.GetSecurityReportDownload, new { httproute = "", reportType = Model.SelectedReportType, estabCode = Model.SelectedEstablishmentCode })" />
+        <iframe id="downloader" class="display-none" title="Your download is being processed" src="@Url.RouteUrl(Routes.SecurityReports.Names.GetSecurityReportDownload, new { httproute = "", reportType = Model.SelectedReportType, estabCode = Model.SelectedEstablishmentCode })" />
     </noscript>
 }
 
