@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Routes;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Middleware;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,48 +10,47 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Web.Controllers
+namespace DfE.GIAP.Web.Controllers;
+
+[Route(Routes.Authentication.AuthenticationController)]
+public class AuthenticationController : Controller
 {
-    [Route(Authentication.AuthenticationController)]
-    public class AuthenticationController : Controller
+    private readonly AzureAppSettings _azureAppSettings;
+
+    public AuthenticationController(IOptions<AzureAppSettings> azureAppSettings)
     {
-        private readonly AzureAppSettings _azureAppSettings;
+        _azureAppSettings = azureAppSettings.Value;
+    }
 
-        public AuthenticationController(IOptions<AzureAppSettings> azureAppSettings)
+    [AllowAnonymous]
+    [HttpGet(Routes.Authentication.LoginAction)]
+    public IActionResult LoginDsi(string returnUrl)
+    {
+        if (string.IsNullOrEmpty(returnUrl))
         {
-            _azureAppSettings = azureAppSettings.Value;
+            returnUrl = Url.Action("Index", "Home");
         }
 
-        [AllowAnonymous]
-        [HttpGet(Authentication.LoginAction)]
-        public IActionResult LoginDsi(string returnUrl)
+        if (User.Identity.IsAuthenticated)
         {
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-                returnUrl = Url.Action("Index", "Home");
-            }
-
-            if (User.Identity.IsAuthenticated)
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return new ChallengeResult(new AuthenticationProperties() { RedirectUri = returnUrl });
-            }
+            return Redirect(returnUrl);
         }
-
-        [AllowWithoutConsent]
-        [AllowAnonymous]
-        [HttpGet(Authentication.SignoutAction)]
-        public async Task<IActionResult> SignoutDsi()
+        else
         {
-            HttpContext.Session.Clear();
-
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            return Redirect(_azureAppSettings.DsiRedirectUrlAfterSignout);
+            return new ChallengeResult(new AuthenticationProperties() { RedirectUri = returnUrl });
         }
+    }
+
+    [AllowWithoutConsent]
+    [AllowAnonymous]
+    [HttpGet(Routes.Authentication.SignoutAction)]
+    public async Task<IActionResult> SignoutDsi()
+    {
+        HttpContext.Session.Clear();
+
+        await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        return Redirect(_azureAppSettings.DsiRedirectUrlAfterSignout);
     }
 }

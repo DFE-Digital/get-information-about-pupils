@@ -62,20 +62,6 @@ namespace DfE.GIAP.Web.Extensions
             return false;
         }
 
-        public static bool IsOrganisationEstablishmentWithFoundationSchool(this ClaimsPrincipal principal)
-        {
-            if (principal.IsOrganisationEstablishment())
-            {
-                string establishmentTypeId = principal.GetClaimValue(CustomClaimTypes.OrganisationEstablishmentTypeId);
-
-                return establishmentTypeId == EstablishmentType.FoundationSchool ||
-                       establishmentTypeId == EstablishmentType.FoundationSchoolString1 ||
-                       establishmentTypeId == EstablishmentType.FoundationSchoolString2;
-            }
-
-            return false;
-        }
-
         public static bool IsEstablishmentWithAccessToULNPages(this ClaimsPrincipal principal)
         {
             if (principal.IsOrganisationEstablishment())

@@ -1489,7 +1489,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
 
             // Assert
             var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.Equal(Global.NationalPupilDatabaseNonUpnAction, viewResult.ActionName);
+            Assert.Equal(Global.NPDNonUpnAction, viewResult.ActionName);
         }
 
         [Fact]

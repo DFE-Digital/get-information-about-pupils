@@ -873,8 +873,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 DownloadType = DownloadType.PupilPremium,
                 ConfirmationGiven = true,
                 ConfirmationError = false,
-                ConfirmationReturnAction = Global.PupilPremiumDownloadConfirmationReturnAction,
-                CancelReturnAction = Global.PupilPremiumDownloadCancellationReturnAction,
+                ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
+                CancelReturnAction = Global.PPDownloadCancellationReturnAction,
                 LearnerNumbers = _paginatedResultsFake.GetUpn()
             };
 
@@ -911,8 +911,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 DownloadType = DownloadType.PupilPremium,
                 ConfirmationGiven = false,
                 ConfirmationError = true,
-                ConfirmationReturnAction = Global.PupilPremiumDownloadConfirmationReturnAction,
-                CancelReturnAction = Global.PupilPremiumDownloadCancellationReturnAction,
+                ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
+                CancelReturnAction = Global.PPDownloadCancellationReturnAction,
                 LearnerNumbers = _paginatedResultsFake.GetUpn()
             };
 
@@ -1252,7 +1252,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
 
             // Assert
             var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.Equal(Global.PupilPremiumNonUpnAction, viewResult.ActionName);
+            Assert.Equal(Global.PPNonUpnAction, viewResult.ActionName);
         }
 
         [Fact]

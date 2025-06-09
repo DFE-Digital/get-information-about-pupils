@@ -52,15 +52,15 @@ namespace DfE.GIAP.Web.Helpers.Navigation
         {
             switch (currentController)
             {
-                case Global.NationalPupilDatabaseTextSearchController:
+                case Global.NPDTextSearchController:
                 case Global.NPDLearnerNumberSearchController:
                     return Global.NPDLearnerNumberSearchController;
 
-                case Global.FurtherEducationLearnerTextSearchController:
-                case Global.FurtherEducationLearnerNumberSearchController:
-                    return Global.FurtherEducationLearnerNumberSearchController;
+                case Global.FELearnerTextSearchController:
+                case Global.FELearnerNumberSearchController:
+                    return Global.FELearnerNumberSearchController;
 
-                case Global.PupilPremiumNonUpnController:
+                case Global.PPNonUpnController:
                 case Global.PPLearnerNumberSearchController:
                     return Global.PPLearnerNumberSearchController;
 
