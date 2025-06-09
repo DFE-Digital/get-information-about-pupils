@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace DfE.GIAP.Core.Common.Application;
+namespace DfE.GIAP.Core.Common.Application.Specification;
 
 public interface ISpecification<T>
 {

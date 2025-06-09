@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.Application;
+﻿using DfE.GIAP.Core.Common.Application.Specification;
+using DfE.GIAP.Core.Common.Application.Specification.Extensions;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification.Factory;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;

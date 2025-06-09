@@ -1,10 +1,13 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application.Specification;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification.Factory;
+using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification.Specifications;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
@@ -31,7 +34,7 @@ public static class CompositionRoot
     {
         return services
             .RegisterApplicationUseCases()
-            .AddSingleton<INewsArticleSpecificationService, FilterNewsArticleSpecificationService>()
+            .AddSingleton<INewsArticleSpecificationService, NewsArticleSpecificationService>()
             .AddSingleton<IFilterNewsArticleSpecificationFactory>(sp =>
             {
                 Dictionary<NewsArticleStateFilter, Func<ISpecification<NewsArticle>>> config = new()

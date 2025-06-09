@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Application;
+﻿namespace DfE.GIAP.Core.Common.Application.Specification.Extensions;
 internal static class ISpecificationExtensions
 {
     internal static ISpecification<T> And<T>(this ISpecification<T> left, ISpecification<T> right)

@@ -1,4 +1,4 @@
-using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application.Specification;
 using DfE.GIAP.Core.NewsArticles.Application.Services.NewsArticles.Specification;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;

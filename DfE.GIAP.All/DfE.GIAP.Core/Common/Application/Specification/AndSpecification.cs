@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace DfE.GIAP.Core.Common.Application;
+namespace DfE.GIAP.Core.Common.Application.Specification;
 public sealed class AndSpecificaton<T> : ISpecification<T>
 {
     public AndSpecificaton(ISpecification<T> left, ISpecification<T> right)
