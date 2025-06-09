@@ -38,20 +38,20 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
 
         // Retrieve news articles based on the specified filters
         IEnumerable<NewsArticle> newsArticlesResult = await _newsArticleReadRepository
-            .GetNewsArticlesAsync(newsArticleSearchStatus: request.searchStatus);
+            .GetNewsArticlesAsync(newsArticleSearchFilter: request.newsArticleSearchFilter);
 
         // Order articles based on the request's IsArchived flag
         IOrderedEnumerable<NewsArticle> orderedNewsArticles;
-        switch (request.searchStatus)
+        switch (request.newsArticleSearchFilter)
         {
-            case NewsArticleSearchStatus.ArchivedWithPublished:
-            case NewsArticleSearchStatus.ArchivedWithNotPublished:
-            case NewsArticleSearchStatus.ArchivedWithPublishedAndNotPublished:
+            case NewsArticleSearchFilter.ArchivedWithPublished:
+            case NewsArticleSearchFilter.ArchivedWithNotPublished:
+            case NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished:
                 orderedNewsArticles = newsArticlesResult.OrderByDescending(x => x.ModifiedDate);
                 break;
-            case NewsArticleSearchStatus.NotArchivedWithPublished:
-            case NewsArticleSearchStatus.NotArchivedWithNotPublished:
-            case NewsArticleSearchStatus.NotArchivedWithPublishedAndNotPublished:
+            case NewsArticleSearchFilter.NotArchivedWithPublished:
+            case NewsArticleSearchFilter.NotArchivedWithNotPublished:
+            case NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished:
                 orderedNewsArticles = newsArticlesResult
                     .OrderByDescending(x => x.Pinned)
                     .ThenByDescending(x => x.ModifiedDate);

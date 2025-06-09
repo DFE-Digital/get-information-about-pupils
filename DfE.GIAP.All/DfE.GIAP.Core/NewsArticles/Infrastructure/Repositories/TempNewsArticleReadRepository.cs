@@ -63,36 +63,36 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         }
     }
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchStatus newsArticleSearchStatus)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchFilter newsArticleSearchFilter)
     {
         try
         {
             string archivedFilter = string.Empty;
             string publishedFilter = string.Empty;
 
-            switch (newsArticleSearchStatus)
+            switch (newsArticleSearchFilter)
             {
-                case NewsArticleSearchStatus.ArchivedWithPublished:
+                case NewsArticleSearchFilter.ArchivedWithPublished:
                     archivedFilter = "c.Archived=true";
                     publishedFilter = " AND c.Published=true";
                     break;
-                case NewsArticleSearchStatus.ArchivedWithNotPublished:
+                case NewsArticleSearchFilter.ArchivedWithNotPublished:
                     archivedFilter = "c.Archived=true";
                     publishedFilter = " AND c.Published=false";
                     break;
-                case NewsArticleSearchStatus.ArchivedWithPublishedAndNotPublished:
+                case NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished:
                     archivedFilter = "c.Archived=true";
                     publishedFilter = string.Empty; // both published and not published
                     break;
-                case NewsArticleSearchStatus.NotArchivedWithPublished:
+                case NewsArticleSearchFilter.NotArchivedWithPublished:
                     archivedFilter = "c.Archived=false";
                     publishedFilter = " AND c.Published=true";
                     break;
-                case NewsArticleSearchStatus.NotArchivedWithNotPublished:
+                case NewsArticleSearchFilter.NotArchivedWithNotPublished:
                     archivedFilter = "c.Archived=false";
                     publishedFilter = " AND c.Published=false";
                     break;
-                case NewsArticleSearchStatus.NotArchivedWithPublishedAndNotPublished:
+                case NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished:
                     archivedFilter = "c.Archived=false";
                     publishedFilter = string.Empty; // both published and not published
                     break;

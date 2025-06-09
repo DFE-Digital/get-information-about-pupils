@@ -1,16 +1,14 @@
 ﻿namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
 /// <summary>
-/// Represents a request for retrieving news articles.
+/// Represents a request to retrieve news articles based on specified search criteria.
 /// </summary>
-/// <param name="IsArchived">Indicates whether to fetch archived news articles.</param>
-/// <param name="IsPublished">
-/// Indicates whether to fetch published news articles. 
-/// If null, fetches both published and unpublished articles.
-/// </param>
-public record GetNewsArticlesRequest(NewsArticleSearchStatus searchStatus);
+/// <remarks>This request encapsulates the search filter used to query news articles.  The filter defines the
+/// criteria for narrowing down the results, such as keywords, date ranges, or categories.</remarks>
+/// <param name="newsArticleSearchFilter">The filter specifying the search criteria for retrieving news articles.</param>
+public record GetNewsArticlesRequest(NewsArticleSearchFilter newsArticleSearchFilter);
 
-public enum NewsArticleSearchStatus
+public enum NewsArticleSearchFilter
 {
     ArchivedWithPublished,
     ArchivedWithNotPublished,

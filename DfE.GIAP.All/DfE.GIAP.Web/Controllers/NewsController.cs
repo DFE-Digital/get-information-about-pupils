@@ -39,7 +39,7 @@ public class NewsController : Controller
         CommonResponseBody newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
         CommonResponseBody newsMaintenance = await _contentService.GetContent(DocumentType.PlannedMaintenance).ConfigureAwait(false);
 
-        GetNewsArticlesRequest request = new(NewsArticleSearchStatus.NotArchivedWithPublished);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.NotArchivedWithPublished);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
         NewsViewModel model = new()
@@ -55,7 +55,7 @@ public class NewsController : Controller
     [Route("archive")]
     public async Task<IActionResult> Archive()
     {
-        GetNewsArticlesRequest request = new(NewsArticleSearchStatus.ArchivedWithPublished);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublished);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
         NewsViewModel model = new()

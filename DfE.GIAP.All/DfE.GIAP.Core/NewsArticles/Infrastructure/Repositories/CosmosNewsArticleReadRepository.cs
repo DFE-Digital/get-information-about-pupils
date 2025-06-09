@@ -73,54 +73,47 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     }
 
 
-    /// <summary>
-    /// Asynchronously retrieves a collection of news articles from Cosmos DB based on their archived and draft status.
-    /// </summary>
-    /// <param name="isArchived">
-    /// Indicates whether to include archived articles. Set to <see langword="true"/> to include archived articles.
-    /// </param>
-    /// <param name="isDraft">
-    /// Indicates whether to include draft articles. Set to <see langword="true"/> to include draft articles.
-    /// </param>
-    /// <returns>
-    /// A task representing the asynchronous operation. The result contains an <see cref="IEnumerable{T}"/> of 
-    /// <see cref="NewsArticle"/> objects that match the specified criteria. Returns an empty collection if an error occurs.
-    /// </returns>
-    /// <remarks>
-    /// Constructs a SQL query dynamically based on the provided filters and executes it against the Cosmos DB container.
-    /// Logs critical errors if a Cosmos DB exception is encountered.
-    /// </remarks>
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchStatus newsArticleSearchStatus)
+    /// <summary>
+    /// Retrieves a collection of news articles based on the specified search filter.
+    /// </summary>
+    /// <remarks>This method queries a Cosmos DB container to retrieve news articles based on the provided
+    /// filter. The filter determines whether articles are archived, published, or both. In the event of a <see
+    /// cref="CosmosException"/>, the method logs the error and returns an empty collection.</remarks>
+    /// <param name="newsArticleSearchFilter">A filter that specifies the criteria for retrieving news articles, such as whether they are archived, published,
+    /// or both.</param>
+    /// <returns>An asynchronous task that returns an <see cref="IEnumerable{T}"/> of <see cref="NewsArticle"/> objects matching
+    /// the specified filter. If no articles match the filter, an empty collection is returned.</returns>
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchFilter newsArticleSearchFilter)
     {
         try
         {
             string archivedFilter = string.Empty;
             string publishedFilter = string.Empty;
 
-            switch (newsArticleSearchStatus)
+            switch (newsArticleSearchFilter)
             {
-                case NewsArticleSearchStatus.ArchivedWithPublished:
+                case NewsArticleSearchFilter.ArchivedWithPublished:
                     archivedFilter = "c.Archived=true";
                     publishedFilter = " AND c.Published=true";
                     break;
-                case NewsArticleSearchStatus.ArchivedWithNotPublished:
+                case NewsArticleSearchFilter.ArchivedWithNotPublished:
                     archivedFilter = "c.Archived=true";
                     publishedFilter = " AND c.Published=false";
                     break;
-                case NewsArticleSearchStatus.ArchivedWithPublishedAndNotPublished:
+                case NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished:
                     archivedFilter = "c.Archived=true";
                     publishedFilter = string.Empty; // both published and not published
                     break;
-                case NewsArticleSearchStatus.NotArchivedWithPublished:
+                case NewsArticleSearchFilter.NotArchivedWithPublished:
                     archivedFilter = "c.Archived=false";
                     publishedFilter = " AND c.Published=true";
                     break;
-                case NewsArticleSearchStatus.NotArchivedWithNotPublished:
+                case NewsArticleSearchFilter.NotArchivedWithNotPublished:
                     archivedFilter = "c.Archived=false";
                     publishedFilter = " AND c.Published=false";
                     break;
-                case NewsArticleSearchStatus.NotArchivedWithPublishedAndNotPublished:
+                case NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished:
                     archivedFilter = "c.Archived=false";
                     publishedFilter = string.Empty; // both published and not published
                     break;
