@@ -8,4 +8,14 @@
 /// Indicates whether to fetch published news articles. 
 /// If null, fetches both published and unpublished articles.
 /// </param>
-public record GetNewsArticlesRequest(bool IsArchived, bool? IsPublished);
+public record GetNewsArticlesRequest(NewsArticleSearchStatus searchStatus);
+
+public enum NewsArticleSearchStatus
+{
+    ArchivedWithPublished,
+    ArchivedWithNotPublished,
+    ArchivedWithPublishedAndNotPublished,
+    NotArchivedWithPublished,
+    NotArchivedWithNotPublished,
+    NotArchivedWithPublishedAndNotPublished
+}

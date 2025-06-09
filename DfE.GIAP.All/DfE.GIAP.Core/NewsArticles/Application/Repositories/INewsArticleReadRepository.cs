@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.NewsArticles.Application.Models;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.Repositories;
 
@@ -28,7 +29,7 @@ public interface INewsArticleReadRepository
     /// </param>
     /// <returns>A task that represents the asynchronous operation. The task result contains an  <see cref="IEnumerable{T}"/>
     /// of <see cref="NewsArticle"/> objects that match the specified criteria.</returns>
-    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isDraft);
+    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchStatus newsArticleSearchStatus);
 
     /// <summary>
     /// Asynchronously retrieves a news article by its unique identifier.

@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
@@ -90,17 +91,41 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     /// Logs critical errors if a Cosmos DB exception is encountered.
     /// </remarks>
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool? isDraft)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchStatus newsArticleSearchStatus)
     {
         try
         {
-            string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string publishedFilter = isDraft switch
+            string archivedFilter = string.Empty;
+            string publishedFilter = string.Empty;
+
+            switch (newsArticleSearchStatus)
             {
-                true => " AND c.Published=false",
-                false => " AND c.Published=true",
-                null => string.Empty
-            };
+                case NewsArticleSearchStatus.ArchivedWithPublished:
+                    archivedFilter = "c.Archived=true";
+                    publishedFilter = " AND c.Published=true";
+                    break;
+                case NewsArticleSearchStatus.ArchivedWithNotPublished:
+                    archivedFilter = "c.Archived=true";
+                    publishedFilter = " AND c.Published=false";
+                    break;
+                case NewsArticleSearchStatus.ArchivedWithPublishedAndNotPublished:
+                    archivedFilter = "c.Archived=true";
+                    publishedFilter = string.Empty; // both published and not published
+                    break;
+                case NewsArticleSearchStatus.NotArchivedWithPublished:
+                    archivedFilter = "c.Archived=false";
+                    publishedFilter = " AND c.Published=true";
+                    break;
+                case NewsArticleSearchStatus.NotArchivedWithNotPublished:
+                    archivedFilter = "c.Archived=false";
+                    publishedFilter = " AND c.Published=false";
+                    break;
+                case NewsArticleSearchStatus.NotArchivedWithPublishedAndNotPublished:
+                    archivedFilter = "c.Archived=false";
+                    publishedFilter = string.Empty; // both published and not published
+                    break;
+            }
+
             string query = $"SELECT * FROM c WHERE {archivedFilter}{publishedFilter}";
 
             IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
