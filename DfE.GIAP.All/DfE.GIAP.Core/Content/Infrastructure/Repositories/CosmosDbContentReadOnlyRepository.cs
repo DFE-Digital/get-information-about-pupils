@@ -61,6 +61,6 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
         }
 
         return _contentDtoToContentMapper.Map(output);
-        
+
     }
 }
