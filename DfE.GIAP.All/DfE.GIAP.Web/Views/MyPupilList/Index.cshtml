@@ -1,4 +1,4 @@
-﻿@model SearchMyPupilListViewModel
+﻿@model MyPupilListViewModel
 @{
     ViewData["Title"] = Model.PageHeading;
 }
@@ -70,7 +70,7 @@
         }
         @if (!Model.ShowErrors && Model.Learners != null && Model.Learners.Any())
         {
-            <partial name="~/Views/Search/MyPupilList/_MyPupilListDownloadLinks.cshtml" model="Model" />
+            <partial name="~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml" model="Model" />
 
             <div class="download-block">
                 <div class="govuk-warning-text">

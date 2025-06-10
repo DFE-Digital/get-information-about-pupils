@@ -19,6 +19,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,15 +32,15 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Web.Controllers.Search;
+namespace DfE.GIAP.Web.Controllers.MyPupilList;
 
 [Route(Routes.Application.MyPupilList)]
-public class SearchMyPupilListController : Controller
+public class MyPupilListController : Controller
 {
     public const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
 
-    private readonly ILogger<SearchMyPupilListController> _logger;
+    private readonly ILogger<MyPupilListController> _logger;
     private readonly ICommonService _commonService;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ISelectionManager _selectionManager;
@@ -51,8 +52,8 @@ public class SearchMyPupilListController : Controller
     public string SortFieldSessionKey = "SearchMPL_SortField";
     public string SortDirectionSessionKey = "SearchMPL_SortDirection";
 
-    public SearchMyPupilListController(
-        ILogger<SearchMyPupilListController> logger,
+    public MyPupilListController(
+        ILogger<MyPupilListController> logger,
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ISelectionManager selectionManager,
@@ -72,7 +73,7 @@ public class SearchMyPupilListController : Controller
     }
 
     [HttpGet]
-    public Task<IActionResult> MyPupilList(bool returnToMPL = false)
+    public Task<IActionResult> Index(bool returnToMPL = false)
     {
         _logger.LogInformation("My pupil list GET method is called");
         return Search(returnToMPL);
@@ -80,7 +81,7 @@ public class SearchMyPupilListController : Controller
 
     [HttpPost]
     public Task<IActionResult> MyPupilList(
-        SearchMyPupilListViewModel model,
+        MyPupilListViewModel model,
         [FromQuery] int pageNumber,
         bool calledByController = false,
         bool failedDownload = false)
@@ -95,8 +96,8 @@ public class SearchMyPupilListController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.SearchMyPupilList.RemoveSelected)]
-    public async Task<IActionResult> RemoveSelected(SearchMyPupilListViewModel model)
+    [Route(Routes.MyPupilList.RemoveSelected)]
+    public async Task<IActionResult> RemoveSelected(MyPupilListViewModel model)
     {
         _logger.LogInformation("Remove from my pupil list POST method is called");
 
@@ -128,25 +129,25 @@ public class SearchMyPupilListController : Controller
 
         return (pagesRemaining != 0)
             ? await MyPupilList(model, model.PageNumber, true)
-            : await MyPupilList();
+            : await Index();
     }
 
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
-    public Task<IActionResult> ToDownloadCommonTransferFileData(SearchMyPupilListViewModel model)
+    public Task<IActionResult> ToDownloadCommonTransferFileData(MyPupilListViewModel model)
         => HandleDownloadRequest(model, DownloadType.CTF);
 
     [HttpPost]
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
-    public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(SearchMyPupilListViewModel model)
+    public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(MyPupilListViewModel model)
         => HandleDownloadRequest(model, DownloadType.PupilPremium);
 
     [HttpPost]
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
-    public Task<IActionResult> ToDownloadSelectedNPDDataUPN(SearchMyPupilListViewModel model)
+    public Task<IActionResult> ToDownloadSelectedNPDDataUPN(MyPupilListViewModel model)
         => HandleDownloadRequest(model, DownloadType.NPD);
 
-    private async Task<IActionResult> HandleDownloadRequest(SearchMyPupilListViewModel model, DownloadType downloadType)
+    private async Task<IActionResult> HandleDownloadRequest(MyPupilListViewModel model, DownloadType downloadType)
     {
         SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
         var selectedPupils = GetSelected(model.Upn.FormatLearnerNumbers());
@@ -178,7 +179,7 @@ public class SearchMyPupilListController : Controller
         };
     }
 
-    private void PrepareStarredPupilConfirmation(SearchMyPupilListViewModel model, HashSet<string> selectedPupils, DownloadType downloadType)
+    private void PrepareStarredPupilConfirmation(MyPupilListViewModel model, HashSet<string> selectedPupils, DownloadType downloadType)
     {
         var confirmationModel = model.StarredPupilConfirmationViewModel;
         confirmationModel.SelectedPupil = string.Join(',', selectedPupils);
@@ -186,7 +187,7 @@ public class SearchMyPupilListController : Controller
         confirmationModel.DownloadType = downloadType;
     }
 
-    private async Task<IActionResult> DownloadCommonTransferFileData(SearchMyPupilListViewModel model, string[] selectedPupils)
+    private async Task<IActionResult> DownloadCommonTransferFileData(MyPupilListViewModel model, string[] selectedPupils)
     {
         var downloadFile = await _ctfService.GetCommonTransferFile(
             selectedPupils,
@@ -204,7 +205,7 @@ public class SearchMyPupilListController : Controller
         return await MyPupilList(model, model.PageNumber, true, true);
     }
 
-    private async Task<IActionResult> DownloadPupilPremiumData(SearchMyPupilListViewModel model, string[] selectedPupils)
+    private async Task<IActionResult> DownloadPupilPremiumData(MyPupilListViewModel model, string[] selectedPupils)
     {
         var userOrganisation = new UserOrganisation
         {
@@ -316,7 +317,7 @@ public class SearchMyPupilListController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.SearchMyPupilList.DownloadNonUPNConfirmationReturn)]
+    [Route(Routes.MyPupilList.DownloadNonUPNConfirmationReturn)]
     public async Task<IActionResult> DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel model)
     {
         model.ConfirmationError = !model.ConfirmationGiven;
@@ -334,9 +335,9 @@ public class SearchMyPupilListController : Controller
 
             return model.DownloadType switch
             {
-                DownloadType.CTF => await DownloadCommonTransferFileData(new SearchMyPupilListViewModel { SelectedPupil = model.SelectedPupil.Split(",").ToList(), Upn = model.LearnerNumbers }, model.SelectedPupil.Split(",")),
+                DownloadType.CTF => await DownloadCommonTransferFileData(new MyPupilListViewModel { SelectedPupil = model.SelectedPupil.Split(",").ToList(), Upn = model.LearnerNumbers }, model.SelectedPupil.Split(",")),
                 DownloadType.NPD => await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupil, model.LearnerNumbers, joinedLearnerNumbers.Length),
-                DownloadType.PupilPremium => await DownloadPupilPremiumData(new SearchMyPupilListViewModel { SelectedPupil = model.SelectedPupil.Split(",").ToList(), Upn = model.LearnerNumbers }, model.SelectedPupil.Split(",")),
+                DownloadType.PupilPremium => await DownloadPupilPremiumData(new MyPupilListViewModel { SelectedPupil = model.SelectedPupil.Split(",").ToList(), Upn = model.LearnerNumbers }, model.SelectedPupil.Split(",")),
                 _ => ConfirmationForStarredPupil(model)
             };
         }
@@ -345,7 +346,7 @@ public class SearchMyPupilListController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.SearchMyPupilList.DownloadCancellationReturn)]
+    [Route(Routes.MyPupilList.DownloadCancellationReturn)]
     public Task<IActionResult> DownloadCancellationReturn(LearnerTextSearchViewModel model)
         => Search(true);
 
@@ -356,11 +357,11 @@ public class SearchMyPupilListController : Controller
     [NonAction]
     private async Task<IActionResult> Search(bool returnToMPL)
     {
-        var model = new SearchMyPupilListViewModel();
+        var model = new MyPupilListViewModel();
         PopulatePageText(model);
         PopulateNavigation(model);
         SetModelApplicationLabels(model);
-        SearchMyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
+        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
 
         var learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
 
@@ -377,16 +378,16 @@ public class SearchMyPupilListController : Controller
         model.PageNumber = 0;
         model.PageSize = PAGESIZE;
 
-        return View(Routes.SearchMyPupilList.MyPupilListView, model);
+        return View(Routes.MyPupilList.MyPupilListView, model);
     }
 
     [NonAction]
-    public async Task<IActionResult> Search(SearchMyPupilListViewModel model, int pageNumber, bool hasQueryItem = false, bool calledByController = false, bool failedDownload = false)
+    public async Task<IActionResult> Search(MyPupilListViewModel model, int pageNumber, bool hasQueryItem = false, bool calledByController = false, bool failedDownload = false)
     {
         PopulatePageText(model);
         PopulateNavigation(model);
         SetModelApplicationLabels(model);
-        SearchMyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
+        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
 
         var notPaged = !hasQueryItem && !calledByController;
         var allSelected = false;
@@ -428,13 +429,13 @@ public class SearchMyPupilListController : Controller
         HttpContext.Session.SetString(SortFieldSessionKey, model.SortField ?? "");
         HttpContext.Session.SetString(SortDirectionSessionKey, model.SortDirection ?? "");
 
-        return View(Routes.SearchMyPupilList.MyPupilListView, model);
+        return View(Routes.MyPupilList.MyPupilListView, model);
     }
 
 
     // Helper methods
-    private async Task<SearchMyPupilListViewModel> GetPupilsForSearchBuilder(
-        SearchMyPupilListViewModel model,
+    private async Task<MyPupilListViewModel> GetPupilsForSearchBuilder(
+        MyPupilListViewModel model,
         int pageNumber,
         bool first)
     {
@@ -498,7 +499,7 @@ public class SearchMyPupilListController : Controller
         return model;
     }
 
-    public SearchMyPupilListViewModel PopulateLearners(IEnumerable<Learner> learners, SearchMyPupilListViewModel model, List<Learner> ppLearners, int pageNumber)
+    public MyPupilListViewModel PopulateLearners(IEnumerable<Learner> learners, MyPupilListViewModel model, List<Learner> ppLearners, int pageNumber)
     {
         foreach (var learner in learners)
         {
@@ -529,24 +530,24 @@ public class SearchMyPupilListController : Controller
         learner.PupilPremium = itemExists ? "Yes" : "No";
     }
 
-    private void SetInvalid(Learner learner, SearchMyPupilListViewModel model, bool isMasked)
+    private void SetInvalid(Learner learner, MyPupilListViewModel model, bool isMasked)
     {
         bool isValid = ValidationHelper.IsValidUpn(isMasked ? RbacHelper.DecryptUpn(learner.LearnerNumberId) : learner.LearnerNumber);
         if (!isValid)
             model.Invalid.Add(learner);
     }
 
-    private SearchMyPupilListViewModel PopulatePageText(SearchMyPupilListViewModel model)
+    private MyPupilListViewModel PopulatePageText(MyPupilListViewModel model)
     {
         model.PageHeading = ApplicationLabel.SearchMyPupilListPageHeading;
         model.LearnerNumberLabel = Global.LearnerNumberLabel;
         return model;
     }
 
-    private SearchMyPupilListViewModel PopulateNavigation(SearchMyPupilListViewModel model)
+    private MyPupilListViewModel PopulateNavigation(MyPupilListViewModel model)
     {
         model.ShowLocalAuthority = _appSettings.UseLAColumn;
-        model.DownloadLinksPartial = "~/Views/Search/MyPupilList/_MyPupilListDownloadLinks.cshtml";
+        model.DownloadLinksPartial = "~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml";
         model.SearchAction = "MyPupilList";
         return model;
     }
@@ -583,7 +584,7 @@ public class SearchMyPupilListController : Controller
         _selectionManager.RemoveAll(toRemove);
     }
 
-    private void PopulateConfirmationViewModel(StarredPupilConfirmationViewModel model, SearchMyPupilListViewModel mplModel = null)
+    private void PopulateConfirmationViewModel(StarredPupilConfirmationViewModel model, MyPupilListViewModel mplModel = null)
     {
         model.ConfirmationReturnController = Global.MyPupilListControllerName;
         model.ConfirmationReturnAction = Global.MyPupilListDownloadConfirmationReturnAction;
@@ -617,7 +618,7 @@ public class SearchMyPupilListController : Controller
     private float NumberOfPagesRemainingAfterSelectedPupilsRemoved(float total, float toRemove)
         => (total - toRemove) / PAGESIZE;
 
-    private void SetRevisedCurrentPageNumber(float pagesRemaining, SearchMyPupilListViewModel model)
+    private void SetRevisedCurrentPageNumber(float pagesRemaining, MyPupilListViewModel model)
     {
         model.PageNumber = (int)Math.Ceiling(pagesRemaining) - 1;
     }
@@ -628,7 +629,7 @@ public class SearchMyPupilListController : Controller
     private string GetMyPupilListStringSeparatedBy(IEnumerable<MyPupilListItem> myPupilList, string separator)
         => string.Join(separator, myPupilList.Select(item => item.PupilId));
 
-    private void SetModelApplicationLabels(SearchMyPupilListViewModel model)
+    private void SetModelApplicationLabels(MyPupilListViewModel model)
     {
         model.DownloadSelectedASCTFLink = ApplicationLabel.DownloadSelectedAsCtfLink;
         model.RemoveSelectedToMyPupilListLink = ApplicationLabel.RemoveSelectedToMyPupilListLink;
