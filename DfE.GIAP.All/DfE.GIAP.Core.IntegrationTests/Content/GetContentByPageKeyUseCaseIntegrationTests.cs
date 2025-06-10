@@ -63,7 +63,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
         Assert.NotNull(response);
         List<ContentResultItem> results = response.ContentResultItems.ToList();
         Assert.Equal(2, response.ContentResultItems.Count());
-        
+
         Assert.Equal("TestContentKey1", results[0].Key);
         Assert.NotNull(results[0].Content);
         Assert.Equal(content[0].Title, results[0].Content!.Title);

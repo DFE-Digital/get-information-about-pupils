@@ -83,7 +83,7 @@ jobs:
 #        path: WebApp.zip
 
       - name: Verify formatting
-        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
+        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ DfE.GIAP.Core.IntegrationTests/ DfE.GIAP.Core.SharedTests/ --verify-no-changes
         working-directory: ${{ env.solutionDirectory }}
 
   integration_tests:

@@ -74,6 +74,6 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         //Assert
         Assert.NotNull(response);
         Assert.Null(response.NewsArticle);
-        
+
     }
 }

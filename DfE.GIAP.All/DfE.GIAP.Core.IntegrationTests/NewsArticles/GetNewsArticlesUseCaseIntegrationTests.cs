@@ -66,7 +66,7 @@ internal static class GetNewsArticleUseCaseNewsArticleExtensions
         => input
             .Where(t => t.Archived == requestIsArchived) // if requested archived include
             .Where(t => t.Published != requestIsDraft); // if requested draft then include
-    
+
     internal static IEnumerable<NewsArticle> OrderArticles(this IEnumerable<NewsArticle> input)
         => input
                 .OrderByDescending(t => t.Pinned)

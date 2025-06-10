@@ -25,7 +25,7 @@ public static class CompositionRoot
 
     private static IServiceCollection AddLocalConfiguration(this IServiceCollection services)
     {
-        
+
         services.AddSingleton<IConfiguration>(
             ConfigurationTestDoubles.Default()
                 .WithLocalCosmosDb()
