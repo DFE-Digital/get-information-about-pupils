@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Controllers.Extensions;
 using DfE.GIAP.Web.ViewModels;
 

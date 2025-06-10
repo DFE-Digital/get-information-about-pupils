@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 
 namespace DfE.GIAP.Web.Controllers.Extensions;
 

@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Repository;
-using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;

@@ -3,7 +3,7 @@ using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Controllers.Landing;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Tests.FakeData;

@@ -34,9 +34,9 @@ using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.Landing;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 
 namespace DfE.GIAP.Web.Extensions.Startup
 {

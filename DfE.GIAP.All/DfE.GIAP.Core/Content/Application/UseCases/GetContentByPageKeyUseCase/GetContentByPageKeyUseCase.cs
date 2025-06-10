@@ -5,7 +5,7 @@ using DfE.GIAP.Core.Content.Application.Options.Extensions;
 using DfE.GIAP.Core.Content.Application.Repository;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
+namespace DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>
 {
     private readonly IContentReadOnlyRepository _contentReadOnlyRepository;
