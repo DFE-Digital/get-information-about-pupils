@@ -17,12 +17,12 @@ public sealed class TempCosmosDbContentReadOnlyRepository : IContentReadOnlyRepo
     private readonly ILogger<TempCosmosDbContentReadOnlyRepository> _logger;
     private readonly CosmosClient _cosmosClient;
     private readonly ContentRepositoryOptions _contentRepositoryOptions;
-    private readonly IMapper<ContentDTO, Application.Model.Content> _contentDtoToContentMapper;
+    private readonly IMapper<ContentDTO?, Application.Model.Content> _contentDtoToContentMapper;
 
     public TempCosmosDbContentReadOnlyRepository(
         ILogger<TempCosmosDbContentReadOnlyRepository> logger,
         CosmosClient cosmosClient,
-        IMapper<ContentDTO, Application.Model.Content> contentDtoToContentMapper,
+        IMapper<ContentDTO?, Application.Model.Content> contentDtoToContentMapper,
         IOptions<ContentRepositoryOptions> contentRepositoryOptions)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -61,17 +61,12 @@ public sealed class TempCosmosDbContentReadOnlyRepository : IContentReadOnlyRepo
             FeedResponse<ContentDTO> response = await resultSet.ReadNextAsync(ctx);
             ContentDTO? output = response.FirstOrDefault();
 
-            if (output == null)
-            {
-                return Application.Model.Content.Empty();
-            }
-
             return _contentDtoToContentMapper.Map(output);
         }
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, $"CosmosException in {nameof(TempCosmosDbContentReadOnlyRepository.GetContentByKeyAsync)}.");
-            return Application.Model.Content.Empty();
+            throw;
         }
     }
 }
