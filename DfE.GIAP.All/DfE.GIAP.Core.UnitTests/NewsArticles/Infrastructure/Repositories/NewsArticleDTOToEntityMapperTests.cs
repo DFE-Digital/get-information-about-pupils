@@ -8,13 +8,13 @@ public sealed class NewsArticleDTOToEntityMapperTests
 {
 
     [Fact]
-    public void NewsArticleDTOToEntityMapper_Construct_With_Default_Constructor() => new NewsArticleDTOToEntityMapper();
+    public void NewsArticleDTOToEntityMapper_Construct_With_Default_Constructor() => new NewsArticleDtoToEntityMapper();
 
     [Fact]
     public void NewsArticleDTOToEntityMapper_ThrowsArgumentException_When_InputIsNull()
     {
         // Arrange
-        NewsArticleDTOToEntityMapper mapper = new();
+        NewsArticleDtoToEntityMapper mapper = new();
 
         // Act Assert
         Action act = () => mapper.Map(input: null!);
@@ -28,13 +28,13 @@ public sealed class NewsArticleDTOToEntityMapperTests
     public void NewsArticleDTOToEntityMapper_MapsProperties_When_DTO_HasProperties()
     {
         // Arrange
-        NewsArticleDTOToEntityMapper mapper = new();
+        NewsArticleDtoToEntityMapper mapper = new();
         NewsArticleDTO inputDto = NewsArticleDTOTestDoubles.Generate(count: 1).Single();
 
         // Act Assert
         NewsArticle mappedResponse = mapper.Map(inputDto);
         Assert.NotNull(mappedResponse);
-        Assert.Equal(mappedResponse.Id, inputDto.ID);
+        Assert.Equal(mappedResponse.Id, inputDto.Id);
         Assert.Equal(mappedResponse.Title, inputDto.Title);
         Assert.Equal(mappedResponse.Body, inputDto.Body);
         Assert.Equal(mappedResponse.DraftBody, inputDto.DraftBody);

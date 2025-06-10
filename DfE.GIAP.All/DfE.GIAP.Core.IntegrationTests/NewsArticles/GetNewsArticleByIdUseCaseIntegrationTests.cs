@@ -34,7 +34,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         await Parallel.ForEachAsync(seededArticles, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
 
         NewsArticleDTO targetArticle = seededArticles.First();
-        GetNewsArticleByIdRequest request = new(Id: targetArticle.ID);
+        GetNewsArticleByIdRequest request = new(Id: targetArticle.Id);
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
