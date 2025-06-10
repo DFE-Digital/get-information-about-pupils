@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # TODO: Consider if HTTP status 200 is actually expected - instead, may be a redirect to login
       - name: Run smoke tests with retries
         id: smoke-test
         shell: pwsh
