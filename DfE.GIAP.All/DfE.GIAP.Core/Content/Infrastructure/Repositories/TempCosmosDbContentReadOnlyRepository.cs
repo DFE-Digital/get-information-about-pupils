@@ -60,7 +60,6 @@ public sealed class TempCosmosDbContentReadOnlyRepository : IContentReadOnlyRepo
             using FeedIterator<ContentDTO> resultSet = container.GetItemQueryIterator<ContentDTO>(queryDefinition, null, null);
             FeedResponse<ContentDTO> response = await resultSet.ReadNextAsync(ctx);
             ContentDTO? output = response.FirstOrDefault();
-
             return _contentDtoToContentMapper.Map(output);
         }
         catch (CosmosException ex)

@@ -5,7 +5,7 @@ internal class ContentDTOToContentMapper : IMapper<ContentDTO?, Application.Mode
 {
     public Application.Model.Content Map(ContentDTO? input)
     {
-        if(input == null)
+        if (input == null)
         {
             return Application.Model.Content.Empty();
         }
