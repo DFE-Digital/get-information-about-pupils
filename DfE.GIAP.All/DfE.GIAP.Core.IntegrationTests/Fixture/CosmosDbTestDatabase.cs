@@ -70,7 +70,9 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
             containers.Single(
                 (container) => container.Container.Id == ApplicationDataContainerName);
 
-        ItemResponse<T> response = await targetContainer.Container.UpsertItemAsync(obj, new PartitionKey((obj as dynamic).DocumentType));
+        // TODO PartitionKeyOptions lookup besides application-data
+        // Container: Name, PartitionKey: DOCTYPE
+        ItemResponse<T> response = await targetContainer.Container.UpsertItemAsync(obj, new PartitionKey((obj as dynamic).DOCTYPE));
 
         Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
     }

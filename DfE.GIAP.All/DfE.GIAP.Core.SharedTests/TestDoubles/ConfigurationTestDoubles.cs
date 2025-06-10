@@ -5,29 +5,28 @@ using Microsoft.Extensions.Configuration.Memory;
 namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 public static class ConfigurationTestDoubles
 {
-    public static IConfiguration Default() => DefaultBuilder().Build();
+    public static IConfigurationBuilder Default() => new ConfigurationBuilder();
 
-    public static IConfiguration WithLocalCosmosDbRepositoryOptions()
+    public static IConfigurationBuilder WithConfiguration(this IConfigurationBuilder builder, Dictionary<string, string> config)
     {
-        ConfigurationBuilder builder = DefaultBuilder();
-
-        RepositoryOptions repositoryOptions = RepositoryOptionsFactory.LocalCosmosDbEmulator();
-
-        Dictionary<string, string?> config = new()
-        {
-            ["RepositoryOptions:ConnectionMode"] = "1",
-            ["RepositoryOptions:EndpointUri"] = repositoryOptions.EndpointUri,
-            ["RepositoryOptions:PrimaryKey"] = repositoryOptions.PrimaryKey,
-        };
-
         builder.Add(
             new MemoryConfigurationSource()
             {
                 InitialData = config
             });
-
-        return builder.Build();
+        return builder;
     }
 
-    private static ConfigurationBuilder DefaultBuilder() => new();
+    public static IConfigurationBuilder WithLocalCosmosDb(this IConfigurationBuilder builder)
+    {
+        RepositoryOptions options = RepositoryOptionsFactory.LocalCosmosDbEmulator();
+        Dictionary<string, string> configurationOptions = new()
+        {
+            ["RepositoryOptions:ConnectionMode"] = "1",
+            ["RepositoryOptions:EndpointUri"] = options.EndpointUri,
+            ["RepositoryOptions:PrimaryKey"] = options.PrimaryKey,
+        };
+        builder.WithConfiguration(configurationOptions);
+        return builder;
+    }
 }

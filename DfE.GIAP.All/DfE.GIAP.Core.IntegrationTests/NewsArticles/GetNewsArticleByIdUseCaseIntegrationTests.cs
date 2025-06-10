@@ -40,7 +40,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
 
         //Assert
-        IMapper<NewsArticleDTO, NewsArticle> testMapper = TestMapNewsArticleDTOToArticle.Create();
+        IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
         NewsArticle seededTargetArticle = testMapper.Map(targetArticle);
         Assert.NotNull(response);
         Assert.NotNull(response.NewsArticle);

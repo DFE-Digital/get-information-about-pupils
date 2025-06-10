@@ -21,9 +21,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
     [InlineData(false, false)]
     public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(bool isArchived, bool isDraft)
     {
-        // Arrange
-        await _fixture.Database.ClearDatabaseAsync();
-
+        //Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
                 .AddTestServices()
@@ -46,7 +44,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
 
         // Assert
-        IMapper<NewsArticleDTO, NewsArticle> testMapper = TestMapNewsArticleDTOToArticle.Create();
+        IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
 
         List<NewsArticle> expectedArticlesOutput =
             seededDTOs.Select(testMapper.Map)
