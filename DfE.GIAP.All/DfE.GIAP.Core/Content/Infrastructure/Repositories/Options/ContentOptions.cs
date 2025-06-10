@@ -1,5 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;
 public sealed class ContentOptions
 {
-    public string Id { get; set; }
+    public string DocumentId { get; set; }
 }

@@ -2,46 +2,53 @@
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Infrastructure;
+using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Repository;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentById;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentByKey;
 using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
+using DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Content;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddContentDependencies(this IServiceCollection services)
+    public static IServiceCollection AddContentDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
         return services
-            .RegisterApplicationDependencies()
-            .RegisterInfrastructureDependencies();
+            .RegisterApplicationDependencies(configuration)
+            .RegisterInfrastructureDependencies(configuration);
     }
 
     // Application
-    private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
+    private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services, IConfiguration configuration)
     {
-        return services
-            .AddScoped<IUseCase<GetContentByKeyUseCaseRequest, GetContentByKeyUseCaseResponse>, GetContentByKeyUseCase>()
-            .AddScoped<IUseCase<GetMultipleContentByKeysUseCaseRequest, GetMultipleContentByKeysUseCaseResponse>, GetMultipleContentByKeysUseCase>();
+        services
+            .AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
+        services.Configure<PageContentOptions>(
+            (options) => configuration.GetSection(nameof(PageContentOptions)).Bind(options));
+        
+        return services;
     }
 
     // Infrastructure 
-    private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
+    private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         return services
             .AddCosmosDbDependencies()
             .RegisterInfrastructureRepositories()
-            .RegisterInfrastructureMappers();
+            .RegisterInfrastructureMappers()
+            .Configure<ContentRepositoryOptions>(
+                (options) => configuration.GetSection(nameof(ContentRepositoryOptions)).Bind(options));
+
     }
 
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         services.AddTemporaryCosmosClient();
-        services.AddScoped<IContentReadOnlyRepository, CosmosDbContentReadOnlyRepository>();
+        services.AddScoped<IContentReadOnlyRepository, TempCosmosDbContentReadOnlyRepository>();
         return services;
     }
 

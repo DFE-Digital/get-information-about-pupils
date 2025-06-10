@@ -21,7 +21,7 @@ var configuration = builder.Configuration;
 // Services configuration
 builder.Services
     .AddNewsArticleDependencies()
-    .AddContentDependencies()
+    .AddContentDependencies(configuration)
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()

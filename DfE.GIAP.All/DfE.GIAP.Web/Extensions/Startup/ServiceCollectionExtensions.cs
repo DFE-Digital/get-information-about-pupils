@@ -33,6 +33,10 @@ using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Content.Application.UseCases.GetMultipleContentByKeys;
+using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Controllers.Landing;
 
 namespace DfE.GIAP.Web.Extensions.Startup
 {
@@ -90,6 +94,8 @@ namespace DfE.GIAP.Web.Extensions.Startup
             services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
             services.AddScoped<ISessionProvider, SessionProvider>();
 
+            //Mappers ToViewModel
+            services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, LandingViewModel>, ContentResultToLandingViewModelMapper>();
             return services;
         }
 

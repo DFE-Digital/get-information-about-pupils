@@ -3,4 +3,9 @@ public record Content
 {
     public required string Body { get; init; }
     public required string Title { get; init; }
+    public static Content Empty() => new()
+    {
+        Body = string.Empty,
+        Title = string.Empty
+    };
 }

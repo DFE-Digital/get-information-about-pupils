@@ -3,9 +3,9 @@
 namespace DfE.GIAP.Core.Content.Infrastructure.Repositories.Options.Extensions;
 internal static class ContentRepositoryOptionsExtensions
 {
-    public static string GetContentIdentifierFromKey(
+    public static string GetContentDocumentIdentifierFromKey(
         this ContentRepositoryOptions contentRepositoryOptions, ContentKey contentKey) =>
-            contentRepositoryOptions.ContentKeyMappings.TryGetValue(contentKey.Value, out ContentOptions? contentReference) ?
-                contentReference.Id :
+            contentRepositoryOptions.ContentKeyToDocumentMapping.TryGetValue(contentKey.Value, out ContentOptions? contentReference) ?
+                contentReference.DocumentId :
                     string.Empty;
 }
