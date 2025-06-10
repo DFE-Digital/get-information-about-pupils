@@ -10,6 +10,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Service.News;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
 namespace DfE.GIAP.Web.Controllers;
 

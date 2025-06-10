@@ -28,6 +28,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 

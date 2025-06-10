@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+﻿using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using DfE.GIAP.Core.NewsArticles.Application.Models;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.Repositories;
 
