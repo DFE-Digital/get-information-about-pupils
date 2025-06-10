@@ -1,0 +1,38 @@
+name: Smoke Test
+description: Run smoke tests against a deployed application.
+
+inputs:
+  url:
+    description: URL of the application to test.
+    required: true
+  username:
+    description: Basic auth username (optional).
+    required: false
+    default: ""
+  password:
+    description: Basic auth password (optional).
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate URL input
+      shell: pwsh
+      run: |
+        if ([string]::IsNullOrWhiteSpace("${{ inputs.url }}")) {
+          Write-Error "The 'url' input is required but was not provided or is empty."
+          exit 1
+        }
+
+    - name: Run smoke test
+      shell: pwsh
+      run: |
+        $url = "${{ inputs.url }}"
+        $username = "${{ inputs.username }}"
+        $password = "${{ inputs.password }}"
+
+        Write-Host "Running smoke test with URL: $url"
+
+        # Call the script with properly formatted parameters
+        & ./scripts/smoke-test.ps1 -url "$url" $(if ($username) { "-username `"$username`"" }) $(if ($password) { "-password `"$password`"" })
