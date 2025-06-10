@@ -113,7 +113,7 @@ jobs:
 
   local_integration_tests:
     runs-on: ubuntu-latest
-    needs: build_test_package
+#    needs: build_test_package
     services:
       cosmosdb:
         image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
@@ -156,7 +156,7 @@ jobs:
     needs: [build_test_package, lint, local_integration_tests]
 #    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
-      environment: development
+      environment: development-poc
       ## Temporary POC on Azure
       app_name: giap-deploy-demo-development
     secrets:
