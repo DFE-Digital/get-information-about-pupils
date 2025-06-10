@@ -1,0 +1,214 @@
+name: giap-web-cicd
+
+permissions:
+  contents: read  # This is required to checkout the code.
+  packages: read  # This is required to access the DfEDigital NuGet feed.
+  id-token: write # This is required for OIDC authentication with Azure
+
+on:
+  push:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    env:
+      SOLUTION_DIRECTORY: DfE.GIAP.All
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v4
+
+      - name: Add DfEDigital NuGet Feed
+        run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+
+      - name: Verify formatting
+        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_CONFIGURATION: Release
+      SOLUTION_DIRECTORY: DfE.GIAP.All
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '12'
+
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v4
+
+      - name: Install NuGet
+        uses: NuGet/setup-nuget@v1
+
+      - name: npm install
+        run: npm install
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}/DfE.GIAP.Web
+
+      - name: Add DfEDigital NuGet Feed
+        run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+
+      - name: Restore NuGet packages
+        run: dotnet restore *.sln
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Build solution
+        run: dotnet build *.sln --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore -p:SkipInvalidConfigurations=true
+
+        # These are specific to windows-latest msdeploy so have been removed temporarily
+        #-p:DesktopBuildPackageLocation="${{ github.workspace }}\WebApp.zip"
+        # -p:DeployOnBuild=true -p:WebPublishMethod=Package -p:PackageAsSingleFile=true -p:DeployIisAppPath="Default Web Site"
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Run unit tests
+        run: dotnet test *.sln --configuration ${{ env.BUILD_CONFIGURATION }} --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Install ReportGenerator tool
+        run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Generate test coverage reports
+        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Upload test coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+
+      - name: Run gulp
+        run: |
+          npm install -g gulp
+          gulp default --gulpfile DfE.GIAP.Web/gulpfile.js --cwd DfE.GIAP.Web
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Publish application
+        run: dotnet publish DfE.GIAP.Web/DfE.GIAP.Web.csproj --configuration ${{ env.BUILD_CONFIGURATION }} --output ${{ github.workspace }}/publish
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Verify publish output
+        run: ls -hal ${{ github.workspace }}/publish
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged_app_for_deployment
+          path: publish
+          if-no-files-found: error
+
+  deploy_dev:
+    uses: ./.github/workflows/deploy.yml
+    needs: [build_and_test, lint]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: development
+      app_name: giap-deploy-demo-development
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  smoke_test_dev:
+    uses: ./.github/workflows/smoke-test.yml
+    needs: deploy_dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: development
+      app_url: ${{ needs.deploy_dev.outputs.app_url }}
+
+  deploy_test:
+    uses: ./.github/workflows/deploy.yml
+    needs: smoke_test_dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: test
+      app_name: giap-deploy-demo-test
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  smoke_test_test:
+    uses: ./.github/workflows/smoke-test.yml
+    needs: deploy_test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: test
+      app_url: ${{ needs.deploy_test.outputs.app_url }}
+
+##  PLACEHOLDERS FOR ADDITIONAL TESTS
+#  integration_test_test:
+#    uses: ./.github/workflows/integration-test.yml
+#    needs: smoke_test_dev
+#    with:
+#      environment: test
+#      app_url: ${{ needs.deploy_dev.outputs.app_url }}
+#
+#  accessibilty_test_test:
+#    uses: ./.github/workflows/accessibility-test.yml
+#    needs: smoke_test_dev
+#    with:
+#      environment: test
+#      app_url: ${{ needs.deploy_dev.outputs.app_url }}
+#
+  deploy_preproduction:
+    uses: ./.github/workflows/deploy.yml
+#    needs: [smoke_test_test, integration_test_test, accessibilty_test_test]
+    needs: [smoke_test_test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: preproduction
+      app_name: giap-deploy-demo-preproduction
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  smoke_test_preproduction:
+    uses: ./.github/workflows/smoke-test.yml
+    needs: deploy_preproduction
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: preproduction
+      app_url: ${{ needs.deploy_preproduction.outputs.app_url }}
+
+##  PLACEHOLDERS FOR ADDITIONAL TESTS
+#  performance_test_preproduction:
+#    uses: ./.github/workflows/performance-test.yml
+#    needs: smoke_test_dev
+#    with:
+#      environment: preproduction
+#      app_url: ${{ needs.deploy_dev.outputs.app_url }}
+
+  deploy_prod:
+    uses: ./.github/workflows/deploy.yml
+    needs: smoke_test_preproduction
+#    needs: [smoke_test_preproduction, performance_test_preproduction]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: production
+      app_name: giap-deploy-demo-production
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  smoke_test_prod:
+    uses: ./.github/workflows/smoke-test.yml
+    needs: deploy_prod
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    with:
+      environment: production
+      app_url: ${{ needs.deploy_prod.outputs.app_url }}

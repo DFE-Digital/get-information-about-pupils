@@ -1,0 +1,94 @@
+name: Deploy to Azure Web App
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Environment to deploy to (development, test, preproduction, production)'
+      app_name:
+        required: true
+        type: string
+        description: 'Name of the Azure Web App to deploy to'
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+    outputs:
+      app_url:
+        description: "The URL of the deployed application"
+        value: ${{ jobs.deploy.outputs.app_url }}
+
+permissions:
+  id-token: write # This is required for requesting the JWT (used to authenticate with Azure)
+  contents: read  # This is required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    outputs:
+      app_url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Verify Azure secrets are defined
+        shell: pwsh
+        run: |
+          $missingSecrets = @()
+
+          if ([string]::IsNullOrEmpty("${{ secrets.AZURE_CLIENT_ID }}")) {
+            $missingSecrets += "AZURE_CLIENT_ID"
+          }
+
+          if ([string]::IsNullOrEmpty("${{ secrets.AZURE_TENANT_ID }}")) {
+            $missingSecrets += "AZURE_TENANT_ID"
+          }
+
+          if ([string]::IsNullOrEmpty("${{ secrets.AZURE_SUBSCRIPTION_ID }}")) {
+            $missingSecrets += "AZURE_SUBSCRIPTION_ID"
+          }
+
+          if ($missingSecrets.Count -gt 0) {
+            Write-Host "::error::The following secrets are missing for the ${{ inputs.environment }} environment:"
+            foreach ($secret in $missingSecrets) {
+              Write-Host "::error::- $secret"
+            }
+            exit 1
+          }
+
+          Write-Host "All required Azure secrets are defined for the ${{ inputs.environment }} environment"
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: packaged_app_for_deployment
+          path: ./app-package
+
+      - name: Verify downloaded artifact
+        run: ls -la ./app-package
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ inputs.app_name }}
+          package: ./app-package
+
+      - name: Deployment details
+        shell: pwsh
+        run: |
+          Write-Host "Deployment to ${{ inputs.environment }} environment completed"
+          Write-Host "Application URL: ${{ steps.deploy-to-webapp.outputs.webapp-url }}"
