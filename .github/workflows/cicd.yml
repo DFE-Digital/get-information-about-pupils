@@ -154,7 +154,7 @@ jobs:
   deploy_dev_poc:
     uses: ./.github/workflows/deploy.yml
     needs: [build_test_package, lint, local_integration_tests]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
       environment: development
       ## Temporary POC on Azure
@@ -167,7 +167,7 @@ jobs:
   smoke_test_dev_poc:
     uses: ./.github/workflows/smoke-test.yml
     needs: deploy_dev_poc
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     with:
       environment: development-poc
       app_url: ${{ needs.deploy_dev_poc.outputs.app_url }}
