@@ -12,7 +12,7 @@ runs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '12'
+        node-version: '22'
 
     - name: Setup .NET SDK from global.json
       uses: actions/setup-dotnet@v4
@@ -20,8 +20,8 @@ runs:
     - name: Install NuGet tools
       uses: NuGet/setup-nuget@v1
 
-    - name: npm install
-      run: npm install
+    - name: npm ci
+      run: npm ci
       shell: bash
       working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
 
