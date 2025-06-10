@@ -20,10 +20,10 @@ runs:
     - name: Install NuGet tools
       uses: NuGet/setup-nuget@v1
 
-    - name: npm install
-      run: npm install
+    - name: npm ci
+      run: npm ci
       shell: bash
-      working-directory: ${{ env.solutionDirectory }}/DfE.GIAP.Web
+      working-directory: ./DfE.GIAP.All/DfE.GIAP.Web
 
     - name: Add DfEDigital NuGet Feed
       run: dotnet nuget add source --username USERNAME --password ${{ inputs.github_token }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
