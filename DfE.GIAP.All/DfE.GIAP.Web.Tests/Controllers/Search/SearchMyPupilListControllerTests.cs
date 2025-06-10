@@ -74,8 +74,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             SetUpLearnerList(upnArray);
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetLearners(2));
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetLearners(2));
 
             // act
             var result = await sut.MyPupilList();
@@ -102,8 +102,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var inputModel = GetInputModel(upns, AzureSearchFields.Forename, AzureSearchSortDirections.Ascending);
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.Forename);
 
@@ -129,8 +129,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Forename);
             var sut = GetController();
 
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
 
@@ -153,8 +153,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var inputModel = GetInputModel(upns, AzureSearchFields.Middlenames, AzureSearchSortDirections.Ascending);
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.Middlenames);
 
@@ -180,8 +180,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Middlenames);
             var sut = GetController();
 
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
 
@@ -204,8 +204,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var inputModel = GetInputModel(upns, AzureSearchFields.Surname, AzureSearchSortDirections.Ascending);
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.Surname);
 
@@ -231,8 +231,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Surname);
             var sut = GetController();
 
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
 
@@ -255,8 +255,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var inputModel = GetInputModel(upns, AzureSearchFields.Gender, AzureSearchSortDirections.Ascending);
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.Gender);
 
@@ -282,8 +282,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Gender);
             var sut = GetController();
 
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
 
@@ -306,8 +306,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var inputModel = GetInputModel(upns, AzureSearchFields.DOB, AzureSearchSortDirections.Ascending);
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.DOB);
 
@@ -333,8 +333,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.DOB);
             var sut = GetController();
 
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
 
@@ -362,8 +362,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetLearners(30));
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetLearners(30));
 
             // act
 
@@ -395,8 +395,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, new PaginatedResponse());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, new PaginatedResponse());
 
             // act
 
@@ -434,8 +434,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
             // act
             var result = await sut.MyPupilList(inputModel, 0);
@@ -470,8 +470,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
             // act
             var result = await sut.MyPupilList(true);
@@ -498,8 +498,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSession.SetString(sut.SortFieldSessionKey, AzureSearchFields.Forename);
             _mockSession.SetString(sut.SortDirectionSessionKey, AzureSearchSortDirections.Ascending);
 
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.MyPupilList(true);
@@ -529,8 +529,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>() { _paginatedResultsFake.GetUpn() });
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
             // act
             var result = await sut.MyPupilList(inputModel, 0, true);
@@ -574,8 +574,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             // arrange
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, new PaginatedResponse());
-            SetupPaginatedSearch(sut.PPIndexType, new PaginatedResponse());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, new PaginatedResponse());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, new PaginatedResponse());
 
             // act
             var result = await sut.MyPupilList();
@@ -600,8 +600,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetInvalidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetInvalidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetInvalidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetInvalidLearners());
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             // act
@@ -630,8 +630,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var sut = GetController();
 
             sut.ControllerContext.HttpContext.User = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal("001", "00", "GIAPApprover", 2, 2);
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
             // act
             var result = await sut.MyPupilList(inputModel, 0);
@@ -657,8 +657,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var sut = GetController();
 
             sut.ControllerContext.HttpContext.User = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal("001", "00", "GIAPApprover", 2, 2);
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
             // act
             var result = await sut.MyPupilList(inputModel, 0);
@@ -683,8 +683,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var sut = GetController();
 
             sut.ControllerContext.HttpContext.User = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal("001", "00", "GIAPApprover", 2, 2);
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetLearners(1));
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetLearners(1));
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetLearners(1));
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetLearners(1));
 
             // act
             var result = await sut.MyPupilList(inputModel, 0);
@@ -740,8 +740,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
                                 LearnerNumberId = "A203202811068",
                             }
                         };
-            SetupPaginatedSearch(sut.NPDIndexType, response);
-            SetupPaginatedSearch(sut.PPIndexType, response);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, response);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, response);
 
             // act
 
@@ -767,8 +767,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             // act
@@ -801,8 +801,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upnArray.Take(1).ToHashSet());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.RemoveSelected(inputModel);
@@ -837,8 +837,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upnsHash.Take(1).ToHashSet(), new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
@@ -867,8 +867,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upnsHash, new HashSet<string>());
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             // act
             var result = await sut.RemoveSelected(inputModel);
@@ -897,8 +897,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upnsHash.Take(2).ToHashSet(), new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             // act
             var result = await sut.RemoveSelected(inputModel);
@@ -927,8 +927,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upnsHash.Take(1).ToHashSet(), new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             // act
             var result = await sut.RemoveSelected(inputModel);
@@ -958,8 +958,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upnsHash.Take(21).ToHashSet(), new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             // act
             var result = await sut.RemoveSelected(inputModel);
@@ -984,8 +984,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>(), new HashSet<string>());
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
@@ -1013,8 +1013,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(null, new HashSet<string>());
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
@@ -1047,8 +1047,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // act
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
             var result = await sut.RemoveSelected(inputModel);
 
             // assert
@@ -1074,8 +1074,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             // act
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
             var result = await sut.RemoveSelected(inputModel);
 
             // assert
@@ -1135,8 +1135,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadCommonTransferFileData(inputModel);
@@ -1162,8 +1162,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController(4000, 1);
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadCommonTransferFileData(inputModel);
@@ -1201,8 +1201,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
              });
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadCommonTransferFileData(inputModel);
@@ -1246,8 +1246,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             });
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
@@ -1273,8 +1273,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
 
@@ -1342,8 +1342,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             // act
@@ -1588,8 +1588,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadSelectedNPDDataUPN(inputModel);
@@ -1699,8 +1699,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadSelectedPupilPremiumDataUPN(inputModel);
@@ -1736,8 +1736,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
                   ).Returns(new ReturnFile());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, learnersResponse);
-            SetupPaginatedSearch(sut.PPIndexType, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
             var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
@@ -1765,8 +1765,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadSelectedPupilPremiumDataUPN(inputModel);
@@ -1807,8 +1807,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetValidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
             // act
             var result = await sut.ToDownloadSelectedPupilPremiumDataUPN(inputModel);
@@ -1838,8 +1838,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetInvalidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetInvalidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetInvalidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetInvalidLearners());
 
             // act
             var result = await sut.MyPupilList(inputModel, 0);
@@ -1873,8 +1873,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
             var sut = GetController();
             var ageMinMax = RbacHelper.CalculateAge((DateTime)paginatedResponse.Learners.Last().DOB);
             sut.ControllerContext.HttpContext.User = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal("001", "00", "GIAPApprover", ageMinMax, ageMinMax);
-            SetupPaginatedSearch(sut.NPDIndexType, paginatedResponse);
-            SetupPaginatedSearch(sut.PPIndexType, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, paginatedResponse);
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
             // act
             var result = await sut.MyPupilList(inputModel, 0);
@@ -1905,8 +1905,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search
 
             _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(formattedMPLItems);
             var sut = GetController();
-            SetupPaginatedSearch(sut.NPDIndexType, _paginatedResultsFake.GetInvalidLearners());
-            SetupPaginatedSearch(sut.PPIndexType, _paginatedResultsFake.GetInvalidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetInvalidLearners());
+            SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetInvalidLearners());
 
             // act
             var result = await sut.MyPupilList();
