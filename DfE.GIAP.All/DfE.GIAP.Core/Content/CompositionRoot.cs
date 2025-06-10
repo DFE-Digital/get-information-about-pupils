@@ -29,7 +29,7 @@ public static class CompositionRoot
             .AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
         services.Configure<PageContentOptions>(
             (options) => configuration.GetSection(nameof(PageContentOptions)).Bind(options));
-        
+
         return services;
     }
 

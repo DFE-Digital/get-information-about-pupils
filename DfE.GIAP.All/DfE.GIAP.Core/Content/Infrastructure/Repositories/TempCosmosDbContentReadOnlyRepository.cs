@@ -68,7 +68,7 @@ public sealed class TempCosmosDbContentReadOnlyRepository : IContentReadOnlyRepo
 
             return _contentDtoToContentMapper.Map(output);
         }
-        catch(CosmosException ex)
+        catch (CosmosException ex)
         {
             _logger.LogCritical(ex, $"CosmosException in {nameof(TempCosmosDbContentReadOnlyRepository.GetContentByKeyAsync)}.");
             return Application.Model.Content.Empty();
