@@ -48,8 +48,10 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
         List<NewsArticle> expectedArticlesOutput =
             seededDTOs.Select(testMapper.Map)
-                .FilterRequestedArticles(request.IsArchived, request.IsDraft)
-                .OrderArticles()
+                .Where(t => t.Archived == isArchived) // if requested archived include
+                .Where(t => t.Published != isDraft) // if requested draft then include
+                .OrderByDescending(t => t.Pinned)
+                .ThenByDescending(t => t.ModifiedDate)
                 .ToList();
 
         Assert.NotNull(response);
@@ -57,18 +59,4 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         Assert.NotEmpty(response.NewsArticles);
         Assert.Equal(expectedArticlesOutput, response.NewsArticles);
     }
-}
-
-internal static class GetNewsArticleUseCaseNewsArticleExtensions
-{
-
-    internal static IEnumerable<NewsArticle> FilterRequestedArticles(this IEnumerable<NewsArticle> input, bool requestIsArchived, bool requestIsDraft)
-        => input
-            .Where(t => t.Archived == requestIsArchived) // if requested archived include
-            .Where(t => t.Published != requestIsDraft); // if requested draft then include
-
-    internal static IEnumerable<NewsArticle> OrderArticles(this IEnumerable<NewsArticle> input)
-        => input
-                .OrderByDescending(t => t.Pinned)
-                .ThenByDescending(t => t.ModifiedDate);
 }
