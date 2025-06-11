@@ -234,13 +234,14 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     }
 
     [Theory]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished, "c.Archived=false", " AND c.Published=true")]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithNotPublished, "c.Archived=false", " AND c.Published=false")]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished, "c.Archived=false", "")]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithPublished, "c.Archived=true", " AND c.Published=true")]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithNotPublished, "c.Archived=true", " AND c.Published=false")]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished, "c.Archived=true", "")]
-    public async Task GetNewsArticlesAsync_QueryConstructedCorrectly_When_Parameters_Passed_And_Handler_And_Mapper_Called(NewsArticleSearchFilter newsArticleSearchStatus, string expectedArchived, string expectedPublished)
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished, "c.Archived=false AND c.Published=true")]
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithNotPublished, "c.Archived=false AND c.Published=false")]
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished, "c.Archived=false")]
+    [InlineData(NewsArticleSearchFilter.ArchivedWithPublished, "c.Archived=true AND c.Published=true")]
+    [InlineData(NewsArticleSearchFilter.ArchivedWithNotPublished, "c.Archived=true AND c.Published=false")]
+    [InlineData(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished, "c.Archived=true")]
+    public async Task GetNewsArticlesAsync_QueryConstructedCorrectly_When_Parameters_Passed_And_Handler_And_Mapper_Called(
+        NewsArticleSearchFilter newsArticleSearchStatus, string expectedFilter)
     {
         // Arrange        
         const string ExpectedContainerName = "news";
@@ -255,12 +256,12 @@ public sealed class CosmosNewsArticleReadRepositoryTests
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object);
 
-        string expectedQuery = $"SELECT * FROM c WHERE {expectedArchived}{expectedPublished}";
+        string expectedQuery = $"SELECT * FROM c WHERE {expectedFilter}";
 
         // Act
         IEnumerable<NewsArticle> response = await sut.GetNewsArticlesAsync(newsArticleSearchStatus);
 
-        // Force enumaration
+        // Force enumeration
         response.ToList();
 
         // Assert
