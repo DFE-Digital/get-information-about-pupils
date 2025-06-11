@@ -88,8 +88,8 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     {
         try
         {
-            (string archivedFilter, string publishedFilter) = newsArticleSearchFilter.ToCosmosFilters();
-            string query = $"SELECT * FROM c WHERE {archivedFilter}{publishedFilter}";
+            string filter = newsArticleSearchFilter.ToCosmosFilters();
+            string query = $"SELECT * FROM c WHERE {filter}";
 
             IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
                 .ReadItemsAsync<NewsArticleDTO>(ContainerName, query);

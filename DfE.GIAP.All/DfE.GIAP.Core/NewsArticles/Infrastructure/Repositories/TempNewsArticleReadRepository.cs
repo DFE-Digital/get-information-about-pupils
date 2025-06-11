@@ -68,8 +68,8 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
     {
         try
         {
-            (string archivedFilter, string publishedFilter) = newsArticleSearchFilter.ToCosmosFilters();
-            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter}{publishedFilter}";
+            string filter = newsArticleSearchFilter.ToCosmosFilters();
+            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {filter}";
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
             using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
