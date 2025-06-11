@@ -1,11 +1,19 @@
-﻿using DfE.GIAP.Common.Helpers.CookieManager;
+﻿using System;
+using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
+using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Common.Constants.DsiConfiguration;
+using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Service.ApiProcessor;
+using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Content;
+using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Service.ManageDocument;
 using DfE.GIAP.Service.MPL;
@@ -15,6 +23,8 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Web.ViewModels;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -22,21 +32,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.DsiConfiguration;
-using DfE.GIAP.Service.ApplicationInsightsTelemetry;
-using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Controllers;
-using DfE.GIAP.Web.Controllers.Landing;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 
 namespace DfE.GIAP.Web.Extensions.Startup
 {
@@ -93,9 +91,6 @@ namespace DfE.GIAP.Web.Extensions.Startup
             services.AddTransient<IEventLogging, EventLogging>();
             services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
             services.AddScoped<ISessionProvider, SessionProvider>();
-
-            //Mappers ToViewModel
-            services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, LandingViewModel>, ContentResultToLandingViewModelMapper>();
             return services;
         }
 

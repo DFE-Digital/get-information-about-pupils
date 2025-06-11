@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Content.Application.Model;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
-using DfE.GIAP.Web.Controllers.Landing;
+using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Tests.FakeData;
 using DfE.GIAP.Web.ViewModels;
@@ -124,7 +124,7 @@ public class LandingControllerTests : IClassFixture<UserClaimsPrincipalFake>
             user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
         }
 
-        return new LandingController(_mockNewsBanner, _mockGetContentByPageKeyUseCase.Object, _mockmapper.Object)
+        return new LandingController(_mockNewsBanner, _mockGetContentByPageKeyUseCase.Object)
         {
             ControllerContext = new ControllerContext()
             {

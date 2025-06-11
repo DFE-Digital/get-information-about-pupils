@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -10,25 +9,22 @@ using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Controllers.Landing;
+namespace DfE.GIAP.Web.Controllers;
 
 [Route(Routes.Application.Landing)]
 public class LandingController : Controller
 {
     private readonly ILatestNewsBanner _newsBanner;
     private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
-    private readonly IMapper<GetContentByPageKeyUseCaseResponse, LandingViewModel> _contentResponstToViewModelMapper;
 
     public LandingController(
         ILatestNewsBanner newsBanner,
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
-        IMapper<GetContentByPageKeyUseCaseResponse, LandingViewModel> contentResponstToViewModelMapper)
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase)
     {
         _newsBanner = newsBanner ??
             throw new ArgumentNullException(nameof(newsBanner));
         _getContentByPageKeyUseCase = getContentByPageKeyUseCase ??
             throw new ArgumentNullException(nameof(getContentByPageKeyUseCase));
-        _contentResponstToViewModelMapper = contentResponstToViewModelMapper;
     }
 
     [HttpGet]
@@ -36,9 +32,26 @@ public class LandingController : Controller
     {
         await _newsBanner.SetLatestNewsStatus();
 
-        GetContentByPageKeyUseCaseRequest request = new(pageKey: "LandingPage");
-        GetContentByPageKeyUseCaseResponse response = await _getContentByPageKeyUseCase.HandleRequest(request);
-        LandingViewModel model = _contentResponstToViewModelMapper.Map(response);
+        GetContentByPageKeyUseCaseResponse landingPageContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
+
+        GetContentByPageKeyUseCaseResponse plannedMaintenanceContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
+
+        GetContentByPageKeyUseCaseResponse publicationScheduleContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
+
+        GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
+
+        LandingViewModel model = new()
+        {
+            LandingResponse = landingPageContentResponse.Content,
+            PlannedMaintenanceResponse = plannedMaintenanceContentResponse.Content,
+            PublicationScheduleResponse = publicationScheduleContentResponse.Content,
+            FAQResponse = frequentlyAskedQuestionsContentResponse.Content
+        };
+
         return View(model);
     }
 
