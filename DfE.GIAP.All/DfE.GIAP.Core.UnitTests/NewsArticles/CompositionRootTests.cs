@@ -5,7 +5,7 @@ using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.SharedTests;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
-using CompositionRoot = DfE.GIAP.Core.Content.CompositionRoot;
+using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles;
 
@@ -15,7 +15,7 @@ public sealed class CompositionRootTests
     public void ThrowsArgumentNullException_When_ServicesIsNull()
     {
         IServiceCollection? serviceCollection = null;
-        Action register = () => CompositionRoot.AddContentDependencies(serviceCollection);
+        Action register = () => CompositionRoot.AddNewsArticleDependencies(serviceCollection!);
         Assert.Throws<ArgumentNullException>(register);
     }
 
@@ -26,7 +26,7 @@ public sealed class CompositionRootTests
         IServiceCollection services = ServiceCollectionTestDoubles.Default().AddTestDependencies();
 
         // Act
-        IServiceCollection registeredServices = CompositionRoot.AddContentDependencies(services);
+        IServiceCollection registeredServices = CompositionRoot.AddNewsArticleDependencies(services);
         IServiceProvider provider = registeredServices.BuildServiceProvider();
 
         // Assert
@@ -36,7 +36,6 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>());
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>());
         Assert.NotNull(provider.GetService<IMapper<NewsArticleDTO, NewsArticle>>());
-        Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
         Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
     }
 }
