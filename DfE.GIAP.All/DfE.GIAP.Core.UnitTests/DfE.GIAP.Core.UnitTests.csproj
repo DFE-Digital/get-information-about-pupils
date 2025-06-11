@@ -33,4 +33,9 @@
 		<Using Include="Xunit" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Content\Infrastructure\" />
+	  <Folder Include="Content\UseCases\" />
+	</ItemGroup>
+
 </Project>

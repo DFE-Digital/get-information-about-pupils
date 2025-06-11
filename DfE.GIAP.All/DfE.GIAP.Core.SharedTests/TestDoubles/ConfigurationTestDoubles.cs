@@ -12,7 +12,7 @@ public static class ConfigurationTestDoubles
         builder.Add(
             new MemoryConfigurationSource()
             {
-                InitialData = config
+                InitialData = config!
             });
         return builder;
     }
@@ -25,6 +25,9 @@ public static class ConfigurationTestDoubles
             ["RepositoryOptions:ConnectionMode"] = "1",
             ["RepositoryOptions:EndpointUri"] = options.EndpointUri,
             ["RepositoryOptions:PrimaryKey"] = options.PrimaryKey,
+            ["RepositoryOptions:DatabaseId"] = options.DatabaseId,
+            ["RepositoryOptions:Containers:0:application-data:ContainerName"] = "application-data",
+            ["RepositoryOptions:Containers:0:application-data:PartitionKey"] = "/DOCTYPE"
         };
         builder.WithConfiguration(configurationOptions);
         return builder;

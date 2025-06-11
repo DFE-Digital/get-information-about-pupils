@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace DfE.GIAP.Core.SharedTests;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddTestServices(this IServiceCollection services)
+    public static IServiceCollection AddTestDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -25,11 +25,21 @@ public static class CompositionRoot
 
     private static IServiceCollection AddLocalConfiguration(this IServiceCollection services)
     {
+        Dictionary<string, string> contentConfiguration = new()
+        {
+            // PageContentOptions
+            ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
+            // RepositoryOptions
+            ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
+        };
 
-        services.AddSingleton<IConfiguration>(
-            ConfigurationTestDoubles.Default()
+        IConfiguration configuration = ConfigurationTestDoubles.Default()
                 .WithLocalCosmosDb()
-                .Build());
+                .WithConfiguration(contentConfiguration)
+                .Build();
+
+        services.AddSingleton<IConfiguration>(configuration);
+
         return services;
     }
 }

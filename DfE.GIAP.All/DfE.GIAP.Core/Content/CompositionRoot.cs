@@ -14,41 +14,59 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DfE.GIAP.Core.Content;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddContentDependencies(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddContentDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
         return services
-            .RegisterApplicationDependencies(configuration)
-            .RegisterInfrastructureDependencies(configuration);
+            .RegisterApplicationDependencies()
+            .RegisterInfrastructureDependencies();
     }
 
     // Application
-    private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
-        services
+        return services
+            .RegisterApplicationOptions()
             .AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
-        services.Configure<PageContentOptions>(
-            (options) => configuration.GetSection(nameof(PageContentOptions)).Bind(options));
+    }
 
+    private static IServiceCollection RegisterApplicationOptions(this IServiceCollection services)
+    {
+        services.AddOptions<PageContentOptions>()
+         .Configure<IServiceProvider>((options, sp) =>
+         {
+             IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
+             configuration.GetSection(nameof(PageContentOptions)).Bind(options);
+         });
         return services;
     }
 
     // Infrastructure 
-    private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
     {
         return services
             .AddCosmosDbDependencies()
             .RegisterInfrastructureRepositories()
             .RegisterInfrastructureMappers()
-            .Configure<ContentRepositoryOptions>(
-                (options) => configuration.GetSection(nameof(ContentRepositoryOptions)).Bind(options));
+            .RegisterInfrastructureOptions();
+    }
 
+    private static IServiceCollection RegisterInfrastructureOptions(this IServiceCollection services)
+    {
+        services
+            .AddOptions<PageContentOptions>()
+            .Configure<IServiceProvider>((options, sp) =>
+            {
+                IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
+                configuration.GetSection(nameof(ContentRepositoryOptions)).Bind(options);
+            });
+        return services;
     }
 
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         services.AddTemporaryCosmosClient();
-        services.AddScoped<IContentReadOnlyRepository, TempCosmosDbContentReadOnlyRepository>();
+        services.AddScoped<IContentReadOnlyRepository, CosmosDbContentReadOnlyRepository>();
         return services;
     }
 

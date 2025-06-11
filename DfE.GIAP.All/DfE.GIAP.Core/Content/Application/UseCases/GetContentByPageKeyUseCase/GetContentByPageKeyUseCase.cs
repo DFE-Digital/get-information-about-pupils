@@ -22,23 +22,11 @@ internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyU
 
     public async Task<GetContentByPageKeyUseCaseResponse> HandleRequest(GetContentByPageKeyUseCaseRequest request)
     {
-        IEnumerable<PageContentOption> contentOptions =
-            _pageContentOptions.Value.TryGetPageContentOptionWithPageKey(request.PageKey);
-
-        IEnumerable<ContentKey> uniqueContentKeys =
-            contentOptions.Select((t) => ContentKey.Create(t.Key))
-                .Distinct();
-
-        List<ContentResultItem> contentItems = [];
-
-        foreach (ContentKey contentKey in uniqueContentKeys)
-        {
-            Model.Content? content = await _contentReadOnlyRepository.GetContentByKeyAsync(contentKey);
-            ContentResultItem item = new(contentKey.Value, content);
-            contentItems.Add(item);
-        }
-
-        return new(contentItems);
+        PageContentOption contentOptions =
+            _pageContentOptions.Value.GetPageContentOptionWithPageKey(request.PageKey);
+        ContentKey key = ContentKey.Create(request.PageKey);
+        Model.Content? content = await _contentReadOnlyRepository.GetContentByKeyAsync(key);
+        return new(content);
     }
 }
 

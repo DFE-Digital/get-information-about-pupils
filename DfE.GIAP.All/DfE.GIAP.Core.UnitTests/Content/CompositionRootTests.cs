@@ -1,21 +1,29 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Content;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.Content.CompositionRoot;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Content.Infrastructure.Repositories;
+using DfE.GIAP.Core.Content.Application.Model;
+using DfE.GIAP.Core.Content.Application.Repository;
+using Microsoft.Extensions.Options;
+using DfE.GIAP.Core.Content.Application.Options;
+using DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;
 
-namespace DfE.GIAP.Core.UnitTests.NewsArticles;
-
+namespace DfE.GIAP.Core.UnitTests.Content;
 public sealed class CompositionRootTests
 {
     [Fact]
     public void ThrowsArgumentNullException_When_ServicesIsNull()
     {
         IServiceCollection? serviceCollection = null;
-        Action register = () => CompositionRoot.AddContentDependencies(serviceCollection);
+        ConfigurationTestDoubles.Default();
+        Action register = () => Core.Content.CompositionRoot.AddContentDependencies(serviceCollection);
         Assert.Throws<ArgumentNullException>(register);
     }
 
@@ -33,10 +41,13 @@ public sealed class CompositionRootTests
         Assert.NotNull(registeredServices);
         Assert.NotNull(provider);
 
-        Assert.NotNull(provider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>());
-        Assert.NotNull(provider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>());
-        Assert.NotNull(provider.GetService<IMapper<NewsArticleDTO, NewsArticle>>());
-        Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
-        Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
+        Assert.NotNull(provider.GetService<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>>());
+        Assert.NotNull(provider.GetService<IMapper<ContentDTO, Core.Content.Application.Model.Content>>());
+
+        Assert.NotNull(provider.GetService<IContentReadOnlyRepository>());
+        
+        Assert.NotNull(provider.GetService<IOptions<PageContentOptions>>());
+        Assert.NotNull(provider.GetService<IOptions<ContentRepositoryOptions>>());
+        
     }
 }
