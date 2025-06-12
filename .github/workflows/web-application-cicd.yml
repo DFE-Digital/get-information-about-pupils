@@ -178,7 +178,8 @@ jobs:
     permissions:
       contents: read  # Required to check out the code.
       id-token: write # Required for OIDC authentication with Azure
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+## Temporarily disabled to demonstrate / test deployment to development environment, prior to merging PRs to main.
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: development
     outputs:
