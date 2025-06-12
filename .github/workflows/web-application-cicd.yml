@@ -169,49 +169,6 @@ jobs:
 
 
   ####
-  ## Development Environment - Demo/PoC web app
-  ####
-  deploy_env_development_poc:
-    needs: [build_test_package, lint, local_integration_tests]
-    concurrency:
-      group: deploy-and-test-dev-poc
-    permissions:
-      contents: read  # Required to check out the code.
-      id-token: write # Required for OIDC authentication with Azure
-    ## Temporarily disabled to allow deploying from PR (for PR/demo/testing purposes)
-    #    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: development-poc
-    outputs:
-      app_url: ${{ steps.deploy.outputs.app_url }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Deploy to Azure
-        id: deploy
-        uses: ./.github/actions/deploy
-        with:
-          app_name: s115d10-s115d10-as-searchweb-cs-gha-poc
-          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  smoke_test_env_development_poc:
-    needs: deploy_env_development_poc
-    concurrency:
-      group: deploy-and-test-dev-poc
-    permissions:
-      contents: read  # Required to check out the code.
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Run smoke tests
-        uses: ./.github/actions/smoke-test
-        with:
-          url: ${{ needs.deploy_env_development_poc.outputs.app_url }}
-
-  ####
   ## Development Environment
   ####
   deploy_env_development:
