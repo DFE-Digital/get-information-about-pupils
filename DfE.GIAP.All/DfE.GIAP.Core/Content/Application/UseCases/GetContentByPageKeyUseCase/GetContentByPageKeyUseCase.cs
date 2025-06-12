@@ -24,7 +24,7 @@ internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyU
     {
         PageContentOption contentOptions = _pageContentOptionProvider.GetPageContentOptionWithPageKey(request.PageKey);
         ContentKey key = ContentKey.Create(contentOptions.DocumentId);
-        Model.Content? content = await _contentReadOnlyRepository.GetContentByKeyAsync(key);
+        Model.Content? content = await _contentReadOnlyRepository.GetContentByIdAsync(key.Value);
         return new(content);
     }
 }

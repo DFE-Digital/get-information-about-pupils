@@ -44,9 +44,9 @@ public sealed class GetContentByPageKeyUseCaseTests
         IContentReadOnlyRepository mockRepository = ContentReadOnlyRepositoryTestDoubles.Default().Object;
         Mock<IPageContentOptionsProvider> mockProvider = new();
 
-        mockProvider.Setup(
-            (t) => t.GetPageContentOptionWithPageKey(It.IsAny<string>()))
-                .Returns(() => throw new Exception("test exception"));
+        mockProvider
+            .Setup((t) => t.GetPageContentOptionWithPageKey(It.IsAny<string>()))
+            .Returns(() => throw new Exception("test exception"));
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository);
         GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
@@ -62,13 +62,13 @@ public sealed class GetContentByPageKeyUseCaseTests
 
         PageContentOption option = PageContentOptionTestDoubles.StubFor("documentId");
 
-        mockProvider.Setup(
-            (t) => t.GetPageContentOptionWithPageKey(It.IsAny<string>()))
-                .Returns(option);
+        mockProvider
+            .Setup((t) => t.GetPageContentOptionWithPageKey(It.IsAny<string>()))
+            .Returns(option);
 
-        mockRepository.Setup(
-            t => t.GetContentByKeyAsync(It.IsAny<ContentKey>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => throw new Exception("Repository exception"));
+        mockRepository
+            .Setup((t) => t.GetContentByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(() => throw new Exception("Repository exception"));
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository.Object);
         GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
@@ -99,8 +99,8 @@ public sealed class GetContentByPageKeyUseCaseTests
             .Returns(pageContentOption)
             .Verifiable();
 
-        mockRepository.Setup(t => t.GetContentByKeyAsync(
-            It.IsAny<ContentKey>(),
+        mockRepository.Setup(t => t.GetContentByIdAsync(
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
                 .ReturnsAsync(content);
 
@@ -112,14 +112,12 @@ public sealed class GetContentByPageKeyUseCaseTests
         Assert.NotNull(response);
         Assert.Equal(content, response.Content);
 
-        mockContentOptionProvider.Verify(
-            (provider) => provider.GetPageContentOptionWithPageKey(
-                It.Is<string>((t) => t == validPageKey)),
+        mockContentOptionProvider.Verify((provider) =>
+            provider.GetPageContentOptionWithPageKey(It.Is<string>((t) => t == validPageKey)),
                 Times.Once());
 
-        mockRepository.Verify(
-            (repository) => repository.GetContentByKeyAsync(
-                It.IsAny<ContentKey>(), It.IsAny<CancellationToken>()),
-                Times.Once());
+        mockRepository.Verify((repository) =>
+            repository.GetContentByIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 }

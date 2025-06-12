@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Content.Application.Options.Provider;
 public class PageContentOptionProvider : IPageContentOptionsProvider
