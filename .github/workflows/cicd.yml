@@ -199,7 +199,7 @@ jobs:
 #    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 #    with:
 #      environment: test
-#      app_name: giap-deploy-demo-test
+#      app_name: s115t02-as-searchweb-cs
 #    secrets:
 #      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
 #      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -237,7 +237,7 @@ jobs:
 #    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 #    with:
 #      environment: preproduction
-#      app_name: giap-deploy-demo-preproduction
+#      app_name: s115p02-as-searchweb-cs
 #    secrets:
 #      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
 #      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -267,7 +267,7 @@ jobs:
 #    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 #    with:
 #      environment: production
-#      app_name: giap-deploy-demo-production
+#      app_name: s115p01-as-searchweb-cs
 #    secrets:
 #      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
 #      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
