@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.UnitTests.Content.Options;
+namespace DfE.GIAP.Core.UnitTests.Content.Tests.Options;
 public sealed class PageContentOptionsProviderTests
 {
     [Fact]

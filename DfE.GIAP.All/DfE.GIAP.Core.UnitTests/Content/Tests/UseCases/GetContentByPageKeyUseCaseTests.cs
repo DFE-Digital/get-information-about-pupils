@@ -3,8 +3,9 @@ using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.UnitTests.Content.TestDoubles;
 
-namespace DfE.GIAP.Core.UnitTests.Content.UseCases;
+namespace DfE.GIAP.Core.UnitTests.Content.Tests.UseCases;
 public sealed class GetContentByPageKeyUseCaseTests
 {
 

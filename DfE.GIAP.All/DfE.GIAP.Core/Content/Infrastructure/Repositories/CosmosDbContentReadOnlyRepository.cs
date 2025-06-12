@@ -51,7 +51,7 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(CosmosDbContentReadOnlyRepository.GetContentByKeyAsync)}.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetContentByKeyAsync)}");
             throw;
         }
     }
