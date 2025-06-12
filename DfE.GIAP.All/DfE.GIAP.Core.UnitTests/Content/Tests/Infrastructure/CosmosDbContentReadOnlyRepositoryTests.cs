@@ -69,7 +69,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public async Task CosmosDbContentReadOnlyRepository_GetContentByIdAsync_Throws_When_OptionsProvider_Returns_NullOrEmptyDocumentId(string? invalidDocumentId)
     {
         // Arrange
-        
+
         CosmosDbContentReadOnlyRepository repository = new(
             logger: _mockLogger,
             contentDtoToContentMapper: _mockMapper.Object,
