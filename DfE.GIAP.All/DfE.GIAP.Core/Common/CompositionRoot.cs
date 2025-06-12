@@ -6,7 +6,7 @@ public static class CompositionRoot
 {
     public static IServiceCollection AddFeaturesSharedDependencies(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(services, nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
         services.AddCosmosDbDependencies();
         return services;
     }
