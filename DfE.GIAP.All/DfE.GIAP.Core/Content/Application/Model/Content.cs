@@ -8,4 +8,5 @@ public record Content
         Body = string.Empty,
         Title = string.Empty
     };
+    public bool IsEmpty() => string.IsNullOrEmpty(Body) && string.IsNullOrEmpty(Title);
 }
