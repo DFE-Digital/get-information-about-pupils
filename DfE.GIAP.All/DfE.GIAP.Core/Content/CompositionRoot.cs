@@ -8,7 +8,6 @@ using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
-using DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,29 +17,28 @@ public static class CompositionRoot
     public static IServiceCollection AddContentDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-        return services
+
+        // both infrastructure and application depend on PageContentOptions
+        services.AddOptions<PageContentOptions>()
+             .Configure<IServiceProvider>((options, sp) =>
+             {
+                 IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
+                 configuration.GetSection(nameof(PageContentOptions)).Bind(options);
+             });
+        services.AddSingleton<IPageContentOptionsProvider, PageContentOptionProvider>();
+
+        services
             .RegisterApplicationDependencies()
             .RegisterInfrastructureDependencies();
+
+        return services;
     }
 
     // Application
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
         return services
-            .RegisterApplicationOptions()
             .AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
-    }
-
-    private static IServiceCollection RegisterApplicationOptions(this IServiceCollection services)
-    {
-        services.AddOptions<PageContentOptions>()
-         .Configure<IServiceProvider>((options, sp) =>
-         {
-             IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
-             configuration.GetSection(nameof(PageContentOptions)).Bind(options);
-         });
-        services.AddSingleton<IPageContentOptionsProvider, PageContentOptionProvider>();
-        return services;
     }
 
     // Infrastructure 
@@ -49,20 +47,7 @@ public static class CompositionRoot
         return services
             .AddCosmosDbDependencies()
             .RegisterInfrastructureRepositories()
-            .RegisterInfrastructureMappers()
-            .RegisterInfrastructureOptions();
-    }
-
-    private static IServiceCollection RegisterInfrastructureOptions(this IServiceCollection services)
-    {
-        services
-            .AddOptions<PageContentOptions>()
-            .Configure<IServiceProvider>((options, sp) =>
-            {
-                IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
-                configuration.GetSection(nameof(ContentRepositoryOptions)).Bind(options);
-            });
-        return services;
+            .RegisterInfrastructureMappers();
     }
 
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
