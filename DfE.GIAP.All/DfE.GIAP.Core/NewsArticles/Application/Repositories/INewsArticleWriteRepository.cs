@@ -15,8 +15,7 @@ public interface INewsArticleWriteRepository
     /// <summary>
     /// Asynchronously creates a new news article in the system.
     /// </summary>
-    /// <param name="newsArticle">The <see cref="NewsArticle"/> object containing the details of the article to be created. Cannot be null.</param>
-    /// <returns>A task representing the asynchronous operation. The task result contains the created <see cref="NewsArticle"/>
-    /// object,  or <see langword="null"/> if the creation was unsuccessful.</returns>
-    Task<NewsArticle?> CreateNewsArticleAsync(NewsArticle newsArticle);
+    /// <param name="newsArticle">The news article to be created. Must not be null and must contain valid data.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task CreateNewsArticleAsync(NewsArticle newsArticle);
 }

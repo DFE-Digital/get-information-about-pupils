@@ -47,25 +47,24 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
     /// <returns>The <see cref="NewsArticle"/> object that was successfully created, or <see langword="null"/> if the operation
     /// failed.</returns>
     /// <exception cref="ArgumentException">Thrown if <paramref name="newsArticle"/> is <see langword="null"/>.</exception>
-    public async Task<NewsArticle?> CreateNewsArticleAsync(NewsArticle newsArticle)
+    public async Task CreateNewsArticleAsync(NewsArticle newsArticle)
     {
+        if (newsArticle is null)
+            throw new ArgumentNullException("NewsArticle must not be null.", nameof(newsArticle));
+        if (string.IsNullOrWhiteSpace(newsArticle.Title))
+            throw new ArgumentException("Title cannot be null or empty.", nameof(newsArticle.Title));
+        if (string.IsNullOrWhiteSpace(newsArticle.Body))
+            throw new ArgumentException("Body cannot be null or empty.", nameof(newsArticle.Body));
+
         try
         {
-            if (newsArticle is null)
-            {
-                _logger.LogCritical("CreateNewsArticleAsync called with null.");
-                throw new ArgumentNullException("NewsArticle must not be null.", nameof(newsArticle));
-            }
-
             NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
-            NewsArticleDTO _ = await _cosmosDbCommandHandler.CreateItemAsync(newsArticleDto, ContainerName, newsArticleDto.Id);
-
-            return newsArticle;
+            await _cosmosDbCommandHandler.CreateItemAsync(newsArticleDto, ContainerName, newsArticleDto.Id);
         }
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, "CosmosDB error occurred while creating a news article: {Message}", ex.Message);
-            return null;
+            throw;
         }
     }
 }

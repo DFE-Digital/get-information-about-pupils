@@ -5,7 +5,6 @@ using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
-using Container = Microsoft.Azure.Cosmos.Container;
 
 namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 

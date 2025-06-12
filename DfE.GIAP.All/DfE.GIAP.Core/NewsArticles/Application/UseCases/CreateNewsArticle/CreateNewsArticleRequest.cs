@@ -8,8 +8,8 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 /// <summary>
 /// Represents a request to create a news article with specified attributes.
 /// </summary>
-/// <remarks>This record is used to encapsulate the data required to create a news article. It includes properties
-/// for the article's title, body content, and various status flags.</remarks>
+/// <remarks>This request is used to provide the necessary details for creating a news article, including its
+/// title, content, and status flags.</remarks>
 /// <param name="Title">The title of the news article. Cannot be null or empty.</param>
 /// <param name="Body">The body content of the news article. Cannot be null or empty.</param>
 /// <param name="Published">A value indicating whether the news article is published. <see langword="true"/> if published; otherwise, <see

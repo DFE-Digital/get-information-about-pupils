@@ -29,27 +29,25 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
             throw new ArgumentNullException(nameof(entityToDtoMapper));
     }
 
-    public async Task<NewsArticle?> CreateNewsArticleAsync(NewsArticle newsArticle)
+    public async Task CreateNewsArticleAsync(NewsArticle newsArticle)
     {
+        if (newsArticle is null)
+            throw new ArgumentNullException("NewsArticle must not be null.", nameof(newsArticle));
+        if (string.IsNullOrWhiteSpace(newsArticle.Title))
+            throw new ArgumentException("Title cannot be null or empty.", nameof(newsArticle.Title));
+        if (string.IsNullOrWhiteSpace(newsArticle.Body))
+            throw new ArgumentException("Body cannot be null or empty.", nameof(newsArticle.Body));
+
         try
         {
-            if (newsArticle is null)
-            {
-                _logger.LogCritical("CreateNewsArticleAsync called with null.");
-                throw new ArgumentNullException("NewsArticle must not be null.", nameof(newsArticle));
-            }
-
             NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
-            ItemResponse<NewsArticleDTO> response = await container.CreateItemAsync(newsArticleDto, new PartitionKey(newsArticleDto.Id));
-
-            return newsArticle;
+            await container.CreateItemAsync(newsArticleDto, new PartitionKey(newsArticleDto.Id));
         }
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, "CosmosDB error occurred while creating a news article: {Message}", ex.Message);
-            return null;
         }
     }
 }
