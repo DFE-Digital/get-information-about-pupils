@@ -48,12 +48,19 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
         if (string.IsNullOrWhiteSpace(request.Body))
             throw new ArgumentException("Body cannot be null or empty.", nameof(request.Body));
 
-        NewsArticle newsArticle = NewsArticle.Create(
-            title: request.Title,
-            body: request.Body,
-            published: request.Published,
-            archived: request.Archived,
-            pinned: request.Pinned);
+        NewsArticle newsArticle = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Title = request.Title,
+            Body = request.Body,
+            DraftBody = string.Empty,
+            DraftTitle = string.Empty,
+            CreatedDate = DateTime.UtcNow,
+            ModifiedDate = DateTime.UtcNow,
+            Published = request.Published,
+            Archived = request.Archived,
+            Pinned = request.Pinned
+        };
 
         await _newsArticleWriteRepository.CreateNewsArticleAsync(newsArticle);
     }

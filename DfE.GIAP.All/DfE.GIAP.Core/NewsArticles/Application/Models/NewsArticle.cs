@@ -13,21 +13,4 @@ public record NewsArticle
     public bool Published { get; set; }
     public bool Archived { get; set; }
     public bool Pinned { get; set; }
-
-    public static NewsArticle Create(string title, string body, bool published, bool archived, bool pinned)
-    {
-        return new NewsArticle
-        {
-            Id = Guid.NewGuid().ToString(),
-            Title = title,
-            Body = body,
-            DraftBody = string.Empty,
-            DraftTitle = string.Empty,
-            CreatedDate = DateTime.UtcNow,
-            ModifiedDate = DateTime.UtcNow,
-            Published = published,
-            Archived = archived,
-            Pinned = pinned
-        };
-    }
 }
