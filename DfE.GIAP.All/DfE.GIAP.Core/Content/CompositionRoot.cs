@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.Content.Application.Options;
+using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
@@ -38,6 +39,7 @@ public static class CompositionRoot
              IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
              configuration.GetSection(nameof(PageContentOptions)).Bind(options);
          });
+        services.AddSingleton<IPageContentOptionProvider, PageContentOptionProvider>();
         return services;
     }
 

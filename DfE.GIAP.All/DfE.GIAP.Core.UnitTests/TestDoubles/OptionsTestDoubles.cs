@@ -5,15 +5,15 @@ internal static class OptionsTestDoubles
 {
     internal static IOptions<T> Default<T>() where T : class, new()
     {
-        return Wrap(new T());
+        return WithValue(new T());
     }
 
     internal static IOptions<T> WithNullValue<T>() where T : class
     {
-        return Wrap<T>(null);
+        return WithValue<T>(null);
     }
 
-    private static IOptions<T> Wrap<T>(T? value) where T : class
+    internal static IOptions<T> WithValue<T>(T? value) where T : class
     {
         Mock<IOptions<T>> mock = new();
         mock.Setup(t => t.Value).Returns(value).Verifiable();

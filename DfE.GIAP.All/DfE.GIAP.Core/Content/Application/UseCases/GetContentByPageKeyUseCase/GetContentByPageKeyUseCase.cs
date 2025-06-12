@@ -1,32 +1,30 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Content.Application.Model;
 using DfE.GIAP.Core.Content.Application.Options;
-using DfE.GIAP.Core.Content.Application.Options.Extensions;
+using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>
 {
+    private readonly IPageContentOptionProvider _pageContentOptionProvider;
     private readonly IContentReadOnlyRepository _contentReadOnlyRepository;
-    private readonly IOptions<PageContentOptions> _pageContentOptions;
 
     public GetContentByPageKeyUseCase(
-        IContentReadOnlyRepository contentReadOnlyRepository,
-        IOptions<PageContentOptions> pageContentOptions)
+        IPageContentOptionProvider pageContentOptionProvider,
+        IContentReadOnlyRepository contentReadOnlyRepository)
     {
+        ArgumentNullException.ThrowIfNull(pageContentOptionProvider);
         ArgumentNullException.ThrowIfNull(contentReadOnlyRepository);
+        _pageContentOptionProvider = pageContentOptionProvider;
         _contentReadOnlyRepository = contentReadOnlyRepository;
-        _pageContentOptions = pageContentOptions;
     }
 
     public async Task<GetContentByPageKeyUseCaseResponse> HandleRequest(GetContentByPageKeyUseCaseRequest request)
     {
-        PageContentOption contentOptions =
-            _pageContentOptions.Value.GetPageContentOptionWithPageKey(request.PageKey);
+        PageContentOption contentOptions = _pageContentOptionProvider.GetPageContentOptionWithPageKey(request.PageKey);
         ContentKey key = ContentKey.Create(request.PageKey);
         Model.Content? content = await _contentReadOnlyRepository.GetContentByKeyAsync(key);
         return new(content);
     }
 }
-
