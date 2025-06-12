@@ -8,8 +8,8 @@ public class PageContentOptionProvider : IPageContentOptionsProvider
     public PageContentOptionProvider(IOptions<PageContentOptions> options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        _options = options.Value
-            ?? throw new ArgumentNullException(nameof(options.Value));
+        ArgumentNullException.ThrowIfNull(options.Value);
+        _options = options.Value;
     }
 
     public PageContentOption GetPageContentOptionWithPageKey(string pageKey)
