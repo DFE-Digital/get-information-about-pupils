@@ -24,7 +24,7 @@ public sealed class NewsArticleEntityToDtoMapperTests
     }
 
     [Fact]
-    public void Map_MapsProperties_When_DTO_HasProperties()
+    public void Map_MapsProperties_When_Entity_HasProperties()
     {
         // Arrange
         NewsArticleEntityToDtoMapper mapper = new();
@@ -43,5 +43,6 @@ public sealed class NewsArticleEntityToDtoMapperTests
         Assert.Equal(mappedResponse.Published, inputEntity.Published);
         Assert.Equal(mappedResponse.Archived, inputEntity.Archived);
         Assert.Equal(mappedResponse.Pinned, inputEntity.Pinned);
+        Assert.Equal(7, mappedResponse.DocumentType); // Temporary, to be removed when DocumentType is removed from DTOs
     }
 }
