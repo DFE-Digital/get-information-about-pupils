@@ -172,16 +172,12 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         ContentKey contentKey = ContentKey.Create(validPageKey);
         PageContentOption pageContentOption = PageContentOptionTestDoubles.StubFor(validDocumentId);
 
-        ContentDTO contentDto = new()
-        {
-            Title = "Dto title",
-            Body = "Dto body",
-        };
+        ContentDTO contentDto = ContentDTOTestDoubles.Generate(1).Single();
 
-        Core.Content.Application.Model.Content expectedContent = new()
+        Core.Content.Application.Model.Content expectedOutputContent = new()
         {
-            Title = "Test title",
-            Body = "Test body"
+            Title = contentDto.Title,
+            Body = contentDto.Body
         };
 
         _mockPageContentOptionsProvider
@@ -194,7 +190,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
 
         _mockMapper
             .Setup(m => m.Map(contentDto))
-            .Returns(expectedContent);
+            .Returns(expectedOutputContent);
 
         CosmosDbContentReadOnlyRepository repository = new(
             logger: _mockLogger,
@@ -207,7 +203,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(expectedContent, result);
+        Assert.Equal(expectedOutputContent, result);
 
         _mockPageContentOptionsProvider.Verify(
             (provider) => provider.GetPageContentOptionWithPageKey(validPageKey),

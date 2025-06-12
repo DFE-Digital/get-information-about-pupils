@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Infrastructure.Repositories;
+﻿using DfE.GIAP.Core.Content.Infrastructure.Repositories;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
+using DfE.GIAP.Core.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Content.Tests.Mapper;
 public sealed class ContentDTOToContentMapperTests
@@ -26,18 +26,14 @@ public sealed class ContentDTOToContentMapperTests
     {
         // Arrange
         ContentDTOToContentMapper mapper = new();
-        ContentDTO dto = new()
-        {
-            Title = "Test title",
-            Body = "Test body"
-        };
+        ContentDTO dto = ContentDTOTestDoubles.Generate(1).Single();
 
         // Act
         Core.Content.Application.Model.Content response = mapper.Map(dto);
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal("Test title", response.Title);
-        Assert.Equal("Test body", response.Body);
+        Assert.Equal(dto.Title, response.Title);
+        Assert.Equal(dto.Body, response.Body);
     }
 }
