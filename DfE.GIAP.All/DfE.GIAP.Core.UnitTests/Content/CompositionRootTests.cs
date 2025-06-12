@@ -1,14 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Content;
-using DfE.GIAP.Core.Content.Application.Model;
 using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
-using DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.SharedTests;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +18,7 @@ public sealed class CompositionRootTests
     {
         IServiceCollection? serviceCollection = null;
         ConfigurationTestDoubles.Default();
-        Action register = () => Core.Content.CompositionRoot.AddContentDependencies(serviceCollection);
+        Action register = () => CompositionRoot.AddContentDependencies(serviceCollection);
         Assert.Throws<ArgumentNullException>(register);
     }
 
@@ -47,7 +42,5 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IContentReadOnlyRepository>());
 
         Assert.NotNull(provider.GetService<IOptions<PageContentOptions>>());
-        Assert.NotNull(provider.GetService<IOptions<ContentRepositoryOptions>>());
-
     }
 }
