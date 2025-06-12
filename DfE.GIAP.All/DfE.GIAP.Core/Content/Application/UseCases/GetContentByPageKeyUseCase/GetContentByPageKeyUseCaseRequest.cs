@@ -1,5 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+
+namespace DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+
 
 /// <summary>
 /// Represents a request to retrieve content using a page key.

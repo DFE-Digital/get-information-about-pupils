@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Content.Infrastructure.Repositories;
+using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Content.Tests.Mapper;

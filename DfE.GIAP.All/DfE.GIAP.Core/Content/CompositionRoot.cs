@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
+using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

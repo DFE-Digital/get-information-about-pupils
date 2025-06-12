@@ -1,6 +1,7 @@
-﻿using DfE.GIAP.Core.Content.Application.Options;
-using DfE.GIAP.Core.Content.Application.Options.Provider;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+
+namespace DfE.GIAP.Core.Content.Application.Options.Provider;
+
 
 /// <summary>
 /// Provides access to configured <see cref="PageContentOption"/> instances based on page keys.
