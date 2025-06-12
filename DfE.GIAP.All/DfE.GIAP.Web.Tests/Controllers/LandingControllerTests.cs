@@ -32,32 +32,27 @@ public class LandingControllerTests : IClassFixture<UserClaimsPrincipalFake>
     public async Task LandingController_Index_Should_Return_LandingPageData()
     {
         // Arrange
-        LandingViewModel model = new()
+        Content stubContent = new()
         {
-            LandingResponse = new Content()
-            {
-                Title = "Title",
-                Body = "Body"
-            },
-            PlannedMaintenanceResponse = new Content()
-            {
-                Title = "Planned Maintenance",
-                Body = "Maintenance content"
-            },
-            PublicationScheduleResponse = new Content()
-            {
-                Title = "Publication Schedule",
-                Body = "Schedule content"
-            },
-            FAQResponse = new Content()
-            {
-                Title = "FAQ",
-                Body = "FAQ content"
-            }
+            Title = "Test title",
+            Body = "Test body",
         };
 
-        _mockGetContentByPageKeyUseCase.Setup(t => t.HandleRequest(It.IsAny<GetContentByPageKeyUseCaseRequest>())).ReturnsAsync(It.IsAny<GetContentByPageKeyUseCaseResponse>()).Verifiable();
-        _mockmapper.Setup(t => t.Map(It.IsAny<GetContentByPageKeyUseCaseResponse>())).Returns(model).Verifiable();
+        LandingViewModel model = new()
+        {
+            LandingResponse = stubContent,
+            PlannedMaintenanceResponse = stubContent,
+            PublicationScheduleResponse = stubContent,
+            FAQResponse = stubContent
+        };
+
+        
+        GetContentByPageKeyUseCaseResponse response = new(stubContent);
+
+        _mockGetContentByPageKeyUseCase.Setup(
+            (useCase) => useCase.HandleRequest(
+                It.IsAny<GetContentByPageKeyUseCaseRequest>())).ReturnsAsync(response).Verifiable();
+
         LandingController controller = GetLandingController();
 
         // Act
