@@ -1,4 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using DfE.GIAP.Core.NewsArticles.Application.Extensions;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using Microsoft.Azure.Cosmos;
@@ -62,13 +64,12 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         }
     }
 
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft)
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchFilter newsArticleSearchFilter)
     {
         try
         {
-            string publishedFilter = isDraft ? "c.Published=false" : "c.Published=true";
-            string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {archivedFilter} And {publishedFilter}";
+            string filter = newsArticleSearchFilter.ToCosmosFilters();
+            string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {filter}";
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
             using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);

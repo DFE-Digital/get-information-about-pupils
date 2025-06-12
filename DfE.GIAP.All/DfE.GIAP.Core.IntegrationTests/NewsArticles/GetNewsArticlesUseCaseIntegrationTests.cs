@@ -1,4 +1,5 @@
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
 
@@ -15,11 +16,10 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
     public async Task InitializeAsync() => await _fixture.Database.ClearDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
 
-
     [Theory]
-    [InlineData(true, true)]
-    [InlineData(false, false)]
-    public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(bool isArchived, bool isDraft)
+    [InlineData(NewsArticleSearchFilter.ArchivedWithPublished)]
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished)]
+    public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(NewsArticleSearchFilter filter)
     {
         // Arrange
         await _fixture.Database.ClearDatabaseAsync();
@@ -36,9 +36,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
         await Parallel.ForEachAsync(seededDTOs, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
 
-        GetNewsArticlesRequest request = new(
-            IsArchived: isArchived,
-            IsDraft: isDraft);
+        GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 
         // Act
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut =
@@ -50,8 +48,8 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
         List<NewsArticle> expectedArticlesOutput =
             seededDTOs.Select(testMapper.Map)
-                .FilterRequestedArticles(request.IsArchived, request.IsDraft)
-                .OrderArticles()
+                .FilterRequestedArticles(filter)
+                .OrderArticles(filter)
                 .ToList();
 
         Assert.NotNull(response);
@@ -63,14 +61,42 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
 internal static class GetNewsArticleUseCaseNewsArticleExtensions
 {
+    internal static IEnumerable<NewsArticle> FilterRequestedArticles(this IEnumerable<NewsArticle> input, NewsArticleSearchFilter filter)
+    {
+        return filter switch
+        {
+            NewsArticleSearchFilter.ArchivedWithPublished =>
+                input.Where(t => t.Archived && t.Published),
+            NewsArticleSearchFilter.ArchivedWithNotPublished =>
+                input.Where(t => t.Archived && !t.Published),
+            NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished =>
+                input.Where(t => t.Archived),
+            NewsArticleSearchFilter.NotArchivedWithPublished =>
+                input.Where(t => !t.Archived && t.Published),
+            NewsArticleSearchFilter.NotArchivedWithNotPublished =>
+                input.Where(t => !t.Archived && !t.Published),
+            NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished =>
+                input.Where(t => !t.Archived),
+            _ => input
+        };
+    }
 
-    internal static IEnumerable<NewsArticle> FilterRequestedArticles(this IEnumerable<NewsArticle> input, bool requestIsArchived, bool requestIsDraft)
-        => input
-            .Where(t => t.Archived == requestIsArchived) // if requested archived include
-            .Where(t => t.Published != requestIsDraft); // if requested draft then include
-    
-    internal static IEnumerable<NewsArticle> OrderArticles(this IEnumerable<NewsArticle> input)
-        => input
-                .OrderByDescending(t => t.Pinned)
-                .ThenByDescending(t => t.ModifiedDate);
+    internal static IEnumerable<NewsArticle> OrderArticles(this IEnumerable<NewsArticle> input, NewsArticleSearchFilter filter)
+    {
+        return filter switch
+        {
+            NewsArticleSearchFilter.ArchivedWithPublished
+            or NewsArticleSearchFilter.ArchivedWithNotPublished
+            or NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished =>
+                input.OrderByDescending(t => t.ModifiedDate),
+
+            NewsArticleSearchFilter.NotArchivedWithPublished
+            or NewsArticleSearchFilter.NotArchivedWithNotPublished
+            or NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished =>
+                input.OrderByDescending(t => t.Pinned)
+                     .ThenByDescending(t => t.ModifiedDate),
+
+            _ => input.OrderByDescending(t => t.ModifiedDate)
+        };
+    }
 }

@@ -1,5 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using DfE.GIAP.Core.NewsArticles.Application.Extensions;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using Microsoft.Azure.Cosmos;
@@ -73,30 +75,21 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
 
 
     /// <summary>
-    /// Asynchronously retrieves a collection of news articles from Cosmos DB based on their archived and draft status.
+    /// Retrieves a collection of news articles based on the specified search filter.
     /// </summary>
-    /// <param name="isArchived">
-    /// Indicates whether to include archived articles. Set to <see langword="true"/> to include archived articles.
-    /// </param>
-    /// <param name="isDraft">
-    /// Indicates whether to include draft articles. Set to <see langword="true"/> to include draft articles.
-    /// </param>
-    /// <returns>
-    /// A task representing the asynchronous operation. The result contains an <see cref="IEnumerable{T}"/> of 
-    /// <see cref="NewsArticle"/> objects that match the specified criteria. Returns an empty collection if an error occurs.
-    /// </returns>
-    /// <remarks>
-    /// Constructs a SQL query dynamically based on the provided filters and executes it against the Cosmos DB container.
-    /// Logs critical errors if a Cosmos DB exception is encountered.
-    /// </remarks>
-
-    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft)
+    /// <remarks>This method queries a Cosmos DB container to retrieve news articles based on the provided
+    /// filter. The filter determines whether articles are archived, published, or both. In the event of a <see
+    /// cref="CosmosException"/>, the method logs the error and returns an empty collection.</remarks>
+    /// <param name="newsArticleSearchFilter">A filter that specifies the criteria for retrieving news articles, such as whether they are archived, published,
+    /// or both.</param>
+    /// <returns>An asynchronous task that returns an <see cref="IEnumerable{T}"/> of <see cref="NewsArticle"/> objects matching
+    /// the specified filter. If no articles match the filter, an empty collection is returned.</returns>
+    public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchFilter newsArticleSearchFilter)
     {
         try
         {
-            string publishedFilter = isDraft ? "c.Published=false" : "c.Published=true";
-            string archivedFilter = isArchived ? "c.Archived=true" : "c.Archived=false";
-            string query = $"SELECT * FROM c WHERE {archivedFilter} And {publishedFilter}";
+            string filter = newsArticleSearchFilter.ToCosmosFilters();
+            string query = $"SELECT * FROM c WHERE {filter}";
 
             IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
                 .ReadItemsAsync<NewsArticleDTO>(ContainerName, query);
