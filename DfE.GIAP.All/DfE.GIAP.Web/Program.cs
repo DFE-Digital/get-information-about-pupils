@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Core.Content;
+using DfE.GIAP.Core.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ var configuration = builder.Configuration;
 
 // Services configuration
 builder.Services
+    .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
     .AddContentDependencies()
     .AddRoutingConfiguration()

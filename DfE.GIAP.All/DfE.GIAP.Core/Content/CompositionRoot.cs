@@ -45,14 +45,12 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
     {
         return services
-            .AddCosmosDbDependencies()
             .RegisterInfrastructureRepositories()
             .RegisterInfrastructureMappers();
     }
 
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
-        services.AddTemporaryCosmosClient();
         services.AddScoped<IContentReadOnlyRepository, CosmosDbContentReadOnlyRepository>();
         return services;
     }

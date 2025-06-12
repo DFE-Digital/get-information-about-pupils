@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.SharedTests.TestDoubles;
+﻿using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -6,11 +7,12 @@ using Microsoft.Extensions.Logging;
 namespace DfE.GIAP.Core.SharedTests;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddTestDependencies(this IServiceCollection services)
+    public static IServiceCollection AddSharedDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services
+            .AddFeaturesSharedDependencies()
             .AddLocalConfiguration()
             .AddInMemoryLogger();
 

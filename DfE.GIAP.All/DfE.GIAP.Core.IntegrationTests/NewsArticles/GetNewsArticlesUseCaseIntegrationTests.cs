@@ -24,7 +24,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         //Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddTestDependencies()
+                .AddSharedDependencies()
                 .AddNewsArticleDependencies();
 
         IServiceProvider provider = services.BuildServiceProvider();

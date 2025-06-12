@@ -26,7 +26,7 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddTestDependencies();
+        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedDependencies();
 
         // Act
         IServiceCollection registeredServices = CompositionRoot.AddContentDependencies(services);
@@ -38,9 +38,7 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>>());
         Assert.NotNull(provider.GetService<IMapper<ContentDTO, Core.Content.Application.Model.Content>>());
-
         Assert.NotNull(provider.GetService<IContentReadOnlyRepository>());
-
         Assert.NotNull(provider.GetService<IOptions<PageContentOptions>>());
     }
 }

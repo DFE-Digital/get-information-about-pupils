@@ -23,7 +23,7 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddTestDependencies();
+        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedDependencies();
 
         // Act
         IServiceCollection registeredServices = CompositionRoot.AddNewsArticleDependencies(services);

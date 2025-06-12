@@ -21,7 +21,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         // Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddTestDependencies()
+                .AddSharedDependencies()
                 .AddNewsArticleDependencies();
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
@@ -53,7 +53,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         // Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddTestDependencies()
+                .AddSharedDependencies()
                 .AddNewsArticleDependencies();
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
