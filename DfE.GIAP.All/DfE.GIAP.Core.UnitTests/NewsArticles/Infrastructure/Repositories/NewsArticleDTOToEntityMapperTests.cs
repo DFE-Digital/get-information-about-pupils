@@ -4,14 +4,14 @@ using DfE.GIAP.Core.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 
-public sealed class NewsArticleDTOToEntityMapperTests
+public sealed class NewsArticleDtoToEntityMapperTests
 {
 
     [Fact]
-    public void NewsArticleDTOToEntityMapper_Construct_With_Default_Constructor() => new NewsArticleDtoToEntityMapper();
+    public void NewsArticleDtoToEntityMapper_Construct_With_Default_Constructor() => new NewsArticleDtoToEntityMapper();
 
     [Fact]
-    public void NewsArticleDTOToEntityMapper_ThrowsArgumentException_When_InputIsNull()
+    public void Map_ThrowsArgumentException_When_InputIsNull()
     {
         // Arrange
         NewsArticleDtoToEntityMapper mapper = new();
@@ -25,7 +25,7 @@ public sealed class NewsArticleDTOToEntityMapperTests
 
     // TODO in future consider a way to validate fluently and public properties
     [Fact]
-    public void NewsArticleDTOToEntityMapper_MapsProperties_When_DTO_HasProperties()
+    public void Map_MapsProperties_When_DTO_HasProperties()
     {
         // Arrange
         NewsArticleDtoToEntityMapper mapper = new();

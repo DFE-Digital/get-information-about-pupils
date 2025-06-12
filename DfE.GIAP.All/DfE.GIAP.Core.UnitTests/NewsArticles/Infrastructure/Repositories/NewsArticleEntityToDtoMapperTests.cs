@@ -1,0 +1,47 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
+using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
+
+namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
+
+public sealed class NewsArticleEntityToDtoMapperTests
+{
+    [Fact]
+    public void NewsArticleEntityToDTOMapper_Construct_With_Default_Constructor() => new NewsArticleEntityToDtoMapper();
+
+    [Fact]
+    public void Map_ThrowsArgumentException_When_InputIsNull()
+    {
+        // Arrange
+        NewsArticleEntityToDtoMapper mapper = new();
+
+        // Act Assert
+        Action act = () => mapper.Map(input: null!);
+        Assert.Throws<ArgumentNullException>(act);
+    }
+
+    [Fact]
+    public void Map_MapsProperties_When_DTO_HasProperties()
+    {
+        // Arrange
+        NewsArticleEntityToDtoMapper mapper = new();
+        NewsArticle inputEntity = NewsArticleTestDoubles.Create();
+
+        // Act Assert
+        NewsArticleDTO mappedResponse = mapper.Map(inputEntity);
+        Assert.NotNull(mappedResponse);
+        Assert.Equal(mappedResponse.Id, inputEntity.Id);
+        Assert.Equal(mappedResponse.Title, inputEntity.Title);
+        Assert.Equal(mappedResponse.Body, inputEntity.Body);
+        Assert.Equal(mappedResponse.DraftBody, inputEntity.DraftBody);
+        Assert.Equal(mappedResponse.DraftTitle, inputEntity.DraftTitle);
+        Assert.Equal(mappedResponse.CreatedDate, inputEntity.CreatedDate);
+        Assert.Equal(mappedResponse.ModifiedDate, inputEntity.ModifiedDate);
+        Assert.Equal(mappedResponse.Published, inputEntity.Published);
+        Assert.Equal(mappedResponse.Archived, inputEntity.Archived);
+        Assert.Equal(mappedResponse.Pinned, inputEntity.Pinned);
+    }
+}
