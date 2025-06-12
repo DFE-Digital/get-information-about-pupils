@@ -22,7 +22,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
     public async Task GetContentByPageKeyUseCase_RetrievesPageContentKey_When_PageKeyIsFound()
     {
         // Arrange
-        List<ContentDTO> content = ContentDTOTestDoubles.Generate(count: 10);
+        List<ContentDto> content = ContentDtoTestDoubles.Generate(count: 10);
         content[0].id = "DocumentId1";
         await Parallel.ForEachAsync(content, async (t, ctx) => await _dbFixture.Database.WriteAsync(t));
 

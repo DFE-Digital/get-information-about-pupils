@@ -1,5 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Content.Infrastructure.Repositories;
-public class ContentDTO
+public class ContentDto
 {
     public string id { get; set; }
     public string? Body { get; set; }

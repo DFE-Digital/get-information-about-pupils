@@ -2,16 +2,16 @@
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
 
 namespace DfE.GIAP.Core.SharedTests.TestDoubles;
-public static class ContentDTOTestDoubles
+public static class ContentDtoTestDoubles
 {
     private const int CONTENT_DOCUMENTTYPE = 20;
-    public static List<ContentDTO> Generate(int count = 10)
+    public static List<ContentDto> Generate(int count = 10)
     {
-        List<ContentDTO> contentDtos = [];
+        List<ContentDto> contentDtos = [];
 
         for (int index = 0; index < count; index++)
         {
-            Faker<ContentDTO> faker = CreateGenerator();
+            Faker<ContentDto> faker = CreateGenerator();
             contentDtos.Add(
                 faker.Generate());
         }
@@ -19,9 +19,9 @@ public static class ContentDTOTestDoubles
         return contentDtos;
     }
 
-    private static Faker<ContentDTO> CreateGenerator()
+    private static Faker<ContentDto> CreateGenerator()
     {
-        return new Faker<ContentDTO>()
+        return new Faker<ContentDto>()
             .StrictMode(true)
             .RuleFor(t => t.id, (f) => f.Random.Guid().ToString())
             .RuleFor(t => t.Title, (f) => f.Lorem.Words().Merge())

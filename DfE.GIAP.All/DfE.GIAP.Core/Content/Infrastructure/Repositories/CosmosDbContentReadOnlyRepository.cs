@@ -11,11 +11,11 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     private const string ContainerName = "application-data";
     private readonly ILogger<CosmosDbContentReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<ContentDTO?, Application.Model.Content> _contentDtoToContentMapper;
+    private readonly IMapper<ContentDto?, Application.Model.Content> _contentDtoToContentMapper;
 
     public CosmosDbContentReadOnlyRepository(
         ILogger<CosmosDbContentReadOnlyRepository> logger,
-        IMapper<ContentDTO?, Application.Model.Content> contentDtoToContentMapper,
+        IMapper<ContentDto?, Application.Model.Content> contentDtoToContentMapper,
         ICosmosDbQueryHandler cosmosDbQueryHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -36,8 +36,8 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
             }
 
             string query = $"SELECT * FROM c WHERE c.DOCTYPE = {ContentDocumentType} AND c.id = '{id}'";
-            IEnumerable<ContentDTO> response = await _cosmosDbQueryHandler.ReadItemsAsync<ContentDTO>(ContainerName, query, ctx);
-            ContentDTO? output = response.FirstOrDefault();
+            IEnumerable<ContentDto> response = await _cosmosDbQueryHandler.ReadItemsAsync<ContentDto>(ContainerName, query, ctx);
+            ContentDto? output = response.FirstOrDefault();
             return _contentDtoToContentMapper.Map(output);
         }
         catch (CosmosException ex)

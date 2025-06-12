@@ -12,12 +12,12 @@ namespace DfE.GIAP.Core.UnitTests.Content.Tests.Infrastructure;
 public sealed class CosmosDbContentReadOnlyRepositoryTests
 {
     private readonly InMemoryLogger<CosmosDbContentReadOnlyRepository> _mockLogger;
-    private readonly Mock<IMapper<ContentDTO?, Core.Content.Application.Model.Content>> _mockMapper;
+    private readonly Mock<IMapper<ContentDto?, Core.Content.Application.Model.Content>> _mockMapper;
     private readonly Mock<ICosmosDbQueryHandler> _mockCosmosDbQueryHandler;
     public CosmosDbContentReadOnlyRepositoryTests()
     {
         _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbContentReadOnlyRepository>();
-        _mockMapper = MapperTestDoubles.DefaultFromTo<ContentDTO?, Core.Content.Application.Model.Content>();
+        _mockMapper = MapperTestDoubles.DefaultFromTo<ContentDto?, Core.Content.Application.Model.Content>();
         _mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
     }
 
@@ -86,7 +86,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     {
         // Arrange
         _mockCosmosDbQueryHandler
-            .Setup(q => q.ReadItemsAsync<ContentDTO>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(q => q.ReadItemsAsync<ContentDto>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .Returns(() => throw new Exception("test exception"));
 
         CosmosDbContentReadOnlyRepository repository = new(
@@ -107,7 +107,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         CosmosException cosmosException = CosmosExceptionTestDoubles.Default();
 
         _mockCosmosDbQueryHandler
-            .Setup(q => q.ReadItemsAsync<ContentDTO>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(q => q.ReadItemsAsync<ContentDto>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(cosmosException);
 
         CosmosDbContentReadOnlyRepository repository = new(
@@ -130,7 +130,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         string validPageKey = "valid-key";
         string expectedQuery = $"SELECT * FROM c WHERE c.DOCTYPE = 20 AND c.id = '{validPageKey}'";
 
-        ContentDTO contentDto = ContentDTOTestDoubles.Generate(1).Single();
+        ContentDto contentDto = ContentDtoTestDoubles.Generate(1).Single();
 
         Core.Content.Application.Model.Content expectedOutputContent = new()
         {
@@ -139,7 +139,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         };
 
         _mockCosmosDbQueryHandler
-            .Setup((queryHandler) => queryHandler.ReadItemsAsync<ContentDTO>(expectedContainerName, expectedQuery, It.IsAny<CancellationToken>()))
+            .Setup((queryHandler) => queryHandler.ReadItemsAsync<ContentDto>(expectedContainerName, expectedQuery, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new[] { contentDto });
 
         _mockMapper
@@ -159,7 +159,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         Assert.Equal(expectedOutputContent, result);
 
         _mockCosmosDbQueryHandler
-            .Verify((queryHandler) => queryHandler.ReadItemsAsync<ContentDTO>(expectedContainerName, expectedQuery, It.IsAny<CancellationToken>()),
+            .Verify((queryHandler) => queryHandler.ReadItemsAsync<ContentDto>(expectedContainerName, expectedQuery, It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mockMapper.Verify(m => m.Map(contentDto), Times.Once);

@@ -3,14 +3,14 @@ using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Content.Tests.Mapper;
-public sealed class ContentDTOToContentMapperTests
+public sealed class ContentDtoToContentMapperTests
 {
 
     [Fact]
-    public void ContentDTOToContentMapper_Map_Returns_EmptyContent_When_NullInput()
+    public void ContentDtoToContentMapper_Map_Returns_EmptyContent_When_NullInput()
     {
         // Arrange
-        ContentDTOToContentMapper mapper = new();
+        ContentDtoToContentMapper mapper = new();
 
         // Act
         Core.Content.Application.Model.Content response = mapper.Map(null);
@@ -22,11 +22,11 @@ public sealed class ContentDTOToContentMapperTests
     }
 
     [Fact]
-    public void ContentDTOToContentMapper_Map_Returns_EmptyTitle_When_DTOTitle_Is_Null()
+    public void ContentDtoToContentMapper_Map_Returns_EmptyTitle_When_DTOTitle_Is_Null()
     {
         // Arrange
-        ContentDTOToContentMapper mapper = new();
-        ContentDTO dto = ContentDTOTestDoubles.Generate(1).Single();
+        ContentDtoToContentMapper mapper = new();
+        ContentDto dto = ContentDtoTestDoubles.Generate(1).Single();
         dto.Title = null;
 
         // Act
@@ -39,11 +39,11 @@ public sealed class ContentDTOToContentMapperTests
     }
 
     [Fact]
-    public void ContentDTOToContentMapper_Map_Returns_EmptyBody_When_DTOBody_Is_Null()
+    public void ContentDtoToContentMapper_Map_Returns_EmptyBody_When_DTOBody_Is_Null()
     {
         // Arrange
-        ContentDTOToContentMapper mapper = new();
-        ContentDTO dto = ContentDTOTestDoubles.Generate(1).Single();
+        ContentDtoToContentMapper mapper = new();
+        ContentDto dto = ContentDtoTestDoubles.Generate(1).Single();
         dto.Body = null;
 
         // Act
@@ -57,11 +57,11 @@ public sealed class ContentDTOToContentMapperTests
 
 
     [Fact]
-    public void ContentDTOToContentMapper_Map_Returns_MappedContent_When_DTOPassed()
+    public void ContentDtoToContentMapper_Map_Returns_MappedContent_When_DTOPassed()
     {
         // Arrange
-        ContentDTOToContentMapper mapper = new();
-        ContentDTO dto = ContentDTOTestDoubles.Generate(1).Single();
+        ContentDtoToContentMapper mapper = new();
+        ContentDto dto = ContentDtoTestDoubles.Generate(1).Single();
 
         // Act
         Core.Content.Application.Model.Content response = mapper.Map(dto);
