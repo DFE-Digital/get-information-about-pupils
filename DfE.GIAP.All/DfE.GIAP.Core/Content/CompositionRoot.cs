@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Options;
+using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Content;
 

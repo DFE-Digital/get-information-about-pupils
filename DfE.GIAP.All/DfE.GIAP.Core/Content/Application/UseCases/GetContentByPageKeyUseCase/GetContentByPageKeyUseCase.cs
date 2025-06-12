@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Options;
+using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
