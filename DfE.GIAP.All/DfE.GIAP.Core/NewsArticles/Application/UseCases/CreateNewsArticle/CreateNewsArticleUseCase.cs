@@ -10,8 +10,6 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 /// <summary>
 /// Handles the creation of a new news article by processing the provided request.
 /// </summary>
-/// <remarks>This use case validates the input request and creates a new news article using the provided
-/// repository. The request must include a non-empty title and body.</remarks>
 public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleRequest>
 {
     /// <summary>
@@ -35,8 +33,6 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
     /// <summary>
     /// Handles the creation of a news article based on the provided request.
     /// </summary>
-    /// <remarks>This method validates the input request and creates a new news article using the provided
-    /// details. The created news article is then persisted asynchronously using the repository.</remarks>
     /// <param name="request">The request containing the details of the news article to be created.  The request must include a non-null,
     /// non-empty <see cref="CreateNewsArticleRequest.Title"/> and  <see cref="CreateNewsArticleRequest.Body"/>.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
