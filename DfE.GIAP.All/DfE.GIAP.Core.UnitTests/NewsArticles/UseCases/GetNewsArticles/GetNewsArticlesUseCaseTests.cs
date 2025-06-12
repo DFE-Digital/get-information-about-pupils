@@ -1,3 +1,4 @@
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;
 
@@ -35,7 +36,7 @@ public sealed class GetNewsArticlesUseCaseTests
         Mock<INewsArticleReadRepository> mockRepository =
             NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => throw new Exception(expectedExceptionMessage));
         GetNewsArticlesUseCase sut = new(mockRepository.Object);
-        GetNewsArticlesRequest request = new(It.IsAny<bool>(), It.IsAny<bool>());
+        GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
         Func<Task> act = () => sut.HandleRequest(request);
 
         // Act Assert
@@ -49,7 +50,7 @@ public sealed class GetNewsArticlesUseCaseTests
         // Arrange
         Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(Enumerable.Empty<NewsArticle>);
         GetNewsArticlesUseCase sut = new(repo.Object);
-        GetNewsArticlesRequest request = new(It.IsAny<bool>(), It.IsAny<bool>());
+        GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
 
         // Act
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
@@ -92,7 +93,7 @@ public sealed class GetNewsArticlesUseCaseTests
 
         Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => unorderedUnpinnedArticles);
         GetNewsArticlesUseCase sut = new(repo.Object);
-        GetNewsArticlesRequest request = new(It.IsAny<bool>(), It.IsAny<bool>());
+        GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
 
         // Act
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
@@ -111,16 +112,50 @@ public sealed class GetNewsArticlesUseCaseTests
         Assert.Equivalent(expectedOrderArticles, response.NewsArticles);
     }
 
+    [Fact]
+    public async Task HandleRequest_ReturnsArticles_OrderedBy_ModifiedDate_Desc_When_IsArchived_True()
+    {
+        // Arrange
+        NewsArticle articleOldest = NewsArticleTestDoubles.Create();
+        articleOldest.ModifiedDate = new DateTime(2021, 1, 1);
+
+        NewsArticle articleMiddle = NewsArticleTestDoubles.Create();
+        articleMiddle.ModifiedDate = new DateTime(2023, 6, 6);
+
+        NewsArticle articleNewest = NewsArticleTestDoubles.Create();
+        articleNewest.ModifiedDate = new DateTime(2025, 1, 1);
+
+        // Pinned status should not affect order when IsArchived is true
+        articleOldest.Pinned = true;
+        articleMiddle.Pinned = false;
+        articleNewest.Pinned = true;
+
+        List<NewsArticle> unorderedArticles = [articleMiddle, articleOldest, articleNewest];
+
+        Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => unorderedArticles);
+        GetNewsArticlesUseCase sut = new(repo.Object);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished);
+
+        // Act
+        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+
+        // Assert
+        List<NewsArticle> expectedOrder = [articleNewest, articleMiddle, articleOldest];
+        Assert.Equivalent(expectedOrder, response.NewsArticles);
+    }
+
     [Theory]
-    [InlineData(true, true)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    [InlineData(false, false)]
-    public async Task HandleRequest_CallsQueryHandler_Once_With_IsArchived_IsDraft(bool isArchived, bool isDraft)
+    [InlineData(NewsArticleSearchFilter.ArchivedWithPublished)]
+    [InlineData(NewsArticleSearchFilter.ArchivedWithNotPublished)]
+    [InlineData(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished)]
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished)]
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithNotPublished)]
+    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished)]
+    public async Task HandleRequest_CallsQueryHandler_Once_With_IsArchived_IsPublished(NewsArticleSearchFilter newsArticleSearchStatus)
     {
         Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => []);
         GetNewsArticlesUseCase sut = new(repo.Object);
-        GetNewsArticlesRequest request = new(isArchived, isDraft);
+        GetNewsArticlesRequest request = new(newsArticleSearchStatus);
 
         // Act
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
@@ -128,6 +163,6 @@ public sealed class GetNewsArticlesUseCaseTests
         // Assert
         Assert.NotNull(response);
         repo.Verify(
-            (useCase) => useCase.GetNewsArticlesAsync(isArchived, isDraft), Times.Once());
+            (useCase) => useCase.GetNewsArticlesAsync(newsArticleSearchStatus), Times.Once());
     }
 }

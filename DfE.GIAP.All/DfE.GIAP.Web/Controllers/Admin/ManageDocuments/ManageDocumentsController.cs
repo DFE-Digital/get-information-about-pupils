@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
@@ -12,9 +13,9 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
-using DfE.GIAP.Core.Models.News;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.ManageDocument;
@@ -27,6 +28,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
@@ -38,12 +40,14 @@ public class ManageDocumentsController : Controller
     private readonly IContentService _contentService;
     private readonly INewsService _newsService;
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
+    private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public ManageDocumentsController(
         INewsService newsService,
         IManageDocumentsService manageDocumentsService,
         IContentService contentService,
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase)
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase)
     {
         _newsService = newsService ??
             throw new ArgumentNullException(nameof(newsService));
@@ -53,6 +57,8 @@ public class ManageDocumentsController : Controller
             throw new ArgumentNullException(nameof(contentService));
         _getNewsArticleByIdUseCase = getNewsArticleByIdUseCase ??
             throw new ArgumentNullException(nameof(getNewsArticleByIdUseCase));
+        _getNewsArticlesUseCase = getNewsArticlesUseCase ??
+            throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
     }
 
     [HttpGet]
@@ -612,16 +618,16 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadNewsList()
     {
-        IList<Document> newsList = new List<Document>();
-        var requestBody = new RequestBody() { ARCHIVED = false, DRAFTS = true };
-        var result = await _newsService.GetNewsArticles(requestBody).ConfigureAwait(false);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished);
+        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
-        foreach (var news in result)
+        IList<Document> newsList = new List<Document>();
+        foreach (NewsArticle news in response.NewsArticles)
         {
-            var status = news.Published ? "Published" : "Draft";
-            var pinned = news.Pinned ? " | Pinned" : "";
-            var date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
-            var name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
+            string status = news.Published ? "Published" : "Draft";
+            string pinned = news.Pinned ? " | Pinned" : "";
+            string date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
+            string name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
 
             newsList.Add(new Document
             {
@@ -637,16 +643,16 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadArchivedNewsList()
     {
-        IList<Document> newsList = new List<Document>();
-        var requestBody = new RequestBody() { ARCHIVED = true, DRAFTS = true };
-        var result = await _newsService.GetNewsArticles(requestBody).ConfigureAwait(false);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished);
+        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
 
-        foreach (var news in result)
+        IList<Document> newsList = new List<Document>();
+        foreach (NewsArticle news in response.NewsArticles)
         {
-            var status = news.Published ? "Published" : "Draft";
-            var pinned = news.Pinned ? " | Pinned" : "";
-            var date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
-            var name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
+            string status = news.Published ? "Published" : "Draft";
+            string pinned = news.Pinned ? " | Pinned" : "";
+            string date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
+            string name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
 
             newsList.Add(new Document
             {
@@ -656,7 +662,7 @@ public class ManageDocumentsController : Controller
             });
         }
 
-        ViewBag.ArchiveNewsIsSuccess = newsList.Count > 0 ? true : false;
+        ViewBag.ArchiveNewsIsSuccess = newsList.Any();
         ViewBag.ArchivedNewsDocuments = new SelectList(newsList, "DocumentId", "DocumentName");
     }
 

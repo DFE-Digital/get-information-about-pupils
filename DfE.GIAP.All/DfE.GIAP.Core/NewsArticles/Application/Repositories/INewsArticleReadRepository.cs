@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.Models;
+﻿using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using DfE.GIAP.Core.NewsArticles.Application.Models;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.Repositories;
 
@@ -14,18 +15,14 @@ namespace DfE.GIAP.Core.NewsArticles.Application.Repositories;
 public interface INewsArticleReadRepository
 {
     /// <summary>
-    /// Retrieves a collection of news articles based on their publication status.
+    /// Asynchronously retrieves a collection of news articles based on the specified search filter.
     /// </summary>
-    /// <remarks>The method filters news articles based on the provided parameters. If both <paramref
-    /// name="isArchived"/>  and <paramref name="isDraft"/> are <see langword="false"/>, only published articles
-    /// will be retrieved.</remarks>
-    /// <param name="isArchived">A value indicating whether to include archived articles.  Specify <see langword="true"/> to retrieve
-    /// archived articles; otherwise, <see langword="false"/>.</param>
-    /// <param name="isDraft">A value indicating whether to include draft articles.  Specify <see langword="true"/> to retrieve draft
-    /// articles; otherwise, <see langword="false"/>.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains an  <see cref="IEnumerable{T}"/>
-    /// of <see cref="NewsArticle"/> objects that match the specified criteria.</returns>
-    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(bool isArchived, bool isDraft);
+    /// <param name="newsArticleSearchFilter">The filter criteria used to search for news articles. This includes parameters such as keywords, date ranges, and
+    /// categories.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of <see
+    /// cref="NewsArticle"/> objects matching the search criteria. If no articles match the filter, the collection will
+    /// be empty.</returns>
+    Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchFilter newsArticleSearchFilter);
 
     /// <summary>
     /// Asynchronously retrieves a news article by its unique identifier.
