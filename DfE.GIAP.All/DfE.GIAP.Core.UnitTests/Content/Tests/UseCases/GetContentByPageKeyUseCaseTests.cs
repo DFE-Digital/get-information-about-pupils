@@ -8,6 +8,7 @@ using DfE.GIAP.Core.UnitTests.Content.TestDoubles;
 namespace DfE.GIAP.Core.UnitTests.Content.Tests.UseCases;
 public sealed class GetContentByPageKeyUseCaseTests
 {
+    private static readonly string StubValidPageKey = "valid-pagekey";
 
     [Theory]
     [InlineData(null)]
@@ -38,7 +39,7 @@ public sealed class GetContentByPageKeyUseCaseTests
     }
 
     [Fact]
-    public async Task GetContentByPageKeyUseCase_BubblesException_When_ProviderThrows()
+    public async Task GetContentByPageKeyUseCase_HandleRequest_BubblesException_When_ProviderThrows()
     {
         IContentReadOnlyRepository mockRepository = ContentReadOnlyRepositoryTestDoubles.Default().Object;
         Mock<IPageContentOptionsProvider> mockProvider = new();
@@ -48,13 +49,13 @@ public sealed class GetContentByPageKeyUseCaseTests
                 .Returns(() => throw new Exception("test exception"));
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository);
-        GetContentByPageKeyUseCaseRequest request = new("valid-pagekey");
+        GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
         Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequest(request);
         await Assert.ThrowsAsync<Exception>(act);
     }
 
     [Fact]
-    public async Task GetContentByPageKeyUseCase_BubblesException_When_RepositoryThrows()
+    public async Task GetContentByPageKeyUseCase_HandleRequest_BubblesException_When_RepositoryThrows()
     {
         Mock<IContentReadOnlyRepository> mockRepository = ContentReadOnlyRepositoryTestDoubles.Default();
         Mock<IPageContentOptionsProvider> mockProvider = new();
@@ -68,7 +69,7 @@ public sealed class GetContentByPageKeyUseCaseTests
                 .ReturnsAsync(() => throw new Exception("Repository exception"));
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository.Object);
-        GetContentByPageKeyUseCaseRequest request = new("valid-pagekey");
+        GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
         Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequest(request);
         await Assert.ThrowsAsync<Exception>(act);
     }
@@ -80,7 +81,7 @@ public sealed class GetContentByPageKeyUseCaseTests
         string validPageKey = "test-pagekey";
         Mock<IContentReadOnlyRepository> mockRepository = ContentReadOnlyRepositoryTestDoubles.Default();
         Mock<IPageContentOptionsProvider> mockContentOptionProvider = new();
-        PageContentOption option = new()
+        PageContentOption pageContentOption = new()
         {
             DocumentId = "test-documentid-1"
         };
@@ -93,7 +94,7 @@ public sealed class GetContentByPageKeyUseCaseTests
 
         mockContentOptionProvider
             .Setup(t => t.GetPageContentOptionWithPageKey(It.Is<string>(t => t == validPageKey)))
-            .Returns(option)
+            .Returns(pageContentOption)
             .Verifiable();
 
         mockRepository.Setup(t => t.GetContentByKeyAsync(
@@ -119,6 +120,4 @@ public sealed class GetContentByPageKeyUseCaseTests
                 It.IsAny<ContentKey>(), It.IsAny<CancellationToken>()),
                 Times.Once());
     }
-
-
 }
