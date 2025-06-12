@@ -1,14 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.SharedTests;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles;
@@ -40,7 +36,6 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>());
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>());
         Assert.NotNull(provider.GetService<IMapper<NewsArticleDTO, NewsArticle>>());
-        Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
         Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
     }
 }
