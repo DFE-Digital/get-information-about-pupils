@@ -44,7 +44,7 @@ public class NewsControllerTests
 
         mockContentService.Setup(repo => repo.GetContent(DocumentType.PublicationSchedule)).ReturnsAsync(listPublicationData);
         mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(listMaintenanceData);
-        _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequest(It.IsAny<GetNewsArticlesRequest>()))
+        _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArticleData));
 
         var controller = new NewsController(mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
@@ -55,7 +55,7 @@ public class NewsControllerTests
         // Assert
         mockContentService.Verify(x => x.GetContent(DocumentType.PublicationSchedule), Times.Once());
         mockContentService.Verify(x => x.GetContent(DocumentType.PlannedMaintenance), Times.Once());
-        _mockGetNewsArticlesUseCase.Verify(x => x.HandleRequest(It.IsAny<GetNewsArticlesRequest>()), Times.Once());
+        _mockGetNewsArticlesUseCase.Verify(x => x.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()), Times.Once());
 
         var viewResult = Assert.IsType<ViewResult>(result);
         var publicationModel = Assert.IsType<NewsViewModel>(
@@ -81,7 +81,7 @@ public class NewsControllerTests
 
         newsViewModel.NewsArticles = listArchivedArticleData;
 
-        _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequest(It.IsAny<GetNewsArticlesRequest>()))
+        _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArchivedArticleData));
 
         var controller = new NewsController(mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
@@ -93,7 +93,7 @@ public class NewsControllerTests
         var viewResult = Assert.IsType<ViewResult>(result);
         var articleModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).NewsArticles.ToList();
 
-        _mockGetNewsArticlesUseCase.Verify(x => x.HandleRequest(It.IsAny<GetNewsArticlesRequest>()), Times.Once());
+        _mockGetNewsArticlesUseCase.Verify(x => x.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()), Times.Once());
 
         Assert.Equal("Title 1", articleModel[0].Title);
         Assert.Equal("Test body 1", articleModel[0].Body);

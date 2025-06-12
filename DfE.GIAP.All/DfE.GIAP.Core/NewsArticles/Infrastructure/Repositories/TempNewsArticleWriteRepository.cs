@@ -35,8 +35,8 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
         {
             if (newsArticle is null)
             {
-                _logger.LogCritical("CreateNewsArticleAsync called with null or empty id.");
-                throw new ArgumentException("NewsArticle must not be null or empty.", nameof(newsArticle));
+                _logger.LogCritical("CreateNewsArticleAsync called with null.");
+                throw new ArgumentNullException("NewsArticle must not be null.", nameof(newsArticle));
             }
 
             NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);

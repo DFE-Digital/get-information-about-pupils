@@ -18,7 +18,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
     {
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticleByIdUseCase sut = new(mockRepository.Object);
-        Func<Task> act = () => sut.HandleRequest(request: null);
+        Func<Task> act = () => sut.HandleRequestAsync(request: null);
 
         // Act Assert 
         await Assert.ThrowsAsync<ArgumentNullException>(act);
@@ -35,7 +35,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticleByIdUseCase sut = new(mockRepository.Object);
         GetNewsArticleByIdRequest request = new(id);
-        Func<Task> act = () => sut.HandleRequest(request);
+        Func<Task> act = () => sut.HandleRequestAsync(request);
 
         // Act Assert 
         await Assert.ThrowsAsync<ArgumentException>(act);
@@ -50,7 +50,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
             NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticleById(() => throw new Exception(expectedExceptionMessage));
         GetNewsArticleByIdUseCase sut = new(mockRepository);
         GetNewsArticleByIdRequest request = new(_validId);
-        Func<Task> act = () => sut.HandleRequest(request);
+        Func<Task> act = () => sut.HandleRequestAsync(request);
 
         // Act Assert
         Exception exception = await Assert.ThrowsAsync<Exception>(act);
@@ -67,7 +67,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         GetNewsArticleByIdRequest request = new(_validId);
 
         // Act
-        GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
+        GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         Assert.NotNull(response);
@@ -84,7 +84,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         GetNewsArticleByIdRequest request = new(_validId);
 
         // Act
-        GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
+        GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         Assert.NotNull(response);

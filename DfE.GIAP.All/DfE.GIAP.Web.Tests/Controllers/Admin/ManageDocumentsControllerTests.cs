@@ -400,7 +400,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
             DraftTitle = string.Empty
         };
 
-        _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequest(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
+        _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequestAsync(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
 
         ManageDocumentsController controller = GetManageDocumentsController();
         string editDocument = "EditDocument";

@@ -1,5 +1,21 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using DfE.GIAP.Core.Common.Application;
+
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
-public record CreateNewsArticleRequest(string Title, string Body, bool Published, bool Archived, bool Pinned);
+
+/// <summary>
+/// Represents a request to create a news article with specified attributes.
+/// </summary>
+/// <remarks>This record is used to encapsulate the data required to create a news article. It includes properties
+/// for the article's title, body content, and various status flags.</remarks>
+/// <param name="Title">The title of the news article. Cannot be null or empty.</param>
+/// <param name="Body">The body content of the news article. Cannot be null or empty.</param>
+/// <param name="Published">A value indicating whether the news article is published. <see langword="true"/> if published; otherwise, <see
+/// langword="false"/>.</param>
+/// <param name="Archived">A value indicating whether the news article is archived. <see langword="true"/> if archived; otherwise, <see
+/// langword="false"/>.</param>
+/// <param name="Pinned">A value indicating whether the news article is pinned. <see langword="true"/> if pinned; otherwise, <see
+/// langword="false"/>.</param>
+public record CreateNewsArticleRequest(string Title, string Body, bool Published, bool Archived, bool Pinned) : IUseCaseRequest;

@@ -6,7 +6,7 @@ using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
-public class CreateNewsArticleUseCase : IUseCase<CreateNewsArticleRequest, CreateNewsArticleResponse>
+public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleRequest>
 {
     private readonly INewsArticleWriteRepository _newsArticleWriteRepository;
     public CreateNewsArticleUseCase(INewsArticleWriteRepository newsArticleWriteRepository)
@@ -15,9 +15,12 @@ public class CreateNewsArticleUseCase : IUseCase<CreateNewsArticleRequest, Creat
             throw new ArgumentNullException(nameof(newsArticleWriteRepository));
     }
 
-    public async Task<CreateNewsArticleResponse> HandleRequest(CreateNewsArticleRequest request)
+    public async Task HandleRequestAsync(CreateNewsArticleRequest request)
     {
-        // Validate the request
+        if (string.IsNullOrWhiteSpace(request.Title))
+            throw new ArgumentException("Title cannot be null or empty.", nameof(request.Title));
+        if (string.IsNullOrWhiteSpace(request.Body))
+            throw new ArgumentException("Body cannot be null or empty.", nameof(request.Body));
 
         NewsArticle newsArticle = NewsArticle.Create(
             title: request.Title,
@@ -26,9 +29,6 @@ public class CreateNewsArticleUseCase : IUseCase<CreateNewsArticleRequest, Creat
             archived: request.Archived,
             pinned: request.Pinned);
 
-        NewsArticle? createResponse = await _newsArticleWriteRepository.CreateNewsArticleAsync(newsArticle);
-
-        CreateNewsArticleResponse response = new(createResponse);
-        return response;
+        await _newsArticleWriteRepository.CreateNewsArticleAsync(newsArticle);
     }
 }
