@@ -1,5 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Content.Application.Options.Provider;
-public interface IPageContentOptionProvider
+public interface IPageContentOptionsProvider
 {
     PageContentOption GetPageContentOptionWithPageKey(string pageKey);
 }

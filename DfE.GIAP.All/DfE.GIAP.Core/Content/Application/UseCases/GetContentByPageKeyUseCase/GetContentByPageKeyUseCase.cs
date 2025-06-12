@@ -7,11 +7,11 @@ using DfE.GIAP.Core.Content.Application.Repository;
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>
 {
-    private readonly IPageContentOptionProvider _pageContentOptionProvider;
+    private readonly IPageContentOptionsProvider _pageContentOptionProvider;
     private readonly IContentReadOnlyRepository _contentReadOnlyRepository;
 
     public GetContentByPageKeyUseCase(
-        IPageContentOptionProvider pageContentOptionProvider,
+        IPageContentOptionsProvider pageContentOptionProvider,
         IContentReadOnlyRepository contentReadOnlyRepository)
     {
         ArgumentNullException.ThrowIfNull(pageContentOptionProvider);

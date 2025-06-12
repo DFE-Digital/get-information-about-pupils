@@ -39,7 +39,7 @@ public static class CompositionRoot
              IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
              configuration.GetSection(nameof(PageContentOptions)).Bind(options);
          });
-        services.AddSingleton<IPageContentOptionProvider, PageContentOptionProvider>();
+        services.AddSingleton<IPageContentOptionsProvider, PageContentOptionProvider>();
         return services;
     }
 

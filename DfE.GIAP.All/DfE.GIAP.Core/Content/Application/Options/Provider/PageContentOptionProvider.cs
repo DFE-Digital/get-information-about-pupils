@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Content.Application.Options.Provider;
-public class PageContentOptionProvider : IPageContentOptionProvider
+public class PageContentOptionProvider : IPageContentOptionsProvider
 {
     private readonly PageContentOptions _options;
 

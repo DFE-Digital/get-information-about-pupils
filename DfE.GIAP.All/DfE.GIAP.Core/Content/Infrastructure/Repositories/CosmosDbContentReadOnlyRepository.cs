@@ -2,11 +2,10 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Content.Application.Model;
 using DfE.GIAP.Core.Content.Application.Options;
-using DfE.GIAP.Core.Content.Application.Options.Extensions;
+using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Content.Infrastructure.Repositories;
 public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyRepository
@@ -15,32 +14,30 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     private const string ContainerName = "application-data";
     private readonly ILogger<CosmosDbContentReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler; 
-    private readonly PageContentOptions _pageContentOptions;
     private readonly IMapper<ContentDTO?, Application.Model.Content> _contentDtoToContentMapper;
+    private readonly IPageContentOptionsProvider _pageContentOptionsProvider;
 
     public CosmosDbContentReadOnlyRepository(
         ILogger<CosmosDbContentReadOnlyRepository> logger,
-        CosmosClient cosmosClient,
         IMapper<ContentDTO?, Application.Model.Content> contentDtoToContentMapper,
-        IOptions<PageContentOptions> pageContentOptions,
+        IPageContentOptionsProvider pageContentOptionProvider,
         ICosmosDbQueryHandler cosmosDbQueryHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
-        ArgumentNullException.ThrowIfNull(cosmosClient);
         ArgumentNullException.ThrowIfNull(contentDtoToContentMapper);
-        ArgumentNullException.ThrowIfNull(pageContentOptions);
+        ArgumentNullException.ThrowIfNull(pageContentOptionProvider);
+        ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         _logger = logger;
         _contentDtoToContentMapper = contentDtoToContentMapper;
+        _pageContentOptionsProvider = pageContentOptionProvider;
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
-        _pageContentOptions = pageContentOptions.Value ??
-            throw new ArgumentNullException(nameof(pageContentOptions.Value));
     }
 
     public async Task<Application.Model.Content> GetContentByKeyAsync(ContentKey key, CancellationToken ctx = default)
     {
         try
         {
-            PageContentOption options = _pageContentOptions.GetPageContentOptionWithPageKey(key.Value); // TODO validate each on registration?
+            PageContentOption options = _pageContentOptionsProvider.GetPageContentOptionWithPageKey(key.Value);
 
             if(string.IsNullOrWhiteSpace(options.DocumentId))
             {
