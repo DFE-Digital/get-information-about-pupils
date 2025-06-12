@@ -17,16 +17,6 @@ public static class CompositionRoot
     public static IServiceCollection AddContentDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-
-        // both infrastructure and application depend on PageContentOptions
-        services.AddOptions<PageContentOptions>().Configure<IServiceProvider>(
-            (options, sp) =>
-             {
-                 IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
-                 configuration.GetSection(nameof(PageContentOptions)).Bind(options);
-             });
-        services.AddSingleton<IPageContentOptionsProvider, PageContentOptionProvider>();
-
         services
             .RegisterApplicationDependencies()
             .RegisterInfrastructureDependencies();
@@ -37,8 +27,14 @@ public static class CompositionRoot
     // Application
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
-        return services
-            .AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
+        services.AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
+        services.AddOptions<PageContentOptions>().Configure<IServiceProvider>((options, sp) =>
+        {
+            IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
+            configuration.GetSection(nameof(PageContentOptions)).Bind(options);
+        });
+        services.AddSingleton<IPageContentOptionsProvider, PageContentOptionProvider>();
+        return services;
     }
 
     // Infrastructure 
