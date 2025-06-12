@@ -11,86 +11,89 @@
     <h1 class="govuk-heading-xl">Manage documents</h1>
 
         <form method="post">
+            <div class="govuk-form-group">
 
-            <partial name="_ValidationSummary" model="ViewData.ModelState" />
-            <label for="select-document-dropdown" class="govuk-label">Please select a document</label>
+                <partial name="_ValidationSummary" model="ViewData.ModelState" />
+                <label for="select-document-dropdown" class="govuk-label">Please select a document</label>
 
-            <select id="select-document-dropdown" asp-for="@Model.DocumentList.DocumentId" class="govuk-select @(Model.HasInvalidDocumentList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ListOfDocuments">
-            </select>
-            <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="select-document--button" value="Select" name="select" class="govuk-button">Select</button>
-
-            @if (Model?.DocumentList?.DocumentId == DocumentType.Article.ToString() && ViewBag.NewsDocuments != null)
-            {
-                <br />
-
-                <label for="select-article-dropdown" class="govuk-label">Please select a news article</label>
-                <select id="select-article-dropdown" asp-for="@Model.SelectedNewsId" class="govuk-select @(Model.HasInvalidNewsList ? "govuk-textarea--error" : "")" asp-items="ViewBag.NewsDocuments">
+                <select id="select-document-dropdown" asp-for="@Model.DocumentList.DocumentId" class="govuk-select @(Model.HasInvalidDocumentList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ListOfDocuments">
                 </select>
-                <button asp-controller="ManageDocuments" asp-action="SelectNewsArticle" id="select-document--button" value="Select" name="select" class="govuk-button">Select</button>
-            }
+                <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="select-document--button" value="Select" name="select" class="govuk-button">Select</button>
 
-            @if (Model?.DocumentList?.DocumentId == DocumentType.ArchivedNews.ToString() && ViewBag.ArchivedNewsDocuments != null)
-            {
-                <br />
-                if (ViewBag.ArchiveNewsIsSuccess)
+                @if (Model?.DocumentList?.DocumentId == DocumentType.Article.ToString() && ViewBag.NewsDocuments != null)
                 {
-                    <label for="select-article-dropdown--archived" class="govuk-label">Please select an archived news article</label>
+                    <br />
 
-                    <select id="select-article-dropdown--archived" asp-for="@Model.ArchivedNewsId" class="govuk-select @(Model.HasInvalidArchiveList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ArchivedNewsDocuments">
+                    <label for="select-article-dropdown" class="govuk-label">Please select a news article</label>
+                    <select id="select-article-dropdown" asp-for="@Model.SelectedNewsId" class="govuk-select @(Model.HasInvalidNewsList ? "govuk-textarea--error" : "")" asp-items="ViewBag.NewsDocuments">
                     </select>
-                    <button asp-controller="ManageDocuments" asp-action="ArchivedNews" id="select-archived-news--button" value="Select" name="select" class="govuk-button">Select</button>
+                    <button asp-controller="ManageDocuments" asp-action="SelectNewsArticle" id="select-document--button" value="Select" name="select" class="govuk-button">Select</button>
                 }
-                else
+
+                @if (Model?.DocumentList?.DocumentId == DocumentType.ArchivedNews.ToString() && ViewBag.ArchivedNewsDocuments != null)
                 {
-                    <h2 class="govuk-heading-l">You do not currently have any archived news articles</h2>
-                }
-            }
-            @if (Model?.DocumentList?.DocumentId == DocumentType.Article.ToString())
-            {
-                <p class="govuk-body">
-                    <button formmethod="get" asp-controller="ManageDocuments" asp-action="CreateNewsArticle" id="create-new-article--button" value="Create" name="create" class="govuk-button govuk-button--secondary">Create new article</button>
-                </p>
-            }
-
-            @if (Model != null && ViewBag.DisplayEditor == true && Model.DocumentData != null)
-            {
-                <input type="hidden" asp-for="@Model.DocumentData.Id" />
-                <input type="hidden" asp-for="@Model.DocumentData.Archived" />
-                <input type="hidden" asp-for="@Model.DocumentData.Published" />
-
-                @if (!string.IsNullOrEmpty(Model.SelectedNewsId))
-                {
-                    <input type="hidden" asp-for="@Model.SelectedNewsId" />
-                    <h2 class="govuk-heading-l">Edit news article</h2>
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="DocumentData.Pinned" name="DocumentData.Pinned" type="checkbox">
-                        <label class="govuk-label govuk-checkboxes__label" for="DocumentData_Pinned">Pinned</label>
-                    </div>
-                }
-                else
-                {
-                    <h2 class="govuk-heading-l">Edit document</h2>
-                }
-                <br />
-
-                <partial name="~/Views/Admin/ManageDocuments/_DocumentFields.cshtml" for="DocumentData" />
-
-                 <div class="govuk-button-group">
-
-                    @if (Model.DocumentList.DocumentId == DocumentType.Article.ToString())
+                    <br />
+                    if (ViewBag.ArchiveNewsIsSuccess)
                     {
-                        <button asp-controller="ManageDocuments" asp-action="SaveArticleAsDraft" id="save-as-draft--button" name="save-as-draft" value="SaveAsDraft" class="govuk-button govuk-button--secondary">Save as draft</button>
+                        <label for="select-article-dropdown--archived" class="govuk-label">Please select an archived news article</label>
+
+                        <select id="select-article-dropdown--archived" asp-for="@Model.ArchivedNewsId" class="govuk-select @(Model.HasInvalidArchiveList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ArchivedNewsDocuments">
+                        </select>
+                        <button asp-controller="ManageDocuments" asp-action="ArchivedNews" id="select-archived-news--button" value="Select" name="select" class="govuk-button">Select</button>
                     }
-                    <button asp-controller="ManageDocuments" asp-action="PublishChanges" id="publish-document--button" name="publish" value="Publish" class="govuk-button govuk-button--secondary">Publish</button>
-                
+                    else
+                    {
+                        <h2 class="govuk-heading-l">You do not currently have any archived news articles</h2>
+                    }
+                }
+
+                @if (Model?.DocumentList?.DocumentId == DocumentType.Article.ToString())
+                {
+                    <p class="govuk-body">
+                        <button asp-controller="ManageDocuments" asp-action="CreateNewsArticle" id="create-new-article--button" value="Create" name="create" class="govuk-button govuk-button--secondary">Create new article</button>
+                    </p>
+                }
+
+                @if (Model != null && ViewBag.DisplayEditor == true && Model.DocumentData != null)
+                {
+                    <input type="hidden" asp-for="@Model.DocumentData.Id" />
+                    <input type="hidden" asp-for="@Model.DocumentData.Archived" />
+                    <input type="hidden" asp-for="@Model.DocumentData.Published" />
+
                     @if (!string.IsNullOrEmpty(Model.SelectedNewsId))
                     {
-                        <button asp-controller="ManageDocuments" asp-action="ArchiveNews" id="archive-document--button" name="archive" value="Archive" type="submit" class="govuk-button govuk-button--secondary">Archive</button>
-                        <button asp-controller="ManageDocuments" asp-action="DeleteNews" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
+                        <input type="hidden" asp-for="@Model.SelectedNewsId" />
+                        <h2 class="govuk-heading-l">Edit news article</h2>
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="DocumentData.Pinned" name="DocumentData.Pinned" type="checkbox">
+                            <label class="govuk-label govuk-checkboxes__label" for="DocumentData_Pinned">Pinned</label>
+                        </div>
                     }
+                    else
+                    {
+                        <h2 class="govuk-heading-l">Edit document</h2>
+                    }
+                    <br />
 
-                    <button asp-controller="ManageDocuments" asp-action="PreviewChanges" id="preview-document--button" name="preview" value="Preview" class="govuk-button">Preview</button>
-                 </div>
-            }
+                    <partial name="~/Views/Admin/ManageDocuments/_DocumentFields.cshtml" for="DocumentData" />
+
+                     <div class="govuk-button-group">
+
+                        @if (Model.DocumentList.DocumentId == DocumentType.Article.ToString())
+                        {
+                            <button asp-controller="ManageDocuments" asp-action="SaveArticleAsDraft" id="save-as-draft--button" name="save-as-draft" value="SaveAsDraft" class="govuk-button govuk-button--secondary">Save as draft</button>
+                        }
+                        <button asp-controller="ManageDocuments" asp-action="PublishChanges" id="publish-document--button" name="publish" value="Publish" class="govuk-button govuk-button--secondary">Publish</button>
+                
+                        @if (!string.IsNullOrEmpty(Model.SelectedNewsId))
+                        {
+                            <button asp-controller="ManageDocuments" asp-action="ArchiveNews" id="archive-document--button" name="archive" value="Archive" type="submit" class="govuk-button govuk-button--secondary">Archive</button>
+                            <button asp-controller="ManageDocuments" asp-action="DeleteNews" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
+                        }
+
+                        <button asp-controller="ManageDocuments" asp-action="PreviewChanges" id="preview-document--button" name="preview" value="Preview" class="govuk-button">Preview</button>
+                     </div>
+                }
+            </div>
         </form>
 </div>
