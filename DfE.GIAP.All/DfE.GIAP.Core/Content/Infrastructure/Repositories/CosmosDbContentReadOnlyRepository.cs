@@ -5,6 +5,10 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace DfE.GIAP.Core.Content.Infrastructure.Repositories;
+
+/// <summary>
+/// Cosmos DB implementation of <see cref="IContentReadOnlyRepository"/> for retrieving content documents.
+/// </summary>
 public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyRepository
 {
     private const int ContentDocumentType = 20;
@@ -13,6 +17,12 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<ContentDto?, Application.Model.Content> _contentDtoToContentMapper;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CosmosDbContentReadOnlyRepository"/> class.
+    /// </summary>
+    /// <param name="logger">Logger instance for diagnostics.</param>
+    /// <param name="contentDtoToContentMapper">Mapper for converting DTOs to domain models.</param>
+    /// <param name="cosmosDbQueryHandler">Handler for executing Cosmos DB queries.</param>
     public CosmosDbContentReadOnlyRepository(
         ILogger<CosmosDbContentReadOnlyRepository> logger,
         IMapper<ContentDto?, Application.Model.Content> contentDtoToContentMapper,
@@ -26,13 +36,14 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
     }
 
+    /// <inheritdoc/>
     public async Task<Application.Model.Content> GetContentByIdAsync(string id, CancellationToken ctx = default)
     {
         try
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                throw new ArgumentException($"DocumentId is null or whitespace");
+                throw new ArgumentException("DocumentId is null or whitespace");
             }
 
             string query = $"SELECT * FROM c WHERE c.DOCTYPE = {ContentDocumentType} AND c.id = '{id}'";

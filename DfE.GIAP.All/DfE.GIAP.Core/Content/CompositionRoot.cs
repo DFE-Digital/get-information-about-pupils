@@ -1,19 +1,25 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
-using DfE.GIAP.Core.Common.Application;
+﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.Infrastructure;
-using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Options.Provider;
+using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
-using DfE.GIAP.Core.Content.Infrastructure.Repositories.Mapper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.Content;
+
+/// <summary>
+/// Provides extension methods to register application and infrastructure dependencies for the Content module.
+/// </summary>
 public static class CompositionRoot
 {
+    /// <summary>
+    /// Registers all dependencies required by the Content module.
+    /// </summary>
+    /// <param name="services">The service collection to register with.</param>
+    /// <returns>The updated service collection.</returns>
     public static IServiceCollection AddContentDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -24,7 +30,9 @@ public static class CompositionRoot
         return services;
     }
 
-    // Application
+    /// <summary>
+    /// Registers application-layer services such as use cases and configuration providers.
+    /// </summary>
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
         services.AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
@@ -37,7 +45,9 @@ public static class CompositionRoot
         return services;
     }
 
-    // Infrastructure 
+    /// <summary>
+    /// Registers infrastructure-layer services such as repositories and mappers.
+    /// </summary>
     private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
     {
         return services
@@ -45,12 +55,18 @@ public static class CompositionRoot
             .RegisterInfrastructureMappers();
     }
 
+    /// <summary>
+    /// Registers repository implementations for the infrastructure layer.
+    /// </summary>
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         services.AddScoped<IContentReadOnlyRepository, CosmosDbContentReadOnlyRepository>();
         return services;
     }
 
+    /// <summary>
+    /// Registers mapper implementations for the infrastructure layer.
+    /// </summary>
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
     {
         return services

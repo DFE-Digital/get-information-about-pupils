@@ -1,15 +1,24 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Options.Provider;
+using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Repository;
 
 namespace DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+
+/// <summary>
+/// Use case for retrieving content based on a page key.
+/// </summary>
 internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>
 {
     private readonly IPageContentOptionsProvider _pageContentOptionProvider;
     private readonly IContentReadOnlyRepository _contentReadOnlyRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GetContentByPageKeyUseCase"/> class.
+    /// </summary>
+    /// <param name="pageContentOptionProvider">Provider for page content options.</param>
+    /// <param name="contentReadOnlyRepository">Repository for retrieving content.</param>
     public GetContentByPageKeyUseCase(
         IPageContentOptionsProvider pageContentOptionProvider,
         IContentReadOnlyRepository contentReadOnlyRepository)
@@ -20,6 +29,11 @@ internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyU
         _contentReadOnlyRepository = contentReadOnlyRepository;
     }
 
+    /// <summary>
+    /// Handles the request to retrieve content by page key.
+    /// </summary>
+    /// <param name="request">The request containing the page key.</param>
+    /// <returns>A response containing the retrieved content.</returns>
     public async Task<GetContentByPageKeyUseCaseResponse> HandleRequest(GetContentByPageKeyUseCaseRequest request)
     {
         PageContentOption contentOptions = _pageContentOptionProvider.GetPageContentOptionWithPageKey(request.PageKey);
