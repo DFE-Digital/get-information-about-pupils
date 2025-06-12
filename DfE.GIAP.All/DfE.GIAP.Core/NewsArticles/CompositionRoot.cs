@@ -1,6 +1,4 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
-using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
-using DfE.GIAP.Core.Common.Application;
+﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
@@ -9,10 +7,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.NewsArticles;
 
@@ -44,7 +39,6 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
     {
         return services
-            .AddCosmosDbDependencies()
             .RegisterInfrastructureRepositories()
             .RegisterInfrastructureMappers();
     }

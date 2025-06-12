@@ -19,8 +19,8 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
 
         // both infrastructure and application depend on PageContentOptions
-        services.AddOptions<PageContentOptions>()
-             .Configure<IServiceProvider>((options, sp) =>
+        services.AddOptions<PageContentOptions>().Configure<IServiceProvider>(
+            (options, sp) =>
              {
                  IConfiguration configuration = sp.GetRequiredService<IConfiguration>();
                  configuration.GetSection(nameof(PageContentOptions)).Bind(options);

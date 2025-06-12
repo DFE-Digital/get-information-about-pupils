@@ -1,4 +1,5 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Content.Application.Model;
 using DfE.GIAP.Core.Content.Application.Options;
@@ -6,6 +7,7 @@ using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Content.Infrastructure.Repositories;
 public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyRepository
@@ -13,7 +15,7 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     private const int ContentDocumentType = 20;
     private const string ContainerName = "application-data";
     private readonly ILogger<CosmosDbContentReadOnlyRepository> _logger;
-    private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler; 
+    private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<ContentDTO?, Application.Model.Content> _contentDtoToContentMapper;
     private readonly IPageContentOptionsProvider _pageContentOptionsProvider;
 
@@ -39,7 +41,7 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
         {
             PageContentOption options = _pageContentOptionsProvider.GetPageContentOptionWithPageKey(key.Value);
 
-            if(string.IsNullOrWhiteSpace(options.DocumentId))
+            if (string.IsNullOrWhiteSpace(options.DocumentId))
             {
                 throw new ArgumentException($"DocumentId is null or whitespace for key {key.Value}");
             }
