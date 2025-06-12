@@ -1,19 +1,19 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Content;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.SharedTests;
-using Microsoft.Extensions.DependencyInjection;
-using CompositionRoot = DfE.GIAP.Core.Content.CompositionRoot;
+using DfE.GIAP.Core.Content.Application.Model;
+using DfE.GIAP.Core.Content.Application.Options;
+using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories;
-using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Application.Repository;
-using Microsoft.Extensions.Options;
-using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Infrastructure.Repositories.Options;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.SharedTests;
+using DfE.GIAP.Core.SharedTests.TestDoubles;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using CompositionRoot = DfE.GIAP.Core.Content.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.Content;
 public sealed class CompositionRootTests
@@ -45,9 +45,9 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IMapper<ContentDTO, Core.Content.Application.Model.Content>>());
 
         Assert.NotNull(provider.GetService<IContentReadOnlyRepository>());
-        
+
         Assert.NotNull(provider.GetService<IOptions<PageContentOptions>>());
         Assert.NotNull(provider.GetService<IOptions<ContentRepositoryOptions>>());
-        
+
     }
 }
