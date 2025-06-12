@@ -23,7 +23,7 @@ internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyU
     public async Task<GetContentByPageKeyUseCaseResponse> HandleRequest(GetContentByPageKeyUseCaseRequest request)
     {
         PageContentOption contentOptions = _pageContentOptionProvider.GetPageContentOptionWithPageKey(request.PageKey);
-        ContentKey key = ContentKey.Create(request.PageKey);
+        ContentKey key = ContentKey.Create(contentOptions.DocumentId);
         Model.Content? content = await _contentReadOnlyRepository.GetContentByKeyAsync(key);
         return new(content);
     }

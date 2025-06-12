@@ -60,9 +60,11 @@ public sealed class GetContentByPageKeyUseCaseTests
         Mock<IContentReadOnlyRepository> mockRepository = ContentReadOnlyRepositoryTestDoubles.Default();
         Mock<IPageContentOptionsProvider> mockProvider = new();
 
+        PageContentOption option = PageContentOptionTestDoubles.StubFor("documentId");
+
         mockProvider.Setup(
             (t) => t.GetPageContentOptionWithPageKey(It.IsAny<string>()))
-                .Returns(It.IsAny<PageContentOption>());
+                .Returns(option);
 
         mockRepository.Setup(
             t => t.GetContentByKeyAsync(It.IsAny<ContentKey>(), It.IsAny<CancellationToken>()))
