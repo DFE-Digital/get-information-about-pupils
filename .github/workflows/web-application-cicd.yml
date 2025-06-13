@@ -28,7 +28,7 @@ jobs:
         run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
 
       - name: Verify formatting
-        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
+        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ DfE.GIAP.Core.IntegrationTests/ DfE.GIAP.Core.SharedTests/ --verify-no-changes
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
   build_test_package:
