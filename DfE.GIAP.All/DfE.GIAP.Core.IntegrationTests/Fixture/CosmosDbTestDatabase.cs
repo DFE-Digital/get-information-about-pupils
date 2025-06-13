@@ -18,7 +18,8 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
             new CosmosClientOptions()
             {
                 ConnectionMode = ConnectionMode.Gateway,
-                ConsistencyLevel = ConsistencyLevel.Strong
+                // Consider in future if necessary - requires better control of docker emulator args, performance cost
+                // ConsistencyLevel = ConsistencyLevel.Strong
             });
     }
 
