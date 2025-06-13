@@ -14,7 +14,11 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     {
         _cosmosClient = new(
             accountEndpoint: options.EndpointUri,
-            authKeyOrResourceToken: options.PrimaryKey);
+            authKeyOrResourceToken: options.PrimaryKey,
+            new CosmosClientOptions()
+            {
+                ConnectionMode = ConnectionMode.Gateway
+            });
     }
 
     public async ValueTask DisposeAsync()
