@@ -32,7 +32,9 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
         List<NewsArticleDTO> seededDTOs = NewsArticleDTOTestDoubles.Generate(count: 10);
 
-        await Parallel.ForEachAsync(seededDTOs, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
+        await Task.WhenAll(
+            seededDTOs.Select(
+                (dto) => _fixture.Database.WriteAsync(dto)));
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 

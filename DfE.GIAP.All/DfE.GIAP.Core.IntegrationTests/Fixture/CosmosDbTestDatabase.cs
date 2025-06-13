@@ -17,7 +17,8 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
             authKeyOrResourceToken: options.PrimaryKey,
             new CosmosClientOptions()
             {
-                ConnectionMode = ConnectionMode.Gateway
+                ConnectionMode = ConnectionMode.Gateway,
+                ConsistencyLevel = ConsistencyLevel.Strong
             });
     }
 
