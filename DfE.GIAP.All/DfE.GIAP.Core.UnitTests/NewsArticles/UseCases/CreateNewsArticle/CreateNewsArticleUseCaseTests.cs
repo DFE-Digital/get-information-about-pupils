@@ -35,7 +35,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("\n")]
-    public async Task HandleRequestAsync_ThrowsArgumentException_When_TitleIsNullOrEmpty(string title)
+    public async Task HandleRequestAsync_ThrowsArgumentException_When_TitleIsNullOrEmpty(string? title)
     {
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
@@ -54,7 +54,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("\n")]
-    public async Task HandleRequestAsync_ThrowsArgumentException_When_BodyIsNullOrEmpty(string body)
+    public async Task HandleRequestAsync_ThrowsArgumentException_When_BodyIsNullOrEmpty(string? body)
     {
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
