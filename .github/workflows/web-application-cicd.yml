@@ -1,0 +1,434 @@
+name: giap-web-cicd
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfE-Digital NuGet feed.
+
+    env:
+      SOLUTION_DIRECTORY: DfE.GIAP.All
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v4
+
+      - name: Add DfE-Digital GitHub NuGet Feed
+        run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+
+      - name: Verify formatting
+        run: dotnet format --include DfE.GIAP.Core/ DfE.GIAP.Core.UnitTests/ --verify-no-changes
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+  build_test_package:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfEDigital NuGet feed.
+
+    env:
+      BUILD_CONFIGURATION: Release
+      SOLUTION_DIRECTORY: DfE.GIAP.All
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run unit tests
+        run: |
+          for proj in \
+            ./DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
+            ./DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
+            ./DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj \
+            ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
+          do
+            echo "Running tests for $proj"
+            dotnet test "$proj" \
+              --verbosity normal \
+              --collect:"XPlat Code Coverage" \
+              -p:CoverletOutputFormat=cobertura \
+              -p:CoverletOutput=./TestResults/
+          done
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Install ReportGenerator tool
+        run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Generate test coverage reports
+        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Upload test coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+
+      - name: Summarise code coverage
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
+      - name: Run gulp
+        run: |
+          npm install -g gulp
+          gulp default --gulpfile DfE.GIAP.Web/gulpfile.js --cwd DfE.GIAP.Web
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Publish application
+        run: dotnet publish DfE.GIAP.Web/DfE.GIAP.Web.csproj --configuration ${{ env.BUILD_CONFIGURATION }} --output ${{ github.workspace }}/publish
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Verify publish output
+        run: ls -hal ${{ github.workspace }}/publish
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged_app_for_deployment
+          path: publish
+          if-no-files-found: error
+
+  local_integration_tests:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfEDigital NuGet feed.
+
+    services:
+      cosmosdb:
+        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+        ports:
+          - 8081:8081
+          - 10250-10255:10250-10255
+        env:
+          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
+          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: ./.github/actions/build
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install CosmosDb Emulator TLS certificate
+        run: |
+          retry_count=0
+          max_retry_count=10
+          until sudo curl --insecure --silent --fail --show-error "https://localhost:8081/_explorer/emulator.pem" --output "/usr/local/share/ca-certificates/cosmos-db-emulator.crt"; do
+            if [ $retry_count -eq $max_retry_count ]; then
+              echo "Failed to download certificate after $retry_count attempts."
+              exit 1
+            fi
+            echo "Failed to download certificate. Retrying in 5 seconds..."
+            sleep 5
+            retry_count=$((retry_count+1))
+          done
+          sudo update-ca-certificates
+
+      - name: Run Integration Tests
+        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --no-build --verbosity normal
+
+
+  ## Below are the "deployment" jobs.
+  ## Notes:
+  ## - Deployments are (currently) run only on pushes to the main branch, not PRs/tags/release branches.
+  ## - These checks are done at the deployment job only - tests (smoke or otherwise) then depend on this deployment, therefore inherit the restrictions
+  ## - Concurrency is defined per-environment (allows full deployment/test to complete, before allowing later queued runs to continue).
+  ## - Permissions are explicit on each job, ensuring only the minimum required permissions are granted.
+  ## - Smoke tests are deliberately extremely lightweight to check the app is deployed and running at all without signs of Azure errors (i.e., they do not check that it is running _correctly_).
+
+
+  ####
+  ## Development Environment
+  ####
+  deploy_env_development:
+    needs: [build_test_package, lint, local_integration_tests]
+    concurrency:
+      group: deploy-and-test-dev
+    permissions:
+      contents: read  # Required to check out the code.
+      id-token: write # Required for OIDC authentication with Azure
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: development
+    outputs:
+      app_url: ${{ steps.deploy.outputs.app_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Deploy to Azure
+        id: deploy
+        uses: ./.github/actions/deploy
+        with:
+          app_name: s115d10-as-searchweb-cs
+          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  smoke_test_env_development:
+    needs: deploy_env_development
+    concurrency:
+      group: deploy-and-test-dev
+    permissions:
+      contents: read  # Required to check out the code.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run smoke tests
+        uses: ./.github/actions/smoke-test
+        with:
+          url: ${{ needs.deploy_env_development.outputs.app_url }}
+
+  ####
+  ## Test Environment
+  ####
+  deploy_env_test:
+    needs: smoke_test_env_development
+    concurrency:
+      group: deploy-and-test-test
+    permissions:
+      contents: read  # Required to check out the code.
+      id-token: write # Required for OIDC authentication with Azure
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: test
+    outputs:
+      app_url: ${{ steps.deploy.outputs.app_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Deploy to Azure
+        id: deploy
+        uses: ./.github/actions/deploy
+        with:
+          app_name: s115t02-as-searchweb-cs
+          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  smoke_test_env_test:
+    needs: deploy_env_test
+    concurrency:
+      group: deploy-and-test-test
+    permissions:
+      contents: read  # Required to check out the code.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run smoke tests
+        uses: ./.github/actions/smoke-test
+        with:
+          url: ${{ needs.deploy_env_test.outputs.app_url }}
+
+  ##  PLACEHOLDERS FOR ADDITIONAL TESTS
+  #  integration_test_env_test:
+  #    needs: smoke_test_env_test
+  #    concurrency:
+  #      group: deploy-and-test-test
+  #    permissions:
+  #      contents: read  # Required to check out the code.
+  #    runs-on: ubuntu-latest
+  #    environment: test
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #      - name: Run integration tests
+  #        uses: ./.github/actions/integration-test
+  #        with:
+  #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
+
+  #  accessibility_test_env_test:
+  #    needs: smoke_test_env_test
+  #    concurrency:
+  #      group: deploy-and-test-test
+  #    permissions:
+  #      contents: read  # Required to check out the code.
+  #    runs-on: ubuntu-latest
+  #    environment: test
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #      - name: Run accessibility tests
+  #        uses: ./.github/actions/accessibility-test
+  #        with:
+  #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
+
+  #  performance_test_env_test:
+  #    needs: smoke_test_env_test
+  #    concurrency:
+  #      group: deploy-and-test-test
+  #    permissions:
+  #      contents: read  # Required to check out the code.
+  #    runs-on: ubuntu-latest
+  #    environment: test
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #      - name: Run performance tests
+  #        uses: ./.github/actions/performance-test
+  #        with:
+  #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
+
+  ####
+  ## Pre-Production Environment - commented until we have governance and agreement
+  ####
+#  deploy_env_preproduction:
+#    needs: smoke_test_env_test
+#    concurrency:
+#      group: deploy-and-test-preproduction
+#    permissions:
+#      contents: read  # Required to check out the code.
+#      id-token: write # Required for OIDC authentication with Azure
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#    runs-on: ubuntu-latest
+#    environment: preproduction
+#    outputs:
+#      app_url: ${{ steps.deploy.outputs.app_url }}
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Deploy to Azure
+#        id: deploy
+#        uses: ./.github/actions/deploy
+#        with:
+#          app_name: s115p02-as-searchweb-cs
+#          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+#          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+#          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+#  smoke_test_env_preproduction:
+#    needs: deploy_env_preproduction
+#    concurrency:
+#      group: deploy-and-test-preproduction
+#    permissions:
+#      contents: read  # Required to check out the code.
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Run smoke tests
+#        uses: ./.github/actions/smoke-test
+#        with:
+#          url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
+
+  ##  PLACEHOLDERS FOR ADDITIONAL TESTS
+  #  performance_test_env_preproduction:
+  #    needs: smoke_test_env_preproduction
+  #    concurrency:
+  #      group: deploy-and-test-preproduction
+  #    permissions:
+  #      contents: read  # Required to check out the code.
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #      - name: Run performance tests
+  #        uses: ./.github/actions/performance-test
+  #        with:
+  #          app_url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
+
+  #  security_test_env_preproduction:
+  #    needs: smoke_test_env_preproduction
+  #    concurrency:
+  #      group: deploy-and-test-preproduction
+  #    permissions:
+  #      contents: read  # Required to check out the code.
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Checkout code
+  #        uses: actions/checkout@v4
+  #      - name: Run security tests
+  #        uses: ./.github/actions/security-test
+  #        with:
+  #          app_url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
+
+  ####
+  ## Production Environment - commented until we have governance and agreement
+  ####
+#  deploy_env_production:
+#    needs: smoke_test_env_preproduction
+#    concurrency:
+#      group: deploy-and-test-production
+#    permissions:
+#      contents: read  # Required to check out the code.
+#      id-token: write # Required for OIDC authentication with Azure
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+#    runs-on: ubuntu-latest
+#    environment: production
+#    outputs:
+#      app_url: ${{ steps.deploy.outputs.app_url }}
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Deploy to Azure
+#        id: deploy
+#        uses: ./.github/actions/deploy
+#        with:
+#          app_name: s115p01-as-searchweb-cs
+#          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+#          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+#          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+#  smoke_test_env_production:
+#    needs: deploy_env_production
+#    concurrency:
+#      group: deploy-and-test-production
+#    permissions:
+#      contents: read  # Required to check out the code.
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Run smoke tests
+#        uses: ./.github/actions/smoke-test
+#        with:
+#          url: ${{ needs.deploy_env_production.outputs.app_url }}
+
+##  PLACEHOLDERS FOR ADDITIONAL TESTS
+#  security_test_env_production:
+#    needs: smoke_test_env_production
+#    concurrency:
+#      group: deploy-and-test-production
+#    permissions:
+#      contents: read  # Required to check out the code.
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Run security tests
+#        uses: ./.github/actions/security-test
+#        with:
+#          app_url: ${{ needs.deploy_env_production.outputs.app_url }}
+
