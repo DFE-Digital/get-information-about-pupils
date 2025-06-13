@@ -10,7 +10,7 @@ public sealed class GetNewsArticlesUseCaseTests
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
         // Arrange
-        Action construct = () => new GetNewsArticlesUseCase(newsArticleReadRepository: null);
+        Action construct = () => new GetNewsArticlesUseCase(newsArticleReadRepository: null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
