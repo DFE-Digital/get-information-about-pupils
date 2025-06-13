@@ -22,9 +22,12 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
     public async Task GetContentByPageKeyUseCase_RetrievesPageContentKey_When_PageKeyIsFound()
     {
         // Arrange
-        List<ContentDto> content = ContentDtoTestDoubles.Generate(count: 10);
-        content[0].id = "DocumentId1";
-        await Parallel.ForEachAsync(content, async (t, ctx) => await _dbFixture.Database.WriteAsync(t));
+        List<ContentDto> contentDtos = ContentDtoTestDoubles.Generate(count: 10);
+        contentDtos[0].id = "DocumentId1";
+
+        await Task.WhenAll(
+            contentDtos.Select(
+                (dto) => _dbFixture.Database.WriteAsync(dto)));
 
         Dictionary<string, string> contentRepositoryOptions = new()
         {
@@ -55,7 +58,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
         // Assert
         Assert.NotNull(response);
         Assert.NotNull(response.Content);
-        Assert.Equal(content[0].Title, response.Content!.Title);
-        Assert.Equal(content[0].Body, response.Content!.Body);
+        Assert.Equal(contentDtos[0].Title, response.Content!.Title);
+        Assert.Equal(contentDtos[0].Body, response.Content!.Body);
     }
 }
