@@ -37,6 +37,10 @@ runs:
       run: dotnet build ./DfE.GIAP.All/*.sln --no-restore
       shell: bash
 
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+      shell: bash
+
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:

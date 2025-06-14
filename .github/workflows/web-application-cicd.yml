@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DOTNET_TOOLS_PATH: ${{ github.workspace }}/tools
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -67,12 +70,8 @@ jobs:
           done
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
-      - name: Install ReportGenerator tool
-        run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
-
       - name: Generate test coverage reports
-        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: ${{env.DOTNET_TOOLS_PATH}}/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Upload test coverage reports
