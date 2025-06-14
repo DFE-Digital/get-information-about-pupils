@@ -174,17 +174,6 @@ There are a number of key settings contained in the `appsettings.json` file. It 
 
 The solution depends on the DfEDigital GitHub Packages NuGet Feed.
 
-### Formatting
-
-The solution uses a [`.editorconfig`](.editorconfig) as a way of enforcing code style.
-
-You can use [dotnet format](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format) to automatically apply the code style.
-
-```sh
-# in the same folder as the .sln
-dotnet format
-```
-
 ### Logging
 
 GIAP uses Application Insights to log auditing, warnings, and errors.
