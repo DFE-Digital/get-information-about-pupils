@@ -34,7 +34,7 @@ runs:
       shell: bash
 
     - name: Build
-      run: dotnet build ./DfE.GIAP.All/*.sln --no-restore
+      run: dotnet build ./DfE.GIAP.All/*.sln --no-restore --no-incremental
       shell: bash
 
     - name: Cache NuGet packages
@@ -52,3 +52,11 @@ runs:
         key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-npm-
+
+    - name: Cache .NET tools
+      uses: actions/cache@v4
+      with:
+        path: ~/.dotnet/tools
+        key: ${{ runner.os }}-dotnet-tools-${{ hashFiles('**/dotnet-tools.json') }}
+        restore-keys: |
+          ${{ runner.os }}-dotnet-tools-
