@@ -2,7 +2,9 @@
 
 The solution uses a [`.editorconfig`](../../editorconfig) as a way of enforcing code style which has cross-platform-editor support.
 
-You can use [dotnet format](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format) to automatically apply the code style.
+You can use [dotnet format](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format) to automatically apply/verify the code styles specified.
+
+It is part of the `dotnet sdk` so does not require separated install or versioning
 
 ```sh
 # in the same folder as the .sln
