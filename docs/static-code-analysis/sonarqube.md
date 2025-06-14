@@ -34,11 +34,11 @@ This helps to resolve issues locally that would show up in a scan at PR
 
 As of `2025/06/14` connecting in IDE requires generating a token as a user, providing that to the connection wizard, and binding that to the SonarCloud project
 
-![token](./generate-sonar-token.png)
+![token](./sonar-images/generate-sonar-token.png)
 
 Files are scanned on open by default and should show warning analyzers if issue detected. Insert a // TODO to any file to test the analyser working
-![scan](./scanning-as-opens.png)
+![scan](./sonar-images/scanning-as-opens.png)
 
-![analyser-works](./analyser-working.png)
+![analyser-works](./sonar-images/analyser-working.png)
 
-![analyser-output](/analyser-errorlist.png)
+![analyser-output](./sonar-images/analyser-errorlist.png)
