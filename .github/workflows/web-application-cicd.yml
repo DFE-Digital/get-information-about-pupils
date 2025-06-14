@@ -47,6 +47,10 @@ jobs:
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v4
       
+      # enables .NET tools installed as local tools to be callable without absolute path
+      - name: Set dotnet tool PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
       - name: Set COVERAGE_REPORT path
         run: echo "COVERAGE_REPORT=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/Cobertura.xml" >> $GITHUB_ENV
 
