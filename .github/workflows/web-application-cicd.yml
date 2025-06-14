@@ -9,7 +9,6 @@ on:
 env:
   BUILD_CONFIGURATION: Release
   SOLUTION_DIRECTORY: DfE.GIAP.All
-  DOTNET_TOOLS_PATH: ${{ github.workspace }}/tools
   JAVA_VERSION: '17'
 
 jobs:
@@ -65,7 +64,7 @@ jobs:
       - name: Start SonarCloud Scanner
         shell: bash
         run: |
-          ${{env.DOTNET_TOOLS_PATH}}/dotnet-sonarscanner begin \
+          dotnet-sonarscanner begin \
             /k:"DFE-Digital_get-information-about-pupils" \
             /o:"dfe-digital" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
@@ -98,7 +97,7 @@ jobs:
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Generate test coverage reports
-        run: ${{env.DOTNET_TOOLS_PATH}}/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Upload test coverage reports
