@@ -6,8 +6,6 @@ We use the DFE-Digital managed SonarQube Cloud to perform static code analysis f
 
 Creating the project in SonarQube is granted through a ServiceNow request to Digital Tools Support (see #digital-tools-support in DfE slack)
 
-
-
 ## Local development
 
 SonarQube provide a free [VisualStudio extension](https://docs.sonarsource.com/sonarqube-for-ide/visual-studio/getting-started/installation/).
