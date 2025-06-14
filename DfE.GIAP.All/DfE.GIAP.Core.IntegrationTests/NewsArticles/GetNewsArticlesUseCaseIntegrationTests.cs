@@ -21,12 +21,10 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
     [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished)]
     public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(NewsArticleSearchFilter filter)
     {
-        // Arrange
-        await _fixture.Database.ClearDatabaseAsync();
-
+        //Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddTestServices()
+                .AddSharedDependencies()
                 .AddNewsArticleDependencies();
 
         IServiceProvider provider = services.BuildServiceProvider();
@@ -34,7 +32,9 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
         List<NewsArticleDTO> seededDTOs = NewsArticleDTOTestDoubles.Generate(count: 10);
 
-        await Parallel.ForEachAsync(seededDTOs, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
+        await Task.WhenAll(
+            seededDTOs.Select(
+                (dto) => _fixture.Database.WriteAsync(dto)));
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 
@@ -44,7 +44,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         GetNewsArticlesResponse response = await sut.HandleRequest(request);
 
         // Assert
-        IMapper<NewsArticleDTO, NewsArticle> testMapper = TestMapNewsArticleDTOToArticle.Create();
+        IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
 
         List<NewsArticle> expectedArticlesOutput =
             seededDTOs.Select(testMapper.Map)

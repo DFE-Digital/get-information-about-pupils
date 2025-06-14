@@ -15,7 +15,7 @@ public sealed class CompositionRootTests
     public void ThrowsArgumentNullException_When_ServicesIsNull()
     {
         IServiceCollection? serviceCollection = null;
-        Action register = () => CompositionRoot.AddNewsArticleDependencies(serviceCollection);
+        Action register = () => CompositionRoot.AddNewsArticleDependencies(serviceCollection!);
         Assert.Throws<ArgumentNullException>(register);
     }
 
@@ -23,7 +23,7 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddTestServices();
+        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedDependencies();
 
         // Act
         IServiceCollection registeredServices = CompositionRoot.AddNewsArticleDependencies(services);

@@ -22,32 +22,40 @@
             </button>
         </form>
 
-        <div id="landing--maintenance--container">
-            <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--plannedwork-heading--text">
-                @Model.PlannedMaintenanceResponse.Title
-            </h2>
-            <p class="govuk-body" id="landing--plannedwork-content--text">
-                @Html.Raw(Model.PlannedMaintenanceResponse.Body)
-            </p>
-        </div>
+        @if (!Model.PlannedMaintenanceResponse.IsEmpty())
+        {
+            <div id="landing--maintenance--container">
+                <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--plannedwork-heading--text">
+                    @Model.PlannedMaintenanceResponse.Title
+                </h2>
+                <p class="govuk-body" id="landing--plannedwork-content--text">
+                    @Html.Raw(Model.PlannedMaintenanceResponse.Body)
+                </p>
+            </div>
+        }
+        @if (!Model.PublicationScheduleResponse.IsEmpty())
+        {
+            <div id="landing--publication--container">
+                <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--release-heading--text">
+                    @Html.Raw(Model.PublicationScheduleResponse?.Title)
+                </h2>
+                <p class="govuk-body" id="landing--release-description--text">
+                    @Html.Raw(Model.PublicationScheduleResponse?.Body)
+                </p>
+            </div>
+        }
+        @if (!Model.FAQResponse.IsEmpty())
+        {
+            <div id="landing--faq--container">
+                <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--faq-heading--text">
+                    @Html.Raw(Model.FAQResponse?.Title)
+                </h2>
+                <p class="govuk-body webapp-formatted-text" id="landing--faq-description--text">
+                    @Html.Raw(Model.FAQResponse?.Body)
+                </p>
+            </div>
+        }
 
-        <div id="landing--publication--container">
-            <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--release-heading--text">
-                @Html.Raw(Model.PublicationScheduleResponse.Title)
-            </h2>
-            <p class="govuk-body" id="landing--release-description--text">
-                @Html.Raw(Model.PublicationScheduleResponse.Body)
-            </p>
-        </div>
-
-        <div id="landing--faq--container">
-            <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--faq-heading--text">
-                @Html.Raw(Model.FAQResponse.Title)
-            </h2>
-            <p class="govuk-body webapp-formatted-text" id="landing--faq-description--text">
-                @Html.Raw(Model.FAQResponse.Body)
-            </p>
-        </div>
     </div>
 
     <div class="govuk-grid-column-one-quarter">

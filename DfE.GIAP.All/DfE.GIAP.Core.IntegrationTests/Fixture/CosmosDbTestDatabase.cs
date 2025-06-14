@@ -14,7 +14,13 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     {
         _cosmosClient = new(
             accountEndpoint: options.EndpointUri,
-            authKeyOrResourceToken: options.PrimaryKey);
+            authKeyOrResourceToken: options.PrimaryKey,
+            new CosmosClientOptions()
+            {
+                ConnectionMode = ConnectionMode.Gateway,
+                // Consider in future if necessary - requires better control of docker emulator args, performance cost
+                // ConsistencyLevel = ConsistencyLevel.Strong
+            });
     }
 
     public async ValueTask DisposeAsync()
@@ -70,7 +76,9 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
             containers.Single(
                 (container) => container.Container.Id == ApplicationDataContainerName);
 
-        ItemResponse<T> response = await targetContainer.Container.UpsertItemAsync(obj, new PartitionKey((obj as dynamic).DocumentType));
+        // TODO PartitionKeyOptions lookup besides application-data
+        // Container: Name, PartitionKey: DOCTYPE
+        ItemResponse<T> response = await targetContainer.Container.UpsertItemAsync(obj, new PartitionKey((obj as dynamic).DOCTYPE));
 
         Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
     }

@@ -1,17 +1,12 @@
-﻿using DfE.GIAP.Core.Models.Common;
-using System;
-using System.Collections.Generic;
+﻿using DfE.GIAP.Core.Content.Application.Model;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-namespace DfE.GIAP.Web.ViewModels
+namespace DfE.GIAP.Web.ViewModels;
+
+[ExcludeFromCodeCoverage]
+public class LandingViewModel
 {
-    [ExcludeFromCodeCoverage]
-    public class LandingViewModel
-    {
-        public CommonResponseBody LandingResponse { get; set; }
-        public CommonResponseBody PlannedMaintenanceResponse { get; set; }
-        public CommonResponseBody PublicationScheduleResponse { get; set; }
-        public CommonResponseBody FAQResponse { get; set; }
-    }
+    public Content LandingResponse { get; set; }
+    public Content PlannedMaintenanceResponse { get; set; }
+    public Content PublicationScheduleResponse { get; set; }
+    public Content FAQResponse { get; set; }
 }

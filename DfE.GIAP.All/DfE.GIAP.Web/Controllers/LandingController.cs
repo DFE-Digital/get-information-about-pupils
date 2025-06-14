@@ -1,28 +1,30 @@
-﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Service.Content;
+﻿using System;
+using System.Threading.Tasks;
+using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Controllers;
 
 [Route(Routes.Application.Landing)]
 public class LandingController : Controller
 {
-    private readonly IContentService _contentService;
     private readonly ILatestNewsBanner _newsBanner;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
 
-    public LandingController(IContentService contentService, ILatestNewsBanner newsBanner)
+    public LandingController(
+        ILatestNewsBanner newsBanner,
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
         _newsBanner = newsBanner ??
             throw new ArgumentNullException(nameof(newsBanner));
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase ??
+            throw new ArgumentNullException(nameof(getContentByPageKeyUseCase));
     }
 
     [HttpGet]
@@ -30,12 +32,24 @@ public class LandingController : Controller
     {
         await _newsBanner.SetLatestNewsStatus();
 
+        GetContentByPageKeyUseCaseResponse landingPageContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
+
+        GetContentByPageKeyUseCaseResponse plannedMaintenanceContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
+
+        GetContentByPageKeyUseCaseResponse publicationScheduleContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
+
+        GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
+
         LandingViewModel model = new()
         {
-            LandingResponse = await _contentService.GetContent(DocumentType.Landing).ConfigureAwait(false),
-            PlannedMaintenanceResponse = await _contentService.GetContent(DocumentType.PlannedMaintenance).ConfigureAwait(false),
-            PublicationScheduleResponse = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false),
-            FAQResponse = await _contentService.GetContent(DocumentType.FAQ).ConfigureAwait(false)
+            LandingResponse = landingPageContentResponse.Content,
+            PlannedMaintenanceResponse = plannedMaintenanceContentResponse.Content,
+            PublicationScheduleResponse = publicationScheduleContentResponse.Content,
+            FAQResponse = frequentlyAskedQuestionsContentResponse.Content
         };
 
         return View(model);

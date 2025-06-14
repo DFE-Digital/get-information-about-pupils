@@ -21,7 +21,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         // Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddTestServices()
+                .AddSharedDependencies()
                 .AddNewsArticleDependencies();
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
@@ -31,7 +31,10 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
 
         // Seed articles
         List<NewsArticleDTO> seededArticles = NewsArticleDTOTestDoubles.Generate();
-        await Parallel.ForEachAsync(seededArticles, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
+
+        await Task.WhenAll(
+            seededArticles.Select(
+                (dto) => _fixture.Database.WriteAsync(dto)));
 
         NewsArticleDTO targetArticle = seededArticles.First();
         GetNewsArticleByIdRequest request = new(Id: targetArticle.ID);
@@ -40,7 +43,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
 
         //Assert
-        IMapper<NewsArticleDTO, NewsArticle> testMapper = TestMapNewsArticleDTOToArticle.Create();
+        IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
         NewsArticle seededTargetArticle = testMapper.Map(targetArticle);
         Assert.NotNull(response);
         Assert.NotNull(response.NewsArticle);
@@ -53,7 +56,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         // Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddTestServices()
+                .AddSharedDependencies()
                 .AddNewsArticleDependencies();
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
@@ -63,7 +66,9 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
 
         // Seed articles
         List<NewsArticleDTO> seededArticles = NewsArticleDTOTestDoubles.Generate();
-        await Parallel.ForEachAsync(seededArticles, async (dto, ct) => await _fixture.Database.WriteAsync(dto));
+        await Task.WhenAll(
+            seededArticles.Select(
+                (dto) => _fixture.Database.WriteAsync(dto)));
 
         string unknownArticleId = Guid.NewGuid().ToString();
         GetNewsArticleByIdRequest request = new(Id: unknownArticleId);
@@ -74,6 +79,6 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         //Assert
         Assert.NotNull(response);
         Assert.Null(response.NewsArticle);
-        
+
     }
 }

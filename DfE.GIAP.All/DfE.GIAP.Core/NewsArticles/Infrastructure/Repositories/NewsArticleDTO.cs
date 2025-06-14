@@ -16,7 +16,5 @@ public class NewsArticleDTO
     public bool Pinned { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
-
-    [JsonProperty("DOCTYPE")]
-    public int DocumentType { get; set; } // TODO: Remove once migrated, no need for this field in the new system
+    public int DOCTYPE { get; set; } // TODO: Remove once migrated, no need for this field in the new system
 }
