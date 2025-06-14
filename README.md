@@ -2,6 +2,9 @@
 
 GIAP (Get Information about pupils) is a replacement of the existing KtS (Key to Success) service that has been in operation for around 15 years. The GIAP service consists of a web application, a data pipeline, a database and set of Azure functions.
 
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=DFE-Digital_get-information-about-pupils)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=bugs)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+
 ## Architecture
 
 GIAP-Web relies on a set of Azure Functions in the GIAP.AzureFunctions application, these then query Azure Cognitive Services/CosmosDB for data. The initial access is granted via [DSI](https://services.signin.education.gov.uk/) which provides authentication and authorisation to the application.
@@ -170,17 +173,6 @@ There are a number of key settings contained in the `appsettings.json` file. It 
 `giap-web` has an [build pipeline](./github/ci.yml) which runs on each commit.
 
 The solution depends on the DfEDigital GitHub Packages NuGet Feed.
-
-### Formatting
-
-The solution uses a [`.editorconfig`](.editorconfig) as a way of enforcing code style.
-
-You can use [dotnet format](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format) to automatically apply the code style.
-
-```sh
-# in the same folder as the .sln
-dotnet format
-```
 
 ### Logging
 
