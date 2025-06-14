@@ -23,7 +23,8 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
     {
         // Arrange
         List<ContentDto> contentDtos = ContentDtoTestDoubles.Generate(count: 10);
-        contentDtos[0].id = "DocumentId1";
+        ContentDto targetContent = contentDtos[0];
+        targetContent.id = "DocumentId1";
 
         await Task.WhenAll(
             contentDtos.Select(
