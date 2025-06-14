@@ -46,10 +46,6 @@ jobs:
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v4
-      
-      # enables .NET tools installed as local tools to be callable without absolute path
-      - name: Set dotnet tool PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Set COVERAGE_REPORT path
         run: echo "COVERAGE_REPORT=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/Cobertura.xml" >> $GITHUB_ENV
@@ -68,7 +64,7 @@ jobs:
       - name: Start SonarCloud Scanner
         shell: bash
         run: |
-          dotnet-sonarscanner begin \
+          dotnet tool run dotnet-sonarscanner begin \
             /k:"DFE-Digital_get-information-about-pupils" \
             /o:"dfe-digital" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}" \
@@ -101,7 +97,7 @@ jobs:
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Generate test coverage reports
-        run: reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: dotnet tool run reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Upload test coverage reports
@@ -113,7 +109,7 @@ jobs:
       - name: End SonarCloud Scanner
         if: always()
         shell: bash
-        run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet tool run dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Summarise code coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
