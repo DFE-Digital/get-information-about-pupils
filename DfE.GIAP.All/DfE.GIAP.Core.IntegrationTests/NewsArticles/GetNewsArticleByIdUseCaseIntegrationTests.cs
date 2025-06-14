@@ -31,7 +31,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
 
         // Seed articles
         List<NewsArticleDTO> seededArticles = NewsArticleDTOTestDoubles.Generate();
-        
+
         await Task.WhenAll(
             seededArticles.Select(
                 (dto) => _fixture.Database.WriteAsync(dto)));
