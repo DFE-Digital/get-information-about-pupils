@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "govuk-frontend": "^5.9.0",
+    "govuk-frontend": "^5.10.2",
     "jquery": "^3.7.1",
     "sass": "^1.89.2"
   },
