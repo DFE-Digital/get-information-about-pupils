@@ -6,7 +6,7 @@ public class NewsArticleDTO
 {
     // TODO some of these properties should be marked nullable. See portal when articles are created. Likely DraftBody, DraftTitle
     [JsonProperty("id")]
-    public string ID { get; set; }
+    public string Id { get; set; }
     public string Title { get; set; }
     public string Body { get; set; }
     public string DraftBody { get; set; }

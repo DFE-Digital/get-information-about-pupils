@@ -10,7 +10,7 @@ public sealed class GetNewsArticlesUseCaseTests
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
         // Arrange
-        Action construct = () => new GetNewsArticlesUseCase(newsArticleReadRepository: null);
+        Action construct = () => new GetNewsArticlesUseCase(newsArticleReadRepository: null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -22,7 +22,7 @@ public sealed class GetNewsArticlesUseCaseTests
         // Arrange
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticlesUseCase sut = new(mockRepository.Object);
-        Func<Task> act = () => sut.HandleRequest(request: null);
+        Func<Task> act = () => sut.HandleRequestAsync(request: null);
 
         // Act Assert
         await Assert.ThrowsAsync<ArgumentNullException>(act);
@@ -37,7 +37,7 @@ public sealed class GetNewsArticlesUseCaseTests
             NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => throw new Exception(expectedExceptionMessage));
         GetNewsArticlesUseCase sut = new(mockRepository.Object);
         GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
-        Func<Task> act = () => sut.HandleRequest(request);
+        Func<Task> act = () => sut.HandleRequestAsync(request);
 
         // Act Assert
         Exception exception = await Assert.ThrowsAsync<Exception>(act);
@@ -53,7 +53,7 @@ public sealed class GetNewsArticlesUseCaseTests
         GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
 
         // Act
-        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+        GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         Assert.NotNull(response);
@@ -96,7 +96,7 @@ public sealed class GetNewsArticlesUseCaseTests
         GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
 
         // Act
-        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+        GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         List<NewsArticle> expectedOrderArticles =
@@ -137,7 +137,7 @@ public sealed class GetNewsArticlesUseCaseTests
         GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished);
 
         // Act
-        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+        GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         List<NewsArticle> expectedOrder = [articleNewest, articleMiddle, articleOldest];
@@ -158,7 +158,7 @@ public sealed class GetNewsArticlesUseCaseTests
         GetNewsArticlesRequest request = new(newsArticleSearchStatus);
 
         // Act
-        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+        GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         Assert.NotNull(response);

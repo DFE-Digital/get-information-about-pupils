@@ -29,7 +29,7 @@ public static class NewsArticleDTOTestDoubles
             .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
             .RuleFor(t => t.Archived, (f) => f.Random.Bool())
             .RuleFor(t => t.Published, (f) => f.Random.Bool())
-            .RuleFor(t => t.ID, (f) => f.Random.Guid().ToString())
+            .RuleFor(t => t.Id, (f) => f.Random.Guid().ToString())
             .RuleFor(t => t.DraftBody, (f) => f.Lorem.Words().Merge())
             .RuleFor(t => t.DraftTitle, (f) => f.Lorem.Words().Merge())
             .RuleFor(t => t.ModifiedDate, (f) => f.Date.Recent())

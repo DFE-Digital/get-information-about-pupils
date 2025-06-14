@@ -32,7 +32,7 @@ internal class GetNewsArticleByIdUseCase : IUseCase<GetNewsArticleByIdRequest, G
     /// <returns>Response containing the retrieved news article.</returns>
     /// <exception cref="ArgumentNullException">Thrown when request is null.</exception>
     /// <exception cref="ArgumentException">Thrown when request ID is invalid.</exception>
-    public async Task<GetNewsArticleByIdResponse> HandleRequest(GetNewsArticleByIdRequest request)
+    public async Task<GetNewsArticleByIdResponse> HandleRequestAsync(GetNewsArticleByIdRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 

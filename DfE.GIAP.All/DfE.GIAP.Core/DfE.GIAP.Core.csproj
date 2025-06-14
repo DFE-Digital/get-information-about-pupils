@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="0.0.1-58" />
+		<PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />

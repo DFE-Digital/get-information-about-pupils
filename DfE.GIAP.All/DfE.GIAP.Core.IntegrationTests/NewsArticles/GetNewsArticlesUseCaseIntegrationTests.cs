@@ -41,7 +41,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         // Act
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut =
             scope.ServiceProvider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
-        GetNewsArticlesResponse response = await sut.HandleRequest(request);
+        GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         IMapper<NewsArticleDTO, NewsArticle> testMapper = TestMapNewsArticleDTOToArticle.Create();
