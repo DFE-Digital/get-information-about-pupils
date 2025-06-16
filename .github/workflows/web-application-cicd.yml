@@ -104,6 +104,8 @@ jobs:
 
       - name: Merge coverage reports
         run: |
+          mkdir -p ./coverlet/merged/
+          
           dotnet tool run reportgenerator \
           "-reports:./coverlet/reports/**/*.cobertura.xml" \
           "-targetdir:./coverlet/merged" \
