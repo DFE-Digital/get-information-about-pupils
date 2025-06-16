@@ -3,7 +3,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Constants.Messages.Downloads;
 using DfE.GIAP.Common.Constants.Messages.Search;
-using DfE.GIAP.Common.Constants.Routes;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -16,6 +15,7 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
 using DfE.GIAP.Web.Helpers.Banner;
@@ -1962,8 +1962,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.IsType<RedirectToActionResult>(result);
             var redirectResult = result as RedirectToActionResult;
 
-            Assert.True(redirectResult.ActionName.Equals(ApplicationRoute.Error));
-            Assert.True(redirectResult.ControllerName.Equals(ApplicationRoute.Home));
+            Assert.True(redirectResult.ActionName.Equals(Routes.Application.Error));
+            Assert.True(redirectResult.ControllerName.Equals(Routes.Application.Home));
         }
 
         [Fact]

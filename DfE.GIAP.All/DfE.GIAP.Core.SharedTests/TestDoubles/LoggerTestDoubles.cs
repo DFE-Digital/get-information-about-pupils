@@ -1,21 +1,21 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 
-internal static class LoggerTestDoubles
+public static class LoggerTestDoubles
 {
-    internal static InMemoryLogger<T> MockLogger<T>()
+    public static InMemoryLogger<T> MockLogger<T>()
     {
         InMemoryLogger<T> mockLogger = new();
         return mockLogger;
     }
 }
 
-internal sealed class InMemoryLogger<T> : ILogger<T>
+public sealed class InMemoryLogger<T> : ILogger<T>
 {
     public List<string> Logs { get; } = [];
 
-    public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull => NullScope.Instance;
 
     public bool IsEnabled(LogLevel logLevel) => true;
 
@@ -23,8 +23,8 @@ internal sealed class InMemoryLogger<T> : ILogger<T>
         LogLevel logLevel,
         EventId eventId,
         TState state,
-        Exception exception,
-        Func<TState, Exception,
+        Exception? exception,
+        Func<TState, Exception?,
         string> formatter)
     {
         Logs.Add(formatter(state, exception));

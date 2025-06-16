@@ -17,8 +17,6 @@ namespace DfE.GIAP.Core.Models.News
         public bool Published { get; set; }
         public string Title { get; set; }
         public bool Archived { get; set; }
-        public string Username { get; set; }
-        public string UserAccount { get; set; }
         public bool Pinned { get; set; }
     }
 }

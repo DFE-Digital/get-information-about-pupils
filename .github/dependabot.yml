@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/DfE.GIAP.All/DfE.GIAP.Web"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "nuget"
+    directory: "/DfE.GIAP.All"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"

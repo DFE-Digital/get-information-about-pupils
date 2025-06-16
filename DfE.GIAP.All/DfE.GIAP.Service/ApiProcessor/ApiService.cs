@@ -51,7 +51,8 @@ namespace DfE.GIAP.Service.ApiProcessor
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Exception getting data '{ex.Message}' from {url.AbsoluteUri}.");
+                var sanitizedUrl = url.AbsoluteUri.Replace("\n", "").Replace("\r", "");
+                _logger.LogError(ex, $"Exception getting data '{ex.Message}' from {sanitizedUrl}.");
             }
 
             return default;

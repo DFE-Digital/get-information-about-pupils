@@ -16,7 +16,7 @@ gulp.task("copy-jquery", function () {
 // Minify and concatenate scripts
 gulp.task("scripts", function () {
     return gulp
-        .src(["./node_modules/govuk-frontend/dist/govuk/all.bundle.js", "./scripts/**/*.js"])
+        .src(["./node_modules/govuk-frontend/dist/govuk/all.bundle.js", "./Scripts/**/*.js"])
         .pipe(uglify())
         .pipe(concat("giap.min.js"))
         .pipe(gulp.dest("./wwwroot/js/"));
@@ -26,7 +26,7 @@ gulp.task("scripts", function () {
 gulp.task('compile-sass', function () {
     return gulp
         .src("./Styles/Master.scss")
-        .pipe(sass({ outputStyle: "compressed" })
+        .pipe(sass({ style: "compressed", loadPaths: ["node_modules"] })
             .on('error', sass.logError))
         .pipe(rename("giap.min.css")) // output filename
         .pipe(gulp.dest('./wwwroot/css'));
