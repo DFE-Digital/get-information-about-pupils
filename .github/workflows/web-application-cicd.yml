@@ -99,7 +99,6 @@ jobs:
               --no-build \
               --nologo \
               --logger "console;verbosity=detailed" \
-              --filter 'FullyQualifiedName!~IntegrationTests' \
               -p:CollectCoverage=true \
               -p:CoverletOutputFormat=cobertura \
               -p:CoverletOutput="$OUTPUT_REPORT_PATH"
@@ -107,7 +106,6 @@ jobs:
 
       - name: Merge coverage reports
         run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*.xml -reporttypes:Cobertura -targetdir:./coverage/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
-
 
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
