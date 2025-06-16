@@ -91,8 +91,9 @@ jobs:
             DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
           do
             TEST_PROJECT=$(basename "$proj" .csproj)
-            OUTPUT_REPORT_PATH=$(pwd)/coverlet/reports/$TEST_PROJECT/cobertura.xml
+            OUTPUT_REPORT_PATH="$(pwd)/coverlet/reports/$TEST_PROJECT/cobertura.xml"
 
+            echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
             echo "Running tests for $TEST_PROJECT..."
 
             dotnet test "$proj" \
@@ -107,7 +108,7 @@ jobs:
       - name: Merge coverage reports
         run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*cobertura.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
-        
+
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
