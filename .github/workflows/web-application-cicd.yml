@@ -106,6 +106,7 @@ jobs:
           done
 
       - name: Merge coverage reports
+        shell: bash
         run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*cobertura.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
