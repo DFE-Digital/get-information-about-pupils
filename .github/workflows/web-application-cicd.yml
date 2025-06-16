@@ -110,7 +110,7 @@ jobs:
         run: | 
           dotnet tool run reportgenerator -reports:./coverlet/reports/**/*cobertura.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
           
-          # note this is a manual patch as reportgenerator outputs a version=1. SonarQube requires Version=1. ReportGenerator can output a SonarQube format.
+          # note this is a manual patch as reportgenerator outputs a <coverage ... version=0>. SonarQube requires a <coverage=1>. ReportGenerator can output a SonarQube format which may be more appropriate
           sed -i 's/version="0"/version="1"/' ./coverlet/merged/Cobertura.xml
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
