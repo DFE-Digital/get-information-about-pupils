@@ -1,0 +1,46 @@
+name: Deploy to Azure
+description: Deploy the application to an Azure Web App.
+
+inputs:
+  app_name:
+    description: Name of the Azure Web App.
+    required: true
+  azure_client_id:
+    description: Azure Client ID.
+    required: true
+  azure_tenant_id:
+    description: Azure Tenant ID.
+    required: true
+  azure_subscription_id:
+    description: Azure Subscription ID.
+    required: true
+
+outputs:
+  app_url:
+    description: "The URL of the deployed application."
+    value: ${{ steps.deploy_step.outputs.webapp-url }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: packaged_app_for_deployment
+        path: ./app-package
+
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        client-id: ${{ inputs.azure_client_id }}
+        tenant-id: ${{ inputs.azure_tenant_id }}
+        subscription-id: ${{ inputs.azure_subscription_id }}
+
+      ## In future, this can be replaced with deploying container images etc.
+    - name: Deploy to Azure Web App
+      id: deploy_step
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ inputs.app_name }}
+        package: ./app-package
+

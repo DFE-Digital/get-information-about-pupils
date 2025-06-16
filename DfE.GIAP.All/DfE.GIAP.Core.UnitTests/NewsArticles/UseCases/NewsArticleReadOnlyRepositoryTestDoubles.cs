@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;
+﻿using DfE.GIAP.Core.NewsArticles.Application.Enums;
+
+namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;
 
 internal static class NewsArticleReadOnlyRepositoryTestDoubles
 {
@@ -30,7 +32,7 @@ internal static class NewsArticleReadOnlyRepositoryTestDoubles
         Mock<INewsArticleReadRepository> mock = CreateMock();
 
         mock.Setup(
-                (repository) => repository.GetNewsArticlesAsync(It.IsAny<bool>(), It.IsAny<bool>()))
+                (repository) => repository.GetNewsArticlesAsync(It.IsAny<NewsArticleSearchFilter>()))
             .ReturnsAsync(repositoryResponse)
             .Verifiable();
 

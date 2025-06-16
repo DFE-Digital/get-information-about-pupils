@@ -2,7 +2,38 @@
 
 GIAP (Get Information about pupils) is a replacement of the existing KtS (Key to Success) service that has been in operation for around 15 years. The GIAP service consists of a web application, a data pipeline, a database and set of Azure functions.
 
-## Architecture
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=DFE-Digital_get-information-about-pupils)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=bugs)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+
+## Status pages
+
+| Tool   | StatusPage | Usage |
+|--------|------------|-------|
+| GitHub | <https://www.githubstatus.com> | Source code, GitHub actions for CI/CD |
+| Azure | <https://status.azure.com> | CIP Infrastructure |
+| npm | <https://status.npmjs.org> | `npm` package restore |
+| NuGet | <https://status.nuget.org> | `dotnet` package restore |
+
+
+## Getting Started / Setup
+
+Related repositories
+
+- [get-information-about-pupils-wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
+
+### Installation process
+
+Clone the repository on your local machine in a suitable location
+
+```sh
+git clone https://github.com/DFE-Digital/get-information-about-pupils
+```
+
+GIAP has been developed using .NET Core so you will need an appropriate IDE (or text file browser if you wish). Either Visual Studio Code (with .NET C# support) or Visual Studio would be preferable, this was developed using Visual Studio 2019/2022. 
+
+Load the solution and build it (F5 or use the menu). Ensure Dfe.GIAP.WEB project is set as default and run the application.
+
+### Architecture
 
 GIAP-Web relies on a set of Azure Functions in the GIAP.AzureFunctions application, these then query Azure Cognitive Services/CosmosDB for data. The initial access is granted via [DSI](https://services.signin.education.gov.uk/) which provides authentication and authorisation to the application.
 
@@ -17,29 +48,15 @@ B --- C[Azure CosmosDB]
 D --- C
 ```
 
-## Getting Started / Setup
-
-### Installation process
-
-Clone the repository on your local machine in a suitable location
-
-```sh
-git clone https://github.com/DFE-Digital/get-information-about-pupils
-```
-
-GIAP has been developed using .NET Core so you will need an appropriate IDE (or text file browser if you wish). Either Visual Studio Code (with .NET C# support) or Visual Studio would be preferable, this was developed using Visual Studio 2019/2022. 
-
-Load the solution and build it (F5 or use the menu). Ensure Dfe.GIAP.WEB project is set as default and run the application.
-
 ### Project dependencies
 
 GIAP web has a number of dependancies listed below, some are closed source, others are open.
 
-* .NET 8
-* node
-* gulp
-* DSI (DfE sign-in)
-* [CosmosDb Infrastructure library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
+- .NET 8
+- node
+- gulp
+- DSI (DfE sign-in)
+- [CosmosDb Infrastructure library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
 
 ### Build and Test
 
@@ -170,17 +187,6 @@ There are a number of key settings contained in the `appsettings.json` file. It 
 `giap-web` has an [build pipeline](./github/ci.yml) which runs on each commit.
 
 The solution depends on the DfEDigital GitHub Packages NuGet Feed.
-
-### Formatting
-
-The solution uses a [`.editorconfig`](.editorconfig) as a way of enforcing code style.
-
-You can use [dotnet format](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format) to automatically apply the code style.
-
-```sh
-# in the same folder as the .sln
-dotnet format
-```
 
 ### Logging
 
