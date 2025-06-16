@@ -80,6 +80,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run unit tests
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
         run: |
         
           mkdir -p ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
@@ -98,9 +99,13 @@ jobs:
               --nologo \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=./coverlet/reports/$PROJECTNAME.cobertura.xml
+              /p:CoverletOutput=coverlet/reports/$PROJECTNAME.cobertura.xml
           done
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Debug coverage report
+        run: |
+          echo "Merged coverage directory contents:"
+          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/
 
       - name: Merge coverage reports
         run: |
@@ -117,12 +122,6 @@ jobs:
         with:
           name: coverage-report
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
-
-
-      - name: Debug coverage report
-        run: |
-          echo "Merged coverage directory contents:"
-          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
 
       - name: End SonarCloud Scanner
         if: always()
