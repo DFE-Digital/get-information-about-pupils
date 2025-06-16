@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
+﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.CreateNewsArticle;
 public sealed class CreateNewsArticleUseCaseTests
