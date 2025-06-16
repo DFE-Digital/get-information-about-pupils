@@ -372,7 +372,7 @@ namespace DfE.GIAP.Web.Controllers
             }
             else
             {
-                model.Total = (long)Convert.ToDouble(this.HttpContext.Session.GetString(TOTAL_SEARCH_RESULTS));
+                model.Total = Convert.ToInt32(this.HttpContext.Session.GetString(TOTAL_SEARCH_RESULTS));
             }
 
             model.NotFound = JsonConvert.DeserializeObject<List<string>>(this.HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY));
