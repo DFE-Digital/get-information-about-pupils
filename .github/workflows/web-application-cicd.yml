@@ -82,7 +82,6 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
         run: |
-        
           mkdir -p ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
 
           for proj in \
@@ -92,19 +91,20 @@ jobs:
             ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
           do
             PROJECTNAME=$(basename $proj .csproj)
-            OUTPUT_COVERLET_PATH=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/$PROJECTNAME.cobertura.xml
+            OUTPUT_COVERLET_PATH=${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/$PROJECTNAME.cobertura.xml
             echo "Running tests for $proj"
             echo "PROJECTNAME is $PROJECTNAME"
             echo "OUTPUT_COVERLET_PATH is $OUTPUT_COVERLET_PATH"
-            echo 
+
             dotnet test "$proj" \
               --no-build \
               --nologo \
-              --logger:"console;verbosity=detailed"
+              --logger:"console;verbosity=detailed" \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
               /p:CoverletOutput=$OUTPUT_COVERLET_PATH
           done
+
 
       - name: Debug outputs to be merged
         run: |
