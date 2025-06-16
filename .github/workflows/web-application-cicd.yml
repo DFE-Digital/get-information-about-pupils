@@ -106,7 +106,8 @@ jobs:
 
       - name: Merge coverage reports
         run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*cobertura.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
-
+        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+        
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
