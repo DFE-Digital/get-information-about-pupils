@@ -70,8 +70,7 @@ jobs:
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.vscoveragexml.reportsPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/SonarQube.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
-            /d:sonar.exclusions=**/*.html,**/*.json,**/*.scss,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
-            /d:sonar.sources=${{env.SOLUTION_DIRECTORY}}
+            /d:sonar.exclusions=**/*.html,**/*.json,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
             /d:sonar.scanner.scanAll=false
 
