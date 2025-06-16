@@ -119,9 +119,7 @@ jobs:
       - name: End SonarCloud Scanner
         if: always()
         shell: bash
-        run: |
-          cat ${{ env.SOLUTION_DIRECTORY}}/coverlet/merged/SonarQube.xml
-          dotnet tool run dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet tool run dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Run gulp
         run: |
