@@ -58,6 +58,7 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, "CosmosException in CreateNewsArticleAsync.");
+            throw;
         }
     }
 }

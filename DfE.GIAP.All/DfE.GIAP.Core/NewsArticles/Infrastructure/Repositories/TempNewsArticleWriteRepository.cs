@@ -42,6 +42,7 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, "CosmosDB error occurred while creating a news article: {Message}", ex.Message);
+            throw;
         }
     }
 }

@@ -7,6 +7,7 @@ using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 public sealed class CosmosNewsArticleWriteRepositoryTests
@@ -75,10 +76,27 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
 
     [Theory]
     [InlineData(null)]
+    public async Task CreateNewsArticleAsync_ThrowsArgumentException_When_TitleIsNull(string? title)
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        Mock<IMapper<NewsArticle, NewsArticleDTO>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDTO>();
+        CosmosNewsArticleWriteRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbCommandHandler: mockCommandHandler.Object,
+            entityToDtoMapper: mockMapper.Object);
+
+        NewsArticle article = NewsArticleTestDoubles.Create() with { Title = title! };
+
+        // Act & Assert
+        ArgumentException ex = await Assert.ThrowsAsync<ArgumentNullException>(() => sut.CreateNewsArticleAsync(article));
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("\n")]
-    public async Task CreateNewsArticleAsync_ThrowsArgumentException_When_TitleIsNullOrEmpty(string? title)
+    public async Task CreateNewsArticleAsync_ThrowsArgumentException_When_TitleIsEmpty(string title)
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
@@ -92,15 +110,32 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
 
         // Act & Assert
         ArgumentException ex = await Assert.ThrowsAsync<ArgumentException>(() => sut.CreateNewsArticleAsync(article));
-        Assert.Equal("Title cannot be null or empty. (Parameter 'Title')", ex.Message);
     }
 
     [Theory]
     [InlineData(null)]
+    public async Task CreateNewsArticleAsync_ThrowsArgumentException_When_BodyIsNull(string? body)
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        Mock<IMapper<NewsArticle, NewsArticleDTO>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDTO>();
+        CosmosNewsArticleWriteRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbCommandHandler: mockCommandHandler.Object,
+            entityToDtoMapper: mockMapper.Object);
+
+        NewsArticle article = NewsArticleTestDoubles.Create() with { Body = body! };
+
+        // Act & Assert
+        ArgumentException ex = await Assert.ThrowsAsync<ArgumentNullException>(() => sut.CreateNewsArticleAsync(article));
+        mockMapper.Verify(m => m.Map(It.IsAny<NewsArticle>()), Times.Never());
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("   ")]
     [InlineData("\n")]
-    public async Task CreateNewsArticleAsync_ThrowsArgumentException_When_BodyIsNullOrEmpty(string? body)
+    public async Task CreateNewsArticleAsync_ThrowsArgumentException_When_BodyIsEmpty(string body)
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
@@ -114,7 +149,6 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
 
         // Act & Assert
         ArgumentException ex = await Assert.ThrowsAsync<ArgumentException>(() => sut.CreateNewsArticleAsync(article));
-        Assert.Equal("Body cannot be null or empty. (Parameter 'Body')", ex.Message);
         mockMapper.Verify(m => m.Map(It.IsAny<NewsArticle>()), Times.Never());
     }
 
@@ -157,9 +191,11 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
             entityToDtoMapper: mockMapper.Object);
 
         // Act
-        await sut.CreateNewsArticleAsync(NewsArticleTestDoubles.Create());
+        Func<Task> act = () => sut.CreateNewsArticleAsync(NewsArticleTestDoubles.Create());
+
 
         // Assert
+        await Assert.ThrowsAsync<CosmosException>(act);
         Assert.Equal("CosmosException in CreateNewsArticleAsync.", _mockLogger.Logs.Single());
         mockMapper.Verify(m => m.Map(It.IsAny<NewsArticle>()), Times.Once());
     }
