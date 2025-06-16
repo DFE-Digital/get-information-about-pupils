@@ -82,7 +82,7 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
         run: |
-            dotnet test --filter !~IntegrationTests
+            dotnet test --filter IntegrationTests
               --no-build \
               --nologo \
               --logger:"console;verbosity=detailed" \
