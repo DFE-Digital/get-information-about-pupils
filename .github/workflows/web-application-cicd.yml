@@ -99,13 +99,13 @@ jobs:
               --nologo \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=coverlet/reports/$PROJECTNAME.cobertura.xml
+              /p:CoverletOutput="./coverlet/reports/$PROJECTNAME.cobertura.xml"
           done
 
-      - name: Debug coverage report
+      - name: Debug outputs to be merged
         run: |
           echo "Merged coverage directory contents:"
-          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/
+          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
 
       - name: Merge coverage reports
         run: |
@@ -116,6 +116,11 @@ jobs:
           "-targetdir:./coverlet/merged" \
           "-reporttypes:Cobertura"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
+
+      - name: Debug coverage report
+        run: |
+          echo "Merged coverage directory contents:"
+          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/
 
       - name: Upload test coverage reports
         uses: actions/upload-artifact@v4
