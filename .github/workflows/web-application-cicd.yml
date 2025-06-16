@@ -100,6 +100,7 @@ jobs:
             dotnet test "$proj" \
               --no-build \
               --nologo \
+              --logger:"console;verbosity=detailed"
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
               /p:CoverletOutput=$OUTPUT_COVERLET_PATH
