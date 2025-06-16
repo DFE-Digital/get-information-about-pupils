@@ -38,12 +38,9 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
     /// or consists only of whitespace.</exception>
     public async Task HandleRequestAsync(CreateNewsArticleRequest request)
     {
-        if (request is null)
-            throw new ArgumentNullException(nameof(request), "Request must not be null.");
-        if (string.IsNullOrWhiteSpace(request.Title))
-            throw new ArgumentException("Title cannot be null or empty.", nameof(request.Title));
-        if (string.IsNullOrWhiteSpace(request.Body))
-            throw new ArgumentException("Body cannot be null or empty.", nameof(request.Body));
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.Title, nameof(request.Title));
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.Body, nameof(request.Body));
 
         NewsArticle newsArticle = new()
         {

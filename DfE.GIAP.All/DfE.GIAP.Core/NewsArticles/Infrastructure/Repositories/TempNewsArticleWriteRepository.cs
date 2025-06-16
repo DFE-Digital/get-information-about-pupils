@@ -28,12 +28,9 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
 
     public async Task CreateNewsArticleAsync(NewsArticle newsArticle)
     {
-        if (newsArticle is null)
-            throw new ArgumentNullException("NewsArticle must not be null.", nameof(newsArticle));
-        if (string.IsNullOrWhiteSpace(newsArticle.Title))
-            throw new ArgumentException("Title cannot be null or empty.", nameof(newsArticle.Title));
-        if (string.IsNullOrWhiteSpace(newsArticle.Body))
-            throw new ArgumentException("Body cannot be null or empty.", nameof(newsArticle.Body));
+        ArgumentNullException.ThrowIfNull(newsArticle);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title, nameof(newsArticle.Title));
+        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body, nameof(newsArticle.Body));
 
         try
         {
