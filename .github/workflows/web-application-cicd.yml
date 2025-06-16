@@ -95,7 +95,7 @@ jobs:
             echo "Running tests for $proj"
             dotnet tool run dotnet-coverage collect "dotnet test $proj --no-build --nologo" \
               -f cobertura \
-              -o "${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/$(PROJECT_NAME).cobertura.xml"
+              -o "./coverlet/reports/$(PROJECT_NAME).cobertura.xml"
           done
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
