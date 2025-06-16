@@ -68,7 +68,7 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/Cobertura.xml \
+            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/Cobertura.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/*.scss,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
@@ -81,36 +81,33 @@ jobs:
 
       - name: Run unit tests
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
+        shell: bash
         run: |
 
-          mkdir -p coverlet/reports
+          for proj in \
+            DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
+            DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
+            DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
+            DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
+          do
+            TEST_PROJECT=$(basename "$proj" .csproj)
+            OUTPUT_REPORT_PATH=$(pwd)/coverlet/reports/$TEST_PROJECT/cobertura.xml
 
-          # Find all test projects (adjust the pattern if needed)
-          for proj in $(find . -name '*Tests.csproj'); do
-            
-          # Extract project name without path or extension
-            name=$(basename "$proj" .csproj)
-
-            echo "Running tests for $name..."
+            echo "Running tests for $TEST_PROJECT..."
 
             dotnet test "$proj" \
               --no-build \
               --nologo \
-              --logger:"console;verbosity=detailed" \
-              --filter \!~IntegrationTests # don't run integration tests here
-              /p:CollectCoverage=true \
-              /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput="coverlet/reports/$name/"
+              --logger "console;verbosity=detailed" \
+              --filter 'FullyQualifiedName!~IntegrationTests' \
+              -p:CollectCoverage=true \
+              -p:CoverletOutputFormat=cobertura \
+              -p:CoverletOutput="$OUTPUT_REPORT_PATH"
           done
 
       - name: Merge coverage reports
-        run: |
-          dotnet tool install --global coverlet.console
+        run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*.xml -reporttypes:Cobertura -targetdir:./coverage/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
-          coverlet merge \
-            --output ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/coverage.cobertura.xml \
-            --formats cobertura \
-            ${{env.SOLUTION_DIRECTORY}}/coverlet/reports/**/*coverage.cobertura.xml
 
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
