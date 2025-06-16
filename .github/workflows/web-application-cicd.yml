@@ -90,7 +90,7 @@ jobs:
             ./DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj \
             ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
           do
-            PROJECTNAME=basename $proj .csproj
+            PROJECTNAME=$(basename $proj .csproj)
             echo "PROJECTNAME is $PROJECTNAME"
             echo "Running tests for $proj"
             dotnet-coverage collect "dotnet test $proj --no-build --nologo" \
@@ -127,7 +127,7 @@ jobs:
       - name: Summarise code coverage
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+          filename: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
           badge: true
           fail_below_min: true
           format: markdown
