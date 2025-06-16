@@ -98,7 +98,7 @@ jobs:
               --nologo \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=./coverlet/reports/$PROJECTNAME
+              /p:CoverletOutput=./coverlet/reports/$PROJECTNAME.cobertura.xml
           done
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
