@@ -93,7 +93,7 @@ jobs:
             PROJECTNAME=$(basename $proj .csproj)
             echo "PROJECTNAME is $PROJECTNAME"
             echo "Running tests for $proj"
-            dotnet-coverage collect "dotnet test $proj --no-build --nologo" \
+            dotnet tool run dotnet-coverage collect "dotnet test $proj --no-build --nologo" \
               -f cobertura \
               -o "${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/$(PROJECT_NAME).cobertura.xml"
           done
