@@ -68,7 +68,7 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/SonarQube.xml \
+            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/Cobertura.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/*.scss,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
@@ -82,53 +82,13 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
         run: |
-          mkdir -p ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
-
-          for proj in \
-            ./DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
-            ./DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
-            ./DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj \
-            ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
-          do
-            PROJECTNAME=$(basename $proj .csproj)
-            OUTPUT_COVERLET_PATH="$(pwd)/coverlet/reports/$PROJECTNAME.cobertura.xml"
-            echo "Running tests for $proj"
-            echo "PROJECTNAME is $PROJECTNAME"
-            echo "OUTPUT_COVERLET_PATH is $OUTPUT_COVERLET_PATH"
-
-            dotnet test "$proj" \
+            dotnet test --filter !~IntegrationTests
               --no-build \
               --nologo \
               --logger:"console;verbosity=detailed" \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=$OUTPUT_COVERLET_PATH
-            
-            echo "Checking if $OUTPUT_COVERLET_PATH exists:"
-            ls -l "$OUTPUT_COVERLET_PATH"
-
-          done
-
-
-      - name: Debug outputs to be merged
-        run: |
-          echo "Merged coverage directory contents:"
-          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
-
-      - name: Merge coverage reports
-        run: |
-          mkdir -p ./coverlet/merged/
-
-          dotnet tool run reportgenerator \
-          "-reports:./coverlet/reports/**/*.cobertura.xml" \
-          "-targetdir:./coverlet/merged" \
-          "-reporttypes:SonarQube"
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
-
-      - name: Debug coverage report
-        run: |
-          echo "Merged coverage directory contents:"
-          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/
+              /p:CoverletOutput=./coverlet/reports
 
       - name: Upload test coverage reports
         uses: actions/upload-artifact@v4
