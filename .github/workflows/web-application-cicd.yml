@@ -107,7 +107,11 @@ jobs:
 
       - name: Merge coverage reports
         shell: bash
-        run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*cobertura.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: | 
+          dotnet tool run reportgenerator -reports:./coverlet/reports/**/*cobertura.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+          
+          # note this is a manual patch as reportgenerator outputs a version=1. SonarQube requires Version=1. ReportGenerator can output a SonarQube format.
+          sed -i 's/version="0"/version="1"/' ./coverlet/merged/Cobertura.xml
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Upload individual test projects coverage reports
