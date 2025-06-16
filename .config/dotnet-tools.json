@@ -15,13 +15,6 @@
         "dotnet-sonarscanner"
       ],
       "rollForward": false
-    },
-    "dotnet-coverage": {
-      "version": "17.14.2",
-      "commands": [
-        "dotnet-coverage"
-      ],
-      "rollForward": false
     }
   }
 }

@@ -93,16 +93,19 @@ jobs:
             PROJECTNAME=$(basename $proj .csproj)
             echo "PROJECTNAME is $PROJECTNAME"
             echo "Running tests for $proj"
-            dotnet tool run dotnet-coverage collect "dotnet test $proj --no-build --nologo" \
-              -f cobertura \
-              -o "./coverlet/reports/$(PROJECT_NAME).cobertura.xml"
+            dotnet test "$proj" \
+              --no-build \
+              --nologo \
+              /p:CollectCoverage=true \
+              /p:CoverletOutputFormat=cobertura \
+              /p:CoverletOutput=./coverlet/reports/$PROJECTNAME
           done
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
-          "-reports:./coverlet/reports/*.cobertura.xml" \
+          "-reports:./coverlet/reports/**/*.cobertura.xml" \
           "-targetdir:./coverlet/merged" \
           "-reporttypes:Cobertura"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
