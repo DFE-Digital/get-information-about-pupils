@@ -117,14 +117,8 @@ jobs:
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
-          name: merged-coverage-report
+          name: coverage-reports
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
-
-      - name: Upload merged coverage reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: merged-coverage-report
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/*
 
       - name: End SonarCloud Scanner
         if: always()
