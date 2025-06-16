@@ -37,64 +37,37 @@ public class MyPupilListViewModel : BaseSearchViewModel
 
     public bool NoPupilSelectedError { get; set; }
 
-    #region Page Text
 
     public string PageTitle { get; set; }
     public string PageHeading { get; set; }
 
-    #endregion Page Text
-
-    #region ViewComponents and Partials
 
     public string DownloadLinksPartial { get; set; }
     public string RemoveSelectedToMyPupilListLink { get; set; }
     public string DownloadSelectedNPDDataLink { get; set; }
     public string DownloadSelectedPupilPremiumDataLink { get; set; }
     public string DownloadSelectedASCTFLink { get; set; }
-    #endregion ViewComponents and Partials
 
-    #region Page Properties
 
     public string LearnerNumberLabel { get; set; }
-
     public static int MaximumUPNsPerSearch { get; set; }
-
     public string Upn { get; set; }
-
     public IEnumerable<Learner> Learners { get; set; } = new List<Learner>();
-
     public bool NoPupilSelected { get; set; }
-
     public string SelectAllNoJsChecked { get; set; }
-
     public bool ToggleSelectAll { get; set; } = false;
-
     public bool ShowErrors { get; set; }
-
     public bool Fail { get; set; }
-
     public bool NoPupil { get; set; }
-
     public string SelectedInvalidUPNOption { get; set; }
-
     public int PageNumber { get; set; }
-
     public int PageSize { get; set; }
-
-    public long Total { get; set; }
-
+    public int Total { get; set; }
     public string PageLearnerNumbers { get; set; }
-
     public List<string> SelectedPupil { get; set; }
-
     public List<Learner> Invalid { get; set; } = new List<Learner>();
-
     public string SearchBoxErrorMessage { get; set; }
-
     public bool ShowLocalAuthority { get; set; }
     public string SortField { get; set; }
-
     public string SortDirection { get; set; }
-
-    #endregion Page Properties
 }

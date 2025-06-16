@@ -103,16 +103,16 @@ public class MyPupilListController : Controller
 
         SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
 
-        var selectedPupils = GetSelected(model.Upn.FormatLearnerNumbers());
+        HashSet<string> selectedPupils = GetSelected(model.Upn.FormatLearnerNumbers());
         if (selectedPupils == null || selectedPupils.Count == 0)
         {
             model.NoPupilSelected = true;
             return await MyPupilList(model, model.PageNumber);
         }
 
-        var learnerList = await GetLearnerListForCurrentUser();
-        var decryptedSelectedPupils = RbacHelper.DecryptUpnCollection(selectedPupils);
-        var userProfile = new UserProfile
+        IEnumerable<MyPupilListItem> learnerList = await GetLearnerListForCurrentUser();
+        IEnumerable<string> decryptedSelectedPupils = RbacHelper.DecryptUpnCollection(selectedPupils);
+        UserProfile userProfile = new()
         {
             UserId = User.GetUserId(),
             IsPupilListUpdated = true,
@@ -124,10 +124,10 @@ public class MyPupilListController : Controller
         model.Upn = GetMyPupilListStringSeparatedBy(userProfile.MyPupilList, "\n");
         model.Removed = true;
 
-        float pagesRemaining = NumberOfPagesRemainingAfterSelectedPupilsRemoved(model.Total, selectedPupils.Count);
+        int pagesRemaining = NumberOfPagesRemainingAfterSelectedPupilsRemoved(model.Total, selectedPupils.Count);
         SetRevisedCurrentPageNumber(pagesRemaining, model);
 
-        return (pagesRemaining != 0)
+        return (pagesRemaining > 0)
             ? await MyPupilList(model, model.PageNumber, true)
             : await Index();
     }
@@ -357,13 +357,13 @@ public class MyPupilListController : Controller
     [NonAction]
     private async Task<IActionResult> Search(bool returnToMPL)
     {
-        var model = new MyPupilListViewModel();
+        MyPupilListViewModel model = new();
         PopulatePageText(model);
         PopulateNavigation(model);
         SetModelApplicationLabels(model);
         MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
 
-        var learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
+        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
 
         if (returnToMPL && HttpContext.Session.Keys.Contains(SortFieldSessionKey) && HttpContext.Session.Keys.Contains(SortDirectionSessionKey))
         {
@@ -615,12 +615,20 @@ public class MyPupilListController : Controller
         };
     }
 
-    private float NumberOfPagesRemainingAfterSelectedPupilsRemoved(float total, float toRemove)
-        => (total - toRemove) / PAGESIZE;
-
-    private void SetRevisedCurrentPageNumber(float pagesRemaining, MyPupilListViewModel model)
+    private int NumberOfPagesRemainingAfterSelectedPupilsRemoved(int total, int toRemove)
     {
-        model.PageNumber = (int)Math.Ceiling(pagesRemaining) - 1;
+        int remaining = total - toRemove;
+        if (remaining <= 0)
+            return 0;
+
+        // Integer division, add one if there's a remainder
+        return (remaining + PAGESIZE - 1) / PAGESIZE;
+    }
+
+    private void SetRevisedCurrentPageNumber(int pagesRemaining, MyPupilListViewModel model)
+    {
+        // If there are no pages, set to 0, else set to last page (zero-based)
+        model.PageNumber = pagesRemaining > 0 ? pagesRemaining - 1 : 0;
     }
 
     private Task<IEnumerable<MyPupilListItem>> GetLearnerListForCurrentUser()
