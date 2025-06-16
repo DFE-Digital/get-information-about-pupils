@@ -68,7 +68,7 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/Cobertura.xml \
+            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/SonarQube.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/*.scss,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
@@ -91,7 +91,7 @@ jobs:
             ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
           do
             PROJECTNAME=$(basename $proj .csproj)
-            OUTPUT_COVERLET_PATH=$(pwd)/coverlet/reports/$PROJECTNAME.cobertura.xml
+            OUTPUT_COVERLET_PATH=$(pwd)/coverlet/reports/SonarQube.xml
             echo "Running tests for $proj"
             echo "PROJECTNAME is $PROJECTNAME"
             echo "OUTPUT_COVERLET_PATH is $OUTPUT_COVERLET_PATH"
@@ -122,7 +122,7 @@ jobs:
           dotnet tool run reportgenerator \
           "-reports:./coverlet/reports/**/*.cobertura.xml" \
           "-targetdir:./coverlet/merged" \
-          "-reporttypes:Cobertura"
+          "-reporttypes:SonarQube"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Debug coverage report
@@ -134,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
+          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
 
       - name: End SonarCloud Scanner
         if: always()
