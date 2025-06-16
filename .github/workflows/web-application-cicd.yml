@@ -105,7 +105,7 @@ jobs:
           done
 
       - name: Merge coverage reports
-        run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*.xml -reporttypes:Cobertura -targetdir:./coverage/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: dotnet tool run reportgenerator -reports:./coverlet/reports/**/*.xml -reporttypes:Cobertura -targetdir:./coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
