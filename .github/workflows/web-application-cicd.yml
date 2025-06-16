@@ -81,33 +81,43 @@ jobs:
 
       - name: Run unit tests
         run: |
+        
+          mkdir -p ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
+
           for proj in \
             ./DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
             ./DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
             ./DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj \
             ./DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj
           do
+            PROJECTNAME=basename $proj .csproj
+            echo "PROJECTNAME is $PROJECTNAME"
             echo "Running tests for $proj"
-            dotnet test "$proj" \
-              --verbosity normal \
-              --collect:"XPlat Code Coverage" \
-              -p:CoverletOutputFormat=cobertura \
-              -p:CoverletOutput=./TestResults/
+            dotnet-coverage collect "dotnet test $proj --no-build --nologo" \
+              -f cobertura \
+              -o "${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/$(PROJECT_NAME).cobertura.xml"
           done
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
-      - name: Generate test coverage reports
-        run: dotnet tool run reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+      - name: Merge coverage reports
+        run: |
+          dotnet tool run reportgenerator \
+          "-reports:./coverlet/reports/*.cobertura.xml" \
+          "-targetdir:./coverlet/merged" \
+          "-reporttypes:Cobertura"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Upload test coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
 
       - name: Debug coverage report
-        run: ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
+        run: | 
+          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
+          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
+          cat ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
 
       - name: End SonarCloud Scanner
         if: always()
