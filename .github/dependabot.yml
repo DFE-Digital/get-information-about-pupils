@@ -1,4 +1,11 @@
 version: 2
+
+registries:
+  github-nuget:
+    type: nuget-feed
+    url: https://nuget.pkg.github.com/DFE-Digital/index.json
+    token: ${{ secrets.DEPENDABOT_DFEDIGITAL_NUGETFEED_TOKEN }}
+
 updates:
   - package-ecosystem: "npm"
     directory: "/DfE.GIAP.All/DfE.GIAP.Web"
@@ -7,6 +14,8 @@ updates:
 
   - package-ecosystem: "nuget"
     directory: "/DfE.GIAP.All"
+    registries:
+      - github-nuget
     schedule:
       interval: "daily"
 

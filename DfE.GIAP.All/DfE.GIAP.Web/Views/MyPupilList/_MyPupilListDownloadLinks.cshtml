@@ -1,4 +1,4 @@
-﻿@model DfE.GIAP.Web.ViewModels.Search.SearchMyPupilListViewModel
+﻿@model MyPupilListViewModel
 
 @if ((Model.Learners != null && Model.Learners.Any()) || Model.Invalid.Any())
 {
@@ -21,7 +21,7 @@
             </button>
         </div>
         <div class="govuk-grid-column-one-quarter">
-            <button class="govuk-list webapp-button-as-link" asp-controller="SearchMyPupilList" asp-action="RemoveSelected" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" asp id="remove--selected--data--link" type="submit">
+            <button class="govuk-list webapp-button-as-link" asp-controller="MyPupilList" asp-action="RemoveSelected" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" asp id="remove--selected--data--link" type="submit">
                 @Model.RemoveSelectedToMyPupilListLink
             </button>
         </div>
