@@ -103,6 +103,10 @@ jobs:
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
               /p:CoverletOutput=$OUTPUT_COVERLET_PATH
+            
+            echo "Checking if $OUTPUT_COVERLET_PATH exists:"
+            ls -l "$OUTPUT_COVERLET_PATH"
+
           done
 
 
