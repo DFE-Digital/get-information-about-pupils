@@ -50,7 +50,7 @@ jobs:
         uses: actions/setup-dotnet@v4
 
       - name: Set COVERAGE_REPORT path
-        run: echo "COVERAGE_REPORT=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/Cobertura.xml" >> $GITHUB_ENV
+        run: echo "COVERAGE_REPORT=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/coverage.cobertura.xml" >> $GITHUB_ENV
 
       - name: Restore dotnet tools
         run: dotnet tool restore
@@ -108,6 +108,9 @@ jobs:
         with:
           name: coverage-report
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+
+      - name: Debug coverage report
+        run: ls -la ${{ env.COVERAGE_REPORT }}
 
       - name: End SonarCloud Scanner
         if: always()
