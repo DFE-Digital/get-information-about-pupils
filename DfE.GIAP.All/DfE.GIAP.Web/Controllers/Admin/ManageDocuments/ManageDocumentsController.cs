@@ -576,7 +576,7 @@ public class ManageDocumentsController : Controller
 
         if (responseArticle != null)
         {
-            output.Id = responseArticle.Id;
+            output.Id = responseArticle.Id.Value;
             output.Title = string.IsNullOrEmpty(responseArticle.DraftTitle) ? SecurityHelper.SanitizeText(responseArticle.Title) : SecurityHelper.SanitizeText(responseArticle.DraftTitle);
             output.Body = string.IsNullOrEmpty(responseArticle.DraftBody) ? SecurityHelper.SanitizeText(responseArticle.Body) : SecurityHelper.SanitizeText(responseArticle.DraftBody);
             output.Pinned = responseArticle.Pinned;
@@ -632,7 +632,7 @@ public class ManageDocumentsController : Controller
             newsList.Add(new Document
             {
                 DocumentName = $"{name} | {date} | {status} {pinned}",
-                DocumentId = news.Id,
+                DocumentId = news.Id.Value,
                 IsEnabled = true
             });
         }
@@ -657,7 +657,7 @@ public class ManageDocumentsController : Controller
             newsList.Add(new Document
             {
                 DocumentName = $"{name} | {date} | {status} {pinned}",
-                DocumentId = news.Id,
+                DocumentId = news.Id.Value,
                 IsEnabled = true
             });
         }

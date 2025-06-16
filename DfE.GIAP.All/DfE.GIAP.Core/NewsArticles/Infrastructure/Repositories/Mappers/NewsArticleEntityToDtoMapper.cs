@@ -32,7 +32,7 @@ internal class NewsArticleEntityToDtoMapper : IMapper<NewsArticle, NewsArticleDT
         // Create a new NewsArticleDTO and populate it with the entity data.
         return new NewsArticleDTO
         {
-            Id = input.Id,
+            Id = input.Id.Value,
             Title = input.Title,
             Body = input.Body,
             DraftBody = input.DraftBody,

@@ -44,7 +44,7 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
 
         NewsArticle newsArticle = new()
         {
-            Id = Guid.NewGuid().ToString(),
+            Id = NewsArticleIdentifier.New(),
             Title = request.Title,
             Body = request.Body,
             DraftBody = string.Empty,

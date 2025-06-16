@@ -394,7 +394,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         {
             Title = "Some Test",
             Body = "Some body",
-            Id = "1",
+            Id = NewsArticleIdentifier.From("1"),
             Pinned = true,
             DraftBody = string.Empty,
             DraftTitle = string.Empty
