@@ -49,9 +49,6 @@ jobs:
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v4
 
-      - name: Set COVERAGE_REPORT path
-        run: echo "COVERAGE_REPORT=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/coverage.cobertura.xml" >> $GITHUB_ENV
-
       - name: Restore dotnet tools
         run: dotnet tool restore
         shell: bash
@@ -71,7 +68,7 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.vscoveragexml.reportsPaths=${{env.COVERAGE_REPORT}} \
+            /d:sonar.cs.vscoveragexml.reportsPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/Cobertura.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/*.scss,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
@@ -110,7 +107,7 @@ jobs:
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
 
       - name: Debug coverage report
-        run: ls -la ${{ env.COVERAGE_REPORT }}
+        run: ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
 
       - name: End SonarCloud Scanner
         if: always()
