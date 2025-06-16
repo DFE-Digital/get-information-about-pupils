@@ -82,19 +82,47 @@ jobs:
       - name: Run unit tests
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
         run: |
-            dotnet test --filter FullyQualifiedName\!~IntegrationTests \
+
+          mkdir -p coverlet/reports
+
+          # Find all test projects (adjust the pattern if needed)
+          for proj in $(find . -name '*Tests.csproj'); do
+            
+          # Extract project name without path or extension
+            name=$(basename "$proj" .csproj)
+
+            echo "Running tests for $name..."
+
+            dotnet test "$proj" \
               --no-build \
               --nologo \
               --logger:"console;verbosity=detailed" \
+              --filter \!~IntegrationTests # don't run integration tests here
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=./coverlet/reports
+              /p:CoverletOutput="coverlet/reports/$name/"
+          done
 
-      - name: Upload test coverage reports
+      - name: Merge coverage reports
+        run: |
+          dotnet tool install --global coverlet.console
+
+          coverlet merge \
+            --output ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/coverage.cobertura.xml \
+            --formats cobertura \
+            ${{env.SOLUTION_DIRECTORY}}/coverlet/reports/**/*coverage.cobertura.xml
+
+      - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: merged-coverage-report
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
+
+      - name: Upload merged coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-coverage-report
+          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/*
 
       - name: End SonarCloud Scanner
         if: always()
