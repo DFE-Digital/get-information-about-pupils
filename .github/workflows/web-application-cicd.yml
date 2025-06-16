@@ -105,7 +105,7 @@ jobs:
       - name: Merge coverage reports
         run: |
           mkdir -p ./coverlet/merged/
-          
+
           dotnet tool run reportgenerator \
           "-reports:./coverlet/reports/**/*.cobertura.xml" \
           "-targetdir:./coverlet/merged" \
@@ -118,11 +118,11 @@ jobs:
           name: coverage-report
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
 
+
       - name: Debug coverage report
-        run: | 
-          ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports
+        run: |
+          echo "Merged coverage directory contents:"
           ls -la ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
-          cat ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/Cobertura.xml
 
       - name: End SonarCloud Scanner
         if: always()
