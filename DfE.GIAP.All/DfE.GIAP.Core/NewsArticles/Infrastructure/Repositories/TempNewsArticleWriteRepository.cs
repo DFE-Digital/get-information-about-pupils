@@ -29,8 +29,8 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
     public async Task CreateNewsArticleAsync(NewsArticle newsArticle)
     {
         ArgumentNullException.ThrowIfNull(newsArticle);
-        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title, nameof(newsArticle.Title));
-        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body, nameof(newsArticle.Body));
+        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
         try
         {

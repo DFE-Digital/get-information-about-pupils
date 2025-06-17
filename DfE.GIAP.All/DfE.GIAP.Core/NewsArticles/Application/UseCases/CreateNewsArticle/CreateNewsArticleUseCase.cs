@@ -39,8 +39,8 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
     public async Task HandleRequestAsync(CreateNewsArticleRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        ArgumentException.ThrowIfNullOrWhiteSpace(request.Title, nameof(request.Title));
-        ArgumentException.ThrowIfNullOrWhiteSpace(request.Body, nameof(request.Body));
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.Title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(request.Body);
 
         NewsArticle newsArticle = new()
         {
