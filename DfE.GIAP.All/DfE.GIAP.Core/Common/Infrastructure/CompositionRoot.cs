@@ -16,16 +16,9 @@ internal static class CompositionRoot
             IOptions<RepositoryOptions> repositoryOptions = sp.GetRequiredService<IOptions<RepositoryOptions>>();
             RepositoryOptions options = repositoryOptions.Value ?? throw new ArgumentException($"{repositoryOptions.Value} is null");
 
-            if (string.IsNullOrWhiteSpace(options.EndpointUri))
-            {
-                throw new ArgumentException("RepositoryOptions.EndpointUri is null or empty");
-            }
-
-            if (string.IsNullOrWhiteSpace(options.PrimaryKey))
-            {
-                throw new ArgumentException("RepositoryOptions.PrimaryKey is null or empty");
-            }
-
+            ArgumentException.ThrowIfNullOrWhiteSpace(options.EndpointUri);
+            ArgumentException.ThrowIfNullOrWhiteSpace(options.PrimaryKey);
+            
             CosmosClientBuilder cosmosClientBuilder = new(options.EndpointUri, options.PrimaryKey);
 
             // Check if the environment is local to use Gateway
