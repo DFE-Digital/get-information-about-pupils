@@ -33,16 +33,20 @@ public class LandingController : Controller
         await _newsBanner.SetLatestNewsStatus();
 
         GetContentByPageKeyUseCaseResponse landingPageContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
 
         GetContentByPageKeyUseCaseResponse plannedMaintenanceContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
 
         GetContentByPageKeyUseCaseResponse publicationScheduleContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
 
         GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequest(new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
 
         LandingViewModel model = new()
         {

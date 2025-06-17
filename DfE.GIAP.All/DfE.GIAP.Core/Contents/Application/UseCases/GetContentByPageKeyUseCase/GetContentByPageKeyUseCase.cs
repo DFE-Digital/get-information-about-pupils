@@ -34,7 +34,7 @@ internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyU
     /// </summary>
     /// <param name="request">The request containing the page key.</param>
     /// <returns>A response containing the retrieved content.</returns>
-    public async Task<GetContentByPageKeyUseCaseResponse> HandleRequest(GetContentByPageKeyUseCaseRequest request)
+    public async Task<GetContentByPageKeyUseCaseResponse> HandleRequestAsync(GetContentByPageKeyUseCaseRequest request)
     {
         PageContentOption contentOptions = _pageContentOptionProvider.GetPageContentOptionWithPageKey(request.PageKey);
         ContentKey key = ContentKey.Create(contentOptions.DocumentId);

@@ -37,10 +37,10 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
                 (dto) => _fixture.Database.WriteAsync(dto)));
 
         NewsArticleDTO targetArticle = seededArticles.First();
-        GetNewsArticleByIdRequest request = new(Id: targetArticle.ID);
+        GetNewsArticleByIdRequest request = new(Id: targetArticle.Id);
 
         // Act
-        GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
+        GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
 
         //Assert
         IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
@@ -74,7 +74,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
         GetNewsArticleByIdRequest request = new(Id: unknownArticleId);
 
         // Act
-        GetNewsArticleByIdResponse response = await sut.HandleRequest(request);
+        GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
 
         //Assert
         Assert.NotNull(response);

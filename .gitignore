@@ -334,3 +334,4 @@ ASALocalRun/
 /DfE.GIAP.All/DfE.GIAP.Web/appsettings.development.json
 /DfE.GIAP.All/DfE.GIAP.Web/wwwroot/lib/jquery/dist/jquery.js
 /DfE.GIAP.All/DfE.GIAP.Web/wwwroot/lib/jquery/dist/jquery.min.js
+/DfE.GIAP.All/nuget.config

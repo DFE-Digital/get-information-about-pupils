@@ -1,8 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-namespace DfE.GIAP.Web.Constants;
-
+﻿namespace DfE.GIAP.Web.Constants;
 public static class Routes
 {
     public const string DownloadSelectedNationalPupilDatabaseData = "download";

@@ -32,7 +32,7 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
     /// <param name="request">Request containing filtering options.</param>
     /// <returns>Response containing a list of retrieved news articles.</returns>
     /// <exception cref="ArgumentNullException">Thrown if the request is null.</exception>
-    public async Task<GetNewsArticlesResponse> HandleRequest(GetNewsArticlesRequest request)
+    public async Task<GetNewsArticlesResponse> HandleRequestAsync(GetNewsArticlesRequest request)
     {
         // Validate request object
         ArgumentNullException.ThrowIfNull(request);

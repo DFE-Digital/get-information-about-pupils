@@ -6,7 +6,7 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
 /// <summary>
 /// Maps a NewsArticleDTO object to a NewsArticle entity.
 /// </summary>
-internal class NewsArticleDTOToEntityMapper : IMapper<NewsArticleDTO, NewsArticle>
+internal class NewsArticleDtoToEntityMapper : IMapper<NewsArticleDTO, NewsArticle>
 {
     /// <summary>
     /// Converts a NewsArticleDTO object into a NewsArticle entity.
@@ -25,7 +25,7 @@ internal class NewsArticleDTOToEntityMapper : IMapper<NewsArticleDTO, NewsArticl
         // Create a new NewsArticle entity and populate it with the DTO data.
         return new NewsArticle
         {
-            Id = input.ID,
+            Id = NewsArticleIdentifier.From(input.Id),
             Title = input.Title,
             Body = input.Body,
             DraftBody = input.DraftBody,

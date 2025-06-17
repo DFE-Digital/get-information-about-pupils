@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Constants.Messages.Articles;
@@ -24,11 +21,14 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
 using DfE.GIAP.Web.ViewModels.Helper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Globalization;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
@@ -571,12 +571,12 @@ public class ManageDocumentsController : Controller
         CommonResponseBodyViewModel output = new();
         GetNewsArticleByIdRequest getNewsArticleByIdRequest = new(newsArticleId);
 
-        GetNewsArticleByIdResponse? response = await _getNewsArticleByIdUseCase.HandleRequest(getNewsArticleByIdRequest);
+        GetNewsArticleByIdResponse? response = await _getNewsArticleByIdUseCase.HandleRequestAsync(getNewsArticleByIdRequest);
         NewsArticle? responseArticle = response.NewsArticle;
 
         if (responseArticle != null)
         {
-            output.Id = responseArticle.Id;
+            output.Id = responseArticle.Id.Value;
             output.Title = string.IsNullOrEmpty(responseArticle.DraftTitle) ? SecurityHelper.SanitizeText(responseArticle.Title) : SecurityHelper.SanitizeText(responseArticle.DraftTitle);
             output.Body = string.IsNullOrEmpty(responseArticle.DraftBody) ? SecurityHelper.SanitizeText(responseArticle.Body) : SecurityHelper.SanitizeText(responseArticle.DraftBody);
             output.Pinned = responseArticle.Pinned;
@@ -619,7 +619,7 @@ public class ManageDocumentsController : Controller
     private async Task LoadNewsList()
     {
         GetNewsArticlesRequest request = new(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished);
-        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
+        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
         IList<Document> newsList = new List<Document>();
         foreach (NewsArticle news in response.NewsArticles)
@@ -632,7 +632,7 @@ public class ManageDocumentsController : Controller
             newsList.Add(new Document
             {
                 DocumentName = $"{name} | {date} | {status} {pinned}",
-                DocumentId = news.Id,
+                DocumentId = news.Id.Value,
                 IsEnabled = true
             });
         }
@@ -644,7 +644,7 @@ public class ManageDocumentsController : Controller
     private async Task LoadArchivedNewsList()
     {
         GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished);
-        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequest(request).ConfigureAwait(false);
+        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
         IList<Document> newsList = new List<Document>();
         foreach (NewsArticle news in response.NewsArticles)
@@ -657,7 +657,7 @@ public class ManageDocumentsController : Controller
             newsList.Add(new Document
             {
                 DocumentName = $"{name} | {date} | {status} {pinned}",
-                DocumentId = news.Id,
+                DocumentId = news.Id.Value,
                 IsEnabled = true
             });
         }

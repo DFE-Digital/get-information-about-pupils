@@ -55,7 +55,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     {
         if (string.IsNullOrWhiteSpace(id))
         {
-            _logger.LogWarning("GetNewsArticleByIdAsync called with null or empty id.");
+            _logger.LogCritical("GetNewsArticleByIdAsync called with null or empty id.");
             throw new ArgumentException("Id must not be null or empty.", nameof(id));
         }
 

@@ -394,13 +394,13 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         {
             Title = "Some Test",
             Body = "Some body",
-            Id = "1",
+            Id = NewsArticleIdentifier.From("1"),
             Pinned = true,
             DraftBody = string.Empty,
             DraftTitle = string.Empty
         };
 
-        _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequest(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
+        _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequestAsync(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
 
         ManageDocumentsController controller = GetManageDocumentsController();
         string editDocument = "EditDocument";

@@ -50,7 +50,7 @@ public class LandingControllerTests : IClassFixture<UserClaimsPrincipalFake>
         GetContentByPageKeyUseCaseResponse response = new(stubContent);
 
         _mockGetContentByPageKeyUseCase.Setup(
-            (useCase) => useCase.HandleRequest(
+            (useCase) => useCase.HandleRequestAsync(
                 It.IsAny<GetContentByPageKeyUseCaseRequest>())).ReturnsAsync(response).Verifiable();
 
         LandingController controller = GetLandingController();

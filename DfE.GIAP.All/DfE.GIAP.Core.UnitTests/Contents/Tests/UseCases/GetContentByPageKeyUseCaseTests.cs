@@ -50,7 +50,7 @@ public sealed class GetContentByPageKeyUseCaseTests
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository);
         GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
-        Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequest(request);
+        Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequestAsync(request);
         await Assert.ThrowsAsync<Exception>(act);
     }
 
@@ -72,7 +72,7 @@ public sealed class GetContentByPageKeyUseCaseTests
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository.Object);
         GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
-        Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequest(request);
+        Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequestAsync(request);
         await Assert.ThrowsAsync<Exception>(act);
     }
 
@@ -106,7 +106,7 @@ public sealed class GetContentByPageKeyUseCaseTests
 
         GetContentByPageKeyUseCase sut = new(mockContentOptionProvider.Object, mockRepository.Object);
         GetContentByPageKeyUseCaseRequest request = new(pageKey: validPageKey);
-        GetContentByPageKeyUseCaseResponse response = await sut.HandleRequest(request);
+        GetContentByPageKeyUseCaseResponse response = await sut.HandleRequestAsync(request);
 
 
         Assert.NotNull(response);

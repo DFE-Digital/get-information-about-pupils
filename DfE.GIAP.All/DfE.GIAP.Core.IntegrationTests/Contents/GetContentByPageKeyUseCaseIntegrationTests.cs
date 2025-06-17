@@ -54,7 +54,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
 
         // Act
         GetContentByPageKeyUseCaseRequest request = new(pageKey: "TestPage1");
-        GetContentByPageKeyUseCaseResponse response = await sut.HandleRequest(request);
+        GetContentByPageKeyUseCaseResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         Assert.NotNull(response);
