@@ -77,7 +77,7 @@ public sealed class GetContentByPageKeyUseCaseTests
     }
 
     [Fact]
-    public async Task GetContentByPageKeyUseCase_HandleRequest_Calls_Provider_And_Repository_Once_ReturnsContent()
+    public async Task GetContentByPageKeyUseCase_HandleRequest_ReturnsContent_When_PageKeyIsValid()
     {
         // Arrange
         string validPageKey = "test-pagekey";
