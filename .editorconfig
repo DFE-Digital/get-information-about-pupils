@@ -33,6 +33,8 @@ dotnet_style_prefer_inferred_tuple_names = true:suggestion
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:suggestion
 dotnet_style_prefer_simplified_interpolation = true:suggestion
+dotnet_style_prefer_collection_expression = when_types_exactly_match:suggestion
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
 
 # C# files
 [*.cs]
@@ -174,6 +176,7 @@ csharp_space_between_square_brackets = false
 csharp_style_prefer_method_group_conversion = true:silent
 csharp_style_prefer_top_level_statements = true:silent
 csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_prefer_local_over_anonymous_function = false:suggestion
 
 # C++ Files
 [*.{cpp,h,in}]
