@@ -1,4 +1,4 @@
-﻿@import 'colours';
+﻿@use 'colours';
 
 /*  All application specific css classes apart from GDS toolkit */
 .validation-summary-valid {
@@ -10,7 +10,7 @@
     border: none;
     padding: 0 !important;
     cursor: pointer;
-    color: $govuk-link-colour !important;
+    color: colours.$govuk-link-colour !important;
     box-shadow: none;
     text-decoration: underline;
     text-underline-offset: .1em;
@@ -18,7 +18,7 @@
 
 .webapp-button-as-link:hover {
     text-decoration: underline;
-    color: $govuk-link-hover-colour !important;
+    color: colours.$govuk-link-hover-colour !important;
     text-decoration-thickness: max(3px, .1875rem, .12em);
     text-underline-offset: .1em;
 }
@@ -33,7 +33,7 @@
 }
 
 .webapp-error-message {
-    border-left: 5px solid $govuk-error-colour;
+    border-left: 5px solid colours.$govuk-error-colour;
     padding: 10px;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .webapp-header-link--active:hover, .webapp-header-link--active:link, .webapp-header-link--active:visited {
-    color: $govuk-link-colour;
+    color: colours.$govuk-link-colour;
     text-decoration: underline;
     text-decoration-thickness: 5px;
     text-underline-offset: .7em;
@@ -91,7 +91,7 @@
 .webapp-results-underline {
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: $govuk-border-colour
+    border-bottom-color: colours.$govuk-border-colour
 }
 
 .webapp-table-cell {
@@ -128,7 +128,7 @@
 }
 
 .govuk-panel--confirmation .govuk-table {
-    color: $govuk-confirmation-colour
+    color: colours.$govuk-confirmation-colour
 }
 
 .bottom-margin-10 {
@@ -141,7 +141,7 @@
 }
 
 .autocomplete__menu {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
 }
 
 .italic {
@@ -154,9 +154,9 @@
 }
 
 .pagination-list button {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
     background: none;
-    color: $govuk-link-colour;
+    color: colours.$govuk-link-colour;
     border: none;
     padding: 0;
     font: inherit;
@@ -167,17 +167,17 @@
 }
 
 .pagination-list button:hover {
-    color: $govuk-link-hover-colour;
+    color: colours.$govuk-link-hover-colour;
     text-decoration-thickness: max(3px, .1875rem, .12em);
 }
 
 .sidebarNav .popularActivities {
     margin-bottom: 30px;
-    border-top: 4px solid $govuk-link-colour;
+    border-top: 4px solid colours.$govuk-link-colour;
 }
 
 .sidebarNav .popularActivities h3 {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
 }
 
 .sidebarNav .popularActivities ul {
@@ -275,7 +275,7 @@
 }
 
 .webapp-filter-item {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
     font-size: 1.1875rem;
     background-color: #e4e4e4;
     border: 1px solid #aaa;

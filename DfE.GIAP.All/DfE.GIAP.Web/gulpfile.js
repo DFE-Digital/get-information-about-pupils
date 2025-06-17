@@ -26,7 +26,11 @@ gulp.task("scripts", function () {
 gulp.task('compile-sass', function () {
     return gulp
         .src("./Styles/Master.scss")
-        .pipe(sass({ style: "compressed", loadPaths: ["node_modules"] })
+        .pipe(sass({
+            style: "compressed",
+            loadPaths: ["node_modules"],
+            quietDeps: true
+        })
             .on('error', sass.logError))
         .pipe(rename("giap.min.css")) // output filename
         .pipe(gulp.dest('./wwwroot/css'));
