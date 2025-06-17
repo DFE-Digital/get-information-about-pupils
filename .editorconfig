@@ -175,7 +175,7 @@ csharp_space_between_square_brackets = false
 
 csharp_style_prefer_method_group_conversion = true:silent
 csharp_style_prefer_top_level_statements = true:silent
-csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_prefer_primary_constructors = false:suggestion
 csharp_style_prefer_local_over_anonymous_function = false:suggestion
 
 # C++ Files
