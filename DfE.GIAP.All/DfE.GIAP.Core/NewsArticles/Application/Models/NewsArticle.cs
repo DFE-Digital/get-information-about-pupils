@@ -1,4 +1,5 @@
-﻿namespace DfE.GIAP.Core.NewsArticles.Application.Models;
+﻿
+namespace DfE.GIAP.Core.NewsArticles.Application.Models;
 
 public record NewsArticle
 {

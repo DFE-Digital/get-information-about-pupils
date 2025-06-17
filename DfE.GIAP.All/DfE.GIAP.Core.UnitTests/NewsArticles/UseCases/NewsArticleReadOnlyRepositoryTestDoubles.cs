@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
-namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticlesById.TestDoubles;
+namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 
 internal static class NewsArticleReadOnlyRepositoryTestDoubles
 {

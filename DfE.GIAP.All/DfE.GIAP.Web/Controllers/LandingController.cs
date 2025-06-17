@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Banner;

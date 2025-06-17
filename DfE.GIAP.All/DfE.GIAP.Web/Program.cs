@@ -8,8 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Core.Content;
 using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Contents;
 
 var builder = WebApplication.CreateBuilder(args);
 

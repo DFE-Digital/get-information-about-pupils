@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.Content.Infrastructure.Repositories;
+using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 
 namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 public static class ContentDtoTestDoubles

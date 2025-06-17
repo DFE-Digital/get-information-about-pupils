@@ -2,8 +2,8 @@
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Content.Application.Models;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.Models;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Tests.FakeData;
@@ -22,7 +22,7 @@ public class LandingControllerTests : IClassFixture<UserClaimsPrincipalFake>
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
     private readonly Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockGetContentByPageKeyUseCase = new();
-    private readonly Mock<IMapper<GetContentByPageKeyUseCaseResponse, LandingViewModel>> _mockmapper = new();
+
     public LandingControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
     {
         _userClaimsPrincipalFake = userClaimsPrincipalFake;

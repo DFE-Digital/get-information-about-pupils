@@ -4,8 +4,6 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Helpers.CookieManager;
-using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.BlobStorage;
