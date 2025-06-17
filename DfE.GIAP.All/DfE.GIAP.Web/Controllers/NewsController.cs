@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
@@ -17,7 +16,6 @@ namespace DfE.GIAP.Web.Controllers;
 [Route(Routes.Application.News)]
 public class NewsController : Controller
 {
-    private readonly INewsService _newsService;
     private readonly IContentService _contentService;
     private readonly ILatestNewsBanner _newsBanner;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;

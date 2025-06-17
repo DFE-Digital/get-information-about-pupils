@@ -2,9 +2,28 @@
 
 @if (latestNewsBanner.ShowNewsBanner())
 {
-    <div class="webapp-news-banner" id="news--banner--alert">
-        <span class="webapp-news-banner-text govuk-body-s" id="news--banner-message--text">*You have new site news</span>
-        <a asp-controller="News" asp-action="DismissNewsBanner" asp-route-returnUrl="@ViewContext.HttpContext.Request.Path" class="webapp-news-banner-link webapp-button-as-link" id="news--banner-dismiss--link">Dismiss</a>
-        <a asp-controller="News" asp-action="Index" class="webapp-news-banner-link webapp-button-as-link" id="news--banner-read--link">Read</a>
+    <div class="govuk-phase-banner webapp-news-banner" id="news--banner--alert">
+        <div class="govuk-width-container">
+            <p class="govuk-phase-banner__content">
+                <span class="govuk-phase-banner__text" id="news--banner-message--text">
+                    *You have new site news.
+                </span>
+
+                <a asp-controller="News"
+                   asp-action="DismissNewsBanner"
+                   asp-route-returnUrl="@ViewContext.HttpContext.Request.Path"
+                   class="govuk-link govuk-link--no-underline govuk-!-margin-left-8"
+                   id="news--banner-dismiss--link">
+                    Dismiss
+                </a>
+
+                <a asp-controller="News"
+                   asp-action="Index"
+                   class="govuk-link govuk-link--no-underline govuk-!-margin-left-8"
+                   id="news--banner-read--link">
+                    Read
+                </a>
+            </p>
+        </div>
     </div>
 }

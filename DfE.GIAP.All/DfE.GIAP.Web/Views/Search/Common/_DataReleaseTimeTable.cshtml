@@ -1,9 +1,8 @@
 ﻿@model DataReleaseTimeTableViewModel
 
-
 @if (Model.NewsPublication != null)
 {
-    <div class="webapp-news-article-latest">
+    <div>
         <h2 id="publication--release-heading--text" class="govuk-heading-l">@Html.Raw(Model.NewsPublication.Title)</h2>
         <div class="govuk-body webapp-results webapp-formatted-text" id="publication--release-description--text">@Html.Raw(Model.NewsPublication.Body)</div>
     </div>
