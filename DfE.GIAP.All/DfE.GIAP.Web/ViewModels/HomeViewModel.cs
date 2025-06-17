@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DfE.GIAP.Web.ViewModels;
 
 [ExcludeFromCodeCoverage]
-public class LandingViewModel
+public class HomeViewModel
 {
     public Content LandingResponse { get; set; }
     public Content PlannedMaintenanceResponse { get; set; }

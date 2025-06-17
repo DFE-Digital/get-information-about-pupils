@@ -1,204 +1,199 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers.CookieManager;
-using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Common.Constants.DsiConfiguration;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Contents.Application.Models;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Controllers;
-using DfE.GIAP.Web.Helpers.Consent;
+using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Tests.FakeData;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Moq;
 using NSubstitute;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Home
+namespace DfE.GIAP.Web.Tests.Controllers.Home;
+
+public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 {
-    public class HomeControllerTests
+    private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
+    private readonly ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
+    private readonly Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockGetContentByPageKeyUseCase = new();
+    private readonly IExceptionHandlerPathFeature _exceptionPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
+
+    public HomeControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
     {
-        private readonly IContentService _contentService = Substitute.For<IContentService>();
-        private readonly IExceptionHandlerPathFeature _exceptionPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
+        _userClaimsPrincipalFake = userClaimsPrincipalFake;
+    }
 
 
-        [Fact]
-        public async Task Index_returns_the_consent_view()
+    [Fact]
+    public void Error404_returns_view()
+    {
+        // Arrange
+        var controller = GetHomeController();
+
+        // Act
+        var result = controller.Error404();
+
+        // Assert
+        Assert.IsType<ViewResult>(result);
+    }
+
+    [Fact]
+    public void Error_returns_view()
+    {
+        // Arrange
+        var controller = GetHomeController();
+
+        // Act
+        var result = controller.Error(500);
+
+        // Assert
+        Assert.IsType<ViewResult>(result);
+    }
+
+    [Fact]
+    public void UserWithNoRole_returns_view()
+    {
+        // Arrange
+        var controller = GetHomeController();
+
+        // Act
+        var result = controller.UserWithNoRole();
+
+        // Assert
+        Assert.IsType<ViewResult>(result);
+    }
+
+    [Fact]
+    public void Exception_page_doesnt_show_error_in_production()
+    {
+        // Arrange
+        var controller = GetHomeController();
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production");
+
+        // Act
+        var result = controller.Exception();
+
+        // Assert
+        Assert.IsType<ViewResult>(result);
+        var viewResult = result as ViewResult;
+        Assert.IsType<ErrorModel>(viewResult.Model);
+        var viewModel = viewResult.Model as ErrorModel;
+        Assert.False(viewModel.ShowError);
+    }
+
+    [Fact]
+    public async Task HomeController_Index_Should_Return_HomePageData()
+    {
+        // Arrange
+        Content stubContent = new()
         {
-            // Arrange
-            var consentResponse = new CommonResponseBody();
-            _contentService.GetContent(DocumentType.Consent).Returns(consentResponse);
-            var controller = GetHomeController();
+            Title = "Test title",
+            Body = "Test body",
+        };
 
-            // Act
-            var result = await controller.Index();
+        HomeViewModel model = new()
+        {
+            LandingResponse = stubContent,
+            PlannedMaintenanceResponse = stubContent,
+            PublicationScheduleResponse = stubContent,
+            FAQResponse = stubContent
+        };
 
-            // Assert
-            Assert.IsType<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsType<ConsentViewModel>(viewResult.Model);
-            var viewModel = viewResult.Model as ConsentViewModel;
-            Assert.Equal(consentResponse, viewModel.Response);
+
+        GetContentByPageKeyUseCaseResponse response = new(stubContent);
+
+        _mockGetContentByPageKeyUseCase.Setup(
+            (useCase) => useCase.HandleRequestAsync(
+                It.IsAny<GetContentByPageKeyUseCaseRequest>())).ReturnsAsync(response).Verifiable();
+
+        HomeController controller = GetHomeController();
+
+        // Act
+        IActionResult result = await controller.Index();
+
+        // Assert
+        ViewResult viewResult = Assert.IsAssignableFrom<ViewResult>(result);
+        HomeViewModel viewModel = viewResult.Model as HomeViewModel;
+        Assert.Equal(model.LandingResponse.Title, viewModel.LandingResponse.Title);
+        Assert.Equal(model.LandingResponse.Body, viewModel.LandingResponse.Body);
+        Assert.Equal(model.PlannedMaintenanceResponse.Title, viewModel.PlannedMaintenanceResponse.Title);
+        Assert.Equal(model.PlannedMaintenanceResponse.Body, viewModel.PlannedMaintenanceResponse.Body);
+        Assert.Equal(model.PublicationScheduleResponse.Title, viewModel.PublicationScheduleResponse.Title);
+        Assert.Equal(model.PublicationScheduleResponse.Body, viewModel.PublicationScheduleResponse.Body);
+        Assert.Equal(model.FAQResponse.Title, viewModel.FAQResponse.Title);
+        Assert.Equal(model.FAQResponse.Body, viewModel.FAQResponse.Body);
+    }
+
+    [Fact]
+    public void HomeController_IndexPost_Should_Redirect_To_NPD_Search_If_User_Is_Not_An_FE_User()
+    {
+        // Arrange
+        var controller = GetHomeController();
+
+        // Act
+        var result = controller.IndexPost();
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
+        Assert.Equal(Global.NPDAction, viewResult.ActionName);
+        Assert.Equal(Global.NPDLearnerNumberSearchController, viewResult.ControllerName);
+    }
+
+    [Fact]
+    public void HomeController_IndexPost_Should_Redirect_To_FE_Search_If_User_Is_An_FE_User()
+    {
+        // Arrange
+        var controller = GetHomeController(true);
+
+        // Act
+        var result = controller.IndexPost();
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
+        Assert.Equal(Global.FELearnerNumberSearchAction, viewResult.ActionName);
+        Assert.Equal(Global.FELearnerNumberSearchController, viewResult.ControllerName);
+    }
+
+    private HomeController GetHomeController(bool feUser = false)
+    {
+        ClaimsPrincipal user;
+
+        if (feUser)
+        {
+            user = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
+                OrganisationCategory.Establishment,
+                EstablishmentType.FurtherEducation,
+                Role.Approver,
+                18,
+                25);
+        }
+        else
+        {
+            user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
         }
 
+        _exceptionPathFeature.Error.Returns(new Exception("test"));
+        _exceptionPathFeature.Path.Returns("/");
 
-        [Fact]
-        public void Index_Post_redirects_to_start_when_consent_given()
+        var controllerContext = new ControllerContext();
+        controllerContext.HttpContext = new DefaultHttpContext();
+
+        controllerContext.HttpContext.Features.Set(_exceptionPathFeature);
+
+        return new HomeController(_mockNewsBanner, _mockGetContentByPageKeyUseCase.Object)
         {
-            // Arrange
-            var controller = GetHomeController();
-            var consentModel = new ConsentViewModel()
+            ControllerContext = new ControllerContext()
             {
-                ConsentGiven = true
-            };
-
-            // Act
-            var result = controller.Index(consentModel);
-
-
-            // Assert
-            Assert.IsType<RedirectToActionResult>(result);
-            var redirectResult = result as RedirectToActionResult;
-            Assert.Equal("Index", redirectResult.ActionName);
-            Assert.Equal("Landing", redirectResult.ControllerName);
-            Assert.True(ConsentHelper.HasGivenConsent(controller.HttpContext));
-        }
-
-        [Fact]
-        public void Index_Post_shows_error_when_consent_not_given()
-        {
-            // Arrange
-            var controller = GetHomeController();
-            var consentModel = new ConsentViewModel()
-            {
-                ConsentGiven = false
-            };
-
-
-            // Act
-            var result = controller.Index(consentModel);
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsType<ConsentViewModel>(viewResult.Model);
-            var viewModel = viewResult.Model as ConsentViewModel;
-            Assert.True(viewModel.ConsentError);
-        }
-
-        [Fact]
-        public void Error404_returns_view()
-        {
-            // Arrange
-            var controller = GetHomeController();
-
-            // Act
-            var result = controller.Error404();
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-        }
-
-        [Fact]
-        public void Error_returns_view()
-        {
-            // Arrange
-            var controller = GetHomeController();
-
-            // Act
-            var result = controller.Error(500);
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-        }
-
-        [Fact]
-        public void UserWithNoRole_returns_view()
-        {
-            // Arrange
-            var controller = GetHomeController();
-
-            // Act
-            var result = controller.UserWithNoRole();
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-        }
-
-        [Fact]
-        public void Exception_page_shows_error_in_dev()
-        {
-            // Arrange
-            var controller = GetHomeController();
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
-
-            // Act
-            var result = controller.Exception();
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsType<ErrorModel>(viewResult.Model);
-            var viewModel = viewResult.Model as ErrorModel;
-            Assert.True(viewModel.ShowError);
-            Assert.Equal("test Page: Home.", viewModel.ExceptionMessage);
-            Assert.Null(viewModel.Stacktrace);
-        }
-
-        [Fact]
-        public void Exception_page_doesnt_show_error_in_production()
-        {
-            // Arrange
-            var controller = GetHomeController();
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production");
-
-            // Act
-            var result = controller.Exception();
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-            var viewResult = result as ViewResult;
-            Assert.IsType<ErrorModel>(viewResult.Model);
-            var viewModel = viewResult.Model as ErrorModel;
-            Assert.False(viewModel.ShowError);
-        }
-
-        private HomeController GetHomeController()
-        {
-            var cookieManager = Substitute.For<ICookieManager>();
-            var commonService = Substitute.For<ICommonService>();
-            var logger = Substitute.For<ILogger<HomeController>>();
-            var options = Substitute.For<IOptions<AzureAppSettings>>();
-
-            var azureAppSettings = new AzureAppSettings()
-            {
-                IsSessionIdStoredInCookie = true
-            };
-
-            options.Value.Returns(azureAppSettings);
-
-            _exceptionPathFeature.Error.Returns(new Exception("test"));
-            _exceptionPathFeature.Path.Returns("/");
-
-            var claimsPrincipal = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var controllerContext = new ControllerContext()
-            {
-                HttpContext = new DefaultHttpContext()
-                {
-                    User = claimsPrincipal,
-                    Session = new TestSession(),
-                }
-            };
-            controllerContext.HttpContext.Features.Set(_exceptionPathFeature);
-
-            return new HomeController(options, _contentService, cookieManager)
-            {
-                ControllerContext = controllerContext
-            };
-        }
+                HttpContext = new DefaultHttpContext() { User = user }
+            }
+        };
     }
 }

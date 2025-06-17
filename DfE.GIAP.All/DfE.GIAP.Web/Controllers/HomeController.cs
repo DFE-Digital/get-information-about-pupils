@@ -19,7 +19,6 @@ public class HomeController : Controller
 {
     private readonly ILatestNewsBanner _newsBanner;
     private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
-
     public HomeController(
         ILatestNewsBanner newsBanner,
         IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase)
@@ -51,7 +50,7 @@ public class HomeController : Controller
             await _getContentByPageKeyUseCase.HandleRequestAsync(
                 new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
 
-        LandingViewModel model = new()
+        HomeViewModel model = new()
         {
             LandingResponse = landingPageContentResponse.Content,
             PlannedMaintenanceResponse = plannedMaintenanceContentResponse.Content,
