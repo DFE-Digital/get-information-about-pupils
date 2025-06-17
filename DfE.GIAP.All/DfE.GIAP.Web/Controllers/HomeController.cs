@@ -1,69 +1,77 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System;
+using System.Threading.Tasks;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers.CookieManager;
 using DfE.GIAP.Common.Helpers.HostEnvironment;
-using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Service.Content;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Helpers.Consent;
+using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IContentService _contentService;
-    private readonly ICookieManager _cookieManager;
-    private readonly AzureAppSettings _azureAppSettings;
+    private readonly ILatestNewsBanner _newsBanner;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
 
-    public HomeController(IOptions<AzureAppSettings> azureAppSettings, IContentService contentService, ICookieManager cookieManager)
+    public HomeController(
+        ILatestNewsBanner newsBanner,
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
-        _cookieManager = cookieManager ??
-            throw new ArgumentNullException(nameof(cookieManager));
-        _azureAppSettings = azureAppSettings?.Value;
+        _newsBanner = newsBanner ??
+           throw new ArgumentNullException(nameof(newsBanner));
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase ??
+            throw new ArgumentNullException(nameof(getContentByPageKeyUseCase));
     }
 
-    [AllowWithoutConsent]
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        if (_azureAppSettings.IsSessionIdStoredInCookie)
-        {
-            _cookieManager.Set(CookieKeys.GIAPSessionId, User.GetSessionId());
-        }
+        await _newsBanner.SetLatestNewsStatus();
 
-        CommonResponseBody consentResponse = await _contentService.GetContent(DocumentType.Consent).ConfigureAwait(false);
-        ConsentViewModel model = new()
+        GetContentByPageKeyUseCaseResponse landingPageContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
+
+        GetContentByPageKeyUseCaseResponse plannedMaintenanceContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
+
+        GetContentByPageKeyUseCaseResponse publicationScheduleContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
+
+        GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
+
+        LandingViewModel model = new()
         {
-            Response = consentResponse
+            LandingResponse = landingPageContentResponse.Content,
+            PlannedMaintenanceResponse = plannedMaintenanceContentResponse.Content,
+            PublicationScheduleResponse = publicationScheduleContentResponse.Content,
+            FAQResponse = frequentlyAskedQuestionsContentResponse.Content
         };
 
-        return View("Index", model);
+        return View(model);
     }
 
-    [AllowWithoutConsent]
     [HttpPost]
-    public IActionResult Index(ConsentViewModel viewModel)
+    [ActionName("Index")]
+    public IActionResult IndexPost()
     {
-        if (viewModel.ConsentGiven)
+        if (User.IsOrganisationEstablishmentWithFurtherEducation())
         {
-            ConsentHelper.SetConsent(ControllerContext.HttpContext);
-            return RedirectToAction("Index", "Landing");
+            return RedirectToAction(Global.FELearnerNumberSearchAction, Global.FELearnerNumberSearchController);
         }
 
-        viewModel.ConsentError = true;
-        return View("Index", viewModel);
+        return RedirectToAction(Global.NPDLearnerNumberSearchAction, Global.NPDLearnerNumberSearchController);
     }
 
     [Route("/error/404")]

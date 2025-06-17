@@ -1,0 +1,38 @@
+﻿@model ConsentViewModel
+@{
+    var title = string.IsNullOrEmpty(Model.Response?.Title) ? "System consent" : Model.Response.Title;
+    ViewData["Title"] = title;
+}
+
+<h1 id="consent--heading--text" class="govuk-heading-xl">@Html.Raw(title)</h1>
+
+@Html.Raw(Model.Response?.Body)
+
+<form asp-controller="Consent" asp-action="Index" method="POST">
+    <input type="hidden" asp-for="@Model.Response.Body" />
+    <input type="hidden" asp-for="@Model.Response.Title" />
+
+    <div class="govuk-form-group @(Model.ConsentError ? "govuk-form-group--error" : "")">
+        <fieldset class="govuk-fieldset">
+            @if (Model.ConsentError)
+            {
+                <p id="consent--errormessage--text" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Select if you have read and understood the conditions
+                </p>
+            }
+
+            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="consent--confirm--chkbox" asp-for="ConsentGiven" name="ConsentGiven" type="checkbox">
+                    <label class="govuk-label govuk-checkboxes__label" for="consent--confirm--chkbox">
+                        I confirm that I have read and understood the conditions
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <button class="govuk-button" data-module="govuk-button" id="consent--next--btn" type="submit">
+        Next
+    </button>
+</form>
