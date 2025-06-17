@@ -12,7 +12,7 @@ public sealed class ContentKeyTests
     public void ContentKey_ThrowsException_WhenConstructed_WithNullEmptyOrWhitespace(string? invalidId)
     {
         // Arrange
-        Action construct = () => ContentKey.Create(invalidId);
+        Action construct = () => ContentKey.Create(invalidId!);
 
         // Act Assert
         Assert.Throws<ArgumentException>(construct);
