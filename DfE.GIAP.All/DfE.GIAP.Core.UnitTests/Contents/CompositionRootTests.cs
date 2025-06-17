@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Contents.Application.Options;
-using DfE.GIAP.Core.Contents.Application.Repository;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using DfE.GIAP.Core.SharedTests;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using DfE.GIAP.Core.Contents.Application.Models;
 using CompositionRoot = DfE.GIAP.Core.Contents.CompositionRoot;
+using DfE.GIAP.Core.Contents.Application.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.Contents;
 public sealed class CompositionRootTests

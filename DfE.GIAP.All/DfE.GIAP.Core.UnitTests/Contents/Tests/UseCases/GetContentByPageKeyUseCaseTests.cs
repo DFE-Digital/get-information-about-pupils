@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.Contents.Application.Options;
 using DfE.GIAP.Core.Contents.Application.Options.Provider;
-using DfE.GIAP.Core.Contents.Application.Repository;
+using DfE.GIAP.Core.Contents.Application.Repositories;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.UnitTests.Contents.TestDoubles;
 

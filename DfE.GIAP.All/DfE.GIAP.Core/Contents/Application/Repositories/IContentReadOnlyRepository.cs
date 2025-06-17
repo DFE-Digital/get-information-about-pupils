@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Contents.Application.Models;
 
-namespace DfE.GIAP.Core.Contents.Application.Repository;
+namespace DfE.GIAP.Core.Contents.Application.Repositories;
 
 /// <summary>
 /// Defines a read-only repository interface for retrieving content by ID.

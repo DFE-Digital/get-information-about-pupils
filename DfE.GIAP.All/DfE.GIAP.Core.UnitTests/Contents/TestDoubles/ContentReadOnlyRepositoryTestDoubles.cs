@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Contents.Application.Repository;
+﻿using DfE.GIAP.Core.Contents.Application.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.Contents.TestDoubles;
 internal sealed class ContentReadOnlyRepositoryTestDoubles

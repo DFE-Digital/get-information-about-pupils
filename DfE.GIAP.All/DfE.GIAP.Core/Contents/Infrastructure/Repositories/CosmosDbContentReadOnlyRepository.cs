@@ -1,7 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Contents.Application.Models;
-using DfE.GIAP.Core.Contents.Application.Repository;
+using DfE.GIAP.Core.Contents.Application.Repositories;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
