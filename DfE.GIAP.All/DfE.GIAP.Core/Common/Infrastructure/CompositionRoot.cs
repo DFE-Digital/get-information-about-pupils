@@ -18,7 +18,7 @@ internal static class CompositionRoot
 
             ArgumentException.ThrowIfNullOrWhiteSpace(options.EndpointUri);
             ArgumentException.ThrowIfNullOrWhiteSpace(options.PrimaryKey);
-            
+
             CosmosClientBuilder cosmosClientBuilder = new(options.EndpointUri, options.PrimaryKey);
 
             // Check if the environment is local to use Gateway
