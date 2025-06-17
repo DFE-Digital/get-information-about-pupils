@@ -58,27 +58,6 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         Assert.Throws<ArgumentNullException>(construct);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("\n")]
-    [InlineData("\r\n")]
-    public async Task CosmosDbContentReadOnlyRepository_GetContentByIdAsync_Throws_When_OptionsProvider_Returns_NullOrEmptyDocumentId(string? invalidDocumentId)
-    {
-        // Arrange
-
-        CosmosDbContentReadOnlyRepository repository = new(
-            logger: _mockLogger,
-            contentDtoToContentMapper: _mockMapper.Object,
-            cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
-
-        Func<Task<Content>> act = () => repository.GetContentByIdAsync(invalidDocumentId);
-
-        // Act Assert
-        await Assert.ThrowsAnyAsync<ArgumentException>(act);
-    }
-
     [Fact]
     public async Task CosmosDbContentReadOnlyRepository_GetContentByIdAsync_Throws_When_NonCosmosExceptionOccurs()
     {
@@ -93,7 +72,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
 
         // Act & Assert
-        await Assert.ThrowsAsync<Exception>(() => repository.GetContentByIdAsync("stub-key"));
+        await Assert.ThrowsAsync<Exception>(() => repository.GetContentByIdAsync(ContentKey.Create("stub-key")));
     }
 
     [Fact]
@@ -114,7 +93,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
 
         // Act Assert
-        await Assert.ThrowsAsync<CosmosException>(() => repository.GetContentByIdAsync(validPageKey));
+        await Assert.ThrowsAsync<CosmosException>(() => repository.GetContentByIdAsync(ContentKey.Create(validPageKey)));
         string log = Assert.Single(_mockLogger.Logs);
         Assert.Contains("CosmosException in GetContentByIdAsync", log);
     }
@@ -150,7 +129,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
 
         // Act
-        Content result = await repository.GetContentByIdAsync(validPageKey);
+        Content result = await repository.GetContentByIdAsync(ContentKey.Create(validPageKey));
 
         // Assert
         Assert.NotNull(result);

@@ -44,7 +44,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
         foreach (ContainerResponse container in containers)
         {
-            QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c");
+            QueryDefinition queryDefinition = new("SELECT * FROM c");
             FeedIterator<dynamic> queryIterator = container.Container.GetItemQueryIterator<dynamic>(queryDefinition);
 
             List<Task> deleteTasks = [];

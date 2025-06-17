@@ -38,16 +38,11 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     }
 
     /// <inheritdoc/>
-    public async Task<Content> GetContentByIdAsync(string id, CancellationToken ctx = default)
+    public async Task<Content> GetContentByIdAsync(ContentKey id, CancellationToken ctx = default)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new ArgumentException("DocumentId is null or whitespace");
-            }
-
-            string query = $"SELECT * FROM c WHERE c.DOCTYPE = {ContentDocumentType} AND c.id = '{id}'";
+            string query = $"SELECT * FROM c WHERE c.DOCTYPE = {ContentDocumentType} AND c.id = '{id.Value}'";
             IEnumerable<ContentDto> response = await _cosmosDbQueryHandler.ReadItemsAsync<ContentDto>(ContainerName, query, ctx);
             ContentDto? output = response.FirstOrDefault();
             return _contentDtoToContentMapper.Map(output);

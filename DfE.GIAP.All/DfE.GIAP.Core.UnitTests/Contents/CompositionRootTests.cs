@@ -19,7 +19,7 @@ public sealed class CompositionRootTests
     {
         IServiceCollection? serviceCollection = null;
         ConfigurationTestDoubles.Default();
-        Action register = () => CompositionRoot.AddContentDependencies(serviceCollection);
+        Action register = () => CompositionRoot.AddContentDependencies(serviceCollection!);
         Assert.Throws<ArgumentNullException>(register);
     }
 

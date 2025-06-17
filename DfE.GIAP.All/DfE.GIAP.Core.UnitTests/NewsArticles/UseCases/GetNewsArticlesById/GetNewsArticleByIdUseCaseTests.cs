@@ -7,7 +7,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
     [Fact]
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
-        Action construct = () => new GetNewsArticleByIdUseCase(newsArticleReadRepository: null);
+        Action construct = () => new GetNewsArticleByIdUseCase(newsArticleReadRepository: null!);
         Assert.Throws<ArgumentNullException>(construct);
     }
 
@@ -16,7 +16,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
     {
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticleByIdUseCase sut = new(mockRepository.Object);
-        Func<Task> act = () => sut.HandleRequest(request: null);
+        Func<Task> act = () => sut.HandleRequest(request: null!);
 
         // Act Assert 
         await Assert.ThrowsAsync<ArgumentNullException>(act);
@@ -32,7 +32,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         // Arrange
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticleByIdUseCase sut = new(mockRepository.Object);
-        GetNewsArticleByIdRequest request = new(id);
+        GetNewsArticleByIdRequest request = new(id!);
         Func<Task> act = () => sut.HandleRequest(request);
 
         // Act Assert 
