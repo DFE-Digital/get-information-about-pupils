@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Content.Application.Model;
+using DfE.GIAP.Core.Content.Application.Models;
 using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
@@ -38,7 +38,7 @@ internal sealed class GetContentByPageKeyUseCase : IUseCase<GetContentByPageKeyU
     {
         PageContentOption contentOptions = _pageContentOptionProvider.GetPageContentOptionWithPageKey(request.PageKey);
         ContentKey key = ContentKey.Create(contentOptions.DocumentId);
-        Model.Content? content = await _contentReadOnlyRepository.GetContentByIdAsync(key.Value);
+        Models.Content? content = await _contentReadOnlyRepository.GetContentByIdAsync(key.Value);
         return new(content);
     }
 }

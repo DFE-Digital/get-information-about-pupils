@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Content.Application.Model;
+﻿using DfE.GIAP.Core.Content.Application.Models;
 using System.Diagnostics.CodeAnalysis;
 namespace DfE.GIAP.Web.ViewModels;
 

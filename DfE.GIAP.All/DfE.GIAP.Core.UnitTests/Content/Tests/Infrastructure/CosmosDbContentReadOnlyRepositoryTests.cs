@@ -12,12 +12,12 @@ namespace DfE.GIAP.Core.UnitTests.Content.Tests.Infrastructure;
 public sealed class CosmosDbContentReadOnlyRepositoryTests
 {
     private readonly InMemoryLogger<CosmosDbContentReadOnlyRepository> _mockLogger;
-    private readonly Mock<IMapper<ContentDto?, Core.Content.Application.Model.Content>> _mockMapper;
+    private readonly Mock<IMapper<ContentDto?, Core.Content.Application.Models.Content>> _mockMapper;
     private readonly Mock<ICosmosDbQueryHandler> _mockCosmosDbQueryHandler;
     public CosmosDbContentReadOnlyRepositoryTests()
     {
         _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbContentReadOnlyRepository>();
-        _mockMapper = MapperTestDoubles.DefaultFromTo<ContentDto?, Core.Content.Application.Model.Content>();
+        _mockMapper = MapperTestDoubles.DefaultFromTo<ContentDto?, Core.Content.Application.Models.Content>();
         _mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
     }
 
@@ -75,7 +75,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
             contentDtoToContentMapper: _mockMapper.Object,
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
 
-        Func<Task<Core.Content.Application.Model.Content>> act = () => repository.GetContentByIdAsync(invalidDocumentId);
+        Func<Task<Core.Content.Application.Models.Content>> act = () => repository.GetContentByIdAsync(invalidDocumentId);
 
         // Act Assert
         await Assert.ThrowsAnyAsync<ArgumentException>(act);
@@ -132,7 +132,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
 
         ContentDto contentDto = ContentDtoTestDoubles.Generate(1).Single();
 
-        Core.Content.Application.Model.Content expectedOutputContent = new()
+        Core.Content.Application.Models.Content expectedOutputContent = new()
         {
             Title = contentDto.Title,
             Body = contentDto.Body
@@ -152,7 +152,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
 
         // Act
-        Core.Content.Application.Model.Content result = await repository.GetContentByIdAsync(validPageKey);
+        Core.Content.Application.Models.Content result = await repository.GetContentByIdAsync(validPageKey);
 
         // Assert
         Assert.NotNull(result);

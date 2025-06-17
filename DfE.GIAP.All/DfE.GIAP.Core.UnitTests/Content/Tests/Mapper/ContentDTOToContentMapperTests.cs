@@ -13,10 +13,10 @@ public sealed class ContentDtoToContentMapperTests
         ContentDtoToContentMapper mapper = new();
 
         // Act
-        Core.Content.Application.Model.Content response = mapper.Map(null);
+        Core.Content.Application.Models.Content response = mapper.Map(null);
 
         // Assert
-        Core.Content.Application.Model.Content expectedResponse = Core.Content.Application.Model.Content.Empty();
+        Core.Content.Application.Models.Content expectedResponse = Core.Content.Application.Models.Content.Empty();
         Assert.NotNull(response);
         Assert.Equal(expectedResponse, response);
     }
@@ -30,7 +30,7 @@ public sealed class ContentDtoToContentMapperTests
         dto.Title = null;
 
         // Act
-        Core.Content.Application.Model.Content response = mapper.Map(dto);
+        Core.Content.Application.Models.Content response = mapper.Map(dto);
 
         // Assert
         Assert.NotNull(response);
@@ -47,7 +47,7 @@ public sealed class ContentDtoToContentMapperTests
         dto.Body = null;
 
         // Act
-        Core.Content.Application.Model.Content response = mapper.Map(dto);
+        Core.Content.Application.Models.Content response = mapper.Map(dto);
 
         // Assert
         Assert.NotNull(response);
@@ -64,7 +64,7 @@ public sealed class ContentDtoToContentMapperTests
         ContentDto dto = ContentDtoTestDoubles.Generate(1).Single();
 
         // Act
-        Core.Content.Application.Model.Content response = mapper.Map(dto);
+        Core.Content.Application.Models.Content response = mapper.Map(dto);
 
         // Assert
         Assert.NotNull(response);

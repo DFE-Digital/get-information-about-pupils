@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Content.Application.Model;
-using DfE.GIAP.Core.Content.Application.Options;
+﻿using DfE.GIAP.Core.Content.Application.Options;
 using DfE.GIAP.Core.Content.Application.Options.Provider;
 using DfE.GIAP.Core.Content.Application.Repository;
 using DfE.GIAP.Core.Content.Application.UseCases.GetContentByPageKeyUseCase;
@@ -88,7 +87,7 @@ public sealed class GetContentByPageKeyUseCaseTests
             DocumentId = "test-documentid-1"
         };
 
-        Core.Content.Application.Model.Content content = new()
+        Core.Content.Application.Models.Content content = new()
         {
             Title = "Test title",
             Body = "Test content"

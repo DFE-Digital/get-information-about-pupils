@@ -15,7 +15,7 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     private const string ContainerName = "application-data";
     private readonly ILogger<CosmosDbContentReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<ContentDto?, Application.Model.Content> _contentDtoToContentMapper;
+    private readonly IMapper<ContentDto?, Application.Models.Content> _contentDtoToContentMapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CosmosDbContentReadOnlyRepository"/> class.
@@ -25,7 +25,7 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     /// <param name="cosmosDbQueryHandler">Handler for executing Cosmos DB queries.</param>
     public CosmosDbContentReadOnlyRepository(
         ILogger<CosmosDbContentReadOnlyRepository> logger,
-        IMapper<ContentDto?, Application.Model.Content> contentDtoToContentMapper,
+        IMapper<ContentDto?, Application.Models.Content> contentDtoToContentMapper,
         ICosmosDbQueryHandler cosmosDbQueryHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -37,7 +37,7 @@ public sealed class CosmosDbContentReadOnlyRepository : IContentReadOnlyReposito
     }
 
     /// <inheritdoc/>
-    public async Task<Application.Model.Content> GetContentByIdAsync(string id, CancellationToken ctx = default)
+    public async Task<Application.Models.Content> GetContentByIdAsync(string id, CancellationToken ctx = default)
     {
         try
         {

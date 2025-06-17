@@ -71,6 +71,6 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
     {
         return services
-            .AddSingleton<IMapper<ContentDto?, Application.Model.Content>, ContentDtoToContentMapper>();
+            .AddSingleton<IMapper<ContentDto?, Application.Models.Content>, ContentDtoToContentMapper>();
     }
 }

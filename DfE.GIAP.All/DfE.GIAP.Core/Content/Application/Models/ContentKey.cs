@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Content.Application.Model;
+﻿namespace DfE.GIAP.Core.Content.Application.Models;
 
 /// <summary>
 /// Represents a strongly-typed key used to identify content.

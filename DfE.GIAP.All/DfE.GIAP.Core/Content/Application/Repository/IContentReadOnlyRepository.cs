@@ -11,5 +11,5 @@ public interface IContentReadOnlyRepository
     /// <param name="id">The unique identifier of the content.</param>
     /// <param name="ctx">Optional cancellation token.</param>
     /// <returns>The content associated with the specified ID.</returns>
-    Task<Model.Content> GetContentByIdAsync(string id, CancellationToken ctx = default);
+    Task<Models.Content> GetContentByIdAsync(string id, CancellationToken ctx = default);
 }

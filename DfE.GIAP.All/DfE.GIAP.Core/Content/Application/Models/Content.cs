@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Content.Application.Model;
+﻿namespace DfE.GIAP.Core.Content.Application.Models;
 
 /// <summary>
 /// Represents the content associated with a page, including its body and title.
