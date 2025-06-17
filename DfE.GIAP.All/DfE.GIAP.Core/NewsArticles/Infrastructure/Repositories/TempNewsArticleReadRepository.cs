@@ -21,12 +21,12 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         CosmosClient cosmosClient,
         IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _cosmosClient = cosmosClient ??
-            throw new ArgumentNullException(nameof(cosmosClient));
-        _dtoToEntityMapper = dtoToEntityMapper ??
-            throw new ArgumentNullException(nameof(dtoToEntityMapper));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(cosmosClient);
+        ArgumentNullException.ThrowIfNull(dtoToEntityMapper);
+        _logger = logger;
+        _cosmosClient = cosmosClient;
+        _dtoToEntityMapper = dtoToEntityMapper;
     }
 
     public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)

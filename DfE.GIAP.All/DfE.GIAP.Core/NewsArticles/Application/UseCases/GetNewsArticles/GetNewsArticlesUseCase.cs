@@ -22,8 +22,8 @@ internal class GetNewsArticlesUseCase : IUseCase<GetNewsArticlesRequest, GetNews
     /// <exception cref="ArgumentNullException">Thrown if the repository is null.</exception>
     public GetNewsArticlesUseCase(INewsArticleReadRepository newsArticleReadRepository)
     {
-        _newsArticleReadRepository = newsArticleReadRepository ??
-            throw new ArgumentNullException(nameof(newsArticleReadRepository));
+        ArgumentNullException.ThrowIfNull(newsArticleReadRepository);
+        _newsArticleReadRepository = newsArticleReadRepository;
     }
 
     /// <summary>
