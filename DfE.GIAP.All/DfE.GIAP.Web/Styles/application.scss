@@ -1,6 +1,6 @@
-﻿@import 'colours';
+﻿@use 'colours';
 
-/*  All application specific css classes apart from GDS toolkit */
+/*  All application specific css */
 .validation-summary-valid {
     display: none;
 }
@@ -10,7 +10,7 @@
     border: none;
     padding: 0 !important;
     cursor: pointer;
-    color: $govuk-link-colour !important;
+    color: colours.$govuk-link-colour !important;
     box-shadow: none;
     text-decoration: underline;
     text-underline-offset: .1em;
@@ -18,7 +18,7 @@
 
 .webapp-button-as-link:hover {
     text-decoration: underline;
-    color: $govuk-link-hover-colour !important;
+    color: colours.$govuk-link-hover-colour !important;
     text-decoration-thickness: max(3px, .1875rem, .12em);
     text-underline-offset: .1em;
 }
@@ -28,59 +28,16 @@
     vertical-align: middle
 }
 
-.webapp-cookie-preferences {
-    margin-bottom: 40px !important
-}
-
 .webapp-error-message {
-    border-left: 5px solid $govuk-error-colour;
+    border-left: 5px solid colours.$govuk-error-colour;
     padding: 10px;
 }
 
-.webapp-header-links {
-    width: 100%;
-    padding-left: 0;
-
-    .webapp-header-navigation {
-        margin-bottom: 0;
-        padding: 10px 0;
-    }
-
-    .webapp-header-link-signin {
-        float: right !important
-    }
-
-    .webapp-header-link-signout {
-        margin-right: 0;
-        display: block !important;
-        float: right !important;
-        padding: 5px 0 10px 0;
-    }
-}
-
 .webapp-header-link--active:hover, .webapp-header-link--active:link, .webapp-header-link--active:visited {
-    color: $govuk-link-colour;
+    color: colours.$govuk-link-colour;
     text-decoration: underline;
     text-decoration-thickness: 5px;
     text-underline-offset: .7em;
-}
-
-.webapp-header-link-email {
-    padding-right: 10px;
-    float: right !important;
-    line-height: 30px;
-}
-
-.webapp-header-nolink {
-    font-size: 16px;
-    font-weight: 700
-}
-
-.webapp-header-navigation__container {
-    border-bottom: none;
-    background-color: #f3f2f1;
-    padding-top: 0px;
-    margin-bottom: 0px;
 }
 
 .webapp-formatted-text {
@@ -88,18 +45,8 @@
     padding-bottom: 10px
 }
 
-.webapp-results-underline {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: $govuk-border-colour
-}
-
 .webapp-table-cell {
     border-bottom: none
-}
-
-.webapp-results-text {
-    padding: 5px 5px 0;
 }
 
 #selected-records--message {
@@ -128,7 +75,7 @@
 }
 
 .govuk-panel--confirmation .govuk-table {
-    color: $govuk-confirmation-colour
+    color: colours.$govuk-confirmation-colour
 }
 
 .bottom-margin-10 {
@@ -136,12 +83,8 @@
     display: block;
 }
 
-.top-margin-10 {
-    margin-top: 10px;
-}
-
 .autocomplete__menu {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
 }
 
 .italic {
@@ -154,9 +97,9 @@
 }
 
 .pagination-list button {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
     background: none;
-    color: $govuk-link-colour;
+    color: colours.$govuk-link-colour;
     border: none;
     padding: 0;
     font: inherit;
@@ -167,17 +110,17 @@
 }
 
 .pagination-list button:hover {
-    color: $govuk-link-hover-colour;
+    color: colours.$govuk-link-hover-colour;
     text-decoration-thickness: max(3px, .1875rem, .12em);
 }
 
 .sidebarNav .popularActivities {
     margin-bottom: 30px;
-    border-top: 4px solid $govuk-link-colour;
+    border-top: 4px solid colours.$govuk-link-colour;
 }
 
 .sidebarNav .popularActivities h3 {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
 }
 
 .sidebarNav .popularActivities ul {
@@ -187,10 +130,6 @@
 .sidebarNav .popularActivities li {
     list-style: none;
     margin-bottom: 20px;
-}
-
-.webapp-landing-content {
-    padding: 5px 5px 0;
 }
 
 [aria-sort=none] button:before {
@@ -250,32 +189,8 @@
     top: 2px;
 }
 
-.govuk-table__row .govuk-table__cell.search--dob--cell {
-    padding-right: 40px;
-}
-
-.govuk-table__row .govuk-table__cell, .govuk-table__header {
-    padding: 10px 10px 10px 0;
-}
-
-.govuk-radios--small .govuk-radios__item {
-    min-height: 40px;
-    padding-left: 40px;
-    min-height: 40px;
-    margin-bottom: 0px;
-    float: inherit;
-}
-
-.govuk-checkboxes--small .govuk-checkboxes__item {
-    min-height: 40px;
-    padding-left: 40px;
-    min-height: 40px;
-    margin-bottom: 0px;
-    float: inherit;
-}
-
 .webapp-filter-item {
-    font-family: $govuk-font-family;
+    font-family: colours.$govuk-font-family;
     font-size: 1.1875rem;
     background-color: #e4e4e4;
     border: 1px solid #aaa;
@@ -298,6 +213,10 @@
 
 .webapp-filter-item button:hover {
     color: black;
+}
+
+.webapp-news-banner {
+    background: colours.$webapp-banner-yellow;
 }
 
 .webapp-timeout-overlay {
@@ -350,10 +269,6 @@
     font-size: 1.25rem;
     line-height: 1.25;
     line-height: 1.31579
-}
-
-.webapp-sign-out-nav {
-    float: right
 }
 
 .webapp-timeout-dialog__link {

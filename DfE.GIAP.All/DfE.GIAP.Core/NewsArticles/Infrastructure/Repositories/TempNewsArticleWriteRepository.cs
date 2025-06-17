@@ -18,12 +18,12 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
         CosmosClient cosmosClient,
         IMapper<NewsArticle, NewsArticleDTO> entityToDtoMapper)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _cosmosClient = cosmosClient ??
-            throw new ArgumentNullException(nameof(cosmosClient));
-        _entityToDtoMapper = entityToDtoMapper ??
-            throw new ArgumentNullException(nameof(entityToDtoMapper));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(cosmosClient);
+        ArgumentNullException.ThrowIfNull(entityToDtoMapper);
+        _logger = logger;
+        _cosmosClient = cosmosClient;
+        _entityToDtoMapper = entityToDtoMapper;
     }
 
     public async Task CreateNewsArticleAsync(NewsArticle newsArticle)

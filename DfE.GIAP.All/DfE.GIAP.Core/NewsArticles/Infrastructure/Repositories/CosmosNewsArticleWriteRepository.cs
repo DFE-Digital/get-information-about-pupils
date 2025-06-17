@@ -25,12 +25,12 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         ICosmosDbCommandHandler cosmosDbCommandHandler,
         IMapper<NewsArticle, NewsArticleDTO> entityToDtoMapper)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _cosmosDbCommandHandler = cosmosDbCommandHandler ??
-            throw new ArgumentNullException(nameof(cosmosDbCommandHandler));
-        _entityToDtoMapper = entityToDtoMapper ??
-            throw new ArgumentNullException(nameof(entityToDtoMapper));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(cosmosDbCommandHandler);
+        ArgumentNullException.ThrowIfNull(entityToDtoMapper);
+        _logger = logger;
+        _cosmosDbCommandHandler = cosmosDbCommandHandler;
+        _entityToDtoMapper = entityToDtoMapper;
     }
 
 

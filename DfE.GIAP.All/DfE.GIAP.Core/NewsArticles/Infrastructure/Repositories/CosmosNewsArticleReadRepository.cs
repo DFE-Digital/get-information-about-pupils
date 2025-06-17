@@ -25,12 +25,12 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _cosmosDbQueryHandler = cosmosDbQueryHandler ??
-            throw new ArgumentNullException(nameof(cosmosDbQueryHandler));
-        _dtoToEntityMapper = dtoToEntityMapper ??
-            throw new ArgumentNullException(nameof(dtoToEntityMapper));
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
+        ArgumentNullException.ThrowIfNull(dtoToEntityMapper);
+        _logger = logger;
+        _cosmosDbQueryHandler = cosmosDbQueryHandler;
+        _dtoToEntityMapper = dtoToEntityMapper;
     }
 
 

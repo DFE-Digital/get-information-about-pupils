@@ -23,8 +23,8 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="newsArticleWriteRepository"/> is <see langword="null"/>.</exception>
     public CreateNewsArticleUseCase(INewsArticleWriteRepository newsArticleWriteRepository)
     {
-        _newsArticleWriteRepository = newsArticleWriteRepository ??
-            throw new ArgumentNullException(nameof(newsArticleWriteRepository));
+        ArgumentNullException.ThrowIfNull(newsArticleWriteRepository);
+        _newsArticleWriteRepository = newsArticleWriteRepository;
     }
 
     /// <summary>
