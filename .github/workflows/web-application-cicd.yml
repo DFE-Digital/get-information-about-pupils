@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  BUILD_CONFIGURATION: Release
+  SOLUTION_DIRECTORY: DfE.GIAP.All
+  JAVA_VERSION: '17'
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -13,9 +18,6 @@ jobs:
     permissions:
       contents: read  # Required to check out the code.
       packages: read  # Required to access the DfE-Digital NuGet feed.
-
-    env:
-      SOLUTION_DIRECTORY: DfE.GIAP.All
 
     steps:
       - name: Checkout code
@@ -38,13 +40,43 @@ jobs:
       contents: read  # Required to check out the code.
       packages: read  # Required to access the DfEDigital NuGet feed.
 
-    env:
-      BUILD_CONFIGURATION: Release
-      SOLUTION_DIRECTORY: DfE.GIAP.All
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history so SonarCloud can find the `main` branch
+
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v4
+
+      - name: Set COVERAGE_REPORT path
+        run: echo "COVERAGE_REPORT=${{env.SOLUTION_DIRECTORY}}/coverlet/reports/Cobertura.xml" >> $GITHUB_ENV
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+        shell: bash
+
+      # For SonarCloud Scanner
+      - name: Setup Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: '17'
+
+      - name: Start SonarCloud Scanner
+        shell: bash
+        run: |
+          dotnet tool run dotnet-sonarscanner begin \
+            /k:"DFE-Digital_get-information-about-pupils" \
+            /o:"dfe-digital" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths=${{env.COVERAGE_REPORT}} \
+            /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
+            /d:sonar.exclusions=**/*.html,**/*.json,**/*.scss,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
+            /d:sonar.scanner.skipJreProvisioning=true \
+            /d:sonar.scanner.scanAll=false
+
       - name: Build
         uses: ./.github/actions/build
         with:
@@ -67,12 +99,8 @@ jobs:
           done
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
-      - name: Install ReportGenerator tool
-        run: dotnet tool install --tool-path ./tools dotnet-reportgenerator-globaltool --version 4.5.8
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
-
       - name: Generate test coverage reports
-        run: ./tools/reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+        run: dotnet tool run reportgenerator "-reports:**/coverage.cobertura.xml" "-targetdir:./coverlet/reports" "-reporttypes:Cobertura" "-assemblyfilters:-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
 
       - name: Upload test coverage reports
@@ -80,6 +108,11 @@ jobs:
         with:
           name: coverage-report
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/Cobertura.xml
+
+      - name: End SonarCloud Scanner
+        if: always()
+        shell: bash
+        run: dotnet tool run dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Summarise code coverage
         uses: irongut/CodeCoverageSummary@v1.3.0

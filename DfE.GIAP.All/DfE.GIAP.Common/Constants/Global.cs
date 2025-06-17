@@ -85,7 +85,7 @@ public static class Global
     public const string DownloadNPDOptionsView = "../Shared/LearnerNumber/DownloadOptions";
 
     // Text Search
-    public const string MPLDownloadNPDOptionsView = "../Search/MyPupilList/DownloadOptions";
+    public const string MPLDownloadNPDOptionsView = "../MyPupilList/DownloadOptions";
     public const string NonLearnerNumberDownloadOptionsView = "../Shared/LearnerText/DownloadOptions";
     public const string LearnerTextControllerName = "BaseLearnerTextSearch";
 }

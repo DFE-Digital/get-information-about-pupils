@@ -93,14 +93,14 @@ public static class Routes
         }
     }
 
-    public static class SearchMyPupilList
+    public static class MyPupilList
     {
         public const string AddToMyPupilList = "AddToMyPupilList";
         public const string RemoveSelected = "RemoveSelected";
         public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
         public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
-        public const string MyPupilListView = "~/Views/Search/MyPupilList/MyPupilList.cshtml";
-        public const string MyPupilListViewConfirmation = "~/Views/Search/MyPupilList/PupilListConfirmation.cshtml";
+        public const string MyPupilListView = "~/Views/MyPupilList/Index.cshtml";
+        public const string MyPupilListViewConfirmation = "~/Views/MyPupilList/PupilListConfirmation.cshtml";
     }
 
     public static class NationalPupilDatabase

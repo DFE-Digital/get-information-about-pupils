@@ -2,42 +2,39 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace DfE.GIAP.Domain.Search.Learner
+namespace DfE.GIAP.Domain.Search.Learner;
+
+[ExcludeFromCodeCoverage]
+public class PaginatedResponse
 {
-    [ExcludeFromCodeCoverage]
-    public class PaginatedResponse
+    public List<Learner> Learners { get; set; } = new();
+    public List<FilterData> Filters { get; set; } = new();
+    public int? Count { get; set; }
+
+    public HashSet<string> GetLearnerNumbers()
     {
-        public List<Learner> Learners { get; set; } = new List<Learner>();
-        public List<FilterData> Filters { get; set; } = new List<FilterData>();
-        public long? Count { get; set; }
-
-        public HashSet<string> GetLearnerNumbers()
+        HashSet<string> learnerNumbers = new();
+        foreach (Learner learner in Learners)
         {
-            var learnerNumbers = new HashSet<string>();
-
-            foreach (var learner in Learners)
-            {
-                learnerNumbers.Add(learner.LearnerNumber);
-            }
-
-            return learnerNumbers;
+            learnerNumbers.Add(learner.LearnerNumber);
         }
 
-        public HashSet<string> GetLearnerNumberIds()
+        return learnerNumbers;
+    }
+
+    public HashSet<string> GetLearnerNumberIds()
+    {
+        HashSet<string> learnerNumberIds = new();
+        foreach (Learner learner in Learners)
         {
-            var learnerNumberIds = new HashSet<string>();
-
-            foreach (var learner in Learners)
-            {
-                learnerNumberIds.Add(learner.LearnerNumberId);
-            }
-
-            return learnerNumberIds;
+            learnerNumberIds.Add(learner.LearnerNumberId);
         }
 
-        public string GetLearnerIdsAsString()
-        {
-            return string.Join(",", this.Learners.Select(l => l.Id));
-        }
+        return learnerNumberIds;
+    }
+
+    public string GetLearnerIdsAsString()
+    {
+        return string.Join(",", Learners.Select(l => l.Id));
     }
 }
