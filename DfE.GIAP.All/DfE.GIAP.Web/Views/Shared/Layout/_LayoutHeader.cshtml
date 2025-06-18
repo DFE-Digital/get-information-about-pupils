@@ -52,9 +52,7 @@
                 <ul class="govuk-service-navigation__list govuk-!-font-size-16" id="navigation">
                     @if (User.IsAuthenticated())
                     {
-                        @if (ViewContext.RouteData.Values["controller"].ToString() != "Consent" &&
-                                            ViewContext.RouteData.Values["controller"].ToString() != "Start" &&
-                                            ViewContext.RouteData.Values["controller"].ToString() != "Home")
+                        @if (ViewContext.RouteData.Values["controller"].ToString() != "Consent")
                         {
                             <partial name="Layout/_LayoutHeaderTitlesSiteNews" />
                             <partial name="Layout/_LayoutHeaderTitlesSearchNPD" />
