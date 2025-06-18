@@ -4,7 +4,6 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers.CookieManager;
 using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
@@ -14,12 +13,12 @@ using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Consent;
+
 public class ConsentControllerTests
 {
     private readonly IContentService _contentService = Substitute.For<IContentService>();
@@ -92,8 +91,6 @@ public class ConsentControllerTests
     private ConsentController GetConsentController()
     {
         var cookieManager = Substitute.For<ICookieManager>();
-        var commonService = Substitute.For<ICommonService>();
-        var logger = Substitute.For<ILogger<HomeController>>();
         var options = Substitute.For<IOptions<AzureAppSettings>>();
 
         var azureAppSettings = new AzureAppSettings()
