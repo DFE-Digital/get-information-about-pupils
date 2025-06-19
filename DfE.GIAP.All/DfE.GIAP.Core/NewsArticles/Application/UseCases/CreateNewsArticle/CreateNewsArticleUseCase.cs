@@ -9,18 +9,8 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 /// </summary>
 public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleRequest>
 {
-    /// <summary>
-    /// Provides access to operations for writing news articles to the data store.
-    /// </summary>
-    /// <remarks>This repository is used to perform create, update, and delete operations on news articles. It
-    /// is intended for use in scenarios where persistence of news article data is required.</remarks>
     private readonly INewsArticleWriteRepository _newsArticleWriteRepository;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CreateNewsArticleUseCase"/> class.
-    /// </summary>
-    /// <param name="newsArticleWriteRepository">The repository used to persist news articles. Cannot be <see langword="null"/>.</param>
-    /// <exception cref="ArgumentNullException">Thrown if <paramref name="newsArticleWriteRepository"/> is <see langword="null"/>.</exception>
     public CreateNewsArticleUseCase(INewsArticleWriteRepository newsArticleWriteRepository)
     {
         ArgumentNullException.ThrowIfNull(newsArticleWriteRepository);
