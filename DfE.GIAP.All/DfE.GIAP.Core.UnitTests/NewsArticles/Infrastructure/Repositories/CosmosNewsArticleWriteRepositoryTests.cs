@@ -218,4 +218,64 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
         mockMapper.Verify(m => m.Map(It.IsAny<NewsArticle>()), Times.Once);
         mockCommandHandler.Verify(m => m.CreateItemAsync(It.IsAny<NewsArticleDTO>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }
+
+    [Fact]
+    public async Task DeleteNewsArticleAsync_ThrowsArgumentNullException_When_IdIsNull()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        Mock<IMapper<NewsArticle, NewsArticleDTO>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDTO>();
+
+        CosmosNewsArticleWriteRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbCommandHandler: mockCommandHandler.Object,
+            entityToDtoMapper: mockMapper.Object);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => sut.DeleteNewsArticleAsync(null!));
+    }
+
+    [Fact]
+    public async Task DeleteNewsArticleAsync_CallsCommandHandler_When_ValidId()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        Mock<IMapper<NewsArticle, NewsArticleDTO>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDTO>();
+
+        CosmosNewsArticleWriteRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbCommandHandler: mockCommandHandler.Object,
+            entityToDtoMapper: mockMapper.Object);
+
+        NewsArticleIdentifier id = NewsArticleIdentifier.New();
+
+        // Act
+        await sut.DeleteNewsArticleAsync(id);
+
+        // Assert
+        mockCommandHandler.Verify(m => m.DeleteItemAsync<NewsArticleDTO>(id.Value, It.IsAny<string>(), id.Value, default), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteNewsArticleAsync_BubblesException_When_CosmosException()
+    {
+        // Arrange
+        CosmosException cosmosException = CosmosExceptionTestDoubles.Default();
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.MockForDeleteItemAsync(CosmosExceptionTestDoubles.Default());
+
+        Mock<IMapper<NewsArticle, NewsArticleDTO>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDTO>();
+
+        CosmosNewsArticleWriteRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbCommandHandler: mockCommandHandler.Object,
+            entityToDtoMapper: mockMapper.Object);
+
+        // Act
+        Func<Task> act = () => sut.DeleteNewsArticleAsync(NewsArticleIdentifier.New());
+
+
+        // Assert
+        await Assert.ThrowsAsync<CosmosException>(act);
+        Assert.Equal("CosmosException in DeleteNewsArticleAsync.", _mockLogger.Logs.Single());
+    }
 }

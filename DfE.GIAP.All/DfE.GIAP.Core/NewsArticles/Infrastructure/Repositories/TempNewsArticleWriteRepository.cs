@@ -41,7 +41,23 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosDB error occurred while creating a news article: {Message}", ex.Message);
+            _logger.LogCritical(ex, "CosmosException in CreateNewsArticleAsync.");
+            throw;
+        }
+    }
+
+    public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
+    {
+        ArgumentNullException.ThrowIfNull(id);
+
+        try
+        {
+            Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
+            await container.DeleteItemAsync<NewsArticleDTO>(id.Value, new PartitionKey(7));
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in DeleteNewsArticleAsync.");
             throw;
         }
     }
