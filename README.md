@@ -48,6 +48,11 @@
       npm install
       npm run gulp
       ```
+    - If you have `gulp` installed globally (`npm install -g gulp`), you can run `gulp` directly:
+      ```sh
+      ## DfE.GIAP.All/DfE.GIAP.Web/
+      gulp
+      ```
 4. Build the C#/.NET solution
     - ```sh
       ## cd DfE.GIAP.All/
