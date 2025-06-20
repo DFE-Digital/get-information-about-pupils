@@ -32,6 +32,12 @@
       application)
     - [Node.js](https://nodejs.org/en/download/) (for building web artefacts: (S)CSS, JS, etc.)
     - IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
+    - Local environment configured to authenticate to the GitHub NuGet feed
+      - Create a classic [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `read:packages` scope from your GitHub account (fine-grained tokens [do not support package scopes](https://github.com/github/roadmap/issues/558)).
+      - Add the NuGet source to your local environment by filling in the placeholders and running:
+        ```sh
+        dotnet nuget add source --username <YOUR_GITHUB_USERNAME> --password <YOUR_PERSONAL_ACCESS_TOKEN> --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+        ```
 2. Clone the repository
     - ```sh
       git clone https://github.com/DFE-Digital/get-information-about-pupils
