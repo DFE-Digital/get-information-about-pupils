@@ -68,6 +68,13 @@
         - Populate with the required settings (see the section below for an example).
     - Set local secrets
         - TODO: Add instructions for setting up local secrets using `dotnet user-secrets` or similar.
+    - Set `ASPNETCORE_ENVIRONMENT` to `local`
+      - In VS Code this can be done by using the `launchsettings.json` file (details below).
+      - In Visual Studio, you can set the environment variable in the project properties under the "Debug" tab.
+      - In Rider, you can set the environment variable (`ASPNETCORE_ENVIRONMENT=local`) in the run configuration.
+      - Command line / OS options are also available, such as:
+        - Windows: `set ASPNETCORE_ENVIRONMENT=local`
+        - Linux/macOS: `export ASPNETCORE_ENVIRONMENT=local`
 7. Run the application
     - ```sh
       ## cd DfE.GIAP.All/DfE.GIAP.Web/
@@ -75,6 +82,9 @@
       ```
     - If using Visual Studio, ensure the `DfE.GIAP.Web` project is set as the startup project and run it (F5 or use the
       menu).
+
+
+> **TODO**: Add details about authentication/authorisation -- e.g., how to set up logging in to DSI (DfE Sign-in) locally
 
 
 ## Architecture
@@ -113,7 +123,10 @@ GIAP web has a number of dependencies listed below, some are closed source, othe
 - DSI (DfE sign-in)
 - [CosmosDb Infrastructure library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
 
+
 ### Build and Test
+
+> **FIXME**: This section is muddled, providing instructions on how to use the IDE and architectural details about tests.
 
 Press Ctrl+Shift+B (if you are using Visual Studio) to build the project. To run all tests in Visaul Studio, select
 Tests from top menu and run all unit tests.
@@ -121,125 +134,134 @@ Unit tests live in the Unit Test project folder and use XUnit, NSubstitute, and 
 Common Layer, Service Layer, and Web Layer.
 Unit tests should be written in the form {TARGET CLASS OR MODULE}_{EXPECTED_OUTCOME}_WHEN_{CONDITION}
 
+
 ### Settings
 
-There are a number of key settings contained in the `appsettings.json` file. It is recommended to create an
-`appsettings.local.json` file to store values as they won't be checked into source control as `.gitignore`. An example
-is provided for reference, additionally a launchSettings.json is required in Properties.
+> **FIXME**: Section needs refining.
 
-> launchSettings.json
+There are a number of key settings contained in the `appsettings.json` file.
+It is recommended to create an `appsettings.local.json` file to store values.
+Changes made to this file are excluded from git via `.gitignore`.
+Care and effort must be made to not manually/accidentally commit/submit changes to this file.
+This file should contain any local overrides or sensitive information that should not be shared publicly.
 
-```json
-{
-    "iisSettings": {
-        "windowsAuthentication": false,
-        "anonymousAuthentication": true,
-        "iisExpress": {
-            "applicationUrl": "https://localhost:44378",
-            "sslPort": 44378
-        }
-    },
-    "profiles": {
-        "IIS Express": {
-            "commandName": "IISExpress",
-            "launchBrowser": true,
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Local"
-            }
-        },
-        "DfE.GIAP.Web": {
-            "commandName": "Project",
-            "launchBrowser": true,
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Local"
-            },
-            "applicationUrl": "https://localhost:44378;http://localhost:5000"
-        }
-    }
-}
-```
+> **TODO**: Consider just including this file directly in the git repo. There are no sensitive values, and it would simplify the "first run" local development.
 
-> appsettings.local.json
+> **TODO**: Explain how to do this without VS Code (does Rider and command line support picking up configuration settings from this file?).
 
-```json
+- An example `launchSettings.json` file:
 
-{
-    "AppVersion": "2.Local",
-    "SessionTimeout": 20,
-    "IsSessionIdStoredInCookie": true,
-    "MaximumNonUPNResults": 100,
-    "MaximumNonULNResults": 100,
-    "MaximumUPNsPerSearch": 4000,
-    "DsiClientId": "dsi-client-id",
-    "DsiClientSecret": "dsi-client-secret",
-    "DsiApiClientSecret": "dsi-api-client-secret",
-    "DsiMetadataAddress": "dsi-metadata-address",
-    "DsiAuthorisationUrl": "dsi-authorisation-url",
-    "DsiRedirectUrlAfterSignout": "dsi-redirect-url-after-signout",
-    "DsiServiceId": "dsi-service-id",
-    "DsiAudience": "dsi-audience",
-    "StorageAccountName": "account-name",
-    "StorageAccountKey": "account-key",
-    "StorageContainerName": "container-name",
-    "NonUpnPPLimit": 4000,
-    "NonUpnNPDMyPupilListLimit": 100,
-    "UpnPPMyPupilListLimit": 4000,
-    "UpnNPDMyPupilListLimit": 4000,
-    "MaximumULNsPerSearch": 4000,
-    "CommonTransferFileUPNLimit": 10,
-    "MetaDataDownloadListDirectory": "AllUsers/Metadata",
-    "DownloadOptionsCheckLimit": 500,
-    "UseLAColumn": true,
-    "NpdUseGender": true,
-    "PpUseGender": false,
-    "FeUseGender": false,
-    "FeatureManagement": {
-        "FurtherEducation": true
-    },
-    "SecurityHeaders": {
-        "Remove": [
-            "Server",
-            "X-Powered-By"
-        ],
-        "Add": {
-            "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-            "X-XSS-Protection": "0",
-            "X-Content-Type-Options": "nosniff",
-            "X-Frame-Options": "DENY",
-            "Content-Security-Policy": "default-src 'self';"
-        }
-    },
-    "GetUserProfileUrl": "http://localhost:7071/api/get-user-profile?code=",
-    "GetLatestNewsStatusUrl": "http://localhost:7071/api/get-latest-news-status?code=",
-    "DeleteNewsArticleUrl": "http://localhost:7071/api/delete-news-article?code=",
-    "DownloadPupilsByUPNsCSVUrl": "http://localhost:7071/api/download-pupils-by-upns-csv?code=",
-    "DownloadPupilsByUPNsTABUrl": "http://localhost:7071/api/download-pupils-by-upns-tab?code=",
-    "DownloadPupilPremiumByUPNFforCSVUrl": "http://localhost:7071/api/download-pupil-premium-by-upns-csv?code=",
-    "GetContentByIDUrl": "http://localhost:7071/api/get-content-by-id?code=",
-    "QueryLAByCodeUrl": "http://localhost:7071/api/get-la-by-code?code=",
-    "QueryLAGetAllUrl": "http://localhost:7071/api/get-la-all?code=",
-    "GetAcademiesURL": "http://localhost:7071/api/get-academies?code=",
-    "QueryNewsArticleUrl": "http://localhost:7071/api/get-news-article-by-id?code=",
-    "QueryNewsArticlesUrl": "http://localhost:7071/api/get-news-articles?code=",
-    "UpdateNewsDocumentUrl": "http://localhost:7071/api/update-news-document?code=",
-    "UpdateNewsPropertyUrl": "http://localhost:7071/api/update-news-article-property?code=",
-    "LoggingEventUrl": "http://localhost:7071/api/logging-event?code=",
-    "CreateOrUpdateUserProfileUrl": "http://localhost:7071/api/create-or-update-user-profile?code=",
-    "DownloadCommonTransferFileUrl": "http://localhost:7071/api/download-common-transfer-file?code=",
-    "DownloadSecurityReportByUpnUrl": "http://localhost:7071/api/download-security-report-by-upn-searches?code=",
-    "DownloadSecurityReportByUlnUrl": "http://localhost:7071/api/download-security-report-by-uln-searches?code=",
-    "DownloadSecurityReportDetailedSearchesUrl": "http://localhost:7071/api/download-detailed-searches?code=",
-    "DownloadSecurityReportLoginDetailsUrl": "http://localhost:7071/api/download-login-details?code=",
-    "DownloadPupilsByULNsUrl": "http://localhost:7071/api/download-further-education?code=",
-    "DownloadPrepreparedFilesUrl": "http://localhost:7071/api/pre-prepared-downloads?code=",
-    "PaginatedSearchUrl": "http://localhost:7071/api/get-page/{indexType}/{queryType}?code=",
-    "GetAllFurtherEducationURL": "http://localhost:7071/api/get-all-fe?code=",
-    "GetFurtherEducationByCodeURL": "http://localhost:7071/api/get-fe-by-code?code=",
-    "SetLatestNewsStatusUrl": "http://localhost:7071/api/set-latest-news-status?code=",
-    "FeatureFlagAppConfigUrl": "Endpoint="
-}
+  ```json
+  {
+      "iisSettings": {
+          "windowsAuthentication": false,
+          "anonymousAuthentication": true,
+          "iisExpress": {
+              "applicationUrl": "https://localhost:44378",
+              "sslPort": 44378
+          }
+      },
+      "profiles": {
+          "IIS Express": {
+              "commandName": "IISExpress",
+              "launchBrowser": true,
+              "environmentVariables": {
+                  "ASPNETCORE_ENVIRONMENT": "Local"
+              }
+          },
+          "DfE.GIAP.Web": {
+              "commandName": "Project",
+              "launchBrowser": true,
+              "environmentVariables": {
+                  "ASPNETCORE_ENVIRONMENT": "Local"
+              },
+              "applicationUrl": "https://localhost:44378;http://localhost:5000"
+          }
+      }
+  }
+  ```
 
-```
+
+
+- An example `appsettings.local.json` file:
+
+  ```json
+  {
+      "AppVersion": "2.Local",
+      "SessionTimeout": 20,
+      "IsSessionIdStoredInCookie": true,
+      "MaximumNonUPNResults": 100,
+      "MaximumNonULNResults": 100,
+      "MaximumUPNsPerSearch": 4000,
+      "DsiClientId": "dsi-client-id",
+      "DsiClientSecret": "dsi-client-secret",
+      "DsiApiClientSecret": "dsi-api-client-secret",
+      "DsiMetadataAddress": "dsi-metadata-address",
+      "DsiAuthorisationUrl": "dsi-authorisation-url",
+      "DsiRedirectUrlAfterSignout": "dsi-redirect-url-after-signout",
+      "DsiServiceId": "dsi-service-id",
+      "DsiAudience": "dsi-audience",
+      "StorageAccountName": "account-name",
+      "StorageAccountKey": "account-key",
+      "StorageContainerName": "container-name",
+      "NonUpnPPLimit": 4000,
+      "NonUpnNPDMyPupilListLimit": 100,
+      "UpnPPMyPupilListLimit": 4000,
+      "UpnNPDMyPupilListLimit": 4000,
+      "MaximumULNsPerSearch": 4000,
+      "CommonTransferFileUPNLimit": 10,
+      "MetaDataDownloadListDirectory": "AllUsers/Metadata",
+      "DownloadOptionsCheckLimit": 500,
+      "UseLAColumn": true,
+      "NpdUseGender": true,
+      "PpUseGender": false,
+      "FeUseGender": false,
+      "FeatureManagement": {
+          "FurtherEducation": true
+      },
+      "SecurityHeaders": {
+          "Remove": [
+              "Server",
+              "X-Powered-By"
+          ],
+          "Add": {
+              "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+              "X-XSS-Protection": "0",
+              "X-Content-Type-Options": "nosniff",
+              "X-Frame-Options": "DENY",
+              "Content-Security-Policy": "default-src 'self';"
+          }
+      },
+      "GetUserProfileUrl": "http://localhost:7071/api/get-user-profile?code=",
+      "GetLatestNewsStatusUrl": "http://localhost:7071/api/get-latest-news-status?code=",
+      "DeleteNewsArticleUrl": "http://localhost:7071/api/delete-news-article?code=",
+      "DownloadPupilsByUPNsCSVUrl": "http://localhost:7071/api/download-pupils-by-upns-csv?code=",
+      "DownloadPupilsByUPNsTABUrl": "http://localhost:7071/api/download-pupils-by-upns-tab?code=",
+      "DownloadPupilPremiumByUPNFforCSVUrl": "http://localhost:7071/api/download-pupil-premium-by-upns-csv?code=",
+      "GetContentByIDUrl": "http://localhost:7071/api/get-content-by-id?code=",
+      "QueryLAByCodeUrl": "http://localhost:7071/api/get-la-by-code?code=",
+      "QueryLAGetAllUrl": "http://localhost:7071/api/get-la-all?code=",
+      "GetAcademiesURL": "http://localhost:7071/api/get-academies?code=",
+      "QueryNewsArticleUrl": "http://localhost:7071/api/get-news-article-by-id?code=",
+      "QueryNewsArticlesUrl": "http://localhost:7071/api/get-news-articles?code=",
+      "UpdateNewsDocumentUrl": "http://localhost:7071/api/update-news-document?code=",
+      "UpdateNewsPropertyUrl": "http://localhost:7071/api/update-news-article-property?code=",
+      "LoggingEventUrl": "http://localhost:7071/api/logging-event?code=",
+      "CreateOrUpdateUserProfileUrl": "http://localhost:7071/api/create-or-update-user-profile?code=",
+      "DownloadCommonTransferFileUrl": "http://localhost:7071/api/download-common-transfer-file?code=",
+      "DownloadSecurityReportByUpnUrl": "http://localhost:7071/api/download-security-report-by-upn-searches?code=",
+      "DownloadSecurityReportByUlnUrl": "http://localhost:7071/api/download-security-report-by-uln-searches?code=",
+      "DownloadSecurityReportDetailedSearchesUrl": "http://localhost:7071/api/download-detailed-searches?code=",
+      "DownloadSecurityReportLoginDetailsUrl": "http://localhost:7071/api/download-login-details?code=",
+      "DownloadPupilsByULNsUrl": "http://localhost:7071/api/download-further-education?code=",
+      "DownloadPrepreparedFilesUrl": "http://localhost:7071/api/pre-prepared-downloads?code=",
+      "PaginatedSearchUrl": "http://localhost:7071/api/get-page/{indexType}/{queryType}?code=",
+      "GetAllFurtherEducationURL": "http://localhost:7071/api/get-all-fe?code=",
+      "GetFurtherEducationByCodeURL": "http://localhost:7071/api/get-fe-by-code?code=",
+      "SetLatestNewsStatusUrl": "http://localhost:7071/api/set-latest-news-status?code=",
+      "FeatureFlagAppConfigUrl": "Endpoint="
+  }
+  ```
 
 ### Continual Integration (CI)
 
@@ -253,32 +275,28 @@ GIAP uses Application Insights to log auditing, warnings, and errors.
 
 ### Gulp Runner
 
-In this project, we have a Gulp task which combines the JS files and CSS files into a minified version.
-We’re using npm to install dependencies.
-We need to install Gulp globally.
-Assuming you have node and npm installed already.
+> **TODO**: Refine this section with a clear view of the audience and what it is attempting to achieve (e.g., explain to a beginner what gulp is vs how to use it vs how it's structured, etc. etc.).
 
-```sh
-npm install -g gulp
-```
+In this project, we use Gulp to package and minify JS/CSS dependencies.
 
-This installs it system wide as opposed to installing on a project-by-project basis.
-Gulp runner also compile Sass (for CSS styling) files into CSS. Unfortunately, SCSS won’t work out of the box.
-Some browsers don’t understand what SASS/SCSS syntax is, so we need to compile it down to a plain CSS file for them.
-The only library we need will be `gulp-sass`, so install it like this:
+Specific `gulp` tasks are defined within the `DfE.GIAP.All/DfE.GIAP.Web/gulpfile.js`.
 
-```sh
-npm install gulp-sass
-```
+Gulp dependencies:
+- `gulp`: Task runner, similar to npm/node scripts
+- `gulp-sass`: Pre-processes Sass/SCSS files into CSS
+- Utility libraries to combine, minify, and rename files:
+  - `gulp-concat`
+  - `gulp-rename`
+  - `gulp-uglify`
 
-You may notice you have a `package.json` and `package-lock.json` file.
-This process also creates a `node_modules` directory within the solution folder.
+Note that gulp is configured as a `devDependency` and can be run using `npm run gulp`, though you can install it globally if you want to use it across multiple projects:
 
-- `gulp-sass`: Sass is a pre-processor and to run in the browsers it needs to be compiled into CSS, that’s why we need
-  `gulp-sass`, this gulp plugin will compile the SCSS files into CSS.
-- `gulp-rename`: this gulp plugin is useful if we want to change the extension file names.
+Gulp runner also compile SASS/SCSS files into CSS (used for styling).
+Unfortunately, SCSS won’t work out of the box.
+Browsers do not understand what SASS/SCSS syntax is, so we need to compile it down to a plain CSS file for them.
 
 The Gulp task runs behind the scenes when you compile your project.
+
 
 ## Licence
 
@@ -288,6 +306,8 @@ This covers both the codebase and any sample code in the documentation.
 The documentation is © Crown copyright and available under the terms of the Open Government 3.0 licence
 
 ## Status pages
+
+> **TODO**: What is the purpose of this section? Do we have GIAP-specific status pages available?
 
 | Tool   | StatusPage                     | Usage                                 |
 |--------|--------------------------------|---------------------------------------|
