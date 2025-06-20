@@ -59,7 +59,7 @@ jobs:
         with:
           distribution: "zulu"
           java-version: '17'
-
+        
       - name: Start SonarCloud Scanner
         # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
         if: github.actor != 'dependabot[bot]'
@@ -102,6 +102,7 @@ jobs:
               --no-build \
               --nologo \
               --logger "console;verbosity=detailed" \
+              --logger "trx" \
               -p:CollectCoverage=true \
               -p:CoverletOutputFormat=cobertura \
               -p:CoverletOutput="$OUTPUT_REPORT_PATH"
@@ -109,14 +110,20 @@ jobs:
 
       - name: Merge coverage reports
         shell: bash
-        run: | 
+        run: |
           dotnet tool run reportgenerator -sourcedirs:"./DfE.GIAP.All" -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-reports
+          name: coverage-reports-unit-test
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
+
+      - name: Upload individual test projects coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: trx-unit-test-logs
+          path: ${{ env.SOLUTION_DIRECTORY }}/**/*.trx
 
       - name: End SonarCloud Scanner
         # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
@@ -186,7 +193,95 @@ jobs:
           sudo update-ca-certificates
 
       - name: Run Integration Tests
-        run: dotnet test ./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --no-build --verbosity normal
+        run: |
+          dotnet test "./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj" \
+            --no-build \
+            --nologo \
+            --logger "console;verbosity=detailed" \
+            --logger "trx" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutputFormat=cobertura \
+            -p:CoverletOutput="./DfE.GIAP.All/coverlet/reports/DfE.GIAP.Core.IntegrationTests/"
+
+      - name: Upload integration test coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-integration-test
+          path: "**/*cobertura.xml"
+
+      - name: Upload integration test trx logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: trx-integration-test-logs
+          path: ${{ env.SOLUTION_DIRECTORY }}/**/*.trx
+
+
+  report_test_results:
+    runs-on: ubuntu-latest
+    needs: [build_test_package, local_integration_tests]
+    if: always()
+
+    permissions:
+      contents: read        # Required to check out the code.
+      pull-requests: write  # Required to add PR comments with test results and coverage details etc.
+      checks: write         # Required to report test results/coverage as a status check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download unit test trx log files
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: trx-unit-test-logs
+          path: ./trx-unit-test-logs
+        continue-on-error: true
+      - name: Download unit test coverage reports
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: coverage-reports-unit-test
+          path: ./coverage-reports-unit-test
+        continue-on-error: true
+
+      - name: Download integration test coverage reports
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: coverage-reports-integration-test
+          path: ./coverage-reports-integration-test
+        continue-on-error: true
+      - name: Download integration test trx log files
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: trx-integration-test-logs
+          path: ./trx-integration-test-logs
+        continue-on-error: true
+
+      - name: Code Coverage Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        if: always()
+        with:
+          filename: '**/*cobertura.xml'
+          badge: true
+          fail_below_min: false
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: false
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: always() && github.event_name == 'pull_request'
+        with:
+          ## `code-coverage-results.md` is default filename for output from `irongut/CodeCoverageSummary`
+          path: code-coverage-results.md
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          trx_files: "**/*.trx"
 
 
   ## Below are the "deployment" jobs.
@@ -461,4 +556,6 @@ jobs:
 #        uses: ./.github/actions/security-test
 #        with:
 #          app_url: ${{ needs.deploy_env_production.outputs.app_url }}
+
+
 
