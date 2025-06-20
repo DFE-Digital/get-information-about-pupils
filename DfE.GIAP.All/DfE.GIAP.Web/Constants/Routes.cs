@@ -50,7 +50,6 @@ public static class Routes
         public const string ManageDocuments = "manage-documents/{docType?}/{docAction?}/{newsArticleId?}";
         public const string ManageDocumentsPreview = "manage-documents/preview";
         public const string ManageDocumentsPublish = "manage-documents/publish";
-        public const string ManageDocumentsNewsArticleAdd = "manage-documents/article/add";
         public const string ManageDocumentsNewsArticleArchive = "manage-documents/article/archive";
         public const string ManageDocumentsNewsArticleArchived = "manage-documents/article/archived";
         public const string ManageDocumentsNewsArticleDelete = "manage-documents/article/delete";
@@ -60,6 +59,8 @@ public static class Routes
         public const string ManageDocumentsNewsArticlePublish = "manage-documents/article/publish";
         public const string ManageDocumentsNewsArticleUnarchive = "manage-documents/article/unarchive";
         public const string ManageDocumentsNewsArticleSaveAsDraft = "manage-documents/article/save-as-draft";
+
+        public const string CreateNewsArticle = "manage-documents/article/create";
     }
 
     public static class PrePreparedDownloads

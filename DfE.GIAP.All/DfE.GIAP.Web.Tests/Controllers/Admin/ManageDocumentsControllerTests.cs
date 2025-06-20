@@ -12,6 +12,7 @@ using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Domain.Models.Common;
@@ -47,6 +48,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly Mock<INewsService> _mockNewsService = new();
     private readonly Mock<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>> _mockGetNewsArticleByIdUseCase = new();
     private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
+    private readonly Mock<IUseCaseRequestOnly<CreateNewsArticleRequest>> _mockCreateNewsArticleUseCase = new();
     private readonly ILogger<ManageDocumentsController> _mockLogger = Substitute.For<ILogger<ManageDocumentsController>>();
     private readonly ICookieManager _mockCookieManager = Substitute.For<ICookieManager>();
     private readonly Mock<ICommonService> _commonService = new Mock<ICommonService>();
@@ -332,7 +334,8 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
             _mockDocRepo.Object,
             _mockContentService.Object,
             _mockGetNewsArticleByIdUseCase.Object,
-            _mockGetNewsArticlesUseCase.Object);
+            _mockGetNewsArticlesUseCase.Object,
+            _mockCreateNewsArticleUseCase.Object);
 
         // Act
         string saveAsDraft = "SaveAsDraft";
@@ -951,6 +954,12 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
     public ManageDocumentsController GetManageDocumentsController()
     {
-        return new ManageDocumentsController(_mockNewsService.Object, _mockDocRepo.Object, _mockContentService.Object, _mockGetNewsArticleByIdUseCase.Object, _mockGetNewsArticlesUseCase.Object);
+        return new ManageDocumentsController(
+            _mockNewsService.Object,
+            _mockDocRepo.Object,
+            _mockContentService.Object,
+            _mockGetNewsArticleByIdUseCase.Object,
+            _mockGetNewsArticlesUseCase.Object,
+            _mockCreateNewsArticleUseCase.Object);
     }
 }

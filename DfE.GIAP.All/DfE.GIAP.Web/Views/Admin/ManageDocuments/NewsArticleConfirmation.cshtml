@@ -1,7 +1,7 @@
-﻿@model ManageDocumentsViewModel
+﻿@model ConfirmationViewModel
 
 @{
-    ViewBag.Title = @Model.Confirmation.Title;
+    ViewBag.Title = @Model.Title;
 }
 
 <div class="govuk-width-container">
@@ -10,12 +10,12 @@
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-panel govuk-panel--confirmation">
                     <h1 class="govuk-panel__title">
-                        @Model.Confirmation.Title
+                        @Model.Title
                     </h1>
                 </div>
                 <h2 class="govuk-heading-m">What happens next</h2>
                 <p class="govuk-body">
-                    @Model.Confirmation.Body
+                    @Model.Body
                 </p>
                 <p class="govuk-body">
                     Click <a href="/admin/manage-documents" class="govuk-link">here</a> to return to the start
