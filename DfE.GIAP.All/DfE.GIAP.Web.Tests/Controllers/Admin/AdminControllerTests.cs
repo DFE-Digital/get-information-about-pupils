@@ -1334,7 +1334,10 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
             ControllerContext = context
         };
 
-        SecurityReportsForYourOrganisationModel model = new();
+        SecurityReportsForYourOrganisationModel model = new()
+        {
+            DocumentId = "0"
+        };
 
         // Act
         IActionResult result = await controller.SecurityReportsForYourOrganisation(model);
