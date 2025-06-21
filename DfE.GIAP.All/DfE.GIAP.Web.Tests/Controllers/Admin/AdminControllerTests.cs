@@ -18,1275 +18,1474 @@ using DfE.GIAP.Web.ViewModels.Admin;
 using System.Collections.Generic;
 using DfE.GIAP.Domain.Models.SecurityReports;
 using DfE.GIAP.Web.Providers.Session;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Security.Claims;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Admin
+namespace DfE.GIAP.Web.Tests.Controllers.Admin;
+
+[Trait("Category", "Admin Controller Unit Tests")]
+public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 {
-    [Trait("Category", "Admin Controller Unit Tests")]
-    public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
+    private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
+    private readonly ISecurityService _securityService = Substitute.For<ISecurityService>();
+    private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
+
+    private readonly IDownloadSecurityReportByUpnUlnService _downloadSecurityReportByUpnService =
+        Substitute.For<IDownloadSecurityReportByUpnUlnService>();
+
+    private readonly IDownloadSecurityReportLoginDetailsService _downloadSecurityReportLoginDetailsService =
+        Substitute.For<IDownloadSecurityReportLoginDetailsService>();
+
+    private readonly IDownloadSecurityReportDetailedSearchesService _downloadSecurityReportDetailedSearchesService =
+        Substitute.For<IDownloadSecurityReportDetailedSearchesService>();
+
+    public AdminControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
     {
-        private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
-        private readonly ISecurityService _securityService = Substitute.For<ISecurityService>();
-        private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
+        _userClaimsPrincipalFake = userClaimsPrincipalFake;
+    }
 
-        private readonly IOptions<AzureAppSettings>
-            _mockAzureAppSettings = Substitute.For<IOptions<AzureAppSettings>>();
+    private AdminController GetAdminController()
+    {
+        return new AdminController(_securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService);
+    }
 
-        private readonly IDownloadSecurityReportByUpnUlnService _downloadSecurityReportByUpnService =
-            Substitute.For<IDownloadSecurityReportByUpnUlnService>();
-
-        private readonly IDownloadSecurityReportLoginDetailsService _downloadSecurityReportLoginDetailsService =
-            Substitute.For<IDownloadSecurityReportLoginDetailsService>();
-
-        private readonly IDownloadSecurityReportDetailedSearchesService _downloadSecurityReportDetailedSearchesService =
-            Substitute.For<IDownloadSecurityReportDetailedSearchesService>();
-
-        public AdminControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
+    [Fact]
+    public void AdminController_AdminViewLoadsSuccessfully()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            _userClaimsPrincipalFake = userClaimsPrincipalFake;
-        }
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-        private AdminController GetAdminController()
+        // Act
+        IActionResult result = controller.Index();
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/Index", viewResult.ViewName);
+    }
+
+    [Fact]
+    public void AdminController_DashboardOptions_Returns_ManageDocuments_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            return new AdminController(_securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-        }
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-        [Fact]
-        public void AdminController_AdminViewLoadsSuccessfully()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedAdminOption = "ManageDocuments"
+        };
 
-            // Act
-            var result = controller.Index();
+        // Act
+        IActionResult result = controller.AdminOptions(model);
 
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/Index", viewResult.ViewName);
-        }
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("ManageDocuments", viewResult.ControllerName);
+        Assert.Equal("ManageDocuments", viewResult.ActionName);
+    }
 
-        [Fact]
-        public void AdminController_DashboardOptions_Returns_ManageDocuments_Redirect_To_Action()
+    [Fact]
+    public void AdminController_DashboardOptions_Returns_SecurityReportsByUpnUln_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new AdminViewModel();
-            model.SelectedAdminOption = "ManageDocuments";
-
-            // Act
-            var result = controller.AdminOptions(model);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("ManageDocuments"));
-            Assert.True(viewResult.ActionName.Equals("ManageDocuments"));
-        }
-
-        [Fact]
-        public void AdminController_DashboardOptions_Returns_SecurityReportsByUpnUln_Redirect_To_Action()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedAdminOption = "DownloadSecurityReportsByPupilOrStudent"
+        };
 
-            var model = new AdminViewModel();
-            model.SelectedAdminOption = "DownloadSecurityReportsByPupilOrStudent";
+        // Act
+        IActionResult result = controller.AdminOptions(model);
 
-            // Act
-            var result = controller.AdminOptions(model);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("SecurityReportByPupilStudentRecord", viewResult.ControllerName);
+        Assert.Equal("SecurityReportsByUpnUln", viewResult.ActionName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("SecurityReportByPupilStudentRecord"));
-            Assert.True(viewResult.ActionName.Equals("SecurityReportsByUpnUln"));
-        }
-
-        [Fact]
-        public void AdminController_DashboardOptions_Returns_SecurityReportsForYourOrganisation_Redirect_To_Action()
+    [Fact]
+    public void AdminController_DashboardOptions_Returns_SecurityReportsForYourOrganisation_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new AdminViewModel();
-            model.SelectedAdminOption = "DownloadSecurityReportsByOrganisation";
-
-            // Act
-            var result = controller.AdminOptions(model);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("SecurityReportsForYourOrganisation"));
-        }
-
-        [Fact]
-        public void AdminController_DashboardOptions_Returns_DownloadSecurityReportsBySchool_Admin_Redirect_To_Action()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedAdminOption = "DownloadSecurityReportsByOrganisation"
+        };
 
-            var model = new AdminViewModel();
-            model.SelectedAdminOption = "DownloadSecurityReportsBySchool";
+        // Act
+        IActionResult result = controller.AdminOptions(model);
 
-            // Act
-            var result = controller.AdminOptions(model);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("SecurityReportsForYourOrganisation", viewResult.ActionName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("SchoolCollegeDownloadOptions"));
-        }
-
-        [Fact]
-        public void AdminController_DashboardOptions_Returns_DownloadSecurityReportsBySchool_NonAdmin_Redirect_To_Action()
+    [Fact]
+    public void AdminController_DashboardOptions_Returns_DownloadSecurityReportsBySchool_Admin_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new AdminViewModel();
-            model.SelectedAdminOption = "DownloadSecurityReportsBySchool";
-
-            // Act
-            var result = controller.AdminOptions(model);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("SecurityReportsBySchool"));
-        }
-
-        [Fact]
-        public void AdminController_DashboardOptions_Returns_ValidationMessage_If_No_Selection_Made()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedAdminOption = "DownloadSecurityReportsBySchool"
+        };
 
-            var model = new AdminViewModel();
-            model.SelectedAdminOption = null;
+        // Act
+        IActionResult result = controller.AdminOptions(model);
 
-            // Act
-            var result = controller.AdminOptions(model);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("SchoolCollegeDownloadOptions", viewResult.ActionName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as AdminViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.Equal("../Admin/Index", viewResult.ViewName);
-            Assert.True(controller.ViewData.ModelState["NoAdminSelection"].Errors.Count == 1);
-        }
-
-        [Fact]
-        public void AdminController_SchoolCollegeDownloadOptionsAdminGet_Renders_Correct_View()
+    [Fact]
+    public void AdminController_DashboardOptions_Returns_DownloadSecurityReportsBySchool_NonAdmin_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            // Act
-            var result = controller.SchoolCollegeDownloadOptions();
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SchoolCollegeDownloadOptions", viewResult.ViewName);
-        }
-
-        [Fact]
-        public void AdminController_SchoolCollegeDownloadOptions_SecurityReportsBySchool_Redirect_To_Action()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedAdminOption = "DownloadSecurityReportsBySchool"
+        };
 
-            var model = new AdminViewModel();
-            model.SelectedOrganisationOption = "AcademyTrust";
+        // Act
+        IActionResult result = controller.AdminOptions(model);
 
-            // Act
-            var result = controller.SchoolCollegeDownloadOptions(model);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("SecurityReportsBySchool", viewResult.ActionName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("SecurityReportsBySchool"));
-        }
-
-        [Fact]
-        public void AdminController_SchoolCollegeDownloadOptions_Returns_Validation_Message_If_No_Selection_Made()
+    [Fact]
+    public void AdminController_DashboardOptions_Returns_ValidationMessage_If_No_Selection_Made()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new AdminViewModel();
-            model.SelectedOrganisationOption = null;
-
-            // Act
-            var result = controller.SchoolCollegeDownloadOptions(model);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SchoolCollegeDownloadOptions", viewResult.ViewName);
-            Assert.True(
-                controller.ViewData.ModelState["NoOrganisationSelection"].Errors.Count == 1);
-        }
-
-        [Fact]
-        public async Task AdminController_SecurityReportsBySchoolGet_Renders_Correct_View()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedAdminOption = null
+        };
 
-            // Act
-            var result = await controller.SecurityReportsBySchool().ConfigureAwait(false);
+        // Act
+        IActionResult result = controller.AdminOptions(model);
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchool", viewResult.ViewName);
-        }
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        AdminViewModel viewModel = viewResult.Model as AdminViewModel;
+        Assert.NotNull(viewModel);
+        Assert.Equal("../Admin/Index", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoAdminSelection"].Errors);
+    }
 
-        [Fact]
-        public async Task AdminController_SecurityReportsBySchoolEstablishmentSelectionGet_Renders_Correct_View()
+    [Fact]
+    public void AdminController_SchoolCollegeDownloadOptionsAdminGet_Renders_Correct_View()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            // Act
-            var result = await controller.SecurityReportsBySchoolEstablishmentSelection().ConfigureAwait(false);
+        // Act
+        IActionResult result = controller.SchoolCollegeDownloadOptions();
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        }
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SchoolCollegeDownloadOptions", viewResult.ViewName);
+    }
 
-        [Fact]
-        public void AdminController_SecurityReportsBySchoolConfirmationGet_Renders_Correct_View()
+    [Fact]
+    public void AdminController_SchoolCollegeDownloadOptions_SecurityReportsBySchool_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            // Act
-            var result = controller.SecurityReportsBySchoolConfirmation();
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolConfirmation", viewResult.ViewName);
-        }
-
-        [Fact]
-        public void AdminController_SecurityReportsForYourOrganisationGet_Renders_Correct_View()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedOrganisationOption = "AcademyTrust"
+        };
 
-            // Act
-            var result = controller.SecurityReportsForYourOrganisation();
+        // Act
+        IActionResult result = controller.SchoolCollegeDownloadOptions(model);
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
-        }
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("SecurityReportsBySchool", viewResult.ActionName);
+    }
 
-        [Fact]
-        public async Task AdminController_SecurityReportsBySchoolPost_Adds_ModelError_If_Neither_LA_or_AT_Selected()
+    [Fact]
+    public void AdminController_SchoolCollegeDownloadOptions_Returns_Validation_Message_If_No_Selection_Made()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedOrganisationCode = null;
-
-            // Act
-            var result = await controller.SecurityReportsBySchool(model).ConfigureAwait(false);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchool", viewResult.ViewName);
-            Assert.True(
-                controller.ViewData.ModelState["NoOrganisationSelected"].Errors.Count == 1);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchoolPost_Adds_ModelError_If_Neither_LA_or_AT_Selected_And_No_Establishment()
+        AdminViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedOrganisationOption = null
+        };
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedEstablishmentCode = null;
-            model.SelectedOrganisationCode = null;
+        // Act
+        IActionResult result = controller.SchoolCollegeDownloadOptions(model);
 
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false);
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SchoolCollegeDownloadOptions", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelection"].Errors);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-            Assert.True(
-                controller.ViewData.ModelState["NoOrganisationSelected"].Errors.Count == 1);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchoolPost_Adds_ModelError_If_Both_LA_and_AT_Selected_And_No_Establishment()
+    [Fact]
+    public async Task AdminController_SecurityReportsBySchoolGet_Renders_Correct_View()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedEstablishmentCode = null;
-            model.SelectedOrganisationCode = "Test LA";
+        // Act
+        IActionResult result = await controller.SecurityReportsBySchool();
 
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false);
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchool", viewResult.ViewName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-            Assert.True(!controller.ViewData.ModelState.IsValid);
-            Assert.True(
-                controller.ViewData.ModelState["NoEstablishmentSelected"].Errors.Count == 1);
-            Assert.True(
-                controller.ViewData.ModelState["NoEstablishmentSelected"].Errors[0].ErrorMessage ==
-                SecurityReportsConstants.NoEstablishmentSelected);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchoolPost_Sets_Correct_Model_Properties_If_No_Establishment()
+    [Fact]
+    public async Task AdminController_SecurityReportsBySchoolEstablishmentSelectionGet_Renders_Correct_View()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedEstablishmentCode = null;
-            model.SelectedOrganisationCode = "Test LA";
-            model.SelectedReportType = "Test report type";
+        // Act
+        IActionResult result = await controller.SecurityReportsBySchoolEstablishmentSelection();
 
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false);
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-            Assert.NotNull(viewResult);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-            Assert.Equal(model.SelectedReportType, controller.ViewBag.SelectedReportType);
-            Assert.Equal(model.SelectedOrganisationCode, controller.ViewBag.SelectedOrganisationCode);
-            Assert.True(controller.ViewData.ModelState["NoEstablishmentSelected"].Errors.Count == 1);
-            Assert.True(controller.ViewData.ModelState["NoEstablishmentSelected"].Errors[0].ErrorMessage ==
-                        SecurityReportsConstants.NoEstablishmentSelected);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchoolPost_Returns_Correct_Data()
+    [Fact]
+    public void AdminController_SecurityReportsBySchoolConfirmationGet_Renders_Correct_View()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = controller.SecurityReportsBySchoolConfirmation();
 
-            var expected = new ReturnFile()
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolConfirmation", viewResult.ViewName);
+    }
+
+    [Fact]
+    public void AdminController_SecurityReportsForYourOrganisationGet_Renders_Correct_View()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        // Act
+        IActionResult result = controller.SecurityReportsForYourOrganisation();
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
+    }
+
+    [Fact]
+    public async Task AdminController_SecurityReportsBySchoolPost_Adds_ModelError_If_Neither_LA_or_AT_Selected()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedOrganisationCode = null
+        };
+
+        // Act
+        IActionResult result = await controller.SecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchool", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelected"].Errors);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchoolPost_Adds_ModelError_If_Neither_LA_or_AT_Selected_And_No_Establishment()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedEstablishmentCode = null,
+            SelectedOrganisationCode = null
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelected"].Errors);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchoolPost_Adds_ModelError_If_Both_LA_and_AT_Selected_And_No_Establishment()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedEstablishmentCode = null,
+            SelectedOrganisationCode = "Test LA"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+        Assert.False(controller.ViewData.ModelState.IsValid);
+        ModelError modelError = Assert.Single(controller.ViewData.ModelState["NoEstablishmentSelected"].Errors);
+        Assert.Equal(SecurityReportsConstants.NoEstablishmentSelected, modelError.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchoolPost_Sets_Correct_Model_Properties_If_No_Establishment()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedEstablishmentCode = null,
+            SelectedOrganisationCode = "Test LA",
+            SelectedReportType = "Test report type"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+        Assert.Equal(model.SelectedReportType, controller.ViewBag.SelectedReportType);
+        Assert.Equal(model.SelectedOrganisationCode, controller.ViewBag.SelectedOrganisationCode);
+        ModelError error = Assert.Single(controller.ViewData.ModelState["NoEstablishmentSelected"].Errors);
+        Assert.Equal(SecurityReportsConstants.NoEstablishmentSelected, error.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchoolPost_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "Test-DownloadSecurityReport-ByURN",
+            FileType = "csv"
+        };
+
+        _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
+            .Returns(expected);
+
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedEstablishmentCode = "123456",
+            SelectedOrganisationCode = "Test LA",
+            SelectedReportType = "LoginDetails"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        Assert.NotNull(viewModel);
+        Assert.True(viewModel.ProcessDownload);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadLoginDetailsSecurityReportsBySchool_By_UniqueReferenceNumber_Post_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "Test-DownloadSecurityReport-ByURN",
+            FileType = "csv"
+        };
+
+        _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
+            .Returns(expected);
+
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedEstablishmentCode = "123456",
+            SelectedOrganisationCode = null,
+            SelectedReportType = "LoginDetails"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        Assert.NotNull(viewModel);
+        Assert.True(viewModel.ProcessDownload);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchool_By_SATApprover_Post_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "Test-DownloadSecurityReport-ByUPN",
+            FileType = "csv"
+        };
+
+        _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
+            .Returns(expected);
+
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedOrganisationCode = "12345",
+            SelectedEstablishmentCode = "6789",
+            SelectedReportType = "LoginDetails"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        Assert.NotNull(viewModel);
+        Assert.True(viewModel.ProcessDownload);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+    }
+
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchool_DetailedSearches_By_UniqueReferenceNumber_Post_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
+
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = new(
+             _securityService,
+             _sessionProvider,
+             _downloadSecurityReportByUpnService,
+             _downloadSecurityReportLoginDetailsService,
+             _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedEstablishmentCode = "123456",
+            SelectedOrganisationCode = null,
+            SelectedReportType = "DetailedSearches"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        Assert.NotNull(viewModel);
+        Assert.True(viewModel.ProcessDownload);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+    }
+
+    [Fact]
+    public async Task AdminController_DownloadSecurityReportsBySchool_DetailedSearches_By_SATApprover_Post_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
+
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = new(
+             _securityService,
+             _sessionProvider,
+             _downloadSecurityReportByUpnService,
+             _downloadSecurityReportLoginDetailsService,
+             _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            SelectedOrganisationCode = "12345",
+            SelectedEstablishmentCode = "6789",
+            SelectedReportType = "DetailedSearches"
+        };
+
+        // Act
+        IActionResult result = await controller.DownloadSecurityReportsBySchool(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        Assert.NotNull(viewResult);
+        Assert.NotNull(viewModel);
+        Assert.True(viewModel.ProcessDownload);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
+    }
+
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = new(
+             _securityService,
+             _sessionProvider,
+             _downloadSecurityReportByUpnService,
+             _downloadSecurityReportLoginDetailsService,
+             _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        // Act
+        IActionResult result = await controller.GetSecurityReport("detailedsearches", "001", "LocalAuthority");
+
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
+
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_SAT_Approver()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        List<Establishment> expectedEstablishments =
+        [
+            new()
             {
-                Bytes = new byte[200],
-                FileName = "Test-DownloadSecurityReport-ByURN",
-                FileType = "csv"
-            };
-            _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
-                .Returns(expected);
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
+                Name = "Test_SAT",
+                URN = "013"
+            }
+        ];
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedEstablishmentCode = "123456";
-            model.SelectedOrganisationCode = "Test LA";
-            model.SelectedReportType = "LoginDetails";
-
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false) as ViewResult;
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.True(viewModel.ProcessDownload);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadLoginDetailsSecurityReportsBySchool_By_UniqueReferenceNumber_Post_Returns_Correct_Data()
+        ReturnFile expected = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        _securityService.GetEstablishmentsByAcademyTrustCode(Arg.Any<List<string>>(), Arg.Any<string>())
+            .Returns(expectedEstablishments);
 
-            var expected = new ReturnFile()
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        // Act
+        IActionResult result = await controller.GetSecurityReport("detailedsearches", "013", "LocalAuthority");
+
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
+
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_LA_Approver()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetLAApproverClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        List<Establishment> expectedEstablishments = [
+            new()
             {
-                Bytes = new byte[200],
-                FileName = "Test-DownloadSecurityReport-ByURN",
-                FileType = "csv"
-            };
-            _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
-                .Returns(expected);
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
+                Name = "Test_LA",
+                URN = "002"
+            }
+        ];
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedEstablishmentCode = "123456";
-            model.SelectedOrganisationCode = null;
-            model.SelectedReportType = "LoginDetails";
-
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false) as ViewResult;
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.True(viewModel.ProcessDownload);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchool_By_SATApprover_Post_Returns_Correct_Data()
+        ReturnFile expected = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        _securityService.GetEstablishmentsByOrganisationCode(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(expectedEstablishments);
 
-            var expected = new ReturnFile()
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = new(
+             _securityService,
+             _sessionProvider,
+             _downloadSecurityReportByUpnService,
+             _downloadSecurityReportLoginDetailsService,
+             _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        // Act
+        IActionResult result = await controller.GetSecurityReport("detailedsearches", "002", "LocalAuthority");
+
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
+
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_FE_Approver()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        List<Establishment> expectedEstablishments = [
+            new()
             {
-                Bytes = new byte[200],
-                FileName = "Test-DownloadSecurityReport-ByUPN",
-                FileType = "csv"
-            };
-            _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
-                .Returns(expected);
+                Name = "Test_FE",
+                URN = "001"
+            }
+        ];
 
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedOrganisationCode = "12345";
-            model.SelectedEstablishmentCode = "6789";
-            model.SelectedReportType = "LoginDetails";
-
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false) as ViewResult;
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.True(viewModel.ProcessDownload);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        }
-
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchool_DetailedSearches_By_UniqueReferenceNumber_Post_Returns_Correct_Data()
+        ReturnFile expected = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        _securityService.GetEstablishmentsByOrganisationCode(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(expectedEstablishments);
 
-            var expected = new ReturnFile()
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        // Act
+        IActionResult result = await controller.GetSecurityReport("detailedsearches", "001", "LocalAuthority");
+
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
+
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_Organisation_User()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        List<Establishment> expectedEstablishments =
+        [
+            new()
             {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-            var controller = new AdminController(
-                 _securityService,
-                 _sessionProvider,
-                 _downloadSecurityReportByUpnService,
-                 _downloadSecurityReportLoginDetailsService,
-                 _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
+                Name = "Test_Org",
+                URN = "121"
+            }
+        ];
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedEstablishmentCode = "123456";
-            model.SelectedOrganisationCode = null;
-            model.SelectedReportType = "DetailedSearches";
-
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false) as ViewResult;
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.True(viewModel.ProcessDownload);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        }
-
-        [Fact]
-        public async Task AdminController_DownloadSecurityReportsBySchool_DetailedSearches_By_SATApprover_Post_Returns_Correct_Data()
+        ReturnFile expected = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        _securityService.GetEstablishmentsByOrganisationCode(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(expectedEstablishments);
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
 
-            var controller = new AdminController(
-                 _securityService,
-                 _sessionProvider,
-                 _downloadSecurityReportByUpnService,
-                 _downloadSecurityReportLoginDetailsService,
-                 _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedOrganisationCode = "12345";
-            model.SelectedEstablishmentCode = "6789";
-            model.SelectedReportType = "DetailedSearches";
-
-            // Act
-            var result = await controller.DownloadSecurityReportsBySchool(model).ConfigureAwait(false) as ViewResult;
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.True(viewModel.ProcessDownload);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_Correct_Data()
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            ControllerContext = context
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = await controller.GetSecurityReport("detailedsearches", "121", "LocalAuthority");
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
 
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
+    [Fact]
+    public async Task AdminController_GetSecurityReport_LoginDetails_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
 
-            var controller = new AdminController(
-                 _securityService,
-                 _sessionProvider,
-                 _downloadSecurityReportByUpnService,
-                 _downloadSecurityReportLoginDetailsService,
-                 _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("detailedsearches", "001", "LocalAuthority").ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_SAT_Approver()
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
 
-            var expectedEstablishments = new List<Establishment>()
-            {
-                new Establishment()
-                {
-                    Name = "Test_SAT",
-                    URN = "013"
-                }
-            };
-
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-
-            _securityService.GetEstablishmentsByAcademyTrustCode(Arg.Any<List<string>>(), Arg.Any<string>())
-                .Returns(expectedEstablishments);
-
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("detailedsearches", "013", "LocalAuthority").ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_LA_Approver()
+        ReturnFile expected = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetLAApproverClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            Bytes = new byte[200],
+            FileName = "SecurityReport_LoginDetails",
+            FileType = "csv"
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
+            .Returns(expected);
 
-            var expectedEstablishments = new List<Establishment>()
-            {
-                new Establishment()
-                {
-                    Name = "Test_LA",
-                    URN = "002"
-                }
-            };
-
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-
-            _securityService.GetEstablishmentsByOrganisationCode(Arg.Any<string>(), Arg.Any<string>())
-                .Returns(expectedEstablishments);
-
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-
-            var controller = new AdminController(
-                 _securityService,
-                 _sessionProvider,
-                 _downloadSecurityReportByUpnService,
-                 _downloadSecurityReportLoginDetailsService,
-                 _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("detailedsearches", "002", "LocalAuthority").ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_FE_Approver()
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            ControllerContext = context
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = await controller.GetSecurityReport("logindetails", "001|Test", "LocalAuthority");
 
-            var expectedEstablishments = new List<Establishment>()
-            {
-                new Establishment()
-                {
-                    Name = "Test_FE",
-                    URN = "001"
-                }
-            };
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
 
-            _securityService.GetEstablishmentsByOrganisationCode(Arg.Any<string>(), Arg.Any<string>())
-                .Returns(expectedEstablishments);
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_NoContent_if_no_data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
 
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("detailedsearches", "001", "LocalAuthority").ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_Organisation_User()
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
 
-            var expectedEstablishments = new List<Establishment>()
-            {
-                new Establishment()
-                {
-                    Name = "Test_Org",
-                    URN = "121"
-                }
-            };
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(Task.FromResult(new ReturnFile()));
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-
-            _securityService.GetEstablishmentsByOrganisationCode(Arg.Any<string>(), Arg.Any<string>())
-                .Returns(expectedEstablishments);
-
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("detailedsearches", "121", "LocalAuthority").ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_LoginDetails_Returns_Correct_Data()
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            ControllerContext = context
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = await controller.GetSecurityReport("detailedsearches", "001", "LocalAuthority");
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_LoginDetails",
-                FileType = "csv"
-            };
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+    }
 
-            _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
-                .Returns(expected);
+    [Fact]
+    public async Task AdminController_GetSecurityReport_Returns_NoContent_if_report_type_invalid()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
 
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("logindetails", "001|Test", "LocalAuthority").ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_NoContent_if_no_data()
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
 
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(Task.FromResult<ReturnFile>(new ReturnFile()));
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(Task.FromResult(new ReturnFile()));
 
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("detailedsearches", "001", "LocalAuthority").ConfigureAwait(false) as NoContentResult;
-
-            // Assert
-            Assert.IsType<NoContentResult>(result);
-        }
-
-        [Fact]
-        public async Task AdminController_GetSecurityReport_Returns_NoContent_if_report_type_invalid()
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            ControllerContext = context
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = await controller.GetSecurityReport("not a report type", "001", "LocalAuthority");
 
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(Task.FromResult<ReturnFile>(new ReturnFile()));
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+    }
 
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
-
-            // Act
-            var result = await controller.GetSecurityReport("not a report type", "001", "LocalAuthority").ConfigureAwait(false) as NoContentResult;
-
-            // Assert
-            Assert.IsType<NoContentResult>(result);
-        }
-
-        [Fact]
-        public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Establishment_Redirect_To_Action()
+    [Fact]
+    public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Establishment_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedConfirmationOption = "AnotherReport";
-
-            // Act
-            var result = controller.SecurityReportsBySchoolConfirmation(model);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("SecurityReportsBySchoolEstablishmentSelection"));
-        }
-
-        [Fact]
-        public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_School_Redirect_To_Action()
+        SecurityReportsBySchoolViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedConfirmationOption = "AnotherReport"
+        };
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedConfirmationOption = "ChangeReport";
+        // Act
+        IActionResult result = controller.SecurityReportsBySchoolConfirmation(model);
 
-            // Act
-            var result = controller.SecurityReportsBySchoolConfirmation(model);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("SecurityReportsBySchoolEstablishmentSelection", viewResult.ActionName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("SecurityReportsBySchool"));
-        }
-
-        [Fact]
-        public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Dashboard_Redirect_To_Action()
+    [Fact]
+    public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_School_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedConfirmationOption = "Admin";
-
-            // Act
-            var result = controller.SecurityReportsBySchoolConfirmation(model);
-
-            // Assert
-            var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
-            Assert.True(viewResult.ControllerName.Equals("Admin"));
-            Assert.True(viewResult.ActionName.Equals("Index"));
-        }
-
-        [Fact]
-        public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Validation_Message_If_No_Option_Selected()
+        SecurityReportsBySchoolViewModel model = new()
         {
-            // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user } };
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+            SelectedConfirmationOption = "ChangeReport"
+        };
 
-            var model = new SecurityReportsBySchoolViewModel();
-            model.SelectedConfirmationOption = "";
+        // Act
+        IActionResult result = controller.SecurityReportsBySchoolConfirmation(model);
 
-            // Act
-            var result = controller.SecurityReportsBySchoolConfirmation(model);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("SecurityReportsBySchool", viewResult.ActionName);
+    }
 
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolConfirmation", viewResult.ViewName);
-            Assert.True(controller.ViewData.ModelState["NoConfirmationSelection"].Errors.Count == 1);
-        }
-
-        [Fact]
-        public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Correct_Data()
+    [Fact]
+    public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Dashboard_Redirect_To_Action()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("0");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
-
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-
-            var controller = new AdminController(
-                _securityService,
-                _sessionProvider,
-                _downloadSecurityReportByUpnService,
-                _downloadSecurityReportLoginDetailsService,
-                _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
-
-            var model = new SecurityReportsForYourOrganisationModel();
-            model.DocumentId = "0";
-
-            // Act
-            var result = await controller.SecurityReportsForYourOrganisation(model).ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_SecurityReportsForYourOrganisation_LoginDetails_Post_Returns_Correct_Data()
+        SecurityReportsBySchoolViewModel model = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("1");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            SelectedConfirmationOption = "Admin"
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = controller.SecurityReportsBySchoolConfirmation(model);
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_LoginDetails",
-                FileType = "csv"
-            };
-            _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
-                .Returns(expected);
+        // Assert
+        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
+        Assert.Equal("Admin", viewResult.ControllerName);
+        Assert.Equal("Index", viewResult.ActionName);
+    }
 
-            var controller = new AdminController(
-                 _securityService,
-                 _sessionProvider,
-                 _downloadSecurityReportByUpnService,
-                 _downloadSecurityReportLoginDetailsService,
-                 _downloadSecurityReportDetailedSearchesService);
-            controller.ControllerContext = context;
-
-            var model = new SecurityReportsForYourOrganisationModel();
-            model.DocumentId = "1";
-
-            // Act
-            var result = await controller.SecurityReportsForYourOrganisation(model).ConfigureAwait(false) as FileContentResult;
-
-            // Assert
-            Assert.IsType<FileContentResult>(result);
-            Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
-        }
-
-        [Fact]
-        public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Validation_Message_If_DocumentID_Is_Null()
+    [Fact]
+    public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Validation_Message_If_No_Option_Selected()
+    {
+        // Arrange
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ControllerContext context = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            HttpContext = new DefaultHttpContext() { User = user }
+        };
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
-
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
-
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
-
-            var model = new SecurityReportsForYourOrganisationModel();
-            model.DocumentId = null;
-
-            // Act
-            var result = await controller.SecurityReportsForYourOrganisation(model).ConfigureAwait(false) as ViewResult;
-
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
-            Assert.True(controller.ViewData.ModelState["NoOrganisationalReportSelected"].Errors.Count == 1);
-        }
-
-        [Fact]
-        public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Validation_Message_If_DocumentID_Is_Invalid()
+        SecurityReportsBySchoolViewModel model = new()
         {
-            // Arrange
-            var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-            var mockSession = new Mock<ISession>();
-            mockSession.Setup(x => x.Id).Returns("12345");
-            var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object } };
+            SelectedConfirmationOption = ""
+        };
 
-            var mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-            mockAzureAppSettings.Setup(x => x.Value)
-                .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+        // Act
+        IActionResult result = controller.SecurityReportsBySchoolConfirmation(model);
 
-            var expected = new ReturnFile()
-            {
-                Bytes = new byte[200],
-                FileName = "SecurityReport_DetailedSearches",
-                FileType = "csv"
-            };
-            _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
-                    Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
-                .Returns(expected);
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        Assert.NotNull(viewResult);
+        Assert.NotNull(viewModel);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolConfirmation", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoConfirmationSelection"].Errors);
+    }
 
-            var controller = GetAdminController();
-            controller.ControllerContext = context;
+    [Fact]
+    public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("0");
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
 
-            var model = new SecurityReportsForYourOrganisationModel();
-            model.DocumentId = "12345";
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
 
-            // Act
-            var result = await controller.SecurityReportsForYourOrganisation(model).ConfigureAwait(false) as ViewResult;
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
 
-            // Assert
-            var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
-            Assert.NotNull(viewResult);
-            Assert.NotNull(viewModel);
-            Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
-            Assert.True(controller.ViewData.ModelState["NoDataForOrganisationalDownloadExists"].Errors.Count == 1);
-        }
+        AdminController controller = new(
+            _securityService,
+            _sessionProvider,
+            _downloadSecurityReportByUpnService,
+            _downloadSecurityReportLoginDetailsService,
+            _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsForYourOrganisationModel model = new()
+        {
+            DocumentId = "0"
+        };
+
+        // Act
+        IActionResult result = await controller.SecurityReportsForYourOrganisation(model);
+
+        // Assert
+        FileContentResult fileContentResult = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, fileContentResult.FileContents.Length);
+    }
+
+    [Fact]
+    public async Task AdminController_SecurityReportsForYourOrganisation_LoginDetails_Post_Returns_Correct_Data()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("1");
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_LoginDetails",
+            FileType = "csv"
+        };
+        _downloadSecurityReportLoginDetailsService.GetSecurityReportLoginDetails(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>())
+            .Returns(expected);
+
+        AdminController controller = new(
+             _securityService,
+             _sessionProvider,
+             _downloadSecurityReportByUpnService,
+             _downloadSecurityReportLoginDetailsService,
+             _downloadSecurityReportDetailedSearchesService)
+        {
+            ControllerContext = context
+        };
+
+        SecurityReportsForYourOrganisationModel model = new()
+        {
+            DocumentId = "1"
+        };
+
+        // Act
+        FileContentResult result = await controller.SecurityReportsForYourOrganisation(model) as FileContentResult;
+
+        // Assert
+        Assert.IsType<FileContentResult>(result);
+        Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
+    }
+
+    [Fact]
+    public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Validation_Message_If_DocumentID_Is_Null()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        SecurityReportsForYourOrganisationModel model = new()
+        {
+            DocumentId = null
+        };
+
+        // Act
+        IActionResult result = await controller.SecurityReportsForYourOrganisation(model);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        SecurityReportsForYourOrganisationModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
+        Assert.NotNull(viewModel);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationalReportSelected"].Errors);
+    }
+
+    [Fact]
+    public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Validation_Message_If_DocumentID_Is_Invalid()
+    {
+        // Arrange
+        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        Mock<ISession> mockSession = new();
+        mockSession.Setup(x => x.Id).Returns("12345");
+        ControllerContext context = new()
+        {
+            HttpContext = new DefaultHttpContext() { User = user, Session = mockSession.Object }
+        };
+
+        Mock<IOptions<AzureAppSettings>> mockAzureAppSettings = new();
+        mockAzureAppSettings.Setup(x => x.Value)
+            .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
+
+        ReturnFile expected = new()
+        {
+            Bytes = new byte[200],
+            FileName = "SecurityReport_DetailedSearches",
+            FileType = "csv"
+        };
+        _downloadSecurityReportDetailedSearchesService.GetSecurityReportDetailedSearches(Arg.Any<string>(),
+                Arg.Any<SecurityReportSearchType>(), Arg.Any<AzureFunctionHeaderDetails>(), Arg.Any<bool>())
+            .Returns(expected);
+
+        AdminController controller = GetAdminController();
+        controller.ControllerContext = context;
+
+        SecurityReportsForYourOrganisationModel model = new()
+        {
+            DocumentId = "12345"
+        };
+
+        // Act
+        ViewResult result = await controller.SecurityReportsForYourOrganisation(model) as ViewResult;
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        SecurityReportsForYourOrganisationModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
+        Assert.NotNull(viewModel);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoDataForOrganisationalDownloadExists"].Errors);
     }
 }
