@@ -46,6 +46,10 @@ csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_between_query_expression_clauses = true
+# Set the maximum line length (e.g., 120 characters)
+max_line_length = 120
+# Enable wrapping for long lines
+csharp_wrap_long_lines = true
 
 # Indentation preferences
 csharp_indent_block_contents = true
