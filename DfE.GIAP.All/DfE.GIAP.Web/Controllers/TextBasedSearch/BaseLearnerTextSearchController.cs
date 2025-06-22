@@ -546,7 +546,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             if (PupilHelper.CheckIfStarredPupil(selected))
             {
-                selected = RbacHelper.DecryptUpn(selected);
+                selected = RbacHelper.DecodeUpn(selected);
             }
 
             if (!ValidationHelper.IsValidUpn(selected))
