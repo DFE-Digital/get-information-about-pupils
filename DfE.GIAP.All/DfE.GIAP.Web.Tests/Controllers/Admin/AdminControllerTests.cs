@@ -1154,7 +1154,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin
                 _downloadSecurityReportDetailedSearchesService);
             controller.ControllerContext = context;
 
-            var model = new SecurityReportsForYourOrganisationModel();
+            var model = new SecurityReportsForYourOrganisationViewModel();
             model.DocumentId = "0";
 
             // Act
@@ -1196,7 +1196,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin
                  _downloadSecurityReportDetailedSearchesService);
             controller.ControllerContext = context;
 
-            var model = new SecurityReportsForYourOrganisationModel();
+            var model = new SecurityReportsForYourOrganisationViewModel();
             model.DocumentId = "1";
 
             // Act
@@ -1233,7 +1233,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin
             var controller = GetAdminController();
             controller.ControllerContext = context;
 
-            var model = new SecurityReportsForYourOrganisationModel();
+            var model = new SecurityReportsForYourOrganisationViewModel();
             model.DocumentId = null;
 
             // Act
@@ -1241,7 +1241,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
+            var viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
             Assert.NotNull(viewResult);
             Assert.NotNull(viewModel);
             Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
@@ -1274,7 +1274,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin
             var controller = GetAdminController();
             controller.ControllerContext = context;
 
-            var model = new SecurityReportsForYourOrganisationModel();
+            var model = new SecurityReportsForYourOrganisationViewModel();
             model.DocumentId = "12345";
 
             // Act
@@ -1282,7 +1282,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            var viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
+            var viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
             Assert.NotNull(viewResult);
             Assert.NotNull(viewModel);
             Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);

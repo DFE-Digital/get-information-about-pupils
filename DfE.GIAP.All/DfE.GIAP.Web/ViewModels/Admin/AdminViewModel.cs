@@ -19,5 +19,7 @@ namespace DfE.GIAP.Web.ViewModels.Admin
 
         public string SelectedOrganisationOption { get; set; }
 
+        public BackButtonViewModel BackButton { get; set; }
+
     }
 }

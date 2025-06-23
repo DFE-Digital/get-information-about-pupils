@@ -4,8 +4,7 @@
 }
 
 @* TODO: Is this check needed? *@
-@Html.ActionLink("Back", User.IsAdmin() ? "SchoolCollegeDownloadOptions" : "Index", "Admin", null, new { id = "admin-dashboard--security-reports-by-school-college-download-back-link", Class = "govuk-back-link govuk-link" })
-
+<partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
 
 <h1 id="security-reports--heading--text" class="govuk-heading-xl">Security reports by school</h1>
 

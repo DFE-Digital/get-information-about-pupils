@@ -23,6 +23,7 @@ namespace DfE.GIAP.Web.ViewModels.Admin.SecurityReports
         public bool ProcessDownload { get; set; }
         public bool NoSRContent { get; set; }
         public IEnumerable<SelectListItem> ListOfSelectItems { get; set; }
+        public BackButtonViewModel BackButton { get; set; }
 
 
         // Helper Methods

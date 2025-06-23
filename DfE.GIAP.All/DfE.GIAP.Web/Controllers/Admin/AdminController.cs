@@ -20,6 +20,7 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Common.Constants.Messages.Common;
 using DfE.GIAP.Common.Constants.Messages.Downloads;
+using DfE.GIAP.Web.ViewModels;
 
 namespace DfE.GIAP.Web.Controllers.Admin;
 
@@ -52,6 +53,14 @@ public class AdminController : Controller
 
     public IActionResult Index()
     {
+        AdminViewModel model = GetAdminViewModel();
+        model.BackButton = new BackButtonViewModel()
+        {
+            IsBackButtonEnabled = true,
+            PreviousAction = "Index",
+            PreviousController = "Admin"
+        };
+
         return View("../Admin/Index", GetAdminViewModel());
     }
 
@@ -93,7 +102,15 @@ public class AdminController : Controller
     public IActionResult SchoolCollegeDownloadOptions()
     {
         ClearSessionData(); // clear out old selections
-        return View("../Admin/SecurityReports/SchoolCollegeDownloadOptions", GetAdminViewModel());
+        AdminViewModel model = GetAdminViewModel();
+        model.BackButton = new()
+        {
+            IsBackButtonEnabled = true,
+            PreviousAction = "Index",
+            PreviousController = "Admin"
+        };
+
+        return View("../Admin/SecurityReports/SchoolCollegeDownloadOptions", model);
     }
 
     [HttpPost]
@@ -125,7 +142,16 @@ public class AdminController : Controller
     [Route(Routes.SecurityReports.SecurityReportsBySchool)]
     public async Task<IActionResult> SecurityReportsBySchool()
     {
-        SecurityReportsBySchoolViewModel model = new();
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            BackButton = new()
+            {
+                IsBackButtonEnabled = true,
+                PreviousAction = "SchoolCollegeDownloadOptions",
+                PreviousController = "Admin"
+            }
+        };
+
         UpdateModelFromSessionData(model);
         await AddOrganisationsToViewBag(model);
 
@@ -169,12 +195,19 @@ public class AdminController : Controller
 
 
 
-
     [HttpGet]
     [Route(Routes.SecurityReports.SecurityReportsBySchoolEstablishmentSelection)]
     public async Task<IActionResult> SecurityReportsBySchoolEstablishmentSelection()
     {
-        var model = new SecurityReportsBySchoolViewModel();
+        SecurityReportsBySchoolViewModel model = new()
+        {
+            BackButton = new()
+            {
+                IsBackButtonEnabled = true,
+                PreviousAction = "SecurityReportsBySchool",
+                PreviousController = "Admin"
+            }
+        };
         UpdateModelFromSessionData(model);
 
         model.ListOfSelectItems = await GetSelectItemsForEstablishmentsByOrganisationCode(model.SelectedOrganisationCodeID, model.SelectedOrganisationCodeDocType);
@@ -303,14 +336,23 @@ public class AdminController : Controller
     [HttpGet(Routes.SecurityReports.SecurityReportsByOrganisation)]
     public IActionResult SecurityReportsForYourOrganisation()
     {
-        SecurityReportsForYourOrganisationModel model = new();
+        SecurityReportsForYourOrganisationViewModel model = new()
+        {
+            BackButton = new BackButtonViewModel()
+            {
+                IsBackButtonEnabled = true,
+                PreviousAction = "Index",
+                PreviousController = "Admin"
+            }
+        };
+
         PopulateSecurityReportsDropdown(model);
 
         return View("../Admin/SecurityReports/SecurityReportsForYourOrganisation", model);
     }
 
     [HttpPost(Routes.SecurityReports.SecurityReportsByOrganisation)]
-    public async Task<IActionResult> SecurityReportsForYourOrganisation(SecurityReportsForYourOrganisationModel model)
+    public async Task<IActionResult> SecurityReportsForYourOrganisation(SecurityReportsForYourOrganisationViewModel model)
     {
         if (string.IsNullOrWhiteSpace(model.DocumentId))
         {
@@ -545,7 +587,7 @@ public class AdminController : Controller
         _sessionProvider.RemoveSessionValue(SessionKeys.NoSecurityReportContent);
     }
 
-    private void PopulateSecurityReportsDropdown(SecurityReportsForYourOrganisationModel model)
+    private void PopulateSecurityReportsDropdown(SecurityReportsForYourOrganisationViewModel model)
     {
         model.SecurityReportTypes = Enum
             .GetValues(typeof(SecurityReportTypes))
