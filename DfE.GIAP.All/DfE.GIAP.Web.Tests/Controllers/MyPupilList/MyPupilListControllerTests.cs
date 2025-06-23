@@ -1883,12 +1883,12 @@ public class MyPupilListControllerTests :
                 new Learner()
                 {
                     LearnerNumber = Global.UpnMask,
-                    LearnerNumberId = RbacHelper.EncryptUpn("A203102209083"),
+                    LearnerNumberId = RbacHelper.EncodeUpn("A203102209083"),
                 },
                 new Learner()
                 {
                     LearnerNumber = Global.UpnMask,
-                    LearnerNumberId = RbacHelper.EncryptUpn("A203202811068"),
+                    LearnerNumberId = RbacHelper.EncodeUpn("A203202811068"),
                 }
         };
 
