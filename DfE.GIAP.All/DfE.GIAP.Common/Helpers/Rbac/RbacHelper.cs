@@ -78,11 +78,7 @@ public static class RbacHelper
 
     public static int CalculateAge(DateTime dob, DateTime? from = null)
     {
-        DateTime dateCalc = DateTime.Today;
-        if (from != null)
-        {
-            dateCalc = from.Value;
-        }
+        DateTime dateCalc = from ?? DateTime.Today;
 
         int age = dateCalc.Year - dob.Year;
         if (dob.Date > dateCalc.AddYears(-age))
