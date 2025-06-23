@@ -10,19 +10,19 @@ namespace DfE.GIAP.Common.Tests.Helpers;
 public class RbacHelperTests
 {
     [Fact]
-    public void Crypto_round_trip_works_correctly()
+    public void Encode_round_trip_works_correctly()
     {
-        string value = "This should be equal by the time its gone around the encrypt/decrypt..";
+        string value = "This should be equal by the time its gone around the encode/decode..";
 
-        string encrypted = RbacHelper.EncodeUpn(value);
-        string decrypted = RbacHelper.DecodeUpn(encrypted);
+        string encoded = RbacHelper.EncodeUpn(value);
+        string decoded = RbacHelper.DecodeUpn(encoded);
 
-        Assert.Equal(value, decrypted);
+        Assert.Equal(value, decoded);
     }
 
     [Theory]
     [InlineData("")]
-    public void DecryptUpn_ReturnsEmptyWhenPassedEmpty(string value)
+    public void DecodeUpn_ReturnsEmptyWhenPassedEmpty(string value)
     {
         Assert.Equal(RbacHelper.DecodeUpn(value), string.Empty);
     }
@@ -70,7 +70,7 @@ public class RbacHelperTests
         Assert.Equal("*************", results[3].LearnerNumber);
     }
 
-    private List<TestRbac> GetTestList()
+    private static List<TestRbac> GetTestList()
     {
         CultureInfo cultureInfo = new CultureInfo("en-gb");
         return

@@ -46,7 +46,7 @@ public static class RbacHelper
 
         string encodedString = Convert.ToBase64String(bytes);
 
-        return encodedString + Global.EncryptedMarker;
+        return encodedString + Global.EncodedSuffixMarker;
     }
 
     public static string DecodeUpn(string learnerNumber)
@@ -56,7 +56,7 @@ public static class RbacHelper
             return string.Empty;
         }
 
-        learnerNumber = learnerNumber.Replace(Global.EncryptedMarker, "");
+        learnerNumber = learnerNumber.Replace(Global.EncodedSuffixMarker, string.Empty);
         byte[] bytes = Convert.FromBase64String(learnerNumber);
 
         string decodedString = Encoding.UTF8.GetString(bytes);
@@ -66,9 +66,9 @@ public static class RbacHelper
 
     public static IEnumerable<string> DecryptUpnCollection(IEnumerable<string> learnerNumbers)
     {
-        IEnumerable<string> unencryptedLearnerNumbers = learnerNumbers.Where(l => !l.Contains(Global.EncryptedMarker));
+        IEnumerable<string> unencryptedLearnerNumbers = learnerNumbers.Where(l => !l.Contains(Global.EncodedSuffixMarker));
         IEnumerable<string> decryptedLearnerNumbers = from learner in learnerNumbers
-                                                      where learner.Contains(Global.EncryptedMarker)
+                                                      where learner.Contains(Global.EncodedSuffixMarker)
                                                       select RbacHelper.DecodeUpn(learner);
 
         IEnumerable<string> unionPageLearnerNumbers = unencryptedLearnerNumbers.Union(decryptedLearnerNumbers);

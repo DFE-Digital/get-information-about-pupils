@@ -11,7 +11,7 @@ namespace DfE.GIAP.Web.Helpers.Search
     {
 
         public static bool CheckIfStarredPupil(string selectedPupil) =>
-            selectedPupil?.Contains(Global.EncryptedMarker) ?? false;
+            selectedPupil?.Contains(Global.EncodedSuffixMarker) ?? false;
 
 
         public static bool CheckIfStarredPupil(string[] selectedPupils)
@@ -21,7 +21,7 @@ namespace DfE.GIAP.Web.Helpers.Search
 
             foreach (var item in selectedPupils.ToList())
             {
-                if (item.Contains(Global.EncryptedMarker))
+                if (item.Contains(Global.EncodedSuffixMarker))
                 {
                     return true;
                 }

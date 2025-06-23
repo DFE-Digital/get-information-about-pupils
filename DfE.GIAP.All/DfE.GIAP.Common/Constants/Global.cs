@@ -14,7 +14,7 @@ public static class Global
     public const string UserName = "someUsername";
     public const string ContactLinkURL = "https://form.education.gov.uk/en/AchieveForms/?form_uri=sandbox-publish://AF-Process-2b61dfcd-9296-4f6a-8a26-4671265cae67/AF-Stage-f3f5200e-e605-4a1b-ae6b-3536bc77305c/definition.json&redirectlink=%2Fen&cancelRedirectLink=%2Fen";
     public const string UpnMask = "*************";
-    public const string EncryptedMarker = "-GIAP";
+    public const string EncodedSuffixMarker = "-GIAP";
 
     // NPD
     public const string LearnerNumberLabel = "UPN";
