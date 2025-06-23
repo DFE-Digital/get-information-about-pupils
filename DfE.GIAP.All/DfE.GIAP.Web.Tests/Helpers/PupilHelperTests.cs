@@ -40,7 +40,7 @@ namespace DfE.GIAP.Web.Tests.Helpers
         public void CheckIfStarredPupil_enter_equals_return_true()
         {
             // Arrange
-            string inputData = Global.EncryptedMarker;
+            string inputData = Global.EncodedSuffixMarker;
 
             // Act
             var acting = PupilHelper.CheckIfStarredPupil(inputData);
@@ -82,7 +82,7 @@ namespace DfE.GIAP.Web.Tests.Helpers
         public void CheckIfStarredPupil_Array_enter_equals_return_true()
         {
             // Arrange
-            var inputData = new string[] { Global.EncryptedMarker };
+            var inputData = new string[] { Global.EncodedSuffixMarker };
 
             // Act
             var acting = PupilHelper.CheckIfStarredPupil(inputData);
@@ -95,7 +95,7 @@ namespace DfE.GIAP.Web.Tests.Helpers
         public void CheckIfStarredPupil_Array_enter_sequence_equals_return_true()
         {
             // Arrange
-            var inputData = new string[] { " ", "", string.Empty, "!!", Global.EncryptedMarker };
+            var inputData = new string[] { " ", "", string.Empty, "!!", Global.EncodedSuffixMarker };
 
             // Act
             var acting = PupilHelper.CheckIfStarredPupil(inputData);

@@ -525,14 +525,14 @@ public class MyPupilListController : Controller
     private void SetPupilPremiumLabel(Learner learner, List<Learner> ppLearners, bool isMasked)
     {
         var itemExists = ppLearners.Exists(x => isMasked
-            ? (x.LearnerNumber == RbacHelper.DecryptUpn(learner.LearnerNumberId))
+            ? (x.LearnerNumber == RbacHelper.DecodeUpn(learner.LearnerNumberId))
             : (x.LearnerNumber == learner.LearnerNumber));
         learner.PupilPremium = itemExists ? "Yes" : "No";
     }
 
     private void SetInvalid(Learner learner, MyPupilListViewModel model, bool isMasked)
     {
-        bool isValid = ValidationHelper.IsValidUpn(isMasked ? RbacHelper.DecryptUpn(learner.LearnerNumberId) : learner.LearnerNumber);
+        bool isValid = ValidationHelper.IsValidUpn(isMasked ? RbacHelper.DecodeUpn(learner.LearnerNumberId) : learner.LearnerNumber);
         if (!isValid)
             model.Invalid.Add(learner);
     }

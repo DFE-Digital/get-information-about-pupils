@@ -30,14 +30,14 @@ namespace DfE.GIAP.Common.Tests.Helpers
         [InlineData("filename.txt", "long/path/with/filename.txt")]
         public void GetMetaDataFileName_returns_file_name(string expected, string test)
         {
-            Assert.True(expected.Equals(StringHelper.GetMetaDataFileName(test)));
+            Assert.Equal(expected, StringHelper.GetMetaDataFileName(test));
         }
 
         [Theory]
         [InlineData("filename", "filename.txt")]
         public void GetMetaDataName_returns_download_name(string expected, string test)
         {
-            Assert.True(expected.Equals(StringHelper.GetMetaDataName(test)));
+            Assert.Equal(expected, StringHelper.GetMetaDataName(test));
         }
 
         [Fact]
