@@ -68,8 +68,6 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
     /// <returns>A task that represents the asynchronous delete operation.</returns>
     public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
     {
-        ArgumentNullException.ThrowIfNull(id);
-
         try
         {
             await _cosmosDbCommandHandler.DeleteItemAsync<NewsArticleDTO>(id.Value, ContainerName, id.Value);

@@ -48,8 +48,6 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
 
     public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
     {
-        ArgumentNullException.ThrowIfNull(id);
-
         try
         {
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);

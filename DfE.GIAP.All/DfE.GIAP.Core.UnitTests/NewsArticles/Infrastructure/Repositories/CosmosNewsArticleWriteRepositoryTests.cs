@@ -220,22 +220,6 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     }
 
     [Fact]
-    public async Task DeleteNewsArticleAsync_ThrowsArgumentNullException_When_IdIsNull()
-    {
-        // Arrange
-        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDTO>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDTO>();
-
-        CosmosNewsArticleWriteRepository sut = new(
-            logger: _mockLogger,
-            cosmosDbCommandHandler: mockCommandHandler.Object,
-            entityToDtoMapper: mockMapper.Object);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => sut.DeleteNewsArticleAsync(null!));
-    }
-
-    [Fact]
     public async Task DeleteNewsArticleAsync_CallsCommandHandler_When_ValidId()
     {
         // Arrange

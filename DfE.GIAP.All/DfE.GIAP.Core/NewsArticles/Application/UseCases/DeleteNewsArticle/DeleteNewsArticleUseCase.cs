@@ -27,7 +27,6 @@ public class DeleteNewsArticleUseCase : IUseCaseRequestOnly<DeleteNewsArticleReq
     public async Task HandleRequestAsync(DeleteNewsArticleRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(request.Id);
 
         await _newsArticleWriteRepository.DeleteNewsArticleAsync(request.Id);
     }

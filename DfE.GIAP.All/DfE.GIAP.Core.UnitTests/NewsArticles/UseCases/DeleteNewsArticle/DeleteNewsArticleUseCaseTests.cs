@@ -28,21 +28,6 @@ public sealed class DeleteNewsArticleUseCaseTests
     }
 
     [Fact]
-    public async Task HandleRequestAsync_ThrowsArgumentException_When_IdIsNull()
-    {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
-        DeleteNewsArticleUseCase sut = new(mockRepository.Object);
-
-        DeleteNewsArticleRequest request = new(null!);
-        Func<Task> act = () => sut.HandleRequestAsync(request: request);
-
-        // Act Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(act);
-        mockRepository.Verify(
-            (useCase) => useCase.DeleteNewsArticleAsync(It.IsAny<NewsArticleIdentifier>()), Times.Never());
-    }
-
-    [Fact]
     public async Task HandleRequestAsync_CallsRepository_When_ArticleIdIsValid()
     {
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
