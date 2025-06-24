@@ -18,12 +18,12 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
     private const string ContainerName = "news";
     private readonly ILogger<CosmosNewsArticleWriteRepository> _logger;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
-    private readonly IMapper<NewsArticle, NewsArticleDTO> _entityToDtoMapper;
+    private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
     public CosmosNewsArticleWriteRepository(
         ILogger<CosmosNewsArticleWriteRepository> logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
-        IMapper<NewsArticle, NewsArticleDTO> entityToDtoMapper)
+        IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbCommandHandler);
@@ -50,9 +50,10 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
+#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
         try
         {
-            NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
             await _cosmosDbCommandHandler.CreateItemAsync(newsArticleDto, ContainerName, newsArticleDto.Id);
         }
         catch (CosmosException ex)
@@ -60,5 +61,6 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
             _logger.LogCritical(ex, "CosmosException in CreateNewsArticleAsync.");
             throw;
         }
+#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
     }
 }

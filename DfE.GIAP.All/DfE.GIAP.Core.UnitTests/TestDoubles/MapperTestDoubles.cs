@@ -7,7 +7,7 @@ internal static class MapperTestDoubles
     internal static Mock<IMapper<TIn, TOut>> DefaultFromTo<TIn, TOut>() where TOut : class => new();
 
     internal static Mock<IMapper<TIn, TOut>> MockMapperFromTo<TIn, TOut>(TOut? stub = null) where TOut : class
-        => MockMapperFromTo<TIn, TOut>(() => stub);
+        => MockMapperFromTo<TIn, TOut>(() => stub!);
 
     internal static Mock<IMapper<TIn, TOut>> MockMapperFromTo<TIn, TOut>(Func<TOut> stubProvider) where TOut : class
     {

@@ -6,7 +6,7 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
 /// <summary>
 /// Maps a NewsArticleDTO object to a NewsArticle entity.
 /// </summary>
-internal class NewsArticleDtoToEntityMapper : IMapper<NewsArticleDTO, NewsArticle>
+internal class NewsArticleDtoToEntityMapper : IMapper<NewsArticleDto, NewsArticle>
 {
     /// <summary>
     /// Converts a NewsArticleDTO object into a NewsArticle entity.
@@ -14,7 +14,7 @@ internal class NewsArticleDtoToEntityMapper : IMapper<NewsArticleDTO, NewsArticl
     /// <param name="input">The DTO containing raw article data.</param>
     /// <returns>A NewsArticle entity populated with the DTO values.</returns>
     /// <exception cref="ArgumentNullException">Thrown if the input DTO is null.</exception>
-    public NewsArticle Map(NewsArticleDTO input)
+    public NewsArticle Map(NewsArticleDto input)
     {
         // Validate input to prevent null reference issues.
         if (input is null)

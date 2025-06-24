@@ -2,16 +2,16 @@
 
 namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 
-public static class NewsArticleDTOTestDoubles
+public static class NewsArticleDtoTestDoubles
 {
     private const int NEWS_ARTICLES_DOCUMENT_TYPE = 7;
-    public static List<NewsArticleDTO> Generate(int count = 10)
+    public static List<NewsArticleDto> Generate(int count = 10)
     {
-        List<NewsArticleDTO> articles = [];
+        List<NewsArticleDto> articles = [];
 
         for (int index = 0; index < count; index++)
         {
-            Faker<NewsArticleDTO> faker = CreateGenerator();
+            Faker<NewsArticleDto> faker = CreateGenerator();
             articles.Add(
                 faker.Generate());
         }
@@ -19,9 +19,9 @@ public static class NewsArticleDTOTestDoubles
         return articles;
     }
 
-    private static Faker<NewsArticleDTO> CreateGenerator()
+    private static Faker<NewsArticleDto> CreateGenerator()
     {
-        return new Faker<NewsArticleDTO>()
+        return new Faker<NewsArticleDto>()
             .StrictMode(true)
             .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
             .RuleFor(t => t.Archived, (f) => f.Random.Bool())

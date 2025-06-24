@@ -6,10 +6,6 @@ namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 
 public sealed class NewsArticleDtoToEntityMapperTests
 {
-
-    [Fact]
-    public void NewsArticleDtoToEntityMapper_Construct_With_Default_Constructor() => new NewsArticleDtoToEntityMapper();
-
     [Fact]
     public void Map_ThrowsArgumentException_When_InputIsNull()
     {
@@ -29,7 +25,7 @@ public sealed class NewsArticleDtoToEntityMapperTests
     {
         // Arrange
         NewsArticleDtoToEntityMapper mapper = new();
-        NewsArticleDTO inputDto = NewsArticleDTOTestDoubles.Generate(count: 1).Single();
+        NewsArticleDto inputDto = NewsArticleDtoTestDoubles.Generate(count: 1).Single();
 
         // Act Assert
         NewsArticle mappedResponse = mapper.Map(inputDto);
