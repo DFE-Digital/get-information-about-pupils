@@ -26,14 +26,13 @@ internal class NewsArticleEntityToDtoMapper : IMapper<NewsArticle, NewsArticleDt
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        // Create a new NewsArticleDTO and populate it with the entity data.
-        return new NewsArticleDto(
-            id : input.Id.Value,
-            title : input.Title,
-            body : input.Body,
-            draftTitle : input.DraftTitle,
-            draftBody: input.DraftBody)
+        return new NewsArticleDto()
         {
+            Id = input.Id.Value,
+            Title = input.Title,
+            Body = input.Body,
+            DraftTitle = input.DraftTitle,
+            DraftBody = input.DraftBody,
             Published = input.Published,
             Archived = input.Archived,
             Pinned = input.Pinned,

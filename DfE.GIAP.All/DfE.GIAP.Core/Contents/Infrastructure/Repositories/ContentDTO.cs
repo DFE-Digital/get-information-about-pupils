@@ -5,15 +5,10 @@
 /// </summary>
 public record ContentDto
 {
-    public ContentDto(string id)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(id);
-        this.id = id;
-    }
     /// <summary>
     /// Gets or sets the unique identifier of the content document.
     /// </summary>
-    public string id { get; }
+    public required string id { get; set; }
 
     /// <summary>
     /// Gets or sets the body of the content.
