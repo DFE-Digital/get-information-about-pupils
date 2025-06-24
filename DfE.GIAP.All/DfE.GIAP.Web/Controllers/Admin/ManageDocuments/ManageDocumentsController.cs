@@ -29,6 +29,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 
@@ -43,6 +44,7 @@ public class ManageDocumentsController : Controller
     private readonly INewsService _newsService;
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
+    private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<CreateNewsArticleRequest> _createNewsArticleUseCase;
 
     public ManageDocumentsController(
@@ -50,6 +52,8 @@ public class ManageDocumentsController : Controller
         IManageDocumentsService manageDocumentsService,
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
+        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase)
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
         IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase)
     {
@@ -63,6 +67,8 @@ public class ManageDocumentsController : Controller
             throw new ArgumentNullException(nameof(getNewsArticleByIdUseCase));
         _getNewsArticlesUseCase = getNewsArticlesUseCase ??
             throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
+        _deleteNewsArticleUseCase = deleteNewsArticleUseCase ??
+            throw new ArgumentNullException(nameof(deleteNewsArticleUseCase));
         _createNewsArticleUseCase = createNewsArticleUseCase ??
             throw new ArgumentNullException(nameof(createNewsArticleUseCase));
     }
@@ -235,12 +241,10 @@ public class ManageDocumentsController : Controller
     [Route(Routes.ManageDocument.ManageDocumentsNewsArticleDelete)]
     public async Task<IActionResult> DeleteNews(ManageDocumentsViewModel manageDocumentsModel)
     {
-        var result = await _newsService.DeleteNewsArticle(manageDocumentsModel.SelectedNewsId).ConfigureAwait(false);
+        string articleId = manageDocumentsModel.SelectedNewsId;
 
-        if (result != System.Net.HttpStatusCode.OK)
-        {
-            return await GenerateErrorView(ArticleErrorMessages.DeleteError).ConfigureAwait(false);
-        }
+        DeleteNewsArticleRequest deleteRequest = new(NewsArticleIdentifier.From(articleId));
+        await _deleteNewsArticleUseCase.HandleRequestAsync(deleteRequest);
 
         manageDocumentsModel.Confirmation = new Confirmation
         {

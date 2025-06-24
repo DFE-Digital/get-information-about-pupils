@@ -224,7 +224,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
     private async Task<IActionResult> DownloadNpdCommonTransferFileData(LearnerTextSearchViewModel model)
     {
-        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecryptUpn(model.SelectedPupil) : model.SelectedPupil;
+        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
 
         var downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
                                                                 new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },
@@ -337,7 +337,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
         var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-        selectedPupil = PupilHelper.CheckIfStarredPupil(selectedPupil) ? RbacHelper.DecryptUpn(selectedPupil) : selectedPupil;
+        selectedPupil = PupilHelper.CheckIfStarredPupil(selectedPupil) ? RbacHelper.DecodeUpn(selectedPupil) : selectedPupil;
         var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
 
 
@@ -355,7 +355,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     {
         if (!String.IsNullOrEmpty(model.SelectedPupils))
         {
-            var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecryptUpn(model.SelectedPupils) : model.SelectedPupils;
+            var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
             var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
 
             if (model.SelectedDownloadOptions == null)
