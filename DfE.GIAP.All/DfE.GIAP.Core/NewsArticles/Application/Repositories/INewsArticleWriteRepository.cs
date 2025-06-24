@@ -15,4 +15,16 @@ public interface INewsArticleWriteRepository
     /// <param name="newsArticle">The news article to be created. Must not be null and must contain valid data.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task CreateNewsArticleAsync(NewsArticle newsArticle);
+
+
+    /// <summary>
+    /// Updates an existing news article with the provided details.
+    /// </summary>
+    /// <remarks>This method updates the news article in the underlying data store. Ensure that the provided 
+    /// <paramref name="newsArticle"/> object contains valid and complete information before calling this
+    /// method.</remarks>
+    /// <param name="newsArticle">The <see cref="NewsArticle"/> object containing the updated details of the article. Must not be <see
+    /// langword="null"/>.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task UpdateNewsArticleAsync(NewsArticle newsArticle);
 }

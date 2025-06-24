@@ -6,10 +6,9 @@ using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.NewsArticles;
@@ -36,7 +35,8 @@ public static class CompositionRoot
         return services
             .AddScoped<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>, GetNewsArticlesUseCase>()
             .AddScoped<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>, GetNewsArticleByIdUseCase>()
-            .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>();
+            .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>()
+            .AddScoped<IUseCaseRequestOnly<UpdateNewsArticleRequest>, UpdateNewsArticleUseCase>();
     }
 
     // Infrastructure 

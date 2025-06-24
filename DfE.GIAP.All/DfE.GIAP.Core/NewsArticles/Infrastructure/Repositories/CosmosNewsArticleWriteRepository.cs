@@ -61,4 +61,22 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
             throw;
         }
     }
+
+    public async Task UpdateNewsArticleAsync(NewsArticle newsArticle)
+    {
+        ArgumentNullException.ThrowIfNull(newsArticle);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
+
+        try
+        {
+            NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            await _cosmosDbCommandHandler.ReplaceItemAsync(newsArticleDto, newsArticleDto.Id, ContainerName, newsArticleDto.Id);
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in UpdateNewsArticleAsync.");
+            throw;
+        }
+    }
 }
