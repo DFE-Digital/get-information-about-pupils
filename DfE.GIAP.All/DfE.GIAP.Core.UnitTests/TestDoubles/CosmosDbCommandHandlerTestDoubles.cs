@@ -25,9 +25,9 @@ internal static class CosmosDbCommandHandlerTestDoubles
 
     internal static Mock<ICosmosDbCommandHandler> MockForDeleteItemAsync(Exception? exceptionToThrow = null)
     {
-        var mockHandler = Default();
+        Mock<ICosmosDbCommandHandler> mockHandler = Default();
 
-        var setup = mockHandler
+        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task> setup = mockHandler
             .Setup(h => h.DeleteItemAsync<NewsArticleDTO>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
