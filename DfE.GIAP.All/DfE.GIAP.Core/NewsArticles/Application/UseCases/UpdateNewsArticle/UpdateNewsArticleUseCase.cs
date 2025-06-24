@@ -16,6 +16,10 @@ public class UpdateNewsArticleUseCase : IUseCaseRequestOnly<UpdateNewsArticleReq
     {
         // validate request
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(request.NewsArticle);
+
+        // Update the modified date to the current UTC time
+        request.NewsArticle.WithModifiedNow();
 
         // Update news article modified date
         await _newsArticleWriteRepository.UpdateNewsArticleAsync(request.NewsArticle);

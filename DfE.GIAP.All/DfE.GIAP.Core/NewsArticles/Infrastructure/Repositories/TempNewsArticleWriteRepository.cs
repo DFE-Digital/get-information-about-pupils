@@ -59,4 +59,21 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
             throw;
         }
     }
+
+    public async Task UpdateNewsArticleAsync(NewsArticle newsArticle)
+    {
+        ArgumentNullException.ThrowIfNull(newsArticle);
+
+        try
+        {
+            Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
+            NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            await container.ReplaceItemAsync(newsArticleDto, newsArticleDto.Id, new PartitionKey(newsArticleDto.DOCTYPE));
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in UpdateNewsArticleAsync.");
+            throw;
+        }
+    }
 }

@@ -60,10 +60,10 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         }
     }
 
-
     /// <summary>
     /// Deletes a news article from the database asynchronously.
     /// </summary>
+    /// <remarks> If the operation fails, a <see cref="CosmosException"/> is logged and rethrown.</remarks>
     /// <param name="id">The identifier of the news article to delete. Cannot be <see langword="null"/>.</param>
     /// <returns>A task that represents the asynchronous delete operation.</returns>
     public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
@@ -79,11 +79,17 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         }
     }
 
+    /// <summary>
+    /// Updates an existing news article in the database.
+    /// </summary>
+    /// <remarks>This method maps the provided <see cref="NewsArticle"/> object to a data transfer object
+    /// (DTO) and updates it in the database. If the operation fails due to a database error, a <see
+    /// cref="CosmosException"/> is thrown.</remarks>
+    /// <param name="newsArticle">The news article to update. Cannot be <see langword="null"/>.</param>
+    /// <returns></returns>
     public async Task UpdateNewsArticleAsync(NewsArticle newsArticle)
     {
         ArgumentNullException.ThrowIfNull(newsArticle);
-        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
-        ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
         try
         {
