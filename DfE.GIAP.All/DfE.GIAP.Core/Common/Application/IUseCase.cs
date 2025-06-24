@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.Application;
+﻿using System.Threading.Tasks;
+
+namespace DfE.GIAP.Core.Common.Application;
 
 /// <summary>
 /// Defines a use-case with an input request and an expected response.
