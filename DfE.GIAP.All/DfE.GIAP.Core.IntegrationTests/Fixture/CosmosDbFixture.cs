@@ -16,7 +16,7 @@ public sealed class CosmosDbFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        if (Database != null)
+        if (Database is not null)
         {
             await Database.DisposeAsync();
         }

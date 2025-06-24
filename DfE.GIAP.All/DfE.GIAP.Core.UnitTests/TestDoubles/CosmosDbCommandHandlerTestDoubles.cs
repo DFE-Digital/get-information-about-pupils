@@ -22,4 +22,29 @@ internal static class CosmosDbCommandHandlerTestDoubles
 
         return mockHandler;
     }
+
+    internal static Mock<ICosmosDbCommandHandler> MockForDeleteItemAsync(Exception? exceptionToThrow = null)
+    {
+        Mock<ICosmosDbCommandHandler> mockHandler = Default();
+
+        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task> setup = mockHandler
+            .Setup(h => h.DeleteItemAsync<NewsArticleDto>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(), // <-- string, not PartitionKey
+                It.IsAny<CancellationToken>()));
+
+        if (exceptionToThrow is not null)
+        {
+            setup.ThrowsAsync(exceptionToThrow);
+        }
+        else
+        {
+            setup.Returns(Task.CompletedTask);
+        }
+
+        setup.Verifiable();
+
+        return mockHandler;
+    }
 }

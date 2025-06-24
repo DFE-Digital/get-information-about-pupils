@@ -33,17 +33,15 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         _entityToDtoMapper = entityToDtoMapper;
     }
 
-
     /// <summary>
-    /// Creates a new news article in the database.
+    /// Asynchronously creates a new news article in the database.
     /// </summary>
-    /// <remarks>This method attempts to create a new news article in the database using the provided <see
-    /// cref="NewsArticle"/> object. If a database error occurs, the method logs the error and returns <see
-    /// langword="null"/>.</remarks>
-    /// <param name="newsArticle">The <see cref="NewsArticle"/> object to be created. Must not be <see langword="null"/>.</param>
-    /// <returns>The <see cref="NewsArticle"/> object that was successfully created, or <see langword="null"/> if the operation
-    /// failed.</returns>
-    /// <exception cref="ArgumentException">Thrown if <paramref name="newsArticle"/> is <see langword="null"/>.</exception>
+    /// <remarks>This method maps the provided <see cref="NewsArticle"/> object to a data transfer object
+    /// (DTO) and stores it in the database. If the operation fails due to a database error, a <see
+    /// cref="CosmosException"/> is thrown.</remarks>
+    /// <param name="newsArticle">The <see cref="NewsArticle"/> object representing the news article to be created. The <see
+    /// cref="NewsArticle.Title"/> and <see cref="NewsArticle.Body"/> properties must not be null or whitespace.</param>
+    /// <returns></returns>
     public async Task CreateNewsArticleAsync(NewsArticle newsArticle)
     {
         ArgumentNullException.ThrowIfNull(newsArticle);
@@ -61,6 +59,25 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
             _logger.LogCritical(ex, "CosmosException in CreateNewsArticleAsync.");
             throw;
         }
-#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
     }
+
+
+    /// <summary>
+    /// Deletes a news article from the database asynchronously.
+    /// </summary>
+    /// <param name="id">The identifier of the news article to delete. Cannot be <see langword="null"/>.</param>
+    /// <returns>A task that represents the asynchronous delete operation.</returns>
+    public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
+    {
+        try
+        {
+            await _cosmosDbCommandHandler.DeleteItemAsync<NewsArticleDto>(id.Value, ContainerName, id.Value);
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in DeleteNewsArticleAsync.");
+            throw;
+        }
+    }
+#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
 }

@@ -15,4 +15,11 @@ public interface INewsArticleWriteRepository
     /// <param name="newsArticle">The news article to be created. Must not be null and must contain valid data.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task CreateNewsArticleAsync(NewsArticle newsArticle);
+
+    /// <summary>
+    /// Deletes a news article identified by the specified <paramref name="id"/>.
+    /// </summary>
+    /// <param name="id">The identifier of the news article to delete. Must not be <see langword="null"/>.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task DeleteNewsArticleAsync(NewsArticleIdentifier id);
 }
