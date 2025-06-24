@@ -29,6 +29,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
@@ -41,13 +42,15 @@ public class ManageDocumentsController : Controller
     private readonly INewsService _newsService;
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
+    private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
 
     public ManageDocumentsController(
         INewsService newsService,
         IManageDocumentsService manageDocumentsService,
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
-        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase)
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
+        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase)
     {
         _newsService = newsService ??
             throw new ArgumentNullException(nameof(newsService));
@@ -59,6 +62,8 @@ public class ManageDocumentsController : Controller
             throw new ArgumentNullException(nameof(getNewsArticleByIdUseCase));
         _getNewsArticlesUseCase = getNewsArticlesUseCase ??
             throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
+        _deleteNewsArticleUseCase = deleteNewsArticleUseCase ??
+            throw new ArgumentNullException(nameof(deleteNewsArticleUseCase));
     }
 
     [HttpGet]
@@ -195,12 +200,10 @@ public class ManageDocumentsController : Controller
     [Route(Routes.ManageDocument.ManageDocumentsNewsArticleDelete)]
     public async Task<IActionResult> DeleteNews(ManageDocumentsViewModel manageDocumentsModel)
     {
-        var result = await _newsService.DeleteNewsArticle(manageDocumentsModel.SelectedNewsId).ConfigureAwait(false);
+        string articleId = manageDocumentsModel.SelectedNewsId;
 
-        if (result != System.Net.HttpStatusCode.OK)
-        {
-            return await GenerateErrorView(ArticleErrorMessages.DeleteError).ConfigureAwait(false);
-        }
+        DeleteNewsArticleRequest deleteRequest = new(NewsArticleIdentifier.From(articleId));
+        await _deleteNewsArticleUseCase.HandleRequestAsync(deleteRequest);
 
         manageDocumentsModel.Confirmation = new Confirmation
         {
