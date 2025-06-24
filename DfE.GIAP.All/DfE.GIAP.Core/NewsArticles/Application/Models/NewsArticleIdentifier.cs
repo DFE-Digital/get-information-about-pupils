@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.NewsArticles.Application.Models;
 
-public record NewsArticleIdentifier
+public readonly struct NewsArticleIdentifier
 {
     public string Value { get; }
     private NewsArticleIdentifier(string value)
