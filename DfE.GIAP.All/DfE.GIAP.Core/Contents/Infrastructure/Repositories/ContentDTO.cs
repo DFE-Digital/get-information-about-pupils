@@ -3,7 +3,7 @@
 /// <summary>
 /// Data Transfer Object (DTO) representing content stored in Cosmos DB.
 /// </summary>
-public class ContentDto
+public record ContentDto
 {
     public ContentDto(string id)
     {
