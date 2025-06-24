@@ -38,7 +38,7 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
             NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
-            await container.CreateItemAsync(newsArticleDto, new PartitionKey(newsArticleDto.Id));
+            await container.CreateItemAsync(newsArticleDto, new PartitionKey(7));
         }
         catch (CosmosException ex)
         {
