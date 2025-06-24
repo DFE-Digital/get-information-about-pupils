@@ -53,8 +53,7 @@ public class ManageDocumentsController : Controller
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
-        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase)
-        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
+        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
         IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase)
     {
         _newsService = newsService ??

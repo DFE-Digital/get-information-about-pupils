@@ -45,10 +45,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<DeleteNewsArticleRequest>> _mockDeleteNewsArticleUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<CreateNewsArticleRequest>> _mockCreateNewsArticleUseCase = new();
-    private readonly ILogger<ManageDocumentsController> _mockLogger = Substitute.For<ILogger<ManageDocumentsController>>();
-    private readonly ICookieManager _mockCookieManager = Substitute.For<ICookieManager>();
-    private readonly Mock<ICommonService> _commonService = new Mock<ICommonService>();
-    private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
 
     public ManageDocumentsControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake, ManageDocumentsResultsFake manageDocumentsResultsFake)
     {
@@ -768,13 +764,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
             _mockContentService.Object,
             _mockGetNewsArticleByIdUseCase.Object,
             _mockGetNewsArticlesUseCase.Object,
-            _mockDeleteNewsArticleUseCase.Object);
-        return new ManageDocumentsController(
-            _mockNewsService.Object,
-            _mockDocRepo.Object,
-            _mockContentService.Object,
-            _mockGetNewsArticleByIdUseCase.Object,
-            _mockGetNewsArticlesUseCase.Object,
+            _mockDeleteNewsArticleUseCase.Object,
             _mockCreateNewsArticleUseCase.Object);
     }
 }
