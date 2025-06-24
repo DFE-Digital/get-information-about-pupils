@@ -2,14 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>DfE.GIAP.Core.SharedTests</RootNamespace>
-    <Authors>Department for Education (DfE)</Authors>
-    <Company>Department for Education (DfE)</Company>
-    <Copyright>Department for Education (DfE)</Copyright>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/DFE-Digital/get-information-about-pupils</RepositoryUrl>
     <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
