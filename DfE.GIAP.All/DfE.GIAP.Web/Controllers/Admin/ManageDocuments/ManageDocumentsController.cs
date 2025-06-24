@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
@@ -43,6 +44,7 @@ public class ManageDocumentsController : Controller
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
+    private readonly IUseCaseRequestOnly<UpdateNewsArticleRequest> _updateNewsArticleUseCase;
 
     public ManageDocumentsController(
         INewsService newsService,
@@ -50,7 +52,8 @@ public class ManageDocumentsController : Controller
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
-        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase)
+        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase)
     {
         _newsService = newsService ??
             throw new ArgumentNullException(nameof(newsService));
@@ -64,6 +67,8 @@ public class ManageDocumentsController : Controller
             throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
         _deleteNewsArticleUseCase = deleteNewsArticleUseCase ??
             throw new ArgumentNullException(nameof(deleteNewsArticleUseCase));
+        _updateNewsArticleUseCase = updateNewsArticleUseCase ??
+            throw new ArgumentNullException(nameof(updateNewsArticleUseCase));
     }
 
     [HttpGet]
@@ -176,12 +181,16 @@ public class ManageDocumentsController : Controller
     [HttpPost]
     public async Task<IActionResult> SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
+        // check selected id exists
+        // make request to get the news article
+
         if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
         {
             manageDocumentsModel.HasInvalidNewsList = true;
             ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.AdminNewsArticleRequired);
         }
-        return await ManageDocuments(manageDocumentsModel, null, null).ConfigureAwait(false);
+
+        return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
     }
 
     [HttpGet]
