@@ -297,3 +297,8 @@
 .webapp-timeout-dialog__link:hover {
     cursor: pointer;
 }
+
+.webapp-news-status-container {
+    display: flex;
+    justify-content: space-between;
+}

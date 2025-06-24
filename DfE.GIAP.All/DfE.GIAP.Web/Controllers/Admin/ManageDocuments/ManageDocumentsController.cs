@@ -30,6 +30,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+using DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
@@ -43,6 +45,7 @@ public class ManageDocumentsController : Controller
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
+    private readonly IUseCaseRequestOnly<CreateNewsArticleRequest> _createNewsArticleUseCase;
 
     public ManageDocumentsController(
         INewsService newsService,
@@ -50,7 +53,8 @@ public class ManageDocumentsController : Controller
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
-        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase)
+        IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
+        IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase)
     {
         _newsService = newsService ??
             throw new ArgumentNullException(nameof(newsService));
@@ -64,6 +68,8 @@ public class ManageDocumentsController : Controller
             throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
         _deleteNewsArticleUseCase = deleteNewsArticleUseCase ??
             throw new ArgumentNullException(nameof(deleteNewsArticleUseCase));
+        _createNewsArticleUseCase = createNewsArticleUseCase ??
+            throw new ArgumentNullException(nameof(createNewsArticleUseCase));
     }
 
     [HttpGet]
@@ -185,16 +191,50 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpGet]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleAdd)]
+    [Route(Routes.ManageDocument.CreateNewsArticle)]
     public IActionResult CreateNewsArticle()
     {
         ManageDocumentsViewModel manageDocumentsModel = new()
         {
-            BackButton = new(isBackButtonEnabled: true, previousController: "ManageDocuments", previousAction: "ManageDocuments")
+            BackButton = new(
+                isBackButtonEnabled: true,
+                previousController: "ManageDocuments",
+                previousAction: "ManageDocuments")
         };
 
         return View("../Admin/ManageDocuments/CreateNewsArticle", manageDocumentsModel);
     }
+
+    [HttpPost]
+    [Route(Routes.ManageDocument.CreateNewsArticle)]
+    public async Task<IActionResult> CreateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("../Admin/ManageDocuments/CreateNewsArticle", manageDocumentsModel);
+        }
+
+        CommonResponseBodyViewModel userInputs = manageDocumentsModel.DocumentData;
+        CreateNewsArticleRequest request = new(
+            Title: userInputs.Title,
+            Body: userInputs.Body,
+            Published: userInputs.Published,
+            Archived: userInputs.Archived,
+            Pinned: userInputs.Pinned);
+
+        await _createNewsArticleUseCase.HandleRequestAsync(request);
+
+        ConfirmationViewModel model = new()
+        {
+            Title = ArticleSuccessMessages.CreateTitle,
+            Body = ArticleSuccessMessages.CreateBody,
+        };
+
+        return View("../Admin/ManageDocuments/NewsArticleConfirmation", model);
+    }
+
+
+
 
     [HttpPost]
     [Route(Routes.ManageDocument.ManageDocumentsNewsArticleDelete)]
@@ -209,7 +249,6 @@ public class ManageDocumentsController : Controller
         {
             Title = ArticleSuccessMessages.DeleteTitle,
             Body = ArticleSuccessMessages.DeleteBody,
-            Text = string.Empty
         };
 
         return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
@@ -426,6 +465,7 @@ public class ManageDocumentsController : Controller
 
         return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
     }
+
 
 
     [HttpPost]
