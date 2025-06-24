@@ -1,15 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<RootNamespace>DfE.GIAP.Core</RootNamespace>
-    <Authors>Department for Education (DfE)</Authors>
-    <Company>Department for Education (DfE)</Company>
-    <Copyright>Department for Education (DfE)</Copyright>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/DFE-Digital/get-information-about-pupils</RepositoryUrl>
 		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>

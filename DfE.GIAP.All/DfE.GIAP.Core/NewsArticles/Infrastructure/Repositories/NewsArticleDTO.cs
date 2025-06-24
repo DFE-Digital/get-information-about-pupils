@@ -16,5 +16,5 @@ public record NewsArticleDto
     public bool Pinned { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
-    public int DOCTYPE { get; } // TODO: Remove once migrated, no need for this field in the new system
+    public int DOCTYPE { get; } = 7; // TODO: Remove once migrated, no need for this field in the new system
 }

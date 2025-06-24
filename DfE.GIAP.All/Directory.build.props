@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enable nullable reference types across all projects -->
+    <Nullable>enable</Nullable>
+
+    <!-- Enable implicit usings (or GlobalUsings) across all projects-->
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Set common assembly info -->
+    <Authors>Department for Education (DfE)</Authors>
+    <Company>Department for Education (DfE)</Company>
+    <Copyright>Department for Education (DfE)</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/DFE-Digital/get-information-about-pupils</RepositoryUrl>
+
+  </PropertyGroup>
+
+  <!-- Treat warnings as errors -->
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'DfE.GIAP.Core' 
+                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.UnitTests' 
+                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.IntegrationTests'
+                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.SharedTests'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
