@@ -1,5 +1,9 @@
 <Project>
   <PropertyGroup>
+
+    <!-- Set Language Version across all projects -->
+    <LangVersion>latest</LangVersion>
+
     <!-- Enable nullable reference types across all projects -->
     <Nullable>enable</Nullable>
 
