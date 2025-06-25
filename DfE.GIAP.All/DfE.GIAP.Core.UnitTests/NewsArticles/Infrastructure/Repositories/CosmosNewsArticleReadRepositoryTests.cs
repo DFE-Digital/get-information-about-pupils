@@ -22,7 +22,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     public void Constructor_ThrowsNullException_When_ReceivesNullLogger()
     {
         // Arrange
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDTO, NewsArticle>();
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDto, NewsArticle>();
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         // Act & Assert
@@ -36,7 +36,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     public void Constructor_ThrowsNullException_When_ReceivesNullQueryHandler()
     {
         // Arrange
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDTO, NewsArticle>();
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDto, NewsArticle>();
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadRepository(
@@ -66,17 +66,17 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDTO, NewsArticle>();
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDto, NewsArticle>();
 
         CosmosNewsArticleReadRepository repository = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
 
-        Func<Task> act = () => repository.GetNewsArticleByIdAsync(id);
+        Func<Task> act = () => repository.GetNewsArticleByIdAsync(id!);
 
         // Act Assert
-        ArgumentException exception = await Assert.ThrowsAsync<ArgumentException>(act);
+        await Assert.ThrowsAsync<ArgumentException>(act);
         Assert.Equal("GetNewsArticleByIdAsync called with null or empty id.", _mockLogger.Logs.Single());
     }
 
@@ -86,12 +86,12 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         // Arrange
         string requestId = _validId;
 
-        Func<NewsArticleDTO> cosmosExceptionGenerator = CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<NewsArticleDTO>();
+        Func<NewsArticleDto> cosmosExceptionGenerator = CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<NewsArticleDto>();
 
         Mock<ICosmosDbQueryHandler> mockQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticleById(cosmosExceptionGenerator);
 
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDTO, NewsArticle>();
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDto, NewsArticle>();
 
         CosmosNewsArticleReadRepository sut = new(
                     logger: _mockLogger,
@@ -105,13 +105,13 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Assert.Null(response);
         Assert.Equal($"CosmosException in GetNewsArticleByIdAsync for id: {requestId}", _mockLogger.Logs.Single());
         // TODO currently just verifying it was called, not what it was called with.
-        mockQueryHandler.Verify(t => t.ReadItemByIdAsync<NewsArticleDTO>(
+        mockQueryHandler.Verify(t => t.ReadItemByIdAsync<NewsArticleDto>(
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
-            default(CancellationToken)), Times.Once());
+            default), Times.Once());
 
-        mockMapper.Verify(m => m.Map(It.IsAny<NewsArticleDTO>()), Times.Never());
+        mockMapper.Verify(m => m.Map(It.IsAny<NewsArticleDto>()), Times.Never());
     }
 
     // TODO consider encapsulate the VerifyCalled into an extension around MockQueryHandler?
@@ -121,7 +121,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDTO, NewsArticle>(() => throw new Exception("Test exception"));
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDto, NewsArticle>(() => throw new Exception("Test exception"));
 
         CosmosNewsArticleReadRepository sut = new(
                     logger: _mockLogger,
@@ -137,7 +137,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     public async Task GetNewsArticleByIdAsync_ReturnsNull_When_MapperReturnsNull()
     {
         // Arrange
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDTO, NewsArticle>(stub: null);
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDto, NewsArticle>(stub: null);
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         CosmosNewsArticleReadRepository sut = new(
@@ -150,11 +150,11 @@ public sealed class CosmosNewsArticleReadRepositoryTests
 
         // Assert
         Assert.Null(response);
-        mockQueryHandler.Verify(t => t.ReadItemByIdAsync<NewsArticleDTO>(
+        mockQueryHandler.Verify(t => t.ReadItemByIdAsync<NewsArticleDto>(
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
-            default(CancellationToken)), Times.Once());
+            default), Times.Once());
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange
         NewsArticle articleStub = NewsArticleTestDoubles.Create();
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDTO, NewsArticle>(articleStub);
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDto, NewsArticle>(articleStub);
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         CosmosNewsArticleReadRepository sut = new(
@@ -176,11 +176,11 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         // Assert
         Assert.NotNull(response);
         Assert.Equal(articleStub, response);
-        mockQueryHandler.Verify(t => t.ReadItemByIdAsync<NewsArticleDTO>(
+        mockQueryHandler.Verify(t => t.ReadItemByIdAsync<NewsArticleDto>(
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
-            default(CancellationToken)), Times.Once());
+            default), Times.Once());
     }
 
 
@@ -189,10 +189,10 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     public async Task GetNewsArticlesAsync_ReturnsEmptyArticlesList_When_CosmosException()
     {
         // Arrange
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDTO, NewsArticle>();
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDto, NewsArticle>();
 
-        Func<IEnumerable<NewsArticleDTO>> cosmosExceptionGenerator =
-            CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<IEnumerable<NewsArticleDTO>>();
+        Func<IEnumerable<NewsArticleDto>> cosmosExceptionGenerator =
+            CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<IEnumerable<NewsArticleDto>>();
 
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticles(cosmosExceptionGenerator);
 
@@ -208,14 +208,14 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Assert.Empty(response);
         Assert.Equal("CosmosException in GetNewsArticlesAsync.", _mockLogger.Logs.Single());
         mockMapper.Verify(
-            (mapper) => mapper.Map(It.IsAny<NewsArticleDTO>()), Times.Never());
+            (mapper) => mapper.Map(It.IsAny<NewsArticleDto>()), Times.Never());
     }
 
     [Fact]
     public async Task GetNewsArticlesAsync_ReturnsEmptyList_When_NoArticlesFound()
     {
         // Arrange
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDTO, NewsArticle>();
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticleDto, NewsArticle>();
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticles(() => []);
 
         CosmosNewsArticleReadRepository sut = new(
@@ -229,7 +229,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         // Assert
         Assert.Empty(response);
         mockQueryHandler.Verify(
-            (handler) => handler.ReadItemsAsync<NewsArticleDTO>(It.IsAny<string>(), It.IsAny<string>(), default(CancellationToken)),
+            (handler) => handler.ReadItemsAsync<NewsArticleDto>(It.IsAny<string>(), It.IsAny<string>(), default),
                 Times.Once());
     }
 
@@ -245,11 +245,11 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange        
         const string ExpectedContainerName = "news";
-        List<NewsArticleDTO> newsArticleDTOs = NewsArticleDTOTestDoubles.Generate();
+        List<NewsArticleDto> newsArticleDTOs = NewsArticleDtoTestDoubles.Generate();
 
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticles(() => newsArticleDTOs);
 
-        Mock<IMapper<NewsArticleDTO, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDTO, NewsArticle>(It.IsAny<NewsArticle>());
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticleDto, NewsArticle>(It.IsAny<NewsArticle>());
 
         CosmosNewsArticleReadRepository sut = new(
             logger: _mockLogger,
@@ -259,17 +259,15 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         string expectedQuery = $"SELECT * FROM c WHERE {expectedFilter}";
 
         // Act
-        IEnumerable<NewsArticle> response = await sut.GetNewsArticlesAsync(newsArticleSearchStatus);
-
         // Force enumeration
-        response.ToList();
+        _ = (await sut.GetNewsArticlesAsync(newsArticleSearchStatus)).ToList();
 
         // Assert
         mockQueryHandler.Verify(
-            (handler) => handler.ReadItemsAsync<NewsArticleDTO>(ExpectedContainerName, expectedQuery, default(CancellationToken)), Times.Once());
+            (handler) => handler.ReadItemsAsync<NewsArticleDto>(ExpectedContainerName, expectedQuery, default), Times.Once());
 
         mockMapper.Verify(
-            (mapper) => mapper.Map(It.IsAny<NewsArticleDTO>()),
+            (mapper) => mapper.Map(It.IsAny<NewsArticleDto>()),
             Times.Exactly(newsArticleDTOs.Count));
     }
 }

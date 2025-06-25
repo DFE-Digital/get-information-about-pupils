@@ -20,6 +20,11 @@ public static class ConfigurationTestDoubles
     public static IConfigurationBuilder WithLocalCosmosDb(this IConfigurationBuilder builder)
     {
         RepositoryOptions options = RepositoryOptionsFactory.LocalCosmosDbEmulator();
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.EndpointUri);
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.PrimaryKey);
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.DatabaseId);
+
         Dictionary<string, string> configurationOptions = new()
         {
             ["RepositoryOptions:ConnectionMode"] = "1",

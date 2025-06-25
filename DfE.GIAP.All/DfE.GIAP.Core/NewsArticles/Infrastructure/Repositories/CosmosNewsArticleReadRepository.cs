@@ -18,12 +18,12 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
     private const string ContainerName = "news";
     private readonly ILogger<CosmosNewsArticleReadRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<NewsArticleDTO, NewsArticle> _dtoToEntityMapper;
+    private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
     public CosmosNewsArticleReadRepository(
         ILogger<CosmosNewsArticleReadRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper)
+        IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
@@ -61,7 +61,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
 
         try
         {
-            NewsArticleDTO queryResponse = await _cosmosDbQueryHandler.ReadItemByIdAsync<NewsArticleDTO>(id, ContainerName, id);
+            NewsArticleDto queryResponse = await _cosmosDbQueryHandler.ReadItemByIdAsync<NewsArticleDto>(id, ContainerName, id);
 
             NewsArticle mappedResponse = _dtoToEntityMapper.Map(queryResponse);
             return mappedResponse;
@@ -91,8 +91,8 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
             string filter = newsArticleSearchFilter.ToCosmosFilters();
             string query = $"SELECT * FROM c WHERE {filter}";
 
-            IEnumerable<NewsArticleDTO> queryResponse = await _cosmosDbQueryHandler
-                .ReadItemsAsync<NewsArticleDTO>(ContainerName, query);
+            IEnumerable<NewsArticleDto> queryResponse = await _cosmosDbQueryHandler
+                .ReadItemsAsync<NewsArticleDto>(ContainerName, query);
 
             IEnumerable<NewsArticle> mappedResponse = queryResponse.Select(_dtoToEntityMapper.Map);
             return mappedResponse;
@@ -100,7 +100,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, "CosmosException in GetNewsArticlesAsync.");
-            return Enumerable.Empty<NewsArticle>();
+            return [];
         }
     }
 }

@@ -15,7 +15,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
         _dbFixture = dbFixture;
     }
 
-    public async Task InitializeAsync() => await _dbFixture.Database.ClearDatabaseAsync();
+    public async Task InitializeAsync() => await _dbFixture.Database!.ClearDatabaseAsync();
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
@@ -24,15 +24,14 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
         // Arrange
         List<ContentDto> contentDtos = ContentDtoTestDoubles.Generate(count: 10);
         ContentDto targetContent = contentDtos[0];
-        targetContent.id = "DocumentId1";
 
         await Task.WhenAll(
             contentDtos.Select(
-                (dto) => _dbFixture.Database.WriteAsync(dto)));
+                (dto) => _dbFixture.Database!.WriteAsync(dto)));
 
         Dictionary<string, string> contentRepositoryOptions = new()
         {
-            ["PageContentOptions:TestPage1:DocumentId"] = "DocumentId1",
+            ["PageContentOptions:TestPage1:DocumentId"] = targetContent.id,
         };
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()

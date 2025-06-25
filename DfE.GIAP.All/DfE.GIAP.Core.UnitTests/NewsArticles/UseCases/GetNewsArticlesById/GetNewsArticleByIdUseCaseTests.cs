@@ -7,7 +7,9 @@ public sealed class GetNewsArticleByIdUseCaseTests
     [Fact]
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
+#pragma warning disable CA1806 // Do not ignore method results
         Action construct = () => new GetNewsArticleByIdUseCase(newsArticleReadRepository: null!);
+#pragma warning restore CA1806 // Do not ignore method results
         Assert.Throws<ArgumentNullException>(construct);
     }
 
@@ -32,7 +34,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         // Arrange
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticleByIdUseCase sut = new(mockRepository.Object);
-        GetNewsArticleByIdRequest request = new(id);
+        GetNewsArticleByIdRequest request = new(id!);
         Func<Task> act = () => sut.HandleRequestAsync(request!);
 
         // Act Assert 

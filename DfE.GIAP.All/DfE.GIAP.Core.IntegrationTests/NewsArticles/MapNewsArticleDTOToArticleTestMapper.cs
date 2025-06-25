@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
-internal sealed class MapNewsArticleDTOToArticleTestMapper : IMapper<NewsArticleDTO, NewsArticle>
+internal sealed class MapNewsArticleDtoToArticleTestMapper : IMapper<NewsArticleDto, NewsArticle>
 {
-    public NewsArticle Map(NewsArticleDTO input)
+    public NewsArticle Map(NewsArticleDto input)
     {
         return new()
         {
@@ -20,5 +20,5 @@ internal sealed class MapNewsArticleDTOToArticleTestMapper : IMapper<NewsArticle
         };
     }
 
-    public static IMapper<NewsArticleDTO, NewsArticle> Create() => new MapNewsArticleDTOToArticleTestMapper();
+    public static IMapper<NewsArticleDto, NewsArticle> Create() => new MapNewsArticleDtoToArticleTestMapper();
 }
