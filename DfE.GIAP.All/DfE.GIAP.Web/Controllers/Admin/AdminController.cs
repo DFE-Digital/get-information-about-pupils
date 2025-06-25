@@ -315,8 +315,8 @@ public class AdminController : Controller
         if (string.IsNullOrWhiteSpace(model.DocumentId))
         {
             model.HasInvalidDocumentList = true;
-            model.ErrorDetails = CommonErrorMessages.AdminSecurityReportRequired;
-            ModelState.AddModelError("NoOrganisationalReportSelected", CommonErrorMessages.AdminSecurityReportRequired);
+            model.ErrorDetails = CommonErrorMessages.SecurityReportRequired;
+            ModelState.AddModelError("NoOrganisationalReportSelected", CommonErrorMessages.SecurityReportRequired);
 
             PopulateSecurityReportsDropdown(model);
             return View("../Admin/SecurityReports/SecurityReportsForYourOrganisation", model);

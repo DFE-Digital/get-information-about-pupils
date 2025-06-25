@@ -131,7 +131,7 @@ public class ManageDocumentsController : Controller
         {
             if (manageDocumentsModel.DocumentList.DocumentId == null)
             {
-                ModelState.AddModelError("Document.Id", CommonErrorMessages.AdminDocumentRequired);
+                ModelState.AddModelError("Document.Id", CommonErrorMessages.DocumentRequired);
                 manageDocumentsModel.HasInvalidDocumentList = true;
             }
             else
@@ -187,14 +187,24 @@ public class ManageDocumentsController : Controller
     [HttpPost]
     public async Task<IActionResult> SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
-        // check selected id exists
-        // make request to get the news article
-
         if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
         {
             manageDocumentsModel.HasInvalidNewsList = true;
-            ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.AdminNewsArticleRequired);
+            ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.NewsArticleRequired);
         }
+
+        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
+            new GetNewsArticleByIdRequest(manageDocumentsModel.SelectedNewsId));
+
+        manageDocumentsModel.DocumentData = new CommonResponseBodyViewModel
+        {
+            Id = response.NewsArticle.Id.Value,
+            Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
+            Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
+            Pinned = response.NewsArticle.Pinned,
+            Published = response.NewsArticle.Published,
+            Archived = response.NewsArticle.Archived
+        };
 
         return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
     }
@@ -243,11 +253,9 @@ public class ManageDocumentsController : Controller
     }
 
 
-
-
     [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleDelete)]
-    public async Task<IActionResult> DeleteNews(ManageDocumentsViewModel manageDocumentsModel)
+    [Route(Routes.ManageDocument.DeleteNewsArticle)]
+    public async Task<IActionResult> DeleteNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
         string articleId = manageDocumentsModel.SelectedNewsId;
 
@@ -262,6 +270,23 @@ public class ManageDocumentsController : Controller
 
         return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
     }
+
+    [HttpPost]
+    [Route(Routes.ManageDocument.UpdateNewsAricle)]
+    public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string edit)
+    {
+        if (manageDocumentsModel.DocumentData != null)
+        {
+            if (!string.IsNullOrEmpty(edit) && !string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
+            {
+                manageDocumentsModel.DocumentData = await GetSelectedNewsDocumentData(manageDocumentsModel.SelectedNewsId);
+            }
+        }
+
+        ModelState.Clear();
+        return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
+    }
+
 
     [HttpPost]
     [Route(Routes.ManageDocument.ManageDocumentsArchivedNewsArticleDelete)]
@@ -290,7 +315,7 @@ public class ManageDocumentsController : Controller
         if (string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId))
         {
             manageDocumentsModel.HasInvalidArchiveList = true;
-            ModelState.AddModelError("SelectArchivNewsArticle", CommonErrorMessages.AdminNewsArticleRequired);
+            ModelState.AddModelError("SelectArchivNewsArticle", CommonErrorMessages.NewsArticleRequired);
             return await ManageDocuments(manageDocumentsModel, null, null).ConfigureAwait(false);
         }
 
@@ -341,20 +366,7 @@ public class ManageDocumentsController : Controller
         return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
     }
 
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleEdit)]
-    public async Task<IActionResult> EditNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string edit)
-    {
-        if (manageDocumentsModel.DocumentData != null)
-        {
-            if (!string.IsNullOrEmpty(edit) && !string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
-            {
-                manageDocumentsModel.DocumentData = await GetSelectedNewsDocumentData(manageDocumentsModel.SelectedNewsId);
-            }
-        }
-        ModelState.Clear();
-        return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
-    }
+
 
     [HttpPost]
     [Route(Routes.ManageDocument.ManageDocumentsNewsArticlePreview)]

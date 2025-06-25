@@ -90,7 +90,7 @@
                         @if (!string.IsNullOrEmpty(Model.SelectedNewsId))
                         {
                             <button asp-controller="ManageDocuments" asp-action="ArchiveNews" id="archive-document--button" name="archive" value="Archive" type="submit" class="govuk-button govuk-button--secondary">Archive</button>
-                            <button asp-controller="ManageDocuments" asp-action="DeleteNews" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
+                            <button asp-controller="ManageDocuments" asp-action="DeleteNewsArticle" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
                         }
 
                         <button asp-controller="ManageDocuments" asp-action="PreviewChanges" id="preview-document--button" name="preview" value="Preview" class="govuk-button">Preview</button>

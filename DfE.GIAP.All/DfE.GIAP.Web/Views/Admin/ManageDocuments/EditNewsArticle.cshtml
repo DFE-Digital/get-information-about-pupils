@@ -35,13 +35,9 @@
             <partial name="~/Views/Admin/ManageDocuments/_DocumentFields.cshtml" for="DocumentData" />
 
             <div class="govuk-button-group">
-                @if (Model?.DocumentList?.DocumentId == DocumentType.Article.ToString())
-                {
-                    <button asp-controller="ManageDocuments" asp-action="SaveArticleAsDraft" id="save-as-draft--button" name="save-as-draft" value="SaveAsDraft" class="govuk-button govuk-button--secondary">Save as draft</button>
-                }
-
-                <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-news-article--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</button>
-                <button asp-controller="ManageDocuments" asp-action="PreviewNewsArticle" id="preview-news-article--button" name="preview" value="Preview" class="govuk-button">Preview</button>
+                <a asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-news-article--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</a>
+                <button asp-controller="ManageDocuments" asp-action="DeleteNewsArticle" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
+                <button asp-controller="ManageDocuments" asp-action="UpdateNewsArticle" id="update-document--button" name="update" value="Update" type="submit" class="govuk-button">Update</button>
             </div>
         </form>
     }
