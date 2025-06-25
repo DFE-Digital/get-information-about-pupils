@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>d4e9d00c-c90a-4862-a2de-9e169b13be02</UserSecretsId>
-    <!-- Note: this has been disabled because Web has ViewModels that have [Required()] attributes on its ViewModel Properties.
+    <!-- Note: this has been disabled because Web has ViewModels which consume from Common.Models that have [Required()] attributes on its ViewModel Properties.
         When nullable is enabled it causes different behaviour as ModelState.IsValid() will evaluate to false - as some properties are bound as null than "" and fail the ModelStateValidation-->
     <Nullable>disable</Nullable>
   </PropertyGroup>
@@ -17,9 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Remove="Views\Shared\LearnerText\_Results.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="C:\Users\developer\.nuget\packages\applicationinsightstelemetry\1.0.4\contentFiles\any\netstandard2.1\logevents.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="appsettings.json" />
