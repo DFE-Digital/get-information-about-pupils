@@ -30,7 +30,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
 
-        List<NewsArticleDTO> seededDTOs = NewsArticleDTOTestDoubles.Generate(count: 10);
+        List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10);
 
         await Task.WhenAll(
             seededDTOs.Select(
@@ -44,7 +44,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
-        IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
+        IMapper<NewsArticleDto, NewsArticle> testMapper = MapNewsArticleDtoToArticleTestMapper.Create();
 
         List<NewsArticle> expectedArticlesOutput =
             seededDTOs.Select(testMapper.Map)

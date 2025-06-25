@@ -3,12 +3,12 @@
 /// <summary>
 /// Data Transfer Object (DTO) representing content stored in Cosmos DB.
 /// </summary>
-public class ContentDto
+public record ContentDto
 {
     /// <summary>
     /// Gets or sets the unique identifier of the content document.
     /// </summary>
-    public string id { get; set; }
+    public required string id { get; set; }
 
     /// <summary>
     /// Gets or sets the body of the content.

@@ -7,7 +7,9 @@ public sealed class CreateNewsArticleUseCaseTests
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
         // Arrange
-        Action construct = () => new CreateNewsArticleUseCase(newsArticleWriteRepository: null);
+#pragma warning disable CA1806 // Do not ignore method results
+        Action construct = () => new CreateNewsArticleUseCase(newsArticleWriteRepository: null!);
+#pragma warning restore CA1806 // Do not ignore method results
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -19,7 +21,7 @@ public sealed class CreateNewsArticleUseCaseTests
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        Func<Task> act = () => sut.HandleRequestAsync(request: null);
+        Func<Task> act = () => sut.HandleRequestAsync(request: null!);
 
         // Act Assert
         await Assert.ThrowsAsync<ArgumentNullException>(act);
@@ -27,14 +29,13 @@ public sealed class CreateNewsArticleUseCaseTests
             (useCase) => useCase.CreateNewsArticleAsync(It.IsAny<NewsArticle>()), Times.Never());
     }
 
-    [Theory]
-    [InlineData(null)]
-    public async Task HandleRequestAsync_ThrowsArgumentException_When_TitleIsNull(string? title)
+    [Fact]
+    public async Task HandleRequestAsync_ThrowsArgumentException_When_TitleIsNull()
     {
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new(title, "body", true, true, true);
+        CreateNewsArticleRequest request = new(null!, "body", true, true, true);
         Func<Task> act = () => sut.HandleRequestAsync(request: request);
 
         // Act Assert
@@ -61,14 +62,13 @@ public sealed class CreateNewsArticleUseCaseTests
             (useCase) => useCase.CreateNewsArticleAsync(It.IsAny<NewsArticle>()), Times.Never());
     }
 
-    [Theory]
-    [InlineData(null)]
-    public async Task HandleRequestAsync_ThrowsArgumentException_When_BodyIsNull(string? body)
+    [Fact]
+    public async Task HandleRequestAsync_ThrowsArgumentException_When_BodyIsNull()
     {
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new("title", body, true, true, true);
+        CreateNewsArticleRequest request = new("title", null!, true, true, true);
 
         Func<Task> act = () => sut.HandleRequestAsync(request: request);
 

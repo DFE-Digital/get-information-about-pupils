@@ -30,20 +30,20 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
             scope.ServiceProvider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
-        List<NewsArticleDTO> seededArticles = NewsArticleDTOTestDoubles.Generate();
+        List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
 
         await Task.WhenAll(
             seededArticles.Select(
                 (dto) => _fixture.Database.WriteAsync(dto)));
 
-        NewsArticleDTO targetArticle = seededArticles.First();
+        NewsArticleDto targetArticle = seededArticles[0];
         GetNewsArticleByIdRequest request = new(Id: targetArticle.Id);
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
 
         //Assert
-        IMapper<NewsArticleDTO, NewsArticle> testMapper = MapNewsArticleDTOToArticleTestMapper.Create();
+        IMapper<NewsArticleDto, NewsArticle> testMapper = MapNewsArticleDtoToArticleTestMapper.Create();
         NewsArticle seededTargetArticle = testMapper.Map(targetArticle);
         Assert.NotNull(response);
         Assert.NotNull(response.NewsArticle);
@@ -65,7 +65,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
             scope.ServiceProvider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
-        List<NewsArticleDTO> seededArticles = NewsArticleDTOTestDoubles.Generate();
+        List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
         await Task.WhenAll(
             seededArticles.Select(
                 (dto) => _fixture.Database.WriteAsync(dto)));

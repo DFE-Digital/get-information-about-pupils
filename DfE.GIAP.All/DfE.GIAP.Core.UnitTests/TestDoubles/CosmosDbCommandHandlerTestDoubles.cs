@@ -7,13 +7,13 @@ internal static class CosmosDbCommandHandlerTestDoubles
     internal static Mock<ICosmosDbCommandHandler> Default() => new();
 
     internal static Mock<ICosmosDbCommandHandler> MockForCreateItemAsync(
-        Func<NewsArticleDTO> handler)
+        Func<NewsArticleDto> handler)
     {
         Mock<ICosmosDbCommandHandler> mockHandler = Default();
 
         mockHandler
             .Setup(h => h.CreateItemAsync(
-                It.IsAny<NewsArticleDTO>(),
+                It.IsAny<NewsArticleDto>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
@@ -25,10 +25,10 @@ internal static class CosmosDbCommandHandlerTestDoubles
 
     internal static Mock<ICosmosDbCommandHandler> MockForDeleteItemAsync(Exception? exceptionToThrow = null)
     {
-        var mockHandler = Default();
+        Mock<ICosmosDbCommandHandler> mockHandler = Default();
 
-        var setup = mockHandler
-            .Setup(h => h.DeleteItemAsync<NewsArticleDTO>(
+        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task> setup = mockHandler
+            .Setup(h => h.DeleteItemAsync<NewsArticleDto>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(), // <-- string, not PartitionKey

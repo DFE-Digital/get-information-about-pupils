@@ -60,7 +60,7 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
     {
         return services
-            .AddScoped<IMapper<NewsArticleDTO, NewsArticle>, NewsArticleDtoToEntityMapper>()
-            .AddScoped<IMapper<NewsArticle, NewsArticleDTO>, NewsArticleEntityToDtoMapper>();
+            .AddScoped<IMapper<NewsArticleDto, NewsArticle>, NewsArticleDtoToEntityMapper>()
+            .AddScoped<IMapper<NewsArticle, NewsArticleDto>, NewsArticleEntityToDtoMapper>();
     }
 }
