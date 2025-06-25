@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Common.Constants.Messages.Common;
 using DfE.GIAP.Domain.Models.User;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 

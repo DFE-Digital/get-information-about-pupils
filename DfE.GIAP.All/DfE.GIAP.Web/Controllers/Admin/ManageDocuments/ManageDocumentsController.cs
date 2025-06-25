@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DfE.GIAP.Common.Constants;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Constants.Messages.Common;
@@ -25,8 +23,6 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
@@ -83,7 +79,15 @@ public class ManageDocumentsController : Controller
     {
         LoadDocumentsList();
         ViewBag.DisplayEditor = false;
-        ManageDocumentsViewModel model = new();
+        ManageDocumentsViewModel model = new()
+        {
+            BackButton = new()
+            {
+                IsBackButtonEnabled = true,
+                PreviousController = "Admin",
+                PreviousAction = "Index"
+            }
+        };
 
         bool isValidUrlAction = CheckValidUrlAction(docAction);
         bool isValidUrlDocType = CheckValidUrlDocType(docType);
@@ -184,31 +188,6 @@ public class ManageDocumentsController : Controller
         return View("../Admin/ManageDocuments/ManageDocuments", manageDocumentsModel);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
-        {
-            manageDocumentsModel.HasInvalidNewsList = true;
-            ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.NewsArticleRequired);
-        }
-
-        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
-            new GetNewsArticleByIdRequest(manageDocumentsModel.SelectedNewsId));
-
-        manageDocumentsModel.DocumentData = new CommonResponseBodyViewModel
-        {
-            Id = response.NewsArticle.Id.Value,
-            Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
-            Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
-            Pinned = response.NewsArticle.Pinned,
-            Published = response.NewsArticle.Published,
-            Archived = response.NewsArticle.Archived
-        };
-
-        return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
-    }
-
     [HttpGet]
     [Route(Routes.ManageDocument.CreateNewsArticle)]
     public IActionResult CreateNewsArticle()
@@ -272,19 +251,74 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.ManageDocument.UpdateNewsAricle)]
-    public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string edit)
+    public async Task<IActionResult> SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
-        if (manageDocumentsModel.DocumentData != null)
+        if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
         {
-            if (!string.IsNullOrEmpty(edit) && !string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
-            {
-                manageDocumentsModel.DocumentData = await GetSelectedNewsDocumentData(manageDocumentsModel.SelectedNewsId);
-            }
+            manageDocumentsModel.HasInvalidNewsList = true;
+            ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.NewsArticleRequired);
         }
 
-        ModelState.Clear();
+        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
+            new GetNewsArticleByIdRequest(manageDocumentsModel.SelectedNewsId));
+
+        // TODO: Handle if response is null
+        if (response.NewsArticle is null)
+            ArgumentNullException.ThrowIfNull(response.NewsArticle);
+
+        // TODO: Remove this later
+        manageDocumentsModel.DocumentData = new CommonResponseBodyViewModel
+        {
+            Id = response.NewsArticle.Id.Value,
+            Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
+            Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
+            Pinned = response.NewsArticle.Pinned,
+            Published = response.NewsArticle.Published,
+            Archived = response.NewsArticle.Archived
+        };
+
+        manageDocumentsModel.NewsArticle = new NewsArticleViewModel
+        {
+            Id = response.NewsArticle.Id.Value,
+            Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
+            Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
+            Pinned = response.NewsArticle.Pinned,
+            Published = response.NewsArticle.Published,
+            Archived = response.NewsArticle.Archived,
+            CreatedDate = response.NewsArticle.CreatedDate,
+            ModifiedDate = response.NewsArticle.ModifiedDate
+        };
+
         return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
+    }
+
+    [HttpPost]
+    [Route(Routes.ManageDocument.UpdateNewsAricle)]
+    public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
+    {
+        NewsArticle updatedArticle = new()
+        {
+            Id = NewsArticleIdentifier.From(manageDocumentsModel.NewsArticle.Id),
+            Title = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Title),
+            Body = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Body),
+            Pinned = manageDocumentsModel.NewsArticle.Pinned,
+            Published = manageDocumentsModel.NewsArticle.Published,
+            Archived = manageDocumentsModel.NewsArticle.Archived,
+            CreatedDate = manageDocumentsModel.NewsArticle.CreatedDate,
+            ModifiedDate = manageDocumentsModel.NewsArticle.ModifiedDate
+        };
+
+        await _updateNewsArticleUseCase.HandleRequestAsync(
+            new UpdateNewsArticleRequest(updatedArticle));
+
+        ConfirmationViewModel model = new()
+        {
+            Title = ArticleSuccessMessages.UpdateTitle,
+            Body = ArticleSuccessMessages.UpdateBody,
+        };
+
+        ModelState.Clear();
+        return View("../Admin/ManageDocuments/Confirmation", model);
     }
 
 

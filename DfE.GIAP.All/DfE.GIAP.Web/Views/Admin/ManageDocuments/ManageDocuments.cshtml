@@ -3,17 +3,15 @@
     ViewBag.Title = "Manage documents"; 
 }
 
-<a class="govuk-back-link" asp-controller="Admin" asp-action="Index" id="admin-dashboard--manage-documents-back-link">
-    Back
-</a>
 
 <div class="govuk-width-container">
+    <partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
+
     <h1 class="govuk-heading-xl">Manage documents</h1>
 
         <form method="post">
             <div class="govuk-form-group">
 
-                <partial name="_ValidationSummary" model="ViewData.ModelState" />
                 <label for="select-document-dropdown" class="govuk-label">Please select a document</label>
 
                 <select id="select-document-dropdown" asp-for="@Model.DocumentList.DocumentId" class="govuk-select @(Model.HasInvalidDocumentList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ListOfDocuments">
