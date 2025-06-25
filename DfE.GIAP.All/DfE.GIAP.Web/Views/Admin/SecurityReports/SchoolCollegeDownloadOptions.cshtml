@@ -3,9 +3,7 @@
     ViewBag.Title = "Download by school or college";
 }
 
-<a class="govuk-back-link" asp-controller="Admin" asp-action="Index" id="admin-dashboard--security-reports-by-school-back-link">
-    Back
-</a>
+<partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
 
 <div class="govuk-width-container">
     <h1 class="govuk-heading-xl">Download by school or college</h1>

@@ -78,7 +78,15 @@ public class ManageDocumentsController : Controller
     {
         LoadDocumentsList();
         ViewBag.DisplayEditor = false;
-        ManageDocumentsViewModel model = new();
+        ManageDocumentsViewModel model = new()
+        {
+            BackButton = new()
+            {
+                IsBackButtonEnabled = true,
+                PreviousAction = "Index",
+                PreviousController = "Admin"
+            }
+        };
 
         bool isValidUrlAction = CheckValidUrlAction(docAction);
         bool isValidUrlDocType = CheckValidUrlDocType(docType);

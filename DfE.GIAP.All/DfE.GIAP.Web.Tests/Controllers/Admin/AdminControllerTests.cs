@@ -20,6 +20,7 @@ using DfE.GIAP.Domain.Models.SecurityReports;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
+using DfE.GIAP.Web.ViewModels.Admin;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin;
 
@@ -1334,7 +1335,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
             ControllerContext = context
         };
 
-        SecurityReportsForYourOrganisationModel model = new()
+        SecurityReportsForYourOrganisationViewModel model = new()
         {
             DocumentId = "0"
         };
@@ -1383,7 +1384,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
             ControllerContext = context
         };
 
-        SecurityReportsForYourOrganisationModel model = new()
+        SecurityReportsForYourOrganisationViewModel model = new()
         {
             DocumentId = "1"
         };
@@ -1426,7 +1427,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         AdminController controller = GetAdminController();
         controller.ControllerContext = context;
 
-        SecurityReportsForYourOrganisationModel model = new()
+        SecurityReportsForYourOrganisationViewModel model = new()
         {
             DocumentId = null
         };
@@ -1437,7 +1438,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsForYourOrganisationModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
+        SecurityReportsForYourOrganisationViewModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
         Assert.NotNull(viewModel);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
         Assert.Single(controller.ViewData.ModelState["NoOrganisationalReportSelected"].Errors);
@@ -1472,7 +1473,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         AdminController controller = GetAdminController();
         controller.ControllerContext = context;
 
-        SecurityReportsForYourOrganisationModel model = new()
+        SecurityReportsForYourOrganisationViewModel model = new()
         {
             DocumentId = "12345"
         };
@@ -1483,7 +1484,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsForYourOrganisationModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationModel;
+        SecurityReportsForYourOrganisationViewModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
         Assert.NotNull(viewModel);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
         Assert.Single(controller.ViewData.ModelState["NoDataForOrganisationalDownloadExists"].Errors);

@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Common.Constants;
+﻿using System;
+using System.Threading.Tasks;
+using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Messages.Downloads;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
@@ -6,11 +8,10 @@ using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.SearchDownload;
+using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.Admin.SecurityReports;
 
@@ -32,9 +33,19 @@ public class SecurityReportByPupilStudentRecordController : Controller
     [Route(Routes.SecurityReports.SecurityReportsByUpnUln)]
     public IActionResult SecurityReportsByUpnUln()
     {
-        var model = new SecurityReportsByUpnUlnViewModel();
+        SecurityReportsByUpnUlnViewModel model = new()
+        {
+            BackButton = new BackButtonViewModel()
+            {
+                IsBackButtonEnabled = true,
+                PreviousAction = "Index",
+                PreviousController = "Admin"
+            }
+        };
+
         return View("../Admin/SecurityReports/SecurityReportsByUpnUln", model);
     }
+
     [HttpPost]
     [Route(Routes.SecurityReports.SecurityReportsByUpnUln)]
     public async Task<IActionResult> DownloadSecurityReportByUpnUln(SecurityReportsByUpnUlnViewModel model)
