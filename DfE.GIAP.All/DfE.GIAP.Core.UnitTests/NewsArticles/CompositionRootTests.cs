@@ -35,7 +35,7 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>());
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>());
-        Assert.NotNull(provider.GetService<IMapper<NewsArticleDTO, NewsArticle>>());
+        Assert.NotNull(provider.GetService<IMapper<NewsArticleDto, NewsArticle>>());
         Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
     }
 }

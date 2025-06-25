@@ -9,7 +9,9 @@ public sealed class GetNewsArticlesUseCaseTests
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
         // Arrange
+#pragma warning disable CA1806 // Do not ignore method results
         Action construct = () => new GetNewsArticlesUseCase(newsArticleReadRepository: null!);
+#pragma warning restore CA1806 // Do not ignore method results
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -21,7 +23,7 @@ public sealed class GetNewsArticlesUseCaseTests
         // Arrange
         Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticlesUseCase sut = new(mockRepository.Object);
-        Func<Task> act = () => sut.HandleRequestAsync(request: null);
+        Func<Task> act = () => sut.HandleRequestAsync(request: null!);
 
         // Act Assert
         await Assert.ThrowsAsync<ArgumentNullException>(act);
@@ -65,27 +67,27 @@ public sealed class GetNewsArticlesUseCaseTests
         // Arrange
         // TODO put this behind an abstraction (static factory method? that can pass in a count of pinned articles)
         NewsArticle pinnedOldest = NewsArticleTestDoubles.Create();
-        pinnedOldest.ModifiedDate = new DateTime(2021, 1, 3);
+        pinnedOldest.ModifiedDate = new DateTime(2021, 1, 3, 3, 30, 30, DateTimeKind.Utc);
         pinnedOldest.Pinned = true;
 
         NewsArticle pinnedMiddle = NewsArticleTestDoubles.Create();
-        pinnedOldest.ModifiedDate = new DateTime(2023, 6, 6);
+        pinnedOldest.ModifiedDate = new DateTime(2023, 6, 6, 8, 40, 15, DateTimeKind.Utc);
         pinnedOldest.Pinned = true;
 
         NewsArticle pinnedNewest = NewsArticleTestDoubles.Create();
-        pinnedOldest.ModifiedDate = new DateTime(2025, 1, 3);
+        pinnedOldest.ModifiedDate = new DateTime(2025, 1, 3, 3, 30, 30, DateTimeKind.Utc);
         pinnedOldest.Pinned = true;
 
         NewsArticle unpinnedOldest = NewsArticleTestDoubles.Create();
-        pinnedOldest.ModifiedDate = new DateTime(2024, 1, 10);
+        pinnedOldest.ModifiedDate = new DateTime(2024, 1, 10, 12, 0, 0, DateTimeKind.Utc);
         unpinnedOldest.Pinned = false;
 
         NewsArticle unpinnedMiddle = NewsArticleTestDoubles.Create();
-        unpinnedMiddle.ModifiedDate = new DateTime(2024, 2, 10);
+        unpinnedMiddle.ModifiedDate = new DateTime(2024, 2, 10, 15, 30, 30, DateTimeKind.Utc);
         unpinnedMiddle.Pinned = false;
 
         NewsArticle unpinnedNewest = NewsArticleTestDoubles.Create();
-        unpinnedNewest.ModifiedDate = new DateTime(2024, 3, 10);
+        unpinnedNewest.ModifiedDate = new DateTime(2024, 3, 10, 20, 30, 30, DateTimeKind.Utc);
         unpinnedNewest.Pinned = false;
 
         List<NewsArticle> unorderedUnpinnedArticles = [unpinnedOldest, pinnedMiddle, unpinnedNewest, pinnedOldest, pinnedNewest, unpinnedMiddle];
@@ -116,13 +118,13 @@ public sealed class GetNewsArticlesUseCaseTests
     {
         // Arrange
         NewsArticle articleOldest = NewsArticleTestDoubles.Create();
-        articleOldest.ModifiedDate = new DateTime(2021, 1, 1);
+        articleOldest.ModifiedDate = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         NewsArticle articleMiddle = NewsArticleTestDoubles.Create();
-        articleMiddle.ModifiedDate = new DateTime(2023, 6, 6);
+        articleMiddle.ModifiedDate = new DateTime(2023, 6, 6, 5, 0, 0, DateTimeKind.Utc);
 
         NewsArticle articleNewest = NewsArticleTestDoubles.Create();
-        articleNewest.ModifiedDate = new DateTime(2025, 1, 1);
+        articleNewest.ModifiedDate = new DateTime(2025, 1, 1, 6, 30, 0, DateTimeKind.Utc);
 
         // Pinned status should not affect order when IsArchived is true
         articleOldest.Pinned = true;

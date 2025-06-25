@@ -14,12 +14,12 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
     private const string DatabaseId = "giapsearch";
     private readonly ILogger<TempNewsArticleReadRepository> _logger;
     private readonly CosmosClient _cosmosClient;
-    private readonly IMapper<NewsArticleDTO, NewsArticle> _dtoToEntityMapper;
+    private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
     public TempNewsArticleReadRepository(
         ILogger<TempNewsArticleReadRepository> logger,
         CosmosClient cosmosClient,
-        IMapper<NewsArticleDTO, NewsArticle> dtoToEntityMapper)
+        IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosClient);
@@ -31,23 +31,19 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
 
     public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            _logger.LogCritical("GetNewsArticleByIdAsync called with null or empty id.");
-            throw new ArgumentException("Id must not be null or empty.", nameof(id));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(id);
 
         try
         {
             string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND c.id='{id}'";
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
 
-            using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
+            using FeedIterator<NewsArticleDto> resultSet = container.GetItemQueryIterator<NewsArticleDto>(query, null, null);
 
             if (resultSet.HasMoreResults)
             {
-                FeedResponse<NewsArticleDTO> queryResponse = await resultSet.ReadNextAsync();
-                NewsArticleDTO? articleResponse = queryResponse.FirstOrDefault();
+                FeedResponse<NewsArticleDto> queryResponse = await resultSet.ReadNextAsync();
+                NewsArticleDto? articleResponse = queryResponse.FirstOrDefault();
 
                 return articleResponse is null
                     ? null
@@ -71,12 +67,12 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
             string query = $"SELECT * FROM c WHERE c.DOCTYPE=7 AND {filter}";
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
-            using FeedIterator<NewsArticleDTO> resultSet = container.GetItemQueryIterator<NewsArticleDTO>(query, null, null);
+            using FeedIterator<NewsArticleDto> resultSet = container.GetItemQueryIterator<NewsArticleDto>(query, null, null);
 
-            List<NewsArticleDTO> responseArticles = [];
+            List<NewsArticleDto> responseArticles = [];
             while (resultSet.HasMoreResults)
             {
-                FeedResponse<NewsArticleDTO> queryResponse = await resultSet.ReadNextAsync();
+                FeedResponse<NewsArticleDto> queryResponse = await resultSet.ReadNextAsync();
                 responseArticles.AddRange(queryResponse);
             }
 
@@ -85,7 +81,7 @@ internal class TempNewsArticleReadRepository : INewsArticleReadRepository
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, "CosmosException in GetNewsArticlesAsync.");
-            return Enumerable.Empty<NewsArticle>();
+            return [];
         }
     }
 }

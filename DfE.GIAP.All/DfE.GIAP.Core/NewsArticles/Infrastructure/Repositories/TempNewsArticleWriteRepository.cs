@@ -11,12 +11,12 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
     private const string DatabaseId = "giapsearch";
     private readonly ILogger<TempNewsArticleWriteRepository> _logger;
     private readonly CosmosClient _cosmosClient;
-    private readonly IMapper<NewsArticle, NewsArticleDTO> _entityToDtoMapper;
+    private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
     public TempNewsArticleWriteRepository(
         ILogger<TempNewsArticleWriteRepository> logger,
         CosmosClient cosmosClient,
-        IMapper<NewsArticle, NewsArticleDTO> entityToDtoMapper)
+        IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosClient);
@@ -32,17 +32,33 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
+#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
         try
         {
-            NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
 
             Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
-            await container.CreateItemAsync(newsArticleDto, new PartitionKey(newsArticleDto.Id));
+            await container.CreateItemAsync(newsArticleDto, new PartitionKey(7));
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosDB error occurred while creating a news article: {Message}", ex.Message);
+            _logger.LogCritical(ex, "CosmosException in CreateNewsArticleAsync.");
             throw;
         }
     }
+
+    public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
+    {
+        try
+        {
+            Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
+            await container.DeleteItemAsync<NewsArticleDto>(id.Value, new PartitionKey(7));
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in DeleteNewsArticleAsync.");
+            throw;
+        }
+    }
+#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
 }

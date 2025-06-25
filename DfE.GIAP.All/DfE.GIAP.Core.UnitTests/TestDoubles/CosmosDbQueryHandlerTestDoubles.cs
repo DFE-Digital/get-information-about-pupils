@@ -7,12 +7,12 @@ internal static class CosmosDbQueryHandlerTestDoubles
 {
     internal static Mock<ICosmosDbQueryHandler> Default() => new();
 
-    internal static Mock<ICosmosDbQueryHandler> MockForGetNewsArticleById(Func<NewsArticleDTO> handler)
+    internal static Mock<ICosmosDbQueryHandler> MockForGetNewsArticleById(Func<NewsArticleDto> handler)
     {
         Mock<ICosmosDbQueryHandler> mockHandler = Default();
 
         mockHandler
-            .Setup(t => t.ReadItemByIdAsync<NewsArticleDTO>(
+            .Setup(t => t.ReadItemByIdAsync<NewsArticleDto>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -22,12 +22,12 @@ internal static class CosmosDbQueryHandlerTestDoubles
         return mockHandler;
     }
 
-    internal static Mock<ICosmosDbQueryHandler> MockForGetNewsArticles(Func<IEnumerable<NewsArticleDTO>> handler)
+    internal static Mock<ICosmosDbQueryHandler> MockForGetNewsArticles(Func<IEnumerable<NewsArticleDto>> handler)
     {
         Mock<ICosmosDbQueryHandler> mockHandler = Default();
 
         mockHandler
-            .Setup(t => t.ReadItemsAsync<NewsArticleDTO>(
+            .Setup(t => t.ReadItemsAsync<NewsArticleDto>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))

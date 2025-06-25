@@ -185,7 +185,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
             IsSAT = User.IsOrganisationSingleAcademyTrust()
         };
 
-        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecryptUpn(model.SelectedPupils) : model.SelectedPupils;
+        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
         var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
 
         var downloadFile = await _downloadService.GetPupilPremiumCSVFile(new string[] { selectedPupil }, sortOrder, model.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven,

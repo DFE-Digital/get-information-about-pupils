@@ -16,7 +16,7 @@ internal static class OptionsTestDoubles
     internal static IOptions<T> WithValue<T>(T? value) where T : class
     {
         Mock<IOptions<T>> mock = new();
-        mock.Setup(t => t.Value).Returns(value).Verifiable();
+        mock.Setup(t => t.Value).Returns(value!).Verifiable();
         return mock.Object;
     }
 }

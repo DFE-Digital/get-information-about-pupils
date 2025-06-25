@@ -23,10 +23,12 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public void CosmosDbContentReadOnlyRepository_Constructor_ThrowsNullException_When_CreatedWithNull_Logger()
     {
         // Arrange
+#pragma warning disable CA1806 // Do not ignore method results
         Action construct = () => new CosmosDbContentReadOnlyRepository(
             logger: null!,
             contentDtoToContentMapper: _mockMapper.Object,
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
+#pragma warning restore CA1806 // Do not ignore method results
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -36,10 +38,12 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public void CosmosDbContentReadOnlyRepository_Constructor_ThrowsNullException_When_CreatedWithNull_Mapper()
     {
         // Arrange
+#pragma warning disable CA1806 // Do not ignore method results
         Action construct = () => new CosmosDbContentReadOnlyRepository(
             logger: _mockLogger,
             contentDtoToContentMapper: null!,
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
+#pragma warning restore CA1806 // Do not ignore method results
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -49,10 +53,12 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public void CosmosDbContentReadOnlyRepository_Constructor_ThrowsNullException_When_CreatedWithNull_CosmosQueryHandler()
     {
         // Arrange
+#pragma warning disable CA1806 // Do not ignore method results
         Action construct = () => new CosmosDbContentReadOnlyRepository(
             logger: _mockLogger,
             contentDtoToContentMapper: _mockMapper.Object,
             cosmosDbQueryHandler: null!);
+#pragma warning restore CA1806 // Do not ignore method results
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -111,8 +117,8 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
 
         Content expectedOutputContent = new()
         {
-            Title = contentDto.Title,
-            Body = contentDto.Body
+            Title = contentDto.Title!,
+            Body = contentDto.Body!
         };
 
         _mockCosmosDbQueryHandler

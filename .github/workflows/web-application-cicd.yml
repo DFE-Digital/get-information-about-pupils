@@ -61,6 +61,8 @@ jobs:
           java-version: '17'
 
       - name: Start SonarCloud Scanner
+        # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+        if: github.actor != 'dependabot[bot]'
         shell: bash
         run: |
           dotnet tool run dotnet-sonarscanner begin \
@@ -117,7 +119,8 @@ jobs:
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
 
       - name: End SonarCloud Scanner
-        if: always()
+        # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+        if: ${{ github.actor != 'dependabot[bot]' && always() }}
         shell: bash
         run: dotnet tool run dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 

@@ -4,12 +4,11 @@ using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.NewsArticles;
@@ -36,7 +35,8 @@ public static class CompositionRoot
         return services
             .AddScoped<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>, GetNewsArticlesUseCase>()
             .AddScoped<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>, GetNewsArticleByIdUseCase>()
-            .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>();
+            .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>()
+            .AddScoped<IUseCaseRequestOnly<DeleteNewsArticleRequest>, DeleteNewsArticleUseCase>();
     }
 
     // Infrastructure 
@@ -58,7 +58,7 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
     {
         return services
-            .AddScoped<IMapper<NewsArticleDTO, NewsArticle>, NewsArticleDtoToEntityMapper>()
-            .AddScoped<IMapper<NewsArticle, NewsArticleDTO>, NewsArticleEntityToDtoMapper>();
+            .AddScoped<IMapper<NewsArticleDto, NewsArticle>, NewsArticleDtoToEntityMapper>()
+            .AddScoped<IMapper<NewsArticle, NewsArticleDto>, NewsArticleEntityToDtoMapper>();
     }
 }

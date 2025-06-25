@@ -8,5 +8,5 @@ public sealed class PageContentOption
     /// <summary>
     /// Gets or sets the ID of the document associated with the page.
     /// </summary>
-    public string DocumentId { get; set; }
+    public string? DocumentId { get; set; } // TODO validate PostConfigure
 }

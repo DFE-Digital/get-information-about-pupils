@@ -18,12 +18,12 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
     private const string ContainerName = "news";
     private readonly ILogger<CosmosNewsArticleWriteRepository> _logger;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
-    private readonly IMapper<NewsArticle, NewsArticleDTO> _entityToDtoMapper;
+    private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
     public CosmosNewsArticleWriteRepository(
         ILogger<CosmosNewsArticleWriteRepository> logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
-        IMapper<NewsArticle, NewsArticleDTO> entityToDtoMapper)
+        IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbCommandHandler);
@@ -33,26 +33,25 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         _entityToDtoMapper = entityToDtoMapper;
     }
 
-
     /// <summary>
-    /// Creates a new news article in the database.
+    /// Asynchronously creates a new news article in the database.
     /// </summary>
-    /// <remarks>This method attempts to create a new news article in the database using the provided <see
-    /// cref="NewsArticle"/> object. If a database error occurs, the method logs the error and returns <see
-    /// langword="null"/>.</remarks>
-    /// <param name="newsArticle">The <see cref="NewsArticle"/> object to be created. Must not be <see langword="null"/>.</param>
-    /// <returns>The <see cref="NewsArticle"/> object that was successfully created, or <see langword="null"/> if the operation
-    /// failed.</returns>
-    /// <exception cref="ArgumentException">Thrown if <paramref name="newsArticle"/> is <see langword="null"/>.</exception>
+    /// <remarks>This method maps the provided <see cref="NewsArticle"/> object to a data transfer object
+    /// (DTO) and stores it in the database. If the operation fails due to a database error, a <see
+    /// cref="CosmosException"/> is thrown.</remarks>
+    /// <param name="newsArticle">The <see cref="NewsArticle"/> object representing the news article to be created. The <see
+    /// cref="NewsArticle.Title"/> and <see cref="NewsArticle.Body"/> properties must not be null or whitespace.</param>
+    /// <returns></returns>
     public async Task CreateNewsArticleAsync(NewsArticle newsArticle)
     {
         ArgumentNullException.ThrowIfNull(newsArticle);
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
+#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
         try
         {
-            NewsArticleDTO newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
             await _cosmosDbCommandHandler.CreateItemAsync(newsArticleDto, ContainerName, newsArticleDto.Id);
         }
         catch (CosmosException ex)
@@ -61,4 +60,24 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
             throw;
         }
     }
+
+
+    /// <summary>
+    /// Deletes a news article from the database asynchronously.
+    /// </summary>
+    /// <param name="id">The identifier of the news article to delete. Cannot be <see langword="null"/>.</param>
+    /// <returns>A task that represents the asynchronous delete operation.</returns>
+    public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
+    {
+        try
+        {
+            await _cosmosDbCommandHandler.DeleteItemAsync<NewsArticleDto>(id.Value, ContainerName, id.Value);
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in DeleteNewsArticleAsync.");
+            throw;
+        }
+    }
+#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
 }
