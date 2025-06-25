@@ -3,7 +3,7 @@
     ViewBag.Title = "Security reports by school";
 }
 
-@Html.ActionLink("Back", "SecurityReportsBySchool", "Admin", null, new { id = "admin-dashboard--security-reports-by-school-establishment-selection--back-link", Class = "govuk-back-link govuk-link" })
+<partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
 
 <form method="post">
     <div class="govuk-fieldset">
