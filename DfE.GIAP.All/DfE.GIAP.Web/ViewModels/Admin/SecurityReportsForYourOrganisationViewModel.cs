@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Web.ViewModels.Admin.SecurityReports;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.GIAP.Web.ViewModels.Admin;
