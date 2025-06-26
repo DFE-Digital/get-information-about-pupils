@@ -311,14 +311,14 @@ public class ManageDocumentsController : Controller
         await _updateNewsArticleUseCase.HandleRequestAsync(
             new UpdateNewsArticleRequest(updatedArticle));
 
-        ConfirmationViewModel model = new()
+        manageDocumentsModel.Confirmation = new()
         {
             Title = ArticleSuccessMessages.UpdateTitle,
             Body = ArticleSuccessMessages.UpdateBody,
         };
 
         ModelState.Clear();
-        return View("../Admin/ManageDocuments/Confirmation", model);
+        return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
     }
 
 
