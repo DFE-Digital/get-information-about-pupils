@@ -296,6 +296,11 @@ public class ManageDocumentsController : Controller
     [Route(Routes.ManageDocument.UpdateNewsAricle)]
     public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
+        // TODO: Change to use specific view models, move away from "ManageDocumentsViewModel"
+        if (!ModelState.IsValid)
+            return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
+
+        // TODO: Porbably change to specific data for request, instead of NewsArticle
         NewsArticle updatedArticle = new()
         {
             Id = NewsArticleIdentifier.From(manageDocumentsModel.NewsArticle.Id),
@@ -311,6 +316,7 @@ public class ManageDocumentsController : Controller
         await _updateNewsArticleUseCase.HandleRequestAsync(
             new UpdateNewsArticleRequest(updatedArticle));
 
+        // Change to speciifc confirmation view model
         manageDocumentsModel.Confirmation = new()
         {
             Title = ArticleSuccessMessages.UpdateTitle,
