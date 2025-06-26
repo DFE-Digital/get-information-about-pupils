@@ -251,49 +251,56 @@ public class ManageDocumentsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
+    public IActionResult SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
         if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
         {
             manageDocumentsModel.HasInvalidNewsList = true;
             ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.NewsArticleRequired);
+            return View("YourViewName", manageDocumentsModel);
         }
 
-        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
-            new GetNewsArticleByIdRequest(manageDocumentsModel.SelectedNewsId));
+        TempData["SelectedNewsId"] = manageDocumentsModel.SelectedNewsId;
+        return RedirectToAction("EditNewsArticle");
+    }
 
-        // TODO: Handle if response is null
+    [HttpGet]
+    [Route(Routes.ManageDocument.EditNewsAricle)]
+    public async Task<IActionResult> EditNewsArticle()
+    {
+        string selectedNewsId = TempData["SelectedNewsId"].ToString();
+
+        if (string.IsNullOrEmpty(selectedNewsId))
+            ArgumentException.ThrowIfNullOrEmpty(selectedNewsId);
+
+        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
+            new GetNewsArticleByIdRequest(selectedNewsId));
+
         if (response.NewsArticle is null)
             ArgumentNullException.ThrowIfNull(response.NewsArticle);
 
-        // TODO: Remove this later
-        manageDocumentsModel.DocumentData = new CommonResponseBodyViewModel
+        ManageDocumentsViewModel manageDocumentsModel = new()
         {
-            Id = response.NewsArticle.Id.Value,
-            Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
-            Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
-            Pinned = response.NewsArticle.Pinned,
-            Published = response.NewsArticle.Published,
-            Archived = response.NewsArticle.Archived
-        };
-
-        manageDocumentsModel.NewsArticle = new NewsArticleViewModel
-        {
-            Id = response.NewsArticle.Id.Value,
-            Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
-            Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
-            Pinned = response.NewsArticle.Pinned,
-            Published = response.NewsArticle.Published,
-            Archived = response.NewsArticle.Archived,
-            CreatedDate = response.NewsArticle.CreatedDate,
-            ModifiedDate = response.NewsArticle.ModifiedDate
+            SelectedNewsId = selectedNewsId,
+            NewsArticle = new NewsArticleViewModel
+            {
+                Id = response.NewsArticle.Id.Value,
+                Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
+                Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
+                Pinned = response.NewsArticle.Pinned,
+                Published = response.NewsArticle.Published,
+                Archived = response.NewsArticle.Archived,
+                CreatedDate = response.NewsArticle.CreatedDate,
+                ModifiedDate = response.NewsArticle.ModifiedDate
+            }
         };
 
         return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
     }
 
+
     [HttpPost]
-    [Route(Routes.ManageDocument.UpdateNewsAricle)]
+    [Route(Routes.ManageDocument.EditNewsAricle)]
     public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
     {
         // TODO: Change to use specific view models, move away from "ManageDocumentsViewModel"

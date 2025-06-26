@@ -60,7 +60,7 @@ public static class Routes
 
         public const string CreateNewsArticle = "manage-documents/article/create";
         public const string DeleteNewsArticle = "manage-documents/article/delete";
-        public const string UpdateNewsAricle = "manage-documents/article/update";
+        public const string EditNewsAricle = "manage-documents/article/edit";
     }
 
     public static class PrePreparedDownloads
