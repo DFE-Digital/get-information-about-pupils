@@ -43,7 +43,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <!--
+    The following target ensures that front-end assets are always up to date when building the project.
+    - Runs 'npm install' if node_modules does not exist, to install JS dependencies for local development.
+    - Runs 'gulp' to build/minify JS and CSS assets before the .NET build.
+    Note: In CI, 'npm ci' is used for a clean, reproducible install. Locally, 'npm install' is faster and more forgiving.
+    The two calls (here and in CI/GitHub Actions) can co-exist due to the the msbuild task checking if `node_modules` exists before running the developer-friendly `npm install`.
+  -->
   <Target Name="RunGulp" BeforeTargets="Build">
+    <Exec Command="npm install" WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ProjectDir)package.json') And !Exists('$(ProjectDir)node_modules')" />
     <Exec Command="gulp" WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ProjectDir)gulpfile.js')" />
   </Target>
 </Project>
