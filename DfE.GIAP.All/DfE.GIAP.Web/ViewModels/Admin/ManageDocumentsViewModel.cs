@@ -1,5 +1,7 @@
-﻿using DfE.GIAP.Core.Models.Editor;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Common.Constants.Messages.Common;
+using DfE.GIAP.Core.Models.Editor;
 
 namespace DfE.GIAP.Web.ViewModels.Admin
 {
@@ -24,6 +26,26 @@ namespace DfE.GIAP.Web.ViewModels.Admin
 
         public string ErrorDetails { get; set; }
 
+        public NewsArticleViewModel NewsArticle { get; set; }
+
         public BackButtonViewModel BackButton { get; set; }
+    }
+
+    public class NewsArticleViewModel
+    {
+        public string Id { get; set; }
+
+        [Required(ErrorMessage = CommonErrorMessages.TitleRequired)]
+        [MaxLength(64, ErrorMessage = CommonErrorMessages.TitleLength)]
+        public string Title { get; set; }
+
+        [Required(ErrorMessage = CommonErrorMessages.BodyRequired)]
+        public string Body { get; set; }
+
+        public bool Pinned { get; set; }
+        public bool Published { get; set; }
+        public bool Archived { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime ModifiedDate { get; set; }
     }
 }

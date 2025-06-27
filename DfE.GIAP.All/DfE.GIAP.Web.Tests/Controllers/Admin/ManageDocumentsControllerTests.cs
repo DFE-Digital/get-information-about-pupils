@@ -344,7 +344,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         string editDocument = "EditDocument";
 
         // Act
-        IActionResult result = await controller.EditNewsArticle(model, editDocument).ConfigureAwait(false);
+        IActionResult result = await controller.UpdateNewsArticle(model, editDocument).ConfigureAwait(false);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);

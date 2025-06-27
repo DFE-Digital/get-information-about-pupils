@@ -9,8 +9,8 @@ public record NewsArticleDto
     public required string Id { get; set; }
     public required string Title { get; set; }
     public required string Body { get; set; }
-    public required string DraftBody { get; set; }
-    public required string DraftTitle { get; set; }
+    public string? DraftBody { get; set; }
+    public string? DraftTitle { get; set; }
     public bool Published { get; set; }
     public bool Archived { get; set; }
     public bool Pinned { get; set; }
