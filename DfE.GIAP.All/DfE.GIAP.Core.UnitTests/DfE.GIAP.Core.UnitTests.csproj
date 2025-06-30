@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DfE.GIAP.Core.SharedTests\DfE.GIAP.Core.SharedTests.csproj" />
     <ProjectReference Include="..\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
+    <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
