@@ -1,23 +1,25 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Service.Content;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Web.ViewModels.Helper;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
-using DfE.GIAP.Core.Models.Common;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class AccessibilityController : Controller
 {
-    private readonly IContentService _contentService;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel> _contentResponseToViewModelMapper;
 
-    public AccessibilityController(IContentService contentService)
+    public AccessibilityController(
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel> mapper)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
+        ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
+        ArgumentNullException.ThrowIfNull(mapper);
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase;
+        _contentResponseToViewModelMapper = mapper;
     }
 
 
@@ -25,26 +27,47 @@ public class AccessibilityController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        CommonResponseBody results = await _contentService.GetContent(DocumentType.Accessibility).ConfigureAwait(false);
+        const string accessibilityPageKey = "AccessibilityReport";
 
-        var model = new AccessibilityViewModel
-        {
-            Response = results.ConvertToViewModel()
-        };
+        GetContentByPageKeyUseCaseResponse response =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: accessibilityPageKey));
 
-        return View(model);
+        return ToViewResult(accessibilityPageKey, response);
     }
 
     [HttpGet]
     public async Task<IActionResult> Report()
     {
-        var results = await _contentService.GetContent(DocumentType.AccessibilityReport).ConfigureAwait(false);
+        const string accessibilityReportPageKey = "AccessibilityReport";
 
-        var model = new AccessibilityViewModel
+        GetContentByPageKeyUseCaseResponse response =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: accessibilityReportPageKey));
+
+        return ToViewResult(accessibilityReportPageKey, response);
+    }
+
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    {
+        if (response.Content == null)
         {
-            Response = results.ConvertToViewModel()
-        };
+            throw new ArgumentException($"Unable to find content with key {pageKey}");
+        }
 
+        AccessibilityViewModel model = _contentResponseToViewModelMapper.Map(response);
         return View(model);
+    }
+}
+
+
+internal sealed class ContentByPageKeyResponseToAccessibilityViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>
+{
+    public AccessibilityViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    {
+        return new AccessibilityViewModel()
+        {
+            Response = input.Content
+        };
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Contents.Application.Models;
 
-namespace DfE.GIAP.Web.ViewModels
+namespace DfE.GIAP.Web.ViewModels;
+
+[ExcludeFromCodeCoverage]
+public class AccessibilityViewModel
 {
-    [ExcludeFromCodeCoverage]
-    public class AccessibilityViewModel
-    {
-        public CommonResponseBodyViewModel Response { get; set; }
-    }
+    public Content Response { get; set; }
 }
