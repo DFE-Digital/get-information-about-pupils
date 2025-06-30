@@ -16,7 +16,7 @@ public sealed class PageContentOptionsProviderTests
     [Fact]
     public void PageOptionsContentProvider_Constructor_ThrowsNullException_When_CreatedWithNullOptionsValue()
     {
-        IOptions<PageContentOptions> nullValueOptions = OptionsTestDoubles.WithNullValue<PageContentOptions>();
+        IOptions<PageContentOptions> nullValueOptions = OptionsTestDoubles.ConfigureOptionsWithNullValue<PageContentOptions>();
         Action construct = () => new PageContentOptionProvider(nullValueOptions);
         Assert.Throws<ArgumentNullException>(construct);
     }

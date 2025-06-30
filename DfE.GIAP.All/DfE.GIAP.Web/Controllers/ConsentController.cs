@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Helpers.CookieManager;
-using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Service.Content;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Consent;
@@ -18,20 +15,22 @@ namespace DfE.GIAP.Web.Controllers;
 [Route(Routes.Application.Consent)]
 public class ConsentController : Controller
 {
-    private readonly IContentService _contentService;
     private readonly ICookieManager _cookieManager;
     private readonly AzureAppSettings _azureAppSettings;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
 
     public ConsentController(
         IOptions<AzureAppSettings> azureAppSettings,
-        IContentService contentService,
-        ICookieManager cookieManager)
+        ICookieManager cookieManager,
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
-        _cookieManager = cookieManager ??
-            throw new ArgumentNullException(nameof(cookieManager));
-        _azureAppSettings = azureAppSettings?.Value;
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
+        ArgumentNullException.ThrowIfNull(cookieManager);
+        ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
+        _azureAppSettings = azureAppSettings.Value;
+        _cookieManager = cookieManager;
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase;
     }
 
 
@@ -44,13 +43,23 @@ public class ConsentController : Controller
             _cookieManager.Set(CookieKeys.GIAPSessionId, User.GetSessionId());
         }
 
-        CommonResponseBody consentResponse = await _contentService.GetContent(DocumentType.Consent).ConfigureAwait(false);
-        ConsentViewModel model = new()
+        const string contentPageKey = "Consent";
+
+        GetContentByPageKeyUseCaseResponse response =
+            await _getContentByPageKeyUseCase.HandleRequestAsync(
+                new GetContentByPageKeyUseCaseRequest(pageKey: contentPageKey));
+
+        if (response.Content is null)
         {
-            Response = consentResponse
+            throw new ArgumentException($"Could not find content for pageKey: {contentPageKey}");
+        }
+
+        ConsentViewModel viewModel = new()
+        {
+            Response = response.Content
         };
 
-        return View(model);
+        return View(viewModel);
     }
 
     [AllowWithoutConsent]

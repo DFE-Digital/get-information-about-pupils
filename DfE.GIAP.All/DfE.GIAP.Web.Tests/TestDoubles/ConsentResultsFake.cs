@@ -1,16 +1,19 @@
-﻿using DfE.GIAP.Core.Models.Common;
+﻿using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Web.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles
+namespace DfE.GIAP.Web.Tests.TestDoubles;
+
+public class ConsentResultsFake
 {
-    public class ConsentResultsFake
+    public ConsentViewModel GetConsent()
     {
-        public ConsentViewModel GetConsent()
+        return new ConsentViewModel()
         {
-            return new ConsentViewModel() { Response = new CommonResponseBody() { Title = "test Title", Body = "test Body" } };
-        }
+            Response = new Content()
+            {
+                Title = "test Title",
+                Body = "test Body"
+            }
+        };
     }
 }
