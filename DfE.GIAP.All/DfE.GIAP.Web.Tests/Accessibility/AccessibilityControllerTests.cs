@@ -15,7 +15,6 @@ namespace DfE.GIAP.Web.Tests.Accessibility;
 [Trait("Category", "Accessibility Controller Unit Tests")]
 public sealed class AccessibilityControllerTests
 {
-#pragma warning disable CA1806 // Do not ignore method results
 
     [Fact]
     public void AccessibilityController_Throws_When_ConstructedWithNullArgs_UseCase()
@@ -25,7 +24,7 @@ public sealed class AccessibilityControllerTests
             MapperTestDoubles.Default<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>();
 
         // Act
-        Action construct = () => new AccessibilityController(null!, mockMapper.Object);
+        Func<AccessibilityController> construct = () => new AccessibilityController(null!, mockMapper.Object);
 
         // Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -34,15 +33,13 @@ public sealed class AccessibilityControllerTests
     [Fact]
     public void AccessibilityController_Throws_When_ConstructedWithNullArgs_Mapper()
     {
-        // Arrange Act
+        // Arrange
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockUseCase = new();
-        Action construct = () => new AccessibilityController(_mockUseCase.Object, null!);
+        Func<AccessibilityController> construct = () => new AccessibilityController(_mockUseCase.Object, null!);
 
-        // Assert
+        // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
-
-#pragma warning restore CA1806
 
     [Fact]
     public async Task AccessibilityController_Index_Throws_When_ResponseContentIsNull()
