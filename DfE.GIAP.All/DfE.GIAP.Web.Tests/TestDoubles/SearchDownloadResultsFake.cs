@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Domain.Models.User;
 
-namespace DfE.GIAP.Web.Tests.FakeData
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class SearchDownloadResultsFake
     {

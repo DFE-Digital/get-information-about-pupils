@@ -61,10 +61,12 @@ public class AccessibilityController : Controller
 }
 
 
-internal sealed class ContentByPageKeyResponseToAccessibilityViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>
+internal sealed class GetContentByPageKeyResponseToAccessibilityViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>
 {
     public AccessibilityViewModel Map(GetContentByPageKeyUseCaseResponse input)
     {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(input.Content);
         return new AccessibilityViewModel()
         {
             Response = input.Content

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Consent;
 using DfE.GIAP.Web.Middleware;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using NSubstitute;

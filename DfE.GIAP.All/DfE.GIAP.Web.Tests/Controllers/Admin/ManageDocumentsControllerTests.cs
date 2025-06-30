@@ -19,7 +19,7 @@ using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.ManageDocument;
 using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Http;

@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Web.Tests.TestDoubles;
 
-namespace DfE.GIAP.Web.Tests.Controllers;
+namespace DfE.GIAP.Web.Tests.Accessibility;
 
 [Trait("Category", "Accessibility Controller Unit Tests")]
 public sealed class AccessibilityControllerTests
@@ -166,15 +167,4 @@ public sealed class AccessibilityControllerTests
         Assert.Equal(content.Title, viewModel.Response.Title);
         Assert.Equal(content.Body, viewModel.Response.Body);
     }
-}
-
-
-// TODO generate with Faker
-internal static class ContentTestDoubles
-{
-    internal static Content Default() => new()
-    {
-        Body = "Test body $%£%\"@{ \t \r \r\n }~",
-        Title = "Test $%£^£ £\" \' \t \r \r\n title"
-    };
 }

@@ -39,6 +39,9 @@
     <ProjectReference Include="..\DfE.GIAP.Service\DfE.GIAP.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="DfE.GIAP.Web.Tests"/>
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="logevents.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
