@@ -6,15 +6,31 @@ public static class OptionsTestDoubles
 {
     public static IOptions<T> Default<T>() where T : class, new()
     {
-        return WithValue(new T());
+        return ConfigureOptions(new T());
     }
 
-    public static IOptions<T> WithNullValue<T>() where T : class
+    public static IOptions<T> ConfigureOptionsWithNullValue<T>() where T : class
     {
-        return WithValue<T>(null);
+        return ConfigureOptions<T>(value: null);
     }
 
-    public static IOptions<T> WithValue<T>(T? value) where T : class
+    public static IOptions<T> ConfigureOptions<T>(Action<T> configure) where T : class, new()
+    {
+        Mock<IOptions<T>> mock = new();
+
+        mock.Setup((t) => t.Value)
+            .Returns(() =>
+            {
+                T configurable = new();
+                configure(configurable);
+                return configurable;
+            })
+            .Verifiable();
+
+        return mock.Object;
+    }
+
+    private static IOptions<T> ConfigureOptions<T>(T? value) where T : class
     {
         Mock<IOptions<T>> mock = new();
         mock.Setup(t => t.Value).Returns(value!).Verifiable();

@@ -1,81 +1,49 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using DfE.GIAP.Common.Constants.AzureFunction;
+using Microsoft.AspNetCore.Http;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles
+namespace DfE.GIAP.Web.Tests.TestDoubles;
+
+public class TestSession : ISession
 {
-    public class TestSession : ISession
+
+    public TestSession()
     {
+        Values = [];
+    }
 
-        public TestSession()
+    public string Id => HeaderDetails.SessionId;
+
+    public bool IsAvailable => true;
+
+    public IEnumerable<string> Keys => Values.Keys;
+
+    public Dictionary<string, byte[]> Values { get; set; }
+
+    public void Clear() => Values.Clear();
+
+    public Task CommitAsync(CancellationToken token) => throw new NotImplementedException();
+
+    public Task LoadAsync(CancellationToken token) => throw new NotImplementedException();
+
+    public void Remove(string key) => Values.Remove(key);
+
+    public void Set(string key, byte[] value)
+    {
+        if (Values.ContainsKey(key))
         {
-            Values = new Dictionary<string, byte[]>();
+            Remove(key);
         }
+        Values.Add(key, value);
+    }
 
-        public string Id
+    public bool TryGetValue(string key, out byte[] value)
+    {
+        if (Values.TryGetValue(key, out byte[]? output))
         {
-            get
-            {
-                return "session_id";
-            }
+            value = output;
+            return true;
         }
-
-        public bool IsAvailable
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public IEnumerable<string> Keys
-        {
-            get { return Values.Keys; }
-        }
-
-        public Dictionary<string, byte[]> Values { get; set; }
-
-        public void Clear()
-        {
-            Values.Clear();
-        }
-
-        public Task CommitAsync(CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task LoadAsync(CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(string key)
-        {
-            Values.Remove(key);
-        }
-
-        public void Set(string key, byte[] value)
-        {
-            if (Values.ContainsKey(key))
-            {
-                Remove(key);
-            }
-            Values.Add(key, value);
-        }
-
-        public bool TryGetValue(string key, out byte[] value)
-        {
-            if (Values.ContainsKey(key))
-            {
-                value = Values[key];
-                return true;
-            }
-            value = new byte[0];
-            return false;
-        }
+        value = [];
+        return false;
     }
 }
