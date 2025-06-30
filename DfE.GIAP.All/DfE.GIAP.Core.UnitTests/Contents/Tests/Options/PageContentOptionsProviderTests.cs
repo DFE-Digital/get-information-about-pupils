@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Contents.Application.Options;
 using DfE.GIAP.Core.Contents.Application.Options.Provider;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.Contents.Tests.Options;

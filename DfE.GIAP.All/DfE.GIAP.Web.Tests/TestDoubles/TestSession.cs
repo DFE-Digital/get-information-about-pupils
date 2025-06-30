@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Web.Tests.FakeData
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class TestSession : ISession
     {

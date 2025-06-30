@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Mime;
 
-namespace DfE.GIAP.Web.Tests.FakeData
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class GlossaryResultsFake
     {

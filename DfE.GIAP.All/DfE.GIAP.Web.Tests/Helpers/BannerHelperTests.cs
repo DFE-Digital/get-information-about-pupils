@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Service.Common;
 using DfE.GIAP.Web.Helpers.Banner;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NSubstitute;

@@ -27,5 +27,6 @@
     <ProjectReference Include="..\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
     <ProjectReference Include="..\DfE.GIAP.Service.Tests\DfE.GIAP.Service.Tests.csproj" />
     <ProjectReference Include="..\DfE.GIAP.Web\DfE.GIAP.Web.csproj" />
+    <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
 </Project>

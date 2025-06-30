@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Web.ViewModels;
 
-namespace DfE.GIAP.Web.Tests.FakeData
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class TermsResultsFake
     {

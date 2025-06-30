@@ -4,7 +4,7 @@ using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Web.Controllers.PreparedDownload;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

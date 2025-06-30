@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.Core.IntegrationTests", "DfE.GIAP.Core.IntegrationTests\DfE.GIAP.Core.IntegrationTests.csproj", "{34AF712D-4FC3-46E7-99F2-1912511DDD14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.Core.SharedTests", "DfE.GIAP.Core.SharedTests\DfE.GIAP.Core.SharedTests.csproj", "{AC4D6F4C-AA0E-4DB2-A2C6-944B1F7ABA90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.SharedTests", "DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj", "{AC4D6F4C-AA0E-4DB2-A2C6-944B1F7ABA90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

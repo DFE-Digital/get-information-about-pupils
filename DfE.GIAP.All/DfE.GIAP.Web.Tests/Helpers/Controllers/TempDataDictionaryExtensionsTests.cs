@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.Helpers.Controllers;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using NSubstitute;

@@ -4,7 +4,7 @@ using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Controllers.Admin;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Admin.SecurityReports;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

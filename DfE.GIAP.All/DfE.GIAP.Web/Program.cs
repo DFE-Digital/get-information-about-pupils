@@ -1,15 +1,11 @@
-using System;
 using System.Security.Cryptography;
 using DfE.GIAP.Common.Helpers.HostEnvironment;
-using DfE.GIAP.Web.Middleware;
-using DfE.GIAP.Web.Extensions.Startup;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using DfE.GIAP.Core.NewsArticles;
-using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Contents;
+using DfE.GIAP.Core.NewsArticles;
+using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Web.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +20,7 @@ builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
     .AddContentDependencies()
+    .AddContentPresentation()
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
