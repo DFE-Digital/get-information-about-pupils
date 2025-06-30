@@ -191,6 +191,9 @@ public sealed class ConsentControllerTests
                 It.IsAny<int>(),
                 It.IsAny<CookieOptions>()),
             Times.Never);
+
+        mockUseCase.Verify(
+            (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
     }
 
     // TODO current consent controller does not guard for null ConsentController.PostIndex -> ConsentViewModel
