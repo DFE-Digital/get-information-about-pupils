@@ -27,7 +27,7 @@ public class AccessibilityController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        const string accessibilityPageKey = "AccessibilityReport";
+        const string accessibilityPageKey = "Accessibility";
 
         GetContentByPageKeyUseCaseResponse response =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
