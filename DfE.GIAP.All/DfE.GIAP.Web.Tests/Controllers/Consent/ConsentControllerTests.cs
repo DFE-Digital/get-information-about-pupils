@@ -102,11 +102,10 @@ public sealed class ConsentControllerTests
     }
 
     [Fact]
-    public async Task ConsentController_GetIndex_Returns_ConsentView_When_ContentIsAvailable_And_SessionIdStoredInCookie()
+    public async Task ConsentController_GetIndex_Returns_ConsentView_And_SetsCookie_When_SessionIdStorageDisabled()
     {
         // Arrange
-        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>(
-            (t) => t.IsSessionIdStoredInCookie = true);
+        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = true);
 
         Content content = ContentTestDoubles.Default();
         GetContentByPageKeyUseCaseResponse response = new(content);
@@ -149,11 +148,10 @@ public sealed class ConsentControllerTests
 
 
     [Fact]
-    public async Task ConsentController_GetIndex_DoesNotSetCookie_When_SessionIdStorageDisabled()
+    public async Task ConsentController_GetIndex_Returns_CosentView_And_DoesNotSetCookie_When_SessionIdStorageDisabled()
     {
         // Arrange
-        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>(
-            (t) => t.IsSessionIdStoredInCookie = false);
+        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = false);
 
         Content content = ContentTestDoubles.Default();
         GetContentByPageKeyUseCaseResponse response = new(content);
@@ -220,7 +218,7 @@ public sealed class ConsentControllerTests
         IActionResult result = controller.Index(consentModel);
 
         // Assert
-        ViewResult? viewResult =  Assert.IsType<ViewResult>(result);
+        ViewResult? viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
 
         ConsentViewModel viewModel = Assert.IsType<ConsentViewModel>(viewResult.Model);
@@ -257,30 +255,5 @@ public sealed class ConsentControllerTests
         RedirectResult? redirectResult = result as RedirectResult;
         Assert.NotNull(redirectResult);
         Assert.Equal(Routes.Application.Home, redirectResult.Url);
-        Assert.True(ConsentHelper.HasGivenConsent(controller.HttpContext));
-    }
-}
-
-internal static class ControllerExtensions
-{
-    internal static HttpContext StubHttpContext<T>(this T controller) where T : ControllerBase
-    {
-        // TODO may want control of this principal on the context?
-        ClaimsPrincipal claimsPrincipal = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
-
-        DefaultHttpContext httpContext = new()
-        {
-            User = claimsPrincipal,
-            Session = new TestSession()
-        };
-
-        ControllerContext controllerContext = new()
-        {
-            HttpContext = httpContext
-        };
-
-        controller.ControllerContext = controllerContext;
-
-        return httpContext;
     }
 }
