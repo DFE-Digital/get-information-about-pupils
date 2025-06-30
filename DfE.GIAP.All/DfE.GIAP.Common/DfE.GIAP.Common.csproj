@@ -7,10 +7,10 @@
     <UserSecretsId>b300c832-5cf0-4b28-b80b-5076cf01fc84</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="HtmlSanitizer" Version="9.0.876" />
+    <PackageReference Include="HtmlSanitizer" Version="9.0.886" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>
