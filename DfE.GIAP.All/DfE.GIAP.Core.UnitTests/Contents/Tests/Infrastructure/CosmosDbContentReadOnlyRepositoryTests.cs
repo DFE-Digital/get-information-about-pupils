@@ -23,8 +23,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public void CosmosDbContentReadOnlyRepository_Constructor_ThrowsNullException_When_CreatedWithNull_Logger()
     {
         // Arrange
-#pragma warning disable CA1806 // Do not ignore method results
-        Action construct = () => new CosmosDbContentReadOnlyRepository(
+        Func<CosmosDbContentReadOnlyRepository> construct = () => new CosmosDbContentReadOnlyRepository(
             logger: null!,
             contentDtoToContentMapper: _mockMapper.Object,
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
@@ -37,7 +36,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public void CosmosDbContentReadOnlyRepository_Constructor_ThrowsNullException_When_CreatedWithNull_Mapper()
     {
         // Arrange
-        Action construct = () => new CosmosDbContentReadOnlyRepository(
+        Func<CosmosDbContentReadOnlyRepository> construct = () => new CosmosDbContentReadOnlyRepository(
             logger: _mockLogger,
             contentDtoToContentMapper: null!,
             cosmosDbQueryHandler: _mockCosmosDbQueryHandler.Object);
@@ -50,7 +49,7 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
     public void CosmosDbContentReadOnlyRepository_Constructor_ThrowsNullException_When_CreatedWithNull_CosmosQueryHandler()
     {
         // Arrange
-        Action construct = () => new CosmosDbContentReadOnlyRepository(
+        Func<CosmosDbContentReadOnlyRepository> construct = () => new CosmosDbContentReadOnlyRepository(
             logger: _mockLogger,
             contentDtoToContentMapper: _mockMapper.Object,
             cosmosDbQueryHandler: null!);
@@ -58,7 +57,6 @@ public sealed class CosmosDbContentReadOnlyRepositoryTests
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
-#pragma warning restore CA1806 // Do not ignore method results
 
     [Fact]
     public async Task CosmosDbContentReadOnlyRepository_GetContentByIdAsync_Throws_When_NonCosmosExceptionOccurs()
