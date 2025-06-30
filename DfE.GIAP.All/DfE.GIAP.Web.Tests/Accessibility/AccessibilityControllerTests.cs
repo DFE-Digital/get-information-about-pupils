@@ -103,7 +103,7 @@ public sealed class AccessibilityControllerTests
 
         mockMapper.Verify(
             (t) => t.Map(
-                It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Once());
+                It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);
@@ -173,7 +173,7 @@ public sealed class AccessibilityControllerTests
 
         mockMapper.Verify(
             (t) => t.Map(
-                It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Once());
+                It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);
