@@ -7,9 +7,10 @@ public sealed class GetNewsArticleByIdUseCaseTests
     [Fact]
     public void Constructor_ThrowsNullException_When_CreatedWithNullRepository()
     {
-#pragma warning disable CA1806 // Do not ignore method results
-        Action construct = () => new GetNewsArticleByIdUseCase(newsArticleReadRepository: null!);
-#pragma warning restore CA1806 // Do not ignore method results
+        // Arrange
+        Func<GetNewsArticleByIdUseCase> construct = () => new GetNewsArticleByIdUseCase(newsArticleReadRepository: null!);
+
+        // Act
         Assert.Throws<ArgumentNullException>(construct);
     }
 
