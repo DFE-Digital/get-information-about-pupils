@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Helpers.CookieManager;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Contents.Application.Models;
@@ -8,7 +7,6 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Helpers.Consent;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
