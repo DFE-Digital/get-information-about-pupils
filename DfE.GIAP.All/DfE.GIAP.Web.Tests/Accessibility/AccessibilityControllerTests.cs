@@ -15,46 +15,55 @@ namespace DfE.GIAP.Web.Tests.Accessibility;
 [Trait("Category", "Accessibility Controller Unit Tests")]
 public sealed class AccessibilityControllerTests
 {
-    private readonly Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockUseCase = new();
-
 #pragma warning disable CA1806 // Do not ignore method results
+
     [Fact]
     public void AccessibilityController_Throws_When_ConstructedWithNullArgs_UseCase()
     {
+        // Arrange
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>> mockMapper =
             MapperTestDoubles.Default<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>();
 
+        // Act
         Action construct = () => new AccessibilityController(null!, mockMapper.Object);
 
+        // Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
 
     [Fact]
     public void AccessibilityController_Throws_When_ConstructedWithNullArgs_Mapper()
     {
+        // Arrange Act
+        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockUseCase = new();
         Action construct = () => new AccessibilityController(_mockUseCase.Object, null!);
+
+        // Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
-#pragma warning restore CA1806 // Do not ignore method results
 
+#pragma warning restore CA1806
 
     [Fact]
     public async Task AccessibilityController_Index_Throws_When_ResponseContentIsNull()
     {
+        // Arrange
         GetContentByPageKeyUseCaseResponse response = new(Content: null);
 
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>> mockMapper =
             MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>();
 
-        _mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
-        AccessibilityController sut = new(_mockUseCase.Object, mockMapper.Object);
+        AccessibilityController sut = new(mockUseCase.Object, mockMapper.Object);
 
+        // Act Assert
         await Assert.ThrowsAsync<ArgumentException>(async () => _ = await sut.Index());
 
-        _mockUseCase.Verify(
+        mockUseCase.Verify(
             (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
 
         mockMapper.Verify(t => t.Map(It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Never);
@@ -63,16 +72,17 @@ public sealed class AccessibilityControllerTests
     [Fact]
     public async Task AccessibilityController_Index_Returns_ViewModel_When_ContentReceived()
     {
+        // Arrange
         Content content = ContentTestDoubles.Default();
 
         GetContentByPageKeyUseCaseResponse response = new(content);
 
-        _mockUseCase.Setup(
+        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        mockUseCase.Setup(
             (t) => t.HandleRequestAsync(
                 It.IsAny<GetContentByPageKeyUseCaseRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
-
 
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>> mockMapper =
             MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>(
@@ -81,12 +91,13 @@ public sealed class AccessibilityControllerTests
                     Response = content
                 });
 
-        AccessibilityController sut = new(_mockUseCase.Object, mockMapper.Object);
+        AccessibilityController sut = new(mockUseCase.Object, mockMapper.Object);
 
+        // Act
         IActionResult result = await sut.Index();
 
         // Assert
-        _mockUseCase.Verify(
+        mockUseCase.Verify(
             (t) => t.HandleRequestAsync(
                 It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
 
@@ -106,20 +117,23 @@ public sealed class AccessibilityControllerTests
     [Fact]
     public async Task AccessibilityController_Report_Throws_When_ResponseContentIsNull()
     {
+        // Arrange
         GetContentByPageKeyUseCaseResponse response = new(Content: null);
 
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>> mockMapper =
             MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>();
 
-        _mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
-        AccessibilityController sut = new(_mockUseCase.Object, mockMapper.Object);
+        AccessibilityController sut = new(mockUseCase.Object, mockMapper.Object);
 
+        // Act Assert
         await Assert.ThrowsAsync<ArgumentException>(async () => _ = await sut.Report());
 
-        _mockUseCase.Verify(
+        mockUseCase.Verify(
             (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
 
         mockMapper.Verify(t => t.Map(It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Never);
@@ -128,16 +142,17 @@ public sealed class AccessibilityControllerTests
     [Fact]
     public async Task AccessibilityController_Report_Returns_ViewModel_When_ContentReceived()
     {
+        // Arrange
         Content content = ContentTestDoubles.Default();
 
         GetContentByPageKeyUseCaseResponse response = new(content);
 
-        _mockUseCase.Setup(
+        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        mockUseCase.Setup(
             (t) => t.HandleRequestAsync(
                 It.IsAny<GetContentByPageKeyUseCaseRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
-
 
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>> mockMapper =
             MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>(
@@ -146,12 +161,13 @@ public sealed class AccessibilityControllerTests
                     Response = content
                 });
 
-        AccessibilityController sut = new(_mockUseCase.Object, mockMapper.Object);
+        AccessibilityController sut = new(mockUseCase.Object, mockMapper.Object);
 
+        // Act
         IActionResult result = await sut.Report();
 
         // Assert
-        _mockUseCase.Verify(
+        mockUseCase.Verify(
             (t) => t.HandleRequestAsync(
                 It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
 
