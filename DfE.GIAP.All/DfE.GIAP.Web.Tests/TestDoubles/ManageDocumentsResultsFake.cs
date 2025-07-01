@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
 
-namespace DfE.GIAP.Web.Tests.FakeData
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class ManageDocumentsResultsFake
     {

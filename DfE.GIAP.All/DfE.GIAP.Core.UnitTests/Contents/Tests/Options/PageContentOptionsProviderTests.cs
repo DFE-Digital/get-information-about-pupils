@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Contents.Application.Options;
 using DfE.GIAP.Core.Contents.Application.Options.Provider;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.Contents.Tests.Options;
@@ -16,7 +16,7 @@ public sealed class PageContentOptionsProviderTests
     [Fact]
     public void PageOptionsContentProvider_Constructor_ThrowsNullException_When_CreatedWithNullOptionsValue()
     {
-        IOptions<PageContentOptions> nullValueOptions = OptionsTestDoubles.WithNullValue<PageContentOptions>();
+        IOptions<PageContentOptions> nullValueOptions = OptionsTestDoubles.ConfigureOptionsWithNullValue<PageContentOptions>();
         Action construct = () => new PageContentOptionProvider(nullValueOptions);
         Assert.Throws<ArgumentNullException>(construct);
     }

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Web.Helpers.Consent;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

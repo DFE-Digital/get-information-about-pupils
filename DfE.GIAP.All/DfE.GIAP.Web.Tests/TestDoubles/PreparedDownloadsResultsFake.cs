@@ -7,7 +7,7 @@ using System.IO;
 using System.Net.Mime;
 using System.Text;
 
-namespace DfE.GIAP.Web.Tests.FakeData
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class PreparedDownloadsResultsFake
     {

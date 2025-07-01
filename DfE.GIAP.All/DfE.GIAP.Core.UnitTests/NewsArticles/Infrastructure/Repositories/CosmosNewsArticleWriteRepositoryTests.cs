@@ -20,7 +20,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     public void Constructor_ThrowsNullException_When_ReceivesNullLogger()
     {
         // Arrange
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
 
         // Act & Assert
@@ -34,7 +34,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     public void Constructor_ThrowsNullException_When_ReceivesNullCommandHandler()
     {
         // Arrange
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleWriteRepository(
@@ -61,7 +61,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
             cosmosDbCommandHandler: mockCommandHandler.Object,
@@ -77,7 +77,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
             cosmosDbCommandHandler: mockCommandHandler.Object,
@@ -97,7 +97,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
             cosmosDbCommandHandler: mockCommandHandler.Object,
@@ -115,7 +115,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
             cosmosDbCommandHandler: mockCommandHandler.Object,
@@ -136,7 +136,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
             cosmosDbCommandHandler: mockCommandHandler.Object,
@@ -154,7 +154,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticle, NewsArticleDto>(() => throw new Exception("Test exception"));
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(() => throw new Exception("Test exception"));
 
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
@@ -180,7 +180,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.MockForCreateItemAsync(cosmosExceptionGenerator);
 
         NewsArticleDto? articleDto = NewsArticleDtoTestDoubles.Generate(1).FirstOrDefault();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticle, NewsArticleDto>(articleDto);
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(articleDto);
 
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
@@ -202,7 +202,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         NewsArticleDto newsArticleDto = NewsArticleDtoTestDoubles.Generate(1).FirstOrDefault()!;
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockMapperFromTo<NewsArticle, NewsArticleDto>(newsArticleDto);
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(newsArticleDto);
 
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
 
@@ -224,7 +224,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
 
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,
@@ -248,7 +248,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
             CosmosDbCommandHandlerTestDoubles.MockForDeleteItemAsync(
                 CosmosExceptionTestDoubles.Default());
 
-        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.DefaultFromTo<NewsArticle, NewsArticleDto>();
+        Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
 
         CosmosNewsArticleWriteRepository sut = new(
             logger: _mockLogger,

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Web.Controllers.Admin.SecurityReports;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Admin;
 using DfE.GIAP.Service.Download.SecurityReport;
 using Microsoft.AspNetCore.Http;

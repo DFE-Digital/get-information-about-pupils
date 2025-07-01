@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Web.Controllers;
-using DfE.GIAP.Web.Tests.FakeData;
+using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
