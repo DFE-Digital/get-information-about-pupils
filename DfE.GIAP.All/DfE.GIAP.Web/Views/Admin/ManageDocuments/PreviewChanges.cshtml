@@ -46,11 +46,6 @@
                 <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="edit-document--button" name="edit" value="Edit" class="govuk-button govuk-button--secondary">Edit</button>
                 <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-document--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</button>
 
-                @if (Model.DocumentList.DocumentId == DocumentType.Article.ToString())
-                {
-                    <button asp-controller="ManageDocuments" asp-action="SaveArticleAsDraft" id="save-as-draft--button" name="save-as-draft" value="SaveAsDraft" class="govuk-button govuk-button--secondary">Save as draft</button>
-                }
-
                 <button asp-controller="ManageDocuments" asp-action="PublishChanges" id="publish-document--button" name="publish" value="Publish" class="govuk-button">Publish</button>
             </div>
         </form>

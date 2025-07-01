@@ -35,9 +35,9 @@
                     {
                         <label for="select-article-dropdown--archived" class="govuk-label">Please select an archived news article</label>
 
-                        <select id="select-article-dropdown--archived" asp-for="@Model.ArchivedNewsId" class="govuk-select @(Model.HasInvalidArchiveList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ArchivedNewsDocuments">
+                        <select id="select-article-dropdown--archived" asp-for="@Model.SelectedNewsId" class="govuk-select @(Model.HasInvalidArchiveList ? "govuk-textarea--error" : "")" asp-items="ViewBag.ArchivedNewsDocuments">
                         </select>
-                        <button asp-controller="ManageDocuments" asp-action="ArchivedNews" id="select-archived-news--button" value="Select" name="select" class="govuk-button">Select</button>
+                        <button asp-controller="ManageDocuments" asp-action="SelectNewsArticle" id="select-archived-news--button" value="Select" name="select" class="govuk-button">Select</button>
                     }
                     else
                     {

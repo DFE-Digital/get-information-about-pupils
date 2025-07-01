@@ -144,7 +144,6 @@ public class ManageDocumentsController : Controller
                 || manageDocumentsModel.DocumentList.DocumentId == DocumentType.ArchivedNews.ToString())
                 {
                     manageDocumentsModel.SelectedNewsId = string.Empty;
-                    manageDocumentsModel.ArchivedNewsId = string.Empty;
                 }
 
                 if (manageDocumentsModel.DocumentList.DocumentId == DocumentType.Article.ToString() &&
@@ -153,7 +152,7 @@ public class ManageDocumentsController : Controller
                     await LoadNewsList().ConfigureAwait(false);
                 }
                 else if (manageDocumentsModel.DocumentList.DocumentId == DocumentType.ArchivedNews.ToString() &&
-                            string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId))
+                            string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
                 {
                     await LoadArchivedNewsList().ConfigureAwait(false);
                 }
@@ -164,7 +163,7 @@ public class ManageDocumentsController : Controller
                     {
                         await LoadNewsList().ConfigureAwait(false);
                     }
-                    else if (!string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId))
+                    else if (!string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
                     {
                         await LoadArchivedNewsList().ConfigureAwait(false);
                     }
@@ -230,7 +229,6 @@ public class ManageDocumentsController : Controller
 
         return View("../Admin/ManageDocuments/NewsArticleConfirmation", model);
     }
-
 
     [HttpPost]
     [Route(Routes.ManageDocument.DeleteNewsArticle)]
@@ -298,7 +296,6 @@ public class ManageDocumentsController : Controller
         return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
     }
 
-
     [HttpPost]
     [Route(Routes.ManageDocument.EditNewsAricle)]
     public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
@@ -335,129 +332,8 @@ public class ManageDocumentsController : Controller
     }
 
 
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsArchivedNewsArticleDelete)]
-    public async Task<IActionResult> DeleteArchiveNews(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        var result = await _newsService.DeleteNewsArticle(manageDocumentsModel.DocumentData.Id).ConfigureAwait(false);
 
-        if (result != System.Net.HttpStatusCode.OK)
-        {
-            return await GenerateErrorView(ArticleErrorMessages.ArchivedDeleteError).ConfigureAwait(false);
-        }
-
-        manageDocumentsModel.Confirmation = new Confirmation
-        {
-            Title = ArticleSuccessMessages.ArchivedDeleteTitle,
-            Body = ArticleSuccessMessages.ArchivedDeleteBody,
-        };
-
-        return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
-    }
-
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleArchived)]
-    public async Task<IActionResult> ArchivedNews(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        if (string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId))
-        {
-            manageDocumentsModel.HasInvalidArchiveList = true;
-            ModelState.AddModelError("SelectArchivNewsArticle", CommonErrorMessages.NewsArticleRequired);
-            return await ManageDocuments(manageDocumentsModel, null, null).ConfigureAwait(false);
-        }
-
-        var newsItem = await GetSelectedNewsDocumentData(manageDocumentsModel.ArchivedNewsId).ConfigureAwait(false);
-        manageDocumentsModel.DocumentData = newsItem;
-        manageDocumentsModel.BackButton = new(true, "ManageDocuments", "ManageDocuments");
-
-        return View("../Admin/ManageDocuments/ArchivedNews", manageDocumentsModel);
-    }
-
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleArchive)]
-    public async Task<IActionResult> ArchiveNews(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        var result = await UnarchiveOrArchiveNewsDocument(manageDocumentsModel, ActionTypes.Archive).ConfigureAwait(false);
-
-        if (result is null)
-        {
-            return await GenerateErrorView(ArticleErrorMessages.ArchiveError).ConfigureAwait(false);
-        }
-
-        manageDocumentsModel.Confirmation = new Confirmation
-        {
-            Title = ArticleSuccessMessages.ArchiveTitle,
-            Body = ArticleSuccessMessages.ArchiveBody,
-        };
-
-        return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
-    }
-
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleUnarchive)]
-    public async Task<IActionResult> UnarchiveNews(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        var result = await UnarchiveOrArchiveNewsDocument(manageDocumentsModel, ActionTypes.Unarchive).ConfigureAwait(false);
-
-        if (result is null)
-        {
-            return await GenerateErrorView(ArticleErrorMessages.UnarchiveError).ConfigureAwait(false);
-        }
-
-        manageDocumentsModel.Confirmation = new Confirmation
-        {
-            Title = ArticleSuccessMessages.UnarchiveTitle,
-            Body = ArticleSuccessMessages.UnarchiveBody,
-        };
-
-        return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
-    }
-
-
-
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticlePreview)]
-    public async Task<IActionResult> PreviewNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string create, string preview)
-    {
-        if (ModelState.IsValid)
-        {
-            if (manageDocumentsModel.DocumentData != null)
-            {
-                var pinned = manageDocumentsModel.DocumentData.Pinned;
-                var getResult = await SaveNewsArticleAsDraft(manageDocumentsModel);
-
-                if (getResult is null)
-                {
-                    return await GenerateErrorView(ArticleErrorMessages.SaveDraftError).ConfigureAwait(false);
-                }
-
-                manageDocumentsModel.DocumentData = getResult;
-                manageDocumentsModel.SelectedNewsId = getResult.Id;
-
-                manageDocumentsModel.DocumentData.Pinned = pinned;
-
-                var updatedResult = await SetPinned(manageDocumentsModel);
-
-                if (updatedResult is null)
-                {
-                    return await GenerateErrorView(ArticleErrorMessages.UpdatedError).ConfigureAwait(false);
-                }
-            }
-
-            return View("../Admin/ManageDocuments/PreviewNewsArticle", manageDocumentsModel);
-        }
-
-        if (!string.IsNullOrEmpty(preview))
-        {
-            ModelState.Clear();
-            return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
-        }
-        else
-        {
-            return View("../Admin/ManageDocuments/CreateNewsArticle", manageDocumentsModel);
-        }
-    }
-
+    // Document methods
     [HttpPost]
     [Route(Routes.ManageDocument.ManageDocumentsPreview)]
     public async Task<IActionResult> PreviewChanges(ManageDocumentsViewModel manageDocumentsModel, string preview)
@@ -481,60 +357,6 @@ public class ManageDocumentsController : Controller
 
         return View("../Admin/ManageDocuments/ManageDocuments", manageDocumentsModel);
     }
-
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticlePublish)]
-    public async Task<IActionResult> PublishNewsArticle(ManageDocumentsViewModel manageDocumentsModel, string publish)
-    {
-        if (manageDocumentsModel != null)
-        {
-            var result = await Publish(manageDocumentsModel);
-            if (result is null)
-            {
-                return await GenerateErrorView(ArticleErrorMessages.PublishError);
-            }
-        }
-
-        manageDocumentsModel.Confirmation = new Confirmation
-        {
-            Title = ArticleSuccessMessages.PublishTitle,
-            Body = ArticleSuccessMessages.PublishBody
-        };
-
-        return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
-    }
-
-    [HttpPost]
-    [Route(Routes.ManageDocument.ManageDocumentsNewsArticleSaveAsDraft)]
-    public async Task<IActionResult> SaveArticleAsDraft(ManageDocumentsViewModel manageDocumentsModel, string publish)
-    {
-        if (manageDocumentsModel != null)
-        {
-            var updatedResult = await SetPinned(manageDocumentsModel);
-
-            if (updatedResult is null)
-            {
-                return await GenerateErrorView(ArticleErrorMessages.UpdatedError);
-            }
-
-            var draftResult = await SaveNewsArticleAsDraft(manageDocumentsModel);
-
-            if (draftResult is null)
-            {
-                return await GenerateErrorView(ArticleErrorMessages.SaveDraftError);
-            }
-        }
-
-        manageDocumentsModel.Confirmation = new Confirmation
-        {
-            Title = ArticleSuccessMessages.SaveAsDraftTitle,
-            Body = ArticleSuccessMessages.SaveAsDraftBody
-        };
-
-        return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
-    }
-
-
 
     [HttpPost]
     [Route(Routes.ManageDocument.ManageDocumentsPublish)]
@@ -638,30 +460,6 @@ public class ManageDocumentsController : Controller
         return results.ConvertToViewModel();
     }
 
-    private async Task<CommonResponseBodyViewModel> SaveNewsArticleAsDraft(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        var isNewsArticle = !string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId);
-        var isTitle = !string.IsNullOrEmpty(manageDocumentsModel.DocumentData.Title);
-
-        var responseToSave = new CommonRequestBody
-        {
-            Title = isTitle ? SecurityHelper.SanitizeText(manageDocumentsModel.DocumentData.Title) : SecurityHelper.SanitizeText(manageDocumentsModel.DocumentData.DraftTitle),
-            Body = isTitle ? SecurityHelper.SanitizeText(manageDocumentsModel.DocumentData.Body) : SecurityHelper.SanitizeText(manageDocumentsModel.DocumentData.DraftBody),
-            Pinned = manageDocumentsModel.DocumentData.Pinned,
-            UserAccount = Global.UserAccount,
-            Username = Global.UserName,
-            Id = isNewsArticle ? manageDocumentsModel.SelectedNewsId : string.Empty,
-            DocType = (int)UpdateDocumentType.NewsArticles,
-            Published = false,
-        };
-
-        var results = await _contentService.AddOrUpdateDocument(responseToSave, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-
-        if (results is null) return default;
-
-        return results.ConvertToViewModel();
-    }
-
     private async Task<CommonResponseBodyViewModel> GetSelectedDocumentData(string documentName)
     {
         CommonResponseBodyViewModel commonResponseBodyViewModel = new CommonResponseBodyViewModel();
@@ -696,29 +494,6 @@ public class ManageDocumentsController : Controller
         return output;
     }
 
-    private async Task<CommonResponseBodyViewModel> UnarchiveOrArchiveNewsDocument(ManageDocumentsViewModel manageDocumentsModel, ActionTypes action)
-    {
-        var isNewsArticle = !string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId) || !string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId);
-
-        var responseToPublish = new CommonRequestBody
-        {
-            Title = manageDocumentsModel.DocumentData.Title,
-            Body = manageDocumentsModel.DocumentData.Body,
-            Pinned = manageDocumentsModel.DocumentData.Pinned,
-            UserAccount = Global.UserAccount,
-            Username = Global.UserName,
-            Id = manageDocumentsModel.SelectedNewsId ?? manageDocumentsModel.DocumentData.Id,
-            DocType = isNewsArticle ? (int)UpdateDocumentType.NewsArticles : (int)UpdateDocumentType.Content,
-            Published = true,
-            Action = (int)action
-        };
-
-        var results = await _contentService.SetDocumentToPublished(responseToPublish, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-
-        if (results is null) return default;
-
-        return results.ConvertToViewModel();
-    }
 
     private void LoadDocumentsList()
     {

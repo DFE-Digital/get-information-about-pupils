@@ -1,58 +1,57 @@
 ﻿using System.ComponentModel;
 
-namespace DfE.GIAP.Common.Enums
+namespace DfE.GIAP.Common.Enums;
+
+public enum DocumentType
 {
-    public enum DocumentType
-    {
-        [Description("Article")]
-        Article,
+    [Description("Article")]
+    Article,
 
-        [Description("Publication Schedule")]
-        PublicationSchedule,
+    [Description("Publication Schedule")]
+    PublicationSchedule,
 
-        [Description("Planned Maintenance")]
-        PlannedMaintenance,
+    [Description("Planned Maintenance")]
+    PlannedMaintenance,
 
-        [Description("Archived Article")]
-        ArchivedNews,
+    [Description("Archived Article")]
+    ArchivedNews,
 
-        [Description("Consent")]
-        Consent,
+    [Description("Consent")]
+    Consent,
 
-        [Description("Cookie Preference")]
-        CookiePreferences,
+    [Description("Cookie Preference")]
+    CookiePreferences,
 
-        [Description("Cookies Measure Website")]
-        CookiesMeasureWebsite,
+    [Description("Cookies Measure Website")]
+    CookiesMeasureWebsite,
 
-        [Description("Cookies Help")]
-        CookiesHelp,
+    [Description("Cookies Help")]
+    CookiesHelp,
 
-        [Description("Cookies Necessary")]
-        CookiesNecessary,
+    [Description("Cookies Necessary")]
+    CookiesNecessary,
 
-        [Description("Cookie Details")]
-        CookieDetails,
+    [Description("Cookie Details")]
+    CookieDetails,
 
-        [Description("Glossary")]
-        Glossary,
+    [Description("Glossary")]
+    Glossary,
 
-        [Description("Terms of Use")]
-        TermOfUse,
+    [Description("Terms of Use")]
+    TermOfUse,
 
-        [Description("Privacy Notice")]
-        PrivacyNotice,
+    [Description("Privacy Notice")]
+    PrivacyNotice,
 
-        [Description("Accessibility")]
-        Accessibility,
+    [Description("Accessibility")]
+    Accessibility,
 
-        [Description("Accessibility Report")]
-        AccessibilityReport,
+    [Description("Accessibility Report")]
+    AccessibilityReport,
 
-        [Description("Frequently Asked Questions")]
-        FAQ,
+    [Description("Frequently Asked Questions")]
+    FAQ,
 
-        [Description("Landing")]
-        Landing,
-    }
+    [Description("Landing")]
+    Landing,
 }
