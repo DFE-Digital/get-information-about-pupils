@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json.Linq;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture;
 public sealed class CosmosDbTestDatabase : IAsyncDisposable
