@@ -50,13 +50,6 @@ public static class Routes
         public const string ManageDocuments = "manage-documents/{docType?}/{docAction?}/{newsArticleId?}";
         public const string ManageDocumentsPreview = "manage-documents/preview";
         public const string ManageDocumentsPublish = "manage-documents/publish";
-        public const string ManageDocumentsNewsArticleArchive = "manage-documents/article/archive";
-        public const string ManageDocumentsNewsArticleArchived = "manage-documents/article/archived";
-        public const string ManageDocumentsArchivedNewsArticleDelete = "manage-documents/article/archived/delete";
-        public const string ManageDocumentsNewsArticlePreview = "manage-documents/article/preview";
-        public const string ManageDocumentsNewsArticlePublish = "manage-documents/article/publish";
-        public const string ManageDocumentsNewsArticleUnarchive = "manage-documents/article/unarchive";
-        public const string ManageDocumentsNewsArticleSaveAsDraft = "manage-documents/article/save-as-draft";
 
         public const string CreateNewsArticle = "manage-documents/article/create";
         public const string DeleteNewsArticle = "manage-documents/article/delete";
