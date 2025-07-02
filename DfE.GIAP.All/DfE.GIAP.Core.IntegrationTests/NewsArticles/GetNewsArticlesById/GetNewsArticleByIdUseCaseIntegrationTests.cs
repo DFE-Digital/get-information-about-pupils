@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 
-namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
+namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
 {
