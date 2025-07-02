@@ -130,6 +130,12 @@ public class ManageDocumentsController : Controller
     public async Task<IActionResult> ManageDocuments(ManageDocumentsViewModel manageDocumentsModel, string discard, string edit)
     {
         LoadDocumentsList();
+        manageDocumentsModel.BackButton = new()
+        {
+            IsBackButtonEnabled = true,
+            PreviousController = "Admin",
+            PreviousAction = "Index"
+        };
 
         if (manageDocumentsModel.DocumentList != null)
         {
@@ -389,6 +395,7 @@ public class ManageDocumentsController : Controller
 
     private async Task<CommonResponseBodyViewModel> SetPinned(ManageDocumentsViewModel manageDocumentsModel)
     {
+        // TODO: Check not needed as this will never be a news article going forward
         var isNewsArticle = !string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId);
 
         var responseToPublish = new CommonRequestBody
