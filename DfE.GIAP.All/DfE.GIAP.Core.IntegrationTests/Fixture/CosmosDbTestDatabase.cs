@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Azure;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
+using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
@@ -69,6 +70,38 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(DatabaseId).DeleteAsync();
 
+    public async Task<IEnumerable<T?>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
+    {
+        DatabaseResponse db = await CreateDatabase(_cosmosClient);
+        List<ContainerResponse> containers = await CreateAllContainers(db);
+        ContainerResponse targetContainer = containers.Single(container => container.Container.Id == ApplicationDataContainerName);
+
+        // TODO Temp to query without point-reading ability (on id) - PartitionKey value needs to be passed as part of query
+        // TODO make partition key or config - configurable not pinned to application-data-container e.g
+        Dictionary<string, PartitionKey> typeToPartitionKeyMap = new()
+        {
+            { nameof(NewsArticleDto), new PartitionKey(7) },
+            { nameof(ContentDto), new PartitionKey(20) }
+        };
+
+        IEnumerable<Task<T?>> readTasks = identifiers.Select(async (id) =>
+        {
+            try
+            {
+                ItemResponse<T> response = await targetContainer.Container.ReadItemAsync<T>(
+                    id,
+                    typeToPartitionKeyMap[typeof(T).Name]); 
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Item not found, return null TODO consider NullObject
+                return null;
+            }
+        });
+
+        return await Task.WhenAll(readTasks);
+    }
 
     public async Task WriteItemAsync<T>(T item) where T : class
     {

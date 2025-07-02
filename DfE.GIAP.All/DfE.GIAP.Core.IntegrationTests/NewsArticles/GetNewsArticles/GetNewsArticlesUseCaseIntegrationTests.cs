@@ -1,7 +1,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
-namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
+namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
@@ -30,12 +30,12 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
 
-        List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10, predicateToFulfil: (article => filter switch
+        List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10, predicateToFulfil: article => filter switch
         {
             NewsArticleSearchFilter.ArchivedWithPublished => article.Archived && article.Published,
             NewsArticleSearchFilter.NotArchivedWithPublished => !article.Archived && article.Published,
             _ => throw new NotImplementedException()
-        }));
+        });
 
         await _fixture.Database.WriteManyAsync(seededDTOs);
 
