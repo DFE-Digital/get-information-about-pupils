@@ -30,11 +30,14 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
 
-        List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10);
+        List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10, predicateToFulfil: (article => filter switch
+        {
+            NewsArticleSearchFilter.ArchivedWithPublished => article.Archived && article.Published,
+            NewsArticleSearchFilter.NotArchivedWithPublished => !article.Archived && article.Published,
+            _ => throw new NotImplementedException()
+        }));
 
-        await Task.WhenAll(
-            seededDTOs.Select(
-                (dto) => _fixture.Database.WriteAsync(dto)));
+        await _fixture.Database.WriteManyAsync(seededDTOs);
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 
@@ -85,17 +88,11 @@ internal static class GetNewsArticleUseCaseNewsArticleExtensions
     {
         return filter switch
         {
-            NewsArticleSearchFilter.ArchivedWithPublished
-            or NewsArticleSearchFilter.ArchivedWithNotPublished
-            or NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished =>
-                input.OrderByDescending(t => t.ModifiedDate),
-
             NewsArticleSearchFilter.NotArchivedWithPublished
             or NewsArticleSearchFilter.NotArchivedWithNotPublished
             or NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished =>
                 input.OrderByDescending(t => t.Pinned)
                      .ThenByDescending(t => t.ModifiedDate),
-
             _ => input.OrderByDescending(t => t.ModifiedDate)
         };
     }

@@ -27,7 +27,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
 
         await Task.WhenAll(
             contentDtos.Select(
-                (dto) => _dbFixture.Database!.WriteAsync(dto)));
+                (dto) => _dbFixture.Database!.WriteItemAsync(dto)));
 
         Dictionary<string, string> contentRepositoryOptions = new()
         {

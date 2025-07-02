@@ -4,16 +4,26 @@ namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 
 public static class NewsArticleDtoTestDoubles
 {
-    private const int NEWS_ARTICLES_DOCUMENT_TYPE = 7;
-    public static List<NewsArticleDto> Generate(int count = 10)
+    public static List<NewsArticleDto> Generate(int count = 10, Func<NewsArticleDto, bool>? predicateToFulfil = null)
     {
         List<NewsArticleDto> articles = [];
 
-        for (int index = 0; index < count; index++)
+        Faker<NewsArticleDto> faker = CreateGenerator();
+
+        const int circuitBreakerGenerationCounter = 111_111;
+
+        for (int attempts = 0; articles.Count < count && attempts < circuitBreakerGenerationCounter; attempts++)
         {
-            Faker<NewsArticleDto> faker = CreateGenerator();
-            articles.Add(
-                faker.Generate());
+            NewsArticleDto dto = faker.Generate();
+            if (predicateToFulfil is null || predicateToFulfil(dto))
+            {
+                articles.Add(dto);
+            }
+        }
+
+        if (articles.Count < count)
+        {
+            throw new ArgumentException($"Unable to generate {count} DTOs after {circuitBreakerGenerationCounter} attempts.");
         }
 
         return articles;
@@ -26,13 +36,12 @@ public static class NewsArticleDtoTestDoubles
             .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
             .RuleFor(t => t.Archived, (f) => f.Random.Bool())
             .RuleFor(t => t.Published, (f) => f.Random.Bool())
-            .RuleFor(t => t.Id, (f) => f.Random.Guid().ToString())
+            .RuleFor(t => t.id, (f) => f.Random.Guid().ToString())
             .RuleFor(t => t.DraftBody, (f) => f.Lorem.Words().Merge())
             .RuleFor(t => t.DraftTitle, (f) => f.Lorem.Words().Merge())
             .RuleFor(t => t.ModifiedDate, (f) => f.Date.Recent())
             .RuleFor(t => t.CreatedDate, (f) => f.Date.Recent())
             .RuleFor(t => t.Title, (f) => f.Lorem.Words().Merge())
-            .RuleFor(t => t.Body, (f) => f.Lorem.Words().Merge())
-            .RuleFor(t => t.DOCTYPE, (f) => NEWS_ARTICLES_DOCUMENT_TYPE);
+            .RuleFor(t => t.Body, (f) => f.Lorem.Words().Merge());
     }
 }
