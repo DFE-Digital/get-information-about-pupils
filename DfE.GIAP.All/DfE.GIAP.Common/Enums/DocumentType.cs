@@ -19,21 +19,6 @@ public enum DocumentType
     [Description("Consent")]
     Consent,
 
-    [Description("Cookie Preference")]
-    CookiePreferences,
-
-    [Description("Cookies Measure Website")]
-    CookiesMeasureWebsite,
-
-    [Description("Cookies Help")]
-    CookiesHelp,
-
-    [Description("Cookies Necessary")]
-    CookiesNecessary,
-
-    [Description("Cookie Details")]
-    CookieDetails,
-
     [Description("Glossary")]
     Glossary,
 

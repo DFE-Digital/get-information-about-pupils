@@ -143,6 +143,7 @@ public class ManageDocumentsController : Controller
                 if (manageDocumentsModel.DocumentList.DocumentId != DocumentType.Article.ToString()
                 || manageDocumentsModel.DocumentList.DocumentId == DocumentType.ArchivedNews.ToString())
                 {
+                    // TODO: We don't care if selectedNewsId if it's not an artcile document type
                     manageDocumentsModel.SelectedNewsId = string.Empty;
                 }
 
