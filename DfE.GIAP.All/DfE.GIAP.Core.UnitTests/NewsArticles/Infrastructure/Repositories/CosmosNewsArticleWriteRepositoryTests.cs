@@ -258,10 +258,11 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
         // Act
         Func<Task> act = () => sut.DeleteNewsArticleAsync(NewsArticleIdentifier.New());
 
-
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);
         Assert.Equal("CosmosException in DeleteNewsArticleAsync.", _mockLogger.Logs.Single());
+        mockCommandHandler.Verify(m => m.DeleteItemAsync<NewsArticleDto>(
+           It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }
 
     [Fact]
@@ -323,5 +324,7 @@ public sealed class CosmosNewsArticleWriteRepositoryTests
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);
         Assert.Equal("CosmosException in UpdateNewsArticleAsync.", _mockLogger.Logs.Single());
+        mockCommandHandler.Verify(m => m.ReplaceItemAsync(
+            It.IsAny<NewsArticleDto>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }
 }
