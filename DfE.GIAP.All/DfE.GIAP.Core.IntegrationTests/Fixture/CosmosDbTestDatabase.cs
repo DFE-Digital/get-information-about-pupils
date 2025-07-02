@@ -90,7 +90,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
             {
                 ItemResponse<T> response = await targetContainer.Container.ReadItemAsync<T>(
                     id,
-                    typeToPartitionKeyMap[typeof(T).Name]); 
+                    typeToPartitionKeyMap[typeof(T).Name]);
                 return response.Resource;
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
