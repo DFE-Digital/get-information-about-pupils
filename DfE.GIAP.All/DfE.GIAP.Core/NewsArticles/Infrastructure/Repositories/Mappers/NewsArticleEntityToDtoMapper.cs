@@ -28,7 +28,7 @@ internal class NewsArticleEntityToDtoMapper : IMapper<NewsArticle, NewsArticleDt
 
         return new NewsArticleDto()
         {
-            Id = input.Id.Value,
+            id = input.Id.Value,
             Title = input.Title,
             Body = input.Body,
             DraftTitle = input.DraftTitle,

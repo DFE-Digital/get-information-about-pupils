@@ -31,13 +31,10 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-
-        await Task.WhenAll(
-            seededArticles.Select(
-                (dto) => _fixture.Database.WriteAsync(dto)));
+        await _fixture.Database.WriteManyAsync(seededArticles);
 
         NewsArticleDto targetArticle = seededArticles[0];
-        GetNewsArticleByIdRequest request = new(Id: targetArticle.Id);
+        GetNewsArticleByIdRequest request = new(Id: targetArticle.id);
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
@@ -66,9 +63,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await Task.WhenAll(
-            seededArticles.Select(
-                (dto) => _fixture.Database.WriteAsync(dto)));
+        await _fixture.Database.WriteManyAsync(seededArticles);
 
         string unknownArticleId = Guid.NewGuid().ToString();
         GetNewsArticleByIdRequest request = new(Id: unknownArticleId);
