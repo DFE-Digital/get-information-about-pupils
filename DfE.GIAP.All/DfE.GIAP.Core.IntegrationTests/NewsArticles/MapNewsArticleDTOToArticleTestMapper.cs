@@ -7,7 +7,7 @@ internal sealed class MapNewsArticleDtoToArticleTestMapper : IMapper<NewsArticle
     {
         return new()
         {
-            Id = NewsArticleIdentifier.From(input.Id),
+            Id = NewsArticleIdentifier.From(input.id),
             Title = input.Title,
             Body = input.Body,
             Archived = input.Archived,

@@ -1,6 +1,9 @@
 ﻿using System.Net;
+using Azure;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
+using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using Microsoft.Azure.Cosmos;
+using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture;
 public sealed class CosmosDbTestDatabase : IAsyncDisposable
@@ -66,21 +69,84 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(DatabaseId).DeleteAsync();
 
-    public async Task WriteAsync<T>(T obj) where T : class// TODO batch options, TODO targetcontainer 
+    public async Task<IEnumerable<T?>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
+    {
+        DatabaseResponse db = await CreateDatabase(_cosmosClient);
+        List<ContainerResponse> containers = await CreateAllContainers(db);
+        ContainerResponse targetContainer = containers.Single(container => container.Container.Id == ApplicationDataContainerName);
+
+        // TODO Temp to query without point-reading ability (on id) - PartitionKey value needs to be passed as part of query
+        // TODO make partition key or config - configurable not pinned to application-data-container e.g
+        Dictionary<string, PartitionKey> typeToPartitionKeyMap = new()
+        {
+            { nameof(NewsArticleDto), new PartitionKey(7) },
+            { nameof(ContentDto), new PartitionKey(20) }
+        };
+
+        IEnumerable<Task<T?>> readTasks = identifiers.Select(async (id) =>
+        {
+            try
+            {
+                ItemResponse<T> response = await targetContainer.Container.ReadItemAsync<T>(
+                    id,
+                    typeToPartitionKeyMap[typeof(T).Name]);
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Item not found, return null TODO consider NullObject
+                return null;
+            }
+        });
+
+        return await Task.WhenAll(readTasks);
+    }
+
+    public async Task WriteItemAsync<T>(T item) where T : class
     {
         DatabaseResponse db = await CreateDatabase(_cosmosClient);
         List<ContainerResponse> containers = await CreateAllContainers(db);
 
-        ContainerResponse targetContainer =
-            containers.Single(
-                (container) => container.Container.Id == ApplicationDataContainerName);
+        ContainerResponse targetContainer = containers.Single(container => container.Container.Id == ApplicationDataContainerName);
 
-        // TODO PartitionKeyOptions lookup besides application-data
-        // Container: Name, PartitionKey: DOCTYPE
-        ItemResponse<T> response = await targetContainer.Container.UpsertItemAsync(obj, new PartitionKey((obj as dynamic).DOCTYPE));
+        PartitionKey documentPartitionKey = new((item as dynamic).DOCTYPE);
 
-        Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
+        await CreateItemInternalAsync(item, targetContainer);
+
+        string documentId = ExtractDocumentId(item);
+
+        await EnsureItemIsQueryableAsync<T>(
+                targetContainer.Container,
+                documentId,
+                documentPartitionKey);
     }
+
+
+    public async Task WriteManyAsync<T>(IEnumerable<T> items) where T : class
+    {
+        DatabaseResponse db = await CreateDatabase(_cosmosClient);
+        List<ContainerResponse> containers = await CreateAllContainers(db);
+
+        Container container = containers.Single(c => c.Container.Id == ApplicationDataContainerName).Container;
+
+        await Task.WhenAll(
+            items.Select(
+                (item) => CreateItemInternalAsync(item, container)));
+
+        await Task.WhenAll(
+            items.Select(
+                (item) => EnsureItemIsQueryableAsync<T>(
+                    container,
+                    ExtractDocumentId(item),
+                    ExtractPartitionKey(item))));
+    }
+
+    private static string ExtractDocumentId<T>(T obj) where T : class
+        => JObject.FromObject(obj)
+                .GetValue("id")?
+                .ToString() ?? throw new ArgumentException("Unable to find id on written document");
+
+    private static PartitionKey ExtractPartitionKey<T>(T obj) where T : class => new((obj as dynamic).DOCTYPE);
 
     private static async Task<DatabaseResponse> CreateDatabase(CosmosClient client)
     {
@@ -99,5 +165,42 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
         });
         containerResponses.Add(response);
         return containerResponses;
+    }
+
+    private static async Task CreateItemInternalAsync<T>(T obj, Container container) where T : class
+    {
+        PartitionKey partitionKey = new((obj as dynamic).DOCTYPE);
+        ItemResponse<T> response = await container.CreateItemAsync(obj, partitionKey);
+        Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
+    }
+
+
+    private static async Task EnsureItemIsQueryableAsync<T>(
+        Container container,
+        string documentId,
+        PartitionKey partitionKey,
+        int maxAttempts = 10,
+        int delayMilliseconds = 500)
+        where T : class
+    {
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            try
+            {
+                ItemResponse<T> readResponse = await container.ReadItemAsync<T>(documentId, partitionKey);
+                if (readResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    return;
+                }
+            }
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            {
+                // Item not yet visible
+            }
+
+            await Task.Delay(delayMilliseconds);
+        }
+
+        throw new TimeoutException($"Item with ID {documentId} was not queryable after {maxAttempts} attempts.");
     }
 }
