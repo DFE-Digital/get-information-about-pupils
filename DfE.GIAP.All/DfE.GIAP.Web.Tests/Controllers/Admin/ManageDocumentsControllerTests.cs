@@ -1,31 +1,30 @@
-﻿using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.ManageDocument;
 using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
+using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin;
 
@@ -37,7 +36,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ManageDocumentsResultsFake _manageDocumentsResultsFake;
     private readonly Mock<IContentService> _mockContentService = new();
-    private readonly Mock<IManageDocumentsService> _mockDocRepo = new();
     private readonly Mock<INewsService> _mockNewsService = new();
     private readonly Mock<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>> _mockGetNewsArticleByIdUseCase = new();
     private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
@@ -59,43 +57,44 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     public async Task LoadListOfDocuments_When_ManageDocuments_MethodIsCalled()
     {
         // Arrange
-        List<Document> expectedDocumentsList = new()
-        {
-            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true },
-        };
+        var expectedDocumentTypes = Enum
+            .GetValues(typeof(DocumentType))
+            .Cast<DocumentType>()
+            .Select(dt => new
+            {
+                DocumentId = dt.ToString(),
+                DocumentName = dt.GetDescription()
+            })
+            .OrderBy(x => x.DocumentName)
+            .ToList();
 
-        CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
-
-        var controller = GetManageDocumentsController();
+        ManageDocumentsController controller = GetManageDocumentsController();
 
         // Act
-        var result = await controller.ManageDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
+        IActionResult result = await controller.ManageDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
         // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(3, viewResult.ViewData.Values.Count);
-        Assert.True(viewResult.ViewData.ContainsKey("IsSuccess"));
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.True(viewResult.ViewData.ContainsKey("ListOfDocuments"));
+
+        SelectList selectList = Assert.IsType<SelectList>(viewResult.ViewData["ListOfDocuments"]);
+
+        List<SelectListItem> selectListItems = selectList.Cast<SelectListItem>().ToList();
+        Assert.Equal(expectedDocumentTypes.Count, selectListItems.Count);
+
+        for (int i = 0; i < expectedDocumentTypes.Count; i++)
+        {
+            Assert.Equal(expectedDocumentTypes[i].DocumentId, selectListItems[i].Value);
+            Assert.Equal(expectedDocumentTypes[i].DocumentName, selectListItems[i].Text);
+        }
     }
 
     [Fact]
     public async Task LoadNewsDocuments_When_ManageDocuments_Posted_MethodIsCalled_And_User_Has_Selected_News_article()
     {
         // Arrange
-        List<Document> expectedDocumentsList = new()
-        {
-            new() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
-        };
-
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
 
         var model = new ManageDocumentsViewModel { DocumentList = new Document { Id = 1, DocumentName = "Test title", DocumentId = "NewsArticle" } };
 
@@ -106,47 +105,16 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(3, viewResult.ViewData.Values.Count);
-        Assert.True(viewResult.ViewData.ContainsKey("IsSuccess"));
+        Assert.Equal(2, viewResult.ViewData.Values.Count);
         Assert.True(viewResult.ViewData.ContainsKey("ListOfDocuments"));
-    }
-
-    [Fact]
-    public async Task FailedToLoad_ListOfDocuments_WhenManageDocumentsMethodIsCalled()
-    {
-        // Arrange
-
-        List<Document> expectedDocumentsList = new List<Document>();
-
-        CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
-
-        var controller = GetManageDocumentsController();
-
-        // Act
-        var result = await controller.ManageDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        var isSuccess = Assert.IsAssignableFrom<Boolean>(viewResult.ViewData["IsSuccess"]);
-        Assert.False(isSuccess);
     }
 
     [Fact]
     public async Task SelectedDocument_FromDropDownList_PostBackToManageDocumentsMethod()
     {
         // Arrange
-        List<Document> documentsList = new List<Document>
-        {
-            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
-        };
-
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(documentsList);
 
         var controller = GetManageDocumentsController();
         var model = _manageDocumentsResultsFake.GetDocumentDetails();
@@ -160,8 +128,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         var documentData = Assert.IsType<ManageDocumentsViewModel>(viewResult.ViewData.Model).DocumentData;
         Assert.Equal(commonResponseBody.Id, documentData.Id);
-        Assert.Equal(3, viewResult.ViewData.Values.Count);
-        Assert.True(viewResult.ViewData.ContainsKey("IsSuccess"));
+        Assert.Equal(2, viewResult.ViewData.Values.Count);
         Assert.True(viewResult.ViewData.ContainsKey("ListOfDocuments"));
     }
 
@@ -185,7 +152,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.AddOrUpdateDocument(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
         _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(documentsList);
 
         var controller = GetManageDocumentsController();
         controller.ControllerContext = context;
@@ -452,7 +418,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     {
         return new ManageDocumentsController(
             _mockNewsService.Object,
-            _mockDocRepo.Object,
             _mockContentService.Object,
             _mockGetNewsArticleByIdUseCase.Object,
             _mockGetNewsArticlesUseCase.Object,

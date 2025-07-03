@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Common.Constants;
+﻿using System.Globalization;
+using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Constants.Messages.Common;
@@ -8,27 +9,25 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.ManageDocument;
 using DfE.GIAP.Service.News;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
-using DfE.GIAP.Web.ViewModels.Helper;
-using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Core.NewsArticles.Application.Enums;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Globalization;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
+using DfE.GIAP.Web.ViewModels.Helper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
@@ -36,7 +35,6 @@ namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 [Authorize(Roles = Role.Admin)]
 public class ManageDocumentsController : Controller
 {
-    private readonly IManageDocumentsService _manageDocumentsService;
     private readonly IContentService _contentService;
     private readonly INewsService _newsService;
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
@@ -47,7 +45,6 @@ public class ManageDocumentsController : Controller
 
     public ManageDocumentsController(
         INewsService newsService,
-        IManageDocumentsService manageDocumentsService,
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
@@ -57,8 +54,6 @@ public class ManageDocumentsController : Controller
     {
         _newsService = newsService ??
             throw new ArgumentNullException(nameof(newsService));
-        _manageDocumentsService = manageDocumentsService ??
-            throw new ArgumentNullException(nameof(manageDocumentsService));
         _contentService = contentService ??
             throw new ArgumentNullException(nameof(contentService));
         _getNewsArticleByIdUseCase = getNewsArticleByIdUseCase ??
@@ -505,9 +500,18 @@ public class ManageDocumentsController : Controller
 
     private void LoadDocumentsList()
     {
-        var documentsList = _manageDocumentsService.GetDocumentsList();
-        ViewBag.IsSuccess = documentsList.Count > 0 ? true : false;
-        ViewBag.ListOfDocuments = new SelectList(documentsList, "DocumentId", "DocumentName");
+        var documentTypes = Enum
+            .GetValues(typeof(DocumentType))
+            .Cast<DocumentType>()
+            .Select(dt => new
+            {
+                DocumentId = dt.ToString(),
+                DocumentName = dt.GetDescription()
+            })
+            .OrderBy(x => x.DocumentName)
+            .ToList();
+
+        ViewBag.ListOfDocuments = new SelectList(documentTypes, "DocumentId", "DocumentName");
     }
 
     private async Task LoadNewsList()

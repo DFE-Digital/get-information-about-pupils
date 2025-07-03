@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
@@ -13,7 +12,6 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.DsiApiClient;
-using DfE.GIAP.Service.ManageDocument;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.News;
 using DfE.GIAP.Service.PreparedDownloads;
@@ -25,13 +23,9 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
 
 namespace DfE.GIAP.Web.Extensions.Startup
@@ -68,7 +62,6 @@ namespace DfE.GIAP.Web.Extensions.Startup
             services.AddScoped<INewsService, NewsService>();
             services.AddScoped<IBlobStorageService, BlobStorageService>();
             services.AddScoped<ICookieManager, CookieManager>();
-            services.AddScoped<IManageDocumentsService, ManageDocumentsService>();
             services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
             services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
             services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
