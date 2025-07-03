@@ -30,7 +30,7 @@ public sealed class NewsArticleDtoToEntityMapperTests
         // Act Assert
         NewsArticle mappedResponse = mapper.Map(inputDto);
         Assert.NotNull(mappedResponse);
-        Assert.Equal(mappedResponse.Id, NewsArticleIdentifier.From(inputDto.Id));
+        Assert.Equal(mappedResponse.Id, NewsArticleIdentifier.From(inputDto.id));
         Assert.Equal(mappedResponse.Title, inputDto.Title);
         Assert.Equal(mappedResponse.Body, inputDto.Body);
         Assert.Equal(mappedResponse.DraftBody, inputDto.DraftBody);

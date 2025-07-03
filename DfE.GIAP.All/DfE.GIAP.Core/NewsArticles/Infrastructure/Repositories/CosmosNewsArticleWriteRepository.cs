@@ -52,7 +52,7 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         try
         {
             NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
-            await _cosmosDbCommandHandler.CreateItemAsync(newsArticleDto, ContainerName, newsArticleDto.Id);
+            await _cosmosDbCommandHandler.CreateItemAsync(newsArticleDto, ContainerName, newsArticleDto.id);
         }
         catch (CosmosException ex)
         {
