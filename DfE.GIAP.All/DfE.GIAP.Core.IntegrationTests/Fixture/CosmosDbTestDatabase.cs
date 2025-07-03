@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using Azure;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using Microsoft.Azure.Cosmos;

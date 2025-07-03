@@ -1,12 +1,6 @@
-﻿using System;
-using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers.CookieManager;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Xunit;
-using Moq;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using NSubstitute;
+using Xunit;
 
 namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
 {
