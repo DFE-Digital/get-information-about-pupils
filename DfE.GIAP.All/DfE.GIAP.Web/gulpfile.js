@@ -13,7 +13,7 @@ gulp.task("copy-jquery", function () {
 });
 
 // Minify and concatenate scripts
-gulp.task("copy-govuk-scripts", function () {
+gulp.task("copy-all-scripts", function () {
     return gulp
         .src(["./node_modules/govuk-frontend/dist/govuk/all.bundle.js", "./Scripts/**/*.js"])
         .pipe(uglify())
