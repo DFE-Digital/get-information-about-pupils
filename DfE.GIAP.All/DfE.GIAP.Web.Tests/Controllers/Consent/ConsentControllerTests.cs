@@ -177,7 +177,7 @@ public sealed class ConsentControllerTests
 
 
     [Fact]
-    public async Task GetIndex_Returns_CosentView_And_DoesNotSetCookie_When_SessionIdStorageDisabled()
+    public async Task GetIndex_Returns_ConsentView_And_DoesNotSetCookie_When_SessionIdStorageDisabled()
     {
         // Arrange
         IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = false);
