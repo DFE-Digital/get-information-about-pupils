@@ -8,5 +8,5 @@ public class ConsentViewModel
 {
     public Content Response { get; set; }
     public bool ConsentGiven { get; set; }
-    public bool ConsentError { get; set; }
+    public bool HasError { get; set; }
 }
