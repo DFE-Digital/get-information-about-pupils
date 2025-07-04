@@ -1,35 +1,62 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Service.Content;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class TermsController : Controller
 {
-    private readonly IContentService _contentService;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel> _contentResponseToViewModelMapper;
 
-    public TermsController(IContentService contentService)
+    public TermsController(
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel> contentResponseToViewModelMapper)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
+        ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
+        ArgumentNullException.ThrowIfNull(contentResponseToViewModelMapper);
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase;
+        _contentResponseToViewModelMapper = contentResponseToViewModelMapper;
     }
 
     [AllowWithoutConsent]
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        CommonResponseBody results = await _contentService.GetContent(DocumentType.TermOfUse).ConfigureAwait(false);
+        const string termOfUsePageKey = "TermOfUse";
 
-        var model = new TermsOfUseViewModel
+        GetContentByPageKeyUseCaseResponse response =
+           await _getContentByPageKeyUseCase.HandleRequestAsync(
+               new GetContentByPageKeyUseCaseRequest(pageKey: termOfUsePageKey));
+
+        return ToViewResult(termOfUsePageKey, response);
+    }
+
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    {
+        if (response.Content == null)
         {
-            Response = results
-        };
+            throw new ArgumentException($"Unable to find content with key {pageKey}");
+        }
 
+        TermsOfUseViewModel model = _contentResponseToViewModelMapper.Map(response);
         return View(model);
+    }
+}
+
+
+internal sealed class GetContentByPageKeyResponseToTermsOfUseViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>
+{
+    public TermsOfUseViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(input.Content);
+        return new TermsOfUseViewModel()
+        {
+            Response = input.Content
+        };
     }
 }

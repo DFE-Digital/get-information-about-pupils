@@ -12,9 +12,9 @@
     <input type="hidden" asp-for="@Model.Response.Body" />
     <input type="hidden" asp-for="@Model.Response.Title" />
 
-    <div class="govuk-form-group @(Model.ConsentError ? "govuk-form-group--error" : "")">
+    <div class="govuk-form-group @(Model.HasError ? "govuk-form-group--error" : "")">
         <fieldset class="govuk-fieldset">
-            @if (Model.ConsentError)
+            @if (Model.HasError)
             {
                 <p id="consent--errormessage--text" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> Select if you have read and understood the conditions
