@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.ManageDocument;
 using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
+using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -39,12 +36,12 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ManageDocumentsResultsFake _manageDocumentsResultsFake;
     private readonly Mock<IContentService> _mockContentService = new();
-    private readonly Mock<IManageDocumentsService> _mockDocRepo = new();
     private readonly Mock<INewsService> _mockNewsService = new();
     private readonly Mock<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>> _mockGetNewsArticleByIdUseCase = new();
     private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<DeleteNewsArticleRequest>> _mockDeleteNewsArticleUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<CreateNewsArticleRequest>> _mockCreateNewsArticleUseCase = new();
+    private readonly Mock<IUseCaseRequestOnly<UpdateNewsArticleRequest>> _mockUpdateNewsArticleUseCase = new();
 
     public ManageDocumentsControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake, ManageDocumentsResultsFake manageDocumentsResultsFake)
     {
@@ -60,43 +57,44 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     public async Task LoadListOfDocuments_When_ManageDocuments_MethodIsCalled()
     {
         // Arrange
-        List<Document> expectedDocumentsList = new()
-        {
-            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true },
-        };
+        var expectedDocumentTypes = Enum
+            .GetValues(typeof(DocumentType))
+            .Cast<DocumentType>()
+            .Select(dt => new
+            {
+                DocumentId = dt.ToString(),
+                DocumentName = dt.GetDescription()
+            })
+            .OrderBy(x => x.DocumentName)
+            .ToList();
 
-        CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
-
-        var controller = GetManageDocumentsController();
+        ManageDocumentsController controller = GetManageDocumentsController();
 
         // Act
-        var result = await controller.ManageDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
+        IActionResult result = await controller.ManageDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
         // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(3, viewResult.ViewData.Values.Count);
-        Assert.True(viewResult.ViewData.ContainsKey("IsSuccess"));
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.True(viewResult.ViewData.ContainsKey("ListOfDocuments"));
+
+        SelectList selectList = Assert.IsType<SelectList>(viewResult.ViewData["ListOfDocuments"]);
+
+        List<SelectListItem> selectListItems = selectList.Cast<SelectListItem>().ToList();
+        Assert.Equal(expectedDocumentTypes.Count, selectListItems.Count);
+
+        for (int i = 0; i < expectedDocumentTypes.Count; i++)
+        {
+            Assert.Equal(expectedDocumentTypes[i].DocumentId, selectListItems[i].Value);
+            Assert.Equal(expectedDocumentTypes[i].DocumentName, selectListItems[i].Text);
+        }
     }
 
     [Fact]
     public async Task LoadNewsDocuments_When_ManageDocuments_Posted_MethodIsCalled_And_User_Has_Selected_News_article()
     {
         // Arrange
-        List<Document> expectedDocumentsList = new()
-        {
-            new() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
-        };
-
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
 
         var model = new ManageDocumentsViewModel { DocumentList = new Document { Id = 1, DocumentName = "Test title", DocumentId = "NewsArticle" } };
 
@@ -107,47 +105,16 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(3, viewResult.ViewData.Values.Count);
-        Assert.True(viewResult.ViewData.ContainsKey("IsSuccess"));
+        Assert.Equal(2, viewResult.ViewData.Values.Count);
         Assert.True(viewResult.ViewData.ContainsKey("ListOfDocuments"));
-    }
-
-    [Fact]
-    public async Task FailedToLoad_ListOfDocuments_WhenManageDocumentsMethodIsCalled()
-    {
-        // Arrange
-
-        List<Document> expectedDocumentsList = new List<Document>();
-
-        CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(expectedDocumentsList);
-
-        var controller = GetManageDocumentsController();
-
-        // Act
-        var result = await controller.ManageDocuments(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        var isSuccess = Assert.IsAssignableFrom<Boolean>(viewResult.ViewData["IsSuccess"]);
-        Assert.False(isSuccess);
     }
 
     [Fact]
     public async Task SelectedDocument_FromDropDownList_PostBackToManageDocumentsMethod()
     {
         // Arrange
-        List<Document> documentsList = new List<Document>
-        {
-            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
-        };
-
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(documentsList);
 
         var controller = GetManageDocumentsController();
         var model = _manageDocumentsResultsFake.GetDocumentDetails();
@@ -161,8 +128,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         var documentData = Assert.IsType<ManageDocumentsViewModel>(viewResult.ViewData.Model).DocumentData;
         Assert.Equal(commonResponseBody.Id, documentData.Id);
-        Assert.Equal(3, viewResult.ViewData.Values.Count);
-        Assert.True(viewResult.ViewData.ContainsKey("IsSuccess"));
+        Assert.Equal(2, viewResult.ViewData.Values.Count);
         Assert.True(viewResult.ViewData.ContainsKey("ListOfDocuments"));
     }
 
@@ -186,7 +152,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
         _mockContentService.Setup(repo => repo.AddOrUpdateDocument(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
         _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
-        _mockDocRepo.Setup(repo => repo.GetDocumentsList()).Returns(documentsList);
 
         var controller = GetManageDocumentsController();
         controller.ControllerContext = context;
@@ -197,104 +162,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
         // Assert
         Assert.IsType<ViewResult>(result);
-    }
-
-    [Fact]
-    public async Task Check_news_article_is_archived()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        var commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        // Act
-        var result = await controller.ArchiveNews(model).ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Confirmation", viewResult.ViewName);
-        Assert.IsType<ManageDocumentsViewModel>(viewResult.Model);
-        _mockContentService.Verify(repo => repo.SetDocumentToPublished(It.Is<CommonRequestBody>(x => x.Action == (int)ActionTypes.Archive), It.IsAny<AzureFunctionHeaderDetails>()));
-    }
-
-    [Fact]
-    public async Task Check_news_article_is_unarchived()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        var commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        // Act
-        var result = await controller.UnarchiveNews(model).ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Confirmation", viewResult.ViewName);
-        Assert.IsType<ManageDocumentsViewModel>(viewResult.Model);
-        _mockContentService.Verify(repo => repo.SetDocumentToPublished(It.Is<CommonRequestBody>(x => x.Action == (int)ActionTypes.Unarchive), It.IsAny<AzureFunctionHeaderDetails>()));
-    }
-
-    [Fact]
-    public async Task Check_error_view_when_news_article_is_not_archived()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        CommonResponseBody commonResponseBody = new CommonResponseBody() { Title = "testTitle", Body = "testBody", Id = "PlannedMaintenance" };
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync((CommonResponseBody)default);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-
-        // Act
-        var result = await controller.ArchiveNews(model).ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.ArchiveError);
-    }
-
-    [Fact]
-    public async Task Check_error_view_when_news_article_is_not_unarchived()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        var commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync((CommonResponseBody)default);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-
-        // Act
-        var result = await controller.UnarchiveNews(model).ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UnarchiveError);
     }
 
     [Fact]
@@ -320,6 +187,13 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     {
         // Arrange
         ManageDocumentsViewModel model = _manageDocumentsResultsFake.GetDocumentDetailsWithSelectedNews();
+        model.NewsArticle = new NewsArticleViewModel
+        {
+            Title = "Some Test",
+            Body = "Some body",
+            Id = "1",
+            Pinned = true,
+        };
 
         CommonResponseBody responseBody = new()
         {
@@ -341,180 +215,16 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequestAsync(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
 
         ManageDocumentsController controller = GetManageDocumentsController();
-        string editDocument = "EditDocument";
 
         // Act
-        IActionResult result = await controller.EditNewsArticle(model, editDocument).ConfigureAwait(false);
+        IActionResult result = await controller.UpdateNewsArticle(model).ConfigureAwait(false);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        CommonResponseBodyViewModel documentData = Assert.IsType<ManageDocumentsViewModel>(viewResult.ViewData.Model).DocumentData;
+        NewsArticleViewModel documentData = Assert.IsType<ManageDocumentsViewModel>(viewResult.ViewData.Model).NewsArticle;
         Assert.Equal(responseBody.Id, documentData.Id);
         Assert.Equal(responseBody.Title, documentData.Title);
         Assert.Equal(responseBody.Body, documentData.Body);
-    }
-
-    [Fact]
-    public async Task PublishNewsArticle_Sets_ActionType_As_Published()
-    {
-        // Arrange
-        System.Security.Claims.ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        ControllerContext context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        ManageDocumentsViewModel model = _manageDocumentsResultsFake.GetDocumentDetailsWithSelectedNews();
-
-        CommonResponseBody responseBody = new()
-        {
-            Id = "1",
-            Title = "Some Test",
-            Body = "Some body",
-            Published = true
-        };
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(responseBody);
-
-        ManageDocumentsController controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        string publish = "Publish";
-
-        // Act
-        IActionResult result = await controller.PublishNewsArticle(model, publish);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-    }
-
-    [Fact]
-    public async Task Check_error_view_when_PublishNewsArticle_fails_to_publish()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync((CommonResponseBody)default);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        var publish = "Publish";
-
-        // Act
-        var result = await controller.PublishNewsArticle(model, publish);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.PublishError);
-    }
-
-    [Fact]
-    public async Task PreviewNewsArticle_ValidationChecks_When_No_Values_OnCreateNewsArticle()
-    {
-        // Arrange
-        var model = new ManageDocumentsViewModel();
-
-        var controller = GetManageDocumentsController();
-        controller.ModelState.AddModelError("key", "title cannot be empty");
-        var create = "Create";
-        var preview = "";
-        // Act
-        var result = await controller.PreviewNewsArticle(model, create, preview).ConfigureAwait(false);
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/CreateNewsArticle", viewResult.ViewName);
-    }
-
-    [Fact]
-    public async Task PreviewNewsArticle_ValidationChecks_When_No_Values_OnEditNewsArticle()
-    {
-        // Arrange
-        var model = new ManageDocumentsViewModel();
-
-        var controller = GetManageDocumentsController();
-        controller.ModelState.AddModelError("key", "title cannot be empty");
-        var create = "";
-        var preview = "Preview";
-        // Act
-        var result = await controller.PreviewNewsArticle(model, create, preview).ConfigureAwait(false);
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/EditNewsArticle", viewResult.ViewName);
-    }
-
-
-    [Fact]
-    public async Task Check_error_view_when_PreviewNewsArticle_fails_to_save_draft()
-    {
-        // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        ControllerContext context = new()
-        {
-            HttpContext = new DefaultHttpContext()
-            {
-                User = user,
-                Session = _mockSession.Object
-            }
-        };
-
-        CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        ManageDocumentsViewModel model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(
-            (repo) => repo.AddOrUpdateDocument(
-                It.IsAny<CommonRequestBody>(),
-                It.IsAny<AzureFunctionHeaderDetails>()))
-            .ReturnsAsync((CommonResponseBody)default);
-
-        ManageDocumentsController controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        string create = "";
-        string preview = "Preview";
-
-        // Act
-        IActionResult result = await controller.PreviewNewsArticle(model, create, preview);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        UserErrorViewModel errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(ArticleErrorMessages.SaveDraftError, errorModel.UserErrorMessage);
-    }
-
-    [Fact]
-    public async Task Check_error_view_when_PreviewNewsArticle_fails_to_set_pinned()
-    {
-        // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        ControllerContext context = new()
-        {
-            HttpContext = new DefaultHttpContext()
-            {
-                User = user,
-                Session = _mockSession.Object
-            }
-        };
-
-        CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        ManageDocumentsViewModel model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.AddOrUpdateDocument(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync((CommonResponseBody)default);
-
-        ManageDocumentsController controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        string create = "";
-        string preview = "Preview";
-
-        // Act
-        IActionResult result = await controller.PreviewNewsArticle(model, create, preview).ConfigureAwait(false);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        UserErrorViewModel errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(ArticleErrorMessages.UpdatedError, errorModel.UserErrorMessage);
     }
 
     [Fact]
@@ -534,58 +244,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
         // Act
         var result = await controller.PreviewChanges(model, preview).ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UpdatedError);
-    }
-
-    [Fact]
-    public async Task Check_error_view_when_SaveArticleAsDraft_fails_to_save_draft()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        var commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync(commonResponseBody);
-        _mockContentService.Setup(repo => repo.AddOrUpdateDocument(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync((CommonResponseBody)default);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        var publish = "";
-
-        // Act
-        var result = await controller.SaveArticleAsDraft(model, publish).ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
-        var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.SaveDraftError);
-    }
-
-    [Fact]
-    public async Task Check_error_view_when_SaveArticleAsDraft_fails_to_set_pinned()
-    {
-        // Arrange
-        var user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
-        var context = new ControllerContext() { HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession.Object } };
-
-        var model = _manageDocumentsResultsFake.GetDocumentDetails();
-
-        _mockContentService.Setup(repo => repo.SetDocumentToPublished(It.IsAny<CommonRequestBody>(), It.IsAny<AzureFunctionHeaderDetails>())).ReturnsAsync((CommonResponseBody)default);
-
-        var controller = GetManageDocumentsController();
-        controller.ControllerContext = context;
-        var publish = "";
-
-        // Act
-        var result = await controller.SaveArticleAsDraft(model, publish).ConfigureAwait(false);
 
         // Assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -760,11 +418,11 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     {
         return new ManageDocumentsController(
             _mockNewsService.Object,
-            _mockDocRepo.Object,
             _mockContentService.Object,
             _mockGetNewsArticleByIdUseCase.Object,
             _mockGetNewsArticlesUseCase.Object,
             _mockDeleteNewsArticleUseCase.Object,
-            _mockCreateNewsArticleUseCase.Object);
+            _mockCreateNewsArticleUseCase.Object,
+            _mockUpdateNewsArticleUseCase.Object);
     }
 }
