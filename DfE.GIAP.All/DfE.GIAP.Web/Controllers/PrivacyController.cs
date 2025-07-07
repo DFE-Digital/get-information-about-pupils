@@ -1,34 +1,60 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Service.Content;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class PrivacyController : Controller
 {
-    private readonly IContentService _contentService;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel> _contentResponseToViewModelMapper;
 
-    public PrivacyController(IContentService contentService)
+    public PrivacyController(
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel> mapper)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
+        ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
+        ArgumentNullException.ThrowIfNull(mapper);
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase;
+        _contentResponseToViewModelMapper = mapper;
     }
 
     [AllowWithoutConsent]
     public async Task<IActionResult> Index()
     {
-        CommonResponseBody results = await _contentService.GetContent(DocumentType.PrivacyNotice).ConfigureAwait(false);
+        const string PrivacyNoticePageKey = "PrivacyNotice";
 
-        var model = new PrivacyViewModel
+        GetContentByPageKeyUseCaseResponse response =
+           await _getContentByPageKeyUseCase.HandleRequestAsync(
+               new GetContentByPageKeyUseCaseRequest(pageKey: PrivacyNoticePageKey));
+
+        return ToViewResult(PrivacyNoticePageKey, response);
+    }
+
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    {
+        if (response.Content == null)
         {
-            Response = results
-        };
+            throw new ArgumentException($"Unable to find content with key {pageKey}");
+        }
 
+        PrivacyViewModel model = _contentResponseToViewModelMapper.Map(response);
         return View(model);
+    }
+}
+
+internal sealed class GetContentByPageKeyResponseToPrivacyViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>
+{
+    public PrivacyViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(input.Content);
+        return new PrivacyViewModel()
+        {
+            Response = input.Content
+        };
     }
 }

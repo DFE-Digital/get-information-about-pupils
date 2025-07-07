@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Middleware;
 using Microsoft.AspNetCore.Authentication;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers;
 
