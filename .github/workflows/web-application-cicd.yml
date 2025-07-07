@@ -265,7 +265,7 @@ jobs:
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
-            /d:sonar.scanner.scanAll=false
+            /d:sonar.scanner.scanAll=false \
             /d:sonar.verbose=true
 
 
