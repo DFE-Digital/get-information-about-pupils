@@ -204,12 +204,12 @@ jobs:
           name: integration-test-coverage
           path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
 
-      - name: Rewrite Cobertura paths to be relative
+      - name: Remove relative pathing in Cobertura reports
         shell: bash
         run: |
             find ./coverlet/reports -name "*.xml" | while read file; do
-            echo "Rewriting paths in $file"
-            sed -i "s|${{ github.workspace }}/||g" "$file"
+              echo "Rewriting paths in $file"
+              sed -i "s|<source>.*</source>|<source>.</source>|g" "$file"
             done
           
       - name: Merge coverage reports
@@ -221,6 +221,7 @@ jobs:
             -targetdir:./coverlet/merged/ \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
             -useRelativePaths:true
+            -sourceLink:true
 
       - name: Upload merged coverage report
         uses: actions/upload-artifact@v4
