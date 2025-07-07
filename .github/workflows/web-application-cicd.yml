@@ -112,6 +112,10 @@ jobs:
         run: | 
           dotnet tool run reportgenerator -sourcedirs:"./DfE.GIAP.All" -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
+
+      - name: Print merged SonarQube report
+        run: cat ./coverlet/merged/SonarQube.xml
+
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
