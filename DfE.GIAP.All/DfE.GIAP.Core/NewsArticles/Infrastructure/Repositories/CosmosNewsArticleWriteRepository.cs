@@ -48,7 +48,6 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
-#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
         try
         {
             NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
@@ -61,10 +60,10 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         }
     }
 
-
     /// <summary>
     /// Deletes a news article from the database asynchronously.
     /// </summary>
+    /// <remarks> If the operation fails, a <see cref="CosmosException"/> is logged and rethrown.</remarks>
     /// <param name="id">The identifier of the news article to delete. Cannot be <see langword="null"/>.</param>
     /// <returns>A task that represents the asynchronous delete operation.</returns>
     public async Task DeleteNewsArticleAsync(NewsArticleIdentifier id)
@@ -79,5 +78,28 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
             throw;
         }
     }
-#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
+
+    /// <summary>
+    /// Updates an existing news article in the database.
+    /// </summary>
+    /// <remarks>This method maps the provided <see cref="NewsArticle"/> object to a data transfer object
+    /// (DTO) and updates it in the database. If the operation fails due to a database error, a <see
+    /// cref="CosmosException"/> is thrown.</remarks>
+    /// <param name="newsArticle">The news article to update. Cannot be <see langword="null"/>.</param>
+    /// <returns></returns>
+    public async Task UpdateNewsArticleAsync(NewsArticle newsArticle)
+    {
+        ArgumentNullException.ThrowIfNull(newsArticle);
+
+        try
+        {
+            NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            await _cosmosDbCommandHandler.ReplaceItemAsync(newsArticleDto, newsArticleDto.id, ContainerName, newsArticleDto.id);
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in UpdateNewsArticleAsync.");
+            throw;
+        }
+    }
 }

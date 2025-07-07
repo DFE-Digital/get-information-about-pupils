@@ -32,7 +32,6 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Title);
         ArgumentException.ThrowIfNullOrWhiteSpace(newsArticle.Body);
 
-#pragma warning disable S2139 // Exceptions should be either logged or rethrown but not both
         try
         {
             NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
@@ -60,5 +59,21 @@ internal class TempNewsArticleWriteRepository : INewsArticleWriteRepository
             throw;
         }
     }
-#pragma warning restore S2139 // Exceptions should be either logged or rethrown but not both
+
+    public async Task UpdateNewsArticleAsync(NewsArticle newsArticle)
+    {
+        ArgumentNullException.ThrowIfNull(newsArticle);
+
+        try
+        {
+            Container container = _cosmosClient.GetContainer(databaseId: DatabaseId, containerId: ContainerName);
+            NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
+            await container.ReplaceItemAsync(newsArticleDto, newsArticleDto.id, new PartitionKey(newsArticleDto.DOCTYPE));
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in UpdateNewsArticleAsync.");
+            throw;
+        }
+    }
 }
