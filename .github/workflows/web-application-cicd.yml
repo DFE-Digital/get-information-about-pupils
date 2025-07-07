@@ -232,7 +232,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: merged-coverage-report
-          path: ./coverlet/merged
+          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v4
