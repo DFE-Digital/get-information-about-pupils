@@ -10,6 +10,7 @@ using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -704,8 +705,8 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        Assert.Equal(ApplicationLabel.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
-        Assert.Equal(ApplicationLabel.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
+        Assert.Equal(ApplicationLabels.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
+        Assert.Equal(ApplicationLabels.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
     }
 
 
@@ -1069,8 +1070,8 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        Assert.Equal(ApplicationLabel.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
-        Assert.Equal(ApplicationLabel.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
+        Assert.Equal(ApplicationLabels.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
+        Assert.Equal(ApplicationLabels.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
 
     }
 

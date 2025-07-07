@@ -19,7 +19,7 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 [Route(Routes.Application.Search)]
 public class FELearnerTextSearchController : BaseLearnerTextSearchController
 {
-    public override string PageHeading => ApplicationLabel.SearchFEWithoutUlnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchFEWithoutUlnPageHeading;
     public override string SearchSessionKey => Global.FENonUlnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
     public override string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
@@ -58,7 +58,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerNumberLabel => Global.FELearnerNumberLabel;
     public override bool ShowMiddleNames => false;
 
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedFurtherEducationLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
 
     private readonly IDownloadService _downloadService;

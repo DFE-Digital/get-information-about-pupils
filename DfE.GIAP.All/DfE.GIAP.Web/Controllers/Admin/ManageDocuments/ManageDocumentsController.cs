@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
@@ -30,7 +29,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 
 [Route(Routes.Application.Admin)]
-[Authorize(Roles = Role.Admin)]
+[Authorize(Roles = Roles.Admin)]
 public class ManageDocumentsController : Controller
 {
     private readonly IContentService _contentService;

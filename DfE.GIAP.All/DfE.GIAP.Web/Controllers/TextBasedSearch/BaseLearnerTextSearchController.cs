@@ -599,8 +599,8 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (ModelState.IsValid)
         {
-            model.AddSelectedToMyPupilListLink = ApplicationLabel.AddSelectedToMyPupilListLink;
-            model.DownloadSelectedASCTFLink = ApplicationLabel.DownloadSelectedAsCtfLink;
+            model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
+            model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
             model.MaximumResults = IndexType == AzureSearchIndexType.FurtherEducation ? _appSettings.MaximumNonULNResults : _appSettings.MaximumNonUPNResults;
             model.DownloadSelectedLink = DownloadSelectedLink;
 

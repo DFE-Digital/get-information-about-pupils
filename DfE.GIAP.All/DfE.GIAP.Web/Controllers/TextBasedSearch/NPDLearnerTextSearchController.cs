@@ -28,7 +28,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchNPDWithOutUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchNPDWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.NPDNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.NPDNonUpnSearchFiltersSessionKey;
     public override string DownloadLinksPartial => Global.NPDNonUpnDownloadLinksView;
@@ -69,7 +69,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override string InvalidUPNsConfirmationAction => Global.NPDNonUpnInvalidUPNsConfirmation;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
     public override bool ShowMiddleNames => true;
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedNationalPupilDatabaseDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
 
 

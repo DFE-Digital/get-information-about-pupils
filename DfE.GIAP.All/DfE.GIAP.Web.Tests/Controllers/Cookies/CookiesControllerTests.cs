@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -53,11 +54,11 @@ namespace DfE.GIAP.Web.Tests.Controllers.Cookies
 
             // Assert
             responseCookies.Verify(
-                c => c.Append(Global.GiapWebsiteUse, Global.StatusTrue, It.IsAny<CookieOptions>()),
+                c => c.Append(CookieKeys.GiapWebsiteUse, Global.StatusTrue, It.IsAny<CookieOptions>()),
                 Times.Once);
 
             responseCookies.Verify(
-                c => c.Append(Global.GiapComms, Global.StatusFalse, It.IsAny<CookieOptions>()),
+                c => c.Append(CookieKeys.GiapComms, Global.StatusFalse, It.IsAny<CookieOptions>()),
                 Times.Once);
 
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -98,8 +99,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Cookies
 
             // Mock Request Cookies
             var requestCookies = new Mock<IRequestCookieCollection>();
-            requestCookies.Setup(c => c[Global.GiapWebsiteUse]).Returns(Global.StatusTrue);
-            requestCookies.Setup(c => c[Global.GiapComms]).Returns(Global.StatusFalse);
+            requestCookies.Setup(c => c[CookieKeys.GiapWebsiteUse]).Returns(Global.StatusTrue);
+            requestCookies.Setup(c => c[CookieKeys.GiapComms]).Returns(Global.StatusFalse);
             httpContext.Setup(c => c.Request.Cookies).Returns(requestCookies.Object);
 
             // Mock Response Cookies

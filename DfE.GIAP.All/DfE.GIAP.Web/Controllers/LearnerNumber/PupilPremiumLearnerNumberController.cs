@@ -25,7 +25,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchPupilPremiumWithUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
     public override string SearchAction => "PupilPremium";
     public override string FullTextLearnerSearchController => Global.PPNonUpnController;
     public override string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
@@ -38,7 +38,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override int MyPupilListLimit => _appSettings.UpnPPMyPupilListLimit;
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override bool ShowMiddleNames => true;
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedPupilPremiumDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
 

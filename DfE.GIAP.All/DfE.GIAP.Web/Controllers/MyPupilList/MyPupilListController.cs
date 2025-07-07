@@ -261,7 +261,7 @@ public class MyPupilListController : Controller
             SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
         }
 
-        searchDownloadViewModel.SearchResultPageHeading = ApplicationLabel.SearchMyPupilListPageHeading;
+        searchDownloadViewModel.SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading;
         return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
     }
 
@@ -531,7 +531,7 @@ public class MyPupilListController : Controller
 
     private MyPupilListViewModel PopulatePageText(MyPupilListViewModel model)
     {
-        model.PageHeading = ApplicationLabel.SearchMyPupilListPageHeading;
+        model.PageHeading = ApplicationLabels.SearchMyPupilListPageHeading;
         model.LearnerNumberLabel = Global.LearnerNumberLabel;
         return model;
     }
@@ -631,9 +631,9 @@ public class MyPupilListController : Controller
 
     private void SetModelApplicationLabels(MyPupilListViewModel model)
     {
-        model.DownloadSelectedASCTFLink = ApplicationLabel.DownloadSelectedAsCtfLink;
-        model.RemoveSelectedToMyPupilListLink = ApplicationLabel.RemoveSelectedToMyPupilListLink;
-        model.DownloadSelectedNPDDataLink = ApplicationLabel.DownloadSelectedNationalPupilDatabaseDataLink;
-        model.DownloadSelectedPupilPremiumDataLink = ApplicationLabel.DownloadSelectedPupilPremiumDataLink;
+        model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
+        model.RemoveSelectedToMyPupilListLink = ApplicationLabels.RemoveSelectedToMyPupilListLink;
+        model.DownloadSelectedNPDDataLink = ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
+        model.DownloadSelectedPupilPremiumDataLink = ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
     }
 }

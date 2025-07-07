@@ -40,7 +40,7 @@ public class FELearnerNumberController : BaseLearnerNumberController
     public override string SearchSessionSortDirection => "SearchULN_SearchTextSortDirection";
     public override bool ShowLocalAuthority => false;
     public override bool ShowMiddleNames => false;
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedFurtherEducationLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
     public override string LearnerNumberLabel => Global.FELearnerNumberLabel;
 
     //below 2 are n/a for FE

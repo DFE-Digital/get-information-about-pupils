@@ -26,7 +26,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchPupilPremiumWithOutUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.PPNonUpnSearchFiltersSessionKey;
 
@@ -66,7 +66,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
     public override bool ShowMiddleNames => true;
 
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedPupilPremiumDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
 
     public PPLearnerTextSearchController(ILogger<PPLearnerTextSearchController> logger,

@@ -27,7 +27,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchNPDWithUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchNPDWithUpnPageHeading;
     public override string SearchAction => "NationalPupilDatabase";
     public override string FullTextLearnerSearchController => "Search";
     public override string FullTextLearnerSearchAction => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
@@ -40,7 +40,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override int MyPupilListLimit => _appSettings.UpnNPDMyPupilListLimit;
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override bool ShowMiddleNames => true;
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedNationalPupilDatabaseDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 

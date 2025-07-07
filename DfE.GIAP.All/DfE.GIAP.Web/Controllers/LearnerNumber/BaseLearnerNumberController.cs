@@ -200,9 +200,9 @@ namespace DfE.GIAP.Web.Controllers
 
         private void SetModelApplicationLabels(LearnerNumberSearchViewModel model)
         {
-            model.AddSelectedToMyPupilListLink = ApplicationLabel.AddSelectedToMyPupilListLink;
+            model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
             model.DownloadSelectedLink = DownloadSelectedLink;
-            model.DownloadSelectedASCTFLink = ApplicationLabel.DownloadSelectedAsCtfLink;
+            model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
         }
 
         #endregion Search

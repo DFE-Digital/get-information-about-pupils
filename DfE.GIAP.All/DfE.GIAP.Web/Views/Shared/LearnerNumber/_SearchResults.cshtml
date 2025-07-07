@@ -9,7 +9,7 @@
 
     @if (string.IsNullOrEmpty(Model.ErrorDetails) && Model.ItemAddedToMyPupilList && !Model.NoPupilSelected)
     {
-        <div class="govuk-inset-text">@ApplicationLabel.SelectedAddedToMyPupilList</div>
+        <div class="govuk-inset-text">@ApplicationLabels.SelectedAddedToMyPupilList</div>
     }
     @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
     {

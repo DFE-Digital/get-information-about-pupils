@@ -163,7 +163,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var viewResult = Assert.IsType<ViewResult>(result);
             Assert.NotNull(viewResult);
             var model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-            Assert.Equal(ApplicationLabel.DownloadSelectedFurtherEducationLink, model.DownloadSelectedLink);
+            Assert.Equal(ApplicationLabels.DownloadSelectedFurtherEducationLink, model.DownloadSelectedLink);
 
         }
 
