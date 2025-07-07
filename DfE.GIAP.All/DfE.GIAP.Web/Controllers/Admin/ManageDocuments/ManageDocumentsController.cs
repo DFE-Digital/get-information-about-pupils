@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Common.Constants;
+﻿using System.Globalization;
+using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
-using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
@@ -24,6 +24,7 @@ using DfE.GIAP.Web.ViewModels.Admin;
 using DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
 using DfE.GIAP.Web.ViewModels.Helper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
@@ -133,7 +134,7 @@ public class ManageDocumentsController : Controller
         {
             if (manageDocumentsModel.DocumentList.DocumentId == null)
             {
-                ModelState.AddModelError("Document.Id", Messages.Common.Errors.AdminDocumentRequired);
+                ModelState.AddModelError("Document.Id", Messages.Common.Errors.DocumentRequired);
                 manageDocumentsModel.HasInvalidDocumentList = true;
             }
             else
@@ -222,8 +223,8 @@ public class ManageDocumentsController : Controller
 
         ConfirmationViewModel model = new()
         {
-            Title = ArticleSuccessMessages.CreateTitle,
-            Body = ArticleSuccessMessages.CreateBody,
+            Title = Messages.NewsArticle.Success.CreateTitle,
+            Body = Messages.NewsArticle.Success.CreateBody,
         };
 
         return View("../Admin/ManageDocuments/NewsArticleConfirmation", model);
@@ -240,8 +241,8 @@ public class ManageDocumentsController : Controller
 
         manageDocumentsModel.Confirmation = new Confirmation
         {
-            Title = ArticleSuccessMessages.DeleteTitle,
-            Body = ArticleSuccessMessages.DeleteBody,
+            Title = Messages.NewsArticle.Success.DeleteTitle,
+            Body = Messages.NewsArticle.Success.DeleteBody,
         };
 
         return View("../Admin/ManageDocuments/Confirmation", manageDocumentsModel);
@@ -253,7 +254,7 @@ public class ManageDocumentsController : Controller
         if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
         {
             manageDocumentsModel.HasInvalidNewsList = true;
-            ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.NewsArticleRequired);
+            ModelState.AddModelError("SelectNewsArticle", Messages.Common.Errors.NewsArticleRequired);
             return View("YourViewName", manageDocumentsModel);
         }
 
@@ -322,8 +323,8 @@ public class ManageDocumentsController : Controller
         // Change to speciifc confirmation view model
         manageDocumentsModel.Confirmation = new()
         {
-            Title = ArticleSuccessMessages.UpdateTitle,
-            Body = ArticleSuccessMessages.UpdateBody,
+            Title = Messages.NewsArticle.Success.UpdateTitle,
+            Body = Messages.NewsArticle.Success.UpdateBody,
         };
 
         ModelState.Clear();
@@ -343,7 +344,7 @@ public class ManageDocumentsController : Controller
 
             if (updatedResult is null)
             {
-                return await GenerateErrorView(ArticleErrorMessages.UpdatedError).ConfigureAwait(false);
+                return await GenerateErrorView(Messages.NewsArticle.Errors.UpdatedError).ConfigureAwait(false);
             }
 
             ViewBag.DisplayEditor = true;
@@ -567,18 +568,18 @@ public class ManageDocumentsController : Controller
 
         if (!string.IsNullOrEmpty(model.SelectedNewsId) && model.DocumentData.Id != null)
         {
-            title = ArticleSuccessMessages.UpdateTitle;
-            body = ArticleSuccessMessages.UpdateBody;
+            title = Messages.NewsArticle.Success.UpdateTitle;
+            body = Messages.NewsArticle.Success.UpdateBody;
         }
         else if (model.DocumentData.Id != null && string.IsNullOrEmpty(model.SelectedNewsId))
         {
-            title = ArticleSuccessMessages.DocumentUpdatedTitle;
-            body = ArticleSuccessMessages.DocumentUpdatedBody;
+            title = Messages.NewsArticle.Success.DocumentUpdatedTitle;
+            body = Messages.NewsArticle.Success.DocumentUpdatedBody;
         }
         else if (model.DocumentData.Id == null && !string.IsNullOrEmpty(model.SelectedNewsId))
         {
-            title = ArticleSuccessMessages.CreateTitle;
-            body = ArticleSuccessMessages.CreateBody;
+            title = Messages.NewsArticle.Success.CreateTitle;
+            body = Messages.NewsArticle.Success.CreateBody;
         }
 
         return new Confirmation
@@ -594,15 +595,15 @@ public class ManageDocumentsController : Controller
 
         if (!string.IsNullOrEmpty(model.SelectedNewsId) && model.DocumentData.Id != null)
         {
-            return ArticleErrorMessages.UpdatedError;
+            return Messages.NewsArticle.Errors.UpdatedError;
         }
         else if (model.DocumentData.Id != null && string.IsNullOrEmpty(model.SelectedNewsId))
         {
-            return ArticleErrorMessages.UpdatedError;
+            return Messages.NewsArticle.Errors.UpdatedError;
         }
         else if (model.DocumentData.Id == null && string.IsNullOrEmpty(model.SelectedNewsId))
         {
-            return ArticleErrorMessages.CreatedError;
+            return Messages.NewsArticle.Errors.CreatedError;
         }
 
         return message;

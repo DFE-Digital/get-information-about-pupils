@@ -2,20 +2,19 @@
 using DfE.GIAP.Web.Constants;
 using System.ComponentModel.DataAnnotations;
 
-namespace DfE.GIAP.Web.Validation
-{
-    public class DocumentationListValidation : ValidationAttribute
-    {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            if (value == null) return null;
-            var document = (Document)value;
+namespace DfE.GIAP.Web.Validation;
 
-            if (document.DocumentId == null)
-            {
-                return new ValidationResult(Messages.Common.Errors.AdminDocumentRequired);
-            }
-            return null;
+public class DocumentationListValidation : ValidationAttribute
+{
+    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    {
+        if (value == null) return null;
+        Document document = (Document)value;
+
+        if (document.DocumentId == null)
+        {
+            return new ValidationResult(Messages.Common.Errors.DocumentRequired);
         }
+        return null;
     }
 }
