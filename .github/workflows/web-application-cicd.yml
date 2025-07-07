@@ -85,7 +85,7 @@ jobs:
       - name: Upload individual test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-reports
+          name: unit-test-coverage
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
 
       - name: Run gulp
@@ -190,7 +190,7 @@ jobs:
       - name: Download unit test coverage reports
         uses: actions/download-artifact@v4
         with:
-          name: coverage-reports
+          name: unit-test-coverage
           path: ./coverlet/reports
 
       - name: Download integration test coverage report
