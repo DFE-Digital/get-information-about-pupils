@@ -81,7 +81,7 @@ jobs:
         shell: bash
         run: | 
           dotnet tool run reportgenerator \
-          -sourcedirs:"${{ github.workspace }}/DfE.GIAP.All" \
+          -sourcedirs:"${{ github.workspace }}","${{ github.workspace }}/DfE.GIAP.All" \
           -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml \
           -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ \
           -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
@@ -207,7 +207,7 @@ jobs:
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
-            -sourcedirs:"${{ github.workspace }}/DfE.GIAP.All" \
+            -sourcedirs:"${{ github.workspace }}","${{ github.workspace }}/DfE.GIAP.All" \
             -reports:./coverlet/reports/**/*.xml \
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
