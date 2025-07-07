@@ -207,11 +207,12 @@ jobs:
       - name: Remove relative pathing in Cobertura reports
         shell: bash
         run: |
-            find ./coverlet/reports -name "*.xml" | while read file; do
-              echo "Rewriting paths in $file"
-              sed -i "s|<source>.*</source>|<source>.</source>|g" "$file"
-            done
-          
+          find ./coverlet/reports -name "*.xml" | while read file; do
+            echo "Fixing source and filename paths in $file"
+            sed -i '/<source>.*<\/source>/d' "$file"
+            sed -i "s|filename=\".*DfE.GIAP.All/|filename=\"DfE.GIAP.All/|g" "$file"
+          done
+
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
