@@ -241,7 +241,7 @@ jobs:
         run: dotnet tool restore
         shell: bash
 
-      - name: Setup Java # for sonarcloud
+      - name: Setup Java ${{ env.JAVA_VERSION }} # for sonarcloud
         uses: actions/setup-java@v4
         with:
           distribution: "zulu"
