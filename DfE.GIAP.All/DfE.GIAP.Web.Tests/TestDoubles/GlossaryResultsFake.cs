@@ -1,47 +1,27 @@
 ﻿using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Core.Models.Glossary;
-using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Mime;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles
+namespace DfE.GIAP.Web.Tests.TestDoubles;
+
+public class GlossaryResultsFake
 {
-    public class GlossaryResultsFake
+    public CommonResponseBody GetCommonResponseBody()
     {
-        public GlossaryViewModel GetGlossaryDetails()
+        return new CommonResponseBody
         {
-            return new GlossaryViewModel() { Response = new CommonResponseBodyViewModel() { Title = "Glossary Title Test", Body = "Glossary Body Test" }, MetaDataDownloadList = GetMetaDataDetailsList() };
-        }
+            Title = "Glossary Title Test",
+            Body = "Glossary Body Test"
+        };
+    }
 
-        public CommonResponseBody GetCommonResponseBody()
+    public FileStreamResult GetMetaDataFile()
+    {
+        var ms = new MemoryStream();
+
+        return new FileStreamResult(ms, MediaTypeNames.Text.Plain)
         {
-            return new CommonResponseBody
-            {
-                Title = "Glossary Title Test",
-                Body = "Glossary Body Test"
-            };
-        }
-
-        public List<MetaDataDownload> GetMetaDataDetailsList()
-        {
-            var list = new List<MetaDataDownload>();
-
-            list.Add(new MetaDataDownload() { Name = "Test Name", FileName = "Test File Name", Date = DateTime.Now, Link = "Test Link" });
-
-            return list;
-        }
-
-        public FileStreamResult GetMetaDataFile()
-        {
-            var ms = new MemoryStream();
-
-            return new FileStreamResult(ms, MediaTypeNames.Text.Plain)
-            {
-                FileDownloadName = "Test.csv"
-            };
-        }
+            FileDownloadName = "Test.csv"
+        };
     }
 }

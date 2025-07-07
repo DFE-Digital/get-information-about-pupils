@@ -34,7 +34,7 @@ namespace DfE.GIAP.Web.Tests.Validation
 
             // Assert
             Assert.IsType<ValidationResult>(result);
-            Assert.Equal(CommonErrorMessages.AdminDocumentRequired, result.ErrorMessage);
+            Assert.Equal(CommonErrorMessages.DocumentRequired, result.ErrorMessage);
         }
     }
 }

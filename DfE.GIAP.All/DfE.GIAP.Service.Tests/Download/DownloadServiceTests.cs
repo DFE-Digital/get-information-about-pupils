@@ -50,7 +50,7 @@ namespace DfE.GIAP.Service.Tests.Download
 
             // Assert
             Assert.IsType<List<MetaDataDownload>>(result);
-            Assert.Equal(response.Count, result.Count);
+            Assert.Equal(response.Count, result.Count());
             Assert.Equal(response.First().Name, result.First().Name);
             Assert.Equal(response.First().FileName, result.First().FileName);
             Assert.Equal(response.First().Date, result.First().Date);

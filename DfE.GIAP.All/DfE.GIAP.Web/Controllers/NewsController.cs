@@ -3,8 +3,6 @@ using DfE.GIAP.Service.Content;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using System;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Core.Common.Application;

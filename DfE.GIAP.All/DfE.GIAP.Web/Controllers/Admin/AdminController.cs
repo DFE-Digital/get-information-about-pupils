@@ -1,5 +1,4 @@
-﻿using System;
-using DfE.GIAP.Common.Constants;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.ViewModels.Admin;
@@ -7,9 +6,6 @@ using DfE.GIAP.Web.ViewModels.Admin.SecurityReports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Helpers.SearchDownload;
@@ -93,7 +89,7 @@ public class AdminController : Controller
             "DownloadSecurityReportsBySchool" => User.IsAdmin()
                                     ? RedirectToAction("SchoolCollegeDownloadOptions", "Admin")
                                     : RedirectToAction("SecurityReportsBySchool", "Admin"),
-            _ => null,// no redirection
+            _ => throw new NotImplementedException()
         };
     }
 
@@ -134,9 +130,6 @@ public class AdminController : Controller
 
         return View("../Admin/SecurityReports/SchoolCollegeDownloadOptions", GetAdminViewModel());
     }
-
-
-
 
     [HttpGet]
     [Route(Routes.SecurityReports.SecurityReportsBySchool)]
@@ -192,7 +185,6 @@ public class AdminController : Controller
         }
         return View("../Admin/SecurityReports/SecurityReportsBySchool", model);
     }
-
 
 
     [HttpGet]
@@ -357,8 +349,8 @@ public class AdminController : Controller
         if (string.IsNullOrWhiteSpace(model.DocumentId))
         {
             model.HasInvalidDocumentList = true;
-            model.ErrorDetails = CommonErrorMessages.AdminSecurityReportRequired;
-            ModelState.AddModelError("NoOrganisationalReportSelected", CommonErrorMessages.AdminSecurityReportRequired);
+            model.ErrorDetails = CommonErrorMessages.SecurityReportRequired;
+            ModelState.AddModelError("NoOrganisationalReportSelected", CommonErrorMessages.SecurityReportRequired);
 
             PopulateSecurityReportsDropdown(model);
             return View("../Admin/SecurityReports/SecurityReportsForYourOrganisation", model);

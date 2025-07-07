@@ -16,12 +16,12 @@ namespace DfE.GIAP.Web.ViewModels.Admin
         public UpdateNewsDocumentRequestBody AddUpdateRequest { get; set; }
 
 
-        [Required(ErrorMessage = CommonErrorMessages.AdminTitleLength)]
+        [Required(ErrorMessage = CommonErrorMessages.TitleLength)]
         public string Title { get; set; }
 
         public bool TitleInvalid { get; set; }
 
-        [Required(ErrorMessage = CommonErrorMessages.AdminBodyRequired)]
+        [Required(ErrorMessage = CommonErrorMessages.BodyRequired)]
         public string Body { get; set; }
 
         public bool BodyInvalid { get; set; }

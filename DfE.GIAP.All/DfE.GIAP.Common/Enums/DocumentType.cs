@@ -1,58 +1,42 @@
 ﻿using System.ComponentModel;
 
-namespace DfE.GIAP.Common.Enums
+namespace DfE.GIAP.Common.Enums;
+
+public enum DocumentType
 {
-    public enum DocumentType
-    {
-        [Description("Article")]
-        Article,
+    [Description("Article")]
+    Article,
 
-        [Description("Publication Schedule")]
-        PublicationSchedule,
+    [Description("Publication Schedule")]
+    PublicationSchedule,
 
-        [Description("Planned Maintenance")]
-        PlannedMaintenance,
+    [Description("Planned Maintenance")]
+    PlannedMaintenance,
 
-        [Description("Archived Article")]
-        ArchivedNews,
+    [Description("Archived Article")]
+    ArchivedNews,
 
-        [Description("Consent")]
-        Consent,
+    [Description("Consent")]
+    Consent,
 
-        [Description("Cookie Preference")]
-        CookiePreferences,
+    [Description("Glossary")]
+    Glossary,
 
-        [Description("Cookies Measure Website")]
-        CookiesMeasureWebsite,
+    [Description("Terms of Use")]
+    TermOfUse,
 
-        [Description("Cookies Help")]
-        CookiesHelp,
+    [Description("Privacy Notice")]
+    PrivacyNotice,
 
-        [Description("Cookies Necessary")]
-        CookiesNecessary,
+    [Description("Accessibility")]
+    Accessibility,
 
-        [Description("Cookie Details")]
-        CookieDetails,
+    [Description("Accessibility Report")]
+    AccessibilityReport,
 
-        [Description("Glossary")]
-        Glossary,
+    [Description("Frequently Asked Questions")]
+    FAQ,
 
-        [Description("Terms of Use")]
-        TermOfUse,
-
-        [Description("Privacy Notice")]
-        PrivacyNotice,
-
-        [Description("Accessibility")]
-        Accessibility,
-
-        [Description("Accessibility Report")]
-        AccessibilityReport,
-
-        [Description("Frequently Asked Questions")]
-        FAQ,
-
-        [Description("Landing")]
-        Landing,
-    }
+    [Description("Landing")]
+    Landing,
 }

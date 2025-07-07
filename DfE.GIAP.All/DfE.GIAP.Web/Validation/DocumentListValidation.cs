@@ -13,7 +13,7 @@ namespace DfE.GIAP.Web.Validation
 
             if (document.DocumentId == null)
             {
-                return new ValidationResult(CommonErrorMessages.AdminDocumentRequired);
+                return new ValidationResult(CommonErrorMessages.DocumentRequired);
             }
             return null;
         }
