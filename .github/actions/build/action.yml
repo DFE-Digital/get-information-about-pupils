@@ -20,6 +20,10 @@ runs:
     - name: Install NuGet tools
       uses: NuGet/setup-nuget@v1
 
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+      shell: bash
+
     - name: npm ci
       run: npm ci
       shell: bash

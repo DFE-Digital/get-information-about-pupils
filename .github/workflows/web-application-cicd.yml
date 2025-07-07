@@ -46,13 +46,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET SDK from global.json
-        uses: actions/setup-dotnet@v4
-
-      - name: Restore dotnet tools
-        run: dotnet tool restore
-        shell: bash
-
       - name: Build
         uses: ./.github/actions/build
         with:
@@ -185,6 +178,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v4
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+        shell: bash
+
       - name: Download unit test coverage reports
         uses: actions/download-artifact@v4
         with:
@@ -196,9 +196,6 @@ jobs:
         with:
           name: integration-test-coverage
           path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
-
-      - name: Restore dotnet tools
-        run: dotnet tool restore
 
       - name: Merge coverage reports
         run: |
@@ -261,7 +258,9 @@ jobs:
             /d:sonar.scanner.scanAll=false
 
       - name: Build
-        run: dotnet build
+        uses: ./.github/actions/build
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: End SonarCloud Scanner
         # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
