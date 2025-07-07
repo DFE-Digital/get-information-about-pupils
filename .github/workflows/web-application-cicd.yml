@@ -220,7 +220,7 @@ jobs:
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
-            -useRelativePaths:true
+            -useRelativePaths:true \
             -sourceLink:true
 
       - name: Upload merged coverage report
