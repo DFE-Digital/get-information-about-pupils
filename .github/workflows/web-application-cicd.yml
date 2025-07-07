@@ -204,6 +204,14 @@ jobs:
           name: integration-test-coverage
           path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
 
+      - name: Rewrite Cobertura paths to be relative
+        shell: bash
+        run: |
+            find ./coverlet/reports -name "*.xml" | while read file; do
+            echo "Rewriting paths in $file"
+            sed -i "s|${{ github.workspace }}/||g" "$file"
+            done
+          
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
