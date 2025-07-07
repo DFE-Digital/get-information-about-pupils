@@ -80,7 +80,7 @@ jobs:
       - name: Merge coverage reports
         shell: bash
         run: | 
-          dotnet tool run reportgenerator \ 
+          dotnet tool run reportgenerator \
           -sourcedirs:"./DfE.GIAP.All" \
           -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml \
           -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ \
