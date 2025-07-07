@@ -80,7 +80,12 @@ jobs:
       - name: Merge coverage reports
         shell: bash
         run: | 
-          dotnet tool run reportgenerator -sourcedirs:"./DfE.GIAP.All" -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+          dotnet tool run reportgenerator \ 
+          -sourcedirs:"./DfE.GIAP.All" \
+          -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml \
+          -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ \
+          -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
+          -useRelativePaths:true
 
       - name: Upload unit test projects coverage reports
         uses: actions/upload-artifact@v4
@@ -202,11 +207,12 @@ jobs:
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
-            -sourcedirs:"${{ github.workspace }}/DfE.GIAP.All" \
+            -sourcedirs:"./DfE.GIAP.All" \
             -reports:./coverlet/reports/**/*.xml \
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+            -useRelativePaths:true
 
       - name: Upload merged coverage report
         uses: actions/upload-artifact@v4
@@ -257,7 +263,7 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=${{env.SOLUTION_DIRECTORY}}/coverlet/merged/SonarQube.xml \
+            /d:sonar.coverageReportPaths=${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/SonarQube.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
