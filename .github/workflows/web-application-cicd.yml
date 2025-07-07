@@ -202,16 +202,7 @@ jobs:
         with:
           name: integration-test-coverage
           path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
-
-      - name: Remove relative pathing in Cobertura reports
-        shell: bash
-        run: |
-          find ./coverlet/reports -name "*.xml" | while read file; do
-            echo "Restoring <source> in $file"
-            sed -i '/<source>.*<\/source>/d' "$file"
-            sed -i "/<sources>/a <source>${{ github.workspace }}/DfE.GIAP.All/</source>" "$file"
-          done
-
+          
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
