@@ -202,7 +202,7 @@ jobs:
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
-            -sourcedirs:"." \
+            -sourcedirs:"${{ github.workspace }}/DfE.GIAP.All" \
             -reports:./coverlet/reports/**/*.xml \
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
