@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
+﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.UpdateNewsArticle;
 public sealed class UpdateNewsArticleUseCaseTests

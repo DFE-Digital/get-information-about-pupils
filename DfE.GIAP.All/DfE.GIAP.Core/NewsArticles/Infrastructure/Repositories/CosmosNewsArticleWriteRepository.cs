@@ -94,7 +94,7 @@ internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
         try
         {
             NewsArticleDto newsArticleDto = _entityToDtoMapper.Map(newsArticle);
-            await _cosmosDbCommandHandler.ReplaceItemAsync(newsArticleDto, newsArticleDto.Id, ContainerName, newsArticleDto.Id);
+            await _cosmosDbCommandHandler.ReplaceItemAsync(newsArticleDto, newsArticleDto.id, ContainerName, newsArticleDto.id);
         }
         catch (CosmosException ex)
         {
