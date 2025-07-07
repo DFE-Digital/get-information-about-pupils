@@ -81,11 +81,10 @@ jobs:
         shell: bash
         run: | 
           dotnet tool run reportgenerator \
-          -sourcedirs:"${{ github.workspace }};${{ github.workspace }}/DfE.GIAP.All" \
+          -sourcedirs:"." \
           -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml \
           -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ \
           -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
-          -useRelativePaths:true
 
       - name: Upload unit test projects coverage reports
         uses: actions/upload-artifact@v4
@@ -216,12 +215,11 @@ jobs:
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
-            -sourcedirs:"${{ github.workspace }};${{ github.workspace }}/DfE.GIAP.All" \
+            -sourcedirs:"." \
             -reports:./coverlet/reports/**/*.xml \
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
-            -useRelativePaths:true
 
       - name: Upload merged coverage report
         uses: actions/upload-artifact@v4
