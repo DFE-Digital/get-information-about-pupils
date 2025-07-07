@@ -156,7 +156,7 @@ jobs:
           echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
           echo "Running tests for $TEST_PROJECT..."
 
-          dotnet test "./DfE.GIAP.All/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj" \
+          dotnet test "./DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj" \
             --no-build \
             --nologo \
             --logger "console;verbosity=detailed" \
