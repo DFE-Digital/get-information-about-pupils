@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
@@ -21,16 +19,10 @@ using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
 
@@ -160,7 +152,7 @@ public class MyPupilListController : Controller
 
         if (downloadType == DownloadType.CTF && selectedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
         {
-            model.ErrorDetails = DownloadErrorMessages.UPNLimitExceeded;
+            model.ErrorDetails = Messages.Downloads.Errors.UPNLimitExceeded;
             return await MyPupilList(model, model.PageNumber, true);
         }
 
@@ -201,7 +193,7 @@ public class MyPupilListController : Controller
         if (downloadFile.Bytes != null)
             return SearchDownloadHelper.DownloadFile(downloadFile);
 
-        model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         return await MyPupilList(model, model.PageNumber, true, true);
     }
 
@@ -227,7 +219,7 @@ public class MyPupilListController : Controller
         if (downloadFile.Bytes != null)
             return SearchDownloadHelper.DownloadFile(downloadFile);
 
-        model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         return await MyPupilList(model, model.PageNumber, true, true);
     }
 
@@ -283,7 +275,7 @@ public class MyPupilListController : Controller
 
             if (model.SelectedDownloadOptions == null)
             {
-                model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
+                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
@@ -301,12 +293,12 @@ public class MyPupilListController : Controller
                 }
                 else
                 {
-                    model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
                 }
             }
             else
             {
-                model.ErrorDetails = SearchErrorMessages.SelectFileType;
+                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Models.Common;
@@ -428,7 +421,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             var model = viewResult.Model as LearnerNumberSearchViewModel;
 
             AssertAbstractValues(sut, model);
-            Assert.Equal(model.SearchBoxErrorMessage, SearchErrorMessages.EnterUPNs);
+            Assert.Equal(model.SearchBoxErrorMessage, Messages.Search.Errors.EnterUPNs);
             Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
             Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
         }
@@ -1781,7 +1774,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.True(viewResult.ViewName.Equals(Global.SearchView));
 
-            Assert.True(model.ErrorDetails.Equals(CommonErrorMessages.MyPupilListLimitExceeded));
+            Assert.True(model.ErrorDetails.Equals(Messages.Common.Errors.MyPupilListLimitExceeded));
         }
 
         #endregion MPL
@@ -1930,7 +1923,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.True(viewResult.ViewName.Equals(Global.SearchView));
 
-            Assert.True(model.ErrorDetails.Equals(DownloadErrorMessages.NoDataForSelectedPupils));
+            Assert.True(model.ErrorDetails.Equals(Messages.Downloads.Errors.NoDataForSelectedPupils));
         }
 
         [Fact]
@@ -1984,7 +1977,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
 
             AssertAbstractValues(sut, model);
             Assert.True(viewResult.ViewName.Equals(Global.SearchView));
-            Assert.Contains(DownloadErrorMessages.UPNLimitExceeded, model.ErrorDetails);
+            Assert.Contains(Messages.Downloads.Errors.UPNLimitExceeded, model.ErrorDetails);
         }
 
         #endregion Download CTF
@@ -2131,7 +2124,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(viewResult.ViewName.Equals(Global.DownloadNPDOptionsView));
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == upns.Length);
-            Assert.True(sut.TempData["ErrorDetails"].Equals(SearchErrorMessages.SelectOneOrMoreDataTypes));
+            Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectOneOrMoreDataTypes));
         }
 
         [Fact]
@@ -2168,7 +2161,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(viewResult.ViewName.Equals(Global.DownloadNPDOptionsView));
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == upns.Length);
-            Assert.True(sut.TempData["ErrorDetails"].Equals(SearchErrorMessages.SelectFileType));
+            Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectFileType));
         }
 
         [Fact]
@@ -2214,7 +2207,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(viewResult.ViewName.Equals(Global.DownloadNPDOptionsView));
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == upns.Length);
-            Assert.True(sut.TempData["ErrorDetails"].Equals(DownloadErrorMessages.NoDataForSelectedPupils));
+            Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Downloads.Errors.NoDataForSelectedPupils));
         }
 
         [Fact]

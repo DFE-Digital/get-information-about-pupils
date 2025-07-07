@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -16,14 +14,9 @@ using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.FeatureManagement.Mvc;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
@@ -143,7 +136,7 @@ public class FELearnerNumberController : BaseLearnerNumberController
             var selectedPupils = model.SelectedPupils.Split(',');
             if (model.SelectedDownloadOptions == null)
             {
-                model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
+                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
@@ -161,12 +154,12 @@ public class FELearnerNumberController : BaseLearnerNumberController
                 }
                 else
                 {
-                    model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
                 }
             }
             else
             {
-                model.ErrorDetails = SearchErrorMessages.SelectFileType;
+                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;

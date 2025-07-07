@@ -1,6 +1,6 @@
 ﻿@model LearnerTextSearchViewModel
 
-@if (Model.NoPupilSelected && !String.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.Equals(CommonErrorMessages.NoPupilsSelected))
+@if (Model.NoPupilSelected && !String.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.Equals(Messages.Common.Errors.NoPupilsSelected))
 {
     <div class="govuk-error-summary">
         <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>

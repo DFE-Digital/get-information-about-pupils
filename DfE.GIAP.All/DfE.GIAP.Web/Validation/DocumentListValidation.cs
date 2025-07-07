@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Core.Models.Editor;
+﻿using DfE.GIAP.Core.Models.Editor;
+using DfE.GIAP.Web.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace DfE.GIAP.Web.Validation
@@ -13,7 +13,7 @@ namespace DfE.GIAP.Web.Validation
 
             if (document.DocumentId == null)
             {
-                return new ValidationResult(CommonErrorMessages.AdminDocumentRequired);
+                return new ValidationResult(Messages.Common.Errors.AdminDocumentRequired);
             }
             return null;
         }

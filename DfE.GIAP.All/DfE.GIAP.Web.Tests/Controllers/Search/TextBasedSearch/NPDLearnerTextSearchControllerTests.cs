@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Search;
@@ -19,6 +13,7 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -866,11 +861,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
     [Theory]
 #pragma warning disable CA1861 // Avoid constant arrays as arguments
-    [InlineData(DownloadFileType.None, new string[] { "csv" }, new byte[0], SearchErrorMessages.SelectFileType)]
+    [InlineData(DownloadFileType.None, new string[] { "csv" }, new byte[0], Messages.Search.Errors.SelectFileType)]
 #pragma warning restore CA1861 // Avoid constant arrays as arguments
-    [InlineData(DownloadFileType.CSV, null, new byte[0], SearchErrorMessages.SelectOneOrMoreDataTypes)]
+    [InlineData(DownloadFileType.CSV, null, new byte[0], Messages.Search.Errors.SelectOneOrMoreDataTypes)]
 #pragma warning disable CA1861 // Avoid constant arrays as arguments
-    [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, DownloadErrorMessages.NoDataForSelectedPupils)]
+    [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, Messages.Downloads.Errors.NoDataForSelectedPupils)]
 #pragma warning restore CA1861 // Avoid constant arrays as arguments
     public async Task DownloadSelectedNationalPupilDatabaseData_returns_correct_validation_error_message(DownloadFileType downloadFileType, string[] selectedDownloadOptions, byte[] fileBytes, string errorMessage)
     {

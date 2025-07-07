@@ -1,8 +1,6 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -29,10 +27,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
@@ -522,7 +516,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             var model = viewResult.Model as LearnerNumberSearchViewModel;
 
             AssertAbstractValues(sut, model);
-            Assert.Equal(SearchErrorMessages.EnterULNs, model.SearchBoxErrorMessage);
+            Assert.Equal(Messages.Search.Errors.EnterULNs, model.SearchBoxErrorMessage);
             Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
             Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         }
@@ -1854,7 +1848,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(viewResult.ViewName.Equals(Global.DownloadNPDOptionsView));
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == ulns.Length);
-            Assert.True(sut.TempData["ErrorDetails"].Equals(SearchErrorMessages.SelectOneOrMoreDataTypes));
+            Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectOneOrMoreDataTypes));
         }
 
         [Fact]
@@ -1891,7 +1885,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(viewResult.ViewName.Equals(Global.DownloadNPDOptionsView));
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == ulns.Length);
-            Assert.True(sut.TempData["ErrorDetails"].Equals(SearchErrorMessages.SelectFileType));
+            Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectFileType));
         }
 
         [Fact]
@@ -1936,7 +1930,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(viewResult.ViewName.Equals(Global.DownloadNPDOptionsView));
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == ulns.Length);
-            Assert.True(sut.TempData["ErrorDetails"].Equals(DownloadErrorMessages.NoDataForSelectedPupils));
+            Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Downloads.Errors.NoDataForSelectedPupils));
         }
 
         [Fact]

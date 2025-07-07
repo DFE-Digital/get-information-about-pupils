@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
@@ -1098,7 +1092,7 @@ public class MyPupilListControllerTests :
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.True(viewResult.ViewName.Equals(Routes.MyPupilList.MyPupilListView));
         var model = Assert.IsType<MyPupilListViewModel>(viewResult.Model);
-        Assert.Equal(DownloadErrorMessages.UPNLimitExceeded, model.ErrorDetails);
+        Assert.Equal(Messages.Downloads.Errors.UPNLimitExceeded, model.ErrorDetails);
     }
 
     [Fact]
@@ -1138,7 +1132,7 @@ public class MyPupilListControllerTests :
         Assert.True(viewResult.ViewName.Equals(Routes.MyPupilList.MyPupilListView));
         var model = Assert.IsType<MyPupilListViewModel>(viewResult.Model);
 
-        Assert.True(model.ErrorDetails.Equals(DownloadErrorMessages.NoDataForSelectedPupils));
+        Assert.True(model.ErrorDetails.Equals(Messages.Downloads.Errors.NoDataForSelectedPupils));
         Assert.Equal(Global.LearnerNumberLabel, model.LearnerNumberLabel);
     }
 
@@ -1339,7 +1333,7 @@ public class MyPupilListControllerTests :
         Assert.True(viewResult.ViewName.Equals(Global.MPLDownloadNPDOptionsView));
         Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
         Assert.True(model.SelectedPupilsCount == upns.Length);
-        Assert.True(sut.TempData["ErrorDetails"].Equals(SearchErrorMessages.SelectOneOrMoreDataTypes));
+        Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectOneOrMoreDataTypes));
     }
 
     [Fact]
@@ -1373,7 +1367,7 @@ public class MyPupilListControllerTests :
         Assert.True(viewResult.ViewName.Equals(Global.MPLDownloadNPDOptionsView));
         Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
         Assert.True(model.SelectedPupilsCount == upns.Length);
-        Assert.True(sut.TempData["ErrorDetails"].Equals(SearchErrorMessages.SelectFileType));
+        Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectFileType));
     }
 
     [Fact]
@@ -1416,7 +1410,7 @@ public class MyPupilListControllerTests :
         Assert.True(viewResult.ViewName.Equals(Global.MPLDownloadNPDOptionsView));
         Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
         Assert.True(model.SelectedPupilsCount == upns.Length);
-        Assert.True(sut.TempData["ErrorDetails"].Equals(DownloadErrorMessages.NoDataForSelectedPupils));
+        Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Downloads.Errors.NoDataForSelectedPupils));
     }
 
     [Fact]
@@ -1635,7 +1629,7 @@ public class MyPupilListControllerTests :
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.True(viewResult.ViewName.Equals(Routes.MyPupilList.MyPupilListView));
         var model = Assert.IsType<MyPupilListViewModel>(viewResult.Model);
-        Assert.Equal(DownloadErrorMessages.NoDataForSelectedPupils, model.ErrorDetails);
+        Assert.Equal(Messages.Downloads.Errors.NoDataForSelectedPupils, model.ErrorDetails);
         Assert.Equal(Global.LearnerNumberLabel, model.LearnerNumberLabel);
     }
 

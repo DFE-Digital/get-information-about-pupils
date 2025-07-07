@@ -11,12 +11,12 @@
     {
         <div class="govuk-inset-text">@ApplicationLabel.SelectedAddedToMyPupilList</div>
     }
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(CommonErrorMessages.MyPupilListLimitExceeded))
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
     {
         <partial name="~/Views/Search/MyPupilList/_AddToMyPupilListError.cshtml" />
     }
 
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(DownloadErrorMessages.UPNLimitExceeded))
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
     {
         <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
     }

@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
@@ -17,13 +15,8 @@ using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
@@ -203,7 +196,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
         if (string.IsNullOrEmpty(selectedPupil))
         {
-            model.ErrorDetails = DownloadErrorMessages.NoPupilSelected;
+            model.ErrorDetails = Messages.Downloads.Errors.NoPupilSelected;
             model.NoPupil = true;
             model.NoPupilSelected = true;
             return await ReturnToSearch(model);
@@ -240,7 +233,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
         }
         else
         {
-            model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         }
 
         return await ReturnToSearch(model);
@@ -292,7 +285,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
         if (string.IsNullOrEmpty(selectedPupil))
         {
-            model.ErrorDetails = DownloadErrorMessages.NoPupilSelected;
+            model.ErrorDetails = Messages.Downloads.Errors.NoPupilSelected;
             model.NoPupil = true;
             model.NoPupilSelected = true;
             return await ReturnToSearch(model);
@@ -360,7 +353,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
             if (model.SelectedDownloadOptions == null)
             {
-                model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
+                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
@@ -380,12 +373,12 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
                 }
                 else
                 {
-                    model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
                 }
             }
             else
             {
-                model.ErrorDetails = SearchErrorMessages.SelectFileType;
+                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;

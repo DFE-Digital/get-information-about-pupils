@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Xunit;
@@ -107,14 +107,14 @@ namespace DfE.GIAP.Web.Tests.Helpers
         #endregion
 
         [Theory]
-        [InlineData("<span style='display:none'>1</span>", SearchErrorMessages.EnterUPNs)]
-        [InlineData("You have not entered any UPNs", SearchErrorMessages.EnterUPNs)]
-        [InlineData("<span style='display:none'>2</span>", SearchErrorMessages.TooManyUPNs)]
-        [InlineData("UPNs have been entered, please review and reduce to the maximum of", SearchErrorMessages.TooManyUPNs)]
-        [InlineData("<span style='display:none'>3</span>", SearchErrorMessages.UPNLength)]
-        [InlineData("<span style='display:none'>4</span>", SearchErrorMessages.UPNFormat)]
-        [InlineData("<span style='display:none'>5</span>", SearchErrorMessages.UPNMustBeUnique)]
-        [InlineData("The following UPN(s) are duplicated", SearchErrorMessages.UPNMustBeUnique)]
+        [InlineData("<span style='display:none'>1</span>", Messages.Search.Errors.EnterUPNs)]
+        [InlineData("You have not entered any UPNs", Messages.Search.Errors.EnterUPNs)]
+        [InlineData("<span style='display:none'>2</span>", Messages.Search.Errors.TooManyUPNs)]
+        [InlineData("UPNs have been entered, please review and reduce to the maximum of", Messages.Search.Errors.TooManyUPNs)]
+        [InlineData("<span style='display:none'>3</span>", Messages.Search.Errors.UPNLength)]
+        [InlineData("<span style='display:none'>4</span>", Messages.Search.Errors.UPNFormat)]
+        [InlineData("<span style='display:none'>5</span>", Messages.Search.Errors.UPNMustBeUnique)]
+        [InlineData("The following UPN(s) are duplicated", Messages.Search.Errors.UPNMustBeUnique)]
         public void GenerateValidationMessageUpnSearch_CheckOutcome(string inputData, string outputValue)
         {
             // Arrange
@@ -129,12 +129,12 @@ namespace DfE.GIAP.Web.Tests.Helpers
         }
 
         [Theory]
-        [InlineData("<span style='display:none'>1</span>", SearchErrorMessages.EnterULNs)]
-        [InlineData("You have not entered any ULNs", SearchErrorMessages.EnterULNs)]
-        [InlineData("<span style='display:none'>2</span>", SearchErrorMessages.TooManyULNs)]
-        [InlineData("ULNs have been entered, please review and reduce to the maximum of", SearchErrorMessages.TooManyULNs)]
-        [InlineData("<span style='display:none'>3</span>", SearchErrorMessages.ULNLength)]
-        [InlineData("<span style='display:none'>4</span>", SearchErrorMessages.ULNFormat)]
+        [InlineData("<span style='display:none'>1</span>", Messages.Search.Errors.EnterULNs)]
+        [InlineData("You have not entered any ULNs", Messages.Search.Errors.EnterULNs)]
+        [InlineData("<span style='display:none'>2</span>", Messages.Search.Errors.TooManyULNs)]
+        [InlineData("ULNs have been entered, please review and reduce to the maximum of", Messages.Search.Errors.TooManyULNs)]
+        [InlineData("<span style='display:none'>3</span>", Messages.Search.Errors.ULNLength)]
+        [InlineData("<span style='display:none'>4</span>", Messages.Search.Errors.ULNFormat)]
 
         public void GenerateValidationMessageUlnSearch_CheckOutcome(string inputData, string outputValue)
         {

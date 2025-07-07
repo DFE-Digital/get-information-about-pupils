@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Core.Models.News;
+﻿using DfE.GIAP.Core.Models.News;
+using DfE.GIAP.Web.Constants;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -16,12 +16,12 @@ namespace DfE.GIAP.Web.ViewModels.Admin
         public UpdateNewsDocumentRequestBody AddUpdateRequest { get; set; }
 
 
-        [Required(ErrorMessage = CommonErrorMessages.AdminTitleLength)]
+        [Required(ErrorMessage = Messages.Common.Errors.AdminTitleLength)]
         public string Title { get; set; }
 
         public bool TitleInvalid { get; set; }
 
-        [Required(ErrorMessage = CommonErrorMessages.AdminBodyRequired)]
+        [Required(ErrorMessage = Messages.Common.Errors.AdminBodyRequired)]
         public string Body { get; set; }
 
         public bool BodyInvalid { get; set; }

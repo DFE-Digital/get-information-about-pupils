@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using DfE.GIAP.Common.Constants;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Constants.Messages.Articles;
-using DfE.GIAP.Common.Constants.Messages.Common;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
@@ -25,8 +22,6 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
@@ -134,7 +129,7 @@ public class ManageDocumentsController : Controller
         {
             if (manageDocumentsModel.DocumentList.DocumentId == null)
             {
-                ModelState.AddModelError("Document.Id", CommonErrorMessages.AdminDocumentRequired);
+                ModelState.AddModelError("Document.Id", Messages.Common.Errors.AdminDocumentRequired);
                 manageDocumentsModel.HasInvalidDocumentList = true;
             }
             else
@@ -193,7 +188,7 @@ public class ManageDocumentsController : Controller
         if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
         {
             manageDocumentsModel.HasInvalidNewsList = true;
-            ModelState.AddModelError("SelectNewsArticle", CommonErrorMessages.AdminNewsArticleRequired);
+            ModelState.AddModelError("SelectNewsArticle", Messages.Common.Errors.AdminNewsArticleRequired);
         }
         return await ManageDocuments(manageDocumentsModel, null, null).ConfigureAwait(false);
     }
@@ -289,7 +284,7 @@ public class ManageDocumentsController : Controller
         if (string.IsNullOrEmpty(manageDocumentsModel.ArchivedNewsId))
         {
             manageDocumentsModel.HasInvalidArchiveList = true;
-            ModelState.AddModelError("SelectArchivNewsArticle", CommonErrorMessages.AdminNewsArticleRequired);
+            ModelState.AddModelError("SelectArchivNewsArticle", Messages.Common.Errors.AdminNewsArticleRequired);
             return await ManageDocuments(manageDocumentsModel, null, null).ConfigureAwait(false);
         }
 
