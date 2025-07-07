@@ -87,7 +87,7 @@ public class AdminController : Controller
             "DownloadSecurityReportsBySchool" => User.IsAdmin()
                                     ? RedirectToAction("SchoolCollegeDownloadOptions", "Admin")
                                     : RedirectToAction("SecurityReportsBySchool", "Admin"),
-            _ => null,// no redirection
+            _ => throw new NotImplementedException()
         };
     }
 
@@ -128,9 +128,6 @@ public class AdminController : Controller
 
         return View("../Admin/SecurityReports/SchoolCollegeDownloadOptions", GetAdminViewModel());
     }
-
-
-
 
     [HttpGet]
     [Route(Routes.SecurityReports.SecurityReportsBySchool)]
@@ -186,7 +183,6 @@ public class AdminController : Controller
         }
         return View("../Admin/SecurityReports/SecurityReportsBySchool", model);
     }
-
 
 
     [HttpGet]

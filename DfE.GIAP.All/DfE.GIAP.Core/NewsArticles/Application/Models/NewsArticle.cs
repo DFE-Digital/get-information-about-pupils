@@ -7,11 +7,16 @@ public record NewsArticle
     public required NewsArticleIdentifier Id { get; init; }
     public required string Title { get; init; }
     public required string Body { get; init; }
-    public required string DraftBody { get; init; }
-    public required string DraftTitle { get; init; }
+    public string? DraftBody { get; init; }
+    public string? DraftTitle { get; init; }
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
     public bool Published { get; set; }
     public bool Archived { get; set; }
     public bool Pinned { get; set; }
+
+    public void WithModifiedNow()
+    {
+        ModifiedDate = DateTime.UtcNow;
+    }
 }
