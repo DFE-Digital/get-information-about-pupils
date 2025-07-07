@@ -1,45 +1,46 @@
 ﻿using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Web.ViewModels.Helper;
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Middleware;
-using System;
-using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Glossary;
-using System.Collections.Generic;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class GlossaryController : Controller
 {
-    private readonly IContentService _contentService;
     private readonly IDownloadService _downloadService;
+    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
 
-    public GlossaryController(IContentService contentService, IDownloadService downloadService)
+    public GlossaryController(
+        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
+        IDownloadService downloadService)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
+        ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _getContentByPageKeyUseCase = getContentByPageKeyUseCase;
+        _downloadService = downloadService;
     }
 
     [AllowWithoutConsent]
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
-        CommonResponseBody glossaryResults = await _contentService.GetContent(DocumentType.Glossary).ConfigureAwait(false);
-        List<MetaDataDownload> downloadList = await _downloadService.GetGlossaryMetaDataDownloadList().ConfigureAwait(false);
+        const string GlossaryPageKey = "Glossary";
 
-        var model = new GlossaryViewModel
+        GetContentByPageKeyUseCaseResponse response =
+           await _getContentByPageKeyUseCase.HandleRequestAsync(
+               new GetContentByPageKeyUseCaseRequest(pageKey: GlossaryPageKey));
+
+        IEnumerable<MetaDataDownload> downloadList = await _downloadService.GetGlossaryMetaDataDownloadList().ConfigureAwait(false);
+
+        GlossaryViewModel model = new()
         {
-            Response = glossaryResults.ConvertToViewModel(),
+            Response = response.Content,
             MetaDataDownloadList = downloadList.OrderByDescending(x => x.Date).ToList()
         };
 
@@ -47,6 +48,7 @@ public class GlossaryController : Controller
 
     }
 
+    [HttpGet]
     public async Task<FileStreamResult> GetBulkUploadTemplateFile(string name)
     {
         var ms = new MemoryStream();
