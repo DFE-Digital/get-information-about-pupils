@@ -211,7 +211,7 @@ jobs:
             -reports:./coverlet/reports/**/*.xml \
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
-            -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+            -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
             -useRelativePaths:true
 
       - name: Upload merged coverage report
