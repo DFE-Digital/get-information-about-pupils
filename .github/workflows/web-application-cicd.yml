@@ -241,11 +241,11 @@ jobs:
         run: dotnet tool restore
         shell: bash
 
-      - name: Setup Java ${{ env.JAVA_VERSION }} # for sonarcloud
+      - name: Setup Java # for sonarcloud
         uses: actions/setup-java@v4
         with:
           distribution: "zulu"
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
 
       - name: Begin SonarCloud analysis
         # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
