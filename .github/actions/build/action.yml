@@ -34,7 +34,7 @@ runs:
       shell: bash
 
     - name: Restore NuGet packages
-      run: dotnet restore ./DfE.GIAP.All/*.sln --configfile ./nuget.config
+      run: dotnet restore ./DfE.GIAP.All/*.sln --configfile ./DfE.GIAP.All/nuget.config
       shell: bash
 
     - name: Build
