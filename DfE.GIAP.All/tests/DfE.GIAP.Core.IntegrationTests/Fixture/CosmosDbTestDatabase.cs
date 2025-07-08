@@ -69,27 +69,31 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(DatabaseId).DeleteAsync();
 
+    public async Task<IEnumerable<T>> ReadManyAsync<T>() where T : class
+    {
+        ContainerResponse targetContainer = await GetApplicationDataContainer();
+
+        int partitionKey = ExtractApplicationDataPartitionKey<T>();
+
+        List<T> output = [];
+        QueryDefinition queryDefinition = new($"SELECT * FROM c WHERE c.DOCTYPE = {partitionKey}");
+        FeedIterator<T> iterator = targetContainer.Container.GetItemQueryIterator<T>(queryDefinition);
+        while (iterator.HasMoreResults)
+        {
+            FeedResponse<T> item = await iterator.ReadNextAsync();
+            output.AddRange(item.Resource);
+        }
+        return output;
+    }
     public async Task<IEnumerable<T?>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
     {
-        DatabaseResponse db = await CreateDatabase(_cosmosClient);
-        List<ContainerResponse> containers = await CreateAllContainers(db);
-        ContainerResponse targetContainer = containers.Single(container => container.Container.Id == ApplicationDataContainerName);
-
-        // TODO Temp to query without point-reading ability (on id) - PartitionKey value needs to be passed as part of query
-        // TODO make partition key or config - configurable not pinned to application-data-container e.g
-        Dictionary<string, PartitionKey> typeToPartitionKeyMap = new()
-        {
-            { nameof(NewsArticleDto), new PartitionKey(7) },
-            { nameof(ContentDto), new PartitionKey(20) }
-        };
-
+        ContainerResponse targetContainer = await GetApplicationDataContainer();
+        int partitionKey = ExtractApplicationDataPartitionKey<T>();
         IEnumerable<Task<T?>> readTasks = identifiers.Select(async (id) =>
         {
             try
             {
-                ItemResponse<T> response = await targetContainer.Container.ReadItemAsync<T>(
-                    id,
-                    typeToPartitionKeyMap[typeof(T).Name]);
+                ItemResponse<T> response = await targetContainer.Container.ReadItemAsync<T>(id, new PartitionKey(partitionKey));
                 return response.Resource;
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
@@ -104,10 +108,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task WriteItemAsync<T>(T item) where T : class
     {
-        DatabaseResponse db = await CreateDatabase(_cosmosClient);
-        List<ContainerResponse> containers = await CreateAllContainers(db);
-
-        ContainerResponse targetContainer = containers.Single(container => container.Container.Id == ApplicationDataContainerName);
+        ContainerResponse targetContainer = await GetApplicationDataContainer();
 
         PartitionKey documentPartitionKey = new((item as dynamic).DOCTYPE);
 
@@ -124,10 +125,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task WriteManyAsync<T>(IEnumerable<T> items) where T : class
     {
-        DatabaseResponse db = await CreateDatabase(_cosmosClient);
-        List<ContainerResponse> containers = await CreateAllContainers(db);
-
-        Container container = containers.Single(c => c.Container.Id == ApplicationDataContainerName).Container;
+        ContainerResponse container = await GetApplicationDataContainer();
 
         await Task.WhenAll(
             items.Select(
@@ -139,6 +137,27 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
                     container,
                     ExtractDocumentId(item),
                     ExtractPartitionKey(item))));
+    }
+
+    private async Task<ContainerResponse> GetApplicationDataContainer()
+    {
+        DatabaseResponse db = await CreateDatabase(_cosmosClient);
+        List<ContainerResponse> containers = await CreateAllContainers(db);
+        ContainerResponse targetContainer = containers.Single((container) => container.Container.Id == ApplicationDataContainerName);
+        return targetContainer;
+    }
+
+    private static int ExtractApplicationDataPartitionKey<T>() where T : class // DOCTYPE
+    {
+        // TODO Temp to query without point-reading ability (on id) - PartitionKey value needs to be passed as part of query
+        // TODO make partition key or config - configurable not pinned to application-data-container e.g
+        Dictionary<string, int> typeToPartitionKeyMap = new()
+        {
+            { nameof(NewsArticleDto), 7 },
+            { nameof(ContentDto), 20 }
+        };
+
+        return typeToPartitionKeyMap[typeof(T).Name];
     }
 
     private static string ExtractDocumentId<T>(T obj) where T : class
