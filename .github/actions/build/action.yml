@@ -27,14 +27,19 @@ runs:
     - name: npm ci
       run: npm ci
       shell: bash
-      working-directory: ./DfE.GIAP.All/DfE.GIAP.Web
+      working-directory: ./DfE.GIAP.All/src/DfE.GIAP.Web
 
     - name: Add DfEDigital NuGet Feed
-      run: dotnet nuget add source --username USERNAME --password ${{ inputs.github_token }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+      run: | 
+        dotnet nuget update source dfedigital \
+        --configfile ./DfE.GIAP.All/nuget.config \
+        --username USERNAME \
+        --password ${{ inputs.github_token }} \
+        --store-password-in-clear-text
       shell: bash
 
     - name: Restore NuGet packages
-      run: dotnet restore ./DfE.GIAP.All/*.sln
+      run: dotnet restore ./DfE.GIAP.All/*.sln --configfile ./DfE.GIAP.All/nuget.config
       shell: bash
 
     - name: Build

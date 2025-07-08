@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>DfE.GIAP.Core.UnitTests</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector"/>
+    <PackageReference Include="coverlet.msbuild"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
+    <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
+  </ItemGroup>
+
+</Project>
