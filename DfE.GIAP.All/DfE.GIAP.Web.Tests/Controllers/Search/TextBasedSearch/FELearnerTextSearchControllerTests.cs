@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Search;
@@ -12,6 +10,7 @@ using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -24,10 +23,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
@@ -168,7 +163,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var viewResult = Assert.IsType<ViewResult>(result);
             Assert.NotNull(viewResult);
             var model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-            Assert.Equal(ApplicationLabel.DownloadSelectedFurtherEducationLink, model.DownloadSelectedLink);
+            Assert.Equal(ApplicationLabels.DownloadSelectedFurtherEducationLink, model.DownloadSelectedLink);
 
         }
 
@@ -686,9 +681,9 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
         }
 
         [Theory]
-        [InlineData(DownloadFileType.None, new string[] { "csv" }, new byte[0], SearchErrorMessages.SelectFileType)]
-        [InlineData(DownloadFileType.CSV, null, new byte[0], SearchErrorMessages.SelectOneOrMoreDataTypes)]
-        [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, DownloadErrorMessages.NoDataForSelectedPupils)]
+        [InlineData(DownloadFileType.None, new string[] { "csv" }, new byte[0], Messages.Search.Errors.SelectFileType)]
+        [InlineData(DownloadFileType.CSV, null, new byte[0], Messages.Search.Errors.SelectOneOrMoreDataTypes)]
+        [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, Messages.Downloads.Errors.NoDataForSelectedPupils)]
         public async Task DownloadSelectedFEDataULN_returns_correct_validation_error_message(DownloadFileType downloadFileType, string[] selectedDownloadOptions, byte[] fileBytes, string errorMessage)
         {
             // arrange

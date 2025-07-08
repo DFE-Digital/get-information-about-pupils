@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Constants.Messages.Articles;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Common;
@@ -13,6 +12,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.News;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin;
 
@@ -249,7 +250,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UpdatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.UpdatedError);
     }
 
     [Fact]
@@ -276,7 +277,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UpdatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.UpdatedError);
     }
 
     [Fact]
@@ -303,7 +304,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UpdatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.UpdatedError);
     }
 
     [Fact]
@@ -330,7 +331,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.CreatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.CreatedError);
     }
 
     [Fact]
@@ -357,7 +358,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UpdatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.UpdatedError);
     }
 
     [Fact]
@@ -384,7 +385,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.UpdatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.UpdatedError);
     }
 
     [Fact]
@@ -411,7 +412,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         var viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageDocuments/Error", viewResult.ViewName);
         var errorModel = Assert.IsType<UserErrorViewModel>(viewResult.Model);
-        Assert.Equal(errorModel.UserErrorMessage, ArticleErrorMessages.CreatedError);
+        Assert.Equal(errorModel.UserErrorMessage, Messages.NewsArticle.Errors.CreatedError);
     }
 
     public ManageDocumentsController GetManageDocumentsController()

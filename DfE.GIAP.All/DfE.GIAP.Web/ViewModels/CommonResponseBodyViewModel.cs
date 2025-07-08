@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Domain.Models.User;
+﻿using DfE.GIAP.Domain.Models.User;
+using DfE.GIAP.Web.Constants;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +9,7 @@ namespace DfE.GIAP.Web.ViewModels;
 [ExcludeFromCodeCoverage]
 public class CommonResponseBodyViewModel
 {
-    [Required(ErrorMessage = CommonErrorMessages.BodyRequired)]
+    [Required(ErrorMessage = Messages.Common.Errors.BodyRequired)]
     public string Body { get; set; }
     public UserInfo CreatedBy { get; set; }
     public DateTime CreatedDate { get; set; }
@@ -21,8 +21,8 @@ public class CommonResponseBodyViewModel
     public DateTime ModifiedDate { get; set; }
     public bool Published { get; set; }
 
-    [Required(ErrorMessage = CommonErrorMessages.TitleRequired)]
-    [MaxLength(64, ErrorMessage = CommonErrorMessages.TitleLength)]
+    [Required(ErrorMessage = Messages.Common.Errors.TitleRequired)]
+    [MaxLength(64, ErrorMessage = Messages.Common.Errors.TitleLength)]
     public string Title { get; set; }
     public bool Archived { get; set; }
     public bool Pinned { get; set; }

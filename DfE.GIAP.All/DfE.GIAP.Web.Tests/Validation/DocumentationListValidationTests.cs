@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Core.Models.Editor;
+﻿using DfE.GIAP.Core.Models.Editor;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Validation;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
@@ -34,7 +34,7 @@ namespace DfE.GIAP.Web.Tests.Validation
 
             // Assert
             Assert.IsType<ValidationResult>(result);
-            Assert.Equal(CommonErrorMessages.DocumentRequired, result.ErrorMessage);
+            Assert.Equal(Messages.Common.Errors.DocumentRequired, result.ErrorMessage);
         }
     }
 }

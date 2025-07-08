@@ -6,14 +6,11 @@ using DfE.GIAP.Service.Download.SecurityReport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System.Linq;
 using Xunit;
 using DfE.GIAP.Domain.Models.Common;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using System.Threading.Tasks;
+using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin.SecurityReports
 {
@@ -180,7 +177,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin.SecurityReports
             var viewModelResult = Assert.IsType<SecurityReportsByUpnUlnViewModel>(viewResult.Model);
             Assert.NotNull(viewResult);
             Assert.Equal("../Admin/SecurityReports/SecurityReportsByUpnUln", viewResult.ViewName);
-            Assert.True(viewModelResult.ErrorDetails.Equals(DownloadErrorMessages.NoDataForDownload));
+            Assert.True(viewModelResult.ErrorDetails.Equals(Messages.Downloads.Errors.NoDataForDownload));
         }
 
         /*https://bytelanguage.net/2020/07/31/writing-unit-test-for-model-validation/*/

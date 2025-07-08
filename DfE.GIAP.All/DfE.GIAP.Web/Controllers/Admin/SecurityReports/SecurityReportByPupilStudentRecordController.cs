@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download.SecurityReport;
@@ -63,7 +60,7 @@ public class SecurityReportByPupilStudentRecordController : Controller
             }
             else
             {
-                model.ErrorDetails = DownloadErrorMessages.NoDataForDownload;
+                model.ErrorDetails = Messages.Downloads.Errors.NoDataForDownload;
             }
         }
 

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -169,9 +167,9 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
         if (feUser)
         {
             user = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
-                OrganisationCategory.Establishment,
-                EstablishmentType.FurtherEducation,
-                Role.Approver,
+                DsiKeys.OrganisationCategory.Establishment,
+                DsiKeys.EstablishmentType.FurtherEducation,
+                Roles.Approver,
                 18,
                 25);
         }

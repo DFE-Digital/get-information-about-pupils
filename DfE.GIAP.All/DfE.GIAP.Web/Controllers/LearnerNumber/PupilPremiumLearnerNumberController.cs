@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
@@ -14,13 +13,8 @@ using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
@@ -31,7 +25,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchPupilPremiumWithUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
     public override string SearchAction => "PupilPremium";
     public override string FullTextLearnerSearchController => Global.PPNonUpnController;
     public override string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
@@ -44,7 +38,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override int MyPupilListLimit => _appSettings.UpnPPMyPupilListLimit;
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override bool ShowMiddleNames => true;
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedPupilPremiumDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
 
@@ -157,7 +151,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
         }
         else
         {
-            searchViewModel.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+            searchViewModel.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         }
 
         return await PupilPremium(searchViewModel, searchViewModel.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);

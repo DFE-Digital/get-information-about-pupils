@@ -2,12 +2,7 @@
 
 public static class Global
 {
-    public const string BaseViewModel = "BaseViewModel";
-
-    public const string GiapComms = "giapcomms";
-    public const string GiapWebsiteUse = "giapwebsiteuse";
     public const int YearMinLimit = 1972;
-    public const string NewsBannerStatus = "NewsBannerStatus";
     public const string StatusTrue = "true";
     public const string StatusFalse = "false";
     public const string UserAccount = "someuser";

@@ -4,7 +4,7 @@
 {
     <h2 class="govuk-heading-m" id="results--heading">Results</h2>
 
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(CommonErrorMessages.MyPupilListLimitExceeded))
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
     {
         <div class="govuk-width-container">
             <div class="govuk-error-summary">
@@ -45,9 +45,9 @@
         <input name="ReturnRoute" type="hidden" value="@Model.ReturnRoute">
         @if (string.IsNullOrEmpty(Model.ErrorDetails) && Model.ItemAddedToMyPupilList && !Model.NoPupilSelected)
         {
-            <div class="govuk-inset-text">@ApplicationLabel.SelectedAddedToMyPupilList</div>
+            <div class="govuk-inset-text">@ApplicationLabels.SelectedAddedToMyPupilList</div>
         }
-        @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(CommonErrorMessages.MyPupilListLimitExceeded))
+        @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
         {
             <partial name="~/Views/Search/MyPupilList/_AddToMyPupilListError.cshtml" />
         }

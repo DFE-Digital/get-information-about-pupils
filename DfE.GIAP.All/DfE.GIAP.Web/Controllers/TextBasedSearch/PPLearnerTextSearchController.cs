@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
@@ -16,10 +15,7 @@ using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
@@ -30,7 +26,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchPupilPremiumWithOutUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.PPNonUpnSearchFiltersSessionKey;
 
@@ -70,7 +66,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
     public override bool ShowMiddleNames => true;
 
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedPupilPremiumDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
 
     public PPLearnerTextSearchController(ILogger<PPLearnerTextSearchController> logger,
@@ -203,7 +199,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         }
         else
         {
-            model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         }
         return RedirectToAction(Global.PPNonUpnAction, Global.PPNonUpnController);
     }
@@ -219,7 +215,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
         if (string.IsNullOrEmpty(selectedPupil))
         {
-            model.ErrorDetails = DownloadErrorMessages.NoPupilSelected;
+            model.ErrorDetails = Messages.Downloads.Errors.NoPupilSelected;
             model.NoPupil = true;
             model.NoPupilSelected = true;
             return await ReturnToSearch(model);

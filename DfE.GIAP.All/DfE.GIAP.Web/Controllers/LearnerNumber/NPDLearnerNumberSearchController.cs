@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
@@ -16,13 +14,8 @@ using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
@@ -34,7 +27,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public override string PageHeading => ApplicationLabel.SearchNPDWithUpnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchNPDWithUpnPageHeading;
     public override string SearchAction => "NationalPupilDatabase";
     public override string FullTextLearnerSearchController => "Search";
     public override string FullTextLearnerSearchAction => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
@@ -47,7 +40,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override int MyPupilListLimit => _appSettings.UpnNPDMyPupilListLimit;
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override bool ShowMiddleNames => true;
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedNationalPupilDatabaseDataLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
@@ -138,7 +131,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
         if (selected.Count == 0)
         {
-            model.ErrorDetails = DownloadErrorMessages.NoPupilSelected;
+            model.ErrorDetails = Messages.Downloads.Errors.NoPupilSelected;
             model.NoPupil = true;
             model.NoPupilSelected = true;
             return await NationalPupilDatabase(model, model.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
@@ -146,7 +139,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
         if (selected.Count > _appSettings.CommonTransferFileUPNLimit)
         {
-            model.ErrorDetails = DownloadErrorMessages.UPNLimitExceeded;
+            model.ErrorDetails = Messages.Downloads.Errors.UPNLimitExceeded;
             return await NationalPupilDatabase(model, model.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
         }
 
@@ -164,7 +157,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         }
         else
         {
-            model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         }
 
         return await NationalPupilDatabase(model, model.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
@@ -219,7 +212,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
             if (model.SelectedDownloadOptions == null)
             {
-                model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
+                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
@@ -240,12 +233,12 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
                 }
                 else
                 {
-                    model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
                 }
             }
             else
             {
-                model.ErrorDetails = SearchErrorMessages.SelectFileType;
+                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;

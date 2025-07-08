@@ -1,6 +1,4 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.DsiConfiguration;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
@@ -11,19 +9,11 @@ using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Web.Helpers.DSIUser;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Web.Constants;
 
@@ -181,9 +171,9 @@ public static class AuthenticationExtensions
                                 {
                                     claims.AddRange(userAccess.Roles.Select(role => new Claim(ClaimTypes.Role, role.Code)));
 
-                                    authenticatedUserInfo.IsAdmin = userAccess.Roles.Any(x => x.Code == Role.Admin);
-                                    authenticatedUserInfo.IsApprover = userAccess.Roles.Any(x => x.Code == Role.Approver);
-                                    authenticatedUserInfo.IsUser = userAccess.Roles.Any(x => x.Code == Role.User);
+                                    authenticatedUserInfo.IsAdmin = userAccess.Roles.Any(x => x.Code == Roles.Admin);
+                                    authenticatedUserInfo.IsApprover = userAccess.Roles.Any(x => x.Code == Roles.Approver);
+                                    authenticatedUserInfo.IsUser = userAccess.Roles.Any(x => x.Code == Roles.User);
                                 }
 
                                 claims.AddRange(new List<Claim>

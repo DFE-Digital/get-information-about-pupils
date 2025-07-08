@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
@@ -12,23 +10,18 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Helper;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
@@ -246,44 +239,44 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (day == 0 && month == 0 && year == 0)
         {
-            ModelState.AddModelError("DobEmpty", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("DobEmpty", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.DobErrorEmpty = true;
             model.FilterErrors.DobError = true;
         }
         else if (day != 0 && month == 0 && year == 0)
         {
-            ModelState.AddModelError("DayOnly", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("DayOnly", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.DobErrorDayOnly = true;
             model.FilterErrors.DobError = true;
         }
         else if (day != 0 && month != 0 && year == 0)
         {
-            ModelState.AddModelError("DayMonthOnly", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("DayMonthOnly", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.DobErrorDayMonthOnly = true;
             model.FilterErrors.DobError = true;
         }
         else if (day < 0 || day > 31)
         {
-            ModelState.AddModelError("DayOutOfRange", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("DayOutOfRange", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.DayOutOfRange = true;
             model.FilterErrors.DobError = true;
         }
         else if (day == 0 && month != 0 && year == 0)
         {
-            ModelState.AddModelError("MonthOnly", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("MonthOnly", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.DobErrorMonthOnly = true;
             model.FilterErrors.DobError = true;
         }
         else if (day != 0 && month == 0 && year != 0)
         {
-            ModelState.AddModelError("NoMonth", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("NoMonth", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.DobErrorNoMonth = true;
             model.FilterErrors.DobError = true;
         }
 
         if (!model.FilterErrors.DobError && (month < 0 || month > 12))
         {
-            ModelState.AddModelError("MonthOutOfRange", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("MonthOutOfRange", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.MonthOutOfRange = true;
             model.FilterErrors.DobError = true;
         }
@@ -293,13 +286,13 @@ public abstract class BaseLearnerTextSearchController : Controller
             var yearLimit = DateTime.Now.Year - 3;
             if (year > yearLimit)
             {
-                ModelState.AddModelError("YearLimitHigh", SearchErrorMessages.DobInvalid);
+                ModelState.AddModelError("YearLimitHigh", Messages.Search.Errors.DobInvalid);
                 model.FilterErrors.YearLimitHigh = true;
                 model.FilterErrors.DobError = true;
             }
             else if (year < Global.YearMinLimit)
             {
-                ModelState.AddModelError("YearLimitLow", SearchErrorMessages.DobInvalid);
+                ModelState.AddModelError("YearLimitLow", Messages.Search.Errors.DobInvalid);
                 model.FilterErrors.YearLimitLow = true;
                 model.FilterErrors.DobError = true;
             }
@@ -307,7 +300,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (!model.FilterErrors.DobError && (day > 0 && month > 0 && year > 0) && !PupilHelper.IsValidateDate($"{day.ToString("00")}/{month.ToString("00")}/{year}"))
         {
-            ModelState.AddModelError("InvalidDate", SearchErrorMessages.DobInvalid);
+            ModelState.AddModelError("InvalidDate", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.InvalidDob = true;
             model.FilterErrors.DobError = true;
         }
@@ -328,7 +321,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (String.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Surname))
         {
-            ModelState.AddModelError("NoSurnameFilter", SearchErrorMessages.FilterEmpty);
+            ModelState.AddModelError("NoSurnameFilter", Messages.Search.Errors.FilterEmpty);
             model.FilterErrors.SurnameError = true;
         }
 
@@ -347,7 +340,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (String.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Middlename))
         {
-            ModelState.AddModelError("NoMiddlenameFilter", SearchErrorMessages.FilterEmpty);
+            ModelState.AddModelError("NoMiddlenameFilter", Messages.Search.Errors.FilterEmpty);
             model.FilterErrors.MiddlenameError = true;
         }
 
@@ -366,7 +359,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (String.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Forename))
         {
-            ModelState.AddModelError("NoForenameFilter", SearchErrorMessages.FilterEmpty);
+            ModelState.AddModelError("NoForenameFilter", Messages.Search.Errors.FilterEmpty);
             model.FilterErrors.ForenameError = true;
         }
 
@@ -508,7 +501,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
         else
         {
-            ModelState.AddModelError("NoContinueSelection", CommonErrorMessages.NoContinueSelection);
+            ModelState.AddModelError("NoContinueSelection", Messages.Common.Errors.NoContinueSelection);
         }
 
         return await InvalidUPNs(model);
@@ -532,7 +525,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             model.NoPupil = true;
             model.NoPupilSelected = true;
-            model.ErrorDetails = CommonErrorMessages.NoPupilsSelected;
+            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
             return await ReturnToSearch(model);
         }
 
@@ -540,7 +533,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (learnerList.Count() + 1 > MyPupilListLimit)
         {
-            model.ErrorDetails = CommonErrorMessages.MyPupilListLimitExceeded;
+            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
         }
         else
         {
@@ -606,8 +599,8 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (ModelState.IsValid)
         {
-            model.AddSelectedToMyPupilListLink = ApplicationLabel.AddSelectedToMyPupilListLink;
-            model.DownloadSelectedASCTFLink = ApplicationLabel.DownloadSelectedAsCtfLink;
+            model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
+            model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
             model.MaximumResults = IndexType == AzureSearchIndexType.FurtherEducation ? _appSettings.MaximumNonULNResults : _appSettings.MaximumNonUPNResults;
             model.DownloadSelectedLink = DownloadSelectedLink;
 

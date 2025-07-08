@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Common;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
@@ -9,21 +8,16 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Helper;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers
 {
@@ -206,9 +200,9 @@ namespace DfE.GIAP.Web.Controllers
 
         private void SetModelApplicationLabels(LearnerNumberSearchViewModel model)
         {
-            model.AddSelectedToMyPupilListLink = ApplicationLabel.AddSelectedToMyPupilListLink;
+            model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
             model.DownloadSelectedLink = DownloadSelectedLink;
-            model.DownloadSelectedASCTFLink = ApplicationLabel.DownloadSelectedAsCtfLink;
+            model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
         }
 
         #endregion Search
@@ -251,7 +245,7 @@ namespace DfE.GIAP.Web.Controllers
             }
             else
             {
-                ModelState.AddModelError("NoContinueSelection", CommonErrorMessages.NoContinueSelection);
+                ModelState.AddModelError("NoContinueSelection", Messages.Common.Errors.NoContinueSelection);
             }
 
             return await InvalidUPNs(model);
@@ -291,7 +285,7 @@ namespace DfE.GIAP.Web.Controllers
 
             if (learnerListUnion.Count() > MyPupilListLimit)
             {
-                model.ErrorDetails = CommonErrorMessages.MyPupilListLimitExceeded;
+                model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
             }
             else
             {

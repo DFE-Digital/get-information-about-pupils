@@ -14,8 +14,6 @@ using DfE.GIAP.Domain.Models.SecurityReports;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Common.Constants.Messages.Common;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
 using DfE.GIAP.Web.ViewModels;
 
 namespace DfE.GIAP.Web.Controllers.Admin;
@@ -66,7 +64,7 @@ public class AdminController : Controller
     {
         if (string.IsNullOrEmpty(model.SelectedAdminOption))
         {
-            ModelState.AddModelError("NoAdminSelection", CommonErrorMessages.NoAdminSelection);
+            ModelState.AddModelError("NoAdminSelection", Messages.Common.Errors.NoAdminSelection);
             return View("../Admin/Index", GetAdminViewModel());
         }
 
@@ -115,7 +113,7 @@ public class AdminController : Controller
     {
         if (string.IsNullOrEmpty(model.SelectedOrganisationOption))
         {
-            ModelState.AddModelError("NoOrganisationSelection", CommonErrorMessages.NoOrganisationSelection);
+            ModelState.AddModelError("NoOrganisationSelection", Messages.Common.Errors.NoOrganisationSelection);
             return View("../Admin/SecurityReports/SchoolCollegeDownloadOptions", GetAdminViewModel());
         }
 
@@ -320,7 +318,7 @@ public class AdminController : Controller
         }
         else
         {
-            ModelState.AddModelError("NoConfirmationSelection", CommonErrorMessages.NoConfirmationSelection);
+            ModelState.AddModelError("NoConfirmationSelection", Messages.Common.Errors.NoConfirmationSelection);
         }
         return View("../Admin/SecurityReports/SecurityReportsBySchoolConfirmation", model);
     }
@@ -349,8 +347,8 @@ public class AdminController : Controller
         if (string.IsNullOrWhiteSpace(model.DocumentId))
         {
             model.HasInvalidDocumentList = true;
-            model.ErrorDetails = CommonErrorMessages.SecurityReportRequired;
-            ModelState.AddModelError("NoOrganisationalReportSelected", CommonErrorMessages.SecurityReportRequired);
+            model.ErrorDetails = Messages.Common.Errors.SecurityReportRequired;
+            ModelState.AddModelError("NoOrganisationalReportSelected", Messages.Common.Errors.SecurityReportRequired);
 
             PopulateSecurityReportsDropdown(model);
             return View("../Admin/SecurityReports/SecurityReportsForYourOrganisation", model);
@@ -371,7 +369,7 @@ public class AdminController : Controller
             return SearchDownloadHelper.DownloadFile(downloadFile);
         }
 
-        model.ErrorDetails = DownloadErrorMessages.NoDataForOrganisationDownload;
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForOrganisationDownload;
         ModelState.AddModelError("NoDataForOrganisationalDownloadExists", model.ErrorDetails);
         PopulateSecurityReportsDropdown(model);
 

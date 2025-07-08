@@ -15,7 +15,7 @@
 
     <partial name="_MyPupilListNoPupilSelectedError.cshtml" model="@Model" />
 
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(DownloadErrorMessages.UPNLimitExceeded))
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
     {
         <div class="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
@@ -25,7 +25,7 @@
             </span>
         </div>
     }
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(DownloadErrorMessages.UPNLimitExceeded))
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
     {
         <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
     }
@@ -196,7 +196,7 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        <span>@ApplicationLabel.SearchMyPupilListNoPupilFound</span>
+                        <span>@ApplicationLabels.SearchMyPupilListNoPupilFound</span>
                     </strong>
                 </div>
             }

@@ -25,8 +25,8 @@ public class CookiesController : Controller
         {
             CookieUse = new CookieUseViewModel
             {
-                IsCookieWebsiteUse = IsCookieEnabled(Global.GiapWebsiteUse),
-                IsCookieComms = IsCookieEnabled(Global.GiapComms)
+                IsCookieWebsiteUse = IsCookieEnabled(CookieKeys.GiapWebsiteUse),
+                IsCookieComms = IsCookieEnabled(CookieKeys.GiapComms)
             }
         };
 
@@ -39,12 +39,12 @@ public class CookiesController : Controller
     {
         if (!string.IsNullOrEmpty(viewModel.CookieWebsiteUse))
         {
-            AppendCookie(Global.GiapWebsiteUse, viewModel.CookieWebsiteUse);
+            AppendCookie(CookieKeys.GiapWebsiteUse, viewModel.CookieWebsiteUse);
         }
 
         if (!string.IsNullOrEmpty(viewModel.CookieComms))
         {
-            AppendCookie(Global.GiapComms, viewModel.CookieComms);
+            AppendCookie(CookieKeys.GiapComms, viewModel.CookieComms);
         }
 
         return RedirectToAction("Index", "Landing");

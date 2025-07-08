@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
@@ -13,20 +11,15 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
 [Route(Routes.Application.Search)]
 public class FELearnerTextSearchController : BaseLearnerTextSearchController
 {
-    public override string PageHeading => ApplicationLabel.SearchFEWithoutUlnPageHeading;
+    public override string PageHeading => ApplicationLabels.SearchFEWithoutUlnPageHeading;
     public override string SearchSessionKey => Global.FENonUlnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
     public override string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
@@ -65,7 +58,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerNumberLabel => Global.FELearnerNumberLabel;
     public override bool ShowMiddleNames => false;
 
-    public override string DownloadSelectedLink => ApplicationLabel.DownloadSelectedFurtherEducationLink;
+    public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
 
     private readonly IDownloadService _downloadService;
@@ -211,7 +204,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
 
             if (model.SelectedDownloadOptions == null)
             {
-                model.ErrorDetails = SearchErrorMessages.SelectOneOrMoreDataTypes;
+                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
@@ -229,12 +222,12 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
                 }
                 else
                 {
-                    model.ErrorDetails = DownloadErrorMessages.NoDataForSelectedPupils;
+                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
                 }
             }
             else
             {
-                model.ErrorDetails = SearchErrorMessages.SelectFileType;
+                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;
@@ -262,7 +255,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
         {
             model.NoPupil = true;
             model.NoPupilSelected = true;
-            model.ErrorDetails = DownloadErrorMessages.NoLearnerSelected;
+            model.ErrorDetails = Messages.Downloads.Errors.NoLearnerSelected;
             return await FurtherEducationNonUlnSearch(model, null, null, null, null, null, null);
         }
 

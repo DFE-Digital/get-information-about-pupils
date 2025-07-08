@@ -1,20 +1,17 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Messages.Downloads;
-using DfE.GIAP.Common.Constants.Messages.Search;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
-using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -25,12 +22,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
@@ -712,8 +705,8 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        Assert.Equal(ApplicationLabel.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
-        Assert.Equal(ApplicationLabel.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
+        Assert.Equal(ApplicationLabels.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
+        Assert.Equal(ApplicationLabels.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
     }
 
 
@@ -1077,8 +1070,8 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        Assert.Equal(ApplicationLabel.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
-        Assert.Equal(ApplicationLabel.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
+        Assert.Equal(ApplicationLabels.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
+        Assert.Equal(ApplicationLabels.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
 
     }
 
