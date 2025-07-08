@@ -8,7 +8,7 @@ registries:
 
 updates:
   - package-ecosystem: "npm"
-    directory: "/DfE.GIAP.All/DfE.GIAP.Web"
+    directory: "DfE.GIAP.All/src/DfE.GIAP.Web"
     schedule:
       interval: "daily"
 
