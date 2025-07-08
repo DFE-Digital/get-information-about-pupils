@@ -1,0 +1,94 @@
+﻿@model LearnerTextSearchViewModel
+
+@if (Model.Learners != null && Model.Learners.Any())
+{
+    <h2 class="govuk-heading-m" id="results--heading">Results</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
+    {
+        <div class="govuk-width-container">
+            <div class="govuk-error-summary">
+                <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
+                <span id="results--heading-errormessage" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span>
+                    @Model.ErrorDetails
+                </span>
+            </div>
+        </div>
+    }
+
+    @if (Model.ShowOverLimitMessage)
+    {
+        <span class="govuk-error-message">
+            Your search has returned too many results. Showing the first 5000 pages. Filter your search to find the pupil you are looking for.
+        </span>
+    }
+}
+
+@if (Model.Learners != null && !string.IsNullOrEmpty(Model.SearchText))
+{
+    <partial name="~/Views/Shared/LearnerText/_ErrorSummary.cshtml" model="Model" />
+}
+
+@if (!string.IsNullOrEmpty(Model.SearchFilters.CurrentFiltersAppliedString))
+{
+    <partial name="~/Views/Shared/LearnerText/_AppliedSearchFilters.cshtml" model="Model" />
+}
+
+@if (Model.Learners != null && Model.Learners.Any() && ViewData.ModelState.IsValid)
+{
+    <form method="POST">
+
+        <input type="hidden" name="SearchText" for="SearchText" value="@Model.SearchText" />
+        <input type="hidden" value="@Model.SearchFilters.CurrentFiltersAppliedString" name="SearchFilters.CurrentFiltersAppliedString" />
+        <input type="hidden" asp-for="@Model.LearnerTextDatabaseName" />
+        <input name="ReturnRoute" type="hidden" value="@Model.ReturnRoute">
+        @if (string.IsNullOrEmpty(Model.ErrorDetails) && Model.ItemAddedToMyPupilList && !Model.NoPupilSelected)
+        {
+            <div class="govuk-inset-text">@ApplicationLabels.SelectedAddedToMyPupilList</div>
+        }
+        @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
+        {
+            <partial name="~/Views/Search/MyPupilList/_AddToMyPupilListError.cshtml" />
+        }
+        @if (Model.Learners.Count() > 0)
+        {
+
+            @if (Model.ShowHiddenUPNWarningMessage)
+            {
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" id="search--warning--icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text" id="search--warning--text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        This download should only be used to obtain prospective pupil data when a UPN is not available. Any pupils outside of your establishment's age range will have their UPN hidden.
+                    </strong>
+                </div>
+            }
+
+            <div class="govuk-grid-row">
+                <partial name="@Model.DownloadLinksPartial" />
+            </div>
+        }
+
+    <div class="result-table @(Model.ShowErrors ? "hide-for-non-js" : "")">
+        @(await Component.InvokeAsync("PaginatedResult", new
+        {
+            learners = Model.Learners,
+            pageLearnerNumbers = Model.PageLearnerNumbers,
+            learnerNumberLabel = Model.LearnerNumberLabel,
+            showMiddleNames = Model.ShowMiddleNames,
+            showNoSelectedError = Model.NoPupil,
+            allowMultipleSelection = false,
+            pageNumber = Model.PageNumber,
+            pageSize = Model.PageSize,
+            total = Model.Total,
+            controllerAction = Model.LearnerTextSearchAction,
+            showPP = false,
+            showGender = Model.ShowGender,
+            showLocalAuthority = Model.ShowLocalAuthority,
+            activeSortField = Model.SortField,
+            activeSortDirection = Model.SortDirection
+        }))
+    </div>
+</form>
+}

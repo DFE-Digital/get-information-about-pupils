@@ -1,0 +1,227 @@
+﻿@model MyPupilListViewModel
+@{
+    ViewData["Title"] = Model.PageHeading;
+}
+
+@if (Model.Removed)
+{
+    <div class="govuk-inset-text">Selected have been removed from 'My pupil list'</div>
+}
+
+<div class="govuk-width-container">
+    <h1 class="govuk-heading-xl" id="search-type--text">
+        @Model.PageHeading
+    </h1>
+
+    <partial name="_MyPupilListNoPupilSelectedError.cshtml" model="@Model" />
+
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
+    {
+        <div class="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
+            <span id="results--heading-errormessage" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span>
+                @Model.ErrorDetails
+            </span>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
+    {
+        <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
+    }
+
+    <form asp-action="@Model.SearchAction" method="POST">
+        <input id="toggleSelectAll" type="hidden" name="ToggleSelectAll" value="@Model.ToggleSelectAll.ToString()" />
+        <input id="@Model.Upn" name="Upn" type="hidden" value="@Model.Upn">
+        
+        @if (Model.Learners != null && Model.Invalid.Any())
+        {
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    <span>
+                        One or more UPN(s) are invalid. Only valid UPN(s) will be shown.
+                    </span>
+                </strong>
+            </div>
+
+            <noscript>
+                @if (Model.ShowErrors)
+                {
+                    <button class="govuk-button govuk-button--secondary" type="submit" name="ShowErrors" value="false">Show valid UPNs</button>
+                }
+                else
+                {
+                    <button class="govuk-button govuk-button--secondary" type="submit" name="ShowErrors" value="true">Show invalid UPNs</button>
+                }
+            </noscript>
+
+            <div id="toggleCheckbox" class="govuk-checkboxes govuk-!-padding-bottom-5 hide-for-non-js">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="toggleErrors" name="toggleErrors" type="checkbox" data-val="true" value="true">
+                    <label for="toggleErrors" class="govuk-label govuk-checkboxes__label">
+                        <span id="errors-show">Show invalid UPNs</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="webapp-results"></div>
+        }
+        @if (!Model.ShowErrors && Model.Learners != null && Model.Learners.Any())
+        {
+            <partial name="~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml" model="Model" />
+
+            <div class="download-block">
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        @if (!Model.ToggleSelectAll)
+                        {
+                            <span>Please be aware that by pressing Select all pupils may take time to process</span>
+                        }
+                        else
+                        {
+                            <span>Please be aware that by pressing Deselect all pupils may take time to process</span>
+                        }
+                    </strong>
+                </div>
+                @if (Model.ToggleSelectAll)
+                {
+                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</button>
+                }
+                else
+                {
+                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</button>
+                }
+            </div>
+        }
+
+        @if (Model.Invalid.Any())
+        {
+            <div class="error-table hide-for-non-js @(Model.ShowErrors ? "display-results" : "")">
+                <div id="pupil--list--table">
+                    <div class="giap--pupil-list">
+                        <p class="govuk-body">Please check the pupils UPNs that are incorrect and <a class="govuk-link" id="invalidupns--contact--link" href="@Global.ContactLinkURL" target="_blank">contact the DfE</a> to report this data discrepancy.</p>
+                        
+                        <table class="govuk-table">
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-select--chkbox">
+                                        <span class="govuk-visually-hidden">checkboxes</span>
+                                    </th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-firstname--text">First</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-middlename--text">Middle</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-surname--text">Surname</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-upn--text">UPN</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-dob--text">Date of birth</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-gender--text">Gender</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
+                                    @if (Model.ShowLocalAuthority)
+                                    {
+                                        <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-gender--text">LA</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                @foreach (var learner in Model.Invalid)
+                                {
+                                    <tr class="govuk-table__row">
+                                        @if (learner.LearnerNumberId != null)
+                                        {
+                                            <td class="govuk-table__cell">
+                                                <div class="govuk-checkboxes">
+                                                <div class="govuk-checkboxes__item">
+                                                    <input class="govuk-checkboxes__input webapp-checkboxes-searchresults" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumberId" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumberId" checked="@learner.Selected">
+                                                    <label class="govuk-label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumberId">
+                                                        <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
+                                                    </label>
+                                                </div>
+                                                </div>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="govuk-table__cell">
+                                                <div class="govuk-checkboxes">
+                                                <div class="govuk-checkboxes__item">
+                                                    <input class="govuk-checkboxes__input webapp-checkboxes-searchresults" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumber" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumber" checked="@learner.Selected">
+                                                    <label class="govuk-label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumber">
+                                                        <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
+                                                    </label>
+                                                </div>
+                                                </div>
+                                            </td>
+                                        }
+                                        <td class="govuk-table__cell" id="search--search-pupils-data-firstname--text1">
+                                            @learner.Forename
+                                        </td>
+                                        <td class="govuk-table__cell" id="search--search-pupils-data-middlename--text1">
+                                            @learner.Middlenames
+                                        </td>
+                                        <td class="govuk-table__cell" id="search--search-pupils-data-surname--text1">
+                                            @learner.Surname
+                                        </td>
+                                        <td class="govuk-table__cell" id="search--search-pupils-data-upn--text1">
+                                            @learner.LearnerNumber
+                                        </td>
+                                        <td class="govuk-table__cell" id="search--search-pupils-data-dob--text1">
+                                            @learner.DOB?.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td class="govuk-table__cell" id="search--search-pupils-data-gender--text1">
+                                            @learner.Gender
+                                        </td>
+                                        <td class="govuk-table__cell" id="search--search-pupils-heading-pupilpremium--text1">
+                                            @learner.PupilPremium
+                                        </td>
+                                        @if (Model.ShowLocalAuthority)
+                                        {
+                                            <td class="govuk-table__cell" id="search--search-pupils-data-gender--text1">
+                                                @learner.LocalAuthority
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="govuk-grid-row">
+            @if (Model.NoPupil)
+            {
+                <div id="results--detail-warningmessage" class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        <span>@ApplicationLabels.SearchMyPupilListNoPupilFound</span>
+                    </strong>
+                </div>
+            }
+            else
+            {
+                <div class="result-table @(Model.ShowErrors ? "hide-for-non-js" : "")">
+                    @(await Component.InvokeAsync("PaginatedResult", new
+                    {
+                        learners = Model.Learners,
+                        pageLearnerNumbers = Model.PageLearnerNumbers,
+                        learnerNumberLabel = Model.LearnerNumberLabel,
+                        allowMultipleSelection = true,
+                        pageNumber = Model.PageNumber,
+                        pageSize = Model.PageSize,
+                        total = Model.Total,
+                        controllerAction = Model.SearchAction,
+                        showPP = true,
+                        showLocalAuthority = Model.ShowLocalAuthority,
+                        activeSortField = Model.SortField,
+                        activeSortDirection = Model.SortDirection
+                    }))
+                </div>
+            }
+        </div>
+    </form>
+
+    <partial name="_MetadataFilesPartial" />
+</div>

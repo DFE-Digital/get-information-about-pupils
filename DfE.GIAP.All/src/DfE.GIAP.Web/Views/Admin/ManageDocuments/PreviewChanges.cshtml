@@ -1,0 +1,53 @@
+﻿@model ManageDocumentsViewModel
+
+@{
+    ViewBag.Title = "Preview changes";
+}
+
+<div class="govuk-width-container">
+
+    <h1 class="govuk-heading-xl">Preview changes</h1>
+    @if (Model != null && Model.DocumentData != null && Model.DocumentList != null)
+    {
+
+        <form method="post">
+            <partial name="_ValidationSummary" model="ViewData.ModelState" />
+
+            <h4 gds>@Model.DocumentList.DocumentName</h4>
+            <input type="hidden" asp-for="@Model.DocumentData.Id" />
+            <input type="hidden" asp-for="@Model.DocumentData.Title" />
+            <input type="hidden" asp-for="@Model.DocumentData.Body" />
+            <input type="hidden" asp-for="@Model.DocumentData.DraftTitle" />
+            <input type="hidden" asp-for="@Model.DocumentData.DraftBody" />
+            <input type="hidden" asp-for="@Model.DocumentList.DocumentId" />
+            <input type="hidden" asp-for="@Model.SelectedNewsId" />
+            <input type="hidden" asp-for="@Model.DocumentData.Pinned" />
+
+            <div id="news--articles--container">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        @if (Model.DocumentData.Pinned)
+                        {
+                            <strong class="govuk-tag govuk-tag--green" id="news--label--text">
+                                Pinned
+                            </strong>
+                        }
+                        <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="preview-changes--item-heading--text">
+                            @Html.Raw(Model.DocumentData.Title)
+                        </h2>
+                        <p class="govuk-body govuk-!-text-break-word" id="preview-changes--item-content--text">
+                            @Html.Raw(Model.DocumentData.Body)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-button-group">
+                <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="edit-document--button" name="edit" value="Edit" class="govuk-button govuk-button--secondary">Edit</button>
+                <button asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-document--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</button>
+
+                <button asp-controller="ManageDocuments" asp-action="PublishChanges" id="publish-document--button" name="publish" value="Publish" class="govuk-button">Publish</button>
+            </div>
+        </form>
+    }
+</div>

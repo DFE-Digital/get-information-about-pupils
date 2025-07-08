@@ -1,0 +1,39 @@
+﻿@model ManageDocumentsViewModel
+
+@{
+    ViewBag.Title = "Create news article";
+}
+
+<div class="govuk-width-container">
+    <partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
+
+    <h1 class="govuk-heading-xl">Create news article</h1>
+
+    <form method="post">
+        <div class="govuk-form-group">
+            <div class="govuk-checkboxes webapp-news-status-container" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
+                    <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="DocumentData.Pinned" name="DocumentData.Pinned" type="checkbox">
+                    <label for="DocumentData_Pinned" class="govuk-label govuk-checkboxes__label">Pinned</label>
+                </div>
+
+                <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
+                    <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="DocumentData.Published" name="DocumentData.Published" type="checkbox">
+                    <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
+                </div>
+
+                <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
+                    <input class="govuk-checkboxes__input" id="DocumentData_Archived" asp-for="DocumentData.Archived" name="DocumentData.Archived" type="checkbox">
+                    <label for="DocumentData_Archived" class="govuk-label govuk-checkboxes__label">Archived</label>
+                </div>
+            </div>
+
+            <partial name="~/Views/Admin/ManageDocuments/_DocumentFields.cshtml" for="DocumentData" />
+
+            <div class="govuk-button-group">
+                <a asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-document--button" name="discard" class="govuk-button govuk-button--secondary">Discard</a>
+                <button asp-controller="ManageDocuments" asp-action="CreateNewsArticle" id="CreateNewsArticle--button" name="Create" class="govuk-button">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
