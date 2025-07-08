@@ -33,7 +33,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
             scope.ServiceProvider.GetService<IUseCaseRequestOnly<CreateNewsArticleRequest>>()!;
 
         const string stubArticleTitle = "Test title";
-        const string stubArticleBody = "Test title";
+        const string stubArticleBody = "Test body";
 
         CreateNewsArticleRequest request = new(
             stubArticleTitle,
