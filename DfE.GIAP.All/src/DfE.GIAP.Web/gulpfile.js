@@ -36,4 +36,4 @@ gulp.task('copy-and-compile-sass', function () {
 });
 
 // Default task (runs all tasks)
-gulp.task("default", gulp.series("copy-jquery", "copy-govuk-scripts", "copy-and-compile-sass"));
+gulp.task("default", gulp.series("copy-jquery", "copy-all-scripts", "copy-and-compile-sass"));
