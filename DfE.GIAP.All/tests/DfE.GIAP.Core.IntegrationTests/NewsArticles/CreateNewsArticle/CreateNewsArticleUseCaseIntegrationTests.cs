@@ -63,9 +63,9 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
 
         Assert.Equal(string.Empty, newsArticleDto.DraftTitle);
         Assert.Equal(string.Empty, newsArticleDto.DraftBody);
-        
+
         Assert.InRange(newsArticleDto.CreatedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
         Assert.InRange(newsArticleDto.ModifiedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
-        
-    }    
+
+    }
 }
