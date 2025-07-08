@@ -18,7 +18,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
     [Theory]
     [InlineData(true, true, true)]
     [InlineData(false, false, false)]
-    public async Task MyTest(bool isPublished, bool isArchived, bool isPinned)
+    public async Task CreateNewsArticles_Creates_Article(bool isPublished, bool isArchived, bool isPinned)
     {
         // Arrange
         IServiceCollection services =
@@ -32,9 +32,12 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
         IUseCaseRequestOnly<CreateNewsArticleRequest> sut =
             scope.ServiceProvider.GetService<IUseCaseRequestOnly<CreateNewsArticleRequest>>()!;
 
+        const string stubArticleTitle = "Test title";
+        const string stubArticleBody = "Test title";
+
         CreateNewsArticleRequest request = new(
-            "Test title",
-            "Test body",
+            stubArticleTitle,
+            stubArticleBody,
             Published: isPublished,
             Archived: isArchived,
             Pinned: isPinned);
@@ -51,8 +54,8 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));
-        Assert.Equal("Test title", newsArticleDto.Title);
-        Assert.Equal("Test body", newsArticleDto.Body);
+        Assert.Equal(stubArticleTitle, newsArticleDto.Title);
+        Assert.Equal(stubArticleBody, newsArticleDto.Body);
         Assert.Equal(isPublished, newsArticleDto.Published);
         Assert.Equal(isArchived, newsArticleDto.Archived);
         Assert.Equal(isPinned, newsArticleDto.Pinned);
