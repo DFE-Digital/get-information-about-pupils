@@ -328,10 +328,10 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-/DfE.GIAP.All/DfE.GIAP.Web/wwwroot/css/giap.min.css
-/DfE.GIAP.All/DfE.GIAP.Web/wwwroot/js/giap.min.js
-/DfE.GIAP.All/DfE.GIAP.Web/appsettings.local.json
-/DfE.GIAP.All/DfE.GIAP.Web/appsettings.development.json
-/DfE.GIAP.All/DfE.GIAP.Web/wwwroot/lib/jquery/dist/jquery.js
-/DfE.GIAP.All/DfE.GIAP.Web/wwwroot/lib/jquery/dist/jquery.min.js
-/DfE.GIAP.All/nuget.config
+/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/css/giap.min.css
+/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/js/giap.min.js
+/DfE.GIAP.All/src/DfE.GIAP.Web/appsettings.local.json
+/DfE.GIAP.All/src/DfE.GIAP.Web/appsettings.development.json
+/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/lib/jquery/dist/jquery.js
+/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/lib/jquery/dist/jquery.min.js
+/DfE.GIAP.All/src/nuget.config
