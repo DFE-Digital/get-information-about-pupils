@@ -7,13 +7,13 @@ using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Load configuration
 builder.Configuration
     .ConfigureSettings();
 
-var configuration = builder.Configuration;
+ConfigurationManager configuration = builder.Configuration;
 
 // Services configuration
 builder.Services
@@ -34,7 +34,7 @@ builder.Services
     .AddAzureAppConfiguration()
     .AddFeatureFlagConfiguration(configuration);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Error handling
 if (app.Environment.IsLocal())
@@ -69,14 +69,10 @@ app.Use(async (context, next) =>
 {
     if (claritySettings != null && !string.IsNullOrEmpty(claritySettings.ProjectId))
     {
-        var nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
+        string nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
         context.Items["CSPNonce"] = nonce;
-        context.Response.Headers["Content-Security-Policy"] =
-            $"default-src 'self'; script-src 'self' 'nonce-{nonce}';";
-
-        context.Response.Headers["Content-Security-Policy"] =
-            $"script-src 'self' https://www.clarity.ms 'nonce-{nonce}'; object-src 'none';";
-
+        
+        context.Response.Headers.ContentSecurityPolicy = $"default-src 'self'; script-src 'self' https://www.clarity.ms 'nonce-{nonce}'; object-src 'none';";
     }
 
     await next();
