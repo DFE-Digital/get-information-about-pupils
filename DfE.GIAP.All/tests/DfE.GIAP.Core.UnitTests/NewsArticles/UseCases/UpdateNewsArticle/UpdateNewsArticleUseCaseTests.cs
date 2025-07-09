@@ -76,7 +76,7 @@ public sealed class UpdateNewsArticleUseCaseTests
     {
         // Arrange
         NewsArticle stub = NewsArticleTestDoubles.Create();
-        Mock<IMapper<UpdateNewsArticlesRequestProperties, NewsArticle>> mockMapper = MapperTestDoubles.MockFor< UpdateNewsArticlesRequestProperties, NewsArticle>(() => stub);
+        Mock<IMapper<UpdateNewsArticlesRequestProperties, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<UpdateNewsArticlesRequestProperties, NewsArticle>(() => stub);
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         UpdateNewsArticleUseCase sut = new(mockRepository.Object, mockMapper.Object);
 
