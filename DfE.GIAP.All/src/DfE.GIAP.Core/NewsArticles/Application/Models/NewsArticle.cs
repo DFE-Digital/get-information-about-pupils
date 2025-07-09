@@ -14,9 +14,4 @@ public record NewsArticle
     public bool Published { get; set; }
     public bool Archived { get; set; }
     public bool Pinned { get; set; }
-
-    public void WithModifiedNow()
-    {
-        ModifiedDate = DateTime.UtcNow;
-    }
 }
