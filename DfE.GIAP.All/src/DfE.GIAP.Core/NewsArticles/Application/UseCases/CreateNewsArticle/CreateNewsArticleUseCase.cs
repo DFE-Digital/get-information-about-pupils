@@ -32,6 +32,7 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Title);
         ArgumentException.ThrowIfNullOrWhiteSpace(request.Body);
 
+        // TODO apply similar pattern UpdateNewsArticleRequestProperties
         NewsArticle newsArticle = new()
         {
             Id = NewsArticleIdentifier.New(),

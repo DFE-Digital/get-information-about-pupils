@@ -273,8 +273,7 @@ public class ManageDocumentsController : Controller
         GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
             new GetNewsArticleByIdRequest(selectedNewsId));
 
-        if (response.NewsArticle is null)
-            ArgumentNullException.ThrowIfNull(response.NewsArticle);
+        ArgumentNullException.ThrowIfNull(response.NewsArticle);
 
         ManageDocumentsViewModel manageDocumentsModel = new()
         {
@@ -301,23 +300,22 @@ public class ManageDocumentsController : Controller
     {
         // TODO: Change to use specific view models, move away from "ManageDocumentsViewModel"
         if (!ModelState.IsValid)
-            return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
-
-        // TODO: Porbably change to specific data for request, instead of NewsArticle
-        NewsArticle updatedArticle = new()
         {
-            Id = NewsArticleIdentifier.From(manageDocumentsModel.NewsArticle.Id),
+            return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
+        }
+
+        // TODO sanitisation part of Application
+        UpdateNewsArticlesRequestProperties updateProperties = new(id: manageDocumentsModel.NewsArticle.Id)
+        {
             Title = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Title),
             Body = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Body),
+            Archived = manageDocumentsModel.NewsArticle.Archived,
             Pinned = manageDocumentsModel.NewsArticle.Pinned,
             Published = manageDocumentsModel.NewsArticle.Published,
-            Archived = manageDocumentsModel.NewsArticle.Archived,
-            CreatedDate = manageDocumentsModel.NewsArticle.CreatedDate,
-            ModifiedDate = manageDocumentsModel.NewsArticle.ModifiedDate
         };
 
         await _updateNewsArticleUseCase.HandleRequestAsync(
-            new UpdateNewsArticleRequest(updatedArticle));
+            new UpdateNewsArticleRequest(updateProperties));
 
         // Change to speciifc confirmation view model
         manageDocumentsModel.Confirmation = new()
