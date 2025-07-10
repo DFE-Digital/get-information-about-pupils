@@ -234,12 +234,9 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     }
 
     [Theory]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished, "c.Archived=false AND c.Published=true")]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithNotPublished, "c.Archived=false AND c.Published=false")]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished, "c.Archived=false")]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithPublished, "c.Archived=true AND c.Published=true")]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithNotPublished, "c.Archived=true AND c.Published=false")]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished, "c.Archived=true")]
+    [InlineData(NewsArticleSearchFilter.Published, "c.Published=true")]
+    [InlineData(NewsArticleSearchFilter.NotPublished, "c.Published=false")]
+    [InlineData(NewsArticleSearchFilter.PublishedAndNotPublished, "(c.Published=true OR c.Published=false)")]
     public async Task GetNewsArticlesAsync_QueryConstructedCorrectly_When_Parameters_Passed_And_Handler_And_Mapper_Called(
         NewsArticleSearchFilter newsArticleSearchStatus, string expectedFilter)
     {

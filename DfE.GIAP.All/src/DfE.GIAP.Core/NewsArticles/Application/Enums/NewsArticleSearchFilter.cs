@@ -8,10 +8,7 @@
 /// querying for news articles.</remarks>
 public enum NewsArticleSearchFilter
 {
-    ArchivedWithPublished,
-    ArchivedWithNotPublished,
-    ArchivedWithPublishedAndNotPublished,
-    NotArchivedWithPublished,
-    NotArchivedWithNotPublished,
-    NotArchivedWithPublishedAndNotPublished
+    Published,
+    NotPublished,
+    PublishedAndNotPublished
 }

@@ -498,7 +498,7 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadNewsList()
     {
-        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.PublishedAndNotPublished);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
         IList<Document> newsList = new List<Document>();

@@ -23,7 +23,6 @@ internal static class NewsArticleTestDoubles
             .RuleFor((target) => target.Body, (faker) => faker.Lorem.Words().Merge())
             .RuleFor((target) => target.CreatedDate, (faker) => faker.Date.Recent())
             .RuleFor((target) => target.ModifiedDate, (faker) => faker.Date.Recent())
-            .RuleFor((target) => target.Archived, (faker) => faker.Random.Bool())
             .RuleFor((target) => target.Pinned, (faker) => faker.Random.Bool())
             .RuleFor((target) => target.Published, (faker) => faker.Random.Bool());
     }

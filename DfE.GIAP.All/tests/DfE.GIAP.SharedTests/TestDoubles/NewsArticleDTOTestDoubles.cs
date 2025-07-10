@@ -34,7 +34,6 @@ public static class NewsArticleDtoTestDoubles
         return new Faker<NewsArticleDto>()
             .StrictMode(true)
             .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
-            .RuleFor(t => t.Archived, (f) => f.Random.Bool())
             .RuleFor(t => t.Published, (f) => f.Random.Bool())
             .RuleFor(t => t.id, (f) => f.Random.Guid().ToString())
             .RuleFor(t => t.DraftBody, (f) => f.Lorem.Words().Merge())
