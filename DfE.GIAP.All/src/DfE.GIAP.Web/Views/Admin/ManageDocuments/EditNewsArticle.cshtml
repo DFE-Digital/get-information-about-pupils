@@ -8,59 +8,62 @@
     <partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
 
     <h1 class="govuk-heading-xl">Edit news article</h1>
+
     @if (Model != null && Model.NewsArticle != null)
     {
         <form method="post">
-            <input type="hidden" asp-for="SelectedNewsId" />
-            <input type="hidden" asp-for="NewsArticle.Id" />
-            <input type="hidden" asp-for="NewsArticle.CreatedDate" />
-            <input type="hidden" asp-for="NewsArticle.ModifiedDate" />
+            <div class="govuk-form-group">
+                <input type="hidden" asp-for="SelectedNewsId" />
+                <input type="hidden" asp-for="NewsArticle.Id" />
+                <input type="hidden" asp-for="NewsArticle.CreatedDate" />
+                <input type="hidden" asp-for="NewsArticle.ModifiedDate" />
 
-            <div class="govuk-checkboxes webapp-news-status-container" data-module="govuk-checkboxes">
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="NewsArticle.Pinned" type="checkbox">
-                    <label class="govuk-label govuk-checkboxes__label" for="DocumentData_Pinned">Pinned</label>
+                <div class="govuk-checkboxes govuk-!-margin-bottom-4" data-module="govuk-checkboxes">
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="NewsArticle.Pinned" type="checkbox">
+                        <label class="govuk-label govuk-checkboxes__label" for="DocumentData_Pinned">Pinned</label>
+                    </div>
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="NewsArticle.Published" type="checkbox">
+                        <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
+                    </div>
                 </div>
-                <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
-                    <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="NewsArticle.Published" type="checkbox">
-                    <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
+
+                <div class="@Html.ClassWithError("NewsArticle.Title", "govuk-form-group govuk-character-count", "govuk-form-group--error")"
+                     data-module="govuk-character-count"
+                     data-maxlength="64">
+                    <label class="govuk-label" for="news-article-title">
+                        Title
+                    </label>
+                    <span id="news-article-title-error" class="govuk-error-message">
+                        <span asp-validation-for="NewsArticle.Title"></span>
+                    </span>
+                    <input class="@Html.ClassWithError("NewsArticle.Title", "govuk-input govuk-js-character-count", "govuk-input--error")"
+                           id="news-article-title"
+                           asp-for="NewsArticle.Title" />
+                    <div id="news-article-title-info" class="govuk-hint govuk-character-count__message">
+                        You can enter up to 64 characters
+                    </div>
                 </div>
-            </div>
 
-            <div class="@Html.ClassWithError("NewsArticle.Title", "govuk-form-group govuk-character-count", "govuk-form-group--error")"
-                 data-module="govuk-character-count"
-                 data-maxlength="64">
-                <label class="govuk-label" for="news-article-title">
-                    Title
-                </label>
-                <span id="news-article-title-error" class="govuk-error-message">
-                    <span asp-validation-for="NewsArticle.Title"></span>
-                </span>
-                <input class="@Html.ClassWithError("NewsArticle.Title", "govuk-input govuk-js-character-count", "govuk-input--error")"
-                       id="news-article-title"
-                       asp-for="NewsArticle.Title" />
-                <div id="news-article-title-info" class="govuk-hint govuk-character-count__message">
-                    You can enter up to 64 characters
+                <div class="@Html.ClassWithError("NewsArticle.Body", "govuk-form-group", "govuk-form-group--error")">
+                    <label class="govuk-label" for="news-article-body">
+                        Body
+                    </label>
+                    <span id="news-article-body-error" class="govuk-error-message">
+                        <span asp-validation-for="NewsArticle.Body"></span>
+                    </span>
+                    <textarea class="@Html.ClassWithError("NewsArticle.Body", "govuk-textarea", "govuk-textarea--error")"
+                              id="news-article-body"
+                              asp-for="NewsArticle.Body"
+                              rows="5"></textarea>
                 </div>
-            </div>
 
-            <div class="@Html.ClassWithError("NewsArticle.Body", "govuk-form-group", "govuk-form-group--error")">
-                <label class="govuk-label" for="news-article-body">
-                    Body
-                </label>
-                <span id="news-article-body-error" class="govuk-error-message">
-                    <span asp-validation-for="NewsArticle.Body"></span>
-                </span>
-                <textarea class="@Html.ClassWithError("NewsArticle.Body", "govuk-textarea", "govuk-textarea--error")"
-                          id="news-article-body"
-                          asp-for="NewsArticle.Body"
-                          rows="5"></textarea>
-            </div>
-
-            <div class="govuk-button-group">
-                <a asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-news-article--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</a>
-                <button asp-controller="ManageDocuments" asp-action="DeleteNewsArticle" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
-                <button asp-controller="ManageDocuments" asp-action="UpdateNewsArticle" id="update-document--button" name="update" value="Update" type="submit" class="govuk-button">Update</button>
+                <div class="govuk-button-group">
+                    <a asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-news-article--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</a>
+                    <button asp-controller="ManageDocuments" asp-action="DeleteNewsArticle" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
+                    <button asp-controller="ManageDocuments" asp-action="UpdateNewsArticle" id="update-document--button" name="update" value="Update" type="submit" class="govuk-button">Update</button>
+                </div>
             </div>
         </form>
     }
