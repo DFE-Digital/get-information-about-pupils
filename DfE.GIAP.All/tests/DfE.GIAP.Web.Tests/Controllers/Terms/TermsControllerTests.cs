@@ -19,8 +19,8 @@ public class TermsControllerTests
     public void Constructor_Throws_ArgumentNullException_When_UseCase_IsNull()
     {
         // Arrange
-        Mock<IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>> mockMapper =
-            MapperTestDoubles.Default<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>();
+        Mock<IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel>> mockMapper =
+            MapperTestDoubles.Default<GetContentByPageKeyResponse, TermsOfUseViewModel>();
 
         // Act
         Func<TermsController> construct = () => new TermsController(null!, mockMapper.Object);
@@ -33,7 +33,7 @@ public class TermsControllerTests
     public void Constructor_Throws_ArgumentNullException_When_Mapper_IsNull()
     {
         // Arrange
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockUseCase = new();
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> _mockUseCase = new();
         Func<TermsController> construct = () => new TermsController(_mockUseCase.Object, null!);
 
         // Act Assert
@@ -44,13 +44,13 @@ public class TermsControllerTests
     public async Task Index_Throws_ArgumentException_When_ResponseContentIsNull()
     {
         // Arrange
-        GetContentByPageKeyUseCaseResponse response = new(Content: null);
+        GetContentByPageKeyResponse response = new(Content: null);
 
-        Mock<IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>> mockMapper =
-            MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>();
+        Mock<IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel>> mockMapper =
+            MapperTestDoubles.MockFor<GetContentByPageKeyResponse, TermsOfUseViewModel>();
 
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
-        mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> mockUseCase = new();
+        mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
@@ -60,9 +60,9 @@ public class TermsControllerTests
         await Assert.ThrowsAsync<ArgumentException>(async () => _ = await sut.Index());
 
         mockUseCase.Verify(
-            (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
+            (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyRequest>()), Times.Once);
 
-        mockMapper.Verify(t => t.Map(It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Never);
+        mockMapper.Verify(t => t.Map(It.IsAny<GetContentByPageKeyResponse>()), Times.Never);
     }
 
     [Fact]
@@ -71,17 +71,17 @@ public class TermsControllerTests
         // Arrange
         Content content = ContentTestDoubles.Default();
 
-        GetContentByPageKeyUseCaseResponse response = new(content);
+        GetContentByPageKeyResponse response = new(content);
 
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> mockUseCase = new();
         mockUseCase.Setup(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+                It.IsAny<GetContentByPageKeyRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
-        Mock<IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>> mockMapper =
-            MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>(
+        Mock<IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel>> mockMapper =
+            MapperTestDoubles.MockFor<GetContentByPageKeyResponse, TermsOfUseViewModel>(
                 new TermsOfUseViewModel()
                 {
                     Response = content
@@ -95,11 +95,11 @@ public class TermsControllerTests
         // Assert
         mockUseCase.Verify(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
+                It.IsAny<GetContentByPageKeyRequest>()), Times.Once);
 
         mockMapper.Verify(
             (t) => t.Map(
-                It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Once);
+                It.IsAny<GetContentByPageKeyResponse>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);

@@ -46,12 +46,12 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
         IServiceProvider provider = services.BuildServiceProvider();
         using IServiceScope scope = provider.CreateScope();
 
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> sut =
-            scope.ServiceProvider.GetService<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>>()!;
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> sut =
+            scope.ServiceProvider.GetService<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>>()!;
 
         // Act
-        GetContentByPageKeyUseCaseRequest request = new(pageKey: "TestPage1");
-        GetContentByPageKeyUseCaseResponse response = await sut.HandleRequestAsync(request);
+        GetContentByPageKeyRequest request = new(pageKey: "TestPage1");
+        GetContentByPageKeyResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
         Assert.NotNull(response);

@@ -25,7 +25,7 @@ public sealed class GetContentByPageKeyResponseToTermsOfUseViewModelMapperTests
     public void Mapper_Throws_When_Input_Content_Is_Null()
     {
         // Arrange
-        GetContentByPageKeyUseCaseResponse response = new(Content: null);
+        GetContentByPageKeyResponse response = new(Content: null);
 
         GetContentByPageKeyResponseToTermsOfUseViewModelMapper sut = new();
         // Act
@@ -40,7 +40,7 @@ public sealed class GetContentByPageKeyResponseToTermsOfUseViewModelMapperTests
     {
         // Arrange
         Content content = ContentTestDoubles.Default();
-        GetContentByPageKeyUseCaseResponse contentResponse = new(content);
+        GetContentByPageKeyResponse contentResponse = new(content);
         GetContentByPageKeyResponseToTermsOfUseViewModelMapper sut = new();
 
         // Act

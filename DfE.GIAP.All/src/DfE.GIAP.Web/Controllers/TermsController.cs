@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +9,12 @@ namespace DfE.GIAP.Web.Controllers;
 
 public class TermsController : Controller
 {
-    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
-    private readonly IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel> _contentResponseToViewModelMapper;
+    private readonly IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel> _contentResponseToViewModelMapper;
 
     public TermsController(
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
-        IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel> contentResponseToViewModelMapper)
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel> contentResponseToViewModelMapper)
     {
         ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
         ArgumentNullException.ThrowIfNull(contentResponseToViewModelMapper);
@@ -28,14 +28,14 @@ public class TermsController : Controller
     {
         const string termOfUsePageKey = "TermOfUse";
 
-        GetContentByPageKeyUseCaseResponse response =
+        GetContentByPageKeyResponse response =
            await _getContentByPageKeyUseCase.HandleRequestAsync(
-               new GetContentByPageKeyUseCaseRequest(pageKey: termOfUsePageKey));
+               new GetContentByPageKeyRequest(pageKey: termOfUsePageKey));
 
         return ToViewResult(termOfUsePageKey, response);
     }
 
-    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyResponse response)
     {
         if (response.Content == null)
         {
@@ -48,9 +48,9 @@ public class TermsController : Controller
 }
 
 
-internal sealed class GetContentByPageKeyResponseToTermsOfUseViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>
+internal sealed class GetContentByPageKeyResponseToTermsOfUseViewModelMapper : IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel>
 {
-    public TermsOfUseViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    public TermsOfUseViewModel Map(GetContentByPageKeyResponse input)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(input.Content);

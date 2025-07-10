@@ -2,7 +2,7 @@
 using DfE.GIAP.Common.Helpers.CookieManager;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Consent;
@@ -18,15 +18,15 @@ public class ConsentController : Controller
 {
     private readonly ICookieManager _cookieManager;
     private readonly AzureAppSettings _azureAppSettings;
-    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
-    private readonly IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel> _contentResponseToViewModelMapper;
+    private readonly IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyResponse, ConsentViewModel> _contentResponseToViewModelMapper;
 
 
     public ConsentController(
         IOptions<AzureAppSettings> azureAppSettings,
         ICookieManager cookieManager,
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
-        IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel> contentResponseToViewModelMapper)
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyResponse, ConsentViewModel> contentResponseToViewModelMapper)
     {
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -51,9 +51,9 @@ public class ConsentController : Controller
 
         const string contentPageKey = "Consent";
 
-        GetContentByPageKeyUseCaseResponse response =
+        GetContentByPageKeyResponse response =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: contentPageKey));
+                new GetContentByPageKeyRequest(pageKey: contentPageKey));
 
         return ToViewResult(contentPageKey, response);
     }
@@ -72,7 +72,7 @@ public class ConsentController : Controller
         return View(viewModel);
     }
 
-    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyResponse response)
     {
         if (response.Content == null)
         {
@@ -85,9 +85,9 @@ public class ConsentController : Controller
 
 }
 
-internal sealed class GetContentByPageKeyResponseToConsentViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>
+internal sealed class GetContentByPageKeyResponseToConsentViewModelMapper : IMapper<GetContentByPageKeyResponse, ConsentViewModel>
 {
-    public ConsentViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    public ConsentViewModel Map(GetContentByPageKeyResponse input)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(input.Content);

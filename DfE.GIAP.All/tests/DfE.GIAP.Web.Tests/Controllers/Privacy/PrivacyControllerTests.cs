@@ -19,8 +19,8 @@ public sealed class PrivacyControllerTests
     public void Constructor_Throws_ArgumentNullException_When_UseCase_IsNull()
     {
         // Arrange
-        Mock<IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>> mockMapper =
-            MapperTestDoubles.Default<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>();
+        Mock<IMapper<GetContentByPageKeyResponse, PrivacyViewModel>> mockMapper =
+            MapperTestDoubles.Default<GetContentByPageKeyResponse, PrivacyViewModel>();
 
         // Act
         Func<PrivacyController> construct = () => new PrivacyController(null!, mockMapper.Object);
@@ -33,7 +33,7 @@ public sealed class PrivacyControllerTests
     public void Constructor_Throws_ArgumentNullException_When_Mapper_IsNull()
     {
         // Arrange
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockUseCase = new();
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> _mockUseCase = new();
         Func<PrivacyController> construct = () => new PrivacyController(_mockUseCase.Object, null!);
 
         // Act Assert
@@ -44,13 +44,13 @@ public sealed class PrivacyControllerTests
     public async Task Index_Throws_ArgumentException_When_ResponseContentIsNull()
     {
         // Arrange
-        GetContentByPageKeyUseCaseResponse response = new(Content: null);
+        GetContentByPageKeyResponse response = new(Content: null);
 
-        Mock<IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>> mockMapper =
-            MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>();
+        Mock<IMapper<GetContentByPageKeyResponse, PrivacyViewModel>> mockMapper =
+            MapperTestDoubles.MockFor<GetContentByPageKeyResponse, PrivacyViewModel>();
 
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
-        mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> mockUseCase = new();
+        mockUseCase.Setup(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
@@ -60,9 +60,9 @@ public sealed class PrivacyControllerTests
         await Assert.ThrowsAsync<ArgumentException>(async () => _ = await sut.Index());
 
         mockUseCase.Verify(
-            (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
+            (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyRequest>()), Times.Once);
 
-        mockMapper.Verify(t => t.Map(It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Never);
+        mockMapper.Verify(t => t.Map(It.IsAny<GetContentByPageKeyResponse>()), Times.Never);
     }
 
     [Fact]
@@ -71,17 +71,17 @@ public sealed class PrivacyControllerTests
         // Arrange
         Content content = ContentTestDoubles.Default();
 
-        GetContentByPageKeyUseCaseResponse response = new(content);
+        GetContentByPageKeyResponse response = new(content);
 
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> mockUseCase = new();
         mockUseCase.Setup(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+                It.IsAny<GetContentByPageKeyRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
-        Mock<IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>> mockMapper =
-            MapperTestDoubles.MockFor<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>(
+        Mock<IMapper<GetContentByPageKeyResponse, PrivacyViewModel>> mockMapper =
+            MapperTestDoubles.MockFor<GetContentByPageKeyResponse, PrivacyViewModel>(
                 new PrivacyViewModel()
                 {
                     Response = content
@@ -95,11 +95,11 @@ public sealed class PrivacyControllerTests
         // Assert
         mockUseCase.Verify(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
+                It.IsAny<GetContentByPageKeyRequest>()), Times.Once);
 
         mockMapper.Verify(
             (t) => t.Map(
-                It.IsAny<GetContentByPageKeyUseCaseResponse>()), Times.Once);
+                It.IsAny<GetContentByPageKeyResponse>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);
