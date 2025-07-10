@@ -24,6 +24,5 @@ public class CommonResponseBodyViewModel
     [Required(ErrorMessage = Messages.Common.Errors.TitleRequired)]
     [MaxLength(64, ErrorMessage = Messages.Common.Errors.TitleLength)]
     public string Title { get; set; }
-    public bool Archived { get; set; }
     public bool Pinned { get; set; }
 }

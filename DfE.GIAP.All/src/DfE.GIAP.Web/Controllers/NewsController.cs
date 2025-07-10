@@ -50,20 +50,6 @@ public class NewsController : Controller
         return View(model);
     }
 
-    [Route("archive")]
-    public async Task<IActionResult> Archive()
-    {
-        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublished);
-        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
-
-        NewsViewModel model = new()
-        {
-            NewsArticles = response.NewsArticles
-        };
-
-        return View(model);
-    }
-
     [HttpGet]
     [Route("dismiss")]
     public async Task<IActionResult> DismissNewsBanner([FromQuery] string returnUrl)

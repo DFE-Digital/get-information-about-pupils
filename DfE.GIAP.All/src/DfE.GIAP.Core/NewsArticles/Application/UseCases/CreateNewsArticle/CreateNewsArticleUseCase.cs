@@ -43,7 +43,6 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
             CreatedDate = DateTime.UtcNow,
             ModifiedDate = DateTime.UtcNow,
             Published = request.Published,
-            Archived = request.Archived,
             Pinned = request.Pinned
         };
 

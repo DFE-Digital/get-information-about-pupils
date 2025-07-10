@@ -42,7 +42,6 @@ public class NewsArticleViewModel
 
     public bool Pinned { get; set; }
     public bool Published { get; set; }
-    public bool Archived { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
 }

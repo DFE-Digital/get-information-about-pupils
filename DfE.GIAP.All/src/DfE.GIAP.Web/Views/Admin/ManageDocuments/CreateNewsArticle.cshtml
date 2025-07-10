@@ -21,11 +21,6 @@
                     <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="DocumentData.Published" name="DocumentData.Published" type="checkbox">
                     <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
                 </div>
-
-                <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
-                    <input class="govuk-checkboxes__input" id="DocumentData_Archived" asp-for="DocumentData.Archived" name="DocumentData.Archived" type="checkbox">
-                    <label for="DocumentData_Archived" class="govuk-label govuk-checkboxes__label">Archived</label>
-                </div>
             </div>
 
             <partial name="~/Views/Admin/ManageDocuments/_DocumentFields.cshtml" for="DocumentData" />

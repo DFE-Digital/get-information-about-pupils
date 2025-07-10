@@ -13,4 +13,4 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 /// langword="false"/>.</param>
 /// <param name="Pinned">A value indicating whether the news article is pinned. <see langword="true"/> if pinned; otherwise, <see
 /// langword="false"/>.</param>
-public record CreateNewsArticleRequest(string Title, string Body, bool Published, bool Archived, bool Pinned) : IUseCaseRequest;
+public record CreateNewsArticleRequest(string Title, string Body, bool Published, bool Pinned) : IUseCaseRequest;

@@ -25,10 +25,6 @@
                     <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="NewsArticle.Published" type="checkbox">
                     <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
                 </div>
-                <div class="govuk-checkboxes__item govuk-!-margin-bottom-4">
-                    <input class="govuk-checkboxes__input" id="DocumentData_Archived" asp-for="NewsArticle.Archived" type="checkbox">
-                    <label for="DocumentData_Archived" class="govuk-label govuk-checkboxes__label">Archived</label>
-                </div>
             </div>
 
             <div class="@Html.ClassWithError("NewsArticle.Title", "govuk-form-group govuk-character-count", "govuk-form-group--error")"
