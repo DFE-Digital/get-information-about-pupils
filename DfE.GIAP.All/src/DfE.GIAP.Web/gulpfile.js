@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 var uglify = require('gulp-uglify');
-var rename = require("gulp-rename");
 var concat = require("gulp-concat");
 
 // Copy jQuery to wwwroot/lib/jquery
@@ -14,7 +13,7 @@ gulp.task("copy-jquery", function () {
 });
 
 // Minify and concatenate scripts
-gulp.task("scripts", function () {
+gulp.task("copy-all-scripts", function () {
     return gulp
         .src(["./node_modules/govuk-frontend/dist/govuk/all.bundle.js", "./Scripts/**/*.js"])
         .pipe(uglify())
@@ -23,7 +22,7 @@ gulp.task("scripts", function () {
 });
 
 // Compile and minify SASS
-gulp.task('compile-sass', function () {
+gulp.task('copy-and-compile-sass', function () {
     return gulp
         .src("./Styles/Master.scss")
         .pipe(sass({
@@ -32,9 +31,9 @@ gulp.task('compile-sass', function () {
             quietDeps: true
         })
             .on('error', sass.logError))
-        .pipe(rename("giap.min.css")) // output filename
+        .pipe(concat("giap.min.css")) // output filename
         .pipe(gulp.dest('./wwwroot/css'));
 });
 
 // Default task (runs all tasks)
-gulp.task("default", gulp.series("copy-jquery", "scripts", "compile-sass"));
+gulp.task("default", gulp.series("copy-jquery", "copy-all-scripts", "copy-and-compile-sass"));
