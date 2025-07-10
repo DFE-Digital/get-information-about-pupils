@@ -28,7 +28,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
         return services
-            .RegisterApplicationUseCases();
+            .RegisterApplicationUseCases()
+            .AddSingleton<IMapper<UpdateNewsArticlesRequestProperties, NewsArticle>, UpdateNewsArticlesRequestPropertiesMapperToNewsArticle>();
     }
 
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
