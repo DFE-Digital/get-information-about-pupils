@@ -38,7 +38,6 @@ public sealed class NewsArticleDtoToEntityMapperTests
         Assert.Equal(mappedResponse.CreatedDate, inputDto.CreatedDate);
         Assert.Equal(mappedResponse.ModifiedDate, inputDto.ModifiedDate);
         Assert.Equal(mappedResponse.Published, inputDto.Published);
-        Assert.Equal(mappedResponse.Archived, inputDto.Archived);
         Assert.Equal(mappedResponse.Pinned, inputDto.Pinned);
     }
 }

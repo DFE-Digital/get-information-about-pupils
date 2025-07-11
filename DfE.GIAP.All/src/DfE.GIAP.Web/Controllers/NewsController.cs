@@ -37,7 +37,7 @@ public class NewsController : Controller
         CommonResponseBody newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
         CommonResponseBody newsMaintenance = await _contentService.GetContent(DocumentType.PlannedMaintenance).ConfigureAwait(false);
 
-        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.NotArchivedWithPublished);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.Published);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
         NewsViewModel model = new()
@@ -47,20 +47,6 @@ public class NewsController : Controller
             NewsPublication = newsPublication
         };
         await _newsBanner.RemoveLatestNewsStatus();
-        return View(model);
-    }
-
-    [Route("archive")]
-    public async Task<IActionResult> Archive()
-    {
-        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublished);
-        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
-
-        NewsViewModel model = new()
-        {
-            NewsArticles = response.NewsArticles
-        };
-
         return View(model);
     }
 

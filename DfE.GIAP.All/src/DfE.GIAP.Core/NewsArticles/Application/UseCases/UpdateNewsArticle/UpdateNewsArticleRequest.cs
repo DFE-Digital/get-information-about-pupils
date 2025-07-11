@@ -20,7 +20,6 @@ public record UpdateNewsArticlesRequestProperties
     public string? Body { get; init; }
     public DateTime ModifiedDate { get; }
     public DateTime CreatedDate { get; }
-    public bool? Archived { get; init; }
     public bool? Pinned { get; init; }
     public bool? Published { get; init; }
 }

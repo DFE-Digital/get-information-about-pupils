@@ -138,8 +138,7 @@ public class ManageDocumentsController : Controller
             }
             else
             {
-                if (manageDocumentsModel.DocumentList.DocumentId != DocumentType.Article.ToString()
-                || manageDocumentsModel.DocumentList.DocumentId == DocumentType.ArchivedNews.ToString())
+                if (manageDocumentsModel.DocumentList.DocumentId != DocumentType.Article.ToString())
                 {
                     // TODO: We don't care if selectedNewsId if it's not an artcile document type
                     manageDocumentsModel.SelectedNewsId = string.Empty;
@@ -150,21 +149,12 @@ public class ManageDocumentsController : Controller
                 {
                     await LoadNewsList().ConfigureAwait(false);
                 }
-                else if (manageDocumentsModel.DocumentList.DocumentId == DocumentType.ArchivedNews.ToString() &&
-                            string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
-                {
-                    await LoadArchivedNewsList().ConfigureAwait(false);
-                }
                 else
                 {
                     ViewBag.DisplayEditor = true;
                     if (!string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
                     {
                         await LoadNewsList().ConfigureAwait(false);
-                    }
-                    else if (!string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
-                    {
-                        await LoadArchivedNewsList().ConfigureAwait(false);
                     }
 
                     if (string.IsNullOrEmpty(edit))
@@ -215,7 +205,6 @@ public class ManageDocumentsController : Controller
             Title: userInputs.Title,
             Body: userInputs.Body,
             Published: userInputs.Published,
-            Archived: userInputs.Archived,
             Pinned: userInputs.Pinned);
 
         await _createNewsArticleUseCase.HandleRequestAsync(request);
@@ -285,7 +274,6 @@ public class ManageDocumentsController : Controller
                 Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
                 Pinned = response.NewsArticle.Pinned,
                 Published = response.NewsArticle.Published,
-                Archived = response.NewsArticle.Archived,
                 CreatedDate = response.NewsArticle.CreatedDate,
                 ModifiedDate = response.NewsArticle.ModifiedDate
             }
@@ -309,7 +297,6 @@ public class ManageDocumentsController : Controller
         {
             Title = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Title),
             Body = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Body),
-            Archived = manageDocumentsModel.NewsArticle.Archived,
             Pinned = manageDocumentsModel.NewsArticle.Pinned,
             Published = manageDocumentsModel.NewsArticle.Published,
         };
@@ -511,7 +498,7 @@ public class ManageDocumentsController : Controller
 
     private async Task LoadNewsList()
     {
-        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished);
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.PublishedAndNotPublished);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
         IList<Document> newsList = new List<Document>();
@@ -534,30 +521,6 @@ public class ManageDocumentsController : Controller
         ViewBag.NewsDocuments = new SelectList(newsList, "DocumentId", "DocumentName");
     }
 
-    private async Task LoadArchivedNewsList()
-    {
-        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished);
-        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
-
-        IList<Document> newsList = new List<Document>();
-        foreach (NewsArticle news in response.NewsArticles)
-        {
-            string status = news.Published ? "Published" : "Draft";
-            string pinned = news.Pinned ? " | Pinned" : "";
-            string date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
-            string name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
-
-            newsList.Add(new Document
-            {
-                DocumentName = $"{name} | {date} | {status} {pinned}",
-                DocumentId = news.Id.Value,
-                IsEnabled = true
-            });
-        }
-
-        ViewBag.ArchiveNewsIsSuccess = newsList.Any();
-        ViewBag.ArchivedNewsDocuments = new SelectList(newsList, "DocumentId", "DocumentName");
-    }
 
     private Confirmation GenerateConfirmationMessage(ManageDocumentsViewModel model)
     {

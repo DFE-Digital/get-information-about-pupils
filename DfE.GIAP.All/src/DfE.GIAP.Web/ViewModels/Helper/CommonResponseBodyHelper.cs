@@ -19,7 +19,6 @@ public static class CommonResponseBodyHelper
             ModifiedDate = commonResponseBody.ModifiedDate,
             Published = commonResponseBody.Published,
             Title = commonResponseBody.Title,
-            Archived = commonResponseBody.Archived,
             Pinned = commonResponseBody.Pinned
         };
         return CommonResponseBodyViewModel;

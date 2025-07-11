@@ -10,7 +10,6 @@ internal sealed class MapNewsArticleDtoToArticleTestMapper : IMapper<NewsArticle
             Id = NewsArticleIdentifier.From(input.id),
             Title = input.Title,
             Body = input.Body,
-            Archived = input.Archived,
             Pinned = input.Pinned,
             Published = input.Published,
             DraftTitle = input.DraftTitle,

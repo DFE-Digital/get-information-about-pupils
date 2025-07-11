@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
@@ -68,43 +64,6 @@ public class NewsControllerTests
 
     }
 
-    [Fact]
-    public async Task ReturnsAViewWithArchivedData()
-    {
-        // Arrange
-        var archivedArticleData1 = new NewsArticle() { Id = NewsArticleIdentifier.From("1"), Title = "Title 1", Body = "Test body 1", DraftTitle = string.Empty, DraftBody = string.Empty, ModifiedDate = new DateTime(2020, 1, 4), Archived = true };
-        var archivedArticleData2 = new NewsArticle() { Id = NewsArticleIdentifier.From("2"), Title = "Title 2", Body = "Test body 2", DraftTitle = string.Empty, DraftBody = string.Empty, ModifiedDate = new DateTime(2020, 1, 2), Archived = false };
-        var listArchivedArticleData = new List<NewsArticle>() { archivedArticleData1, archivedArticleData2 };
-
-        var mockContentService = new Mock<IContentService>();
-        var newsViewModel = new NewsViewModel();
-
-        newsViewModel.NewsArticles = listArchivedArticleData;
-
-        _mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()))
-            .ReturnsAsync(new GetNewsArticlesResponse(listArchivedArticleData));
-
-        var controller = new NewsController(mockContentService.Object, _mockNewsBanner, _mockGetNewsArticlesUseCase.Object);
-
-        // Act
-        var result = await controller.Archive().ConfigureAwait(false);
-
-        // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
-        var articleModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).NewsArticles.ToList();
-
-        _mockGetNewsArticlesUseCase.Verify(x => x.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()), Times.Once());
-
-        Assert.Equal("Title 1", articleModel[0].Title);
-        Assert.Equal("Test body 1", articleModel[0].Body);
-        Assert.True(articleModel[0].Archived);
-
-        Assert.Equal("Title 2", articleModel[1].Title);
-        Assert.Equal("Test body 2", articleModel[1].Body);
-        Assert.False(articleModel[1].Archived);
-
-        Assert.Equal(2, articleModel.Count);
-    }
 
     [Fact]
     public async Task DismissNewsBanner_redirects_to_ProvidedURL()

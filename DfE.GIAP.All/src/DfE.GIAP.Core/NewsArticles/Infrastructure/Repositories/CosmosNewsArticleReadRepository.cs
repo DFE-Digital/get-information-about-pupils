@@ -75,15 +75,16 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
 
 
     /// <summary>
-    /// Retrieves a collection of news articles based on the specified search filter.
+    /// Retrieves a collection of news articles that match the specified search filter.
     /// </summary>
-    /// <remarks>This method queries a Cosmos DB container to retrieve news articles based on the provided
-    /// filter. The filter determines whether articles are archived, published, or both. In the event of a <see
-    /// cref="CosmosException"/>, the method logs the error and returns an empty collection.</remarks>
-    /// <param name="newsArticleSearchFilter">A filter that specifies the criteria for retrieving news articles, such as whether they are archived, published,
-    /// or both.</param>
-    /// <returns>An asynchronous task that returns an <see cref="IEnumerable{T}"/> of <see cref="NewsArticle"/> objects matching
-    /// the specified filter. If no articles match the filter, an empty collection is returned.</returns>
+    /// <remarks>This method queries a Cosmos DB container using the provided filter criteria and maps the results
+    /// to a collection of <see cref="NewsArticle"/> objects. Ensure that the <paramref name="newsArticleSearchFilter"/> 
+    /// is properly configured to avoid invalid queries.</remarks>
+    /// <param name="newsArticleSearchFilter">The filter criteria used to search for news articles. This includes parameters such as keywords,  date ranges, or
+    /// other attributes to refine the search.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection  of <see
+    /// cref="NewsArticle"/> objects that match the search criteria. If no articles are found, the  collection will be
+    /// empty.</returns>
     public async Task<IEnumerable<NewsArticle>> GetNewsArticlesAsync(NewsArticleSearchFilter newsArticleSearchFilter)
     {
         try

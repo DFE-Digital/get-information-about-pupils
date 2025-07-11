@@ -12,6 +12,5 @@ public record NewsArticle
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }
     public bool Published { get; set; }
-    public bool Archived { get; set; }
     public bool Pinned { get; set; }
 }

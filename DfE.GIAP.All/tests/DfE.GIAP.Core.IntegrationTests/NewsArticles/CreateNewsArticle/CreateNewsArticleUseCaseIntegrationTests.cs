@@ -16,9 +16,9 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Theory]
-    [InlineData(true, true, true)]
-    [InlineData(false, false, false)]
-    public async Task CreateNewsArticles_Creates_Article(bool isPublished, bool isArchived, bool isPinned)
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    public async Task CreateNewsArticles_Creates_Article(bool isPublished, bool isPinned)
     {
         // Arrange
         IServiceCollection services =
@@ -39,7 +39,6 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
             stubArticleTitle,
             stubArticleBody,
             Published: isPublished,
-            Archived: isArchived,
             Pinned: isPinned);
 
         Stopwatch watch = Stopwatch.StartNew();
@@ -57,7 +56,6 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
         Assert.Equal(stubArticleTitle, newsArticleDto.Title);
         Assert.Equal(stubArticleBody, newsArticleDto.Body);
         Assert.Equal(isPublished, newsArticleDto.Published);
-        Assert.Equal(isArchived, newsArticleDto.Archived);
         Assert.Equal(isPinned, newsArticleDto.Pinned);
         Assert.Equal(7, newsArticleDto.DOCTYPE);
 
