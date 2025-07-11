@@ -27,14 +27,6 @@ public static class Messages
         {
             public const string DeleteTitle = "News article was deleted successfully";
             public const string DeleteBody = "Your news article was deleted successfully and your change will be reflected immediately";
-            public const string ArchivedDeleteTitle = "Archived news article was deleted successfully";
-            public const string ArchivedDeleteBody = "Your archived news article was deleted successfully and your change will be reflected immediately";
-            public const string ArchiveTitle = "News article was archived successfully";
-            public const string ArchiveBody = "Your news article was archived successfully and your change will be reflected immediately";
-            public const string UnarchiveTitle = "News article was unarchived successfully";
-            public const string UnarchiveBody = "Your news article was unarchived successfully and your change will be reflected immediately";
-            public const string SaveAsDraftTitle = "News article was saved as draft successfully";
-            public const string SaveAsDraftBody = "Your news article was saved as draft successfully and your change will be reflected immediately";
             public const string PublishTitle = "News article was published successfully";
             public const string PublishBody = "Your news article was published successfully and your change will be reflected immediately";
             public const string CreateTitle = "News article was created successfully";
@@ -47,9 +39,6 @@ public static class Messages
 
         public static class Errors
         {
-            public const string ArchivedDeleteError = "We have been unable to delete the archived article.";
-            public const string ArchiveError = "We have been unable to archive the article.";
-            public const string UnarchiveError = "We have been unable to unarchive the article.";
             public const string SaveDraftError = "We have been unable to save the draft article.";
             public const string PublishError = "We have been unable to publish the article.";
             public const string CreatedError = "We have been unable to create the article.";
