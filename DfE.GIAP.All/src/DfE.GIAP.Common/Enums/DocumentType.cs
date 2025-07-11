@@ -13,9 +13,6 @@ public enum DocumentType
     [Description("Planned Maintenance")]
     PlannedMaintenance,
 
-    [Description("Archived Article")]
-    ArchivedNews,
-
     [Description("Consent")]
     Consent,
 

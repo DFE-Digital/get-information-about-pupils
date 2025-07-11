@@ -36,7 +36,6 @@ public sealed class UpdateNewsArticleUseCaseTests
 
         Assert.Null(properties.Title);
         Assert.Null(properties.Body);
-        Assert.Null(properties.Archived);
         Assert.Null(properties.Pinned);
         Assert.Null(properties.Published);
     }

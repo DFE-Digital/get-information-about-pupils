@@ -17,8 +17,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Theory]
-    [InlineData(NewsArticleSearchFilter.ArchivedWithPublished)]
-    [InlineData(NewsArticleSearchFilter.NotArchivedWithPublished)]
+    [InlineData(NewsArticleSearchFilter.Published)]
     public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(NewsArticleSearchFilter filter)
     {
         //Arrange
@@ -32,8 +31,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
 
         List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10, predicateToFulfil: article => filter switch
         {
-            NewsArticleSearchFilter.ArchivedWithPublished => article.Archived && article.Published,
-            NewsArticleSearchFilter.NotArchivedWithPublished => !article.Archived && article.Published,
+            NewsArticleSearchFilter.Published => article.Published,
             _ => throw new NotImplementedException()
         });
 
@@ -68,18 +66,12 @@ internal static class GetNewsArticleUseCaseNewsArticleExtensions
     {
         return filter switch
         {
-            NewsArticleSearchFilter.ArchivedWithPublished =>
-                input.Where(t => t.Archived && t.Published),
-            NewsArticleSearchFilter.ArchivedWithNotPublished =>
-                input.Where(t => t.Archived && !t.Published),
-            NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished =>
-                input.Where(t => t.Archived),
-            NewsArticleSearchFilter.NotArchivedWithPublished =>
-                input.Where(t => !t.Archived && t.Published),
-            NewsArticleSearchFilter.NotArchivedWithNotPublished =>
-                input.Where(t => !t.Archived && !t.Published),
-            NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished =>
-                input.Where(t => !t.Archived),
+            NewsArticleSearchFilter.Published =>
+                input.Where(t => t.Published),
+            NewsArticleSearchFilter.NotPublished =>
+                input.Where(t => !t.Published),
+            NewsArticleSearchFilter.PublishedAndNotPublished =>
+                input.Where(t => t.Published || !t.Published),
             _ => input
         };
     }
@@ -88,9 +80,9 @@ internal static class GetNewsArticleUseCaseNewsArticleExtensions
     {
         return filter switch
         {
-            NewsArticleSearchFilter.NotArchivedWithPublished
-            or NewsArticleSearchFilter.NotArchivedWithNotPublished
-            or NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished =>
+            NewsArticleSearchFilter.Published
+            or NewsArticleSearchFilter.NotPublished
+            or NewsArticleSearchFilter.PublishedAndNotPublished =>
                 input.OrderByDescending(t => t.Pinned)
                      .ThenByDescending(t => t.ModifiedDate),
             _ => input.OrderByDescending(t => t.ModifiedDate)

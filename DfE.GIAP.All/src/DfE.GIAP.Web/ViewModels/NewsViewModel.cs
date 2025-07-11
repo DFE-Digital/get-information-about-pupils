@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.GIAP.Web.ViewModels;

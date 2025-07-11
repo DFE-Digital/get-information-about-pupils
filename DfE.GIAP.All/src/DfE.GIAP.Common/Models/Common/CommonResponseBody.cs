@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Domain.Models.User;
 using Newtonsoft.Json;
 
@@ -20,6 +19,5 @@ public class CommonResponseBody
     public DateTime ModifiedDate { get; set; }
     public bool Published { get; set; }
     public string Title { get; set; }
-    public bool Archived { get; set; }
     public bool Pinned { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+﻿namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
 public record NewsArticleDto
 {
@@ -11,7 +9,6 @@ public record NewsArticleDto
     public string? DraftBody { get; set; }
     public string? DraftTitle { get; set; }
     public bool Published { get; set; }
-    public bool Archived { get; set; }
     public bool Pinned { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime ModifiedDate { get; set; }

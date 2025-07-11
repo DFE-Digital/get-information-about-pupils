@@ -33,7 +33,7 @@ public sealed class CreateNewsArticleUseCaseTests
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new(null!, "body", true, true, true);
+        CreateNewsArticleRequest request = new(null!, "body", true, true);
         Func<Task> act = () => sut.HandleRequestAsync(request: request);
 
         // Act Assert
@@ -51,7 +51,7 @@ public sealed class CreateNewsArticleUseCaseTests
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new(title, "body", true, true, true);
+        CreateNewsArticleRequest request = new(title, "body", true, true);
         Func<Task> act = () => sut.HandleRequestAsync(request: request);
 
         // Act Assert
@@ -66,7 +66,7 @@ public sealed class CreateNewsArticleUseCaseTests
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new("title", null!, true, true, true);
+        CreateNewsArticleRequest request = new("title", null!, true, true);
 
         Func<Task> act = () => sut.HandleRequestAsync(request: request);
 
@@ -85,7 +85,7 @@ public sealed class CreateNewsArticleUseCaseTests
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new("title", body, true, true, true);
+        CreateNewsArticleRequest request = new("title", body, true, true);
 
         Func<Task> act = () => sut.HandleRequestAsync(request: request);
 
@@ -101,7 +101,7 @@ public sealed class CreateNewsArticleUseCaseTests
         Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
-        CreateNewsArticleRequest request = new("title", "body", true, true, true);
+        CreateNewsArticleRequest request = new("title", "body", true, true);
 
         await sut.HandleRequestAsync(request: request);
 

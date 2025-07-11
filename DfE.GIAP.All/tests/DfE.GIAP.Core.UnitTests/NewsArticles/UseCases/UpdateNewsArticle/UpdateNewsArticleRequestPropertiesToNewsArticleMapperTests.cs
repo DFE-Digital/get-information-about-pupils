@@ -30,7 +30,6 @@ public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
         Assert.Equal(string.Empty, result.Body);
         Assert.Equal(properties.CreatedDate, result.CreatedDate);
         Assert.Equal(properties.ModifiedDate, result.ModifiedDate);
-        Assert.False(result.Archived);
         Assert.False(result.Pinned);
         Assert.False(result.Published);
     }
@@ -42,7 +41,6 @@ public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
         UpdateNewsArticlesRequestPropertiesMapperToNewsArticle mapper = new();
         UpdateNewsArticlesRequestProperties properties = new(id: "VALID_ID")
         {
-            Archived = true,
             Published = true,
             Pinned = true,
             Title = "Test tile",
@@ -58,7 +56,6 @@ public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
         Assert.Equal(properties.Body, result.Body);
         Assert.Equal(properties.CreatedDate, result.CreatedDate);
         Assert.Equal(properties.ModifiedDate, result.ModifiedDate);
-        Assert.Equal(properties.Archived, result.Archived);
         Assert.Equal(properties.Pinned, result.Pinned);
         Assert.Equal(properties.Published, result.Published);
     }

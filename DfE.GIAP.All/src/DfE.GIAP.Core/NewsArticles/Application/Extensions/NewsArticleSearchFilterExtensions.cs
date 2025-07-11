@@ -22,18 +22,12 @@ public static class NewsArticleSearchFilterExtensions
     {
         return filter switch
         {
-            NewsArticleSearchFilter.ArchivedWithPublished =>
-                "c.Archived=true AND c.Published=true",
-            NewsArticleSearchFilter.ArchivedWithNotPublished =>
-                "c.Archived=true AND c.Published=false",
-            NewsArticleSearchFilter.ArchivedWithPublishedAndNotPublished =>
-                "c.Archived=true",
-            NewsArticleSearchFilter.NotArchivedWithPublished =>
-                "c.Archived=false AND c.Published=true",
-            NewsArticleSearchFilter.NotArchivedWithNotPublished =>
-                "c.Archived=false AND c.Published=false",
-            NewsArticleSearchFilter.NotArchivedWithPublishedAndNotPublished =>
-                "c.Archived=false",
+            NewsArticleSearchFilter.Published =>
+                "c.Published=true",
+            NewsArticleSearchFilter.NotPublished =>
+                "c.Published=false",
+            NewsArticleSearchFilter.PublishedAndNotPublished =>
+                "(c.Published=true OR c.Published=false)",
             _ => throw new ArgumentOutOfRangeException(nameof(filter), filter, null)
         };
     }

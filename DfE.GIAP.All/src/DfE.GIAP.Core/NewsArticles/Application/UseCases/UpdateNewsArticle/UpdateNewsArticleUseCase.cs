@@ -40,7 +40,6 @@ internal sealed class UpdateNewsArticlesRequestPropertiesMapperToNewsArticle : I
             Id = input.Id,
             Title = input.Title ?? string.Empty,
             Body = input.Body ?? string.Empty,
-            Archived = input.Archived ?? false,
             Pinned = input.Pinned ?? false,
             Published = input.Published ?? false,
             CreatedDate = input.CreatedDate,
