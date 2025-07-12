@@ -45,14 +45,14 @@ public class NewsControllerTests
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> mockGetNewsArticlesUseCase = new();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockGetContentByPageKeyUseCase = new();
 
-        Content firstCallPublication = ContentTestDoubles.Default();
-        Content secondCallMaintenance = ContentTestDoubles.Default();
+        Content firstCallPublicationSchedule = ContentTestDoubles.Default();
+        Content secondCallPlannedMaintenance = ContentTestDoubles.Default();
 
         mockGetContentByPageKeyUseCase.SetupSequence(
             (t) => t.HandleRequestAsync(
                     It.IsAny<GetContentByPageKeyUseCaseRequest>()))
-                .ReturnsAsync(new GetContentByPageKeyUseCaseResponse(firstCallPublication))
-                .ReturnsAsync(new GetContentByPageKeyUseCaseResponse(secondCallMaintenance));
+                .ReturnsAsync(new GetContentByPageKeyUseCaseResponse(firstCallPublicationSchedule))
+                .ReturnsAsync(new GetContentByPageKeyUseCaseResponse(secondCallPlannedMaintenance));
 
         mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArticleData));
@@ -71,10 +71,10 @@ public class NewsControllerTests
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
 
         Content publicationModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).NewsPublication;
-        Assert.Equal(firstCallPublication.Body, publicationModel.Body);
+        Assert.Equal(firstCallPublicationSchedule.Body, publicationModel.Body);
 
         Content maintenanceModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).NewsMaintenance;
-        Assert.Equal(secondCallMaintenance.Body, maintenanceModel.Body);
+        Assert.Equal(secondCallPlannedMaintenance.Body, maintenanceModel.Body);
 
     }
 
