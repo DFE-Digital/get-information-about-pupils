@@ -4,44 +4,36 @@ using DfE.GIAP.Core.NewsArticles.Application.Enums;
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
+public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _fixture;
-
-    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture)
+    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
     {
-        _fixture = fixture;
     }
 
-    public async Task InitializeAsync() => await _fixture.Database.ClearDatabaseAsync();
-    public Task DisposeAsync() => Task.CompletedTask;
+    protected override Task OnInitializeAsync(IServiceCollection services)
+    {
+        services.AddNewsArticleDependencies();
+        return Task.CompletedTask;
+    }
 
     [Theory]
     [InlineData(NewsArticleSearchFilter.Published)]
     public async Task GetNewsArticlesUseCase_Returns_Articles_When_HandleRequest(NewsArticleSearchFilter filter)
     {
         //Arrange
-        IServiceCollection services =
-            ServiceCollectionTestDoubles.Default()
-                .AddSharedDependencies()
-                .AddNewsArticleDependencies();
-
-        IServiceProvider provider = services.BuildServiceProvider();
-        using IServiceScope scope = provider.CreateScope();
-
         List<NewsArticleDto> seededDTOs = NewsArticleDtoTestDoubles.Generate(count: 10, predicateToFulfil: article => filter switch
         {
             NewsArticleSearchFilter.Published => article.Published,
             _ => throw new NotImplementedException()
         });
 
-        await _fixture.Database.WriteManyAsync(seededDTOs);
+        await Fixture.Database.WriteManyAsync(seededDTOs);
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 
         // Act
-        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut =
-            scope.ServiceProvider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
+
         GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
@@ -50,7 +42,8 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : IAsyncLifetime
         List<NewsArticle> expectedArticlesOutput =
             seededDTOs.Select(testMapper.Map)
                 .FilterRequestedArticles(filter)
-                .OrderArticles(filter)
+                .OrderByDescending(t => t.Pinned)
+                .ThenByDescending(t => t.ModifiedDate)
                 .ToList();
 
         Assert.NotNull(response);
@@ -73,19 +66,6 @@ internal static class GetNewsArticleUseCaseNewsArticleExtensions
             NewsArticleSearchFilter.PublishedAndNotPublished =>
                 input.Where(t => t.Published || !t.Published),
             _ => input
-        };
-    }
-
-    internal static IEnumerable<NewsArticle> OrderArticles(this IEnumerable<NewsArticle> input, NewsArticleSearchFilter filter)
-    {
-        return filter switch
-        {
-            NewsArticleSearchFilter.Published
-            or NewsArticleSearchFilter.NotPublished
-            or NewsArticleSearchFilter.PublishedAndNotPublished =>
-                input.OrderByDescending(t => t.Pinned)
-                     .ThenByDescending(t => t.ModifiedDate),
-            _ => input.OrderByDescending(t => t.ModifiedDate)
         };
     }
 }
