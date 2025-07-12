@@ -2,10 +2,23 @@
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 
 namespace DfE.GIAP.Core.UnitTests.Common.TextSanitiser;
-public sealed class TextSanitiserHandlerTests
+public sealed class TextSanitiserInvokerTests
 {
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Sanitise_With_NullOrEmpty_DoesNotThrow(string? input)
+    {
+        TextSanitisationInvoker handler = new(null!);
+
+        SanitisedTextResult output = handler.Sanitise(input!);
+
+        Assert.Equal(string.Empty, output.Value);
+    }
+
     [Fact]
-    public void Handle_WithNoCustomSanitisers_AppliesDefaultHtmlSanitiser()
+    public void Sanitise_WithNoCustomSanitisers_AppliesDefaultHtmlSanitiser()
     {
         // Arrange
         TextSanitisationInvoker handler = new(null!);
@@ -18,7 +31,7 @@ public sealed class TextSanitiserHandlerTests
     }
 
     [Fact]
-    public void Handle_WithCustomSanitisers_AppliesAllInOrder()
+    public void Sanitise_WithCustomSanitisers_AppliesAll()
     {
         // Arrange
         FakeTextToUpperCaseSanitiser testUpperCaseSanitiser = new();
@@ -37,10 +50,10 @@ public sealed class TextSanitiserHandlerTests
     internal sealed class FakeTextToUpperCaseSanitiser : ITextSanitiserHandler
     {
         public int ExecutionCount { get; private set; }
-        public SanitisedText Handle(string raw)
+        public SanitisedText Handle(string? raw)
         {
             ExecutionCount++;
-            return new(raw.ToUpper());
+            return new(raw!.ToUpper());
         }
     }
 
@@ -48,7 +61,7 @@ public sealed class TextSanitiserHandlerTests
     {
         public int ExecutionCount { get; private set; }
 
-        public SanitisedText Handle(string raw)
+        public SanitisedText Handle(string? raw)
         {
             ExecutionCount++;
             // Simulated malicious input for testing purposes only

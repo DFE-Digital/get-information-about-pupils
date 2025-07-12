@@ -10,8 +10,13 @@ internal sealed class HtmlTextSanitiser : ITextSanitiserHandler
     {
         s_htmlSanitizer.AllowedAttributes.Add("class");
     }
-    public SanitisedText Handle(string raw)
+    public SanitisedText Handle(string? raw)
     {
+        if (string.IsNullOrEmpty(raw))
+        {
+            return new(string.Empty);
+        }
+
         string output = s_htmlSanitizer.Sanitize(raw);
         return new(output);
     }
