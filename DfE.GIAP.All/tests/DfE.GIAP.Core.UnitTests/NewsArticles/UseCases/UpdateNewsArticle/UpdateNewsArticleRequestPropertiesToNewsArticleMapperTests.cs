@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.UpdateNewsArticle;

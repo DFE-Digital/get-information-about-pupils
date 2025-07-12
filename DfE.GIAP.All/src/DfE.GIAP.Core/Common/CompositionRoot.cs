@@ -1,7 +1,5 @@
 ﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Handler;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Common;

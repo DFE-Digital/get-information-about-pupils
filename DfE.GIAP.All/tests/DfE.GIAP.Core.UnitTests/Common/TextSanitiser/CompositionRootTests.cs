@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.SharedTests;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;

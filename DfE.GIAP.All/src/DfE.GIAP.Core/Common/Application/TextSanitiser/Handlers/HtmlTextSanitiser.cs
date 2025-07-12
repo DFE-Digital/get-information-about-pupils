@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using Ganss.Xss;
 
-namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 internal sealed class HtmlTextSanitiser : ITextSanitiserHandler
 {
     private static readonly HtmlSanitizer s_htmlSanitizer = new();

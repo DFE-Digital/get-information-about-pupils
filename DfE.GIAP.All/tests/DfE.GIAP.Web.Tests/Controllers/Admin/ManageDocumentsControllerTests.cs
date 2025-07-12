@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Core.NewsArticles.Application.Models;

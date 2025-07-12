@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 
-namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 
 public interface ITextSanitiserInvoker
 {

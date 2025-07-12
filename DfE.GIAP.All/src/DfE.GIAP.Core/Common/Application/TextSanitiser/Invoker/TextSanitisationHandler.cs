@@ -1,7 +1,6 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 
-namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Handler;
+namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 internal sealed class TextSanitisationInvoker : ITextSanitiserInvoker
 {
     private readonly List<ITextSanitiserHandler> _sanitisers;

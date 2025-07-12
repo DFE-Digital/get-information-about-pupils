@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+﻿namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 
 public readonly struct SanitisedText
 {

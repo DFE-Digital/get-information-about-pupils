@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 
-namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 public sealed class SanitisedTextResult
 {
     public string Value { get; }

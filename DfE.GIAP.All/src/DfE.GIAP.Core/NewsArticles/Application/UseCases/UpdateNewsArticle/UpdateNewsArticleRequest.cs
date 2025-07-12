@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
