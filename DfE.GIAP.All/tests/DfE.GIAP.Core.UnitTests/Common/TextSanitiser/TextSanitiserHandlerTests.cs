@@ -12,7 +12,7 @@ public sealed class TextSanitiserHandlerTests
         TextSanitisationInvoker handler = new(null!);
 
         // Act
-        SanitisedTextResult result = handler.Handle("<script onClick=evil()>Hello</script>");
+        SanitisedTextResult result = handler.Sanitise("<script onClick=evil()>Hello</script>");
 
         // Assert
         Assert.DoesNotContain("script", result.Value);
@@ -27,7 +27,7 @@ public sealed class TextSanitiserHandlerTests
         TextSanitisationInvoker handler = new(sanitisers: [testUpperCaseSanitiser, maliciousScriptSanitiser]);
 
         // Act
-        SanitisedTextResult result = handler.Handle("hello");
+        SanitisedTextResult result = handler.Sanitise("hello");
 
         // Assert
         Assert.Equal("HELLO", result.Value);
@@ -38,7 +38,7 @@ public sealed class TextSanitiserHandlerTests
     internal sealed class FakeTextToUpperCaseSanitiser : ITextSanitiserHandler
     {
         public int ExecutionCount { get; private set; }
-        public SanitisedText Sanitise(string raw)
+        public SanitisedText Handle(string raw)
         {
             ExecutionCount++;
             return new(raw.ToUpper());
@@ -49,7 +49,7 @@ public sealed class TextSanitiserHandlerTests
     {
         public int ExecutionCount { get; private set; }
 
-        public SanitisedText Sanitise(string raw)
+        public SanitisedText Handle(string raw)
         {
             ExecutionCount++;
             // Simulated malicious input for testing purposes only

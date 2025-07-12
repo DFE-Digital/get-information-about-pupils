@@ -4,5 +4,5 @@ namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 
 public interface ITextSanitiserHandler
 {
-    SanitisedText Sanitise(string raw);
+    SanitisedText Handle(string raw);
 }

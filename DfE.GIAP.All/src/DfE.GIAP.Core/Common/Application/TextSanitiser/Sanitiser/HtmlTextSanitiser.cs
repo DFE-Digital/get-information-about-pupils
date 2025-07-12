@@ -10,7 +10,7 @@ internal sealed class HtmlTextSanitiser : ITextSanitiserHandler
     {
         s_htmlSanitizer.AllowedAttributes.Add("class");
     }
-    public SanitisedText Sanitise(string raw)
+    public SanitisedText Handle(string raw)
     {
         string output = s_htmlSanitizer.Sanitize(raw);
         return new(output);

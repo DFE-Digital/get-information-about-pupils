@@ -13,7 +13,7 @@ internal sealed class TextSanitisationInvoker : ITextSanitiserInvoker
         _sanitisers.Add(new HtmlTextSanitiser()); // ensure this runs last in case the custom sanitisers are malicious or misconfigured
     }
 
-    public SanitisedTextResult Handle(string input)
+    public SanitisedTextResult Sanitise(string input)
     {
         if (string.IsNullOrEmpty(input))
         {
@@ -23,7 +23,7 @@ internal sealed class TextSanitisationInvoker : ITextSanitiserInvoker
         string current = input;
         foreach (ITextSanitiserHandler sanitiser in _sanitisers)
         {
-            SanitisedText result = sanitiser.Sanitise(current);
+            SanitisedText result = sanitiser.Handle(current);
             current = result.Value;
         }
 

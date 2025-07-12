@@ -19,7 +19,7 @@ public sealed class HtmlTextSanitiserTests
         string input = "<script>alert('xss');</script><p>Hello</p>";
 
         // Act
-        SanitisedText result = _sanitiser.Sanitise(input);
+        SanitisedText result = _sanitiser.Handle(input);
 
         // Assert
         Assert.Equal("<p>Hello</p>", result.Value);
@@ -33,7 +33,7 @@ public sealed class HtmlTextSanitiserTests
         string input = "<p class='highlight'>Text</p>";
 
         // Act
-        SanitisedText result = _sanitiser.Sanitise(input);
+        SanitisedText result = _sanitiser.Handle(input);
 
         // Assert
         Assert.Equal("<p class=\"highlight\">Text</p>", result.Value);
@@ -46,7 +46,7 @@ public sealed class HtmlTextSanitiserTests
         string input = "<p onclick='evil()'>Click me</p>";
 
         // Act
-        SanitisedText result = _sanitiser.Sanitise(input);
+        SanitisedText result = _sanitiser.Handle(input);
 
         // Assert
         Assert.DoesNotContain("onclick", result.Value);
@@ -59,7 +59,7 @@ public sealed class HtmlTextSanitiserTests
     public void Sanitise_Strips_CarriageReturns(string input)
     {
         // Act
-        SanitisedText result = _sanitiser.Sanitise(input!);
+        SanitisedText result = _sanitiser.Handle(input!);
 
         // Assert
         Assert.DoesNotContain("\r", result.Value);
@@ -74,7 +74,7 @@ public sealed class HtmlTextSanitiserTests
     public void Sanitise_HandlesEmptyOrNull_Input(string? input)
     {
         // Act
-        SanitisedText result = _sanitiser.Sanitise(input!);
+        SanitisedText result = _sanitiser.Handle(input!);
 
         // Assert
         string expected = input ?? string.Empty;

@@ -306,8 +306,8 @@ public class ManageDocumentsController : Controller
 
         UpdateNewsArticlesRequestProperties updateProperties = new(id: manageDocumentsModel.NewsArticle.Id)
         {
-            Title =  _textSanitiserHandler.Handle(manageDocumentsModel.NewsArticle.Title),
-            Body = _textSanitiserHandler.Handle(manageDocumentsModel.NewsArticle.Body),
+            Title =  _textSanitiserHandler.Sanitise(manageDocumentsModel.NewsArticle.Title),
+            Body = _textSanitiserHandler.Sanitise(manageDocumentsModel.NewsArticle.Body),
             Pinned = manageDocumentsModel.NewsArticle.Pinned,
             Published = manageDocumentsModel.NewsArticle.Published,
         };

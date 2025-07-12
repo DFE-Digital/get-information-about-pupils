@@ -216,7 +216,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
         _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequestAsync(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
         _mockTextSanitiser
-            .Setup((t) => t.Handle(It.IsAny<string>()))
+            .Setup((t) => t.Sanitise(It.IsAny<string>()))
             .Returns((string input) => new SanitisedText(input));
 
         ManageDocumentsController controller = GetManageDocumentsController();
