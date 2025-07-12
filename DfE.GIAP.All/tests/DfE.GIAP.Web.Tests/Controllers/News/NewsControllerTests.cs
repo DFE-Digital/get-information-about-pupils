@@ -41,13 +41,12 @@ public class NewsControllerTests
         };
 
         List<NewsArticle> listArticleData = [articleData1, articleData2];
-
-        Content firstCallPublication = ContentTestDoubles.Default();
-        Content secondCallMaintenance = ContentTestDoubles.Default();
         
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> mockGetNewsArticlesUseCase = new();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockGetContentByPageKeyUseCase = new();
 
+        Content firstCallPublication = ContentTestDoubles.Default();
+        Content secondCallMaintenance = ContentTestDoubles.Default();
 
         mockGetContentByPageKeyUseCase.SetupSequence(
             (t) => t.HandleRequestAsync(
