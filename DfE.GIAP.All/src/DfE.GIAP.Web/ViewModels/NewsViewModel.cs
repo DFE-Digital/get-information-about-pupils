@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Models.Common;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
-using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.GIAP.Web.ViewModels;
 
@@ -8,6 +8,6 @@ namespace DfE.GIAP.Web.ViewModels;
 public class NewsViewModel
 {
     public IEnumerable<NewsArticle> NewsArticles { get; set; }
-    public CommonResponseBody NewsPublication { get; set; }
-    public CommonResponseBody NewsMaintenance { get; set; }
+    public Content NewsPublication { get; set; }
+    public Content NewsMaintenance { get; set; }
 }
