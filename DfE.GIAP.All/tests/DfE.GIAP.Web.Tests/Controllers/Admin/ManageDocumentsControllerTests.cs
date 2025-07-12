@@ -2,6 +2,7 @@
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
@@ -215,9 +216,10 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
         };
 
         _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequestAsync(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
+
         _mockTextSanitiser
             .Setup((t) => t.Sanitise(It.IsAny<string>()))
-            .Returns((string input) => new SanitisedText(input));
+            .Returns((string input) => SanitisedTextResult.From(input));
 
         ManageDocumentsController controller = GetManageDocumentsController();
 

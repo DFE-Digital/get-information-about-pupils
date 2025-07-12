@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
@@ -47,6 +48,6 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
         Assert.NotNull(provider.GetService<INewsArticleWriteRepository>());
 
-        Assert.NotNull(provider.GetService<ITextSanitiserHandler>());
+        Assert.NotNull(provider.GetService<ITextSanitiserInvoker>());
     }
 }
