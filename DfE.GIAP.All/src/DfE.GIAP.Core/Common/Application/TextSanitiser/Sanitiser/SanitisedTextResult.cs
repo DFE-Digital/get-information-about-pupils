@@ -4,7 +4,7 @@ namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 public sealed class SanitisedTextResult
 {
     public string Value { get; }
-    // Should not be constructable externally to enforce clients go via ITextSanitisationHandler
+    // NOT to be constructable external to the assembly
     private SanitisedTextResult(SanitisedText text)
     {
         Value = text.Value;

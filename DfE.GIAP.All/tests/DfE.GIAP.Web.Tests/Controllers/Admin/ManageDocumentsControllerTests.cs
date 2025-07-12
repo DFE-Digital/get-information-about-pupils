@@ -43,7 +43,7 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly Mock<IUseCaseRequestOnly<DeleteNewsArticleRequest>> _mockDeleteNewsArticleUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<CreateNewsArticleRequest>> _mockCreateNewsArticleUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<UpdateNewsArticleRequest>> _mockUpdateNewsArticleUseCase = new();
-    private readonly Mock<ITextSanitiserHandler> _mockTextSanitiser = new();
+    private readonly Mock<ITextSanitiserInvoker> _mockTextSanitiser = new();
 
     public ManageDocumentsControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake, ManageDocumentsResultsFake manageDocumentsResultsFake)
     {

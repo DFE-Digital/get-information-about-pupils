@@ -11,7 +11,7 @@ public static class CompositionRoot
     {
         ArgumentNullException.ThrowIfNull(services);
         services.AddCosmosDbDependencies();
-        services.AddSingleton<ITextSanitiserHandler, TextSanitiserHandler>();
+        services.AddSingleton<ITextSanitiserInvoker, TextSanitisationInvoker>();
         return services;
     }
 }

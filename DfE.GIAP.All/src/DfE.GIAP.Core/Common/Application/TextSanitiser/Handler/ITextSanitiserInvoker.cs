@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
 
-public interface ITextSanitiserHandler
+public interface ITextSanitiserInvoker
 {
     SanitisedTextResult Handle(string input);
 }

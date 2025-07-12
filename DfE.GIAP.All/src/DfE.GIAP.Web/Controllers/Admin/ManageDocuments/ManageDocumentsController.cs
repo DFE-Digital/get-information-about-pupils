@@ -40,7 +40,7 @@ public class ManageDocumentsController : Controller
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<CreateNewsArticleRequest> _createNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<UpdateNewsArticleRequest> _updateNewsArticleUseCase;
-    private readonly ITextSanitiserHandler _textSanitiserHandler;
+    private readonly ITextSanitiserInvoker _textSanitiserHandler;
 
     public ManageDocumentsController(
         INewsService newsService,
@@ -50,7 +50,7 @@ public class ManageDocumentsController : Controller
         IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
         IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase,
         IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase,
-        ITextSanitiserHandler textSanitiser)
+        ITextSanitiserInvoker textSanitiser)
     {
         ArgumentNullException.ThrowIfNull(newsService);
         _newsService = newsService;

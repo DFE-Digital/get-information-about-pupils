@@ -47,6 +47,6 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
         Assert.NotNull(provider.GetService<INewsArticleWriteRepository>());
 
-        Assert.NotNull(provider.GetService<ITextSanitiser>());
+        Assert.NotNull(provider.GetService<ITextSanitiserHandler>());
     }
 }

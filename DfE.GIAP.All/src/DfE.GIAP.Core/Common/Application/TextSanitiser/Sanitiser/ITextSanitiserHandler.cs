@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 
-public interface ITextSanitiser
+public interface ITextSanitiserHandler
 {
     SanitisedText Sanitise(string raw);
 }

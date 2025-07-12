@@ -9,7 +9,7 @@ public sealed class TextSanitiserHandlerTests
     public void Handle_WithNoCustomSanitisers_AppliesDefaultHtmlSanitiser()
     {
         // Arrange
-        TextSanitiserHandler handler = new(null!);
+        TextSanitisationInvoker handler = new(null!);
 
         // Act
         SanitisedTextResult result = handler.Handle("<script onClick=evil()>Hello</script>");
@@ -24,7 +24,7 @@ public sealed class TextSanitiserHandlerTests
         // Arrange
         FakeTextToUpperCaseSanitiser testUpperCaseSanitiser = new();
         FakeMaliciousScriptSanitiser maliciousScriptSanitiser = new();
-        TextSanitiserHandler handler = new(sanitisers: [testUpperCaseSanitiser, maliciousScriptSanitiser]);
+        TextSanitisationInvoker handler = new(sanitisers: [testUpperCaseSanitiser, maliciousScriptSanitiser]);
 
         // Act
         SanitisedTextResult result = handler.Handle("hello");
@@ -35,7 +35,7 @@ public sealed class TextSanitiserHandlerTests
         Assert.Equal(1, maliciousScriptSanitiser.ExecutionCount);
     }
 
-    internal sealed class FakeTextToUpperCaseSanitiser : ITextSanitiser
+    internal sealed class FakeTextToUpperCaseSanitiser : ITextSanitiserHandler
     {
         public int ExecutionCount { get; private set; }
         public SanitisedText Sanitise(string raw)
@@ -45,7 +45,7 @@ public sealed class TextSanitiserHandlerTests
         }
     }
 
-    internal sealed class FakeMaliciousScriptSanitiser : ITextSanitiser
+    internal sealed class FakeMaliciousScriptSanitiser : ITextSanitiserHandler
     {
         public int ExecutionCount { get; private set; }
 

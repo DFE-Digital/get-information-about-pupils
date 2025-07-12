@@ -20,6 +20,6 @@ public sealed class CompositionRootTests
 
         // Assert
         Assert.NotNull(provider);
-        Assert.NotNull(provider.GetService<ITextSanitiserHandler>());
+        Assert.NotNull(provider.GetService<ITextSanitiserInvoker>());
     }
 }

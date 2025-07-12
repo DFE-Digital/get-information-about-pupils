@@ -2,11 +2,11 @@
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Handler;
-internal sealed class TextSanitiserHandler : ITextSanitiserHandler
+internal sealed class TextSanitisationInvoker : ITextSanitiserInvoker
 {
-    private readonly List<ITextSanitiser> _sanitisers;
+    private readonly List<ITextSanitiserHandler> _sanitisers;
 
-    public TextSanitiserHandler(IEnumerable<ITextSanitiser> sanitisers)
+    public TextSanitisationInvoker(IEnumerable<ITextSanitiserHandler> sanitisers)
     {
         _sanitisers = [];
         _sanitisers.AddRange(sanitisers ?? []);
@@ -21,7 +21,7 @@ internal sealed class TextSanitiserHandler : ITextSanitiserHandler
         }
 
         string current = input;
-        foreach (ITextSanitiser sanitiser in _sanitisers)
+        foreach (ITextSanitiserHandler sanitiser in _sanitisers)
         {
             SanitisedText result = sanitiser.Sanitise(current);
             current = result.Value;
