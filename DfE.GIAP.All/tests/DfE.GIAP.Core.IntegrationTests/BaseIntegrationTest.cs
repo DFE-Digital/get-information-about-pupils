@@ -39,7 +39,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     private async Task SetupAsync()
     {
         await Fixture.Database.ClearDatabaseAsync();
-        _services.AddSharedDependencies();
+        _services.AddSharedTestDependencies();
     }
 
     public async Task DisposeAsync()

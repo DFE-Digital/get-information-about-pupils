@@ -38,8 +38,8 @@ internal sealed class UpdateNewsArticlesRequestPropertiesMapperToNewsArticle : I
         return new()
         {
             Id = input.Id,
-            Title = input.Title ?? string.Empty,
-            Body = input.Body ?? string.Empty,
+            Title = input.Title?.Value ?? string.Empty,
+            Body = input.Body?.Value ?? string.Empty,
             Pinned = input.Pinned ?? false,
             Published = input.Published ?? false,
             CreatedDate = input.CreatedDate,

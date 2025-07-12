@@ -1,0 +1,72 @@
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
+
+namespace DfE.GIAP.Core.UnitTests.Common.TextSanitiser;
+public sealed class TextSanitiserInvokerTests
+{
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(null)]
+    public void Sanitise_With_NullOrEmpty_DoesNotThrow(string? input)
+    {
+        TextSanitisationInvoker handler = new(null!);
+
+        SanitisedTextResult output = handler.Sanitise(input!);
+
+        Assert.Equal(string.Empty, output.Value);
+    }
+
+    [Fact]
+    public void Sanitise_WithNoCustomSanitisers_AppliesDefaultHtmlSanitiser()
+    {
+        // Arrange
+        TextSanitisationInvoker handler = new(null!);
+
+        // Act
+        SanitisedTextResult result = handler.Sanitise("<script onClick=evil()>Hello</script>");
+
+        // Assert
+        Assert.DoesNotContain("script", result.Value);
+    }
+
+    [Fact]
+    public void Sanitise_WithCustomSanitisers_AppliesAll()
+    {
+        // Arrange
+        FakeTextToUpperCaseSanitiser testUpperCaseSanitiser = new();
+        FakeMaliciousScriptSanitiser maliciousScriptSanitiser = new();
+        TextSanitisationInvoker handler = new(sanitisers: [testUpperCaseSanitiser, maliciousScriptSanitiser]);
+
+        // Act
+        SanitisedTextResult result = handler.Sanitise("hello");
+
+        // Assert
+        Assert.Equal("HELLO", result.Value);
+        Assert.Equal(1, testUpperCaseSanitiser.ExecutionCount);
+        Assert.Equal(1, maliciousScriptSanitiser.ExecutionCount);
+    }
+
+    internal sealed class FakeTextToUpperCaseSanitiser : ITextSanitiserHandler
+    {
+        public int ExecutionCount { get; private set; }
+        public SanitisedText Handle(string? raw)
+        {
+            ExecutionCount++;
+            return new(raw!.ToUpper());
+        }
+    }
+
+    internal sealed class FakeMaliciousScriptSanitiser : ITextSanitiserHandler
+    {
+        public int ExecutionCount { get; private set; }
+
+        public SanitisedText Handle(string? raw)
+        {
+            ExecutionCount++;
+            // Simulated malicious input for testing purposes only
+            string malicious = raw + "<script>alert('xss');</script>";
+            return new(malicious);
+        }
+    }
+}
