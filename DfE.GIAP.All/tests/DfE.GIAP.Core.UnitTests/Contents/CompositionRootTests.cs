@@ -27,7 +27,7 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedDependencies();
+        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedTestDependencies();
 
         // Act
         IServiceCollection registeredServices = CompositionRoot.AddContentDependencies(services);

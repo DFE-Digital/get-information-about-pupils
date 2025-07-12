@@ -3,6 +3,7 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
 using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Editor;
@@ -39,6 +40,7 @@ public class ManageDocumentsController : Controller
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<CreateNewsArticleRequest> _createNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<UpdateNewsArticleRequest> _updateNewsArticleUseCase;
+    private readonly ITextSanitiserHandler _textSanitiserHandler;
 
     public ManageDocumentsController(
         INewsService newsService,
@@ -47,22 +49,32 @@ public class ManageDocumentsController : Controller
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
         IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
         IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase,
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase)
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase,
+        ITextSanitiserHandler textSanitiser)
     {
-        _newsService = newsService ??
-            throw new ArgumentNullException(nameof(newsService));
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
-        _getNewsArticleByIdUseCase = getNewsArticleByIdUseCase ??
-            throw new ArgumentNullException(nameof(getNewsArticleByIdUseCase));
-        _getNewsArticlesUseCase = getNewsArticlesUseCase ??
-            throw new ArgumentNullException(nameof(getNewsArticlesUseCase));
-        _deleteNewsArticleUseCase = deleteNewsArticleUseCase ??
-            throw new ArgumentNullException(nameof(deleteNewsArticleUseCase));
-        _createNewsArticleUseCase = createNewsArticleUseCase ??
-            throw new ArgumentNullException(nameof(createNewsArticleUseCase));
-        _updateNewsArticleUseCase = updateNewsArticleUseCase ??
-            throw new ArgumentNullException(nameof(updateNewsArticleUseCase));
+        ArgumentNullException.ThrowIfNull(newsService);
+        _newsService = newsService;
+
+        ArgumentNullException.ThrowIfNull(contentService);
+        _contentService = contentService;
+
+        ArgumentNullException.ThrowIfNull(getNewsArticleByIdUseCase);
+        _getNewsArticleByIdUseCase = getNewsArticleByIdUseCase;
+
+        ArgumentNullException.ThrowIfNull(getNewsArticlesUseCase);
+        _getNewsArticlesUseCase = getNewsArticlesUseCase;
+
+        ArgumentNullException.ThrowIfNull(deleteNewsArticleUseCase);
+        _deleteNewsArticleUseCase = deleteNewsArticleUseCase;
+
+        ArgumentNullException.ThrowIfNull(createNewsArticleUseCase);
+        _createNewsArticleUseCase = createNewsArticleUseCase;
+
+        ArgumentNullException.ThrowIfNull(updateNewsArticleUseCase);
+        _updateNewsArticleUseCase = updateNewsArticleUseCase;
+
+        ArgumentNullException.ThrowIfNull(textSanitiser);
+        _textSanitiserHandler = textSanitiser;
     }
 
     [HttpGet]
@@ -292,11 +304,10 @@ public class ManageDocumentsController : Controller
             return View("../Admin/ManageDocuments/EditNewsArticle", manageDocumentsModel);
         }
 
-        // TODO sanitisation part of Application
         UpdateNewsArticlesRequestProperties updateProperties = new(id: manageDocumentsModel.NewsArticle.Id)
         {
-            Title = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Title),
-            Body = SecurityHelper.SanitizeText(manageDocumentsModel.NewsArticle.Body),
+            Title =  _textSanitiserHandler.Handle(manageDocumentsModel.NewsArticle.Title),
+            Body = _textSanitiserHandler.Handle(manageDocumentsModel.NewsArticle.Body),
             Pinned = manageDocumentsModel.NewsArticle.Pinned,
             Published = manageDocumentsModel.NewsArticle.Published,
         };

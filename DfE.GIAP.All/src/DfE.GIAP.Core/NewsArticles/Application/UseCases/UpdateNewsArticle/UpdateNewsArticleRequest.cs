@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
@@ -16,8 +17,8 @@ public record UpdateNewsArticlesRequestProperties
     }
 
     public NewsArticleIdentifier Id { get; }
-    public string? Title { get; init; }
-    public string? Body { get; init; }
+    public SanitisedTextResult? Title { get; init; }
+    public SanitisedTextResult? Body { get; init; }
     public DateTime ModifiedDate { get; }
     public DateTime CreatedDate { get; }
     public bool? Pinned { get; init; }

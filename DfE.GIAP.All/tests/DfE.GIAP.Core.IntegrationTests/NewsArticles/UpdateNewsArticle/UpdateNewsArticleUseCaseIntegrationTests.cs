@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using Microsoft.Azure.Cosmos;
 
@@ -43,8 +45,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         UpdateNewsArticlesRequestProperties requestProperties = new(seededArticle.id)
         {
-            Title = "Test tile",
-            Body = "Test body",
+            Title = SanitisedTextResult.From("Test tile"),
+            Body = SanitisedTextResult.From("Test body"),
             Pinned = requestPinned,
             Published = requestPublished,
         };
@@ -65,8 +67,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         Assert.NotNull(updatedArticle);
         Assert.Equal(seededArticle.id, updatedArticle.id);
-        Assert.Equal(requestProperties.Title, updatedArticle.Title);
-        Assert.Equal(requestProperties.Body, updatedArticle.Body);
+        Assert.Equal(requestProperties.Title.Value, updatedArticle.Title);
+        Assert.Equal(requestProperties.Body.Value, updatedArticle.Body);
         Assert.Equal(requestProperties.Pinned, updatedArticle.Pinned);
         Assert.Equal(requestProperties.Published, updatedArticle.Published);
         Assert.InRange(updatedArticle.CreatedDate, beforeRequestCreationDateTimeUtc, beforeRequestCreationDateTimeUtc.Add(stopWatch.Elapsed));

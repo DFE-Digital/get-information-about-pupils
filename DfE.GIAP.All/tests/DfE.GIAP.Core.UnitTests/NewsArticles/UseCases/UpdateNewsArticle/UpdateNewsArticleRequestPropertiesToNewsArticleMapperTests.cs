@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Abstraction.Handler;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Sanitiser;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.UpdateNewsArticle;
 public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
@@ -43,8 +45,8 @@ public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
         {
             Published = true,
             Pinned = true,
-            Title = "Test tile",
-            Body = "Test body",
+            Title = SanitisedTextResult.From("Test tile"),
+            Body = SanitisedTextResult.From("Test body"),
         };
 
         // Act
@@ -52,8 +54,8 @@ public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
 
         // Assert
         Assert.Equal(properties.Id, result.Id);
-        Assert.Equal(properties.Title, result.Title);
-        Assert.Equal(properties.Body, result.Body);
+        Assert.Equal(properties.Title.Value, result.Title);
+        Assert.Equal(properties.Body.Value, result.Body);
         Assert.Equal(properties.CreatedDate, result.CreatedDate);
         Assert.Equal(properties.ModifiedDate, result.ModifiedDate);
         Assert.Equal(properties.Pinned, result.Pinned);
