@@ -29,6 +29,13 @@ public static class NewsArticleDtoTestDoubles
         return articles;
     }
 
+    public static NewsArticleDto GenerateEmpty() => new()
+    {
+        id = Guid.NewGuid().ToString(),
+        Title = null!,
+        Body = null!,
+    };
+
     private static Faker<NewsArticleDto> CreateGenerator()
     {
         return new Faker<NewsArticleDto>()
