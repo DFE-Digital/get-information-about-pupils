@@ -40,7 +40,7 @@ public class ManageDocumentsController : Controller
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<CreateNewsArticleRequest> _createNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<UpdateNewsArticleRequest> _updateNewsArticleUseCase;
-    private readonly ITextSanitiserInvoker _textSanitiserHandler;
+    private readonly ITextSanitiserInvoker _textSanitiserInvoker;
 
     public ManageDocumentsController(
         INewsService newsService,
@@ -50,7 +50,7 @@ public class ManageDocumentsController : Controller
         IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
         IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase,
         IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase,
-        ITextSanitiserInvoker textSanitiser)
+        ITextSanitiserInvoker textSanitiserInvoker)
     {
         ArgumentNullException.ThrowIfNull(newsService);
         _newsService = newsService;
@@ -73,8 +73,8 @@ public class ManageDocumentsController : Controller
         ArgumentNullException.ThrowIfNull(updateNewsArticleUseCase);
         _updateNewsArticleUseCase = updateNewsArticleUseCase;
 
-        ArgumentNullException.ThrowIfNull(textSanitiser);
-        _textSanitiserHandler = textSanitiser;
+        ArgumentNullException.ThrowIfNull(textSanitiserInvoker);
+        _textSanitiserInvoker = textSanitiserInvoker;
     }
 
     [HttpGet]
@@ -306,8 +306,8 @@ public class ManageDocumentsController : Controller
 
         UpdateNewsArticlesRequestProperties updateProperties = new(id: manageDocumentsModel.NewsArticle.Id)
         {
-            Title =  _textSanitiserHandler.Sanitise(manageDocumentsModel.NewsArticle.Title),
-            Body = _textSanitiserHandler.Sanitise(manageDocumentsModel.NewsArticle.Body),
+            Title =  _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Title),
+            Body = _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Body),
             Pinned = manageDocumentsModel.NewsArticle.Pinned,
             Published = manageDocumentsModel.NewsArticle.Published,
         };
