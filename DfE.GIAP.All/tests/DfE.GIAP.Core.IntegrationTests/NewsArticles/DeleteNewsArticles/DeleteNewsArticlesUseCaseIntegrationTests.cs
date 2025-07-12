@@ -11,7 +11,7 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
         services.AddNewsArticleDependencies();
         return Task.CompletedTask;
     }
-    
+
     [Fact]
     public async Task DeleteNewsArticles_Deletes_SelectedArticle()
     {

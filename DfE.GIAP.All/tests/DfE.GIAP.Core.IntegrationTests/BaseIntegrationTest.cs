@@ -29,7 +29,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     private void EnsureServicesScope()
     {
         ArgumentNullException.ThrowIfNull(_services);
-        if(_testServicesScope == null)
+        if (_testServicesScope == null)
         {
             ServiceProvider provider = _services.BuildServiceProvider();
             _testServicesScope = provider.CreateScope();
