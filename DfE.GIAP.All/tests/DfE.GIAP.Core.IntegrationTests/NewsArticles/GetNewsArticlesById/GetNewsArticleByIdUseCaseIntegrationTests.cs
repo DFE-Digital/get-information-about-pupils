@@ -3,35 +3,26 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
+public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _fixture;
+    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
 
-    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture fixture)
+
+    protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        _fixture = fixture;
+        services.AddNewsArticleDependencies();
+        return Task.CompletedTask;
     }
-
-    public async Task InitializeAsync() => await _fixture.Database.ClearDatabaseAsync();
-    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task GetNewsArticleByIdUseCase_Returns_Article_When_HandleRequest()
     {
         // Arrange
-        IServiceCollection services =
-            ServiceCollectionTestDoubles.Default()
-                .AddSharedDependencies()
-                .AddNewsArticleDependencies();
-        IServiceProvider provider = services.BuildServiceProvider();
-        using IServiceScope scope = provider.CreateScope();
-
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut =
-            scope.ServiceProvider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await _fixture.Database.WriteManyAsync(seededArticles);
+        await Fixture.Database.WriteManyAsync(seededArticles);
 
         NewsArticleDto targetArticle = seededArticles[0];
         GetNewsArticleByIdRequest request = new(Id: targetArticle.id);
@@ -51,19 +42,11 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : IAsyncLifetime
     public async Task GetNewsArticleByIdUseCase_Returns_Null_When_HandleRequest_Finds_NoArticleMatchingId()
     {
         // Arrange
-        IServiceCollection services =
-            ServiceCollectionTestDoubles.Default()
-                .AddSharedDependencies()
-                .AddNewsArticleDependencies();
-        IServiceProvider provider = services.BuildServiceProvider();
-        using IServiceScope scope = provider.CreateScope();
-
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut =
-            scope.ServiceProvider.GetService<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await _fixture.Database.WriteManyAsync(seededArticles);
+        await Fixture.Database.WriteManyAsync(seededArticles);
 
         string unknownArticleId = Guid.NewGuid().ToString();
         GetNewsArticleByIdRequest request = new(Id: unknownArticleId);
