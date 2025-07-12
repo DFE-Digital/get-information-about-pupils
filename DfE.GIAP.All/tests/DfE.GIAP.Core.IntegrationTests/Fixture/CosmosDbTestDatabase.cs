@@ -189,7 +189,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     private static async Task CreateItemInternalAsync<T>(T obj, Container container) where T : class
     {
         PartitionKey partitionKey = new((obj as dynamic).DOCTYPE);
-        ItemResponse<T> response = await container.CreateItemAsync(obj, partitionKey);
+        ItemResponse<T> response = await container.UpsertItemAsync(obj, partitionKey);
         Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
     }
 
