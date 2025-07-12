@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.Contents.Application.Options;
 using DfE.GIAP.Core.Contents.Application.Options.Provider;
 using DfE.GIAP.Core.Contents.Application.Repositories;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories.Mapper;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +37,7 @@ public static class CompositionRoot
     /// </summary>
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
-        services.AddScoped<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>, GetContentByPageKeyUseCase>();
+        services.AddScoped<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>, GetContentByPageKeyUseCase>();
         services.AddOptions<PageContentOptions>().Configure<IServiceProvider>((options, sp) =>
         {
             IConfiguration configuration = sp.GetRequiredService<IConfiguration>();

@@ -37,7 +37,7 @@ public sealed class CompositionRootTests
         Assert.NotNull(registeredServices);
         Assert.NotNull(provider);
 
-        Assert.NotNull(provider.GetService<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>>());
+        Assert.NotNull(provider.GetService<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>>());
         Assert.NotNull(provider.GetService<IMapper<ContentDto, Content>>());
         Assert.NotNull(provider.GetService<IContentReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IOptions<PageContentOptions>>());

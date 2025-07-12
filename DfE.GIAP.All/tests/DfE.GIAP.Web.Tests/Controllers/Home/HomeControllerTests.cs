@@ -21,7 +21,7 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 {
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
-    private readonly Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockGetContentByPageKeyUseCase = new();
+    private readonly Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> _mockGetContentByPageKeyUseCase = new();
     private readonly IExceptionHandlerPathFeature _exceptionPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
 
     public HomeControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
@@ -106,11 +106,11 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
         };
 
 
-        GetContentByPageKeyUseCaseResponse response = new(stubContent);
+        GetContentByPageKeyResponse response = new(stubContent);
 
         _mockGetContentByPageKeyUseCase.Setup(
             (useCase) => useCase.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>())).ReturnsAsync(response).Verifiable();
+                It.IsAny<GetContentByPageKeyRequest>())).ReturnsAsync(response).Verifiable();
 
         HomeController controller = GetHomeController();
 

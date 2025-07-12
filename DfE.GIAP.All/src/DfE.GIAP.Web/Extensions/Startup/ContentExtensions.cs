@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.ViewModels;
 
@@ -11,10 +11,10 @@ internal static class ContentExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>, GetContentByPageKeyResponseToAccessibilityViewModelMapper>();
-        services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>, GetContentByPageKeyResponseToPrivacyViewModelMapper>();
-        services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>, GetContentByPageKeyResponseToTermsOfUseViewModelMapper>();
-        services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>, GetContentByPageKeyResponseToConsentViewModelMapper>();
+        services.AddSingleton<IMapper<GetContentByPageKeyResponse, AccessibilityViewModel>, GetContentByPageKeyResponseToAccessibilityViewModelMapper>();
+        services.AddSingleton<IMapper<GetContentByPageKeyResponse, PrivacyViewModel>, GetContentByPageKeyResponseToPrivacyViewModelMapper>();
+        services.AddSingleton<IMapper<GetContentByPageKeyResponse, TermsOfUseViewModel>, GetContentByPageKeyResponseToTermsOfUseViewModelMapper>();
+        services.AddSingleton<IMapper<GetContentByPageKeyResponse, ConsentViewModel>, GetContentByPageKeyResponseToConsentViewModelMapper>();
 
         return services;
     }

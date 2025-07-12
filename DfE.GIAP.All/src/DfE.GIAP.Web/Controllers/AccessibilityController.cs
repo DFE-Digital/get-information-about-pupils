@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +9,12 @@ namespace DfE.GIAP.Web.Controllers;
 
 public class AccessibilityController : Controller
 {
-    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
-    private readonly IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel> _contentResponseToViewModelMapper;
+    private readonly IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyResponse, AccessibilityViewModel> _contentResponseToViewModelMapper;
 
     public AccessibilityController(
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
-        IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel> mapper)
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyResponse, AccessibilityViewModel> mapper)
     {
         ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
         ArgumentNullException.ThrowIfNull(mapper);
@@ -29,9 +29,9 @@ public class AccessibilityController : Controller
     {
         const string accessibilityPageKey = "Accessibility";
 
-        GetContentByPageKeyUseCaseResponse response =
+        GetContentByPageKeyResponse response =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: accessibilityPageKey));
+                new GetContentByPageKeyRequest(pageKey: accessibilityPageKey));
 
         return ToViewResult(accessibilityPageKey, response);
     }
@@ -41,14 +41,14 @@ public class AccessibilityController : Controller
     {
         const string accessibilityReportPageKey = "AccessibilityReport";
 
-        GetContentByPageKeyUseCaseResponse response =
+        GetContentByPageKeyResponse response =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: accessibilityReportPageKey));
+                new GetContentByPageKeyRequest(pageKey: accessibilityReportPageKey));
 
         return ToViewResult(accessibilityReportPageKey, response);
     }
 
-    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyResponse response)
     {
         if (response.Content == null)
         {
@@ -61,9 +61,9 @@ public class AccessibilityController : Controller
 }
 
 
-internal sealed class GetContentByPageKeyResponseToAccessibilityViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, AccessibilityViewModel>
+internal sealed class GetContentByPageKeyResponseToAccessibilityViewModelMapper : IMapper<GetContentByPageKeyResponse, AccessibilityViewModel>
 {
-    public AccessibilityViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    public AccessibilityViewModel Map(GetContentByPageKeyResponse input)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(input.Content);

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +9,12 @@ namespace DfE.GIAP.Web.Controllers;
 
 public class PrivacyController : Controller
 {
-    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
-    private readonly IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel> _contentResponseToViewModelMapper;
+    private readonly IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> _getContentByPageKeyUseCase;
+    private readonly IMapper<GetContentByPageKeyResponse, PrivacyViewModel> _contentResponseToViewModelMapper;
 
     public PrivacyController(
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
-        IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel> mapper)
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> getContentByPageKeyUseCase,
+        IMapper<GetContentByPageKeyResponse, PrivacyViewModel> mapper)
     {
         ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
         ArgumentNullException.ThrowIfNull(mapper);
@@ -27,14 +27,14 @@ public class PrivacyController : Controller
     {
         const string PrivacyNoticePageKey = "PrivacyNotice";
 
-        GetContentByPageKeyUseCaseResponse response =
+        GetContentByPageKeyResponse response =
            await _getContentByPageKeyUseCase.HandleRequestAsync(
-               new GetContentByPageKeyUseCaseRequest(pageKey: PrivacyNoticePageKey));
+               new GetContentByPageKeyRequest(pageKey: PrivacyNoticePageKey));
 
         return ToViewResult(PrivacyNoticePageKey, response);
     }
 
-    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
+    private ViewResult ToViewResult(string pageKey, GetContentByPageKeyResponse response)
     {
         if (response.Content == null)
         {
@@ -46,9 +46,9 @@ public class PrivacyController : Controller
     }
 }
 
-internal sealed class GetContentByPageKeyResponseToPrivacyViewModelMapper : IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>
+internal sealed class GetContentByPageKeyResponseToPrivacyViewModelMapper : IMapper<GetContentByPageKeyResponse, PrivacyViewModel>
 {
-    public PrivacyViewModel Map(GetContentByPageKeyUseCaseResponse input)
+    public PrivacyViewModel Map(GetContentByPageKeyResponse input)
     {
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(input.Content);

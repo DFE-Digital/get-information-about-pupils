@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.Constants;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Banner;
@@ -18,10 +16,10 @@ namespace DfE.GIAP.Web.Controllers;
 public class HomeController : Controller
 {
     private readonly ILatestNewsBanner _newsBanner;
-    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
+    private readonly IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> _getContentByPageKeyUseCase;
     public HomeController(
         ILatestNewsBanner newsBanner,
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase)
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> getContentByPageKeyUseCase)
     {
         _newsBanner = newsBanner ??
            throw new ArgumentNullException(nameof(newsBanner));
@@ -34,21 +32,21 @@ public class HomeController : Controller
     {
         await _newsBanner.SetLatestNewsStatus();
 
-        GetContentByPageKeyUseCaseResponse landingPageContentResponse =
+        GetContentByPageKeyResponse landingPageContentResponse =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
+                new GetContentByPageKeyRequest(pageKey: "Landing"));
 
-        GetContentByPageKeyUseCaseResponse plannedMaintenanceContentResponse =
+        GetContentByPageKeyResponse plannedMaintenanceContentResponse =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
+                new GetContentByPageKeyRequest(pageKey: "PlannedMaintenance"));
 
-        GetContentByPageKeyUseCaseResponse publicationScheduleContentResponse =
+        GetContentByPageKeyResponse publicationScheduleContentResponse =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
+                new GetContentByPageKeyRequest(pageKey: "PublicationSchedule"));
 
-        GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
+        GetContentByPageKeyResponse frequentlyAskedQuestionsContentResponse =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
+                new GetContentByPageKeyRequest(pageKey: "FrequentlyAskedQuestions"));
 
         HomeViewModel model = new()
         {
@@ -90,14 +88,14 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Exception()
     {
-        var model = new ErrorModel();
+        ErrorModel model = new();
 
         if (HostEnvironmentHelper.ShouldShowErrors())
         {
             model.ShowError = true;
             model.RequestId = HttpContext.TraceIdentifier;
 
-            var exceptionHandlerPathFeature =
+            IExceptionHandlerPathFeature exceptionHandlerPathFeature =
                 HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
             model.ExceptionMessage += exceptionHandlerPathFeature?.Error.Message;

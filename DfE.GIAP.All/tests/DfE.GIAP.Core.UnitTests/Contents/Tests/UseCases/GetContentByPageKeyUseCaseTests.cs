@@ -16,9 +16,9 @@ public sealed class GetContentByPageKeyUseCaseTests
     [InlineData(" ")]
     [InlineData("\n")]
     [InlineData("\r\n")]
-    public void GetContentByPageKeyUseCaseRequest_ThrowsNullException_When_CreatedWithNullOrEmpty(string? pageKey)
+    public void GetContentByPageKeyRequest_ThrowsNullException_When_CreatedWithNullOrEmpty(string? pageKey)
     {
-        Action construct = () => new GetContentByPageKeyUseCaseRequest(pageKey!);
+        Action construct = () => new GetContentByPageKeyRequest(pageKey!);
         Assert.ThrowsAny<ArgumentException>(construct);
     }
 
@@ -49,8 +49,8 @@ public sealed class GetContentByPageKeyUseCaseTests
             .Returns(() => throw new Exception("test exception"));
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository);
-        GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
-        Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequestAsync(request);
+        GetContentByPageKeyRequest request = new(StubValidPageKey);
+        Func<Task<GetContentByPageKeyResponse>> act = () => sut.HandleRequestAsync(request);
         await Assert.ThrowsAsync<Exception>(act);
     }
 
@@ -71,8 +71,8 @@ public sealed class GetContentByPageKeyUseCaseTests
             .ReturnsAsync(() => throw new Exception("Repository exception"));
 
         GetContentByPageKeyUseCase sut = new(mockProvider.Object, mockRepository.Object);
-        GetContentByPageKeyUseCaseRequest request = new(StubValidPageKey);
-        Func<Task<GetContentByPageKeyUseCaseResponse>> act = () => sut.HandleRequestAsync(request);
+        GetContentByPageKeyRequest request = new(StubValidPageKey);
+        Func<Task<GetContentByPageKeyResponse>> act = () => sut.HandleRequestAsync(request);
         await Assert.ThrowsAsync<Exception>(act);
     }
 
@@ -105,8 +105,8 @@ public sealed class GetContentByPageKeyUseCaseTests
                 .ReturnsAsync(content);
 
         GetContentByPageKeyUseCase sut = new(mockContentOptionProvider.Object, mockRepository.Object);
-        GetContentByPageKeyUseCaseRequest request = new(pageKey: validPageKey);
-        GetContentByPageKeyUseCaseResponse response = await sut.HandleRequestAsync(request);
+        GetContentByPageKeyRequest request = new(pageKey: validPageKey);
+        GetContentByPageKeyResponse response = await sut.HandleRequestAsync(request);
 
 
         Assert.NotNull(response);

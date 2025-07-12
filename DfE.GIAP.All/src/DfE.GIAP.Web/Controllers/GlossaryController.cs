@@ -7,17 +7,17 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Core.Models.Glossary;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
+using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKey;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class GlossaryController : Controller
 {
     private readonly IDownloadService _downloadService;
-    private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
+    private readonly IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> _getContentByPageKeyUseCase;
 
     public GlossaryController(
-        IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
+        IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse> getContentByPageKeyUseCase,
         IDownloadService downloadService)
     {
         ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
@@ -32,9 +32,9 @@ public class GlossaryController : Controller
     {
         const string GlossaryPageKey = "Glossary";
 
-        GetContentByPageKeyUseCaseResponse response =
+        GetContentByPageKeyResponse response =
            await _getContentByPageKeyUseCase.HandleRequestAsync(
-               new GetContentByPageKeyUseCaseRequest(pageKey: GlossaryPageKey));
+               new GetContentByPageKeyRequest(pageKey: GlossaryPageKey));
 
         IEnumerable<MetaDataDownload> downloadList = await _downloadService.GetGlossaryMetaDataDownloadList().ConfigureAwait(false);
 
@@ -51,7 +51,7 @@ public class GlossaryController : Controller
     [HttpGet]
     public async Task<FileStreamResult> GetBulkUploadTemplateFile(string name)
     {
-        var ms = new MemoryStream();
+        MemoryStream ms = new();
         await _downloadService.GetGlossaryMetaDataDownFileAsync(name, ms, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
 
         ms.Position = 0;

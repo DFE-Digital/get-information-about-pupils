@@ -37,12 +37,12 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
         // Arrange
         ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
         Content content = ContentTestDoubles.Default();
-        GetContentByPageKeyUseCaseResponse response = new(content);
+        GetContentByPageKeyResponse response = new(content);
 
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> mockUseCase = new();
         mockUseCase.Setup(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+                It.IsAny<GetContentByPageKeyRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
@@ -54,7 +54,7 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
         // Assert
         mockUseCase.Verify(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
+                It.IsAny<GetContentByPageKeyRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);
@@ -93,11 +93,11 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
             .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
 
         Content content = ContentTestDoubles.Default();
-        GetContentByPageKeyUseCaseResponse response = new(content);
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        GetContentByPageKeyResponse response = new(content);
+        Mock<IUseCase<GetContentByPageKeyRequest, GetContentByPageKeyResponse>> mockUseCase = new();
         mockUseCase.Setup(
             (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()))
+                It.IsAny<GetContentByPageKeyRequest>()))
             .ReturnsAsync(response)
             .Verifiable();
 
