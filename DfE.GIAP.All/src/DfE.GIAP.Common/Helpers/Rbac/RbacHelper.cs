@@ -1,9 +1,6 @@
-﻿using DfE.GIAP.Common.Constants;
+﻿using System.Text;
+using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Domain.Models.Search;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 
 namespace DfE.GIAP.Common.Helpers.Rbac;
 
@@ -88,5 +85,3 @@ public static class RbacHelper
         return age;
     }
 }
-
-

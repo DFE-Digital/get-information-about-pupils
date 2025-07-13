@@ -19,7 +19,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="MyPupils\Domain\" />
 	  <Folder Include="MyPupils\Application\" />
 	</ItemGroup>
 </Project>

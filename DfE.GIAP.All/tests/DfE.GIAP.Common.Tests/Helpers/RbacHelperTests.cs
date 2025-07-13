@@ -1,8 +1,6 @@
-﻿using DfE.GIAP.Common.Helpers.Rbac;
+﻿using System.Globalization;
+using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Search;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Xunit;
 
 namespace DfE.GIAP.Common.Tests.Helpers;
@@ -28,15 +26,20 @@ public class RbacHelperTests
     }
 
     [Theory]
-    [InlineData("01/10/2010")]
+    [InlineData("01/01/2010")]
     [InlineData("01/09/2010")]
-    [InlineData("01/11/2010")]
+    [InlineData("30/12/2010")]
     public void Calculate_age_works_correctly(string strDob)
     {
         DateTime today = DateTime.Now;
         DateTime dob = DateTime.Parse(strDob, new CultureInfo("en-gb"));
 
         int expectedAge = today.Year - dob.Year;
+        if (dob.Month > today.Month)
+        {
+            expectedAge--;
+        }
+
         Assert.Equal(expectedAge, RbacHelper.CalculateAge(dob));
     }
 
