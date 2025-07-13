@@ -1,13 +1,13 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Domain;
 public sealed class Pupil
 {
-    private readonly int _URN;
+    private readonly int _upn;
     private readonly DateTime? _dateOfBirth;
 
     // TODO PupilIdentifier
     public Pupil(int URN, DateTime? dateOfBirth)
     {
-        _URN = URN;
+        _upn = URN;
         _dateOfBirth = dateOfBirth;
     }
 
