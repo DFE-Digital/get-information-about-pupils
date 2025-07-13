@@ -28,15 +28,16 @@ public class RbacHelperTests
     }
 
     [Theory]
-    [InlineData("01/10/2010", "01/10/2022", 12)]
-    [InlineData("01/09/2010", "01/10/2022", 12)]
-    [InlineData("01/11/2010", "01/10/2022", 11)]
-    public void Calculate_age_works_correctly(string strDob, string strToday, int age)
+    [InlineData("01/10/2010")]
+    [InlineData("01/09/2010")]
+    [InlineData("01/11/2010")]
+    public void Calculate_age_works_correctly(string strDob)
     {
+        DateTime today = DateTime.Now;
         DateTime dob = DateTime.Parse(strDob, new CultureInfo("en-gb"));
-        DateTime today = DateTime.Parse(strToday, new CultureInfo("en-gb"));
 
-        Assert.Equal(age, RbacHelper.CalculateAge(dob, today));
+        int expectedAge = today.Year - dob.Year;
+        Assert.Equal(expectedAge, RbacHelper.CalculateAge(dob));
     }
 
     [Fact]
@@ -62,7 +63,7 @@ public class RbacHelperTests
         List<TestRbac> testData = GetTestList();
 
         // Act
-        List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 3, 11, DateTime.Parse("01/10/2022", new CultureInfo("en-gb")));
+        List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 3, 11);
 
         // Assert
         Assert.Equal("*************", results[0].LearnerNumber);

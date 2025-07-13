@@ -9,7 +9,7 @@ namespace DfE.GIAP.Common.Helpers.Rbac;
 
 public static class RbacHelper
 {
-    public static List<T> CheckRbacRulesGeneric<T>(List<T> results, int statutoryLowAge, int statutoryHighAge, DateTime? from = null)
+    public static List<T> CheckRbacRulesGeneric<T>(List<T> results, int statutoryLowAge, int statutoryHighAge)
        where T : IRbac
     {
         // Rbac rules don't apply
@@ -22,7 +22,7 @@ public static class RbacHelper
         {
             if (item.DOB != null)
             {
-                int age = CalculateAge(item.DOB.Value, from);
+                int age = CalculateAge(item.DOB.Value);
 
                 if ((age < statutoryLowAge || age > statutoryHighAge) && item.LearnerNumber != null)
                 {
@@ -76,9 +76,9 @@ public static class RbacHelper
         return unionPageLearnerNumbers;
     }
 
-    public static int CalculateAge(DateTime dob, DateTime? from = null)
+    public static int CalculateAge(DateTime dob)
     {
-        DateTime dateCalc = from ?? DateTime.Today;
+        DateTime dateCalc = DateTime.Today;
 
         int age = dateCalc.Year - dob.Year;
         if (dob.Date > dateCalc.AddYears(-age))
@@ -88,3 +88,5 @@ public static class RbacHelper
         return age;
     }
 }
+
+
