@@ -1,13 +1,12 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain;
-public sealed class Pupil
+﻿using DfE.GIAP.Core.Common.Domain;
+
+namespace DfE.GIAP.Core.MyPupils.Domain;
+public sealed class Pupil : Entity<UniquePupilIdentifier>
 {
-    private readonly int _upn;
     private readonly DateTime? _dateOfBirth;
 
-    // TODO PupilIdentifier
-    public Pupil(int URN, DateTime? dateOfBirth)
+    public Pupil(UniquePupilIdentifier upn, DateTime? dateOfBirth) : base(upn)
     {
-        _upn = URN;
         _dateOfBirth = dateOfBirth;
     }
 
@@ -34,3 +33,4 @@ public sealed class Pupil
         return true;
     }
 }
+
