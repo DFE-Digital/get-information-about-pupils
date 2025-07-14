@@ -38,7 +38,7 @@ public sealed class GetContentByPageKeyUseCaseIntegrationTests : IAsyncLifetime
             .Build();
 
         IServiceCollection services = ServiceCollectionTestDoubles.Default()
-            .AddSharedDependencies()
+            .AddSharedTestDependencies()
             .RemoveAll<IConfiguration>() // replace default configuration
             .AddSingleton(configuration)
             .AddContentDependencies();
