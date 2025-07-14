@@ -74,9 +74,9 @@ public sealed class TextSanitiserInvokerTests
         {
             ExecutionCount++;
             StringBuilder builder = new();
-            foreach(char c in raw!)
+            foreach (char c in raw!)
             {
-                if(c != _characterToSanitise)
+                if (c != _characterToSanitise)
                 {
                     builder.Append(c);
                 }
