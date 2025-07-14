@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Domain.PupilIdentifierMask.Rules.Abstraction;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules;
-internal class PupilAgeIsHigherThanAuthorisedHighestPupilAgeMaskRule : IMaskPupilIdentifierRule
+internal sealed class MaskIfPupilAgeIsHigherThanAuthorisedHighestPupilAgeMaskRule : IMaskPupilIdentifierRule
 {
     public bool ShouldMask(MyPupilsAuthorisationContext authorisationContext, Pupil pupil)
     {
