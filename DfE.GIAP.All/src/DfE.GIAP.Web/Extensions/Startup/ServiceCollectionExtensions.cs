@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.BlobStorage;
@@ -18,6 +19,7 @@ using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -81,6 +83,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IEventLogging, EventLogging>();
         services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
         services.AddScoped<ISessionProvider, SessionProvider>();
+        services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
         return services;
     }
 

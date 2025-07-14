@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules.Abstraction;
 using DfE.GIAP.Core.MyPupils.Domain.PupilIdentifierMask.Rules.Abstraction;
 
-namespace DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules;
-internal class PupilAgeIsHigherThanAuthorisedHighestPupilAgeMaskRule : IMaskPupilIdentifierRule
+namespace DfE.GIAP.Core.MyPupils.Domain.PupilIdentifierMask.Rules;
+internal sealed class MaskIfPupilAgeIsLowerThanAuthorisedLowestPupilAgeRangeMaskRule : IMaskPupilIdentifierRule
 {
     public bool ShouldMask(MyPupilsAuthorisationContext authorisationContext, Pupil pupil)
     {
@@ -10,6 +10,6 @@ internal class PupilAgeIsHigherThanAuthorisedHighestPupilAgeMaskRule : IMaskPupi
         {
             return false;
         }
-        return calculatedAge > authorisationContext.AgeRange.High;
+        return calculatedAge < authorisationContext.AgeRange.Low;
     }
 }
