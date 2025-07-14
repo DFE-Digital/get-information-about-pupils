@@ -9,6 +9,14 @@ public readonly struct AgeRange
 
     public AgeRange(int low, int high)
     {
+        if(low < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(low));
+        }
+        if (high < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(high));
+        }
         Low = low;
         High = high;
     }
