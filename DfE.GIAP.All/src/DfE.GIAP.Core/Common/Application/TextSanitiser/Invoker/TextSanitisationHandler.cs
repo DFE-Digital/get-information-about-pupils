@@ -9,7 +9,6 @@ internal sealed class TextSanitisationInvoker : ITextSanitiserInvoker
     {
         _sanitisers = [];
         _sanitisers.AddRange(sanitisers ?? []);
-        _sanitisers.Add(new HtmlTextSanitiser()); // ensure this runs last in case the custom sanitisers are malicious or misconfigured
     }
 
     public SanitisedTextResult Sanitise(string input)

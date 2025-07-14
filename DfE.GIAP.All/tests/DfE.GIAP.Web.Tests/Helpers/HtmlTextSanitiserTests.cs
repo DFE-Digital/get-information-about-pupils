@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
+using DfE.GIAP.Web.Helpers.TextSanitiser;
+using Xunit;
 
-namespace DfE.GIAP.Core.UnitTests.Common.TextSanitiser;
-
+namespace DfE.GIAP.Web.Tests.Helpers;
 public sealed class HtmlTextSanitiserTests
 {
     private readonly HtmlTextSanitiser _sanitiser;
