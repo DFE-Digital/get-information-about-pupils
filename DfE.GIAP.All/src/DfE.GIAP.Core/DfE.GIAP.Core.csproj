@@ -6,7 +6,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="1.0.0" />
-		<PackageReference Include="HtmlSanitizer" Version="9.0.886" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
