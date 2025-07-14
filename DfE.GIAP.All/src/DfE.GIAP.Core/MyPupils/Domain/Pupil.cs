@@ -1,15 +1,15 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Domain;
 public sealed class Pupil
 {
-    private readonly int _upn;
     private readonly DateTime? _dateOfBirth;
 
-    // TODO PupilIdentifier
-    public Pupil(int URN, DateTime? dateOfBirth)
+    public Pupil(UniquePupilIdentifier id, DateTime? dateOfBirth)
     {
-        _upn = URN;
+        Id = id;
         _dateOfBirth = dateOfBirth;
     }
+
+    public UniquePupilIdentifier Id { get; }
 
     public bool HasDateOfBirth => _dateOfBirth is not null;
 
@@ -32,5 +32,15 @@ public sealed class Pupil
             calculatedAge--;
         }
         return true;
+    }
+}
+
+public readonly struct UniquePupilIdentifier
+{
+    private readonly int _upn; // TODO PULL IN AS VALUE OBJECT
+
+    public UniquePupilIdentifier(int urn)
+    {
+        _upn = urn;
     }
 }

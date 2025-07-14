@@ -24,8 +24,8 @@ public static class CompositionRoot
         this List<IEvaluator<TEvaluationRequest, TEvaluationResponse>> evaluators)
     {
         ChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse> headOutputHandler = new(evaluators[0]);
-
         ChainEvaluationHandler<TEvaluationRequest, TEvaluationResponse> current = headOutputHandler;
+
         // Chain the remaining handlers
         foreach (IEvaluator<TEvaluationRequest, TEvaluationResponse> evaluator in evaluators.Skip(1))
         {
@@ -33,6 +33,8 @@ public static class CompositionRoot
             current.ChainNextHandler(nextHandler);
             current = nextHandler;
         }
+
+
         return headOutputHandler;
     }
 }
