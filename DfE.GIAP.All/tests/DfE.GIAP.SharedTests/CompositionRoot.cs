@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 namespace DfE.GIAP.Core.SharedTests;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddSharedDependencies(this IServiceCollection services)
+    // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
+    public static IServiceCollection AddSharedTestDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
