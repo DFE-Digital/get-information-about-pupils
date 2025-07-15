@@ -181,11 +181,10 @@ namespace DfE.GIAP.Web.Extensions.Startup
             return services;
         }
 
-        public static IServiceCollection AddClarity(this IServiceCollection services, IConfigurationManager configuration)
+        public static IServiceCollection AddSettings<T>(this IServiceCollection services, IConfigurationManager configuration, string sectionName)
+            where T : class
         {
-
-            services.Configure<ClaritySettings>(configuration.GetSection("Clarity"));
-
+            services.Configure<T>(configuration.GetSection(sectionName));
             return services;
         }
     }
