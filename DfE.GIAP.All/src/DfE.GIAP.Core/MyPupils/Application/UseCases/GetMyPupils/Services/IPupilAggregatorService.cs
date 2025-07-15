@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Pupil.Domain;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCase.GetMyPupils.Services;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
 public interface IPupilAggregatorService
 {
     public Task<IEnumerable<Pupil.Domain.Pupil>> GetPupils(

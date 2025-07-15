@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.User.Domain.Aggregate;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCase.GetMyPupils;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
 {
     private readonly IUserAggregateFactory _userAggregateFactory;

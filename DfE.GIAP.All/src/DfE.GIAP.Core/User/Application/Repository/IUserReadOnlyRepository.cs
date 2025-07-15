@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCase.GetMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.User.Domain.Aggregate;
 
 namespace DfE.GIAP.Core.User.Application.Repository;
