@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Core.User.Repository;
+namespace DfE.GIAP.Core.User.Infrastructure.Repository;
 public class UserMyPupilItemDto
 {
     public string? PupilId { get; set; }

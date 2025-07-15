@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.User.Repository;
-
-namespace DfE.GIAP.Core.User.Infrastructure.Repository;
+﻿namespace DfE.GIAP.Core.User.Infrastructure.Repository;
 public sealed class UserProfileDto
 {
     //public string? id { get; set; }
