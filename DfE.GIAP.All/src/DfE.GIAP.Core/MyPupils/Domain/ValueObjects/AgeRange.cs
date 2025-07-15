@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.AuthorisationContext;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public readonly struct AgeRange
 {
     public AgeRange(int low, int high)
@@ -15,10 +15,10 @@ public readonly struct AgeRange
         High = high;
     }
 
-    public bool HasLowAge => Low != 0;
-    public bool HasHighAge => High != 0;
-    public bool HasNoAgeRange => !HasLowAge && !HasHighAge;
-    public int Range => High - Low;
     public int High { get; }
     public int Low { get; }
+    public bool IsDefaultedRange => IsDefaultLow && IsDefaultHigh;
+    public int Range => High - Low;
+    private bool IsDefaultLow => Low == 0;
+    private bool IsDefaultHigh => High != 0;
 }

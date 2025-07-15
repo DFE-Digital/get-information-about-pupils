@@ -1,17 +1,17 @@
 ﻿using DfE.GIAP.Core.Common.Domain.Contracts;
 
 namespace DfE.GIAP.Core.Common.Domain.User;
-public sealed class UserId : ValueObject<UserId>
+public sealed class UserIdentifier : ValueObject<UserIdentifier>
 {
-    public UserId(string id)
+    public UserIdentifier(string id)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
-        Id = id;
+        Value = id;
     }
-    public string Id { get; }
+    public string Value { get; }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return Id;
+        yield return Value;
     }
 }

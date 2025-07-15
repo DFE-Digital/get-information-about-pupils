@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCase.GetMyPupils;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 
