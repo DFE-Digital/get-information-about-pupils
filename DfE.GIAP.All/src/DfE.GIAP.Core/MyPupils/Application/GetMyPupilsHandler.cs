@@ -1,13 +1,14 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.PupilIdentifierEncoder;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.Rules.Abstraction;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Domain;
+using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.AuthorisationContext;
+using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.PupilIdentifierEncoder;
+using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules.Abstraction;
 using DfE.GIAP.Core.MyPupils.Domain.Services.PupilAggregator;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Domain.GetMyPupils;
-internal sealed class GetMyPupilsHandler
+namespace DfE.GIAP.Core.MyPupils.Application;
+internal sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 {
     private readonly IChainEvaluationHandler<MaskPupilIdentifierRequest, ShouldMaskPupilIdentifier> _handler;
     private readonly IMapper<PupilWithMyPupilIdentifier, MyPupil> _mapper;
@@ -26,25 +27,25 @@ internal sealed class GetMyPupilsHandler
         _handler = handler;
     }
 
-    public MyPupilsResponse Get(string[] upns, MyPupilsAuthorisationContext context)
+    public Task<IEnumerable<MyPupil>> Get(MyPupilsAuthorisationContext context)
     {
+        // TODO DomainService to fetch what urns are from the UserIdentifier?
+        string[] urns = [""]; //context.userId; // Call DomainService to get Urns?
 
-        IEnumerable<Pupil> pupils = _domainServicePupilAggregator.GetPupils(upns);
+        IEnumerable<Pupil> pupils = _domainServicePupilAggregator.GetPupils(urns);
+
         IEnumerable<MaskPupilIdentifierRequest> requests = pupils.Select(p => new MaskPupilIdentifierRequest(context, p));
 
-        IEnumerable<MyPupil> pupilItems = requests.Select(req =>
+        IEnumerable<PupilWithMyPupilIdentifier> pupilItems = requests.Select((req) =>
         {
             ShouldMaskPupilIdentifier shouldMask = _handler.Evaluate(req);
-
-            MyPupilIdentifier identifier = new(
-                req.Pupil.Id,
-                shouldMask,
-                _encoder);
-
+            MyPupilIdentifier identifier = new(req.Pupil.Identifier, shouldMask, _encoder);
             PupilWithMyPupilIdentifier mappablePupil = new(req.Pupil, identifier);
-            return _mapper.Map(mappablePupil);
+            return mappablePupil;
         });
 
-        return new MyPupilsResponse(pupilItems);
+        IEnumerable<MyPupil> outputPupilItems = pupilItems.Select(_mapper.Map);
+
+        return Task.FromResult(outputPupilItems);
     }
 }

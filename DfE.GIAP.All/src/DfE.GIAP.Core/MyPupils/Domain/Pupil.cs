@@ -1,17 +1,17 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
 
 namespace DfE.GIAP.Core.MyPupils.Domain;
-public sealed class Pupil
+public sealed class Pupil : Entity<UniquePupilIdentifier>
 {
     private readonly DateTime? _dateOfBirth;
 
-    public Pupil(UniquePupilIdentifier id, DateTime? dateOfBirth)
+    public Pupil(
+        UniquePupilIdentifier identifier,
+        DateTime? dateOfBirth) : base(identifier)
     {
-        Id = id;
         _dateOfBirth = dateOfBirth;
-    }
 
-    public UniquePupilIdentifier Id { get; }
+    }
 
     public bool HasDateOfBirth => _dateOfBirth is not null;
 

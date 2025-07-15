@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.PupilIdentifierEncoder;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.PupilIdentifierEncoder;
 public interface IPupilIdentifierEncoder
 {
     string Encode(UniquePupilIdentifier identifier);

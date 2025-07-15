@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.Rules;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.Rules.Abstraction;
+using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules;
+using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules.Abstraction;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.MyPupils;

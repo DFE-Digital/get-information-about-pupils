@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.ValueObjects;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.AuthorisationContext;
 public readonly struct AgeRange
 {
     public AgeRange(int low, int high)

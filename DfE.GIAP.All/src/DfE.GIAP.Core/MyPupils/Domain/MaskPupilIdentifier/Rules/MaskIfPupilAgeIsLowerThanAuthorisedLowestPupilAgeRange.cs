@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-using DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.Rules.Abstraction;
+using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules.Abstraction;
 
-namespace DfE.GIAP.Core.MyPupils.Domain.GetMyPupils.MaskPupilIdentifier.Rules;
+namespace DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.Rules;
 internal sealed class MaskIfPupilAgeIsLowerThanAuthorisedLowestPupilAgeRange : IEvaluator<MaskPupilIdentifierRequest, ShouldMaskPupilIdentifier>
 {
     public bool CanEvaluate(MaskPupilIdentifierRequest evaluationRequest)
