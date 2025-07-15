@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain;
+﻿using DfE.GIAP.Core.Common.Domain;
+
+namespace DfE.GIAP.Core.MyPupils.Domain;
 public sealed class Pupil
 {
     private readonly DateTime? _dateOfBirth;
@@ -35,12 +37,25 @@ public sealed class Pupil
     }
 }
 
-public readonly struct UniquePupilIdentifier
+public sealed class UniquePupilIdentifier : ValueObject<UniquePupilIdentifier>
 {
-    private readonly int _upn; // TODO PULL IN AS VALUE OBJECT
+    public int Value { get; }
 
-    public UniquePupilIdentifier(int urn)
+    public UniquePupilIdentifier(int value)
     {
-        _upn = urn;
+        // Should be a 6 digit positive number
+        if (value < 100000 || value > 999999)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value), "UPN must be a 6-digit positive number.");
+        }
+
+        Value = value;
     }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Value;
+    }
+
+    public override string ToString() => Value.ToString();
 }
