@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain.Contracts;
-
-namespace DfE.GIAP.Core.Common.Domain.Pupil;
+﻿namespace DfE.GIAP.Core.Common.Domain.Pupil;
 public sealed class UniquePupilIdentifier : ValueObject<UniquePupilIdentifier>
 {
     public int Value { get; }

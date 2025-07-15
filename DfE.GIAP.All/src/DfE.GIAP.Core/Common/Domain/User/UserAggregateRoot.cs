@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain.Contracts;
-using DfE.GIAP.Core.MyPupils.Domain.Entities;
+﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
 
 namespace DfE.GIAP.Core.Common.Domain.User;
 public sealed class UserAggregateRoot : AggregateRoot<UserIdentifier>

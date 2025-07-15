@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Domain.Contracts;
+﻿namespace DfE.GIAP.Core.Common.Domain;
 /// <summary>
 /// Abstract Value Object base class which is used as the basis of any domain concept when the
 /// model's identity is not a key design consideration, rather equality is determined by assessing

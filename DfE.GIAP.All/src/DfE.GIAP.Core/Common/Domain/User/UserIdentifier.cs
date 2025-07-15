@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain.Contracts;
-
-namespace DfE.GIAP.Core.Common.Domain.User;
+﻿namespace DfE.GIAP.Core.Common.Domain.User;
 public sealed class UserIdentifier : ValueObject<UserIdentifier>
 {
     public UserIdentifier(string id)

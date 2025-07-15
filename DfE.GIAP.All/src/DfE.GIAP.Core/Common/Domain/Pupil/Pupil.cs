@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain.Contracts;
-
-namespace DfE.GIAP.Core.Common.Domain.Pupil;
+﻿namespace DfE.GIAP.Core.Common.Domain.Pupil;
 public sealed class Pupil : Entity<UniquePupilIdentifier>
 {
     private readonly DateTime? _dateOfBirth;

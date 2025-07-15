@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain.Contracts;
+﻿using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.Common.Domain.Pupil;
 using DfE.GIAP.Core.MyPupils.Domain.PupilIdentifierEncoder;
 

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Domain.Contracts;
+﻿namespace DfE.GIAP.Core.Common.Domain;
 /// <summary>
 /// Abstract base class for an aggregate root in a domain-driven design context.
 /// </summary>
