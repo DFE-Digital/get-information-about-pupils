@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Domain;
+﻿namespace DfE.GIAP.Core.Common.Domain.Contracts;
 /// <summary>
 /// Interface representing an aggregate root in a domain-driven design context.
 /// </summary>

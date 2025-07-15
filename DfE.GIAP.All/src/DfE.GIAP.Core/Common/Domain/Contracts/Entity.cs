@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Domain;
+﻿namespace DfE.GIAP.Core.Common.Domain.Contracts;
 /// <summary>
 /// Abstract Entity base class which is used as the basis of any domain concept when the
 /// model requires identification, thus affording the ability to distinguish one entity from the other,

@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.Domain;
+﻿using DfE.GIAP.Core.Common.Domain.Contracts;
 
-namespace DfE.GIAP.Core.MyPupils.Domain;
+namespace DfE.GIAP.Core.Common.Domain.User;
 public sealed class UserId : ValueObject<UserId>
 {
     public UserId(string id)

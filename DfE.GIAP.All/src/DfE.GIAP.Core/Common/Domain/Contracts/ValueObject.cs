@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Domain;
+﻿namespace DfE.GIAP.Core.Common.Domain.Contracts;
 /// <summary>
 /// Abstract Value Object base class which is used as the basis of any domain concept when the
 /// model's identity is not a key design consideration, rather equality is determined by assessing
@@ -48,7 +48,7 @@ public abstract class ValueObject<TValueObject> where TValueObject : ValueObject
         int hash = 17;
 
         foreach (object component in GetEqualityComponents())
-            hash = (hash * 31) + (component?.GetHashCode() ?? 0);
+            hash = hash * 31 + (component?.GetHashCode() ?? 0);
 
         return hash;
     }

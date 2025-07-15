@@ -1,7 +1,18 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.Common.Domain.Contracts;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain;
-public record MyPupil
+public sealed class MyPupil : ValueObject<MyPupil>
 {
-    public required MyPupilIdentifier Id { get; init; }
+    public MyPupil(MyPupilIdentifier id)
+    {
+        Id = id;
+    }
+
+    public MyPupilIdentifier Id { get; }
+
+    protected override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Id;
+    }
 }

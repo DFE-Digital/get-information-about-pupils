@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+using DfE.GIAP.Core.Common.Domain.Pupil;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.AuthorisationContext;
 using DfE.GIAP.Core.MyPupils.Domain.MaskPupilIdentifier.PupilIdentifierEncoder;
