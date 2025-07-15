@@ -1,6 +1,7 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
+﻿using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.MyPupils.Domain.Entities;
 
-namespace DfE.GIAP.Core.Common.Domain.User;
+namespace DfE.GIAP.Core.User.Domain.Aggregate;
 public sealed class UserAggregateRoot : AggregateRoot<UserIdentifier>
 {
     private readonly List<MyPupil> _myPupils;
@@ -15,7 +16,7 @@ public sealed class UserAggregateRoot : AggregateRoot<UserIdentifier>
     public IEnumerable<MyPupil> GetMyPupils() => _myPupils;
 
     // TODO consider actions to delete will need identifiers attached to each item (what is it currently doing?)
-    public void AddPupil(MyPupil pupil)
+    public void AddPupilToMyPupils(MyPupil pupil)
     {
         if (_myPupils.Any(myPupil => myPupil.Equals(pupil)))
         {

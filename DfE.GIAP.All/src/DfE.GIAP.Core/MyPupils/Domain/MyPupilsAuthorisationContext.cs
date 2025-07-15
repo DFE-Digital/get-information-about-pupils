@@ -1,17 +1,12 @@
-﻿using DfE.GIAP.Core.Common.Domain.Pupil;
-using DfE.GIAP.Core.Common.Domain.User;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain;
 public record MyPupilsAuthorisationContext
 {
-    private readonly UserIdentifier _userId;
     private readonly AgeRange _authorisedAgeRange;
 
-    public MyPupilsAuthorisationContext(UserIdentifier userId, AgeRange AgeRange)
+    public MyPupilsAuthorisationContext(AgeRange AgeRange)
     {
-        ArgumentNullException.ThrowIfNull(userId);
-        _userId = userId;
         _authorisedAgeRange = AgeRange;
     }
 
@@ -19,7 +14,7 @@ public record MyPupilsAuthorisationContext
         => age >= _authorisedAgeRange.Low &&
             age <= _authorisedAgeRange.High;
 
-    public bool ShouldMaskPupil(Pupil pupil)
+    public bool ShouldMaskPupil(Pupil.Domain.Pupil pupil)
     {
         if (_authorisedAgeRange.IsDefaultedRange) // RBAC rules don't apply and should not be masked
         {

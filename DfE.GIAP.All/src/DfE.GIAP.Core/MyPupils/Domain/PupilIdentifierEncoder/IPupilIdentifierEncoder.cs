@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain.Pupil;
+﻿using DfE.GIAP.Core.Pupil.Domain;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.PupilIdentifierEncoder;
 public interface IPupilIdentifierEncoder

@@ -1,14 +1,13 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.Common.Domain.Pupil;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Entities;
 
 public sealed class MyPupil : Entity<MyPupilIdentifier>
 {
-    private readonly Pupil _pupil;
+    private readonly Pupil.Domain.Pupil _pupil;
 
-    public MyPupil(MyPupilIdentifier identifier, Pupil pupil)
+    public MyPupil(MyPupilIdentifier identifier, Pupil.Domain.Pupil pupil)
         : base(identifier)
     {
         _pupil = pupil;

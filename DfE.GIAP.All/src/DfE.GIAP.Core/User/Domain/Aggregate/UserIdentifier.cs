@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.Domain.User;
+﻿using DfE.GIAP.Core.Common.Domain;
+
+namespace DfE.GIAP.Core.User.Domain.Aggregate;
 public sealed class UserIdentifier : ValueObject<UserIdentifier>
 {
     public UserIdentifier(string id)

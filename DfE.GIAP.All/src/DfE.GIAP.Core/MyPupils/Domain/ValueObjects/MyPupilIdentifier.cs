@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.Common.Domain.Pupil;
 using DfE.GIAP.Core.MyPupils.Domain.PupilIdentifierEncoder;
+using DfE.GIAP.Core.Pupil.Domain;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class MyPupilIdentifier : ValueObject<MyPupilIdentifier>

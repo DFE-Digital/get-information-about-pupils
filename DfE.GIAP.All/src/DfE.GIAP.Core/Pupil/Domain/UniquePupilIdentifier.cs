@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.Domain.Pupil;
+﻿using DfE.GIAP.Core.Common.Domain;
+
+namespace DfE.GIAP.Core.Pupil.Domain;
 public sealed class UniquePupilIdentifier : ValueObject<UniquePupilIdentifier>
 {
     public int Value { get; }
@@ -12,6 +14,11 @@ public sealed class UniquePupilIdentifier : ValueObject<UniquePupilIdentifier>
         }
 
         Value = value;
+    }
+
+    public UniquePupilIdentifier(string value) : this(int.Parse(value))
+    {
+
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
