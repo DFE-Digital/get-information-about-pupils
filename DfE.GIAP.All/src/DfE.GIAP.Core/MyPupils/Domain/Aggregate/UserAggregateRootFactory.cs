@@ -1,0 +1,42 @@
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
+using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
+using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using DfE.GIAP.Core.MyPupils.Domain.Services;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+
+namespace DfE.GIAP.Core.MyPupils.Domain.Aggregate;
+internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
+{
+    private readonly IUserReadOnlyRepository _userReadOnlyRepository;
+    private readonly IAggregatePupilsForMyPupilsDomainService _aggregatePupilsForMyPupilDomainService;
+    private readonly IMapper<IAuthorisationContext, MyPupilsAuthorisationContext> _mapApplicationAuthorisationToMyPupilsAuthorisationContext;
+
+    public UserAggregateRootFactory(
+        IUserReadOnlyRepository userReadOnlyRepository,
+        IAggregatePupilsForMyPupilsDomainService aggregatePupilsForMyPupilDomainService,
+        IMapper<IAuthorisationContext, MyPupilsAuthorisationContext> mapApplicationAuthorisationToMyPupilsAuthorisationContext)
+    {
+        ArgumentNullException.ThrowIfNull(userReadOnlyRepository);
+        ArgumentNullException.ThrowIfNull(aggregatePupilsForMyPupilDomainService);
+        ArgumentNullException.ThrowIfNull(mapApplicationAuthorisationToMyPupilsAuthorisationContext);
+        _userReadOnlyRepository = userReadOnlyRepository;
+        _aggregatePupilsForMyPupilDomainService = aggregatePupilsForMyPupilDomainService;
+        _mapApplicationAuthorisationToMyPupilsAuthorisationContext = mapApplicationAuthorisationToMyPupilsAuthorisationContext;
+    }
+
+    public async Task<UserAggregateRoot> CreateAsync(IAuthorisationContext authorisationContext)
+    {
+        UserId identfiier = new(authorisationContext.UserId);
+
+        User user = await _userReadOnlyRepository.GetUserByIdAsync(identfiier, authorisationContext);
+
+        MyPupilsAuthorisationContext myPupilsAuthorisationContext = _mapApplicationAuthorisationToMyPupilsAuthorisationContext.Map(authorisationContext);
+
+        IEnumerable<UniquePupilNumber> myPupilUpns = user.MyPupilsIds.Distinct();
+        IEnumerable<Pupil> myPupils = await _aggregatePupilsForMyPupilDomainService.GetPupilsAsync(myPupilUpns,myPupilsAuthorisationContext);
+
+        return new UserAggregateRoot(identfiier, myPupils);
+    }
+}
