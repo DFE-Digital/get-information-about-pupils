@@ -3,21 +3,16 @@
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class PupilId : ValueObject<PupilId>
 {
-    private const string MaskedPupilMarker = "*************";
-    public PupilId(
-        UniquePupilNumber id,
-        bool isUniquePupilIdentifierMasked)
+    private readonly Guid _id;
+
+    public PupilId(Guid id)
     {
-
-        Id = Guid.NewGuid().ToString(); // TODO need to embed a UniqueIdentifier for the Pupil that is different to its UPN because that's just a presentation concern here
-
-        Upn = isUniquePupilIdentifierMasked ?
-            MaskedPupilMarker :
-                id.Value.ToString();
+        _id = id;
+        // TODO need to embed a UniqueIdentifier for the Pupil that is different to its UPN because that's just a presentation concern here
+        // Could be removing the UniquePupilnumber from this, and this being a separated ValueObject. The masking would also move into Pupil.
     }
 
-    public string Upn { get; init; }
-    public string Id { get; init; }
+    public string Id => _id.ToString();
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
