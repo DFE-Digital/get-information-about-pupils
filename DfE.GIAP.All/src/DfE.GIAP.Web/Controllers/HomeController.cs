@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Helpers.HostEnvironment;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Banner;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
