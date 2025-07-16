@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Web.Helpers.CookieManager;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
@@ -12,7 +12,6 @@ using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Service.MPL;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
@@ -60,7 +59,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
-        services.AddScoped<INewsService, NewsService>();
         services.AddScoped<IBlobStorageService, BlobStorageService>();
         services.AddScoped<ICookieManager, CookieManager>();
         services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();

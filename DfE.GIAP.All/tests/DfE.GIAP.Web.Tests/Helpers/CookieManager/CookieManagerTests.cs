@@ -2,7 +2,7 @@
 using NSubstitute;
 using Xunit;
 
-namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
+namespace DfE.GIAP.Web.Tests.Helpers.CookieManager
 {
     public class CookieManagerTests
     {
@@ -13,7 +13,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Get_returns_null_when_key_does_not_exist()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             var result = sut.Get("null");
@@ -26,7 +26,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Get_returns_correctly_when_key_exists()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             var result = sut.Get("test");
@@ -41,7 +41,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
             // Arrange
             var nullContext = Substitute.For<IHttpContextAccessor>();
             nullContext.HttpContext.Returns(x => null);
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(nullContext);
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(nullContext);
 
             // Act
             // Assert
@@ -52,7 +52,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Contains_throws_exception_when_key_is_null()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             // Assert
@@ -64,7 +64,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Contains_returns_true_when_key_exists()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             var result = sut.Contains("test");
@@ -77,7 +77,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Delete_calls_cookiecollection_delete()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             sut.Delete("test");
@@ -90,7 +90,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Set_throws_exception_if_key_is_null()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             // Assert
@@ -101,7 +101,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Set_throws_exception_if_value_is_null()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             // Assert
@@ -112,7 +112,7 @@ namespace DfE.GIAP.Common.Tests.Helpers.CookieManager
         public void Set_appends_cookie_correctly_with_valid_values()
         {
             // Arrange
-            var sut = new DfE.GIAP.Common.Helpers.CookieManager.CookieManager(SetupContextAccessor());
+            var sut = new DfE.GIAP.Web.Helpers.CookieManager.CookieManager(SetupContextAccessor());
 
             // Act
             sut.Set("key", "value", true, 1, null);
