@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Web.Helpers.CookieManager;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
