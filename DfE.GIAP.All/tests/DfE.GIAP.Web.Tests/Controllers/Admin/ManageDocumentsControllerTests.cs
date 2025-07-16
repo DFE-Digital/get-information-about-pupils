@@ -13,7 +13,6 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 using DfE.GIAP.Web.Extensions;
@@ -38,7 +37,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ManageDocumentsResultsFake _manageDocumentsResultsFake;
     private readonly Mock<IContentService> _mockContentService = new();
-    private readonly Mock<INewsService> _mockNewsService = new();
     private readonly Mock<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>> _mockGetNewsArticleByIdUseCase = new();
     private readonly Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> _mockGetNewsArticlesUseCase = new();
     private readonly Mock<IUseCaseRequestOnly<DeleteNewsArticleRequest>> _mockDeleteNewsArticleUseCase = new();
@@ -424,7 +422,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     public ManageDocumentsController GetManageDocumentsController()
     {
         return new ManageDocumentsController(
-            _mockNewsService.Object,
             _mockContentService.Object,
             _mockGetNewsArticleByIdUseCase.Object,
             _mockGetNewsArticlesUseCase.Object,
