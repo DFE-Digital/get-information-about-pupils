@@ -46,10 +46,6 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         Assert.Equal(stubArticleBody, newsArticleDto.Body);
         Assert.Equal(isPublished, newsArticleDto.Published);
         Assert.Equal(isPinned, newsArticleDto.Pinned);
-        Assert.Equal(7, newsArticleDto.DOCTYPE);
-
-        Assert.Equal(string.Empty, newsArticleDto.DraftTitle);
-        Assert.Equal(string.Empty, newsArticleDto.DraftBody);
 
         Assert.InRange(newsArticleDto.CreatedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
         Assert.InRange(newsArticleDto.ModifiedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);

@@ -26,8 +26,6 @@ public class NewsControllerTests
             Id = NewsArticleIdentifier.From("1"),
             Title = "Title 1",
             Body = "Test body 1",
-            DraftTitle = string.Empty,
-            DraftBody = string.Empty,
             CreatedDate = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         };
         NewsArticle articleData2 = new()
@@ -35,8 +33,6 @@ public class NewsControllerTests
             Id = NewsArticleIdentifier.From("2"),
             Title = "Title 2",
             Body = "Test body 2",
-            DraftTitle = string.Empty,
-            DraftBody = string.Empty,
             CreatedDate = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)
         };
 

@@ -470,14 +470,14 @@ public class ManageDocumentsController : Controller
         CommonResponseBodyViewModel output = new();
         GetNewsArticleByIdRequest getNewsArticleByIdRequest = new(newsArticleId);
 
-        GetNewsArticleByIdResponse? response = await _getNewsArticleByIdUseCase.HandleRequestAsync(getNewsArticleByIdRequest);
+        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(getNewsArticleByIdRequest);
         NewsArticle? responseArticle = response.NewsArticle;
 
-        if (responseArticle != null)
+        if (responseArticle is not null)
         {
             output.Id = responseArticle.Id.Value;
-            output.Title = string.IsNullOrEmpty(responseArticle.DraftTitle) ? SecurityHelper.SanitizeText(responseArticle.Title) : SecurityHelper.SanitizeText(responseArticle.DraftTitle);
-            output.Body = string.IsNullOrEmpty(responseArticle.DraftBody) ? SecurityHelper.SanitizeText(responseArticle.Body) : SecurityHelper.SanitizeText(responseArticle.DraftBody);
+            output.Title = SecurityHelper.SanitizeText(responseArticle.Title);
+            output.Body = SecurityHelper.SanitizeText(responseArticle.Body);
             output.Pinned = responseArticle.Pinned;
             output.Published = responseArticle.Published;
         }
@@ -506,19 +506,18 @@ public class ManageDocumentsController : Controller
         GetNewsArticlesRequest request = new(NewsArticleSearchFilter.PublishedAndNotPublished);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
-        IList<Document> newsList = new List<Document>();
+        List<Document> newsList = new();
         foreach (NewsArticle news in response.NewsArticles)
         {
             string status = news.Published ? "Published" : "Draft";
             string pinned = news.Pinned ? " | Pinned" : "";
             string date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
-            string name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
+            string name = news.Title;
 
             newsList.Add(new Document
             {
                 DocumentName = $"{name} | {date} | {status} {pinned}",
                 DocumentId = news.Id.Value,
-                IsEnabled = true
             });
         }
 

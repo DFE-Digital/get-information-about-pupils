@@ -28,8 +28,6 @@ internal class NewsArticleDtoToEntityMapper : IMapper<NewsArticleDto, NewsArticl
             Id = NewsArticleIdentifier.From(input.id),
             Title = input.Title,
             Body = input.Body,
-            DraftBody = input.DraftBody,
-            DraftTitle = input.DraftTitle,
             Published = input.Published,
             Pinned = input.Pinned,
             CreatedDate = input.CreatedDate,

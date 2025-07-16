@@ -143,9 +143,9 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
 
         List<Document> documentsList = new()
         {
-            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
-            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2, IsEnabled = true },
-            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3, IsEnabled = true }
+            new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1 },
+            new Document() { Id = 2, DocumentId = "PublicationSchedule", DocumentName = "Publication Schedule", SortId = 2 },
+            new Document() { Id = 3, DocumentId = "PlannedMaintenance", DocumentName = "Planned Maintenance", SortId = 3 }
         };
 
         ManageDocumentsViewModel model = _manageDocumentsResultsFake.GetDocumentDetails();
@@ -209,8 +209,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
             Body = "Some body",
             Id = NewsArticleIdentifier.From("1"),
             Pinned = true,
-            DraftBody = string.Empty,
-            DraftTitle = string.Empty
         };
 
         _mockGetNewsArticleByIdUseCase.Setup(useCase => useCase.HandleRequestAsync(It.IsAny<GetNewsArticleByIdRequest>())).ReturnsAsync(new GetNewsArticleByIdResponse(article));
