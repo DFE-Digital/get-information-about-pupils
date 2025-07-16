@@ -1,5 +1,6 @@
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.GetNewsArticles;
 
