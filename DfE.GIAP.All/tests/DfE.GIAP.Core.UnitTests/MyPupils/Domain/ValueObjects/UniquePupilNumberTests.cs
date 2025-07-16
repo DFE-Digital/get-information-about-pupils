@@ -25,11 +25,8 @@ public class UniquePupilNumberTests
     [InlineData("\n")]
     public void TryCreate_WithNullOrWhitespace_ReturnsFalse(string? input)
     {
-        // Arrange
-        UniquePupilNumber? result;
-
         // Act
-        bool success = UniquePupilNumber.TryCreate(input, out result);
+        bool success = UniquePupilNumber.TryCreate(input, out UniquePupilNumber? result);
 
         // Assert
         Assert.False(success);
