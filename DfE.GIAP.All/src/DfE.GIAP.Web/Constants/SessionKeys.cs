@@ -7,4 +7,7 @@ public static class SessionKeys
     public const string SelectedEstablishmentCode = "SelectedEstablishmentCode";
     public const string SelectedOrganisationOption = "SelectedOrganisationOption";
     public const string NoSecurityReportContent = "NoSRContent";
+
+    public const string ConsentKey = "cg";
+    public const string ConsentValue = "yes";
 }

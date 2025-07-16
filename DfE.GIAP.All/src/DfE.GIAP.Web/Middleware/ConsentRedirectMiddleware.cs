@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Helpers.Consent;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Http.Features;
 
 namespace DfE.GIAP.Web.Middleware;
@@ -11,25 +8,30 @@ namespace DfE.GIAP.Web.Middleware;
 public class ConsentRedirectMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ISessionProvider _sessionProvider;
 
-    public ConsentRedirectMiddleware(RequestDelegate next)
+    public ConsentRedirectMiddleware(RequestDelegate next, ISessionProvider sessionProvider)
     {
         _next = next;
+        _sessionProvider = sessionProvider;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var request = context.Request;
-        var response = context.Response;
+        HttpRequest request = context.Request;
+        HttpResponse response = context.Response;
 
         if (context.User.Identity.IsAuthenticated)
         {
 
-            var endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
-            var attribute = endpoint?.Metadata.GetMetadata<AllowWithoutConsentAttribute>();
-            if (attribute == null)
+            Endpoint endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
+            AllowWithoutConsentAttribute attribute = endpoint?.Metadata.GetMetadata<AllowWithoutConsentAttribute>();
+            if (attribute is null)
             {
-                if (!ConsentHelper.HasGivenConsent(context))
+                // TODO: Why are we using "yes" ?
+                // Check if consent key is missing or its value is not "yes"
+                string consentValue = _sessionProvider.GetSessionValue(SessionKeys.ConsentKey);
+                if (!string.Equals(consentValue, SessionKeys.ConsentValue, StringComparison.OrdinalIgnoreCase))
                 {
                     response.Redirect(Routes.Application.Consent);
                     return;
