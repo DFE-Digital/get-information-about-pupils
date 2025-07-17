@@ -8,6 +8,7 @@ internal sealed class AuthorisationContextToMyPupilsAuthorisationContextMapper :
     public MyPupilsAuthorisationContext Map(IAuthorisationContext input)
     {
         AgeRange ageRange = new(input.LowAge, input.HighAge);
-        return new(ageRange);
+        UserRole userRole = new(input.IsAdministrator);
+        return new(ageRange, userRole);
     }
 }
