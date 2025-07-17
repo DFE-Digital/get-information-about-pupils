@@ -18,7 +18,7 @@ public sealed class PupilTests
         Pupil pupil = PupilBuilder.CreateBuilder(upn, context)
             .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthThatHasAlreadyOccuredThisYear()) // Birthday already occurred this year
             .Build();
-        
+
         // Act
         bool success = pupil.TryCalculateAge(out int? age);
 

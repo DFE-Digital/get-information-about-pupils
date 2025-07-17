@@ -39,7 +39,7 @@ public sealed class Pupil : Entity<PupilId>
         {
             return false;
         }
-            
+
         DateTime today = DateTime.Today;
         DateTime pupilDob = _dateOfBirth!.Value;
 

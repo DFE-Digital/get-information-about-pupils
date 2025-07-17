@@ -87,7 +87,7 @@ public sealed class UserAggregateRootFactoryTests
             .Returns(pupilAuthorisationContext);
 
         List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(3);
-                User user = new(userId, upns);
+        User user = new(userId, upns);
 
         Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = new();
         mockUserReadOnlyRepository.Setup(repo => repo.GetUserByIdAsync(
@@ -119,12 +119,12 @@ public sealed class UserAggregateRootFactoryTests
         UserAggregateRoot result = await userAggregateRootFactory.CreateAsync(context);
 
         // Assert
-        
+
         Assert.NotNull(result);
         Assert.Equal(userId, result.Identifier);
 
         List<Pupil> pupils = result.GetMyPupils().ToList();
         Assert.Equal(3, pupils.Count);
-        Assert.Equivalent(pupils, new[] { stubPupil1, stubPupil2, stubPupil3 } );
+        Assert.Equivalent(pupils, new[] { stubPupil1, stubPupil2, stubPupil3 });
     }
 }
