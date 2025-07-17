@@ -19,14 +19,14 @@ public sealed class MapAuthorisationContextToPupilAuthorisationContextTests
 
         MapAuthorisationContextToPupilsAuthorisationContextMapper mapper = new();
 
-        PupilAuthorisationContext expected = new(
-            new AgeLimit(lowAge, highAge),
-            new UserRole(isAdmin));
-
         // Act
         PupilAuthorisationContext result = mapper.Map(mockContext.Object);
 
         // Assert
+        PupilAuthorisationContext expected = new(
+            new AgeLimit(lowAge, highAge),
+            new UserRole(isAdmin));
+
         Assert.Equal(expected, result);
     }
 
