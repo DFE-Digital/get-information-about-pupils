@@ -9,5 +9,5 @@ public sealed class UserProfileDto
     //public DateTime? PreviousLoginDateTime { get; set; }
     //public DateTime? LatestNewsAccessedDateTime { get; set; }
     public string[] PupilList { get; set; } = [];
-    public IEnumerable<UserMyPupilItemDto> MyPupilList { get; set; } = [];
+    public IEnumerable<PupilItemDto> MyPupilList { get; set; } = [];
 }
