@@ -31,10 +31,9 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
 
         //Assert
         IEnumerable<NewsArticleDto> newsArticleDtosShouldReturn = seededArticles.Where(t => t.id != targetDeleteArticle.id);
-        IEnumerable<NewsArticleDto?> queriedArticles = await Fixture.Database.ReadManyAsync<NewsArticleDto>(seededArticles.Select(t => t.id));
+        IEnumerable<NewsArticleDto?> queriedArticles = await Fixture.Database.ReadManyAsync<NewsArticleDto>();
 
         Assert.Equivalent(newsArticleDtosShouldReturn, queriedArticles);
         Assert.Equal(countGenerated - 1, queriedArticles.Count(t => t != null));
-        Assert.DoesNotContain(targetDeleteArticle.id, queriedArticles.Select(t => t?.id ?? string.Empty));
     }
 }

@@ -16,7 +16,6 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Content;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.ViewModels;
@@ -34,7 +33,6 @@ namespace DfE.GIAP.Web.Controllers.Admin.ManageDocuments;
 public class ManageDocumentsController : Controller
 {
     private readonly IContentService _contentService;
-    private readonly INewsService _newsService;
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
@@ -43,7 +41,6 @@ public class ManageDocumentsController : Controller
     private readonly ITextSanitiserInvoker _textSanitiserInvoker;
 
     public ManageDocumentsController(
-        INewsService newsService,
         IContentService contentService,
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticlesUseCase,
@@ -52,9 +49,6 @@ public class ManageDocumentsController : Controller
         IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase,
         ITextSanitiserInvoker textSanitiserInvoker)
     {
-        ArgumentNullException.ThrowIfNull(newsService);
-        _newsService = newsService;
-
         ArgumentNullException.ThrowIfNull(contentService);
         _contentService = contentService;
 
@@ -306,7 +300,7 @@ public class ManageDocumentsController : Controller
 
         UpdateNewsArticlesRequestProperties updateProperties = new(id: manageDocumentsModel.NewsArticle.Id)
         {
-            Title =  _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Title),
+            Title = _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Title),
             Body = _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Body),
             Pinned = manageDocumentsModel.NewsArticle.Pinned,
             Published = manageDocumentsModel.NewsArticle.Published,
@@ -476,14 +470,14 @@ public class ManageDocumentsController : Controller
         CommonResponseBodyViewModel output = new();
         GetNewsArticleByIdRequest getNewsArticleByIdRequest = new(newsArticleId);
 
-        GetNewsArticleByIdResponse? response = await _getNewsArticleByIdUseCase.HandleRequestAsync(getNewsArticleByIdRequest);
+        GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(getNewsArticleByIdRequest);
         NewsArticle? responseArticle = response.NewsArticle;
 
-        if (responseArticle != null)
+        if (responseArticle is not null)
         {
             output.Id = responseArticle.Id.Value;
-            output.Title = string.IsNullOrEmpty(responseArticle.DraftTitle) ? SecurityHelper.SanitizeText(responseArticle.Title) : SecurityHelper.SanitizeText(responseArticle.DraftTitle);
-            output.Body = string.IsNullOrEmpty(responseArticle.DraftBody) ? SecurityHelper.SanitizeText(responseArticle.Body) : SecurityHelper.SanitizeText(responseArticle.DraftBody);
+            output.Title = SecurityHelper.SanitizeText(responseArticle.Title);
+            output.Body = SecurityHelper.SanitizeText(responseArticle.Body);
             output.Pinned = responseArticle.Pinned;
             output.Published = responseArticle.Published;
         }
@@ -512,19 +506,18 @@ public class ManageDocumentsController : Controller
         GetNewsArticlesRequest request = new(NewsArticleSearchFilter.PublishedAndNotPublished);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
-        IList<Document> newsList = new List<Document>();
+        List<Document> newsList = new();
         foreach (NewsArticle news in response.NewsArticles)
         {
             string status = news.Published ? "Published" : "Draft";
             string pinned = news.Pinned ? " | Pinned" : "";
             string date = news.ModifiedDate.ToString("dd/MM/yyyy", new CultureInfo("en-GB"));
-            string name = string.IsNullOrEmpty(news.DraftTitle) ? news.Title : news.DraftTitle;
+            string name = news.Title;
 
             newsList.Add(new Document
             {
                 DocumentName = $"{name} | {date} | {status} {pinned}",
                 DocumentId = news.Id.Value,
-                IsEnabled = true
             });
         }
 

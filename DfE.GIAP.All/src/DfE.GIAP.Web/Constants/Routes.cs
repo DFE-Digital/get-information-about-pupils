@@ -18,7 +18,7 @@ public static class Routes
         public const string Admin = "admin";
         public const string Consent = "consent";
         public const string Error = "error";
-        public const string Home = "home";
+        public const string Home = "/";
         public const string News = "news";
         public const string UserWithNoRole = "user-with-no-role";
         public const string MyPupilList = "my-pupil-list";

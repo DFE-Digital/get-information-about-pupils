@@ -1,12 +1,9 @@
-﻿using DfE.GIAP.Common.Helpers.HostEnvironment;
+﻿using DfE.GIAP.Web.Helpers.HostEnvironment;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
-namespace DfE.GIAP.Common.Tests.Helpers
+namespace DfE.GIAP.Web.Tests.Helpers
 {
     public class HostEnvironmentHelperTests
     {

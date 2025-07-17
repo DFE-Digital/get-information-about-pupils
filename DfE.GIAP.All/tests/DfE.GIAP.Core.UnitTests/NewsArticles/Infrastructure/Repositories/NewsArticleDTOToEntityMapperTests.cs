@@ -33,8 +33,6 @@ public sealed class NewsArticleDtoToEntityMapperTests
         Assert.Equal(mappedResponse.Id, NewsArticleIdentifier.From(inputDto.id));
         Assert.Equal(mappedResponse.Title, inputDto.Title);
         Assert.Equal(mappedResponse.Body, inputDto.Body);
-        Assert.Equal(mappedResponse.DraftBody, inputDto.DraftBody);
-        Assert.Equal(mappedResponse.DraftTitle, inputDto.DraftTitle);
         Assert.Equal(mappedResponse.CreatedDate, inputDto.CreatedDate);
         Assert.Equal(mappedResponse.ModifiedDate, inputDto.ModifiedDate);
         Assert.Equal(mappedResponse.Published, inputDto.Published);

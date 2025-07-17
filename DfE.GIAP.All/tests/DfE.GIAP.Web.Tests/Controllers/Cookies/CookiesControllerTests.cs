@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Web.Helpers.CookieManager;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.ViewModels;

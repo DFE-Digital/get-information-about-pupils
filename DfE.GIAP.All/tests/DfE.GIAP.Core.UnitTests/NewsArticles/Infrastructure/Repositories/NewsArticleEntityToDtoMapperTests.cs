@@ -31,12 +31,9 @@ public sealed class NewsArticleEntityToDtoMapperTests
         Assert.Equal(mappedResponse.id, inputEntity.Id.Value);
         Assert.Equal(mappedResponse.Title, inputEntity.Title);
         Assert.Equal(mappedResponse.Body, inputEntity.Body);
-        Assert.Equal(mappedResponse.DraftBody, inputEntity.DraftBody);
-        Assert.Equal(mappedResponse.DraftTitle, inputEntity.DraftTitle);
         Assert.Equal(mappedResponse.CreatedDate, inputEntity.CreatedDate);
         Assert.Equal(mappedResponse.ModifiedDate, inputEntity.ModifiedDate);
         Assert.Equal(mappedResponse.Published, inputEntity.Published);
         Assert.Equal(mappedResponse.Pinned, inputEntity.Pinned);
-        Assert.Equal(7, mappedResponse.DOCTYPE); // Temporary, to be removed when DocumentType is removed from DTOs
     }
 }

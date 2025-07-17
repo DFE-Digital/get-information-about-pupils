@@ -1,12 +1,11 @@
 ﻿using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Helpers.Consent;
 using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using NSubstitute;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Middleware;
@@ -18,14 +17,16 @@ public class ConsentRedirectMiddlewareTests
     {
         // Arrange
         var context = CreateContext(true);
-        var middleware = CreateMiddleware();
+        var sessionProvider = Substitute.For<ISessionProvider>();
+        sessionProvider.GetSessionValue(SessionKeys.ConsentKey).Returns((string)null);
+        var middleware = CreateMiddleware(sessionProvider);
 
         // Act
         await middleware.InvokeAsync(context);
 
         // Assert
-        Assert.True(context.Response.StatusCode == StatusCodes.Status302Found);
-        Assert.True(context.Response.Headers["location"].Equals(Routes.Application.Consent));
+        Assert.Equal(StatusCodes.Status302Found, context.Response.StatusCode);
+        Assert.Equal(Routes.Application.Consent, context.Response.Headers["location"]);
     }
 
     [Fact]
@@ -33,15 +34,16 @@ public class ConsentRedirectMiddlewareTests
     {
         // Arrange
         var context = CreateContext(true);
-        var middleware = CreateMiddleware();
-        ConsentHelper.SetConsent(context);
+        var sessionProvider = Substitute.For<ISessionProvider>();
+        sessionProvider.GetSessionValue(SessionKeys.ConsentKey).Returns(SessionKeys.ConsentValue);
+        var middleware = CreateMiddleware(sessionProvider);
 
         // Act
         await middleware.InvokeAsync(context);
 
         // Assert
-        Assert.False(context.Response.StatusCode == StatusCodes.Status302Found);
-        Assert.False(context.Response.Headers["location"].Equals("/Home"));
+        Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
+        Assert.DoesNotContain(Routes.Application.Consent, context.Response.Headers["location"].ToString());
     }
 
     [Fact]
@@ -58,14 +60,15 @@ public class ConsentRedirectMiddlewareTests
         endpointFeature.Endpoint.Returns(endpoint);
         context.Features.Set<IEndpointFeature>(endpointFeature);
 
-        var middleware = CreateMiddleware();
+        var sessionProvider = Substitute.For<ISessionProvider>();
+        var middleware = CreateMiddleware(sessionProvider);
 
         // Act
         await middleware.InvokeAsync(context);
 
         // Assert
-        Assert.False(context.Response.StatusCode == StatusCodes.Status302Found);
-        Assert.False(context.Response.Headers["location"].Equals("/Home"));
+        Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
+        Assert.DoesNotContain(Routes.Application.Consent, context.Response.Headers["location"].ToString());
     }
 
     [Fact]
@@ -73,34 +76,30 @@ public class ConsentRedirectMiddlewareTests
     {
         // Arrange
         var context = CreateContext(false);
-        var middleware = CreateMiddleware();
+        var sessionProvider = Substitute.For<ISessionProvider>();
+        var middleware = CreateMiddleware(sessionProvider);
 
         // Act
         await middleware.InvokeAsync(context);
 
         // Assert
-        Assert.False(context.Response.StatusCode == StatusCodes.Status302Found);
-        Assert.False(context.Response.Headers["location"].Equals("/Home"));
+        Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
+        Assert.DoesNotContain(Routes.Application.Consent, context.Response.Headers["location"].ToString());
     }
 
     private HttpContext CreateContext(bool isAuthenticated)
     {
-        var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[0], "fake"));
+        var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[0], isAuthenticated ? "fake" : null));
         HttpContext context = new DefaultHttpContext();
         context.Session = new TestSession();
-
-        if (isAuthenticated)
-        {
-            context.User = userPrincipal;
-        }
-
+        context.User = userPrincipal;
         return context;
     }
 
-    private ConsentRedirectMiddleware CreateMiddleware()
+    private ConsentRedirectMiddleware CreateMiddleware(ISessionProvider sessionProvider)
     {
         var requestDelegate = new RequestDelegate(
-            (innerContext) => Task.FromResult(0));
-        return new ConsentRedirectMiddleware(requestDelegate);
+            (innerContext) => Task.CompletedTask);
+        return new ConsentRedirectMiddleware(requestDelegate, sessionProvider);
     }
 }

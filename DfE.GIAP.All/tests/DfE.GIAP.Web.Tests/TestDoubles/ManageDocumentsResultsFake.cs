@@ -11,7 +11,7 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
         {
             return new ManageDocumentsViewModel
             {
-                DocumentList = new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
+                DocumentList = new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1 },
                 DocumentData = new CommonResponseBodyViewModel()
                 {
                     Title = "testTitle",
@@ -25,7 +25,7 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
         {
             return new ManageDocumentsViewModel
             {
-                DocumentList = new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
+                DocumentList = new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1 },
                 DocumentData = new CommonResponseBodyViewModel()
                 {
                     Title = "testTitle",
@@ -38,7 +38,7 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
         {
             return new ManageDocumentsViewModel
             {
-                DocumentList = new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1, IsEnabled = true },
+                DocumentList = new Document() { Id = 1, DocumentId = "TestNewsArticle", DocumentName = "Test News Articles", SortId = 1 },
                 DocumentData = new CommonResponseBodyViewModel()
                 {
                     Title = "testTitle",

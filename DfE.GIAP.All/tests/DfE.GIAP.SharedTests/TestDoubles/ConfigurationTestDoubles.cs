@@ -32,7 +32,9 @@ public static class ConfigurationTestDoubles
             ["RepositoryOptions:PrimaryKey"] = options.PrimaryKey,
             ["RepositoryOptions:DatabaseId"] = options.DatabaseId,
             ["RepositoryOptions:Containers:0:application-data:ContainerName"] = "application-data",
-            ["RepositoryOptions:Containers:0:application-data:PartitionKey"] = "/DOCTYPE"
+            ["RepositoryOptions:Containers:0:application-data:PartitionKey"] = "/DOCTYPE",
+            ["RepositoryOptions:Containers:1:news:ContainerName"] = "news",
+            ["RepositoryOptions:Containers:1:news:PartitionKey"] = "/id"
         };
         builder.WithConfiguration(configurationOptions);
         return builder;

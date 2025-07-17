@@ -12,8 +12,6 @@ internal sealed class MapNewsArticleDtoToArticleTestMapper : IMapper<NewsArticle
             Body = input.Body,
             Pinned = input.Pinned,
             Published = input.Published,
-            DraftTitle = input.DraftTitle,
-            DraftBody = input.DraftBody,
             CreatedDate = input.CreatedDate,
             ModifiedDate = input.ModifiedDate
         };
