@@ -9,13 +9,13 @@ public sealed class Pupil : Entity<PupilId>
     private const string MaskedPupilMarker = "*************";
     private readonly UniquePupilNumber _uniquePupilNumber;
     private readonly DateTime? _dateOfBirth;
-    private readonly MyPupilsAuthorisationContext _authorisationContext;
+    private readonly PupilAuthorisationContext _authorisationContext;
 
     public Pupil(
         PupilId identifier,
         UniquePupilNumber uniquePupilNumber,
         DateTime? dateOfBirth,
-        MyPupilsAuthorisationContext authorisationContext)
+        PupilAuthorisationContext authorisationContext)
         : base(identifier)
     {
         _uniquePupilNumber = uniquePupilNumber;

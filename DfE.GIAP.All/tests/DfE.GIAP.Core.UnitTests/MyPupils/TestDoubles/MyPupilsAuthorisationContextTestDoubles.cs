@@ -4,33 +4,33 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class MyPupilsAuthorisationContextTestDoubles
 {
-    internal static MyPupilsAuthorisationContext Default()
+    internal static PupilAuthorisationContext Default()
         => Generate(
             low: 5,
             high: 18,
             isAdministrator: false);
 
-    internal static MyPupilsAuthorisationContext GenerateWithNotSetAgeRange()
+    internal static PupilAuthorisationContext GenerateWithNotSetAgeRange()
         => Generate(
             low: 0,
             high: 0,
             isAdministrator: false);
 
-    internal static MyPupilsAuthorisationContext GenerateAsAdminisrativeUser()
+    internal static PupilAuthorisationContext GenerateAsAdminisrativeUser()
         => Generate(
             low: 5,
             high: 6,
             isAdministrator: true);
 
-    internal static MyPupilsAuthorisationContext Generate(
+    internal static PupilAuthorisationContext Generate(
         int low,
         int high,
         bool isAdministrator)
     {
         UserRole userRole = new(isAdministrator);
 
-        return new MyPupilsAuthorisationContext(
-            new AgeRange(low, high),
+        return new PupilAuthorisationContext(
+            new AgeLimit(low, high),
             userRole);
     }
 }

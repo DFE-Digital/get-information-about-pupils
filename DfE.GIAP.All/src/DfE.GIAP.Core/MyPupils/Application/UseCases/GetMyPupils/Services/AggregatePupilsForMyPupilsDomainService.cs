@@ -12,7 +12,7 @@ internal sealed class AggregatePupilsForMyPupilsDomainService : IAggregatePupils
 
     public Task<IEnumerable<Pupil>> GetPupilsAsync(
         IEnumerable<UniquePupilNumber> upns,
-        MyPupilsAuthorisationContext authorisationContext)
+        PupilAuthorisationContext authorisationContext)
     {
         // Call Cognitive Search abstraction for Types,
         // Create Domain Pupil either via Mapper, using authorisationContext.ShouldMaskPupil()

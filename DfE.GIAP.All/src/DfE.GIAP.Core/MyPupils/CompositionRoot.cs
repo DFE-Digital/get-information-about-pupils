@@ -40,7 +40,7 @@ public static class CompositionRoot
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, PupilItemPresentationModel>, MapPupilToPupilPresentationModel>()
-            .AddSingleton<IMapper<IAuthorisationContext, MyPupilsAuthorisationContext>, AuthorisationContextToMyPupilsAuthorisationContextMapper>();
+            .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, AuthorisationContextToMyPupilsAuthorisationContextMapper>();
 
         return services;
     }

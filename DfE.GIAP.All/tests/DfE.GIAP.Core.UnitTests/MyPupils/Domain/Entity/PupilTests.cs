@@ -13,7 +13,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Default();
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Default();
 
         Pupil pupil = PupilBuilder.CreateBuilder(upn, context)
             .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthThatHasAlreadyOccuredThisYear()) // Birthday already occurred this year
@@ -32,7 +32,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Default();
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Default();
 
         Pupil pupil = PupilBuilder.CreateBuilder(upn, context)
             .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthThatHasNotOccuredYetThisYear())
@@ -51,7 +51,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Default();
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Default();
 
         Pupil pupil = // Do not supply a DateOfBirth
             PupilBuilder.CreateBuilder(upn, context)
@@ -70,7 +70,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Generate(
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Generate(
             low: 5,
             high: 19,
             isAdministrator: false);
@@ -92,7 +92,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Generate(
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Generate(
             low: 5,
             high: 19,
             isAdministrator: false);
@@ -113,7 +113,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Generate(
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.Generate(
             low: 5,
             high: 19,
             isAdministrator: false);
@@ -135,7 +135,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.GenerateWithNotSetAgeRange();
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.GenerateWithNotSetAgeRange();
 
         Pupil pupil = PupilBuilder
             .CreateBuilder(upn, context)
@@ -154,7 +154,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        MyPupilsAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.GenerateAsAdminisrativeUser();
+        PupilAuthorisationContext context = MyPupilsAuthorisationContextTestDoubles.GenerateAsAdminisrativeUser();
 
         Pupil pupil = PupilBuilder
             .CreateBuilder(upn, context)

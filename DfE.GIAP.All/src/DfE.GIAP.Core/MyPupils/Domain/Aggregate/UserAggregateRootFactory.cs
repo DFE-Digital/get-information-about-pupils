@@ -11,12 +11,12 @@ internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
 {
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IAggregatePupilsForMyPupilsDomainService _aggregatePupilsForMyPupilDomainService;
-    private readonly IMapper<IAuthorisationContext, MyPupilsAuthorisationContext> _mapApplicationAuthorisationToMyPupilsAuthorisationContext;
+    private readonly IMapper<IAuthorisationContext, PupilAuthorisationContext> _mapApplicationAuthorisationToMyPupilsAuthorisationContext;
 
     public UserAggregateRootFactory(
         IUserReadOnlyRepository userReadOnlyRepository,
         IAggregatePupilsForMyPupilsDomainService aggregatePupilsForMyPupilDomainService,
-        IMapper<IAuthorisationContext, MyPupilsAuthorisationContext> mapApplicationAuthorisationToMyPupilsAuthorisationContext)
+        IMapper<IAuthorisationContext, PupilAuthorisationContext> mapApplicationAuthorisationToMyPupilsAuthorisationContext)
     {
         ArgumentNullException.ThrowIfNull(userReadOnlyRepository);
         ArgumentNullException.ThrowIfNull(aggregatePupilsForMyPupilDomainService);
@@ -32,7 +32,7 @@ internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
 
         User user = await _userReadOnlyRepository.GetUserByIdAsync(identfiier, authorisationContext);
 
-        MyPupilsAuthorisationContext myPupilsAuthorisationContext = _mapApplicationAuthorisationToMyPupilsAuthorisationContext.Map(authorisationContext);
+        PupilAuthorisationContext myPupilsAuthorisationContext = _mapApplicationAuthorisationToMyPupilsAuthorisationContext.Map(authorisationContext);
 
         IEnumerable<UniquePupilNumber> myPupilUpns = user.MyPupilsIds.Distinct();
         IEnumerable<Pupil> myPupils = await _aggregatePupilsForMyPupilDomainService.GetPupilsAsync(myPupilUpns,myPupilsAuthorisationContext);

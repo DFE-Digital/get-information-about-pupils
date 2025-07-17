@@ -6,13 +6,13 @@ namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal sealed class PupilBuilder
 {
     private readonly UniquePupilNumber _upn;
-    private readonly MyPupilsAuthorisationContext _authorisationContext;
+    private readonly PupilAuthorisationContext _authorisationContext;
     private PupilId? _id;
     private DateTime? _dateOfBirth;
 
     private PupilBuilder(
         UniquePupilNumber upn,
-        MyPupilsAuthorisationContext context)
+        PupilAuthorisationContext context)
     {
         _upn = upn;
         _authorisationContext = context;
@@ -38,7 +38,7 @@ internal sealed class PupilBuilder
             _authorisationContext);
     internal static PupilBuilder CreateBuilder(
         UniquePupilNumber upn,
-        MyPupilsAuthorisationContext authorisationContext)
+        PupilAuthorisationContext authorisationContext)
     {
         return new PupilBuilder(upn, authorisationContext);
     }

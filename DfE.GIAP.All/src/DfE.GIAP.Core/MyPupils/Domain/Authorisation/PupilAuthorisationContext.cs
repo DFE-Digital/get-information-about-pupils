@@ -2,13 +2,13 @@
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Authorisation;
-public record MyPupilsAuthorisationContext
+public record PupilAuthorisationContext
 {
-    private readonly AgeRange _authorisedAgeRange;
+    private readonly AgeLimit _authorisedAgeRange;
     private readonly UserRole _userRole;
 
-    public MyPupilsAuthorisationContext(
-        AgeRange AgeRange,
+    public PupilAuthorisationContext(
+        AgeLimit AgeRange,
         UserRole role)
     {
         _authorisedAgeRange = AgeRange;
@@ -26,7 +26,7 @@ public record MyPupilsAuthorisationContext
             return false;
         }
 
-        if (_authorisedAgeRange.IsDefaultedRange) // RBAC rules don't apply and should not be masked
+        if (_authorisedAgeRange.IsDefaultLimit) // RBAC rules don't apply and should not be masked
         {
             return false;
         }

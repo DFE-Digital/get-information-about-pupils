@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+﻿namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class DateTimeTestDoubles
 {
     internal static DateTime GenerateDateOfBirthForAgeOf(int age)
