@@ -36,6 +36,7 @@ public sealed class UserAggregateRootFactoryTests
     [Fact]
     public void Constructor_ThrowsException_When_AggregatePupilService_Is_Null()
     {
+        // Arrange
         Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = new();
         Mock<IMapper<IAuthorisationContext, PupilAuthorisationContext>> mockMapper = MapperTestDoubles.Default<IAuthorisationContext, PupilAuthorisationContext>();
 

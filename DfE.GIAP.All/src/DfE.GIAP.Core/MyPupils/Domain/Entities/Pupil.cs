@@ -29,6 +29,8 @@ public sealed class Pupil : Entity<PupilId>
             ? MaskedPupilMarker :
                 _uniquePupilNumber.Value;
 
+    public DateTime? DateOfBirth => _dateOfBirth;
+
     internal bool TryCalculateAge(out int? calculatedAge)
     {
         calculatedAge = null;

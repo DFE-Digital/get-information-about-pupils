@@ -20,7 +20,8 @@ public static class CompositionRoot
 
         services
             .AddMyPupilsDomain()
-            .AddMyPupilsApplication();
+            .AddMyPupilsApplication()
+            .AddMyPupilsInfrastructure();
 
         return services;
     }
@@ -29,8 +30,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IAggregatePupilsForMyPupilsDomainService, AggregatePupilsForMyPupilsDomainService>()
-            .AddSingleton<IUserAggregateRootFactory, UserAggregateRootFactory>()
-            .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>();
+            .AddSingleton<IUserAggregateRootFactory, UserAggregateRootFactory>();
 
         return services;
     }
@@ -40,8 +40,16 @@ public static class CompositionRoot
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, PupilItemPresentationModel>, MapPupilToPupilPresentationModel>()
-            .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, AuthorisationContextToMyPupilsAuthorisationContextMapper>();
+            .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, MapAuthorisationContextToMyPupilsAuthorisationContextMapper>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddMyPupilsInfrastructure(this IServiceCollection services)
+    {
+        services
+            .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
+            .AddSingleton<IMapper<UserProfileDto, User>, MapUserProfileDtoToUserMapper>();
         return services;
     }
 }

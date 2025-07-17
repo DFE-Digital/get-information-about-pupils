@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
-public sealed class UserProfileDtoToUserMapper : IMapper<UserProfileDto, User>
+public sealed class MapUserProfileDtoToUserMapper : IMapper<UserProfileDto, User>
 {
     public User Map(UserProfileDto dto)
     {
