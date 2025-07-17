@@ -22,7 +22,7 @@ public class ConsentRedirectMiddlewareTests
         var middleware = CreateMiddleware(sessionProvider);
 
         // Act
-        await middleware.InvokeAsync(context);
+        await middleware.InvokeAsync(context, sessionProvider);
 
         // Assert
         Assert.Equal(StatusCodes.Status302Found, context.Response.StatusCode);
@@ -39,7 +39,7 @@ public class ConsentRedirectMiddlewareTests
         var middleware = CreateMiddleware(sessionProvider);
 
         // Act
-        await middleware.InvokeAsync(context);
+        await middleware.InvokeAsync(context, sessionProvider);
 
         // Assert
         Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
@@ -64,7 +64,7 @@ public class ConsentRedirectMiddlewareTests
         var middleware = CreateMiddleware(sessionProvider);
 
         // Act
-        await middleware.InvokeAsync(context);
+        await middleware.InvokeAsync(context, sessionProvider);
 
         // Assert
         Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
@@ -80,7 +80,7 @@ public class ConsentRedirectMiddlewareTests
         var middleware = CreateMiddleware(sessionProvider);
 
         // Act
-        await middleware.InvokeAsync(context);
+        await middleware.InvokeAsync(context, sessionProvider);
 
         // Assert
         Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
@@ -100,6 +100,6 @@ public class ConsentRedirectMiddlewareTests
     {
         var requestDelegate = new RequestDelegate(
             (innerContext) => Task.CompletedTask);
-        return new ConsentRedirectMiddleware(requestDelegate, sessionProvider);
+        return new ConsentRedirectMiddleware(requestDelegate);
     }
 }

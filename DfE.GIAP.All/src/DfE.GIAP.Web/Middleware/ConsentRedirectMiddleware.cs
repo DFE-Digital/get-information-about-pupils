@@ -8,15 +8,13 @@ namespace DfE.GIAP.Web.Middleware;
 public class ConsentRedirectMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ISessionProvider _sessionProvider;
 
-    public ConsentRedirectMiddleware(RequestDelegate next, ISessionProvider sessionProvider)
+    public ConsentRedirectMiddleware(RequestDelegate next)
     {
         _next = next;
-        _sessionProvider = sessionProvider;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ISessionProvider sessionProvider)
     {
         HttpRequest request = context.Request;
         HttpResponse response = context.Response;
@@ -30,7 +28,7 @@ public class ConsentRedirectMiddleware
             {
                 // TODO: Why are we using "yes" ?
                 // Check if consent key is missing or its value is not "yes"
-                string consentValue = _sessionProvider.GetSessionValue(SessionKeys.ConsentKey);
+                string consentValue = sessionProvider.GetSessionValue(SessionKeys.ConsentKey);
                 if (!string.Equals(consentValue, SessionKeys.ConsentValue, StringComparison.OrdinalIgnoreCase))
                 {
                     response.Redirect(Routes.Application.Consent);
