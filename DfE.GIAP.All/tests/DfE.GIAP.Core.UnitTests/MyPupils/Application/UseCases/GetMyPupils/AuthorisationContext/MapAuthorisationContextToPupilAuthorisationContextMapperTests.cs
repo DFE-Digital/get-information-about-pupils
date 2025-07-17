@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
-public sealed class MapAuthorisationContextToPupilAuthorisationContextTests
+public sealed class MapAuthorisationContextToPupilAuthorisationContextMapperTests
 {
 
     [Theory]
