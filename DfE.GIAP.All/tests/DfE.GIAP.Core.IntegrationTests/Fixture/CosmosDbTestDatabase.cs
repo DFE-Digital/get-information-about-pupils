@@ -82,12 +82,22 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
         return output;
     }
 
-    public async Task<IEnumerable<T?>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
+    public async Task<IEnumerable<T>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
     {
-        return (await ReadManyAsync<T>())
-            .Where(t
-                => identifiers.Contains(
-                    ExtractDocumentIdFromDto(t)));
+        IEnumerable<T> results = await ReadManyAsync<T>();
+        IEnumerable<string> resultIdentifiers = results.Select(ExtractDocumentIdFromDto<T>);
+
+
+        List<string> missingIdentifiers = identifiers.Except(resultIdentifiers).ToList();
+        if (missingIdentifiers.Any())
+        {
+            throw new ArgumentException($"Unable to find identifier(s): {string.Join(", ", missingIdentifiers)}");
+        }
+
+        IEnumerable<T> matchingResults = results.Where(t => identifiers.Contains(ExtractDocumentIdFromDto(t)));
+
+        return matchingResults;
+
     }
 
     public async Task WriteItemAsync<T>(T item) where T : class
