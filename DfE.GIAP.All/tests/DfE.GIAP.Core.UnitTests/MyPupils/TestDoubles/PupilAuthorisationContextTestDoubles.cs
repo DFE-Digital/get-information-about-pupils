@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
-internal static class MyPupilsAuthorisationContextTestDoubles
+internal static class PupilAuthorisationContextTestDoubles
 {
     internal static PupilAuthorisationContext Default()
         => Generate(

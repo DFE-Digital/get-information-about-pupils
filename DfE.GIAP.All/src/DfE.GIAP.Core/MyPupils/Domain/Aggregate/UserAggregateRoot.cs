@@ -14,7 +14,8 @@ public sealed class UserAggregateRoot : AggregateRoot<UserId>
         _myPupils = myPupils?.ToList() ?? [];
     }
 
-    public IEnumerable<Pupil> GetMyPupils() => _myPupils;
+    public IEnumerable<Pupil> GetMyPupils()
+        => _myPupils.Distinct();
 
     // TODO consider actions to delete will need identifiers attached to each item (what is it currently doing?)
     public void AddPupilToMyPupils(Pupil pupil)
