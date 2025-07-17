@@ -9,6 +9,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -23,15 +24,42 @@ namespace DfE.GIAP.Web.Tests.Controllers.Consent;
 public sealed class ConsentControllerTests
 {
     [Fact]
-    public void Constructor_Throws_When_ConstructedWithNullOptions()
+    public void Constructor_Throws_When_ConstructedWithNullSessionProvider()
     {
         // Arrange
+        IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<ICookieManager> mockCookieManager = new();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
 
         // Act
-        Func<ConsentController> construct = () => new ConsentController(null!, mockCookieManager.Object, mockUseCase.Object, mockMapper.Object);
+        Func<ConsentController> construct = () => new ConsentController(
+            null!,
+            options,
+            mockCookieManager.Object,
+            mockUseCase.Object,
+            mockMapper.Object);
+
+        // Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_ConstructedWithNullOptions()
+    {
+        // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
+        Mock<ICookieManager> mockCookieManager = new();
+        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
+        Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
+
+        // Act
+        Func<ConsentController> construct = () => new ConsentController(
+            mockSessionProvider.Object,
+            null!,
+            mockCookieManager.Object,
+            mockUseCase.Object,
+            mockMapper.Object);
 
         // Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -41,13 +69,19 @@ public sealed class ConsentControllerTests
     public void Constructor_Throws_When_ConstructedWithNullOptionsValue()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptionsWithNullValue<AzureAppSettings>();
         Mock<ICookieManager> mockCookieManager = new();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
 
         // Act
-        Func<ConsentController> construct = () => new ConsentController(options, mockCookieManager.Object, mockUseCase.Object, mockMapper.Object);
+        Func<ConsentController> construct = () => new ConsentController(
+            mockSessionProvider.Object,
+            options,
+            mockCookieManager.Object,
+            mockUseCase.Object,
+            mockMapper.Object);
 
         // Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -57,12 +91,18 @@ public sealed class ConsentControllerTests
     public void Constructor_Throws_When_ConstructedWithNullCookieManager()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
 
         // Act
-        Func<ConsentController> construct = () => new ConsentController(options, null!, mockUseCase.Object, mockMapper.Object);
+        Func<ConsentController> construct = () => new ConsentController(
+            mockSessionProvider.Object,
+            options,
+            null!,
+            mockUseCase.Object,
+            mockMapper.Object);
 
         // Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -72,12 +112,18 @@ public sealed class ConsentControllerTests
     public void Constructor_Throws_When_ConstructedWithNullUseCase()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
         Mock<ICookieManager> mockCookieManager = new();
 
         // Act
-        Func<ConsentController> construct = () => new ConsentController(options, mockCookieManager.Object, null!, mockMapper.Object);
+        Func<ConsentController> construct = () => new ConsentController(
+            mockSessionProvider.Object,
+            options,
+            mockCookieManager.Object,
+            null!,
+            mockMapper.Object);
 
         // Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -87,12 +133,18 @@ public sealed class ConsentControllerTests
     public void Constructor_Throws_When_ConstructedWithNullMapper()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
         Mock<ICookieManager> mockCookieManager = new();
 
         // Act
-        Func<ConsentController> construct = () => new ConsentController(options, mockCookieManager.Object, mockUseCase.Object, null!);
+        Func<ConsentController> construct = () => new ConsentController(
+            mockSessionProvider.Object,
+            options,
+            mockCookieManager.Object,
+            mockUseCase.Object,
+            null!);
 
         // Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -102,6 +154,7 @@ public sealed class ConsentControllerTests
     public async Task GetIndex_Throws_When_ContentIsNull()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         GetContentByPageKeyUseCaseResponse response = new(Content: null);
         IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
@@ -112,16 +165,22 @@ public sealed class ConsentControllerTests
 
         Mock<ICookieManager> mockCookieManager = new();
 
-        ConsentController controller = new(options, mockCookieManager.Object, mockUseCase.Object, mockMapper.Object);
+        ConsentController controller = new(
+            mockSessionProvider.Object,
+            options,
+            mockCookieManager.Object,
+            mockUseCase.Object,
+            mockMapper.Object);
 
         // Act Assert
         await Assert.ThrowsAsync<ArgumentException>(() => controller.Index());
     }
 
     [Fact]
-    public async Task GetIndex_Returns_ConsentView_And_SetsCookie_When_SessionIdStorageDisabled()
+    public async Task GetIndex_Returns_ConsentView_And_SetsCookie_When_SessionIdStorageEnabled()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = true);
         Content content = ContentTestDoubles.Default();
         GetContentByPageKeyUseCaseResponse response = new(content);
@@ -139,8 +198,8 @@ public sealed class ConsentControllerTests
                 (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
             .ReturnsAsync(response);
 
-
         ConsentController controller = new(
+            mockSessionProvider.Object,
             options,
             mockCookieManager.Object,
             mockUseCase.Object,
@@ -171,11 +230,11 @@ public sealed class ConsentControllerTests
             (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
     }
 
-
     [Fact]
     public async Task GetIndex_Returns_ConsentView_And_DoesNotSetCookie_When_SessionIdStorageDisabled()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = false);
         Content content = ContentTestDoubles.Default();
         GetContentByPageKeyUseCaseResponse response = new(content);
@@ -193,8 +252,8 @@ public sealed class ConsentControllerTests
                 (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()))
             .ReturnsAsync(response);
 
-
         ConsentController controller = new(
+            mockSessionProvider.Object,
             options,
             mockCookieManager.Object,
             mockUseCase.Object,
@@ -226,18 +285,18 @@ public sealed class ConsentControllerTests
             (t) => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
     }
 
-    // TODO current consent controller does not guard for null ConsentController.PostIndex -> ConsentViewModel
-
     [Fact]
     public void PostIndex_ReturnViewResultError_When_ConsentNotGiven()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
         Mock<ICookieManager> mockCookieManager = new();
 
         ConsentController controller = new(
+            mockSessionProvider.Object,
             options,
             mockCookieManager.Object,
             mockUseCase.Object,
@@ -259,18 +318,24 @@ public sealed class ConsentControllerTests
         Assert.NotNull(viewModel);
         Assert.False(viewModel.ConsentGiven);
         Assert.True(viewModel.HasError);
+
+        // Ensure session is not set
+        mockSessionProvider.Verify(
+            s => s.SetSessionValue(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     public void PostIndex_RedirectsToHome_When_ConsentGiven()
     {
         // Arrange
+        var mockSessionProvider = new Mock<ISessionProvider>();
         IOptions<AzureAppSettings> options = OptionsTestDoubles.Default<AzureAppSettings>();
         Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
         Mock<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>> mockMapper = new();
         Mock<ICookieManager> mockCookieManager = new();
 
         ConsentController controller = new(
+            mockSessionProvider.Object,
             options,
             mockCookieManager.Object,
             mockUseCase.Object,
@@ -291,5 +356,9 @@ public sealed class ConsentControllerTests
         RedirectResult? redirectResult = result as RedirectResult;
         Assert.NotNull(redirectResult);
         Assert.Equal(Routes.Application.Home, redirectResult.Url);
+
+        // Ensure session is set
+        mockSessionProvider.Verify(
+            s => s.SetSessionValue(SessionKeys.ConsentKey, SessionKeys.ConsentValue), Times.Once);
     }
 }
