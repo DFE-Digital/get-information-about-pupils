@@ -20,13 +20,13 @@ using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.ViewModels;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
+using DfE.GIAP.Web.Providers.NewsBanner;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -82,6 +82,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
         services.AddScoped<ISessionProvider, SessionProvider>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
+        services.AddScoped<INewsBannerProvider, NewsBannerProvider>();
+
         return services;
     }
 
