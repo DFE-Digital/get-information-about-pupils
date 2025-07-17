@@ -9,11 +9,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.DSIUser;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.IO;
-using System.Linq;
 using System.Net.Mime;
-using System.Threading.Tasks;
 
 namespace DfE.GIAP.Web.Controllers.PreparedDownload;
 

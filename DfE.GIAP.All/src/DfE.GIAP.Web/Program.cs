@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Contents;
@@ -27,7 +28,8 @@ builder.Services
     .AddFormOptionsConfiguration()
     .AddApplicationInsightsTelemetry()
     .AddAllServices()
-    .AddClarity(configuration)
+    .AddSettings<ClaritySettings>(configuration, "Clarity")
+    .AddSettings<GoogleTagManager>(configuration, "GoogleTagManager")
     .AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
