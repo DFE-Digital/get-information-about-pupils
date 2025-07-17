@@ -124,8 +124,6 @@ public sealed class UserAggregateRootFactoryTests
 
         List<Pupil> pupils = result.GetMyPupils().ToList();
         Assert.Equal(3, pupils.Count);
-        Assert.Equal(stubPupil1, pupils[0]);
-        Assert.Equal(stubPupil2, pupils[1]);
-        Assert.Equal(stubPupil3, pupils[2]);
+        Assert.Equivalent(pupils, new[] { stubPupil1, stubPupil2, stubPupil3 } );
     }
 }
