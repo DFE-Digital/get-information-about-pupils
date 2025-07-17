@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
-using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
@@ -56,10 +55,9 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
                 FeedResponse<dynamic> queriedItem = await queryIterator.ReadNextAsync();
                 foreach (dynamic item in queriedItem)
                 {
-                    string id = item.id.ToString();
-                    PartitionKey partitionKey = new((int)item.DOCTYPE); // TODO currently hardcoded to application-data partitionKey.
-
-                    deleteTasks.Add(container.Container.DeleteItemAsync<dynamic>(id, partitionKey));
+                    JObject itemObject = JObject.FromObject(item);
+                    (string id, PartitionKey pk) = ExtractDocumentQueryValues(container, itemObject);
+                    deleteTasks.Add(container.Container.DeleteItemAsync<dynamic>(id, pk));
                 }
             }
             await Task.WhenAll(deleteTasks);
@@ -71,12 +69,10 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task<IEnumerable<T>> ReadManyAsync<T>() where T : class
     {
-        ContainerResponse targetContainer = await GetApplicationDataContainer();
-
-        int partitionKey = ExtractApplicationDataPartitionKey<T>();
+        ContainerResponse targetContainer = await GetTargetContainer<T>();
 
         List<T> output = [];
-        QueryDefinition queryDefinition = new($"SELECT * FROM c WHERE c.DOCTYPE = {partitionKey}");
+        QueryDefinition queryDefinition = new($"SELECT * FROM c");
         FeedIterator<T> iterator = targetContainer.Container.GetItemQueryIterator<T>(queryDefinition);
         while (iterator.HasMoreResults)
         {
@@ -85,36 +81,32 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
         }
         return output;
     }
-    public async Task<IEnumerable<T?>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
-    {
-        ContainerResponse targetContainer = await GetApplicationDataContainer();
-        int partitionKey = ExtractApplicationDataPartitionKey<T>();
-        IEnumerable<Task<T?>> readTasks = identifiers.Select(async (id) =>
-        {
-            try
-            {
-                ItemResponse<T> response = await targetContainer.Container.ReadItemAsync<T>(id, new PartitionKey(partitionKey));
-                return response.Resource;
-            }
-            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-            {
-                // Item not found, return null TODO consider NullObject
-                return null;
-            }
-        });
 
-        return await Task.WhenAll(readTasks);
+    public async Task<IEnumerable<T>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
+    {
+        IEnumerable<T> results = await ReadManyAsync<T>();
+        IEnumerable<string> resultIdentifiers = results.Select(ExtractDocumentIdFromDto<T>);
+
+
+        List<string> missingIdentifiers = identifiers.Except(resultIdentifiers).ToList();
+        if (missingIdentifiers.Any())
+        {
+            throw new ArgumentException($"Unable to find identifier(s): {string.Join(", ", missingIdentifiers)}");
+        }
+
+        IEnumerable<T> matchingResults = results.Where(t => identifiers.Contains(ExtractDocumentIdFromDto(t)));
+
+        return matchingResults;
+
     }
 
     public async Task WriteItemAsync<T>(T item) where T : class
     {
-        ContainerResponse targetContainer = await GetApplicationDataContainer();
+        ContainerResponse targetContainer = await GetTargetContainer<T>();
 
-        PartitionKey documentPartitionKey = new((item as dynamic).DOCTYPE);
+        (string documentId, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(item));
 
         await CreateItemInternalAsync(item, targetContainer);
-
-        string documentId = ExtractDocumentId(item);
 
         await EnsureItemIsQueryableAsync<T>(
                 targetContainer.Container,
@@ -125,7 +117,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
     public async Task WriteManyAsync<T>(IEnumerable<T> items) where T : class
     {
-        ContainerResponse container = await GetApplicationDataContainer();
+        ContainerResponse container = await GetTargetContainer<T>();
 
         await Task.WhenAll(
             items.Select(
@@ -133,39 +125,39 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
 
         await Task.WhenAll(
             items.Select(
-                (item) => EnsureItemIsQueryableAsync<T>(
-                    container,
-                    ExtractDocumentId(item),
-                    ExtractPartitionKey(item))));
+                (item) =>
+                {
+                    (string id, PartitionKey key) = ExtractDocumentQueryValues(container, JObject.FromObject(item));
+
+                    return EnsureItemIsQueryableAsync<T>(
+                        container,
+                        id,
+                        key);
+                }
+                ));
     }
 
-    private async Task<ContainerResponse> GetApplicationDataContainer()
+    private async Task<ContainerResponse> GetTargetContainer<T>()
     {
-        DatabaseResponse db = await CreateDatabase(_cosmosClient);
-        List<ContainerResponse> containers = await CreateAllContainers(db);
-        ContainerResponse targetContainer = containers.Single((container) => container.Container.Id == ApplicationDataContainerName);
-        return targetContainer;
-    }
-
-    private static int ExtractApplicationDataPartitionKey<T>() where T : class // DOCTYPE
-    {
-        // TODO Temp to query without point-reading ability (on id) - PartitionKey value needs to be passed as part of query
-        // TODO make partition key or config - configurable not pinned to application-data-container e.g
-        Dictionary<string, int> typeToPartitionKeyMap = new()
+        Dictionary<Type, string> typeToContainerNameMap = new()
         {
-            { nameof(NewsArticleDto), 7 },
-            { nameof(ContentDto), 20 }
+            {  typeof(NewsArticleDto), "news" }
         };
 
-        return typeToPartitionKeyMap[typeof(T).Name];
+        DatabaseResponse db = await CreateDatabase(_cosmosClient);
+        List<ContainerResponse> containers = await CreateAllContainers(db);
+
+        typeToContainerNameMap.TryGetValue(typeof(T), out string? containerName);
+
+        string targetContainer = containerName ?? ApplicationDataContainerName; // Default back to ApplicationData
+        return containers.Single((container) => container.Container.Id == targetContainer);
     }
 
-    private static string ExtractDocumentId<T>(T obj) where T : class
+    private static string ExtractDocumentIdFromDto<T>(T obj) where T : class
         => JObject.FromObject(obj)
                 .GetValue("id")?
                 .ToString() ?? throw new ArgumentException("Unable to find id on written document");
 
-    private static PartitionKey ExtractPartitionKey<T>(T obj) where T : class => new((obj as dynamic).DOCTYPE);
 
     private static async Task<DatabaseResponse> CreateDatabase(CosmosClient client)
     {
@@ -177,20 +169,52 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(database);
         List<ContainerResponse> containerResponses = [];
-        ContainerResponse response = await database.CreateContainerIfNotExistsAsync(new ContainerProperties()
+
+        // TODO hardcoded Container -> PartitionKey relationships
+        ContainerResponse applicationData = await database.CreateContainerIfNotExistsAsync(new ContainerProperties()
         {
             Id = ApplicationDataContainerName,
-            PartitionKeyPath = "/DOCTYPE", // TODO hardcoded AND assumes there is a single partitionkey per logical partition
+            PartitionKeyPath = "/DOCTYPE",
         });
-        containerResponses.Add(response);
+
+        ContainerResponse news = await database.CreateContainerIfNotExistsAsync(new ContainerProperties()
+        {
+            Id = "news",
+            PartitionKeyPath = "/id",
+        });
+        containerResponses.Add(applicationData);
+        containerResponses.Add(news);
         return containerResponses;
     }
 
-    private static async Task CreateItemInternalAsync<T>(T obj, Container container) where T : class
+    private static async Task CreateItemInternalAsync<T>(T obj, ContainerResponse container) where T : class
     {
-        PartitionKey partitionKey = new((obj as dynamic).DOCTYPE);
-        ItemResponse<T> response = await container.CreateItemAsync(obj, partitionKey);
+        (string id, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(container, JObject.FromObject(obj));
+        ItemResponse<T> response = await container.Container.CreateItemAsync(obj, documentPartitionKey);
         Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
+    }
+
+    private static string ExtractPartitionKeyForContainer(ContainerResponse container)
+    {
+        string partitionKeyPath = container.Resource.PartitionKeyPath; // e.g., "/application-data"
+        string partitionKeyProperty = partitionKeyPath.TrimStart('/');
+        return partitionKeyProperty;
+    }
+
+    private static (string id, PartitionKey) ExtractDocumentQueryValues(ContainerResponse container, JObject document)
+    {
+        string containerPartitionKey = ExtractPartitionKeyForContainer(container);
+
+        string id = document["id"]?.ToString() ?? throw new ArgumentException("Could not find id on object");
+
+        JToken partitionKeyValue = document[containerPartitionKey] ??
+            throw new ArgumentException($"Could not find partitionkey {containerPartitionKey} on object");
+
+        PartitionKey partitionKey = container.Container.Id == ApplicationDataContainerName ?
+            new PartitionKey(partitionKeyValue.Value<int>()) :
+                new PartitionKey(partitionKeyValue.ToString());
+
+        return (id, partitionKey);
     }
 
 

@@ -38,8 +38,6 @@ public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleReq
             Id = NewsArticleIdentifier.New(),
             Title = request.Title,
             Body = request.Body,
-            DraftBody = string.Empty,
-            DraftTitle = string.Empty,
             CreatedDate = DateTime.UtcNow,
             ModifiedDate = DateTime.UtcNow,
             Published = request.Published,

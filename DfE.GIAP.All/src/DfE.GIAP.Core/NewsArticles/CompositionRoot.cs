@@ -54,8 +54,8 @@ public static class CompositionRoot
     {
         return services
             .AddTemporaryCosmosClient()
-            .AddScoped<INewsArticleReadRepository, TempNewsArticleReadRepository>() // TODO: Swap with CosmosNewsArticleReadRepository when ready
-            .AddScoped<INewsArticleWriteRepository, TempNewsArticleWriteRepository>(); // TODO: Swap with CosmosNewsArticleWriteRepository when ready
+            .AddScoped<INewsArticleReadRepository, CosmosNewsArticleReadRepository>()
+            .AddScoped<INewsArticleWriteRepository, CosmosNewsArticleWriteRepository>();
     }
 
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
