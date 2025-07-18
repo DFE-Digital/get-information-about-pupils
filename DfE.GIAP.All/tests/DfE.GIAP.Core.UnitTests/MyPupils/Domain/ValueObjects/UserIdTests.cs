@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
-public class UserIdTests
+public sealed class UserIdTests
 {
     [Fact]
     public void Constructor_WithValidId_SetsValueCorrectly()
@@ -13,7 +13,7 @@ public class UserIdTests
         UserId userId = new(input);
 
         // Assert
-        Assert.Equal("user-123", userId.Value);
+        Assert.Equal(input, userId.Value);
     }
 
     [Theory]
