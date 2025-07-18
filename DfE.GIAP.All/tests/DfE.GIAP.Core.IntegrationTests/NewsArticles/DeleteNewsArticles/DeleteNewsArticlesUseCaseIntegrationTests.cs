@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
 [Collection(IntegrationTestCollectionMarker.Name)]

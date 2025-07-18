@@ -4,9 +4,9 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationConte
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 using User = DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository.User;
 

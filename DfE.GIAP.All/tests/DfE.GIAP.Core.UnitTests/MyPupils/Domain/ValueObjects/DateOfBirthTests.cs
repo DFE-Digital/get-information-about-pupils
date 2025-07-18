@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
 
