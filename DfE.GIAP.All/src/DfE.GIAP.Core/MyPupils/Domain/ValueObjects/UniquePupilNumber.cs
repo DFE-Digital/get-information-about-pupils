@@ -9,7 +9,7 @@ public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
         if (!UniquePupilNumberValidator.Validate(value))
         {
             throw new ArgumentException($"Input {value} is not a valid UniquePupilNumber");
-        };
+        }
 
         Value = value;
     }
