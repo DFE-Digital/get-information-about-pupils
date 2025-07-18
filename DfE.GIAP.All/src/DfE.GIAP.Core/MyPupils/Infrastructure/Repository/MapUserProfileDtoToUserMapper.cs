@@ -8,11 +8,12 @@ public sealed class MapUserProfileDtoToUserMapper : IMapper<UserProfileDto, User
     public User Map(UserProfileDto dto)
     {
         IEnumerable<UniquePupilNumber> upns =
-            dto.MyPupilList
-            .Select(t => t.PupilId!)
-            .Concat(dto.PupilList ?? []) // TODO understand why this is joined, does PupilList even exist in persistence
-            .Select(TryCreateUpn)
+            (dto.MyPupilList ?? Enumerable.Empty<PupilItemDto>())
+            .Select(t => t.PupilId)
+            .Concat(dto.PupilList ?? Enumerable.Empty<string>()) // TODO understand why this is joined, does PupilList even exist in persistence
+            .Select(TryCreateUpn!)
             .Where(t => t is not null)!;
+
 
         UserId id = new(dto.UserId!);
 

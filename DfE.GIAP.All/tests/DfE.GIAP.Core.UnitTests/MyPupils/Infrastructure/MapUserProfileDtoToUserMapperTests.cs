@@ -45,46 +45,88 @@ public sealed class MapUserProfileDtoToUserMapperTests
         Assert.Contains(result.PupilIdentifiers, upn => upn.Value == upns[1].Value);
     }
 
-    //[Fact]
-    //public void Map_ReturnsUserWithEmptyUpns_When_NoValidUpnsProvided()
-    //{
-    //    // Arrange
-    //    UserProfileDto dto = new()
-    //    {
-    //        UserId = "user-456",
-    //        MyPupilList = new List<UserProfileDto> { new() { PupilId = "invalid" } },
-    //        PupilList = ["also-invalid"]
-    //    };
+    [Fact]
+    public void Map_ReturnsUserWithEmptyUpns_When_NoValidUpnsProvided()
+    {
+        // Arrange
+        IEnumerable<string> pupilList = ["invalid-upn-1"];
 
-    //    MapUserProfileDtoToUserMapper mapper = new();
+        IEnumerable<PupilItemDto> myPupilList = [
+            new()
+            {
+                PupilId = "invalid-upn-2"
+            }
+        ];
 
-    //    // Act
-    //    User result = mapper.Map(dto);
+        UserProfileDto dto = new()
+        {
+            UserId = "user",
+            MyPupilList = myPupilList,
+            PupilList = pupilList.ToArray()
+        };
 
-    //    // Assert
-    //    Assert.Equal("user-456", result.Id.Value);
-    //    Assert.Empty(result.PupilIdentifiers);
-    //}
+        MapUserProfileDtoToUserMapper mapper = new();
 
-    //[Fact]
-    //public void Map_HandlesNullPupilList_Gracefully()
-    //{
-    //    // Arrange
-    //    UserProfileDto dto = new()
-    //    {
-    //        UserId = "user-789",
-    //        MyPupilList = new List<UserProfileDto> { new() { PupilId = "123456789012" } },
-    //        PupilList = null
-    //    };
+        // Act
+        User result = mapper.Map(dto);
 
-    //    MapUserProfileDtoToUserMapper mapper = new();
+        // Assert
+        Assert.Equal("user", result.UserId.Value);
+        Assert.Empty(result.PupilIdentifiers);
+    }
 
-    //    // Act
-    //    User result = mapper.Map(dto);
+    [Fact]
+    public void Map_HandlesNullPupilList_Gracefully()
+    {
+        UniquePupilNumber myPupilListUpn = UniquePupilNumberTestDoubles.Generate();
 
-    //    // Assert
-    //    UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIdentifiers);
-    //    Assert.Equal("123456789012", uniquePupilNumber.Value);
-    //}
+        IEnumerable<PupilItemDto> myPupilList = [
+            new()
+            {
+                PupilId = myPupilListUpn.Value
+            }
+        ];
+        // Arrange
+        UserProfileDto dto = new()
+        {
+            UserId = "user",
+            MyPupilList = myPupilList,
+            PupilList = null!
+        };
 
+        MapUserProfileDtoToUserMapper mapper = new();
+
+        // Act
+        User result = mapper.Map(dto);
+
+        // Assert
+        Assert.Equal("user", result.UserId.Value);
+        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIdentifiers);
+        Assert.Equal(myPupilListUpn.Value, uniquePupilNumber.Value);
+    }
+
+
+    [Fact]
+    public void Map_HandlesNullMyPupilList_Gracefully()
+    {
+        // Arrange
+        UniquePupilNumber pupilListUpn = UniquePupilNumberTestDoubles.Generate();
+
+        UserProfileDto dto = new()
+        {
+            UserId = "user",
+            MyPupilList = null!,
+            PupilList = [pupilListUpn.Value]
+        };
+
+        MapUserProfileDtoToUserMapper mapper = new();
+
+        // Act
+        User result = mapper.Map(dto);
+
+        // Assert
+        Assert.Equal("user", result.UserId.Value);
+        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIdentifiers);
+        Assert.Equal(pupilListUpn.Value, uniquePupilNumber.Value);
+    }
 }
