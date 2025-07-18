@@ -28,6 +28,7 @@ builder.Services
     .AddFormOptionsConfiguration()
     .AddApplicationInsightsTelemetry()
     .AddAllServices()
+    .AddWebProviders()
     .AddSettings<ClaritySettings>(configuration, "Clarity")
     .AddSettings<GoogleTagManager>(configuration, "GoogleTagManager")
     .AddDsiAuthentication(configuration)

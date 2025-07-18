@@ -8,8 +8,8 @@ public class SessionProvider : ISessionProvider
 
     public SessionProvider(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAccessor = httpContextAccessor ??
-            throw new ArgumentNullException(nameof(httpContextAccessor));
+        ArgumentNullException.ThrowIfNull(httpContextAccessor);
+        _httpContextAccessor = httpContextAccessor;
     }
 
     private ISession Session => _httpContextAccessor.HttpContext?.Session

@@ -276,8 +276,8 @@ public class ManageDocumentsController : Controller
             NewsArticle = new NewsArticleViewModel
             {
                 Id = response.NewsArticle.Id.Value,
-                Title = SecurityHelper.SanitizeText(response.NewsArticle.Title),
-                Body = SecurityHelper.SanitizeText(response.NewsArticle.Body),
+                Title = _textSanitiserInvoker.Sanitise(response.NewsArticle.Title).Value,
+                Body = _textSanitiserInvoker.Sanitise(response.NewsArticle.Body).Value,
                 Pinned = response.NewsArticle.Pinned,
                 Published = response.NewsArticle.Published,
                 CreatedDate = response.NewsArticle.CreatedDate,
