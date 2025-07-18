@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Web.Helpers.CookieManager;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +11,12 @@ namespace DfE.GIAP.Web.Controllers;
 [AllowWithoutConsent]
 public class CookiesController : Controller
 {
-    private readonly ICookieManager _cookieManager;
+    private readonly ICookieProvider _cookieProvider;
 
-    public CookiesController(ICookieManager cookieManager)
+    public CookiesController(ICookieProvider cookieProvider)
     {
-        _cookieManager = cookieManager ??
-            throw new ArgumentNullException(nameof(cookieManager));
+        ArgumentNullException.ThrowIfNull(cookieProvider);
+        _cookieProvider = cookieProvider;
     }
 
     public IActionResult Index()
@@ -47,7 +47,7 @@ public class CookiesController : Controller
             AppendCookie(CookieKeys.GiapComms, viewModel.CookieComms);
         }
 
-        return RedirectToAction("Index", "Landing");
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
@@ -57,8 +57,8 @@ public class CookiesController : Controller
         ITrackingConsentFeature consentTracker = HttpContext?.Features.Get<ITrackingConsentFeature>();
         consentTracker?.GrantConsent();
 
-        var yearInMinutes = (int)(DateTime.Now.AddYears(1) - DateTime.Now).TotalMinutes;
-        _cookieManager.Set(CookieKeys.AspConsentCookie, "yes", expireTime: yearInMinutes);
+        int yearInMinutes = (int)(DateTime.Now.AddYears(1) - DateTime.Now).TotalMinutes;
+        _cookieProvider.Set(CookieKeys.AspConsentCookie, "yes", expireTime: yearInMinutes);
 
         return Redirect(returnUrl);
     }

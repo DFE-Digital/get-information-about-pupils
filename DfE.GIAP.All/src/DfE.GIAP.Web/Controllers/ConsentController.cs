@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Web.Helpers.CookieManager;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
@@ -10,6 +9,7 @@ using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Web.Providers.Cookie;
 
 namespace DfE.GIAP.Web.Controllers;
 
@@ -17,7 +17,7 @@ namespace DfE.GIAP.Web.Controllers;
 public class ConsentController : Controller
 {
     private readonly ISessionProvider _sessionProvider;
-    private readonly ICookieManager _cookieManager;
+    private readonly ICookieProvider _cookieProvider;
     private readonly AzureAppSettings _azureAppSettings;
     private readonly IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> _getContentByPageKeyUseCase;
     private readonly IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel> _contentResponseToViewModelMapper;
@@ -26,19 +26,19 @@ public class ConsentController : Controller
     public ConsentController(
         ISessionProvider sessionProvider,
         IOptions<AzureAppSettings> azureAppSettings,
-        ICookieManager cookieManager,
+        ICookieProvider cookieProvider,
         IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse> getContentByPageKeyUseCase,
         IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel> contentResponseToViewModelMapper)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        ArgumentNullException.ThrowIfNull(cookieManager);
+        ArgumentNullException.ThrowIfNull(cookieProvider);
         ArgumentNullException.ThrowIfNull(getContentByPageKeyUseCase);
         ArgumentNullException.ThrowIfNull(contentResponseToViewModelMapper);
         _sessionProvider = sessionProvider;
         _azureAppSettings = azureAppSettings.Value;
-        _cookieManager = cookieManager;
+        _cookieProvider = cookieProvider;
         _getContentByPageKeyUseCase = getContentByPageKeyUseCase;
         _contentResponseToViewModelMapper = contentResponseToViewModelMapper;
     }
@@ -49,9 +49,7 @@ public class ConsentController : Controller
     public async Task<IActionResult> Index()
     {
         if (_azureAppSettings.IsSessionIdStoredInCookie)
-        {
-            _cookieManager.Set(CookieKeys.GIAPSessionId, User.GetSessionId());
-        }
+            _cookieProvider.Set(CookieKeys.GIAPSessionId, User.GetSessionId());
 
         const string contentPageKey = "Consent";
 
