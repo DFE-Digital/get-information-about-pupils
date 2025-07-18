@@ -149,10 +149,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         const string applicationDataContainerName = "application-data";
         UserId userId = new("user");
 
-        UserProfileDto userProfileDto = new()
-        {
-            UserId = userId.Value
-        };
+        UserProfileDto userProfileDto = UserProfileDtoTestDoubles.WithId(userId);
 
         User expectedUser = new(
             userId,
