@@ -105,7 +105,7 @@ public sealed class HttpContextAuthorisationContextTests
         Mock<IHttpContextAccessor> accessor = new();
         accessor.Setup(a => a.HttpContext).Returns(context);
 
-        HttpContextAuthorisationContext result = null;
+        HttpContextAuthorisationContext? result = null;
 
         // Act
 #pragma warning disable xUnit1030 // Do not call ConfigureAwait(false) in test method
