@@ -32,4 +32,7 @@ public interface INewsArticleReadRepository
     /// if found; otherwise, <see langword="null"/>.</returns>
     /// <exception cref="ArgumentException">Thrown if the id is null or empty.</exception>
     Task<NewsArticle?> GetNewsArticleByIdAsync(string id);
+
+
+    Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime);
 }
