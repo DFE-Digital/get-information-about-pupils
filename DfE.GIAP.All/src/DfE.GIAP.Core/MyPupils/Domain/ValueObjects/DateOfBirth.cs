@@ -34,8 +34,8 @@ public sealed class DateOfBirth : ValueObject<DateOfBirth>
         return hasOccuredThisMonth ?
             today.Year - Year :
                 today.Year - Year - 1;
-    } 
-         
+    }
+
 
     public override string ToString() => _value.ToString("yyyy-MM-dd") ?? string.Empty;
 

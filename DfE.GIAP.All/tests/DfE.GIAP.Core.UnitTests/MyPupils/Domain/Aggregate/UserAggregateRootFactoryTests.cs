@@ -84,13 +84,13 @@ public sealed class UserAggregateRootFactoryTests
         User user = new(userId, upns);
 
         Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
-        
+
         IEnumerable<Pupil> stubPupils = [
             PupilBuilder.CreateBuilder(upns[0], pupilAuthorisationContext).Build(),
             PupilBuilder.CreateBuilder(upns[1], pupilAuthorisationContext).Build(),
             PupilBuilder.CreateBuilder(upns[2], pupilAuthorisationContext).Build()
         ];
-        
+
         Mock<IAggregatePupilsForMyPupilsDomainService> aggregatePupilsService = new();
         aggregatePupilsService.Setup((t)
             => t.GetPupilsAsync(

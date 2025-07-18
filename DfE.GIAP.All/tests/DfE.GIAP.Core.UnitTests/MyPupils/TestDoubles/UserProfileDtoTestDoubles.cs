@@ -20,9 +20,9 @@ internal static class UserProfileDtoTestDoubles
         UserId id,
         string[]? pupils,
         IEnumerable<PupilItemDto>? myPupils) => new()
-    {
-        UserId = id.Value,
-        PupilList = pupils!,
-        MyPupilList = myPupils!,
-    };
+        {
+            UserId = id.Value,
+            PupilList = pupils!,
+            MyPupilList = myPupils!,
+        };
 }
