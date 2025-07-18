@@ -116,7 +116,7 @@ public sealed class HttpContextAuthorisationContextTests
 #pragma warning restore xUnit1030 // Do not call ConfigureAwait(false) in test method
 
         // Assert
-        Assert.Equal("async-no-return-to-scheduling-context", result.UserId);
+        Assert.Equal("async-no-return-to-scheduling-context", result!.UserId);
         Assert.Equal(11, result.LowAge);
         Assert.Equal(17, result.HighAge);
         Assert.True(result.IsAdministrator);
