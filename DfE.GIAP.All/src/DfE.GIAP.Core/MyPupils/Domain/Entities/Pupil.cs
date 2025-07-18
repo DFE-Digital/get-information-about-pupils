@@ -8,7 +8,7 @@ public sealed class Pupil : Entity<PupilId>
 {
     private const string MaskedPupilMarker = "*************";
     private readonly UniquePupilNumber _uniquePupilNumber;
-    private readonly DateTime? _dateOfBirth;
+    private readonly DateOfBirth? _dateOfBirth;
     private readonly PupilAuthorisationContext _authorisationContext;
 
     public Pupil(
@@ -19,7 +19,7 @@ public sealed class Pupil : Entity<PupilId>
         : base(identifier)
     {
         _uniquePupilNumber = uniquePupilNumber;
-        _dateOfBirth = dateOfBirth;
+        _dateOfBirth = dateOfBirth is null ? null : new DateOfBirth(dateOfBirth.Value);
         _authorisationContext = authorisationContext;
     }
 
@@ -29,7 +29,7 @@ public sealed class Pupil : Entity<PupilId>
             ? MaskedPupilMarker :
                 _uniquePupilNumber.Value;
 
-    public DateTime? DateOfBirth => _dateOfBirth;
+    public string? DateOfBirth => _dateOfBirth?.ToString();
 
     internal bool TryCalculateAge(out int? calculatedAge)
     {
@@ -40,18 +40,7 @@ public sealed class Pupil : Entity<PupilId>
             return false;
         }
 
-        DateTime today = DateTime.Today;
-        DateTime pupilDob = _dateOfBirth!.Value;
-
-        int age = today.Year - pupilDob.Year;
-
-        // If birthday hasn't occurred yet this year, subtract 1
-        if (today < pupilDob.AddYears(age))
-        {
-            age--;
-        }
-
-        calculatedAge = age;
+        calculatedAge = _dateOfBirth!.Age;
         return true;
 
     }

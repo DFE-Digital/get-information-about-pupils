@@ -6,7 +6,7 @@ public record PupilItemPresentationModel
     public PupilItemPresentationModel(
         PupilId pupilId,
         string upn,
-        DateTime? dateOfBirth) // TODO consider ValueObject?
+        string? dateOfBirth) // TODO consider ValueObject?
     {
         Id = pupilId.Id;
         UniquePupilIdentifier = upn;
@@ -15,5 +15,5 @@ public record PupilItemPresentationModel
 
     public string Id { get; } // Uniquely identifies a Pupil in the list
     public string UniquePupilIdentifier { get; }
-    public DateTime? DateOfBirth { get; }
+    public string? DateOfBirth { get; }
 }
