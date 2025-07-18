@@ -6,14 +6,14 @@ public record PupilItemPresentationModel
     public PupilItemPresentationModel(
         PupilId pupilId,
         string upn,
-        string? dateOfBirth) // TODO consider ValueObject?
+        DateOfBirth? dateOfBirth)
     {
         Id = pupilId.Id;
         UniquePupilIdentifier = upn;
-        DateOfBirth = dateOfBirth;
+        DateOfBirth = dateOfBirth?.ToString() ?? string.Empty;
     }
 
     public string Id { get; } // Uniquely identifies a Pupil in the list
     public string UniquePupilIdentifier { get; }
-    public string? DateOfBirth { get; }
+    public string DateOfBirth { get; }
 }
