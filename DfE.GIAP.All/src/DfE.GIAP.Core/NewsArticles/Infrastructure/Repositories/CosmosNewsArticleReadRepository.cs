@@ -104,4 +104,23 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
             return [];
         }
     }
+
+
+
+    public async Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime)
+    {
+        try
+        {
+            string isoDate = expectedTime.ToString("o");
+            string query = $"SELECT TOP 1 * FROM c WHERE c.lastModifiedTime > '{isoDate}' AND c.isPublished = true";
+
+            IEnumerable<NewsArticleDto> results = await _cosmosDbQueryHandler.ReadItemsAsync<NewsArticleDto>(ContainerName, query);
+            return results.Any();
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, "CosmosException in HasArticlesModifiedSinceAsync.");
+            return false;
+        }
+    }
 }
