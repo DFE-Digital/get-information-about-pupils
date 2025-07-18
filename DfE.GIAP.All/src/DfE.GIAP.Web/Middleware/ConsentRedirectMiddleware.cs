@@ -28,8 +28,8 @@ public class ConsentRedirectMiddleware
             {
                 // TODO: Why are we using "yes" ?
                 // Check if consent key is missing or its value is not "yes"
-                string consentValue = sessionProvider.GetSessionValue(SessionKeys.ConsentKey);
-                if (!string.Equals(consentValue, SessionKeys.ConsentValue, StringComparison.OrdinalIgnoreCase))
+                string consentValue = sessionProvider.GetSessionValue(SessionKeys.ConsentGiven);
+                if (!string.Equals(consentValue, SessionKeys.ConsentGiven, StringComparison.OrdinalIgnoreCase))
                 {
                     response.Redirect(Routes.Application.Consent);
                     return;

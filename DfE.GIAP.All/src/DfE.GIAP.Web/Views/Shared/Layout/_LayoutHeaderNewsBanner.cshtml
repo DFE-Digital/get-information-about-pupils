@@ -1,6 +1,6 @@
-﻿@inject ILatestNewsBanner latestNewsBanner
+﻿@inject INewsBannerProvider newsBannerProvider
 
-@if (latestNewsBanner.ShowNewsBanner())
+@if (newsBannerProvider.ShouldShowNewsBanner())
 {
     <div class="govuk-phase-banner webapp-news-banner" id="news--banner--alert">
         <div class="govuk-width-container">
