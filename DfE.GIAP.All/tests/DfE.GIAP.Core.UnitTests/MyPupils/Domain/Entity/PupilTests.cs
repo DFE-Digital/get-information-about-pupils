@@ -135,7 +135,7 @@ public sealed class PupilTests
     {
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        PupilAuthorisationContext context = PupilAuthorisationContextTestDoubles.GenerateWithNotSetAgeRange();
+        PupilAuthorisationContext context = PupilAuthorisationContextTestDoubles.GenerateWithDefaultAgeLimits();
 
         Pupil pupil = PupilBuilder
             .CreateBuilder(upn, context)

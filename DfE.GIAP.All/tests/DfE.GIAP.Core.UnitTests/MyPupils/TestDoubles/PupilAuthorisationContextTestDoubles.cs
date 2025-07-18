@@ -10,7 +10,7 @@ internal static class PupilAuthorisationContextTestDoubles
             high: 18,
             isAdministrator: false);
 
-    internal static PupilAuthorisationContext GenerateWithNotSetAgeRange()
+    internal static PupilAuthorisationContext GenerateWithDefaultAgeLimits()
         => Generate(
             low: 0,
             high: 0,
