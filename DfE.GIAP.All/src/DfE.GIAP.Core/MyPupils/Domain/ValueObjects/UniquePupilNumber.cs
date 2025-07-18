@@ -22,11 +22,7 @@ public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
 
         try
         {
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                return false;
-            }
-            result = new UniquePupilNumber(input);
+            result = new UniquePupilNumber(input!);
             return true;
         }
         catch
