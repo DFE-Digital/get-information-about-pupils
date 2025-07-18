@@ -7,8 +7,8 @@ using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Web.Tests.Accessibility;
 

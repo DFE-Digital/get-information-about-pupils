@@ -2,9 +2,9 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 
@@ -89,7 +89,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Func<NewsArticleDto> cosmosExceptionGenerator = CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<NewsArticleDto>();
 
         Mock<ICosmosDbQueryHandler> mockQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticleById(cosmosExceptionGenerator);
+            CosmosDbQueryHandlerTestDoubles.MockForReadById(cosmosExceptionGenerator);
 
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
 
@@ -194,7 +194,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Func<IEnumerable<NewsArticleDto>> cosmosExceptionGenerator =
             CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<IEnumerable<NewsArticleDto>>();
 
-        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticles(cosmosExceptionGenerator);
+        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(cosmosExceptionGenerator);
 
         CosmosNewsArticleReadRepository sut = new(
             logger: _mockLogger,
@@ -216,7 +216,8 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
-        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticles(() => []);
+        Mock<ICosmosDbQueryHandler> mockQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadMany<NewsArticleDto>(() => []);
 
         CosmosNewsArticleReadRepository sut = new(
                     logger: _mockLogger,
@@ -244,7 +245,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         const string ExpectedContainerName = "news";
         List<NewsArticleDto> newsArticleDTOs = NewsArticleDtoTestDoubles.Generate();
 
-        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForGetNewsArticles(() => newsArticleDTOs);
+        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(() => newsArticleDTOs);
 
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<NewsArticleDto, NewsArticle>(It.IsAny<NewsArticle>());
 

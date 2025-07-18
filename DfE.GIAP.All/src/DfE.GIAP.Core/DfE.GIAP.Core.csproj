@@ -18,4 +18,8 @@
 		<InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
 		<InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Common\Application\User\" />
+	</ItemGroup>
 </Project>

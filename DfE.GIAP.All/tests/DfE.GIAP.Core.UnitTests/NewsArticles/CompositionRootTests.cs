@@ -6,8 +6,8 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
