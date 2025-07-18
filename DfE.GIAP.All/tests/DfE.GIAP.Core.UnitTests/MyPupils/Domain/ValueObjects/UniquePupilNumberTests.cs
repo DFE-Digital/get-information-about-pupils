@@ -1,58 +1,84 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
-public class UniquePupilNumberTests
+public sealed class UniquePupilNumberTests
 {
-    [Fact]
-    public void Constructor_WithValidValue_SetsValueCorrectly()
-    {
-        // Arrange
-        string input = "A12345678901";
+    public static TheoryData<string> ValidUpnValues => [
+            "A12345678901X" , // A
+            "T98765432109Z" , // T
+            "A00000000000A" , // A Any 11 digits between 
+            "T11111111111B" // T Any 11 digits between
+        ];
 
+    public static TheoryData<string> InvalidUpnValues => [
+            "B12345678901X" , // Invalid prefix
+            "A1234567890X" ,  // Too short
+            "A1234567890123" , // Too long
+            "A12345678901" ,  // Missing check digit
+            "A12345678901!" , // Invalid check digit
+            "",              // Empty
+            "   " ,           // Whitespace
+            "\r\n",          // Windows new line
+            "   \r\n " ,      // Windows new line with whitespace
+            "\n" ,            // Unix new line
+            null!              // Null
+        ];
+
+    [Theory]
+    [MemberData(nameof(ValidUpnValues))]
+    public void IsValidUpn_ReturnsTrue_ForValidUpns(string upn)
+    {
         // Act
-        UniquePupilNumber upn = new(input);
+        UniquePupilNumber constructed = new(upn);
 
         // Assert
-        Assert.Equal("A12345678901", upn.Value);
+        Assert.Equal(upn, constructed.Value);
     }
 
     [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("\r\n")]
-    [InlineData("   \r\n ")]
-    [InlineData("\n")]
-    public void TryCreate_WithNullOrWhitespace_ReturnsFalse(string? input)
+    [MemberData(nameof(InvalidUpnValues))]
+    public void IsValidUpn_ReturnsFalse_ForInvalidUpns(string? upn)
     {
         // Act
-        bool success = UniquePupilNumber.TryCreate(input, out UniquePupilNumber? result);
+        Func<UniquePupilNumber> construct = () => new UniquePupilNumber(upn!);
 
         // Assert
-        Assert.False(success);
-        Assert.Null(result);
+        Assert.Throws<ArgumentException>(construct);
     }
 
-    [Fact]
-    public void TryCreate_WithValidInput_ReturnsTrueAndSetsResult()
+
+    [Theory]
+    [MemberData(nameof(ValidUpnValues))]
+    public void TryCreate_ReturnsTrueAndConstructsUpn_ForValidUpns(string upn)
     {
-        // Arrange
-        string input = "B98765432109";
-
         // Act
-        bool success = UniquePupilNumber.TryCreate(input, out UniquePupilNumber? result);
+        bool result = UniquePupilNumber.TryCreate(upn, out UniquePupilNumber? constructed);
 
         // Assert
-        Assert.True(success);
-        Assert.NotNull(result);
-        Assert.Equal("B98765432109", result!.Value);
+        Assert.True(result);
+        Assert.NotNull(constructed);
+        Assert.Equal(upn, constructed!.Value);
     }
+
+    [Theory]
+    [MemberData(nameof(InvalidUpnValues))]
+    public void TryCreate_ReturnsFalseAndNull_ForInvalidUpns(string? upn)
+    {
+        // Act
+        bool result = UniquePupilNumber.TryCreate(upn, out UniquePupilNumber? constructed);
+
+        // Assert
+        Assert.False(result);
+        Assert.Null(constructed);
+    }
+
 
     [Fact]
     public void ToString_ReturnsValue()
     {
         // Arrange
-        string input = "C11223344556";
+        string input = UniquePupilNumberTestDoubles.Generate().Value;
         UniquePupilNumber upn = new(input);
 
         // Act
@@ -66,8 +92,9 @@ public class UniquePupilNumberTests
     public void Equality_ShouldBeBasedOnValue()
     {
         // Arrange
-        UniquePupilNumber upn1 = new("D12345678901");
-        UniquePupilNumber upn2 = new("D12345678901");
+        string input = UniquePupilNumberTestDoubles.Generate().Value;
+        UniquePupilNumber upn1 = new(input);
+        UniquePupilNumber upn2 = new(input);
 
         // Act Assert
         Assert.Equal(upn1, upn2);
@@ -78,8 +105,9 @@ public class UniquePupilNumberTests
     public void Inequality_ShouldBeTrue_ForDifferentValues()
     {
         // Arrange
-        UniquePupilNumber upn1 = new("E12345678901");
-        UniquePupilNumber upn2 = new("F98765432109");
+        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(2);
+        UniquePupilNumber upn1 = new(upns[0].Value);
+        UniquePupilNumber upn2 = new(upns[1].Value);
 
         // Act Assert
         Assert.NotEqual(upn1, upn2);

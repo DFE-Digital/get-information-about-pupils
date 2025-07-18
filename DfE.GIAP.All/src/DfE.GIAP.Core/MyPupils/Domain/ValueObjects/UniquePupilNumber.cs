@@ -6,8 +6,11 @@ public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
 {
     public UniquePupilNumber(string value)
     {
-        // TODO what is the shape of a UPN 1/2 chars at the start, some amount of numbers?
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        if (!UniquePupilNumberValidator.Validate(value))
+        {
+            throw new ArgumentException($"Input {value} is not a valid UniquePupilNumber");
+        };
+
         Value = value;
     }
 
