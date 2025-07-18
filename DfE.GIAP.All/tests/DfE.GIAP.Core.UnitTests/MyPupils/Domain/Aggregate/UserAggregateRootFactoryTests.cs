@@ -7,10 +7,8 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.Aggregate;
-
 
 public sealed class UserAggregateRootFactoryTests
 {
@@ -37,13 +35,13 @@ public sealed class UserAggregateRootFactoryTests
     public void Constructor_ThrowsException_When_AggregatePupilService_Is_Null()
     {
         // Arrange
-        Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = new();
+        IUserReadOnlyRepository mockUserReadOnlyRepository = UserReadOnlyRepositoryTestDoubles.Default();
         Mock<IMapper<IAuthorisationContext, PupilAuthorisationContext>> mockMapper = MapperTestDoubles.Default<IAuthorisationContext, PupilAuthorisationContext>();
 
         // Act
         Func<UserAggregateRootFactory> act = () =>
             new UserAggregateRootFactory(
-                mockUserReadOnlyRepository.Object,
+                mockUserReadOnlyRepository,
                 null!,
                 mockMapper.Object);
 
@@ -55,13 +53,13 @@ public sealed class UserAggregateRootFactoryTests
     public void Constructor_ThrowsException_When_Mapper_Is_Null()
     {
         // Assert
-        Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = new();
+        IUserReadOnlyRepository mockUserReadOnlyRepository = UserReadOnlyRepositoryTestDoubles.Default();
         Mock<IAggregatePupilsForMyPupilsDomainService> mockAggregatePupilsService = new();
 
         // Act
         Func<UserAggregateRootFactory> act = () =>
             new UserAggregateRootFactory(
-                mockUserReadOnlyRepository.Object,
+                mockUserReadOnlyRepository,
                 mockAggregatePupilsService.Object,
                 null!);
 
@@ -74,40 +72,31 @@ public sealed class UserAggregateRootFactoryTests
     {
         // Arrange
 
-        string userIdString = "my-user-id";
-        Mock<IAuthorisationContext> authorisationContext = new();
-        authorisationContext.Setup(t => t.UserId).Returns(userIdString);
-        IAuthorisationContext context = authorisationContext.Object;
+        string userIdInput = "my-user-id";
 
-        UserId userId = new(userIdString);
+        UserId userId = new(userIdInput);
         PupilAuthorisationContext pupilAuthorisationContext = PupilAuthorisationContextTestDoubles.Default();
 
-        Mock<IMapper<IAuthorisationContext, PupilAuthorisationContext>> mockMapper = new();
-        mockMapper.Setup(m => m.Map(It.IsAny<IAuthorisationContext>()))
-            .Returns(pupilAuthorisationContext);
+        Mock<IMapper<IAuthorisationContext, PupilAuthorisationContext>> mockMapper = MapperTestDoubles.MockFor<IAuthorisationContext, PupilAuthorisationContext>(pupilAuthorisationContext);
 
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(3);
+        const int pupilCount = 3;
+        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(pupilCount);
         User user = new(userId, upns);
 
-        Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = new();
-        mockUserReadOnlyRepository.Setup(repo => repo.GetUserByIdAsync(
-                It.Is<UserId>(t => t.Equals(userId)),
-                It.IsAny<IAuthorisationContext>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(user)
-            .Verifiable();
-
-        Pupil stubPupil1 = PupilBuilder.CreateBuilder(upns[0], pupilAuthorisationContext).Build();
-        Pupil stubPupil2 = PupilBuilder.CreateBuilder(upns[1], pupilAuthorisationContext).Build();
-        Pupil stubPupil3 = PupilBuilder.CreateBuilder(upns[2], pupilAuthorisationContext).Build();
-
+        Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
+        
+        IEnumerable<Pupil> stubPupils = [
+            PupilBuilder.CreateBuilder(upns[0], pupilAuthorisationContext).Build(),
+            PupilBuilder.CreateBuilder(upns[1], pupilAuthorisationContext).Build(),
+            PupilBuilder.CreateBuilder(upns[2], pupilAuthorisationContext).Build()
+        ];
+        
         Mock<IAggregatePupilsForMyPupilsDomainService> aggregatePupilsService = new();
-        aggregatePupilsService.Setup(
-            (t) => t.GetPupilsAsync(
-                It.Is<IEnumerable<UniquePupilNumber>>(
-                    (upns) => upns.Count() == 3),
+        aggregatePupilsService.Setup((t)
+            => t.GetPupilsAsync(
+                    It.Is<IEnumerable<UniquePupilNumber>>((upns) => upns.Count() == pupilCount),
                     pupilAuthorisationContext))
-            .ReturnsAsync([stubPupil1, stubPupil2, stubPupil3])
+            .ReturnsAsync(stubPupils)
             .Verifiable();
 
         // Act
@@ -116,7 +105,8 @@ public sealed class UserAggregateRootFactoryTests
             aggregatePupilsService.Object,
             mockMapper.Object);
 
-        UserAggregateRoot result = await userAggregateRootFactory.CreateAsync(context);
+        Mock<IAuthorisationContext> authorisationContext = AuthorisationContextTestDoubles.MockFor(userIdInput);
+        UserAggregateRoot result = await userAggregateRootFactory.CreateAsync(authorisationContext.Object);
 
         // Assert
 
@@ -124,7 +114,7 @@ public sealed class UserAggregateRootFactoryTests
         Assert.Equal(userId, result.Identifier);
 
         List<Pupil> pupils = result.GetMyPupils().ToList();
-        Assert.Equal(3, pupils.Count);
-        Assert.Equivalent(pupils, new[] { stubPupil1, stubPupil2, stubPupil3 });
+        Assert.Equal(3, stubPupils.Count());
+        Assert.Equivalent(stubPupils, pupils);
     }
 }

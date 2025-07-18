@@ -29,7 +29,7 @@ public sealed class Pupil : Entity<PupilId>
             ? MaskedPupilMarker :
                 _uniquePupilNumber.Value;
 
-    public string? DateOfBirth => _dateOfBirth?.ToString();
+    public DateOfBirth? DateOfBirth => _dateOfBirth;
 
     internal bool TryCalculateAge(out int? calculatedAge)
     {
