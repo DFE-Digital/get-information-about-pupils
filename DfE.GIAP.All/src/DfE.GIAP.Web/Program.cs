@@ -75,7 +75,7 @@ app.Use(async (context, next) =>
         string nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
         context.Items["CSPNonce"] = nonce;
 
-        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms 'nonce-{nonce}'; object-src 'none';";
+        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms https://www.googletagmanager.com 'nonce-{nonce}'; object-src 'none';";
     }
 
     await next();
