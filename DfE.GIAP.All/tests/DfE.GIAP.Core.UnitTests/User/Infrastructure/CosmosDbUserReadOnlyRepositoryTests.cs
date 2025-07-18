@@ -4,10 +4,11 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationConte
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.User.TestDoubles;
 using DfE.GIAP.Core.User.Infrastructure;
 using Microsoft.Azure.Cosmos;
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
+namespace DfE.GIAP.Core.UnitTests.User.Infrastructure;
 public sealed class CosmosDbUserReadOnlyRepositoryTests
 {
 
@@ -15,7 +16,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
     public void Constructor_ThrowsArgumentNullException_When_LoggerIsNull()
     {
         // Arrange
-        Mock<IMapper<UserProfileDto, User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, User.Application.Repository.User>();
+        Mock<IMapper<UserProfileDto, Core.User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, Core.User.Application.Repository.User>();
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
@@ -34,7 +35,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         // Arrange
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
-        Mock<IMapper<UserProfileDto, User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, User.Application.Repository.User>();
+        Mock<IMapper<UserProfileDto, Core.User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, Core.User.Application.Repository.User>();
 
         Func<CosmosDbUserReadOnlyRepository> construct = () => new CosmosDbUserReadOnlyRepository(
             logger: mockLogger,
@@ -73,7 +74,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
-        Mock<IMapper<UserProfileDto, User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, User.Application.Repository.User>();
+        Mock<IMapper<UserProfileDto, Core.User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, Core.User.Application.Repository.User>();
 
         CosmosDbUserReadOnlyRepository repository = new(
             logger: mockLogger,
@@ -97,7 +98,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
-        Mock<IMapper<UserProfileDto, User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, User.Application.Repository.User>();
+        Mock<IMapper<UserProfileDto, Core.User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, Core.User.Application.Repository.User>();
 
         CosmosDbUserReadOnlyRepository repository = new(
             logger: mockLogger,
@@ -124,7 +125,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
-        Mock<IMapper<UserProfileDto, User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, User.Application.Repository.User>();
+        Mock<IMapper<UserProfileDto, Core.User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, Core.User.Application.Repository.User>();
 
         CosmosDbUserReadOnlyRepository repository = new(
             logger: mockLogger,
@@ -148,7 +149,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         UserProfileDto userProfileDto = UserProfileDtoTestDoubles.WithId(userId);
 
-        User.Application.Repository.User expectedUser = new(
+        Core.User.Application.Repository.User expectedUser = new(
             userId,
             UniquePupilNumberTestDoubles.Generate(count: 3));
 
@@ -157,7 +158,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
-        Mock<IMapper<UserProfileDto, User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, User.Application.Repository.User>();
+        Mock<IMapper<UserProfileDto, Core.User.Application.Repository.User>> mockMapper = MapperTestDoubles.Default<UserProfileDto, Core.User.Application.Repository.User>();
 
         mockMapper
             .Setup(m => m.Map(userProfileDto))
@@ -169,7 +170,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
             userMapper: mockMapper.Object);
 
         // Act
-        User.Application.Repository.User result = await repository.GetUserByIdAsync(userId, Mock.Of<IAuthorisationContext>());
+        Core.User.Application.Repository.User result = await repository.GetUserByIdAsync(userId, Mock.Of<IAuthorisationContext>());
 
         // Assert
         Assert.NotNull(result);

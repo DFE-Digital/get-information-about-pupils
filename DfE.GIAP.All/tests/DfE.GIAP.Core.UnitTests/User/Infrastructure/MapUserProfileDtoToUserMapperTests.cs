@@ -1,8 +1,9 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+using DfE.GIAP.Core.UnitTests.User.TestDoubles;
 using DfE.GIAP.Core.User.Infrastructure;
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
+namespace DfE.GIAP.Core.UnitTests.User.Infrastructure;
 public sealed class MapUserProfileDtoToUserMapperTests
 {
     [Fact]
@@ -30,7 +31,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(dto.UserId, result.UserId.Value);
@@ -59,7 +60,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(userId.Value, result.UserId.Value);
@@ -85,7 +86,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(userId, result.UserId);
@@ -106,7 +107,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(user, result.UserId);

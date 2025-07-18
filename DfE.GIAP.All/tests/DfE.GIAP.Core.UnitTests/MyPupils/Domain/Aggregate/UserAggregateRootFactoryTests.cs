@@ -6,6 +6,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+using DfE.GIAP.Core.UnitTests.User.TestDoubles;
 using DfE.GIAP.Core.User.Application.Repository;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.Aggregate;
@@ -81,7 +82,7 @@ public sealed class UserAggregateRootFactoryTests
 
         const int pupilCount = 3;
         List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(pupilCount);
-        User.Application.Repository.User user = new(userId, upns);
+        Core.User.Application.Repository.User user = new(userId, upns);
 
         Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
 

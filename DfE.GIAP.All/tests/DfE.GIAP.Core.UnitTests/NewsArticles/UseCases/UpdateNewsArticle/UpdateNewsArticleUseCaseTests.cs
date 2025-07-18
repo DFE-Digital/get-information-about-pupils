@@ -25,6 +25,7 @@ public sealed class UpdateNewsArticleUseCaseTests
         // Arrange
         DateTime utcDateBeforeCreation = DateTime.UtcNow;
         Stopwatch watch = Stopwatch.StartNew();
+        watch.Start();
 
         // Act
         UpdateNewsArticlesRequestProperties properties = new(id: "VALID_ID");

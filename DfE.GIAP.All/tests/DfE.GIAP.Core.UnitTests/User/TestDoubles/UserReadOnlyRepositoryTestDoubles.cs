@@ -2,12 +2,12 @@
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application.Repository;
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+namespace DfE.GIAP.Core.UnitTests.User.TestDoubles;
 internal static class UserReadOnlyRepositoryTestDoubles
 {
     internal static IUserReadOnlyRepository Default() => CreateMock().Object;
 
-    internal static Mock<IUserReadOnlyRepository> MockForGetUserById(User.Application.Repository.User repositoryResponse)
+    internal static Mock<IUserReadOnlyRepository> MockForGetUserById(Core.User.Application.Repository.User repositoryResponse)
     {
         Mock<IUserReadOnlyRepository> mock = CreateMock();
 
