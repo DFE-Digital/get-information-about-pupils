@@ -65,7 +65,7 @@ public sealed class DateOfBirthTests
     public void ImplicitConversion_ReturnsDateTimeValue()
     {
         // Arrange
-        DateTime date = DateTimeTestDoubles.GenerateFor(2008, 15, 2);
+        DateTime date = DateTimeTestDoubles.GenerateFor(2008, 2, 15);
         DateOfBirth dob = new(date);
 
         // Act
