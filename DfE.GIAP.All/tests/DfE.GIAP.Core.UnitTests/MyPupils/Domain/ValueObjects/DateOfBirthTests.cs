@@ -23,7 +23,7 @@ public sealed class DateOfBirthTests
     public void Constructor_ThrowsArgumentException_WhenDateIsInFuture()
     {
         // Arrange
-        DateTime futureDate = DateTime.UtcNow.AddDays(1);
+        DateTime futureDate = DateTimeTestDoubles.GenerateFutureDate();
 
         // Act Assert
         ArgumentException ex = Assert.Throws<ArgumentException>(() => new DateOfBirth(futureDate));
@@ -35,14 +35,13 @@ public sealed class DateOfBirthTests
     {
         // Arrange
         DateTime dobDate = DateTimeTestDoubles.GenerateDateOfBirthThatHasAlreadyOccuredThisYear();
-        int expectedAge = DateTime.UtcNow.Year - dobDate.Year;
-
         DateOfBirth dob = new(dobDate);
 
         // Act
         int age = dob.Age;
 
         // Assert
+        int expectedAge = DateTime.UtcNow.Year - dobDate.Year;
         Assert.Equal(expectedAge, age);
     }
 
@@ -51,14 +50,13 @@ public sealed class DateOfBirthTests
     {
         // Arrange
         DateTime dobDate = DateTimeTestDoubles.GenerateDateOfBirthThatHasNotOccuredYetThisYear();
-        int expectedAge = DateTime.UtcNow.Year - dobDate.Year - 1;
-
         DateOfBirth dob = new(dobDate);
 
         // Act
         int age = dob.Age;
 
         // Assert
+        int expectedAge = DateTime.UtcNow.Year - dobDate.Year - 1;
         Assert.Equal(expectedAge, age);
     }
 
@@ -67,7 +65,7 @@ public sealed class DateOfBirthTests
     public void ImplicitConversion_ReturnsDateTimeValue()
     {
         // Arrange
-        DateTime date = DateTimeTestDoubles.GenerateFor(2010, 5, 20);
+        DateTime date = DateTimeTestDoubles.GenerateFor(2008, 15, 2);
         DateOfBirth dob = new(date);
 
         // Act

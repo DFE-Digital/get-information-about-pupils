@@ -6,6 +6,12 @@ internal static class DateTimeTestDoubles
     {
         return new(year, month, day, 0, 0, 0, DateTimeKind.Utc);
     }
+
+    internal static DateTime GenerateFutureDate()
+    {
+        return DateTime.Now.AddDays(1);
+    }
+
     internal static DateTime GenerateDateOfBirthForAgeOf(int age)
     {
         return DateTime.Today.AddYears(age < 0 ? age : -age);
