@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Infrastructure;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class UserProfileDtoTestDoubles

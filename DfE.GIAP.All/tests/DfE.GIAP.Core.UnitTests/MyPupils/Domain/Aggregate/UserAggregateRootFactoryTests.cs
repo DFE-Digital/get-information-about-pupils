@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+using DfE.GIAP.Core.User.Application.Repository;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.Aggregate;
 
@@ -81,7 +81,7 @@ public sealed class UserAggregateRootFactoryTests
 
         const int pupilCount = 3;
         List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(pupilCount);
-        User user = new(userId, upns);
+        User.Application.Repository.User user = new(userId, upns);
 
         Mock<IUserReadOnlyRepository> mockUserReadOnlyRepository = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
 

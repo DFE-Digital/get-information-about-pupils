@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
+﻿namespace DfE.GIAP.Core.User.Infrastructure;
 public sealed class PupilItemDto
 {
     public string? PupilId { get; set; }

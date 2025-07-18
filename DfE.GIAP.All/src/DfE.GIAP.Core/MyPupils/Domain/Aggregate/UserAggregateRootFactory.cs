@@ -1,10 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application.Repository;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
@@ -30,7 +30,7 @@ internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
     {
         UserId identfiier = new(authorisationContext.UserId);
 
-        User user = await _userReadOnlyRepository.GetUserByIdAsync(identfiier, authorisationContext);
+        User.Application.Repository.User user = await _userReadOnlyRepository.GetUserByIdAsync(identfiier, authorisationContext);
         PupilAuthorisationContext myPupilsAuthorisationContext = _mapApplicationAuthorisationToMyPupilsAuthorisationContext.Map(authorisationContext);
 
         IEnumerable<Pupil> myPupils = await _aggregatePupilsForMyPupilDomainService.GetPupilsAsync(user.PupilIdentifiers, myPupilsAuthorisationContext);

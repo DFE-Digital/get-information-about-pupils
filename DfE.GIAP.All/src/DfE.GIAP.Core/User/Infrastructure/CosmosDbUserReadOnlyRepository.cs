@@ -1,24 +1,23 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application.Repository;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
-using User = DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository.User;
 
-namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
+namespace DfE.GIAP.Core.User.Infrastructure;
 
 internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
 {
     private readonly ILogger<CosmosDbUserReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<UserProfileDto, User> _userMapper;
+    private readonly IMapper<UserProfileDto, Application.Repository.User> _userMapper;
 
     public CosmosDbUserReadOnlyRepository(
         ILogger<CosmosDbUserReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<UserProfileDto, User> userMapper)
+        IMapper<UserProfileDto, Application.Repository.User> userMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
@@ -28,7 +27,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         _userMapper = userMapper;
     }
 
-    public async Task<User> GetUserByIdAsync(
+    public async Task<Application.Repository.User> GetUserByIdAsync(
         UserId id,
         IAuthorisationContext authorisationContext,
         CancellationToken ctx = default)
@@ -53,7 +52,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
             }
 
             UserProfileDto userProfile = results.First();
-            User user = _userMapper.Map(userProfile);
+            Application.Repository.User user = _userMapper.Map(userProfile);
             return user;
         }
         catch (CosmosException ex)

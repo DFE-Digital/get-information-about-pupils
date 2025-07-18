@@ -2,13 +2,13 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
 using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Application.Repository;
+using DfE.GIAP.Core.User.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.MyPupils;
@@ -49,7 +49,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
-            .AddSingleton<IMapper<UserProfileDto, User>, MapUserProfileDtoToUserMapper>();
+            .AddSingleton<IMapper<UserProfileDto, User.Application.Repository.User>, MapUserProfileDtoToUserMapper>();
         return services;
     }
 }

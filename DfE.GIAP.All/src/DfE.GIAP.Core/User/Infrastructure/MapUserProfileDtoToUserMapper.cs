@@ -1,11 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Repository;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repository;
-public sealed class MapUserProfileDtoToUserMapper : IMapper<UserProfileDto, User>
+namespace DfE.GIAP.Core.User.Infrastructure;
+public sealed class MapUserProfileDtoToUserMapper : IMapper<UserProfileDto, Application.Repository.User>
 {
-    public User Map(UserProfileDto dto)
+    public Application.Repository.User Map(UserProfileDto dto)
     {
         IEnumerable<UniquePupilNumber> upns =
             (dto.MyPupilList ?? Enumerable.Empty<PupilItemDto>())
@@ -17,7 +16,7 @@ public sealed class MapUserProfileDtoToUserMapper : IMapper<UserProfileDto, User
 
         UserId id = new(dto.UserId!);
 
-        return new User(id, upns);
+        return new Application.Repository.User(id, upns);
     }
 
     private static UniquePupilNumber? TryCreateUpn(string id) =>
