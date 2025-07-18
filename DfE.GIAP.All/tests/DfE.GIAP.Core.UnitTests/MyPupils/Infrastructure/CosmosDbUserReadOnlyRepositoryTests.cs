@@ -122,7 +122,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
     public async Task GetUserByIdAsync_Throws_When_UserNotFound()
     {
         // Arrange
-        
+
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany<UserProfileDto>(() => []);
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();

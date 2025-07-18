@@ -5,24 +5,24 @@ namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
 public sealed class UniquePupilNumberTests
 {
     public static TheoryData<string> ValidUpnValues => [
-            "A12345678901X" , // A
-            "T98765432109Z" , // T
-            "A00000000000A" , // A Any 11 digits between 
-            "T11111111111B" // T Any 11 digits between
+            "A12345678901X", // A
+        "T98765432109Z", // T
+        "A00000000000A", // A Any 11 digits between 
+        "T11111111111B" // T Any 11 digits between
         ];
 
     public static TheoryData<string> InvalidUpnValues => [
-            "B12345678901X" , // Invalid prefix
-            "A1234567890X" ,  // Too short
-            "A1234567890123" , // Too long
-            "A12345678901" ,  // Missing check digit
-            "A12345678901!" , // Invalid check digit
-            "",              // Empty
-            "   " ,           // Whitespace
-            "\r\n",          // Windows new line
-            "   \r\n " ,      // Windows new line with whitespace
-            "\n" ,            // Unix new line
-            null!              // Null
+            "B12345678901X", // Invalid prefix
+        "A1234567890X",  // Too short
+        "A1234567890123", // Too long
+        "A12345678901",  // Missing check digit
+        "A12345678901!", // Invalid check digit
+        "",              // Empty
+        "   ",           // Whitespace
+        "\r\n",          // Windows new line
+        "   \r\n ",      // Windows new line with whitespace
+        "\n",            // Unix new line
+        null!              // Null
         ];
 
     [Theory]
