@@ -6,7 +6,7 @@ using DfE.GIAP.Core.User.Application.Repository;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.User.Infrastructure;
+namespace DfE.GIAP.Core.User.Infrastructure.Repository;
 
 internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
 {

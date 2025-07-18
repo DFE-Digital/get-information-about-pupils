@@ -8,7 +8,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Infrastructure;
+using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;

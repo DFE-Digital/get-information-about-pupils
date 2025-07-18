@@ -5,7 +5,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.User.TestDoubles;
-using DfE.GIAP.Core.User.Infrastructure;
+using DfE.GIAP.Core.User.Infrastructure.Repository;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.User.Infrastructure;
