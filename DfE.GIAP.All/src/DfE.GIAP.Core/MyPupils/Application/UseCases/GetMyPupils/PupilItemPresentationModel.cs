@@ -1,19 +1,26 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 public record PupilItemPresentationModel
 {
-    public PupilItemPresentationModel(
-        PupilId pupilId,
-        string upn,
-        DateOfBirth? dateOfBirth)
+    public PupilItemPresentationModel(Pupil pupil)
     {
-        Id = pupilId.Id;
-        UniquePupilIdentifier = upn;
-        DateOfBirth = dateOfBirth?.ToString() ?? string.Empty;
+        Id = pupil.Identifier.Id;
+        UniquePupilIdentifier = pupil.UniquePupilNumber;
+        DateOfBirth = pupil.DateOfBirth?.ToString() ?? string.Empty;
+        FirstName = pupil.FirstName;
+        Surname = pupil.Surname;
+        Sex = pupil.Sex?.ToString() ?? string.Empty;
+        IsPupilPremium = pupil.IsOfPupilType(Domain.ValueObjects.PupilType.PupilPremium);
+        LocalAuthorityCode = pupil.LocalAuthorityCode;
     }
 
     public string Id { get; } // Uniquely identifies a Pupil in the list
+    public string FirstName { get; }
+    public string Surname { get; }
     public string UniquePupilIdentifier { get; }
     public string DateOfBirth { get; }
+    public string Sex { get; }
+    public bool IsPupilPremium { get; }
+    public int LocalAuthorityCode { get; }
 }

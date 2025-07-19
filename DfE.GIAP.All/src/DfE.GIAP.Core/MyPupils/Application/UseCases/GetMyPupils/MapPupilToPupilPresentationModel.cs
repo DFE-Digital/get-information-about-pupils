@@ -6,9 +6,7 @@ internal sealed class MapPupilToPupilPresentationModel : IMapper<Pupil, PupilIte
 {
     public PupilItemPresentationModel Map(Pupil input)
     {
-        return new(
-            input.Identifier,
-            input.UniquePupilNumber,
-            input.DateOfBirth);
+        ArgumentNullException.ThrowIfNull(input);
+        return new(input);
     }
 }

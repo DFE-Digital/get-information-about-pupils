@@ -57,11 +57,11 @@ public static class CompositionRoot
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
             .AddSingleton<IMapper<UserProfileDto, User.Application.Repository.User>, MapUserProfileDtoToUserMapper>();
 
-        services.AddMyPupilsInfrastructureSearchServices();
+        services.AddMyPupilsInfrastructureSearch();
         return services;
     }
 
-    private static IServiceCollection AddMyPupilsInfrastructureSearchServices(this IServiceCollection services)
+    private static IServiceCollection AddMyPupilsInfrastructureSearch(this IServiceCollection services)
     {
         // Temporary Search Options
         services.AddOptions<SearchIndexOptions>()
