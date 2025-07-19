@@ -3,6 +3,8 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Models.User;
@@ -438,49 +440,49 @@ public class MyPupilListController : Controller
         }
 
         string[] upnArray = model.Upn.FormatLearnerNumbers();
-        var learnerList = await GetLearnerListForCurrentUser();
+        IEnumerable<MyPupilListItem> learnerList = await GetLearnerListForCurrentUser();
         string learnerListSearchText = GetMyPupilListStringSeparatedBy(learnerList, ",");
 
-        var ppResult = await _paginatedSearch.GetPage(
+        PaginatedResponse ppResult = await _paginatedSearch.GetPage(
             learnerListSearchText, null, _appSettings.MaximumULNsPerSearch, 0,
             AzureSearchIndexType.PupilPremium, AzureSearchQueryType.Numbers,
             AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
             model.SortField ?? "", model.SortDirection ?? "");
 
-        var npdResult = await _paginatedSearch.GetPage(
+        PaginatedResponse npdResult = await _paginatedSearch.GetPage(
             learnerListSearchText, null, _appSettings.MaximumULNsPerSearch, 0,
             AzureSearchIndexType.NPD, AzureSearchQueryType.Numbers,
             AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
             model.SortField ?? "", model.SortDirection ?? "");
 
-        var learners = npdResult.Learners.Union(ppResult.Learners).ToList();
+        List<Learner> learners = npdResult.Learners.Union(ppResult.Learners).ToList();
 
-        if (!learners.Any())
+        if (learners.Count == 0)
         {
             model.NoPupil = true;
             return model;
         }
 
         model.MyPupilList = learnerList.ToList();
-        var whiteListUPNs = model.MyPupilList.Where(x => !x.IsMasked).Select(x => x.PupilId);
+        IEnumerable<string> whiteListUPNs = model.MyPupilList.Where(x => !x.IsMasked).Select(x => x.PupilId);
 
         learners.ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        var unionLearnerNumbers = ProcessStarredPupils(learners, whiteListUPNs);
+        IEnumerable<string> unionLearnerNumbers = ProcessStarredPupils(learners, whiteListUPNs);
 
         model.Upn = string.Join("\n", unionLearnerNumbers);
 
         if (first)
         {
-            var decryptedLearnerNumbers = RbacHelper.DecryptUpnCollection(unionLearnerNumbers);
-            var missing = upnArray.Except(decryptedLearnerNumbers).ToList();
+            IEnumerable<string> decryptedLearnerNumbers = RbacHelper.DecryptUpnCollection(unionLearnerNumbers);
+            List<string> missing = upnArray.Except(decryptedLearnerNumbers).ToList();
             HttpContext.Session.SetString(MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(missing));
             _selectionManager.RemoveAll(unionLearnerNumbers);
             model.ToggleSelectAll = false;
         }
         else
         {
-            var selected = GetSelected(unionLearnerNumbers.ToArray());
-            foreach (var learner in learners)
+            HashSet<string> selected = GetSelected(unionLearnerNumbers.ToArray());
+            foreach (Learner learner in learners)
             {
                 learner.Selected = selected.Contains(learner.LearnerNumber.Equals(Global.UpnMask) ? learner.LearnerNumberId : learner.LearnerNumber);
             }
