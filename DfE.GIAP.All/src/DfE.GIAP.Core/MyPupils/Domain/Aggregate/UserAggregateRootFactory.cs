@@ -31,6 +31,7 @@ internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
         UserId identfiier = new(authorisationContext.UserId);
 
         User.Application.Repository.User user = await _userReadOnlyRepository.GetUserByIdAsync(identfiier, authorisationContext);
+
         PupilAuthorisationContext myPupilsAuthorisationContext = _mapApplicationAuthorisationToMyPupilsAuthorisationContext.Map(authorisationContext);
 
         IEnumerable<Pupil> myPupils = await _aggregatePupilsForMyPupilDomainService.GetPupilsAsync(user.PupilIdentifiers, myPupilsAuthorisationContext);
