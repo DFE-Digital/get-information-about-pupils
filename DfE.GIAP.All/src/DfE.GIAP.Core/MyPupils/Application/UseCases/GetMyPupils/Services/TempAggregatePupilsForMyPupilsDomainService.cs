@@ -16,12 +16,12 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
     private const int PageSplitLimit = 500; // TODO pulled from FA
     private readonly IEnumerable<SearchClient> _searchClients;
-    private readonly IMapper<Learner, Pupil> _mapper;
+    private readonly IMapper<MappableLearnerWithAuthorisationContext, Pupil> _mapper;
     private readonly SearchIndexOptions _searchOptions;
 
     public TempAggregatePupilsForMyPupilsDomainService(
         IEnumerable<SearchClient> searchClients,
-        IMapper<Learner, Pupil> mapper,
+        IMapper<MappableLearnerWithAuthorisationContext, Pupil> mapper,
         IOptions<SearchIndexOptions> searchOptions)
     {
         if (!searchClients.Any())
@@ -55,7 +55,6 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
             throw new ArgumentException("UPN limit exceeded");
         }
 
-        
         SearchClient npdSearchIndex = _searchClients.Single(
             (t) => t.IndexName == _searchOptions.GetIndexOptionsByKey("npd").IndexName);
 
@@ -66,7 +65,11 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         await AddLearnersToResponse(npdSearchIndex, upns, response);
         await AddLearnersToResponse(pupilPremiumSearchClient, upns, response);
 
-        return response.Learners.Select(_mapper.Map);
+        return response.Learners.Select((learner) =>
+        {
+            return _mapper.Map(
+                new MappableLearnerWithAuthorisationContext(learner, authorisationContext));
+        });
     }
 
     private static async Task AddLearnersToResponse(
@@ -153,7 +156,7 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
         if (numberOfPages == 0)
         {
-            return [ numbers.AsEnumerable() ];
+            return [numbers.AsEnumerable()];
         }
 
         return Enumerable.Range(0, numberOfPages)
