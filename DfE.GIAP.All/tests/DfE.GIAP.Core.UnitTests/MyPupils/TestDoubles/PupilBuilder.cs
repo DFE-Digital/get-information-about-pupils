@@ -9,6 +9,9 @@ internal sealed class PupilBuilder
     private readonly PupilAuthorisationContext _authorisationContext;
     private PupilId? _id;
     private DateTime? _dateOfBirth;
+    private PupilType? _pupilType;
+    private string? _firstName;
+    private string? _surname;
 
     private PupilBuilder(
         UniquePupilNumber upn,
@@ -24,6 +27,24 @@ internal sealed class PupilBuilder
         return this;
     }
 
+    internal PupilBuilder WithPupilType(PupilType pupilType)
+    {
+        _pupilType = pupilType;
+        return this;
+    }
+
+    internal PupilBuilder WithFirstName(string firstName)
+    {
+        _firstName = firstName;
+        return this;
+    }
+
+    internal PupilBuilder WithSurname(string surname)
+    {
+        _surname = surname;
+        return this;
+    }
+
     internal PupilBuilder WithDateOfBirth(DateTime dateOfBirth)
     {
         _dateOfBirth = dateOfBirth;
@@ -31,11 +52,19 @@ internal sealed class PupilBuilder
     }
 
     internal Pupil Build()
-        => new Pupil(
-            _id ?? new(Guid.NewGuid()),
-            _upn,
-            _dateOfBirth,
-            _authorisationContext);
+    {
+        PupilName name = new(
+            _firstName ?? "Default first name",
+            _surname ?? "Default surname");
+
+        return new Pupil(
+            identifier: _id ?? new(Guid.NewGuid()),
+            pupilType : _pupilType ?? PupilType.NationalPupilDatabase,
+            name: name,
+            uniquePupilNumber: _upn,
+            dateOfBirth: _dateOfBirth,
+            authorisationContext: _authorisationContext);
+    }
     internal static PupilBuilder CreateBuilder(
         UniquePupilNumber upn,
         PupilAuthorisationContext authorisationContext)

@@ -7,17 +7,26 @@ namespace DfE.GIAP.Core.MyPupils.Domain.Entities;
 public sealed class Pupil : Entity<PupilId>
 {
     private const string MaskedPupilMarker = "*************";
+    private readonly PupilType _pupilType;
+    private readonly PupilName _name;
     private readonly UniquePupilNumber _uniquePupilNumber;
     private readonly DateOfBirth? _dateOfBirth;
     private readonly PupilAuthorisationContext _authorisationContext;
 
     public Pupil(
         PupilId identifier,
+        PupilType pupilType,
+        PupilName name,
         UniquePupilNumber uniquePupilNumber,
         DateTime? dateOfBirth,
         PupilAuthorisationContext authorisationContext)
         : base(identifier)
     {
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(uniquePupilNumber);
+        ArgumentNullException.ThrowIfNull(authorisationContext);
+        _pupilType = pupilType;
+        _name = name;
         _uniquePupilNumber = uniquePupilNumber;
         _dateOfBirth = dateOfBirth is null ? null : new DateOfBirth(dateOfBirth.Value);
         _authorisationContext = authorisationContext;
@@ -30,7 +39,9 @@ public sealed class Pupil : Entity<PupilId>
                 _uniquePupilNumber.Value;
 
     public DateOfBirth? DateOfBirth => _dateOfBirth;
-
+    public string FirstName => _name.FirstName;
+    public string Surname => _name.Surname;
+    public bool IsOfPupilType(PupilType pupilType) => _pupilType.Equals(pupilType);
     internal bool TryCalculateAge(out int? calculatedAge)
     {
         calculatedAge = null;
@@ -44,5 +55,4 @@ public sealed class Pupil : Entity<PupilId>
         return true;
 
     }
-    // TODO expose fields that extract and format out of Pupil
 }

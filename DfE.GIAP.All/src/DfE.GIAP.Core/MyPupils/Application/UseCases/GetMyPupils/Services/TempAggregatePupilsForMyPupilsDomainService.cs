@@ -10,6 +10,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Azure.Search.Documents.Models;
+using Azure;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
 internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePupilsForMyPupilsDomainService
