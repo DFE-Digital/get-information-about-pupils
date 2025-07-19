@@ -9,6 +9,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Azure.Search.Documents.Models;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
 internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePupilsForMyPupilsDomainService
@@ -98,16 +99,7 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         PaginatedResponse response,
         IEnumerable<string> upns)
     {
-        const bool UseLAColumn = true; // From configuration
         const string Upn = "UPN";
-        const string Id = "id";
-        const string Surname = "Surname";
-        const string Forename = "Forename";
-        const string Middlename = "Middlenames";
-        const string Gender = "Gender";
-        const string Sex = "Sex";
-        const string DOB = "DOB";
-        const string LocalAuthorityIndexKey = "LocalAuthority";
 
         SearchOptions options = new()
         {
@@ -119,28 +111,23 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
         options.SearchFields.Add(Upn);
         options.Select.Add(Upn);
-        options.Select.Add(Surname);
-        options.Select.Add(Forename);
-        options.Select.Add(Middlename);
-        options.Select.Add(Gender);
-        options.Select.Add(Sex);
-        options.Select.Add(DOB);
-
-        if (UseLAColumn)
-        {
-            options.Select.Add(LocalAuthorityIndexKey);
-        }
-
-        options.Select.Add(Id);
+        options.Select.Add("Surname");
+        options.Select.Add("Forename");
+        options.Select.Add("Middlenames");
+        options.Select.Add("Gender");
+        options.Select.Add("Sex");
+        options.Select.Add("DOB");
+        options.Select.Add("LocalAuthority");
+        options.Select.Add("id");
 
         string requestSortField = "search.score()";
         string requestSortDirection = "desc";
 
         options.OrderBy.Add($"{requestSortField} {requestSortDirection}");
 
-        Azure.Response<Azure.Search.Documents.Models.SearchResults<AzureIndexEntity>> results = await client.SearchAsync<AzureIndexEntity>("*", options);
+        Response<SearchResults<AzureIndexEntity>> results = await client.SearchAsync<AzureIndexEntity>("*", options);
 
-        await foreach (Azure.Search.Documents.Models.SearchResult<AzureIndexEntity> result in results.Value.GetResultsAsync())
+        await foreach (SearchResult<AzureIndexEntity> result in results.Value.GetResultsAsync())
         {
             response.Learners.Add((Learner)result.Document);
         }
