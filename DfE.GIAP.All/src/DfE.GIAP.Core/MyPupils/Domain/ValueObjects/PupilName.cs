@@ -27,7 +27,6 @@ public sealed class PupilName : ValueObject<PupilName>
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(input);
         string trimmedInput = input.Trim();
-        return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1).ToLowerInvariant();
-
+        return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
     }
 }

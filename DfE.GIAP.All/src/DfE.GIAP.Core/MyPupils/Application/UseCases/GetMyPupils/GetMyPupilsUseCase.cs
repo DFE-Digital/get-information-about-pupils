@@ -9,6 +9,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
     {
         _userAggregateFactory = userAggregateFactory;
     }
+
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
         UserAggregateRoot userAggregate = await _userAggregateFactory.CreateAsync(request.AuthContext);

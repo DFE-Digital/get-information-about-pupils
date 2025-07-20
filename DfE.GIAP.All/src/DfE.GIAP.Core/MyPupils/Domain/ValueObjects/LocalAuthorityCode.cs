@@ -5,12 +5,12 @@ public readonly struct LocalAuthorityCode
 {
     public LocalAuthorityCode(int code)
     {
-        if(code < 0)
+        if (code < 0)
         {
             throw new ArgumentException("Local authority must be a positive number");
         }
 
-        if(code > 999)
+        if (code > 999)
         {
             throw new ArgumentOutOfRangeException(nameof(code));
         }

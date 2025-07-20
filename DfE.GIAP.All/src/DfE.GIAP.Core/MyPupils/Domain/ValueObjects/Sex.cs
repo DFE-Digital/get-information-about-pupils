@@ -1,6 +1,9 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public readonly struct Sex
 {
+    // TODO should we accept "male", "female"
+    // TODO is intersex represented?
+
     private readonly char _value;
     private static readonly char s_maleCharacterCode = 'M';
     private static readonly char s_femaleCharacterCode = 'F';
@@ -13,7 +16,6 @@ public readonly struct Sex
             _ => sexCode
         };
 
-        // TODO is Intersex represented?
         char[] validCodes = [s_maleCharacterCode, s_femaleCharacterCode];
 
         if (!validCodes.Contains(normalisedSexCode))
@@ -27,5 +29,4 @@ public readonly struct Sex
     public static Sex Female => new(s_femaleCharacterCode);
 
     public char AsSingleCharacter() => _value;
-    
 }

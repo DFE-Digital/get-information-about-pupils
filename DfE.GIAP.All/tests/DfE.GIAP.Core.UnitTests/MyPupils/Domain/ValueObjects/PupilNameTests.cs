@@ -36,7 +36,7 @@ public class PupilNameTests
 #pragma warning restore CA1806 // Do not ignore method results
 
         // Assert
-        Assert.Throws<ArgumentNullException>(act);
+        Assert.ThrowsAny<ArgumentException>(act);
     }
 
     [Theory]

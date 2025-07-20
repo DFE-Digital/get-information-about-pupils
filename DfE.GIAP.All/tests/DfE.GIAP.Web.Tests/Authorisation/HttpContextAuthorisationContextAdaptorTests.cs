@@ -28,6 +28,22 @@ public sealed class HttpContextAuthorisationContextTests
     }
 
     [Fact]
+    public void Constructor_WithMissingUserIdClaim_ThrowsException()
+    {
+        // Arrange
+        DefaultHttpContext context = HttpContextBuilder.Create().Build();
+
+        Mock<IHttpContextAccessor> accessor = new();
+        accessor.Setup(a => a.HttpContext).Returns(context);
+
+        // Act
+        Func<HttpContextAuthorisationContextAdaptor> act = () => new(accessor.Object);
+
+        // Assert
+        Assert.Throws<ArgumentException>(act);
+    }
+
+    [Fact]
     public void Constructor_WithValidClaims_InitialisesPropertiesCorrectly()
     {
         // Arrange
@@ -51,10 +67,10 @@ public sealed class HttpContextAuthorisationContextTests
     }
 
     [Fact]
-    public void Constructor_WithMissingClaims_UsesDefaults()
+    public void Constructor_WithMissingAgeClaims_UsesDefaults()
     {
         // Arrange
-        DefaultHttpContext context = HttpContextBuilder.Create().Build();
+        DefaultHttpContext context = HttpContextBuilder.Create().WithUserId("user").Build();
 
         Mock<IHttpContextAccessor> accessor = new();
         accessor.Setup(a => a.HttpContext).Returns(context);
@@ -63,7 +79,7 @@ public sealed class HttpContextAuthorisationContextTests
         HttpContextAuthorisationContextAdaptor result = new(accessor.Object);
 
         // Assert
-        Assert.Null(result.UserId);
+        Assert.Equal("user", result.UserId);
         Assert.Equal(0, result.LowAge);
         Assert.Equal(0, result.HighAge);
         Assert.False(result.IsAdministrator);
