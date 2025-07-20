@@ -103,6 +103,7 @@ public static class Routes
         public const string LearnerTextDownloadFile = "download-file-non-upn";
         public const string DownloadCTFData = "npd-non-upn-download-ctf";
         public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
+        public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
         public const string NonUpnDobFilter = "/search/npd-nonupn/dob-filter";
         public const string NonUpnGenderFilter = "/search/npd-nonupn/gender-filter";
         public const string NonUpnSexFilter = "/search/npd-nonupn/sex-filter";

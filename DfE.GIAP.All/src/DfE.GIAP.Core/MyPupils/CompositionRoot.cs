@@ -46,7 +46,6 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
-            .AddSingleton<IMapper<Pupil, PupilItemPresentationModel>, MapPupilToPupilPresentationModel>()
             .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, MapAuthorisationContextToPupilsAuthorisationContextMapper>()
             // Outbound: AggregatePupilsDomainService uses
             .AddSingleton<IMapper<MappableLearnerWithAuthorisationContext, Pupil>, MapMappableLearnerWithAuthorisationContextToPupilMapper>();

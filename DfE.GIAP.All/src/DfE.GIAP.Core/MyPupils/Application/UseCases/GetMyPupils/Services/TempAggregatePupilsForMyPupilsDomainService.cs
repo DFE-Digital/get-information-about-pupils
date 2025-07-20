@@ -51,7 +51,7 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
         IEnumerable<DecoratedLearnerWithPupilType> npdLearners =
             (await SearchForLearnersByUpn(
-                    client: _searchClientProvider.GetClientByKey(key: "npd"),
+                    client: _searchClientProvider.GetClientByKey(name: "npd"),
                     upns))
                 .Select((npdLearner)
                     => new DecoratedLearnerWithPupilType(npdLearner, PupilType.NationalPupilDatabase));
@@ -59,7 +59,7 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
         IEnumerable<DecoratedLearnerWithPupilType> pupilPremiumLearners =
             (await SearchForLearnersByUpn(
-                    client: _searchClientProvider.GetClientByKey(key: "pupil-premium"),
+                    client: _searchClientProvider.GetClientByKey(name: "pupil-premium"),
                     upns))
                 .Select(t => new DecoratedLearnerWithPupilType(t, PupilType.PupilPremium));
 
