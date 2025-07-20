@@ -1,42 +1,34 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Azure;
 using Azure.Search.Documents;
-using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
+using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Options;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Client;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Azure.Search.Documents.Models;
-using Azure;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
+
 internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePupilsForMyPupilsDomainService
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
     private const int PageSplitLimit = 500; // TODO pulled from FA
-    private readonly IEnumerable<SearchClient> _searchClients;
+    private readonly ISearchClientProvider _searchClientProvider;
     private readonly IMapper<MappableLearnerWithAuthorisationContext, Pupil> _mapper;
-    private readonly SearchIndexOptions _searchOptions;
+
 
     public TempAggregatePupilsForMyPupilsDomainService(
-        IEnumerable<SearchClient> searchClients,
-        IMapper<MappableLearnerWithAuthorisationContext, Pupil> mapper,
-        IOptions<SearchIndexOptions> searchOptions)
+        ISearchClientProvider searchClientProvider,
+        IMapper<MappableLearnerWithAuthorisationContext, Pupil> mapper)
     {
-        if (!searchClients.Any())
-        {
-            throw new ArgumentException("No search clients registered");
-        }
 
         ArgumentNullException.ThrowIfNull(mapper);
-        ArgumentNullException.ThrowIfNull(searchOptions);
-        ArgumentNullException.ThrowIfNull(searchOptions.Value);
-        _searchClients = searchClients;
+        ArgumentNullException.ThrowIfNull(searchClientProvider);
+        _searchClientProvider = searchClientProvider;
         _mapper = mapper;
-        _searchOptions = searchOptions.Value;
     }
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(
@@ -57,61 +49,72 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
             throw new ArgumentException("UPN limit exceeded");
         }
 
-        SearchClient npdSearchIndex = _searchClients.Single(
-            (t) => t.IndexName == _searchOptions.GetIndexOptionsByKey("npd").IndexName);
+        IEnumerable<DecoratedLearnerWithPupilType> npdLearners =
+            (await SearchForLearnersByUpn(
+                    client: _searchClientProvider.GetClientByKey(key: "npd"),
+                    upns))
+                .Select((npdLearner)
+                    => new DecoratedLearnerWithPupilType(npdLearner, PupilType.NationalPupilDatabase));
 
-        SearchClient pupilPremiumSearchClient = _searchClients.Single(
-            (t) => t.IndexName == _searchOptions.GetIndexOptionsByKey("pupil-premium").IndexName);
 
-        PaginatedResponse response = new();
-        await AddLearnersToResponse(npdSearchIndex, upns, response);
-        await AddLearnersToResponse(pupilPremiumSearchClient, upns, response);
+        IEnumerable<DecoratedLearnerWithPupilType> pupilPremiumLearners =
+            (await SearchForLearnersByUpn(
+                    client: _searchClientProvider.GetClientByKey(key: "pupil-premium"),
+                    upns))
+                .Select(t => new DecoratedLearnerWithPupilType(t, PupilType.PupilPremium));
 
-        return response.Learners.Select((learner) =>
-        {
-            return _mapper.Map(
-                new MappableLearnerWithAuthorisationContext(learner, authorisationContext));
-        });
+        return npdLearners.Concat(pupilPremiumLearners)
+            .Select(decoratedLearner =>
+                _mapper.Map(
+                    new MappableLearnerWithAuthorisationContext(
+                        decoratedLearner.Learner,
+                        decoratedLearner.PupilType,
+                        authorisationContext)));
     }
 
-    private static async Task AddLearnersToResponse(
+
+
+    private static async Task<List<Learner>> SearchForLearnersByUpn(
         SearchClient client,
-        IEnumerable<UniquePupilNumber> upns,
-        PaginatedResponse response)
+        IEnumerable<UniquePupilNumber> upns)
     {
         IEnumerable<string> upnValues = upns.Select(t => t.Value);
 
-        if (upnValues.Count() > PageSplitLimit)
+        if (upnValues.Count() <= PageSplitLimit)
         {
-            foreach (IEnumerable<string> numbers in SplitNumbers(upnValues.ToArray()))
-            {
-                await AddLearners(client, response, numbers);
-            }
-            response.Count = response.Learners.Count;
-            return;
+            return await SearchLearners(client, upnValues);
         }
 
-        await AddLearners(client, response, upnValues);
+        List<Learner> learners = [];
+
+        foreach (IEnumerable<string> upnsSplitPart in SplitUpnsToFitPagingLimit(upns))
+        {
+            List<Learner> learnersToAdd = await SearchLearners(client, upnsSplitPart);
+            learners.AddRange(learnersToAdd);
+        }
+
+        return learners;
     }
 
 
-    public static async Task AddLearners(
+    public static async Task<List<Learner>> SearchLearners(
         SearchClient client,
-        PaginatedResponse response,
         IEnumerable<string> upns)
     {
-        const string Upn = "UPN";
+        const string UpnIndexField = "UPN";
+
+        List<Learner> output = [];
 
         SearchOptions options = new()
         {
             Size = UpnQueryLimit,
             Skip = 0,
-            Filter = upns.Count() > 1 ? $"search.in({Upn}, '{string.Join(",", upns)}')" : $"{Upn} eq '{upns.First()}'",
+            Filter = upns.Count() > 1 ? $"search.in({UpnIndexField}, '{string.Join(",", upns)}')" : $"{UpnIndexField} eq '{upns.First()}'",
             IncludeTotalCount = true
         };
 
-        options.SearchFields.Add(Upn);
-        options.Select.Add(Upn);
+        options.SearchFields.Add(UpnIndexField);
+        options.Select.Add(UpnIndexField);
         options.Select.Add("Surname");
         options.Select.Add("Forename");
         options.Select.Add("Middlenames");
@@ -130,28 +133,30 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
         await foreach (SearchResult<AzureIndexEntity> result in results.Value.GetResultsAsync())
         {
-            response.Learners.Add((Learner)result.Document);
+            output.Add((Learner)result.Document);
         }
 
-        response.Count = results.Value.TotalCount;
+        return output;
     }
 
-
-
-    private static List<IEnumerable<string>> SplitNumbers(string[] numbers)
+    private static List<IEnumerable<string>> SplitUpnsToFitPagingLimit(IEnumerable<UniquePupilNumber> upns)
     {
-        int numberOfPages = (int)Math.Ceiling((double)numbers.Length / PageSplitLimit);
+        IEnumerable<string> upnValues = upns.Select(t => t.Value);
+        int numberOfPages = (int)Math.Ceiling((double)upnValues.Count() / PageSplitLimit);
 
         if (numberOfPages == 0)
         {
-            return [numbers.AsEnumerable()];
+            return [upnValues];
         }
 
         return Enumerable.Range(0, numberOfPages)
-            .Select(
-                (index) => numbers.Skip(index * PageSplitLimit).Take(PageSplitLimit))
+            .Select((index)
+                => upnValues.Skip(index * PageSplitLimit).Take(PageSplitLimit))
             .ToList();
     }
+
+
+    private sealed record DecoratedLearnerWithPupilType(Learner Learner, PupilType PupilType);
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
@@ -201,8 +206,6 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
                 LearnerNumber = entity.UPN ?? entity.ULN,
                 Forename = entity.Forename,
                 Surname = entity.Surname,
-                MiddleNames = entity.Middlenames,
-                Gender = entity.Gender?.ToString() ?? string.Empty,
                 Sex = entity.Sex?.ToString() ?? string.Empty,
                 Dob = entity.DOB,
                 Id = entity.id,
@@ -215,7 +218,7 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
     /// Data about learners that is stored in the cognitive search index. Returned based on searches.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class Learner // renamed from Learner to MyLearner because of namespace clash with WEB
+    public class Learner
     {
         /// <summary>
         /// Cognitive search ID
@@ -242,15 +245,18 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         /// </summary>
         public string Forename { get; set; }
 
-        /// <summary>
-        /// Learners middle names. May be multiple names.
-        /// </summary>
-        public string MiddleNames { get; set; }
+        // TODO UNUSED SO COMMENTED OUT
+        ///// <summary>
+        ///// Learners middle names. May be multiple names.
+        ///// </summary>
+        //public string MiddleNames { get; set; }
 
-        /// <summary>
-        /// Learners gender.
-        /// </summary>
-        public string Gender { get; set; }
+
+        // TODO UNUSED SO COMMENTED OUT
+        ///// <summary>
+        ///// Learners gender.
+        ///// </summary>
+        //public string Gender { get; set; }
 
         /// <summary>
         /// Learners sex.
@@ -262,69 +268,5 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         /// </summary>
         public DateTime? Dob { get; set; }
     }
-
-    /// <summary>
-    /// The paginated search response model
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class PaginatedResponse
-    {
-        /// <summary>
-        /// A list of learners that were returned based on a search.
-        /// </summary>
-        public List<Learner> Learners { get; set; } = new List<Learner>();
-        /// <summary>
-        /// The list of facets that should be displayed based on the search. May be empty.
-        /// </summary>
-        public List<FilterData> Filters { get; set; } = new List<FilterData>();
-        /// <summary>
-        /// The number of learners returned.
-        /// </summary>
-        public long? Count { get; set; }
-
-        /// <summary>
-        /// Converts the list of configured <see cref="Learner"/>
-        /// instances to a comma separated string.
-        /// </summary>
-        /// <returns>
-        /// Comma separated string containing the learners defined
-        /// withing the ist of configured <see cref="Learner"/> instances.
-        /// </returns>
-        public string GetLearnerNumbersAsString() =>
-            string.Join(",", Learners.ConvertAll(learner => learner.LearnerNumber));
-    }
-
-    /// <summary>
-    /// Facet group data returned based on a search.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class FilterData
-    {
-        /// <summary>
-        /// The name of the facet, i.e. Forename, Surname, Gender
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// List of values for the facet, i.e. first names.
-        /// </summary>
-        public List<FilterDataItem> Items { get; set; } = new List<FilterDataItem>();
-    }
-
-    /// <summary>
-    /// Contains specific data about a facet
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class FilterDataItem
-    {
-        /// <summary>
-        /// The value of the facet, i.e. a first name.
-        /// </summary>
-        public string Value { get; set; }
-        /// <summary>
-        /// how many documents exist that contain the facet, i.e. how many Johns exist.
-        /// </summary>
-        public long? Count { get; set; }
-    }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 }

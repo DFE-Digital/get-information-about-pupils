@@ -16,6 +16,7 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Client;
 
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot
@@ -36,6 +37,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IAggregatePupilsForMyPupilsDomainService, TempAggregatePupilsForMyPupilsDomainService>()
+            .AddSingleton<IMapper<MappableLearnerWithAuthorisationContext, Pupil>, MapMappableLearnerWithAuthorisationContextToPupilMapper>()
             .AddSingleton<IUserAggregateRootFactory, UserAggregateRootFactory>();
 
         return services;
@@ -103,6 +105,9 @@ public static class CompositionRoot
                 new AzureKeyCredential(options.Key));
             return searchClient;
         });
+
+        // Temporary SearchClientProvider
+        services.AddSingleton<ISearchClientProvider, SearchClientProvider>();
 
         return services;
     }

@@ -3,33 +3,22 @@
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class PupilName : ValueObject<PupilName>
 {
-    public PupilName(string firstName, string lastName) : this(firstName, [], lastName)
-    { }
-
-    public PupilName(string firstName, IEnumerable<string> middleNames, string lastName) // TODO double barrelled names are they normalised in data and treated singular?
+    // TODO double barrelled names are they normalised in data and treated singular?
+    // TODO middlenames required for Search representation
+    public PupilName(string firstName, string lastName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName); // TODO is it possible for these to not exist?
         ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
         FirstName = Normalise(firstName);
         Surname = Normalise(lastName);
-        MiddleNames = middleNames.Select(Normalise)
-            .ToArray()
-            .AsReadOnly();
     }
 
     public string FirstName { get; }
     public string Surname { get; }
-    public IReadOnlyList<string> MiddleNames { get; }
-    public bool HasMiddleNames => MiddleNames.Any();
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return FirstName;
-
-        foreach (string middleName in MiddleNames)
-        {
-            yield return middleName;
-        }
 
         yield return Surname;
     }
