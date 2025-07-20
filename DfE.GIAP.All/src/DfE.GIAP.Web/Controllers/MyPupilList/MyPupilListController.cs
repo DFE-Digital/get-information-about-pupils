@@ -96,10 +96,10 @@ public class MyPupilListController : Controller
         _logger.LogInformation("My pupil list GET method is called");
 
         // ******** New implmenetation
-        //GetMyPupilsRequest request = new(
-        //    new HttpContextAuthorisationContextAdaptor(_httpContextAccessor));
+        GetMyPupilsRequest request = new(
+            new HttpContextAuthorisationContextAdaptor(_httpContextAccessor));
 
-        //GetMyPupilsResponse getMyPupilsResponse = await _getMyPupilsUseCase.HandleRequestAsync(request);
+        GetMyPupilsResponse getMyPupilsResponse = await _getMyPupilsUseCase.HandleRequestAsync(request);
 
         // ********
         // Old implementation below

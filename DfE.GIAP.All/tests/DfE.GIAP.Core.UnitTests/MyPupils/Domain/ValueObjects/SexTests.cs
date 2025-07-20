@@ -18,7 +18,7 @@ public class SexTests
         Sex sex = new(input);
 
         // Assert
-        Assert.Equal(expected, sex.AsSingleCharacter());
+        Assert.Equal(expected, sex.ToString());
     }
 
     [Theory]
@@ -50,7 +50,7 @@ public class SexTests
         Sex result = Sex.Male;
 
         // Assert
-        Assert.Equal(expected.AsSingleCharacter(), result.AsSingleCharacter());
+        Assert.Equal(expected.ToString(), result.ToString());
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class SexTests
         Sex result = Sex.Female;
 
         // Assert
-        Assert.Equal(expected.AsSingleCharacter(), result.AsSingleCharacter());
+        Assert.Equal(expected.ToString(), result.ToString());
     }
 
     [Fact]

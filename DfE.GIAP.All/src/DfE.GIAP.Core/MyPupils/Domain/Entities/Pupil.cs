@@ -43,8 +43,7 @@ public sealed class Pupil : Entity<PupilId>
     public bool HasDateOfBirth => _dateOfBirth is not null;
     public string DateOfBirth => _dateOfBirth?.ToString() ?? string.Empty;
     public int LocalAuthorityCode { get; }
-    public char? Sex => _sex is not null ? null : _sex!.Value.AsSingleCharacter();
-
+    public string Sex => _sex?.ToString() ?? string.Empty;
     public bool IsOfPupilType(PupilType pupilType) => _pupilType.Equals(pupilType);
     internal bool TryCalculateAge(out int? calculatedAge)
     {
