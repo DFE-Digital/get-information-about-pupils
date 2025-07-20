@@ -16,12 +16,16 @@ public readonly struct Sex
         // TODO is Intersex represented?
         char[] validCodes = [s_maleCharacterCode, s_femaleCharacterCode];
 
-        if (!validCodes.Contains(sexCode))
+        if (!validCodes.Contains(normalisedSexCode))
         {
-            throw new ArgumentException($"Invalid character to represent Sex: {sexCode}");
+            throw new ArgumentException($"Invalid character to represent Sex: {normalisedSexCode}");
         }
         _value = normalisedSexCode;
     }
 
+    public static Sex Male => new(s_maleCharacterCode);
+    public static Sex Female => new(s_femaleCharacterCode);
+
     public char AsSingleCharacter() => _value;
+    
 }
