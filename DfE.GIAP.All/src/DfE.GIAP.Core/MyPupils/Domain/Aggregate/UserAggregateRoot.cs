@@ -5,13 +5,16 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 public sealed class UserAggregateRoot : AggregateRoot<UserId>
 {
+    private const int PUPIL_LIST_LIMIT = 4000;
     private readonly List<Pupil> _myPupils;
 
     public UserAggregateRoot(
         UserId identifier,
         IEnumerable<Pupil>? myPupils) : base(identifier)
     {
-        _myPupils = myPupils?.ToList() ?? [];
+        _myPupils = myPupils?
+            .Take(PUPIL_LIST_LIMIT)?
+            .ToList() ?? [];
     }
 
     public IEnumerable<Pupil> GetMyPupils()

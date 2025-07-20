@@ -117,8 +117,8 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         options.Select.Add(UpnIndexField);
         options.Select.Add("Surname");
         options.Select.Add("Forename");
-        options.Select.Add("Middlenames");
-        options.Select.Add("Gender");
+        // options.Select.Add("Middlenames");
+        // options.Select.Add("Gender");
         options.Select.Add("Sex");
         options.Select.Add("DOB");
         options.Select.Add("LocalAuthority");
@@ -172,8 +172,8 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         [JsonProperty("UPN")]
         public string UPN { get; set; }
 
-        [JsonProperty("ULN")]
-        public string ULN { get; set; }
+        //[JsonProperty("ULN")]
+        //public string ULN { get; set; }
 
         [JsonProperty("Surname")]
         public string Surname { get; set; }
@@ -181,11 +181,11 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         [JsonProperty("Forename")]
         public string Forename { get; set; }
 
-        [JsonProperty("Middlenames")]
-        public string Middlenames { get; set; }
+        //[JsonProperty("Middlenames")]
+        //public string Middlenames { get; set; }
 
-        [JsonProperty("Gender")]
-        public char? Gender { get; set; }
+        //[JsonProperty("Gender")]
+        //public char? Gender { get; set; }
 
         [JsonProperty("Sex")]
         public char? Sex { get; set; }
@@ -203,7 +203,7 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         {
             return new Learner()
             {
-                LearnerNumber = entity.UPN ?? entity.ULN,
+                LearnerNumber = entity.UPN ?? string.Empty,
                 Forename = entity.Forename,
                 Surname = entity.Surname,
                 Sex = entity.Sex?.ToString() ?? string.Empty,

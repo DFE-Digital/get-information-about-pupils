@@ -37,7 +37,6 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IAggregatePupilsForMyPupilsDomainService, TempAggregatePupilsForMyPupilsDomainService>()
-            .AddSingleton<IMapper<MappableLearnerWithAuthorisationContext, Pupil>, MapMappableLearnerWithAuthorisationContextToPupilMapper>()
             .AddSingleton<IUserAggregateRootFactory, UserAggregateRootFactory>();
 
         return services;
@@ -48,7 +47,9 @@ public static class CompositionRoot
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, PupilItemPresentationModel>, MapPupilToPupilPresentationModel>()
-            .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, MapAuthorisationContextToPupilsAuthorisationContextMapper>();
+            .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, MapAuthorisationContextToPupilsAuthorisationContextMapper>()
+            // Outbound: AggregatePupilsDomainService uses
+            .AddSingleton<IMapper<MappableLearnerWithAuthorisationContext, Pupil>, MapMappableLearnerWithAuthorisationContextToPupilMapper>();
 
         return services;
     }
@@ -85,7 +86,7 @@ public static class CompositionRoot
         services.AddSingleton<SearchClient>(sp =>
         {
             SearchIndexOptions options = sp.GetRequiredService<IOptions<SearchIndexOptions>>().Value;
-            IndexOptions indexOptions = options.GetIndexOptionsByKey("npd");
+            IndexOptions indexOptions = options.GetIndexOptionsByName("npd");
 
             SearchClient searchClient = new(
                 new Uri(options.Url),
@@ -97,7 +98,7 @@ public static class CompositionRoot
         services.AddSingleton<SearchClient>(sp =>
         {
             SearchIndexOptions options = sp.GetRequiredService<IOptions<SearchIndexOptions>>().Value;
-            IndexOptions indexOptions = options.GetIndexOptionsByKey("pupil-premium");
+            IndexOptions indexOptions = options.GetIndexOptionsByName("pupil-premium");
 
             SearchClient searchClient = new(
                 new Uri(options.Url),

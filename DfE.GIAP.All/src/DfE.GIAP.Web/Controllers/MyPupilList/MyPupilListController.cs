@@ -14,6 +14,7 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.Web.Authorisation;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
@@ -36,6 +37,8 @@ public class MyPupilListController : Controller
 
     private readonly ILogger<MyPupilListController> _logger;
     private readonly ICommonService _commonService;
+    private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ISelectionManager _selectionManager;
     private readonly IMyPupilListService _mplService;
@@ -54,23 +57,75 @@ public class MyPupilListController : Controller
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
         ICommonService commonService,
-        IOptions<AzureAppSettings> azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
+        IHttpContextAccessor httpContextAccessor)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(commonService);
         _commonService = commonService;
+
+        ArgumentNullException.ThrowIfNull(getMyPupilsUseCase);
+        _getMyPupilsUseCase = getMyPupilsUseCase;
+        _httpContextAccessor = httpContextAccessor;
+        ArgumentNullException.ThrowIfNull(paginatedSearch);
         _paginatedSearch = paginatedSearch;
+
+        ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
+
+        ArgumentNullException.ThrowIfNull(mplService);
         _mplService = mplService;
+
+        ArgumentNullException.ThrowIfNull(ctfService);
         _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
     }
 
     [HttpGet]
-    public Task<IActionResult> Index(bool returnToMPL = false)
+    public async Task<IActionResult> Index(bool returnToMPL = false)
     {
         _logger.LogInformation("My pupil list GET method is called");
-        return Search(returnToMPL);
+
+        // ******** New implmenetation
+        //GetMyPupilsRequest request = new(
+        //    new HttpContextAuthorisationContextAdaptor(_httpContextAccessor));
+
+        //GetMyPupilsResponse getMyPupilsResponse = await _getMyPupilsUseCase.HandleRequestAsync(request);
+
+        // ********
+        // Old implementation below
+
+        MyPupilListViewModel model = new();
+        PopulatePageText(model);
+        PopulateNavigation(model);
+        SetModelApplicationLabels(model);
+        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
+
+        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
+
+        if (returnToMPL && HttpContext.Session.Keys.Contains(SortFieldSessionKey) && HttpContext.Session.Keys.Contains(SortDirectionSessionKey))
+        {
+            model.SortField = HttpContext.Session.GetString(SortFieldSessionKey);
+            model.SortDirection = HttpContext.Session.GetString(SortDirectionSessionKey);
+        }
+
+        model.Upn = GetMyPupilListStringSeparatedBy(learnerList, "\n");
+        model.MyPupilList = learnerList.ToList();
+
+        model = await GetPupilsForSearchBuilder(model, 0, !returnToMPL);
+        model.PageNumber = 0;
+        model.PageSize = PAGESIZE;
+
+        return View(Routes.MyPupilList.MyPupilListView, model);
     }
 
     [HttpPost]
@@ -339,41 +394,9 @@ public class MyPupilListController : Controller
         return ConfirmationForStarredPupil(model);
     }
 
-    [HttpPost]
-    [Route(Routes.MyPupilList.DownloadCancellationReturn)]
-    public Task<IActionResult> DownloadCancellationReturn(LearnerTextSearchViewModel model)
-        => Search(true);
-
     [NonAction]
     public IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
         => View(Global.StarredPupilConfirmationView, model);
-
-    [NonAction]
-    private async Task<IActionResult> Search(bool returnToMPL)
-    {
-        MyPupilListViewModel model = new();
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetModelApplicationLabels(model);
-        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
-
-        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
-
-        if (returnToMPL && HttpContext.Session.Keys.Contains(SortFieldSessionKey) && HttpContext.Session.Keys.Contains(SortDirectionSessionKey))
-        {
-            model.SortField = HttpContext.Session.GetString(SortFieldSessionKey);
-            model.SortDirection = HttpContext.Session.GetString(SortDirectionSessionKey);
-        }
-
-        model.Upn = GetMyPupilListStringSeparatedBy(learnerList, "\n");
-        model.MyPupilList = learnerList.ToList();
-
-        model = await GetPupilsForSearchBuilder(model, 0, !returnToMPL);
-        model.PageNumber = 0;
-        model.PageSize = PAGESIZE;
-
-        return View(Routes.MyPupilList.MyPupilListView, model);
-    }
 
     [NonAction]
     public async Task<IActionResult> Search(MyPupilListViewModel model, int pageNumber, bool hasQueryItem = false, bool calledByController = false, bool failedDownload = false)
@@ -431,7 +454,7 @@ public class MyPupilListController : Controller
     private async Task<MyPupilListViewModel> GetPupilsForSearchBuilder(
         MyPupilListViewModel model,
         int pageNumber,
-        bool first)
+        bool first) //!returnToMpl ?
     {
         if (string.IsNullOrEmpty(model.Upn))
         {

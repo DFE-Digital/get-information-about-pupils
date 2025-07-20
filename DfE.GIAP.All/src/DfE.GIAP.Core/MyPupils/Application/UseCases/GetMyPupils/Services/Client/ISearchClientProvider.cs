@@ -4,5 +4,5 @@ namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Clien
 
 internal interface ISearchClientProvider
 {
-    SearchClient GetClientByKey(string key);
+    SearchClient GetClientByKey(string name);
 }

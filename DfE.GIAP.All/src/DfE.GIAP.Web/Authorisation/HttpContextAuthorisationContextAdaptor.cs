@@ -4,9 +4,9 @@ using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Authorisation;
-public sealed class HttpContextAuthorisationContext : IAuthorisationContext
+public sealed class HttpContextAuthorisationContextAdaptor : IAuthorisationContext
 {
-    public HttpContextAuthorisationContext(IHttpContextAccessor accessor)
+    public HttpContextAuthorisationContextAdaptor(IHttpContextAccessor accessor)
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(accessor.HttpContext);
