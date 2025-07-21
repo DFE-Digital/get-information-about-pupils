@@ -6,7 +6,5 @@ namespace DfE.GIAP.Web.ViewModels;
 public class HomeViewModel
 {
     public Content LandingResponse { get; set; }
-    public Content PlannedMaintenanceResponse { get; set; }
-    public Content PublicationScheduleResponse { get; set; }
     public Content FAQResponse { get; set; }
 }
