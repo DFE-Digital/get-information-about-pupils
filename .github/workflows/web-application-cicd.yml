@@ -419,46 +419,47 @@ jobs:
   #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
 
   ####
-  ## Pre-Production Environment - commented until we have governance and agreement
+  ## Pre-Production Environment
   ####
-#  deploy_env_preproduction:
-#    needs: smoke_test_env_test
-#    concurrency:
-#      group: deploy-and-test-preproduction
-#    permissions:
-#      contents: read  # Required to check out the code.
-#      id-token: write # Required for OIDC authentication with Azure
-#    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#    environment: preproduction
-#    outputs:
-#      app_url: ${{ steps.deploy.outputs.app_url }}
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#      - name: Deploy to Azure
-#        id: deploy
-#        uses: ./.github/actions/deploy
-#        with:
-#          app_name: s115p02-as-searchweb-cs
-#          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-#          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-#          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+  deploy_env_preproduction:
+    needs: smoke_test_env_test
+    concurrency:
+      group: deploy-and-test-preproduction
+    permissions:
+      contents: read  # Required to check out the code.
+      id-token: write # Required for OIDC authentication with Azure
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: preproduction
+    outputs:
+      app_url: ${{ steps.deploy.outputs.app_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Deploy to Azure
+        id: deploy
+        uses: ./.github/actions/deploy
+        with:
+          app_name: s115p02-as-searchweb-cs
+          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-#  smoke_test_env_preproduction:
-#    needs: deploy_env_preproduction
-#    concurrency:
-#      group: deploy-and-test-preproduction
-#    permissions:
-#      contents: read  # Required to check out the code.
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#      - name: Run smoke tests
-#        uses: ./.github/actions/smoke-test
-#        with:
-#          url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
+  smoke_test_env_preproduction:
+    needs: deploy_env_preproduction
+    concurrency:
+      group: deploy-and-test-preproduction
+    permissions:
+      contents: read  # Required to check out the code.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run smoke tests
+        uses: ./.github/actions/smoke-test
+        with:
+          url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
 
   ##  PLACEHOLDERS FOR ADDITIONAL TESTS
   #  performance_test_env_preproduction:
