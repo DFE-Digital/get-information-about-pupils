@@ -36,14 +36,6 @@ public class HomeController : Controller
             await _getContentByPageKeyUseCase.HandleRequestAsync(
                 new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
 
-        GetContentByPageKeyUseCaseResponse plannedMaintenanceContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "PlannedMaintenance"));
-
-        GetContentByPageKeyUseCaseResponse publicationScheduleContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "PublicationSchedule"));
-
         GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
             await _getContentByPageKeyUseCase.HandleRequestAsync(
                 new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
@@ -51,8 +43,6 @@ public class HomeController : Controller
         HomeViewModel model = new()
         {
             LandingResponse = landingPageContentResponse.Content,
-            PlannedMaintenanceResponse = plannedMaintenanceContentResponse.Content,
-            PublicationScheduleResponse = publicationScheduleContentResponse.Content,
             FAQResponse = frequentlyAskedQuestionsContentResponse.Content
         };
 
