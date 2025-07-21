@@ -4,6 +4,7 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
@@ -25,6 +26,7 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Globalization;
 using System.Reflection;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
@@ -38,6 +40,7 @@ public class MyPupilListController : Controller
     private readonly ILogger<MyPupilListController> _logger;
     private readonly ICommonService _commonService;
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
+    private readonly IMapper<PupilItemPresentationModel, Learner> _mapPresentationModelToLegacyLearner;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ISelectionManager _selectionManager;
@@ -59,6 +62,7 @@ public class MyPupilListController : Controller
         ICommonService commonService,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
+        IMapper<PupilItemPresentationModel, Learner> mapPresentationModelToLegacyLearner,
         IHttpContextAccessor httpContextAccessor)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -69,6 +73,7 @@ public class MyPupilListController : Controller
 
         ArgumentNullException.ThrowIfNull(getMyPupilsUseCase);
         _getMyPupilsUseCase = getMyPupilsUseCase;
+        _mapPresentationModelToLegacyLearner = mapPresentationModelToLegacyLearner;
         _httpContextAccessor = httpContextAccessor;
         ArgumentNullException.ThrowIfNull(paginatedSearch);
         _paginatedSearch = paginatedSearch;
@@ -90,40 +95,76 @@ public class MyPupilListController : Controller
         _downloadService = downloadService;
     }
 
+    internal sealed class MapPresentationItemToLegacyLearner : IMapper<PupilItemPresentationModel, Learner>
+    {
+        public Learner Map(PupilItemPresentationModel input)
+        {
+            return new()
+            {
+                Id = input.Id,
+                LearnerNumber = input.UniquePupilIdentifier,
+                LearnerNumberId = input.UniquePupilIdentifier,
+                Forename = input.FirstName,
+                Surname = input.Surname,
+                DOB = DateTime.Parse(input.DateOfBirth, new CultureInfo("en-GB")),
+                Selected = false,
+                PupilPremium = input.IsPupilPremium ? "Yes" : "No",
+                Sex = input.Sex,
+                LocalAuthority = input.LocalAuthorityCode.ToString()
+            };
+        }
+    }
+
+    public sealed class MyPupilsViewModel
+    {
+        public MyPupilsViewModel(
+            IEnumerable<PupilItemPresentationModel> pupils,
+            IMapper<PupilItemPresentationModel, Learner> mapper)
+        {
+            Learners = pupils.Select(mapper.Map);
+        }
+
+        public string PageHeading => "My pupil list";
+
+        public IEnumerable<Learner> Learners { get; } = [];
+        public IEnumerable<string> PageLearnerNumbers => Learners.Select(t => t.LearnerNumberId);
+        public IEnumerable<Learner> Invalid => [];
+
+        public int Total => 20;
+        public int PageNumber { get; set; } = 0;
+        public int PageSize { get; set; } = 20;
+
+        public string SortField => "";
+        public string SortDirection => "";
+
+        public string LearnerNumberLabel => "UPN";
+        public string DownloadLinksPartial => "~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml";
+        public string SearchAction => "MyPupilList";
+
+        public int MaximumUPNsPerSearch { get; set; } = 4000;
+        
+        public bool Removed => false;
+        public bool NoPupilSelected => false;
+        public bool NoPupil => false;
+        public bool ShowLocalAuthority => true;
+        public bool ToggleSelectAll => false;
+        public string Upn => string.Empty;
+
+        public string ErrorDetails => string.Empty;
+        public bool ShowErrors => false;
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index(bool returnToMPL = false)
     {
         _logger.LogInformation("My pupil list GET method is called");
 
-        // ******** New implmenetation
         GetMyPupilsRequest request = new(
             new HttpContextAuthorisationContextAdaptor(_httpContextAccessor));
 
         GetMyPupilsResponse getMyPupilsResponse = await _getMyPupilsUseCase.HandleRequestAsync(request);
 
-        // ********
-        // Old implementation below
-
-        MyPupilListViewModel model = new();
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetModelApplicationLabels(model);
-        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
-
-        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
-
-        if (returnToMPL && HttpContext.Session.Keys.Contains(SortFieldSessionKey) && HttpContext.Session.Keys.Contains(SortDirectionSessionKey))
-        {
-            model.SortField = HttpContext.Session.GetString(SortFieldSessionKey);
-            model.SortDirection = HttpContext.Session.GetString(SortDirectionSessionKey);
-        }
-
-        model.Upn = GetMyPupilListStringSeparatedBy(learnerList, "\n");
-        model.MyPupilList = learnerList.ToList();
-
-        model = await GetPupilsForSearchBuilder(model, 0, !returnToMPL);
-        model.PageNumber = 0;
-        model.PageSize = PAGESIZE;
+        MyPupilsViewModel model = new(getMyPupilsResponse.Pupils, _mapPresentationModelToLegacyLearner);
 
         return View(Routes.MyPupilList.MyPupilListView, model);
     }
@@ -490,7 +531,7 @@ public class MyPupilListController : Controller
         IEnumerable<string> whiteListUPNs = model.MyPupilList.Where(x => !x.IsMasked).Select(x => x.PupilId);
 
         learners.ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        IEnumerable<string> unionLearnerNumbers = ProcessStarredPupils(learners, whiteListUPNs);
+        IEnumerable<string> unionLearnerNumbers = []; //ProcessStarredPupils(learners, whiteListUPNs);
 
         model.Upn = string.Join("\n", unionLearnerNumbers);
 
@@ -569,23 +610,6 @@ public class MyPupilListController : Controller
         return model;
     }
 
-    private IEnumerable<string> ProcessStarredPupils(IEnumerable<Learner> learners, IEnumerable<string> whiteList)
-    {
-        var isAdmin = User.IsAdmin();
-        var lowAge = User.GetOrganisationLowAge();
-        var highAge = User.GetOrganisationHighAge();
-
-        if (!isAdmin)
-        {
-            var learnersExemptFromMask = learners.Where(x => whiteList.Contains(x.LearnerNumber));
-            var learnersNotExempt = learners.Where(x => !whiteList.Contains(x.LearnerNumber));
-            learnersNotExempt = RbacHelper.CheckRbacRulesGeneric<Learner>(learnersNotExempt.ToList(), lowAge, highAge);
-            learners = learnersNotExempt.Union(learnersExemptFromMask);
-        }
-
-        return learners.Select(l => l.LearnerNumberId);
-    }
-
     private HashSet<string> GetSelected(string[] available)
     {
         var missing = JsonConvert.DeserializeObject<List<string>>(HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY));
@@ -662,3 +686,6 @@ public class MyPupilListController : Controller
         model.DownloadSelectedPupilPremiumDataLink = ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
     }
 }
+
+
+

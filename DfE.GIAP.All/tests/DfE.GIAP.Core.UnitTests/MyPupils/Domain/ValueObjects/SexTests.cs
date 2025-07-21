@@ -12,7 +12,7 @@ public class SexTests
     public void Constructor_WithValidCharacters_ShouldNormaliseAndStoreCorrectly(char input)
     {
         // Arrange
-        char expected = char.ToUpperInvariant(input);
+        string expected = char.ToUpperInvariant(input).ToString();
 
         // Act
         Sex sex = new(input);
