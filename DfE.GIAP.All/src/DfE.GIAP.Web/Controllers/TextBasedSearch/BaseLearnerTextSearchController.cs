@@ -106,10 +106,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
 
-        var newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
-
-        model.DataReleaseTimeTable.NewsPublication = newsPublication.ConvertToViewModel();
-
         model.ShowMiddleNames = this.ShowMiddleNames;
 
         if (returnToSearch ?? false)
