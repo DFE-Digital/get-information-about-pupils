@@ -10,7 +10,6 @@ using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
 
@@ -43,7 +42,7 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>());
         Assert.NotNull(provider.GetService<IMapper<IAuthorisationContext, PupilAuthorisationContext>>());
 
-        Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsDomainService>());
+        Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsDomainService>());;
 
         Assert.NotNull(provider.GetService<IUserReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IUserAggregateRootFactory>());

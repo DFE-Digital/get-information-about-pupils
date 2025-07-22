@@ -10,7 +10,7 @@ public record PupilItemPresentationModel
         DateOfBirth = pupil.DateOfBirth?.ToString() ?? string.Empty;
         FirstName = pupil.FirstName;
         Surname = pupil.Surname;
-        Sex = pupil.Sex?.ToString() ?? string.Empty;
+        Sex = pupil.Sex;
         IsPupilPremium = pupil.IsOfPupilType(Domain.ValueObjects.PupilType.PupilPremium);
         LocalAuthorityCode = pupil.LocalAuthorityCode;
     }

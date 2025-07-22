@@ -4,9 +4,9 @@ using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Authorisation;
-public sealed class HttpContextAuthorisationContext : IAuthorisationContext
+public sealed class HttpContextAuthorisationContextAdaptor : IAuthorisationContext
 {
-    public HttpContextAuthorisationContext(IHttpContextAccessor accessor)
+    public HttpContextAuthorisationContextAdaptor(IHttpContextAccessor accessor)
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(accessor.HttpContext);
@@ -14,8 +14,7 @@ public sealed class HttpContextAuthorisationContext : IAuthorisationContext
         ClaimsPrincipal user = accessor.HttpContext.User;
 
         UserId = user.Claims.FirstOrDefault(
-            (c) => c.Type == CustomClaimTypes.UserId)?.Value; // TODO should we be validating that the User claim is not empty here, rather than sending it down as `null` which is what ClaimsPrincipalExtensions was doing previously
-            // Can we judge how many UserProfiles signed in without an Id, e.g they were created through the Create path of Upsert / Get UserProfile. Use CreatedDate?
+            (c) => c.Type == CustomClaimTypes.UserId)?.Value ?? throw new ArgumentException("User id claim is empty");
 
         LowAge = int.TryParse(
             user.Claims.FirstOrDefault(

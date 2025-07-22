@@ -1,4 +1,5 @@
-﻿@model MyPupilListViewModel
+﻿@using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
+@model MyPupilsViewModel
 @{
     ViewData["Title"] = Model.PageHeading;
 }
@@ -24,9 +25,7 @@
                 @Model.ErrorDetails
             </span>
         </div>
-    }
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
-    {
+
         <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
     }
 
@@ -69,6 +68,7 @@
             <div class="webapp-results"></div>
         }
         @if (!Model.ShowErrors && Model.Learners != null && Model.Learners.Any())
+
         {
             <partial name="~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml" model="Model" />
 
@@ -206,7 +206,7 @@
                     @(await Component.InvokeAsync("PaginatedResult", new
                     {
                         learners = Model.Learners,
-                        pageLearnerNumbers = Model.PageLearnerNumbers,
+                        pageLearnerNumbers = string.Join(',', Model.Learners.Select(t => t.Id)),
                         learnerNumberLabel = Model.LearnerNumberLabel,
                         allowMultipleSelection = true,
                         pageNumber = Model.PageNumber,

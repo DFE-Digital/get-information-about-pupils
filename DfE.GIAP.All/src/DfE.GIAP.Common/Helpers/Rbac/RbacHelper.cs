@@ -1,13 +1,14 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Domain.Models.Search;
+using DfE.GIAP.Domain.Search.Learner;
 
 namespace DfE.GIAP.Common.Helpers.Rbac;
 
 public static class RbacHelper
 {
-    public static List<T> CheckRbacRulesGeneric<T>(List<T> results, int statutoryLowAge, int statutoryHighAge)
-       where T : IRbac
+    public static List<Learner> CheckRbacRulesGeneric(List<Learner> results, int statutoryLowAge, int statutoryHighAge)
     {
         // Rbac rules don't apply
         if (statutoryLowAge == 0 && statutoryHighAge == 0)
@@ -15,7 +16,7 @@ public static class RbacHelper
             return results;
         }
 
-        foreach (T item in results)
+        foreach (Learner item in results)
         {
             if (item.DOB != null)
             {

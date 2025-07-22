@@ -1963,7 +1963,10 @@ public class MyPupilListControllerTests :
             _mockCtfService,
             _mockDownloadService,
             _mockCommonService,
-            _mockAppOptions)
+            _mockAppOptions,
+            null, // TODO stub
+            null,
+            null) // TODO stub
         {
             ControllerContext = context
         };

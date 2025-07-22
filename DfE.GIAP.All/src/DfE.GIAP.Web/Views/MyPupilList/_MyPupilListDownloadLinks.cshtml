@@ -1,4 +1,5 @@
-﻿@model MyPupilListViewModel
+﻿@using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
+@model MyPupilsViewModel
 
 @if ((Model.Learners != null && Model.Learners.Any()) || Model.Invalid.Any())
 {
@@ -7,22 +8,22 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             <button class="govuk-list webapp-button-as-link" asp-action="ToDownloadCommonTransferFileData" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" id="search--download--as--CTF--link" name="downloadASCTF" value="selected" type="submit">
-                @Model.DownloadSelectedASCTFLink
+                @ApplicationLabels.DownloadSelectedAsCtfLink
             </button>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <button class="govuk-list webapp-button-as-link" asp-action="ToDownloadSelectedNPDDataUPN" id="download--selected--npd--data--link" type="submit">
-                @Model.DownloadSelectedNPDDataLink
+                @ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink
             </button>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <button class="govuk-list webapp-button-as-link" asp-action="ToDownloadSelectedPupilPremiumDataUPN" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" id="download--selected--pp--data--link" type="submit">
-                @Model.DownloadSelectedPupilPremiumDataLink
+                @ApplicationLabels.DownloadSelectedPupilPremiumDataLink
             </button>
         </div>
         <div class="govuk-grid-column-one-quarter">
             <button class="govuk-list webapp-button-as-link" asp-controller="MyPupilList" asp-action="RemoveSelected" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" asp id="remove--selected--data--link" type="submit">
-                @Model.RemoveSelectedToMyPupilListLink
+                @ApplicationLabels.RemoveSelectedToMyPupilListLink
             </button>
         </div>
     </div>

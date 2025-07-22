@@ -75,7 +75,7 @@ internal sealed class PupilBuilder
 
         return new Pupil(
             identifier: _id ?? new(Guid.NewGuid()),
-            pupilType: _pupilType ?? PupilType.NationalPupilDatabase,
+            pupilType : _pupilType ?? PupilType.NationalPupilDatabase,
             name: name,
             uniquePupilNumber: _upn,
             dateOfBirth: _dateOfBirth,

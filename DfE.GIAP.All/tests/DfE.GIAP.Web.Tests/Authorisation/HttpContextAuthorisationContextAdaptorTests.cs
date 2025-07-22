@@ -13,7 +13,7 @@ public sealed class HttpContextAuthorisationContextTests
     public void Constructor_WithNullAccessor_ThrowsArgumentNullException()
     {
         // Act Assert
-        Assert.Throws<ArgumentNullException>(() => new HttpContextAuthorisationContext(null));
+        Assert.Throws<ArgumentNullException>(() => new HttpContextAuthorisationContextAdaptor(null));
     }
 
     [Fact]
@@ -24,7 +24,23 @@ public sealed class HttpContextAuthorisationContextTests
         accessor.Setup(a => a.HttpContext).Returns((HttpContext)null!);
 
         // Act Assert
-        Assert.Throws<ArgumentNullException>(() => new HttpContextAuthorisationContext(accessor.Object));
+        Assert.Throws<ArgumentNullException>(() => new HttpContextAuthorisationContextAdaptor(accessor.Object));
+    }
+
+    [Fact]
+    public void Constructor_WithMissingUserIdClaim_ThrowsException()
+    {
+        // Arrange
+        DefaultHttpContext context = HttpContextBuilder.Create().Build();
+
+        Mock<IHttpContextAccessor> accessor = new();
+        accessor.Setup(a => a.HttpContext).Returns(context);
+
+        // Act
+        Func<HttpContextAuthorisationContextAdaptor> act = () => new(accessor.Object);
+
+        // Assert
+        Assert.Throws<ArgumentException>(act);
     }
 
     [Fact]
@@ -41,7 +57,7 @@ public sealed class HttpContextAuthorisationContextTests
         accessor.Setup(a => a.HttpContext).Returns(context);
 
         // Act
-        HttpContextAuthorisationContext result = new(accessor.Object);
+        HttpContextAuthorisationContextAdaptor result = new(accessor.Object);
 
         // Assert
         Assert.Equal("user-123", result.UserId);
@@ -51,19 +67,19 @@ public sealed class HttpContextAuthorisationContextTests
     }
 
     [Fact]
-    public void Constructor_WithMissingClaims_UsesDefaults()
+    public void Constructor_WithMissingAgeClaims_UsesDefaults()
     {
         // Arrange
-        DefaultHttpContext context = HttpContextBuilder.Create().Build();
+        DefaultHttpContext context = HttpContextBuilder.Create().WithUserId("user").Build();
 
         Mock<IHttpContextAccessor> accessor = new();
         accessor.Setup(a => a.HttpContext).Returns(context);
 
         // Act
-        HttpContextAuthorisationContext result = new(accessor.Object);
+        HttpContextAuthorisationContextAdaptor result = new(accessor.Object);
 
         // Assert
-        Assert.Null(result.UserId);
+        Assert.Equal("user", result.UserId);
         Assert.Equal(0, result.LowAge);
         Assert.Equal(0, result.HighAge);
         Assert.False(result.IsAdministrator);
@@ -83,7 +99,7 @@ public sealed class HttpContextAuthorisationContextTests
         accessor.Setup(a => a.HttpContext).Returns(context);
 
         // Act
-        HttpContextAuthorisationContext result = await Task.Run(() => new HttpContextAuthorisationContext(accessor.Object));
+        HttpContextAuthorisationContextAdaptor result = await Task.Run(() => new HttpContextAuthorisationContextAdaptor(accessor.Object));
 
         // Assert
         Assert.Equal("async", result.UserId);
@@ -105,13 +121,13 @@ public sealed class HttpContextAuthorisationContextTests
         Mock<IHttpContextAccessor> accessor = new();
         accessor.Setup(a => a.HttpContext).Returns(context);
 
-        HttpContextAuthorisationContext? result = null;
+        HttpContextAuthorisationContextAdaptor? result = null;
 
         // Act
 #pragma warning disable xUnit1030 // Do not call ConfigureAwait(false) in test method
         await Task.Run(() =>
         {
-            result = new HttpContextAuthorisationContext(accessor.Object);
+            result = new HttpContextAuthorisationContextAdaptor(accessor.Object);
         }).ConfigureAwait(false);
 #pragma warning restore xUnit1030 // Do not call ConfigureAwait(false) in test method
 

@@ -5,9 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.Search.Documents" Version="11.6.1" />
 		<PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
@@ -19,7 +20,4 @@
 		<InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Common\Application\User\" />
-	</ItemGroup>
 </Project>
