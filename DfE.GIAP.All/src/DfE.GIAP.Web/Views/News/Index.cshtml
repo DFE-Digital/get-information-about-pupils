@@ -7,8 +7,7 @@
 {
     <h1 class="govuk-heading-xl" id="news--heading--text">News</h1>
 
-    <partial name="_Maintenance" model="@Model" />
-    <partial name="_Publication" model="@Model" />
+    @await Component.InvokeAsync("ReleaseTimetable")
 
     <p class="govuk-body">
         No news articles found.
@@ -18,7 +17,7 @@ else
 {
     <h1 class="govuk-heading-xl" id="news--heading--text">News</h1>
 
-    <partial name="_Maintenance" model="@Model" />
-    <partial name="_Publication" model="@Model" />
+    @await Component.InvokeAsync("ReleaseTimetable")
+
     <partial name="_NewsArticles" model="@Model" />
 }
