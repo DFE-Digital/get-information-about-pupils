@@ -4,31 +4,31 @@ namespace DfE.GIAP.Web.Views.Shared.Components.ReleaseTimetable;
 
 public class SchoolCensusDataViewModel
 {
-    public string AcademicYear { get; set; }
-    public bool AutumnCensus { get; set; }
-    public bool SpringCensus { get; set; }
-    public bool SummerCensus { get; set; }
-    public bool PupilPremium { get; set; }
-    public bool DisadvantagePremium16To18 { get; set; }
-    public bool Sen16To18 { get; set; }
+    public required string AcademicYear { get; set; }
+    public required bool AutumnCensus { get; set; }
+    public required bool SpringCensus { get; set; }
+    public required bool SummerCensus { get; set; }
+    public required bool PupilPremium { get; set; }
+    public required bool DisadvantagePremium16To18 { get; set; }
+    public required bool Sen16To18 { get; set; }
 }
 
 public class AttainmentDataViewModel
 {
-    public string AcademicYear { get; set; }
-    public bool KeyStage1 { get; set; }
-    public bool KeyStage2 { get; set; }
-    public bool KeyStage4 { get; set; }
-    public bool EYFSP { get; set; }
-    public bool Phonics { get; set; }
-    public bool PhonicsAutumnY2 { get; set; }
-    public bool MTC { get; set; }
+    public required string AcademicYear { get; set; }
+    public required bool KeyStage1 { get; set; }
+    public required bool KeyStage2 { get; set; }
+    public required bool KeyStage4 { get; set; }
+    public required bool EYFSP { get; set; }
+    public required bool Phonics { get; set; }
+    public required bool PhonicsAutumnY2 { get; set; }
+    public required bool MTC { get; set; }
 }
 
 public class ReleaseTimetableViewModel
 {
-    public List<SchoolCensusDataViewModel> SchoolCensusData { get; set; }
-    public List<AttainmentDataViewModel> AttainmentData { get; set; }
+    public required List<SchoolCensusDataViewModel> SchoolCensusData { get; set; }
+    public required List<AttainmentDataViewModel> AttainmentData { get; set; }
 }
 
 
@@ -41,7 +41,7 @@ public class ReleaseTimetableViewComponent : ViewComponent
         {
             SchoolCensusData = new List<SchoolCensusDataViewModel>
             {
-                 new SchoolCensusDataViewModel
+                new SchoolCensusDataViewModel
                 {
                     AcademicYear = "2025-26",
                     AutumnCensus = false,
@@ -51,106 +51,106 @@ public class ReleaseTimetableViewComponent : ViewComponent
                     DisadvantagePremium16To18 = false,
                     Sen16To18 = false
                 },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2024-25",
-                AutumnCensus = true,
-                SpringCensus = false,
-                SummerCensus = false,
-                PupilPremium = true,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2023-24",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = true,
-                DisadvantagePremium16To18 = true,
-                Sen16To18 = true
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2022-23",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = true,
-                DisadvantagePremium16To18 = true,
-                Sen16To18 = true
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2021-22",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = true,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2020-21",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = true,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2019-20",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = false,
-                PupilPremium = false,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2018-19",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = false,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2017-18",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = false,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2016-17",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = false,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
-            new SchoolCensusDataViewModel
-            {
-                AcademicYear = "2015-16",
-                AutumnCensus = true,
-                SpringCensus = true,
-                SummerCensus = true,
-                PupilPremium = false,
-                DisadvantagePremium16To18 = false,
-                Sen16To18 = false
-            },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2024-25",
+                    AutumnCensus = true,
+                    SpringCensus = false,
+                    SummerCensus = false,
+                    PupilPremium = true,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2023-24",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = true,
+                    DisadvantagePremium16To18 = true,
+                    Sen16To18 = true
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2022-23",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = true,
+                    DisadvantagePremium16To18 = true,
+                    Sen16To18 = true
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2021-22",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = true,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2020-21",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = true,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2019-20",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = false,
+                    PupilPremium = false,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2018-19",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = false,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2017-18",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = false,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2016-17",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = false,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
+                new SchoolCensusDataViewModel
+                {
+                    AcademicYear = "2015-16",
+                    AutumnCensus = true,
+                    SpringCensus = true,
+                    SummerCensus = true,
+                    PupilPremium = false,
+                    DisadvantagePremium16To18 = false,
+                    Sen16To18 = false
+                },
             },
             AttainmentData = new List<AttainmentDataViewModel>
             {

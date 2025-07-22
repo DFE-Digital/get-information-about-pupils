@@ -95,8 +95,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     {
         // Arrange
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-
         ManageDocumentsViewModel model = new() { DocumentList = new Document { Id = 1, DocumentName = "Test title", DocumentId = "NewsArticle" } };
 
         ManageDocumentsController controller = GetManageDocumentsController();
@@ -115,8 +113,6 @@ public class ManageDocumentsControllerTests : IClassFixture<UserClaimsPrincipalF
     {
         // Arrange
         CommonResponseBody commonResponseBody = _manageDocumentsResultsFake.GetCommonResponseBody();
-        _mockContentService.Setup(repo => repo.GetContent(DocumentType.PlannedMaintenance)).ReturnsAsync(commonResponseBody);
-
         ManageDocumentsController controller = GetManageDocumentsController();
         ManageDocumentsViewModel model = _manageDocumentsResultsFake.GetDocumentDetails();
         string discard = "Discard";

@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -64,7 +63,6 @@ public class LearnerTextSearchViewModel
     public ReturnRoute ReturnRoute { get; set; }
     public bool ItemAddedToMyPupilList { get; set; }
     public bool NoPupilSelected { get; set; }
-    public DataReleaseTimeTableViewModel DataReleaseTimeTable { get; set; } = new DataReleaseTimeTableViewModel();
     public string RedirectFrom { get; set; }
     public string ErrorDetails { get; set; }
     public string SortDirection { get; set; }

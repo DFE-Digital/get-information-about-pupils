@@ -20,13 +20,10 @@ public class ContentServiceTests
     [Theory]
     [InlineData(DocumentType.Accessibility)]
     [InlineData(DocumentType.AccessibilityReport)]
-    [InlineData(DocumentType.Consent)]
     [InlineData(DocumentType.FAQ)]
     [InlineData(DocumentType.Glossary)]
     [InlineData(DocumentType.Landing)]
-    [InlineData(DocumentType.PlannedMaintenance)]
     [InlineData(DocumentType.PrivacyNotice)]
-    [InlineData(DocumentType.PublicationSchedule)]
     [InlineData(DocumentType.TermOfUse)]
     public async Task ContentService_GetContent_Returns_Data_Successfully(DocumentType documentType)
     {

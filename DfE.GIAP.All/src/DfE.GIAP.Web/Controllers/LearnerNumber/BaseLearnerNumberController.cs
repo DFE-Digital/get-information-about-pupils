@@ -97,9 +97,6 @@ namespace DfE.GIAP.Web.Controllers
             ClearSortingDataFromSession();
             LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
-            var newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
-            model.DataReleaseTimeTable.NewsPublication = newsPublication.ConvertToViewModel();
-
             model.ShowMiddleNames = this.ShowMiddleNames;
 
             SetModelApplicationLabels(model);
@@ -142,9 +139,6 @@ namespace DfE.GIAP.Web.Controllers
             }
             var notPaged = hasQueryItem && !calledByController;
             var allSelected = false;
-
-            var newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
-            model.NewsPublication = newsPublication.ConvertToViewModel();
 
             model.ShowMiddleNames = this.ShowMiddleNames;
 

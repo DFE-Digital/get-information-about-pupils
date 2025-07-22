@@ -65,8 +65,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
-
             // act
             var sut = GetController();
             var result = await sut.NationalPupilDatabase(null);
@@ -83,9 +81,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             _mockSelectionManager.Received().Clear();
 
             AssertAbstractValues(sut, model);
-
-            Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Body, newsPubCommonResponse.Body);
         }
 
         [Fact]
@@ -98,7 +93,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
 
             // act
@@ -121,8 +115,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, _paginatedResultsFake.GetUpns());
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
         }
 
@@ -136,7 +128,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -170,8 +161,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
         }
 
@@ -184,8 +173,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
 
@@ -218,8 +205,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             model.Learners.AssertSelected(true);
         }
 
@@ -232,8 +217,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
 
@@ -276,8 +259,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
             Assert.True(model.ToggleSelectAll);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
         }
 
         [Fact]
@@ -289,8 +270,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
 
@@ -332,8 +311,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
             Assert.False(model.ToggleSelectAll);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
         }
 
         [Fact]
@@ -345,8 +322,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
 
@@ -387,8 +362,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Arg.Is<IEnumerable<string>>(l => l.SequenceEqual(new List<string> { "A203202811068" })));
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
         }
 
         [Fact]
@@ -401,7 +374,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel();
 
@@ -422,8 +394,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
 
             AssertAbstractValues(sut, model);
             Assert.Equal(model.SearchBoxErrorMessage, Messages.Search.Errors.EnterUPNs);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
         }
 
         [Fact]
@@ -436,7 +406,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpnsWithInvalid();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -483,7 +452,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpnsWithNotFound();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -526,7 +494,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpnsWithDuplicates();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -572,7 +539,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
 
             var sut = GetController();
@@ -639,8 +605,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
-
             var upns = _paginatedResultsFake.GetUpns();
 
             var inputModel = new LearnerNumberSearchViewModel()
@@ -674,8 +638,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             model.Learners.AssertSelected(true);
 
             Assert.Equal(model.SortField, sortField);
@@ -691,8 +653,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
 
@@ -737,8 +697,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
             Assert.True(model.ToggleSelectAll);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
 
             Assert.Equal(model.SortField, sortField);
             Assert.Equal(model.SortDirection, sortDirection);
@@ -753,8 +711,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
 
@@ -798,8 +754,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(1, model.PageNumber);
             Assert.False(model.ToggleSelectAll);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
 
             Assert.Equal(model.SortField, sortField);
             Assert.Equal(model.SortDirection, sortDirection);
@@ -815,7 +769,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
 
             // act
@@ -842,8 +795,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, _paginatedResultsFake.GetUpns());
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -860,7 +811,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -896,8 +846,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -914,7 +862,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -950,8 +897,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -968,7 +913,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1004,8 +948,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1022,7 +964,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1058,8 +999,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1076,7 +1015,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1112,8 +1050,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1130,7 +1066,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1166,8 +1101,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1184,7 +1117,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1220,8 +1152,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1238,7 +1168,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1274,8 +1203,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1292,7 +1219,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1328,8 +1254,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1346,7 +1270,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1382,8 +1305,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             AssertAbstractValues(sut, model);
             Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
             Assert.Equal(0, model.PageNumber);
-            Assert.Equal(model.NewsPublication.Id, newsPubCommonResponse.Id);
-            Assert.Equal(model.NewsPublication.Body, newsPubCommonResponse.Body);
             Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
 
             Assert.Equal(model.SortField, sortField);
@@ -1592,7 +1513,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1647,7 +1567,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1695,7 +1614,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpnsWithInvalid();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1741,7 +1659,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1830,7 +1747,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             var upns = _paginatedResultsFake.GetUpnsWithInvalid();
             var inputModel = new LearnerNumberSearchViewModel()
             {
@@ -1874,8 +1790,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Id = "0",
                 Body = "test"
             };
-
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
@@ -1936,7 +1850,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
             _mockCtfService.GetCommonTransferFile(
                 Arg.Any<string[]>(),
                 Arg.Any<string[]>(),
@@ -1993,7 +1906,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 Body = "test"
             };
 
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
             var upns = _paginatedResultsFake.GetUpns();
             var inputModel = new LearnerNumberSearchViewModel()
