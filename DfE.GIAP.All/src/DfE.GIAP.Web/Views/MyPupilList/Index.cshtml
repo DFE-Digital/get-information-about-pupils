@@ -16,13 +16,13 @@
 
     <partial name="_MyPupilListNoPupilSelectedError.cshtml" model="@Model" /> <!-- TODO just handle Error setting when Remove / Download requires a selection and set the error (like below). Then delete this partial-->
 
-    @if (Model.IsError && Model.Error is not null)
+    @if (Model.IsError)
     {
         <div class="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
             <span id="results--heading-errormessage" class="govuk-error-message">
                 <span class="govuk-visually-hidden">Error:</span>
-                @Model.Error.Message
+                @Model.ErrorMessage
             </span>
         </div>
 

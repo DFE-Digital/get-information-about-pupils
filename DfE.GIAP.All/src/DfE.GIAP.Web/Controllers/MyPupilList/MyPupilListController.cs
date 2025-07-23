@@ -123,12 +123,13 @@ public class MyPupilListController : Controller
 
     public sealed class MyPupilsViewModel
     {
+        private readonly MyPupilsErrorModel? _error;
         public MyPupilsViewModel(
             IEnumerable<PupilPresentatationModel> pupils,
             MyPupilsErrorModel? error = null)
         {
             Pupils = pupils;
-            Error = error;
+            _error = error;
         }
 
         public string PageHeading => "My pupil list";
@@ -154,9 +155,8 @@ public class MyPupilListController : Controller
         public bool NoPupilSelected => false;
         public bool ToggleSelectAll => false;
 
-        public MyPupilsErrorModel? Error { get; } = null;
-        public string ErrorDetails => string.Empty;
-        public bool IsError => Error is not null;
+        public string ErrorMessage => _error?.Message ?? string.Empty;
+        public bool IsError => _error is not null;
     }
 
     public sealed class PaginatedMyPupilsRequestDto
