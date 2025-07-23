@@ -1,7 +1,10 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Aggregate;
-public interface IUserAggregateRootFactory
+internal interface IUserAggregateRootFactory
 {
-    Task<UserAggregateRoot> CreateAsync(IAuthorisationContext authorisationContext);
+    Task<UserAggregateRoot> CreateAsync(
+        IAuthorisationContext authorisationContext,
+        PupilQuery pupilQuery);
 }

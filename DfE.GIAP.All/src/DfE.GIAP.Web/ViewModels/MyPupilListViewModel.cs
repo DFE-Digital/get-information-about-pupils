@@ -50,7 +50,6 @@ public class MyPupilListViewModel : BaseSearchViewModel
 
 
     public string LearnerNumberLabel { get; set; }
-    public static int MaximumUPNsPerSearch { get; set; }
     public string Upn { get; set; }
     public IEnumerable<Learner> Learners { get; set; } = new List<Learner>();
     public bool NoPupilSelected { get; set; }

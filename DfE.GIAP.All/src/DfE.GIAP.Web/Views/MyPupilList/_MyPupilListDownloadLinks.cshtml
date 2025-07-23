@@ -1,10 +1,10 @@
 ﻿@using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
 @model MyPupilsViewModel
 
-@if ((Model.Learners != null && Model.Learners.Any()) || Model.Invalid.Any())
+@if ((Model.Pupils != null && Model.Pupils.Any()) || Model.InvalidUpns.Any()) // Is this Invalid correct are InvalidUpns download attemptable?
 {
-    <input type="hidden" name="PageLearnerNumbers" value="@Model.PageLearnerNumbers" />
-    <input type="hidden" name="Total" value="@Model.Total" />
+    <!--<input type="hidden" name="PageLearnerNumbers" value="Model.PageLearnerNumbers" /> -->
+    <!--<input type="hidden" name="Total" value="Model.Total" />-->
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             <button class="govuk-list webapp-button-as-link" asp-action="ToDownloadCommonTransferFileData" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" id="search--download--as--CTF--link" name="downloadASCTF" value="selected" type="submit">

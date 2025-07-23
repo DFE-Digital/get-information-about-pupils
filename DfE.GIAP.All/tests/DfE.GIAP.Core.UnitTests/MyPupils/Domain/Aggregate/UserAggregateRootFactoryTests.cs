@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
@@ -96,26 +97,38 @@ public sealed class UserAggregateRootFactoryTests
         aggregatePupilsService.Setup((t)
             => t.GetPupilsAsync(
                     It.Is<IEnumerable<UniquePupilNumber>>((upns) => upns.Count() == pupilCount),
-                    pupilAuthorisationContext))
+                    pupilAuthorisationContext,
+                    It.IsAny<PupilQuery>()))
             .ReturnsAsync(stubPupils)
             .Verifiable();
 
         // Act
-        UserAggregateRootFactory userAggregateRootFactory = new(
+        UserAggregateRootFactory aggregateRootFactory = new(
             mockUserReadOnlyRepository.Object,
             aggregatePupilsService.Object,
             mockMapper.Object);
 
         Mock<IAuthorisationContext> authorisationContext = AuthorisationContextTestDoubles.MockFor(userIdInput);
-        UserAggregateRoot result = await userAggregateRootFactory.CreateAsync(authorisationContext.Object);
+        UserAggregateRoot result = await aggregateRootFactory.CreateAsync(authorisationContext.Object, It.IsAny<PupilQuery>());
 
         // Assert
-
         Assert.NotNull(result);
         Assert.Equal(userId, result.Identifier);
 
-        List<Pupil> pupils = result.GetMyPupils().ToList();
+        List<PupilDto> pupilDtos = result.GetMyPupils().ToList();
         Assert.Equal(3, stubPupils.Count());
-        Assert.Equivalent(stubPupils, pupils);
+
+        IEnumerable<(Pupil Entity, PupilDto Dto)> entityToDto = stubPupils.Zip(pupilDtos, (pupil, dto) => (pupil, dto));
+
+        Assert.All(entityToDto, item =>
+        {
+            Assert.Equal(item.Entity.Identifier.Id, item.Dto.Id);
+            Assert.Equal(item.Entity.Forename, item.Dto.Forename);
+            Assert.Equal(item.Entity.Surname, item.Dto.Surname);
+            Assert.Equal(item.Entity.Sex, item.Dto.Sex);
+            Assert.Equal(item.Entity.UniquePupilNumber, item.Dto.UniquePupilNumber);
+            Assert.Equal(item.Entity.DateOfBirth, item.Dto.DateOfBirth);
+            Assert.Equal(item.Entity.LocalAuthorityCode, item.Dto.LocalAuthorityCode);
+        });
     }
 }

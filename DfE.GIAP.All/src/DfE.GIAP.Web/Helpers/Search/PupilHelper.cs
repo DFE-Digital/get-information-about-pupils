@@ -33,11 +33,13 @@ public static class PupilHelper
         string errorMessage = string.Empty;
 
         if (modelState.ErrorCount == 0)
-            return errorMessage;
-
-        foreach (var state in modelState.Values)
         {
-            foreach (var error in state.Errors)
+            return errorMessage;
+        }
+
+        foreach (ModelStateEntry state in modelState.Values)
+        {
+            foreach (ModelError error in state.Errors)
             {
                 if (error.ErrorMessage.Contains("<span style='display:none'>1</span>")
                     || error.ErrorMessage.Contains("You have not entered any UPNs"))

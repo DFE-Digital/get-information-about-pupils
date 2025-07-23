@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class AuthorisationContextTestDoubles

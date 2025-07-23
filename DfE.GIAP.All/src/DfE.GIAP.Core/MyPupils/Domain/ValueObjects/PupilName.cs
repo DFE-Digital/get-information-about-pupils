@@ -3,12 +3,12 @@
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class PupilName : ValueObject<PupilName>
 {
-    // TODO double barrelled names are they normalised in data and treated singular?
+    // TODO double barrelled names should we expect normalised in data?
     // TODO middlenames required for Search representation
     public PupilName(string firstName, string lastName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(firstName); // TODO is it possible for these to not exist?
-        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+        //ArgumentException.ThrowIfNullOrWhiteSpace(firstName); 
+        //ArgumentException.ThrowIfNullOrWhiteSpace(lastName); // TODO should we enforce these must exist? or just normalise
         FirstName = Normalise(firstName);
         Surname = Normalise(lastName);
     }
@@ -25,7 +25,10 @@ public sealed class PupilName : ValueObject<PupilName>
 
     private static string Normalise(string input)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(input);
+        if(string.IsNullOrEmpty(input))
+        {
+            return string.Empty;
+        }
         string trimmedInput = input.Trim();
         return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
     }

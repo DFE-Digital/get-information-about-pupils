@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 

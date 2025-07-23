@@ -3,8 +3,6 @@ using Azure;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
 using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
@@ -16,7 +14,9 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Client;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Client;
 
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 public interface IAuthorisationContext
 {
     string UserId { get; }

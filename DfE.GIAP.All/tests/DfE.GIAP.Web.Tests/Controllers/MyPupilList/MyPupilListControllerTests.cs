@@ -466,7 +466,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
         // act
-        var result = await sut.Index(true);
+        var result = await sut.Index();//true);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -487,14 +487,14 @@ public class MyPupilListControllerTests :
         SetUpLearnerList(upns.FormatLearnerNumbers());
 
         var sut = GetController();
-        _mockSession.SetString(sut.SortFieldSessionKey, AzureSearchFields.Forename);
-        _mockSession.SetString(sut.SortDirectionSessionKey, AzureSearchSortDirections.Ascending);
+        //_mockSession.SetString(sut.SortFieldSessionKey, AzureSearchFields.Forename);
+        //_mockSession.SetString(sut.SortDirectionSessionKey, AzureSearchSortDirections.Ascending);
 
         SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
         // act
-        var result = await sut.Index(true);
+        var result = await sut.Index();
 
         // assert
 
@@ -525,7 +525,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
         // act
-        var result = await sut.MyPupilList(inputModel, 0, true);
+        var result = await sut.MyPupilList(inputModel, 0);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -1965,7 +1965,6 @@ public class MyPupilListControllerTests :
             _mockCommonService,
             _mockAppOptions,
             null, // TODO stub
-            null,
             null) // TODO stub
         {
             ControllerContext = context

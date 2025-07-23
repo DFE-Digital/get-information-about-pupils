@@ -13,20 +13,25 @@ public sealed class UserAggregateRoot : AggregateRoot<UserId>
         IEnumerable<Pupil>? myPupils) : base(identifier)
     {
         _myPupils = myPupils?
-            .Take(PUPIL_LIST_LIMIT)?
+            .Take(PUPIL_LIST_LIMIT)
             .ToList() ?? [];
     }
 
-    public IEnumerable<Pupil> GetMyPupils()
-        => _myPupils.Distinct();
+    public IEnumerable<PupilDto> GetMyPupils() 
+        => _myPupils.Distinct()
+                .Select((pupil)
+                    => new PupilDto(pupil));
+
+    public bool HasPupil(PupilId id) => _myPupils.Any(p => p.Identifier == id);
+
 
     // TODO consider actions to delete will need identifiers attached to each item (what is it currently doing?)
-    public void AddPupilToMyPupils(Pupil pupil)
+    public void AddPupilToMyPupils(PupilDto pupil) // TODO specific write model
     {
         if (_myPupils.Any(myPupil => myPupil.Equals(pupil)))
         {
             throw new InvalidOperationException("Pupil already added.");
         }
-        _myPupils.Add(pupil);
+        //_myPupils.Add(pupil);
     }
 }

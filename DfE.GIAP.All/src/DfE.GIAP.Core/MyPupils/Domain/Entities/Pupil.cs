@@ -38,7 +38,7 @@ public sealed class Pupil : Entity<PupilId>
     }
 
     public string UniquePupilNumber => _authorisationContext.ShouldMaskPupil(this) ? MaskedPupilMarker : _uniquePupilNumber.Value;
-    public string FirstName => _name.FirstName;
+    public string Forename => _name.FirstName;
     public string Surname => _name.Surname;
     public bool HasDateOfBirth => _dateOfBirth is not null;
     public string DateOfBirth => _dateOfBirth?.ToString() ?? string.Empty;

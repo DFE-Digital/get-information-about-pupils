@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
@@ -26,7 +27,7 @@ internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
         _mapApplicationAuthorisationToMyPupilsAuthorisationContext = mapApplicationAuthorisationToMyPupilsAuthorisationContext;
     }
 
-    public async Task<UserAggregateRoot> CreateAsync(IAuthorisationContext authorisationContext)
+    public async Task<UserAggregateRoot> CreateAsync(IAuthorisationContext authorisationContext, PupilQuery pupilQuery)
     {
         UserId identfiier = new(authorisationContext.UserId);
 
@@ -34,7 +35,10 @@ internal sealed class UserAggregateRootFactory : IUserAggregateRootFactory
 
         PupilAuthorisationContext myPupilsAuthorisationContext = _mapApplicationAuthorisationToMyPupilsAuthorisationContext.Map(authorisationContext);
 
-        IEnumerable<Pupil> myPupils = await _aggregatePupilsForMyPupilDomainService.GetPupilsAsync(user.PupilIdentifiers, myPupilsAuthorisationContext);
+        IEnumerable<Pupil> myPupils = await _aggregatePupilsForMyPupilDomainService.GetPupilsAsync(
+            user.PupilIdentifiers,
+            myPupilsAuthorisationContext,
+            pupilQuery);
 
         return new UserAggregateRoot(identfiier, myPupils);
     }

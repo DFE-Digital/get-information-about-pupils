@@ -8,7 +8,8 @@ public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
     {
         if (!UniquePupilNumberValidator.Validate(value))
         {
-            throw new ArgumentException($"Input {value} is not a valid UniquePupilNumber");
+            // TEMP TO TEST
+            // throw new ArgumentException($"Input {value} is not a valid UniquePupilNumber");
         }
 
         Value = value;
@@ -19,7 +20,6 @@ public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
     public static bool TryCreate(string? input, [NotNullWhen(true)] out UniquePupilNumber? result)
     {
         result = null;
-
         try
         {
             result = new UniquePupilNumber(input!);

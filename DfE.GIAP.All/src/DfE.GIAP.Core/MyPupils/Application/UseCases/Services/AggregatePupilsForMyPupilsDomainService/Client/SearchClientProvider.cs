@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Client;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Client;
 internal sealed class SearchClientProvider : ISearchClientProvider
 {
     private readonly SearchIndexOptions _searchOptions;

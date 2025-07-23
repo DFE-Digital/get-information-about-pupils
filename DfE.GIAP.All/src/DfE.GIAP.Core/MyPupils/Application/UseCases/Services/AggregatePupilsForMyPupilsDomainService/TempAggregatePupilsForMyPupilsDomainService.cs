@@ -3,14 +3,16 @@ using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Client;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Client;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.Services;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService;
 
 internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePupilsForMyPupilsDomainService
 {
@@ -33,26 +35,27 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(
         IEnumerable<UniquePupilNumber> upns,
-        PupilAuthorisationContext authorisationContext)
+        PupilAuthorisationContext authorisationContext,
+        PupilQuery pupilQueryOptions)
     {
-
-#pragma warning disable S125 // Sections of code should not be commented out
-        //if (request.PageSize < 1)
-        //    throw new ArgumentException("page size must be above 1");
-        //if (request.PageNumber < 0)
-        //    throw new ArgumentException("page number must be above 0");
-
-#pragma warning restore S125 // Sections of code should not be commented out
-
-        if (upns.Count() > UpnQueryLimit)
+        if(upns.Count() == 0)
         {
-            throw new ArgumentException("UPN limit exceeded");
+            return [];
         }
+
+        // TODO fetch PageSize + 1
+        // ViewModel calculates HasMoreResults => Results.Size() > PageSize.
+        // Previous, Next. ShowPrevious displays if the PageNumber > 1; ShowNext display if HasMoreResults
+
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(upns.Count(), UpnQueryLimit);
+        ArgumentNullException.ThrowIfNull(authorisationContext);
+        ArgumentNullException.ThrowIfNull(pupilQueryOptions);
 
         IEnumerable<DecoratedLearnerWithPupilType> npdLearners =
             (await SearchForLearnersByUpn(
                     client: _searchClientProvider.GetClientByKey(name: "npd"),
-                    upns))
+                    upns,
+                    pupilQueryOptions))
                 .Select((npdLearner)
                     => new DecoratedLearnerWithPupilType(npdLearner, PupilType.NationalPupilDatabase));
 
@@ -60,10 +63,12 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         IEnumerable<DecoratedLearnerWithPupilType> pupilPremiumLearners =
             (await SearchForLearnersByUpn(
                     client: _searchClientProvider.GetClientByKey(name: "pupil-premium"),
-                    upns))
+                    upns,
+                    pupilQueryOptions))
                 .Select(t => new DecoratedLearnerWithPupilType(t, PupilType.PupilPremium));
 
         return npdLearners.Concat(pupilPremiumLearners)
+            .Take(pupilQueryOptions.PageSize)
             .Select(decoratedLearner =>
                 _mapper.Map(
                     new MappableLearnerWithAuthorisationContext(
@@ -76,20 +81,21 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
     private static async Task<List<Learner>> SearchForLearnersByUpn(
         SearchClient client,
-        IEnumerable<UniquePupilNumber> upns)
+        IEnumerable<UniquePupilNumber> upns,
+        PupilQuery pupilQueryOptions)
     {
         IEnumerable<string> upnValues = upns.Select(t => t.Value);
 
         if (upnValues.Count() <= PageSplitLimit)
         {
-            return await SearchLearners(client, upnValues);
+            return await SearchLearners(client, upnValues, pupilQueryOptions);
         }
 
         List<Learner> learners = [];
 
         foreach (IEnumerable<string> upnsSplitPart in SplitUpnsToFitPagingLimit(upns))
         {
-            List<Learner> learnersToAdd = await SearchLearners(client, upnsSplitPart);
+            List<Learner> learnersToAdd = await SearchLearners(client, upnsSplitPart, pupilQueryOptions);
             learners.AddRange(learnersToAdd);
         }
 
@@ -99,16 +105,22 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
 
     public static async Task<List<Learner>> SearchLearners(
         SearchClient client,
-        IEnumerable<string> upns)
+        IEnumerable<string> upns,
+        PupilQuery pupilQueryOptions)
     {
         const string UpnIndexField = "UPN";
 
         List<Learner> output = [];
 
+        // e.g Skip and Size act as a Take
+        // - page 1 with pageSize 20 -> 20 * (1-1) = 0-19 results
+        // - page 3 with pageSize 20 -> 20 * (3-1) = skips the first 40 (0-39) -> 40-59 results 
+        int resultsToSkip = pupilQueryOptions.PageSize * (pupilQueryOptions.PageNumber - 1);
+
         SearchOptions options = new()
         {
-            Size = UpnQueryLimit,
-            Skip = 0,
+            Size = pupilQueryOptions.PageSize,
+            Skip = resultsToSkip,
             Filter = upns.Count() > 1 ? $"search.in({UpnIndexField}, '{string.Join(",", upns)}')" : $"{UpnIndexField} eq '{upns.First()}'",
             IncludeTotalCount = true
         };
@@ -117,17 +129,27 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
         options.Select.Add(UpnIndexField);
         options.Select.Add("Surname");
         options.Select.Add("Forename");
-        // options.Select.Add("Middlenames");
-        // options.Select.Add("Gender");
         options.Select.Add("Sex");
         options.Select.Add("DOB");
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
 
-        string requestSortField = "search.score()";
-        string requestSortDirection = "desc";
+        string sortField = pupilQueryOptions.SortField switch
+        {
+            "Forename" => "Forename",
+            "Surname" => "Surname",
+            "Sex" => "Sex",
+            "DOB" => "DOB",
+            _ => "search.score()" // If unknown field is passed 1-1 mapping otherwise
+        };
 
-        options.OrderBy.Add($"{requestSortField} {requestSortDirection}");
+        string sortDirection = pupilQueryOptions.SortDirection switch
+        {
+            SortDirection.Ascending => "asc",
+            _ => "desc"
+        };
+
+        options.OrderBy.Add($"{sortField} {sortDirection}");
 
         Response<SearchResults<AzureIndexEntity>> results = await client.SearchAsync<AzureIndexEntity>("*", options);
 
@@ -154,7 +176,6 @@ internal sealed class TempAggregatePupilsForMyPupilsDomainService : IAggregatePu
                 => upnValues.Skip(index * PageSplitLimit).Take(PageSplitLimit))
             .ToList();
     }
-
 
     private sealed record DecoratedLearnerWithPupilType(Learner Learner, PupilType PupilType);
 

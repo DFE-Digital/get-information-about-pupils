@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.AuthorisationContext;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 
