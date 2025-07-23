@@ -1,7 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.GIAP.SharedTests;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture;
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 public sealed class CosmosDbFixture : IAsyncLifetime
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

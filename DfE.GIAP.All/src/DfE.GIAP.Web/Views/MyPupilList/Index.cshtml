@@ -1,4 +1,6 @@
-﻿@using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
+﻿@using DfE.GIAP.Domain.Search.Learner
+@using DfE.GIAP.Web.Controllers.MyPupilList
+@using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
 @model MyPupilsViewModel
 @{
     ViewData["Title"] = Model.PageHeading;
@@ -31,7 +33,6 @@
 
     <form asp-action="@Model.FormAction" method="POST">
         <input id="toggleSelectAll" type="hidden" name="ToggleSelectAll" value="@Model.ToggleSelectAll.ToString()" />
-        @* <input id="@Model.Upn" name="Upn" type="hidden" value="@Model.Upn" /> *@
 
         @if (Model.InvalidUpns.Any())
         {
@@ -120,7 +121,7 @@
                                 </tr>
                             </thead>
                             <tbody class="govuk-table__body">
-                                @foreach (var learner in Model.InvalidUpns)
+                                @foreach (Learner learner in Model.InvalidUpns)
                                 {
                                     <tr class="govuk-table__row">
                                         @if (learner.LearnerNumberId != null)
@@ -196,7 +197,6 @@
             }
             else
             {
-                <!--          NEW  -->
                 <div class="result-table @(Model.IsError ? "hide-for-non-js" : "")">
                     <div id="pupil--list--table">
                         <div class="giap--pupil-list">

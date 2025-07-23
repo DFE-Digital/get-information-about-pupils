@@ -35,7 +35,7 @@ public static class CompositionRoot
             // RepositoryOptions
             ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
 
-            ["SearchIndexOptions:Url"] = "https://search-index.example",
+            ["SearchIndexOptions:Url"] = "https://localhost:44444",
             ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
             ["SearchIndexOptions:IndexOptions:0:Name"] = "npd",
             ["SearchIndexOptions:IndexOptions:0:IndexName"] = "npd-index",

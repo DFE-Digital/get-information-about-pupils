@@ -4,17 +4,17 @@ public record OrderPupilsBy
     // TODO Expression<Func<T for choosing a field?
     public OrderPupilsBy(
         string field,
-        SortDirection direction)
+        Direction direction)
     {
         Field = field ?? string.Empty;
         Direction = direction;
     }
 
     public string Field { get; }
-    public SortDirection Direction { get; }
+    public Direction Direction { get; }
 }
 
-public enum SortDirection
+public enum Direction
 {
     Ascending,
     Descending,

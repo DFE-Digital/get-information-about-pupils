@@ -1,13 +1,12 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Services;
-internal interface IAggregatePupilsForMyPupilsDomainService
+public interface IAggregatePupilsForMyPupilsDomainService
 {
-    internal Task<IEnumerable<Pupil>> GetPupilsAsync(
-        IEnumerable<UniquePupilNumber> upns,
+    Task<IEnumerable<Pupil>> GetPupilsAsync(
+        IEnumerable<PupilIdentifier> pupilIdentifiers,
         PupilAuthorisationContext authorisationContext,
-        PupilQuery pupilQueryOptions);
+        PupilSelectionDomainCriteria pupilSelectionCriteria);
 }

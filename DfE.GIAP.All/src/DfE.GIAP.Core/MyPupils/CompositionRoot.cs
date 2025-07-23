@@ -1,22 +1,25 @@
-﻿using Azure.Search.Documents;
-using Azure;
+﻿using Azure;
+using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
-using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
-using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Domain.Services;
-using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Infrastructure.Repository;
-using Microsoft.Extensions.DependencyInjection;
 using DfE.GIAP.Core.MyPupils.Application.Options;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Configuration;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Repository.UserAggregate;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Client;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Mapper;
+using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
+using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using DfE.GIAP.Core.MyPupils.Domain.Services;
+using DfE.GIAP.Core.MyPupils.Infrastructure;
+using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
+using DfE.GIAP.Core.User.Infrastructure.Repository;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot
@@ -37,7 +40,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IAggregatePupilsForMyPupilsDomainService, TempAggregatePupilsForMyPupilsDomainService>()
-            .AddSingleton<IUserAggregateRootFactory, UserAggregateRootFactory>();
+            .AddSingleton<IMapper<MyPupilsQueryOptions, PupilSelectionDomainCriteria>, MapMyPupilsQueryOptionsToPupilSelectionCriteriaMapper>();
 
         return services;
     }
@@ -46,9 +49,10 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
+            .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
             .AddSingleton<IMapper<IAuthorisationContext, PupilAuthorisationContext>, MapAuthorisationContextToPupilsAuthorisationContextMapper>()
-            // Outbound: AggregatePupilsDomainService uses
             .AddSingleton<IMapper<MappableLearnerWithAuthorisationContext, Pupil>, MapMappableLearnerWithAuthorisationContextToPupilMapper>();
+            
 
         return services;
     }
@@ -57,7 +61,8 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
-            .AddSingleton<IMapper<UserProfileDto, User.Application.Repository.User>, MapUserProfileDtoToUserMapper>();
+            .AddScoped<IUserAggregateWriteRepository, CosmosDbUserAggregateWriteRepository>()
+            .AddSingleton<IMapper<UserProfileDto, User.Application.Repository.UserReadRepository.User>, MapUserProfileDtoToUserMapper>();
 
         services.AddMyPupilsInfrastructureSearch();
         return services;

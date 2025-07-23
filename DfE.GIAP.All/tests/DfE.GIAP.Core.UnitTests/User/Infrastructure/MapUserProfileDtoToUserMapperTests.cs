@@ -31,13 +31,13 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        Core.User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.UserReadRepository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(dto.UserId, result.UserId.Value);
-        Assert.Equal(2, result.PupilIdentifiers.Count()); // invalid UPNs should be filtered out
-        Assert.Contains(result.PupilIdentifiers, upn => upn.Value == upns[0].Value);
-        Assert.Contains(result.PupilIdentifiers, upn => upn.Value == upns[1].Value);
+        Assert.Equal(2, result.PupilIds.Select(t => t.UniquePupilNumber).Count()); // invalid UPNs should be filtered out
+        Assert.Contains(result.PupilIds.Select(t => t.UniquePupilNumber), upn => upn.Value == upns[0].Value);
+        Assert.Contains(result.PupilIds.Select(t => t.UniquePupilNumber), upn => upn.Value == upns[1].Value);
     }
 
     [Fact]
@@ -60,11 +60,11 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        Core.User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.UserReadRepository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(userId.Value, result.UserId.Value);
-        Assert.Empty(result.PupilIdentifiers);
+        Assert.Empty(result.PupilIds.Select(t => t.UniquePupilNumber));
     }
 
     [Fact]
@@ -86,11 +86,11 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        Core.User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.UserReadRepository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(userId, result.UserId);
-        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIdentifiers);
+        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIds.Select(t => t.UniquePupilNumber));
         Assert.Equal(myPupilListUpn.Value, uniquePupilNumber.Value);
     }
 
@@ -107,11 +107,11 @@ public sealed class MapUserProfileDtoToUserMapperTests
         MapUserProfileDtoToUserMapper mapper = new();
 
         // Act
-        Core.User.Application.Repository.User result = mapper.Map(dto);
+        Core.User.Application.Repository.UserReadRepository.User result = mapper.Map(dto);
 
         // Assert
         Assert.Equal(user, result.UserId);
-        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIdentifiers);
+        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIds.Select(t => t.UniquePupilNumber));
         Assert.Equal(pupilListUpn.Value, uniquePupilNumber.Value);
     }
 }
