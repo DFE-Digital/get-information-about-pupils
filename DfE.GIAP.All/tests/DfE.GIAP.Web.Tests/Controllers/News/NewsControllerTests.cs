@@ -1,12 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Contents.Application.Models;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;
-using DfE.GIAP.Web.Tests.TestDoubles;
-using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -37,41 +33,22 @@ public class NewsControllerTests
         };
 
         List<NewsArticle> listArticleData = [articleData1, articleData2];
-        
+
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> mockGetNewsArticlesUseCase = new();
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockGetContentByPageKeyUseCase = new();
-
-        Content firstCallPublicationSchedule = ContentTestDoubles.Default();
-        Content secondCallPlannedMaintenance = ContentTestDoubles.Default();
-
-        mockGetContentByPageKeyUseCase.SetupSequence(
-            (t) => t.HandleRequestAsync(
-                    It.IsAny<GetContentByPageKeyUseCaseRequest>()))
-                .ReturnsAsync(new GetContentByPageKeyUseCaseResponse(firstCallPublicationSchedule))
-                .ReturnsAsync(new GetContentByPageKeyUseCaseResponse(secondCallPlannedMaintenance));
 
         mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArticleData));
 
         ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
 
-        NewsController controller = new(_mockNewsBanner, mockGetNewsArticlesUseCase.Object, mockGetContentByPageKeyUseCase.Object);
+        NewsController controller = new(_mockNewsBanner, mockGetNewsArticlesUseCase.Object);
 
         // Act
         IActionResult result = await controller.Index();
 
         // Assert
         mockGetNewsArticlesUseCase.Verify(x => x.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()), Times.Once());
-        mockGetContentByPageKeyUseCase.Verify(t => t.HandleRequestAsync(It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Exactly(2));
-
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-
-        Content publicationModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).NewsPublication;
-        Assert.Equal(firstCallPublicationSchedule.Body, publicationModel.Body);
-
-        Content maintenanceModel = Assert.IsType<NewsViewModel>(viewResult.ViewData.Model).NewsMaintenance;
-        Assert.Equal(secondCallPlannedMaintenance.Body, maintenanceModel.Body);
-
     }
 
 
@@ -83,9 +60,7 @@ public class NewsControllerTests
         mockNewsBanner.Setup(t => t.RemoveLatestNewsStatus()).Verifiable();
 
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> mockGetNewsArticlesUseCase = new();
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockGetContentByPageKeyUseCase = new();
-
-        NewsController controller = new(mockNewsBanner.Object, mockGetNewsArticlesUseCase.Object, mockGetContentByPageKeyUseCase.Object);
+        NewsController controller = new(mockNewsBanner.Object, mockGetNewsArticlesUseCase.Object);
 
         // Act
         IActionResult result = await controller.DismissNewsBanner("testURL");
