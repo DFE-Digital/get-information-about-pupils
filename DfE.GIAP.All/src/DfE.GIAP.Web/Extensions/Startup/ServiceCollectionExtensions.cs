@@ -19,7 +19,6 @@ using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Session;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +74,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddScoped<IMyPupilListService, MyPupilListService>();
-        services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
         services.AddTransient<IEventLogging, EventLogging>();
         services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();

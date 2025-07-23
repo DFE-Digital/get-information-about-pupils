@@ -1,7 +1,4 @@
 using Microsoft.ApplicationInsights;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Service.ApplicationInsightsTelemetry;
@@ -17,12 +14,12 @@ public class EventLogging : IEventLogging
 
     public void TrackEvent(int eventId, string eventDescription, string clientId, string sessionId, string filePath)
     {
-        var dataPath = System.IO.Path.Combine(filePath, "logevents.json");
+        string dataPath = Path.Combine(filePath, "logevents.json");
 
         using StreamReader file = File.OpenText(dataPath);
-        var serializer = new JsonSerializer();
-        var eventList = (List<LogEvent>)serializer.Deserialize(file, typeof(List<LogEvent>));
-        var trackedEvent = eventList.FirstOrDefault(e => e.EventID == eventId);
+        JsonSerializer serializer = new JsonSerializer();
+        List<LogEvent> eventList = (List<LogEvent>)serializer.Deserialize(file, typeof(List<LogEvent>));
+        LogEvent trackedEvent = eventList.FirstOrDefault(e => e.EventID == eventId);
 
         _telemetryClient.Context.Session.Id = sessionId;
         _telemetryClient.Context.User.Id = clientId;
