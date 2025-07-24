@@ -278,7 +278,6 @@ jobs:
 # Autotag on merges into patch increments
 # NOTE minor / major bumps to be done manually
   autotag:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [build_unittest_package, local_integration_tests]
     permissions:
       contents: read  # Required to check out the code.
