@@ -45,9 +45,6 @@ public class MyPupilListController : Controller
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    //public string SortFieldSessionKey = "SearchMPL_SortField";
-    //public string SortDirectionSessionKey = "SearchMPL_SortDirection";
-
     public MyPupilListController(
         ILogger<MyPupilListController> logger,
         IPaginatedSearchService paginatedSearch,
