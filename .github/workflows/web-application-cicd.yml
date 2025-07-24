@@ -296,9 +296,11 @@ jobs:
           latest=$(git describe --tags `git rev-list --tags --max-count=1`)
           echo "latest_tag=$latest" >> $GITHUB_ENV
 
-      - name: Calculate next version (patch bump)
+      - name: Parse version
         run: |
-          IFS='.' read -r major minor patch <<<"${{ env.latest_tag#v }}"
+          tag="${{ env.latest_tag }}"
+          version="${tag#v}"  # This strips the leading 'v'
+          IFS='.' read -r major minor patch <<< "$version"
           patch=$((patch + 1))
           new_tag="v$major.$minor.$patch"
           echo "new_tag=$new_tag" >> $GITHUB_ENV
