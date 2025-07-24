@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Domain.Models.User
+namespace DfE.GIAP.Domain.Models.User;
+
+[ExcludeFromCodeCoverage]
+public class UserInfo
 {
-    [ExcludeFromCodeCoverage]
-    public class UserInfo
-    {
-        public string UserId { get; set; }
-    }
+    public string UserId { get; set; }
 }
