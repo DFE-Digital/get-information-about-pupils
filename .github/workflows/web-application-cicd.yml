@@ -275,6 +275,40 @@ jobs:
         shell: bash
         run: dotnet tool run dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
+# Autotag on merges into patch increments
+# NOTE minor / major bumps to be done manually
+  autotag:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build_unittest_package, local_integration_tests]
+    permissions:
+      contents: read  # Required to check out the code.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          latest=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "latest_tag=$latest" >> $GITHUB_ENV
+
+      - name: Calculate next version (patch bump)
+        run: |
+          IFS='.' read -r major minor patch <<<"${{ env.latest_tag#v }}"
+          patch=$((patch + 1))
+          new_tag="v$major.$minor.$patch"
+          echo "new_tag=$new_tag" >> $GITHUB_ENV
+
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag -a ${{ env.new_tag }} -m "Auto-tagged minor release"
+          git push origin ${{ env.new_tag }}
 
   ## Below are the "deployment" jobs.
   ## Notes:
