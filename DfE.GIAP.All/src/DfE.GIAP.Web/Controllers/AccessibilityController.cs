@@ -37,15 +37,9 @@ public class AccessibilityController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Report()
+    public IActionResult Report()
     {
-        const string accessibilityReportPageKey = "AccessibilityReport";
-
-        GetContentByPageKeyUseCaseResponse response =
-            await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: accessibilityReportPageKey));
-
-        return ToViewResult(accessibilityReportPageKey, response);
+        return View();
     }
 
     private ViewResult ToViewResult(string pageKey, GetContentByPageKeyUseCaseResponse response)
