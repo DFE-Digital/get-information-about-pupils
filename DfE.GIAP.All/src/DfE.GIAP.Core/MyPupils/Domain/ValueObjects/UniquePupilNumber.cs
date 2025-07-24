@@ -8,8 +8,7 @@ public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
     {
         if (!UniquePupilNumberValidator.Validate(value))
         {
-            // TEMP TO TEST
-            // throw new ArgumentException($"Input {value} is not a valid UniquePupilNumber");
+            throw new ArgumentException($"Input {value} is not a valid UniquePupilNumber");
         }
 
         Value = value;
