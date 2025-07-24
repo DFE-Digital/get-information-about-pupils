@@ -96,12 +96,6 @@ public class MyPupilListController : Controller
         _downloadService = downloadService;
     }
 
-    public sealed class PaginatedMyPupilsRequestDto
-    {
-        public string SortField { get; set; } = string.Empty;
-        public string SortDirection { get; set; } = string.Empty;
-        public int PageNumber { get; set; } = 1;
-    }
 
     [HttpGet]
     public async Task<IActionResult> Index() // TODO call to MyPupilList with Page=0, SortField = "", SortDir = "" (Add Default to MyPupilOptions
@@ -164,45 +158,6 @@ public class MyPupilListController : Controller
         };
 
         return View(Routes.MyPupilList.MyPupilListView, presentationModel);
-
-        /***** OLD IMPLEMENTATION BELOW */
-        // There's a select all flag which is passed, not sure what relevance that has for sorting / paging though, only relevant for Removal / Downloads.
-
-        //var allSelected = false;
-
-        //model.Upn = SecurityHelper.SanitizeText(model.Upn);
-
-        //if (ModelState.IsValid)
-        //{
-        //    if (!string.IsNullOrEmpty(model.SelectAllNoJsChecked))
-        //    {
-        //        var selectAll = Convert.ToBoolean(model.SelectAllNoJsChecked);
-        //        var upns = model.Upn.FormatLearnerNumbers();
-        //        if (selectAll)
-        //        {
-        //            _selectionManager.AddAll(upns);
-        //            model.ToggleSelectAll = true;
-        //        }
-        //        else
-        //        {
-        //            _selectionManager.RemoveAll(upns);
-        //            model.ToggleSelectAll = false;
-        //        }
-
-        //        model.SelectAllNoJsChecked = null;
-        //        allSelected = true;
-        //    }
-
-        //    if (!notPaged && !allSelected && !failedDownload)
-        //    {
-        //        SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
-        //    }
-
-        //    model = await GetPupilsForSearchBuilder(model, pageNumber, notPaged);
-        //    model.PageNumber = pageNumber;
-        //    model.PageSize = PAGESIZE;
-        //}
-
     }
 
     [HttpPost]
@@ -224,6 +179,54 @@ public class MyPupilListController : Controller
         return RedirectToAction(nameof(Index));
 
     }
+
+
+    public sealed class PaginatedMyPupilsRequestDto
+    {
+        public string SortField { get; set; } = string.Empty;
+        public string SortDirection { get; set; } = string.Empty;
+        public int PageNumber { get; set; } = 1;
+    }
+
+
+
+    /***** OLD IMPLEMENTATION BELOW */
+    // There's a select all flag which is passed, not sure what relevance that has for sorting / paging though, only relevant for Removal / Downloads.
+
+    //var allSelected = false;
+
+    //model.Upn = SecurityHelper.SanitizeText(model.Upn);
+
+    //if (ModelState.IsValid)
+    //{
+    //    if (!string.IsNullOrEmpty(model.SelectAllNoJsChecked))
+    //    {
+    //        var selectAll = Convert.ToBoolean(model.SelectAllNoJsChecked);
+    //        var upns = model.Upn.FormatLearnerNumbers();
+    //        if (selectAll)
+    //        {
+    //            _selectionManager.AddAll(upns);
+    //            model.ToggleSelectAll = true;
+    //        }
+    //        else
+    //        {
+    //            _selectionManager.RemoveAll(upns);
+    //            model.ToggleSelectAll = false;
+    //        }
+
+    //        model.SelectAllNoJsChecked = null;
+    //        allSelected = true;
+    //    }
+
+    //    if (!notPaged && !allSelected && !failedDownload)
+    //    {
+    //        SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
+    //    }
+
+    //    model = await GetPupilsForSearchBuilder(model, pageNumber, notPaged);
+    //    model.PageNumber = pageNumber;
+    //    model.PageSize = PAGESIZE;
+    //}
 
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
