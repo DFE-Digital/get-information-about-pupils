@@ -34,14 +34,12 @@ public class LearnerNumberSearchViewModel
     public string AddSelectedToMyPupilListLink { get; set; }
     public string DownloadSelectedASCTFLink { get; set; }
     public string DownloadSelectedLink { get; set; }
-    public CommonResponseBodyViewModel NewsPublication { get; set; }
     public bool ItemAddedToMyPupilList { get; set; }
     public bool NoPupilSelected { get; set; }
     public string SelectAllNoJsChecked { get; set; }
     public bool ToggleSelectAll { get; set; } = true;
     public bool ShowErrors { get; set; }
     public bool NoPupil { get; set; }
-    public DataReleaseTimeTableViewModel DataReleaseTimeTable { get; set; } = new DataReleaseTimeTableViewModel();
     public string SelectedInvalidUPNOption { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }

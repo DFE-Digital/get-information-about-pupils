@@ -74,7 +74,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
 
             _mockSelectionManager.Received().Clear();
             AssertAbstractValues(sut, model);
-            AssertContentServicePublicationValues(model);
             Assert.True(string.IsNullOrEmpty(model.SearchText));
         }
         [Fact]
@@ -104,7 +103,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var model = viewResult.Model as LearnerTextSearchViewModel;
 
             AssertAbstractValues(sut, model);
-            AssertContentServicePublicationValues(model);
 
             Assert.True(string.IsNullOrEmpty(model.SearchText));
             Assert.False(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
@@ -137,7 +135,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var model = viewResult.Model as LearnerTextSearchViewModel;
 
             AssertAbstractValues(sut, model);
-            AssertContentServicePublicationValues(model);
             Assert.Equal(searchText, model.SearchText);
             Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         }
@@ -1131,7 +1128,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 Title = "Title",
                 Body = "Body"
             };
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(expectedCommonResponseBody);
         }
 
         private void AssertAbstractValues(FELearnerTextSearchController controller, LearnerTextSearchViewModel model)
@@ -1145,11 +1141,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             Assert.Equal(controller.SearchLearnerNumberAction, model.LearnerNumberAction);
         }
 
-        private void AssertContentServicePublicationValues(LearnerTextSearchViewModel model)
-        {
-            Assert.Equal("PublicationSchedule", model.DataReleaseTimeTable.NewsPublication.Id);
-            Assert.Equal("Body", model.DataReleaseTimeTable.NewsPublication.Body);
-        }
 
         private FELearnerTextSearchController GetController()
         {
