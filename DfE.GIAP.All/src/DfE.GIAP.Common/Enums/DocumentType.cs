@@ -7,15 +7,6 @@ public enum DocumentType
     [Description("Article")]
     Article,
 
-    [Description("Publication Schedule")]
-    PublicationSchedule,
-
-    [Description("Planned Maintenance")]
-    PlannedMaintenance,
-
-    [Description("Consent")]
-    Consent,
-
     [Description("Glossary")]
     Glossary,
 
