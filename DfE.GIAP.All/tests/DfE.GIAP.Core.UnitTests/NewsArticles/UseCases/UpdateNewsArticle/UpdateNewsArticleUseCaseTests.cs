@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.UpdateNewsArticle;
 public sealed class UpdateNewsArticleUseCaseTests
@@ -24,6 +25,7 @@ public sealed class UpdateNewsArticleUseCaseTests
         // Arrange
         DateTime utcDateBeforeCreation = DateTime.UtcNow;
         Stopwatch watch = Stopwatch.StartNew();
+        watch.Start();
 
         // Act
         UpdateNewsArticlesRequestProperties properties = new(id: "VALID_ID");

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DfE.GIAP.Domain.Search.Learner
 {
     [ExcludeFromCodeCoverage]
-    public class Learner : IRbac
+    public class Learner
     {
         public string Id { get; set; }
 

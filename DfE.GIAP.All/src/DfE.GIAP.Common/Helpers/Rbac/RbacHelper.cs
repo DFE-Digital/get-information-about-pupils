@@ -1,16 +1,14 @@
-﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Domain.Models.Search;
-using System;
-using System.Collections.Generic;
+﻿using System.Globalization;
 using System.Text;
-using System.Linq;
+using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Domain.Models.Search;
+using DfE.GIAP.Domain.Search.Learner;
 
 namespace DfE.GIAP.Common.Helpers.Rbac;
 
 public static class RbacHelper
 {
-    public static List<T> CheckRbacRulesGeneric<T>(List<T> results, int statutoryLowAge, int statutoryHighAge, DateTime? from = null)
-       where T : IRbac
+    public static List<Learner> CheckRbacRulesGeneric(List<Learner> results, int statutoryLowAge, int statutoryHighAge)
     {
         // Rbac rules don't apply
         if (statutoryLowAge == 0 && statutoryHighAge == 0)
@@ -18,11 +16,11 @@ public static class RbacHelper
             return results;
         }
 
-        foreach (T item in results)
+        foreach (Learner item in results)
         {
             if (item.DOB != null)
             {
-                int age = CalculateAge(item.DOB.Value, from);
+                int age = CalculateAge(item.DOB.Value);
 
                 if ((age < statutoryLowAge || age > statutoryHighAge) && item.LearnerNumber != null)
                 {
@@ -76,9 +74,9 @@ public static class RbacHelper
         return unionPageLearnerNumbers;
     }
 
-    public static int CalculateAge(DateTime dob, DateTime? from = null)
+    public static int CalculateAge(DateTime dob)
     {
-        DateTime dateCalc = from ?? DateTime.Today;
+        DateTime dateCalc = DateTime.Today;
 
         int age = dateCalc.Year - dob.Year;
         if (dob.Date > dateCalc.AddYears(-age))

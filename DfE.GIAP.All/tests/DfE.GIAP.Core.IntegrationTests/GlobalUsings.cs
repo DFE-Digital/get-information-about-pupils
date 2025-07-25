@@ -4,7 +4,5 @@ global using DfE.GIAP.Core.NewsArticles;
 global using DfE.GIAP.Core.NewsArticles.Application.Models;
 global using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 global using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-global using DfE.GIAP.Core.SharedTests;
-global using DfE.GIAP.Core.SharedTests.TestDoubles;
 global using Microsoft.Extensions.DependencyInjection;
 global using Xunit;

@@ -1,10 +1,10 @@
 ﻿using DfE.GIAP.Core.Common;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.SharedTests;
+namespace DfE.GIAP.SharedTests;
 public static class CompositionRoot
 {
     // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
@@ -34,6 +34,13 @@ public static class CompositionRoot
             ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
             // RepositoryOptions
             ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
+
+            ["SearchIndexOptions:Url"] = "https://localhost:44444",
+            ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
+            ["SearchIndexOptions:IndexOptions:0:Name"] = "npd",
+            ["SearchIndexOptions:IndexOptions:0:IndexName"] = "npd-index",
+            ["SearchIndexOptions:IndexOptions:1:Name"] = "pupil-premium",
+            ["SearchIndexOptions:IndexOptions:1:IndexName"] = "pupil-premium-index",
         };
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()
@@ -41,7 +48,7 @@ public static class CompositionRoot
                 .WithConfiguration(contentConfiguration)
                 .Build();
 
-        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton(configuration);
 
         return services;
     }

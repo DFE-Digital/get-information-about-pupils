@@ -7,6 +7,11 @@ using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
+using DfE.GIAP.Core.MyPupils;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Domain.Search.Learner;
+using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController;
+using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +27,7 @@ builder.Services
     .AddNewsArticleDependencies()
     .AddContentDependencies()
     .AddContentPresentation()
+    .AddMyPupilsDependencies()
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()

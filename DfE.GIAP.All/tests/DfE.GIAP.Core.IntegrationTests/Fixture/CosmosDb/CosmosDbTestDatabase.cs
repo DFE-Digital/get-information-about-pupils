@@ -4,7 +4,7 @@ using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture;
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 public sealed class CosmosDbTestDatabase : IAsyncDisposable
 {
     private const string DatabaseId = "giapsearch";
@@ -85,7 +85,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     public async Task<IEnumerable<T>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
     {
         IEnumerable<T> results = await ReadManyAsync<T>();
-        IEnumerable<string> resultIdentifiers = results.Select(ExtractDocumentIdFromDto<T>);
+        IEnumerable<string> resultIdentifiers = results.Select(ExtractDocumentIdFromDto);
 
 
         List<string> missingIdentifiers = identifiers.Except(resultIdentifiers).ToList();
