@@ -18,8 +18,6 @@ public class ContentServiceTests
     private readonly Mock<IOptions<AzureAppSettings>> _mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
 
     [Theory]
-    [InlineData(DocumentType.Accessibility)]
-    [InlineData(DocumentType.AccessibilityReport)]
     [InlineData(DocumentType.FAQ)]
     [InlineData(DocumentType.Glossary)]
     [InlineData(DocumentType.Landing)]

@@ -16,9 +16,6 @@ public enum DocumentType
     [Description("Privacy Notice")]
     PrivacyNotice,
 
-    [Description("Accessibility")]
-    Accessibility,
-
     [Description("Frequently Asked Questions")]
     FAQ,
 
