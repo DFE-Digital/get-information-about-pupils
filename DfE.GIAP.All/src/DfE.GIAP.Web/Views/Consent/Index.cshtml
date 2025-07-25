@@ -1,17 +1,21 @@
 ﻿@model ConsentViewModel
 @{
-    var title = string.IsNullOrEmpty(Model.Response?.Title) ? "System consent" : Model.Response.Title;
-    ViewData["Title"] = title;
+    ViewData["Title"] = "System consent";
 }
 
-<h1 id="consent--heading--text" class="govuk-heading-xl">@Html.Raw(title)</h1>
+<h1 id="consent--heading--text" class="govuk-heading-xl">
+    Get information about pupils: system consent
+</h1>
 
-@Html.Raw(Model.Response?.Body)
+<ul class="govuk-list govuk-list--bullet">
+    <li>I confirm that I have read and understood the terms and conditions for the use of the GIAP system</li>
+    <li>I confirm that I will use the GIAP system solely for the purposes stated within the GIAP terms and conditions</li>
+    <li>I understand that all my actions within the GIAP system are logged and can be retrieved by DfE</li>
+    <li>I confirm that I will only use the non-UPN/ULN advanced search for pupils who have either joined, or are going to join my local authority / academy trust / establishment. I understand that all such searches are logged</li>
+</ul>
+<p class="govuk-body">For full terms of use, please use the link in the footer below.</p>
 
 <form asp-controller="Consent" asp-action="Index" method="POST">
-    <input type="hidden" asp-for="@Model.Response.Body" />
-    <input type="hidden" asp-for="@Model.Response.Title" />
-
     <div class="govuk-form-group @(Model.HasError ? "govuk-form-group--error" : "")">
         <fieldset class="govuk-fieldset">
             @if (Model.HasError)
