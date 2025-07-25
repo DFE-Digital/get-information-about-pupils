@@ -56,6 +56,5 @@ public sealed class Pupil : Entity<PupilId>
 
         calculatedAge = _dateOfBirth!.Age;
         return true;
-
     }
 }
