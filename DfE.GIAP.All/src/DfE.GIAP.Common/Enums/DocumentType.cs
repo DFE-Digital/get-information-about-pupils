@@ -19,9 +19,6 @@ public enum DocumentType
     [Description("Accessibility")]
     Accessibility,
 
-    [Description("Accessibility Report")]
-    AccessibilityReport,
-
     [Description("Frequently Asked Questions")]
     FAQ,
 
