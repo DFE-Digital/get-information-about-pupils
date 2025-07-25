@@ -4,7 +4,6 @@ using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.ViewModels.Search;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.GIAP.Web.ViewModels;

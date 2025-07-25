@@ -13,7 +13,6 @@ internal static class ContentExtensions
 
         services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>, GetContentByPageKeyResponseToPrivacyViewModelMapper>();
         services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>, GetContentByPageKeyResponseToTermsOfUseViewModelMapper>();
-        services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, ConsentViewModel>, GetContentByPageKeyResponseToConsentViewModelMapper>();
 
         return services;
     }
