@@ -100,7 +100,6 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
         HomeViewModel model = new()
         {
             LandingResponse = stubContent,
-            FAQResponse = stubContent
         };
 
 
@@ -120,8 +119,6 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
         HomeViewModel viewModel = viewResult.Model as HomeViewModel;
         Assert.Equal(model.LandingResponse.Title, viewModel.LandingResponse.Title);
         Assert.Equal(model.LandingResponse.Body, viewModel.LandingResponse.Body);
-        Assert.Equal(model.FAQResponse.Title, viewModel.FAQResponse.Title);
-        Assert.Equal(model.FAQResponse.Body, viewModel.FAQResponse.Body);
     }
 
     [Fact]

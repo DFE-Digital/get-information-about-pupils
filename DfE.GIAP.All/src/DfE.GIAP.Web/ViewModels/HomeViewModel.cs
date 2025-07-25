@@ -6,5 +6,4 @@ namespace DfE.GIAP.Web.ViewModels;
 public class HomeViewModel
 {
     public Content LandingResponse { get; set; }
-    public Content FAQResponse { get; set; }
 }

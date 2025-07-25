@@ -36,14 +36,9 @@ public class HomeController : Controller
             await _getContentByPageKeyUseCase.HandleRequestAsync(
                 new GetContentByPageKeyUseCaseRequest(pageKey: "Landing"));
 
-        GetContentByPageKeyUseCaseResponse frequentlyAskedQuestionsContentResponse =
-            await _getContentByPageKeyUseCase.HandleRequestAsync(
-                new GetContentByPageKeyUseCaseRequest(pageKey: "FrequentlyAskedQuestions"));
-
         HomeViewModel model = new()
         {
             LandingResponse = landingPageContentResponse.Content,
-            FAQResponse = frequentlyAskedQuestionsContentResponse.Content
         };
 
         return View(model);
@@ -78,14 +73,14 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Exception()
     {
-        var model = new ErrorModel();
+        ErrorModel model = new();
 
         if (HostEnvironmentHelper.ShouldShowErrors())
         {
             model.ShowError = true;
             model.RequestId = HttpContext.TraceIdentifier;
 
-            var exceptionHandlerPathFeature =
+            IExceptionHandlerPathFeature exceptionHandlerPathFeature =
                 HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
             model.ExceptionMessage += exceptionHandlerPathFeature?.Error.Message;
