@@ -20,10 +20,7 @@
   </PropertyGroup>
 
   <!-- Treat warnings as errors -->
-  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'DfE.GIAP.Core' 
-                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.UnitTests' 
-                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.IntegrationTests'
-                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.SharedTests'">
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'DfE.GIAP.Core'                                      Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.UnitTests'                                      Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.IntegrationTests'                                     Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.SharedTests'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>
