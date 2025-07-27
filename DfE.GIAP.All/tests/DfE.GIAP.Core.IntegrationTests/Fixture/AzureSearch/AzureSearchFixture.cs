@@ -1,9 +1,11 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Dto;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
+using WireMock.Settings;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
 internal sealed class AzureSearchMockFixture : IDisposable
@@ -19,12 +21,25 @@ internal sealed class AzureSearchMockFixture : IDisposable
             throw new ArgumentException($"Unable to create Search Mock fixture with Url {options.Url}");
         }
 
-        Server = WireMockServer.Start(port: result.Port);
+
+        Server = WireMockServer.Start(new WireMockServerSettings
+        {
+            UseSSL = true,
+            Port = result.Port
+        });
     }
 
-    public void StubSearchResponse(string indexName, IEnumerable<AzureIndexEntity> indexDocuments)
+    public IEnumerable<AzureIndexEntity> StubSearchIndexResponse(IndexOptions options)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
+        IEnumerable<AzureIndexEntity> azureIndexDtos = AzureIndexDtosTestDoubles.Generate();
+        StubSearchResponse(options, azureIndexDtos);
+        return azureIndexDtos;
+
+    }
+
+    public void StubSearchResponse(IndexOptions options, IEnumerable<AzureIndexEntity> indexDocuments)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(options.IndexName);
         var indexResponse = new
         {
             value = indexDocuments?.Select(t => new
@@ -42,8 +57,8 @@ internal sealed class AzureSearchMockFixture : IDisposable
 
         Server
             .Given(Request.Create()
-                .WithPath($"/indexes/{indexName}/docs")
-                .UsingGet())
+                .WithPath($"/indexes('{options.IndexName}')/docs/search.post.search")
+                .UsingPost())
             .RespondWith(Response.Create()
                 .WithHeader("Content-Type", "application/json")
                 .WithBody(JsonConvert.SerializeObject(indexResponse))

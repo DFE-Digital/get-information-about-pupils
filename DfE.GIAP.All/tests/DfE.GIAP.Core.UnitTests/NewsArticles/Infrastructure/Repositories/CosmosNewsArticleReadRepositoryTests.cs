@@ -4,7 +4,7 @@ using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.News;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 

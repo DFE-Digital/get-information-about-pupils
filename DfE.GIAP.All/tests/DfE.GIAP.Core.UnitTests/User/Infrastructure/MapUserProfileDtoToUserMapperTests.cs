@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.User.TestDoubles;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
+using DfE.GIAP.SharedTests.TestDoubles.Users;
 
 namespace DfE.GIAP.Core.UnitTests.User.Infrastructure;
 public sealed class MapUserProfileDtoToUserMapperTests
@@ -15,18 +16,18 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         string[] pupilList = ["invalid-upn-1", upns[0].Value];
 
-        IEnumerable<PupilItemDto> myPupilList = [
+        IEnumerable<MyPupilItemDto> myPupilList = [
             new()
             {
-                PupilId = upns[1].Value
+                UPN = upns[1].Value
             },
             new()
             {
-                PupilId = "invalid-upn-2"
+                UPN = "invalid-upn-2"
             }
         ];
 
-        UserProfileDto dto = UserProfileDtoTestDoubles.WithPupils(userId, pupilList, myPupilList);
+        UserDto dto = UserDtoTestDoubles.WithPupils(userId, pupilList, myPupilList);
 
         MapUserProfileDtoToUserMapper mapper = new();
 
@@ -34,7 +35,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         Core.User.Application.Repository.UserReadRepository.User result = mapper.Map(dto);
 
         // Assert
-        Assert.Equal(dto.UserId, result.UserId.Value);
+        Assert.Equal(dto.id, result.UserId.Value);
         Assert.Equal(2, result.PupilIds.Select(t => t.UniquePupilNumber).Count()); // invalid UPNs should be filtered out
         Assert.Contains(result.PupilIds.Select(t => t.UniquePupilNumber), upn => upn.Value == upns[0].Value);
         Assert.Contains(result.PupilIds.Select(t => t.UniquePupilNumber), upn => upn.Value == upns[1].Value);
@@ -48,14 +49,14 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         string[] pupilList = ["invalid-upn-1"];
 
-        IEnumerable<PupilItemDto> myPupilList = [
+        IEnumerable<MyPupilItemDto> myPupilList = [
             new()
             {
-                PupilId = "invalid-upn-2"
+                UPN = "invalid-upn-2"
             }
         ];
 
-        UserProfileDto dto = UserProfileDtoTestDoubles.WithPupils(userId, pupilList, myPupilList);
+        UserDto dto = UserDtoTestDoubles.WithPupils(userId, pupilList, myPupilList);
 
         MapUserProfileDtoToUserMapper mapper = new();
 
@@ -74,14 +75,14 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         UserId userId = new("user");
 
-        IEnumerable<PupilItemDto> myPupilList = [
+        IEnumerable<MyPupilItemDto> myPupilList = [
             new()
             {
-                PupilId = myPupilListUpn.Value
+                UPN = myPupilListUpn.Value
             }
         ];
         // Arrange
-        UserProfileDto dto = UserProfileDtoTestDoubles.WithPupils(userId, null!, myPupilList);
+        UserDto dto = UserDtoTestDoubles.WithPupils(userId, null!, myPupilList);
 
         MapUserProfileDtoToUserMapper mapper = new();
 
@@ -102,7 +103,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         UniquePupilNumber pupilListUpn = UniquePupilNumberTestDoubles.Generate();
 
         UserId user = new("user");
-        UserProfileDto dto = UserProfileDtoTestDoubles.WithPupils(user, [pupilListUpn.Value], null!);
+        UserDto dto = UserDtoTestDoubles.WithPupils(user, [pupilListUpn.Value], null!);
 
         MapUserProfileDtoToUserMapper mapper = new();
 

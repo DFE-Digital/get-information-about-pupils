@@ -4,7 +4,7 @@ namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public static partial class UniquePupilNumberValidator
 {
     [GeneratedRegex(@"^[A-HJ-NP-RT-Z][0-9]{11}([0-9]|[A-HJ-NP-RT-Z])$", RegexOptions.Compiled)]
-    private static partial Regex UpnRegex();
+    internal static partial Regex UpnRegex();
 
     // As per https://www.gov.uk/government/publications/unique-pupil-numbers
     /*

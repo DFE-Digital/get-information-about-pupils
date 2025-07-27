@@ -48,6 +48,6 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IUserReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IUserAggregateWriteRepository>());
-        Assert.NotNull(provider.GetService<IMapper<UserProfileDto, Core.User.Application.Repository.UserReadRepository.User>>());
+        Assert.NotNull(provider.GetService<IMapper<UserDto, Core.User.Application.Repository.UserReadRepository.User>>());
     }
 }

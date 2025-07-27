@@ -7,22 +7,16 @@ using Microsoft.Extensions.Logging;
 namespace DfE.GIAP.SharedTests;
 public static class CompositionRoot
 {
-    // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
     public static IServiceCollection AddSharedTestDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        // These are provided by the runtime; Logging, Configuration etc. Registered types will fail if they depend on these these. We stub and configure them
         services
             .AddFeaturesSharedDependencies()
             .AddLocalConfiguration()
             .AddInMemoryLogger();
 
-        return services;
-    }
-
-    private static IServiceCollection AddInMemoryLogger(this IServiceCollection services)
-    {
-        services.AddSingleton(typeof(ILogger<>), typeof(InMemoryLogger<>));
         return services;
     }
 
@@ -32,9 +26,11 @@ public static class CompositionRoot
         {
             // PageContentOptions
             ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
-            // RepositoryOptions
+
+            // ContentRepositoryOptions
             ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
 
+            // SearchIndexOptions
             ["SearchIndexOptions:Url"] = "https://localhost:44444",
             ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
             ["SearchIndexOptions:IndexOptions:0:Name"] = "npd",
@@ -44,12 +40,18 @@ public static class CompositionRoot
         };
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()
-                .WithLocalCosmosDb()
-                .WithConfiguration(contentConfiguration)
-                .Build();
+            .WithLocalCosmosDb()
+            .WithConfiguration(contentConfiguration)
+            .Build();
 
         services.AddSingleton(configuration);
 
+        return services;
+    }
+
+    private static IServiceCollection AddInMemoryLogger(this IServiceCollection services)
+    {
+        services.AddSingleton(typeof(ILogger<>), typeof(InMemoryLogger<>));
         return services;
     }
 }

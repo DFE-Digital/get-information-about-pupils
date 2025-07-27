@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 

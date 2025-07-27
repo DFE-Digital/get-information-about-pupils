@@ -1,7 +1,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.News;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
@@ -29,7 +29,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
             _ => throw new NotImplementedException()
         });
 
-        await Fixture.Database.WriteManyAsync(seededDTOs);
+        await CosmosDbFixture.Database.WriteManyAsync(seededDTOs);
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 

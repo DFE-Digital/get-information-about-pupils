@@ -3,22 +3,22 @@ using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.User.Infrastructure.Repository;
-public sealed class MapUserProfileDtoToUserMapper : IMapper<UserProfileDto, Application.Repository.UserReadRepository.User>
+public sealed class MapUserProfileDtoToUserMapper : IMapper<UserDto, Application.Repository.UserReadRepository.User>
 {
-    public Application.Repository.UserReadRepository.User Map(UserProfileDto dto)
+    public Application.Repository.UserReadRepository.User Map(UserDto dto)
     {
-        IEnumerable<PupilItemDto> myPupils = dto.MyPupils ?? [];
+        IEnumerable<MyPupilItemDto> myPupils = dto.MyPupils ?? [];
         
-        UserId id = new(dto.UserId!);
+        UserId id = new(dto.id!);
 
         IEnumerable<PupilIdentifier> pupilIdentifiers
             = myPupils
                 .Where(
-                    (myPupil) => TryCreateUpn(myPupil.PupilId) is not null)
+                    (myPupil) => TryCreateUpn(myPupil.UPN) is not null)
                 .Select(
                     (myPupil) => new PupilIdentifier(
                         PupilId: new PupilId(myPupil.Id),
-                        UniquePupilNumber: new UniquePupilNumber(myPupil.PupilId)));
+                        UniquePupilNumber: new UniquePupilNumber(myPupil.UPN)));
 
         return new Application.Repository.UserReadRepository.User(id, pupilIdentifiers);
     }

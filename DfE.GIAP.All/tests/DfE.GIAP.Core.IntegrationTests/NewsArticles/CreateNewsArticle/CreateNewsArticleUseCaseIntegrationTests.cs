@@ -39,7 +39,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         watch.Stop();
 
         // Assert
-        IEnumerable<NewsArticleDto> enumerable = await Fixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto> enumerable = await CosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));

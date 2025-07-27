@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Content;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.Contents.Tests.Infrastructure;

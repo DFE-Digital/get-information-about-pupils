@@ -31,23 +31,23 @@ internal sealed class CosmosDbUserAggregateWriteRepository : IUserAggregateWrite
         // TODO stub out the PupilDtos on UserReadOnlyRepository to have static UPNs and Static PupilIds.
         // It's being done on MapUserProfileDtoToUserMapper. So rather than being dynamic it pulls a static list, then test removal.
 
-        List<PupilItemDto> updatedPupilList =
+        List<MyPupilItemDto> updatedPupilList =
             originalUser.PupilIds
                 .Where(
                     (originalPupilIdentifiers) => // Select matching identifiers in the list
                         updatedPupilIds.Any(id => id == originalPupilIdentifiers.PupilId))
                 .Select((pupilRetainedInList)
-                    => new PupilItemDto()
+                    => new MyPupilItemDto()
                     {
                         Id = Guid.Parse(pupilRetainedInList.PupilId.Id),
-                        PupilId = pupilRetainedInList.UniquePupilNumber.Value
+                        UPN = pupilRetainedInList.UniquePupilNumber.Value
                     })
                 .ToList();
 
-        UserProfileDto updatedUserProfile = new()
+        UserDto updatedUserProfile = new()
         {
-            UserId = userAggregate.Identifier.Value,
-            MyPupilList = updatedPupilList,
+            id = userAggregate.Identifier.Value,
+            MyPupils = updatedPupilList,
             // TODO: map other fields if needed
         };
 

@@ -11,12 +11,12 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
 {
     private readonly ILogger<CosmosDbUserReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<UserProfileDto, Application.Repository.UserReadRepository.User> _userMapper;
+    private readonly IMapper<UserDto, Application.Repository.UserReadRepository.User> _userMapper;
 
     public CosmosDbUserReadOnlyRepository(
         ILogger<CosmosDbUserReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<UserProfileDto, Application.Repository.UserReadRepository.User> userMapper)
+        IMapper<UserDto, Application.Repository.UserReadRepository.User> userMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
@@ -32,25 +32,16 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
     {
         try
         {
-            // Old query for UserProfile impl
-            string query = $"SELECT * FROM u " +
-                    $"WHERE u.DOCTYPE = 10 AND u.UserId = '{id.Value}' " +
-                    $"ORDER BY u._ts DESC " +
-                    $"OFFSET 0 LIMIT 1";
+            UserDto userDto =
+                await _cosmosDbQueryHandler.ReadItemByIdAsync<UserDto>(
+                    id: id.Value,
+                    containerKey: "users",
+                    partitionKeyValue: id.Value,
+                    ctx);
 
-
-            IEnumerable<UserProfileDto> results = await _cosmosDbQueryHandler.ReadItemsAsync<UserProfileDto>(
-                containerKey: "application-data",
-                query,
-                ctx);
-
-            if (!results.Any())
-            {
-                throw new ArgumentException($"Unable to find User by identifier {id.Value}");
-            }
-
-            UserProfileDto userProfile = results.First();
-            Application.Repository.UserReadRepository.User user = _userMapper.Map(userProfile);
+            ArgumentNullException.ThrowIfNull(userDto);
+            
+            Application.Repository.UserReadRepository.User user = _userMapper.Map(userDto);
             return user;
         }
         catch (CosmosException ex)

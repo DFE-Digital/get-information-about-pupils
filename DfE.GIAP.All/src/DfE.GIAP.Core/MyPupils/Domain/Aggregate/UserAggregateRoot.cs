@@ -31,7 +31,7 @@ public sealed class UserAggregateRoot : AggregateRoot<UserId>
                 authorisationContext,
                 pupilSelectionCriteria);
 
-        return pupils.Select((pupil) => new PupilDto(pupil));
+        return pupils.Select(MapToPupilDto);
     }
 
     public void RemovePupils(IEnumerable<PupilId> pupilsToRemove) // TODO future consider raising domain event
@@ -53,4 +53,19 @@ public sealed class UserAggregateRoot : AggregateRoot<UserId>
     }
 
     public IReadOnlyCollection<PupilId> GetUpdatedPupilIds() => _pupilIds.Select(t => t.PupilId).ToList().AsReadOnly();
+
+    private static PupilDto MapToPupilDto(Pupil pupil)
+    {
+        return new PupilDto()
+        {
+            Id = pupil.Identifier.Id,
+            UniquePupilNumber = pupil.UniquePupilNumber,
+            DateOfBirth = pupil.DateOfBirth?.ToString() ?? string.Empty,
+            Forename = pupil.Forename,
+            Surname = pupil.Surname,
+            Sex = pupil.Sex,
+            IsPupilPremium = pupil.IsOfPupilType(PupilType.PupilPremium),
+            LocalAuthorityCode = pupil.LocalAuthorityCode,
+        };
+    }
 }
