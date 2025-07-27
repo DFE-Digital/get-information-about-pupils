@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
@@ -31,30 +32,22 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_HasSomePupilsInList_Returns_Pupils()
     {
         // Arrange
-        SearchIndexOptions options = ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>().Value;
+        using AzureSearchMockFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>().Value);
 
-        using AzureSearchMockFixture mockSearchFixture = new(options);
-
-        IEnumerable<AzureIndexEntity> npdSearchindexDtos
-            = mockSearchFixture.StubSearchIndexResponse(
-                options.GetIndexOptionsByName("npd"));
-
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos =
-            mockSearchFixture.StubSearchIndexResponse(
-                options.GetIndexOptionsByName("pupil-premium"));
+        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpd();
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremium();
 
         UserId userId = new(Guid.NewGuid().ToString());
-
-        UserDto userProfileDto = UserDtoTestDoubles.WithPupils(
-            userId,
-            ToMyPupilsDto(npdSearchindexDtos).Concat(ToMyPupilsDto(pupilPremiumSearchIndexDtos)));
-
-        await CosmosDbFixture.Database.WriteItemAsync(userProfileDto);
+        
+        await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                myPupils: npdSearchindexDtos.MapToMyPupilsItemDto().Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto())));
 
         IAuthorisationContext authorisationContext = AuthorisationContextTestDoubles.WithUser(userId);
 
         // Act
-
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
             ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
 
@@ -66,15 +59,13 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.Pupils);
 
-        List<PupilDto> expectedPupils = MapSearchIndexDtoToPupilDto(
-            npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos)).ToList();
+        List<PupilDto> expectedPupils = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).MapToPupilDto().ToList();
 
         Assert.Equal(expectedPupils.Count, getMyPupilsResponse.Pupils.Count());
 
         foreach (PupilDto expected in expectedPupils)
         {
             PupilDto? actual = getMyPupilsResponse.Pupils.SingleOrDefault(p => p.UniquePupilNumber == expected.UniquePupilNumber);
-            bool expectedToBePupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expected.UniquePupilNumber);
 
             Assert.NotNull(actual);
             Assert.Equal(expected.Forename, actual.Forename);
@@ -83,32 +74,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expected.Sex, actual.Sex);
             Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
             Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
-            Assert.Equal(expectedToBePupilPremium, actual.IsPupilPremium);
+
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expected.UniquePupilNumber);
+            Assert.Equal(isPupilPremium, actual.IsPupilPremium);
         }
-    }
-
-    private static IEnumerable<PupilDto> MapSearchIndexDtoToPupilDto(IEnumerable<AzureIndexEntity> indexDtos)
-    {
-        return indexDtos.Select(pupil => new PupilDto()
-        {
-            Id = pupil.id,
-            UniquePupilNumber = pupil.UPN,
-            DateOfBirth = pupil.DOB?.ToString("yyyy-MM-dd") ?? string.Empty,
-            Forename = pupil.Forename,
-            Surname = pupil.Surname,
-            Sex = pupil.Sex?.ToString() ?? string.Empty,
-            IsPupilPremium = false,
-            LocalAuthorityCode = int.Parse(pupil.LocalAuthority),
-        });
-    }
-
-    private static IEnumerable<MyPupilItemDto> ToMyPupilsDto(IEnumerable<AzureIndexEntity> indexDtos)
-    {
-        return indexDtos.Select((indexDto) => new MyPupilItemDto()
-        {
-            Id = Guid.NewGuid(),
-            UPN = indexDto.UPN
-        });
     }
 }
 

@@ -42,7 +42,7 @@ public sealed class UserAggregateRoot : AggregateRoot<UserId>
 
         if (!_pupilIds.Any(pupilIdentifier => ShouldRemovePupil(pupilIdentifier.PupilId)))
         {
-            throw new InvalidOperationException("None of the pupils exist in the list.");
+            throw new InvalidOperationException($"None of the identifiers exist in MyPupils: {string.Join(',', removePupilIds)}");
         }
 
         _pupilIds =

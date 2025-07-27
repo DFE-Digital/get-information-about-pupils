@@ -23,19 +23,15 @@ internal sealed class CosmosDbUserAggregateWriteRepository : IUserAggregateWrite
     public async Task SaveAsync(UserAggregateRoot userAggregate)
     {
         IReadOnlyCollection<PupilId> updatedPupilIds = userAggregate.GetUpdatedPupilIds();
+        // TODO if User does not exist, then need to write with updated
 
-        // Fetch User to retrieve UniquePupilNumbers without Upn masking
+        // Fetch User to persist updated UPNs on User - UserAggregate does not expose these
         User.Application.Repository.UserReadRepository.User originalUser =
             await _userReadOnlyRepository.GetUserByIdAsync(userAggregate.AggregateId);
 
-        // TODO stub out the PupilDtos on UserReadOnlyRepository to have static UPNs and Static PupilIds.
-        // It's being done on MapUserProfileDtoToUserMapper. So rather than being dynamic it pulls a static list, then test removal.
-
         List<MyPupilItemDto> updatedPupilList =
             originalUser.PupilIds
-                .Where(
-                    (originalPupilIdentifiers) => // Select matching identifiers in the list
-                        updatedPupilIds.Any(id => id == originalPupilIdentifiers.PupilId))
+                .Where((originalPupilIdentifiers) => updatedPupilIds.Contains(originalPupilIdentifiers.PupilId))
                 .Select((pupilRetainedInList)
                     => new MyPupilItemDto()
                     {
@@ -54,8 +50,8 @@ internal sealed class CosmosDbUserAggregateWriteRepository : IUserAggregateWrite
         await _commandHandler.ReplaceItemAsync(
             item: updatedUserProfile,
             itemId: userAggregate.Identifier.Value,
-            containerKey: "application-data",
-            partitionKey: new PartitionKey(10));
+            containerKey: "users",
+            partitionKey: new PartitionKey(userAggregate.Identifier.Value));
     }
 
 }
