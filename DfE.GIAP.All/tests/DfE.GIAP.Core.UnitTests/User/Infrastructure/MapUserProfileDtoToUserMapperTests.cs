@@ -1,6 +1,4 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
-using DfE.GIAP.Core.UnitTests.User.TestDoubles;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests.TestDoubles.Users;
 

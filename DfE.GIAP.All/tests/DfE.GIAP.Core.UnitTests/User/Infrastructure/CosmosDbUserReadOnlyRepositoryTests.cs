@@ -4,7 +4,6 @@ using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.UnitTests.User.TestDoubles;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests.TestDoubles.Users;
 using Microsoft.Azure.Cosmos;
@@ -70,7 +69,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         // Arrange
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadMany<UserDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(
                 () => throw new Exception("test exception"));
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
@@ -93,7 +92,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadMany<UserDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(
                 () => throw CosmosExceptionTestDoubles.Default());
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
@@ -119,8 +118,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
     public async Task GetUserByIdAsync_Throws_When_UserNotFound()
     {
         // Arrange
-
-        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany<UserDto>(() => []);
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(null!);
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
@@ -132,7 +130,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
             userMapper: mockMapper.Object);
 
         // Act Assert
-        await Assert.ThrowsAsync<ArgumentException>(() =>
+        await Assert.ThrowsAnyAsync<ArgumentException>(() =>
             repository.GetUserByIdAsync(
                 new UserId(Guid.NewGuid().ToString())));
     }
@@ -142,7 +140,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
     public async Task GetUserByIdAsync_ReturnsMappedUser_When_UserExists()
     {
         // Arrange
-        const string applicationDataContainerName = "application-data";
+        const string usersContainerName = "users";
         UserId userId = new("user");
 
         UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
@@ -160,7 +158,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
             pupilIdentifiers);
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadMany<UserDto>(() => [userProfileDto]);
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(() => userProfileDto);
 
         InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
 
@@ -183,9 +181,10 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         Assert.Equal(expectedUser, result);
 
         mockCosmosDbQueryHandler.Verify((handler) =>
-            handler.ReadItemsAsync<UserDto>(
-                applicationDataContainerName,
-                It.IsAny<string>(),
+            handler.ReadItemByIdAsync<UserDto>(
+                userId.Value,
+                usersContainerName,
+                userId.Value,
                 It.IsAny<CancellationToken>()), Times.Once);
 
         mockMapper.Verify(m => m.Map(userProfileDto), Times.Once);

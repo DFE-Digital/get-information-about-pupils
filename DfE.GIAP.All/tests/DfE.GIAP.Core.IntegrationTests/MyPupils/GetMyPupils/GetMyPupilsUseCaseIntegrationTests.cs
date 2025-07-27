@@ -52,13 +52,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         await CosmosDbFixture.Database.WriteItemAsync(userProfileDto);
 
         IAuthorisationContext authorisationContext = AuthorisationContextTestDoubles.WithUser(userId);
-        GetMyPupilsRequest request = new(authorisationContext);
+
+        // Act
 
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
             ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
 
-        // Act
-        GetMyPupilsResponse getMyPupilsResponse = await sut.HandleRequestAsync(request);
+        GetMyPupilsResponse getMyPupilsResponse =
+            await sut.HandleRequestAsync(
+                new GetMyPupilsRequest(authorisationContext));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
