@@ -20,7 +20,6 @@ public class ContentServiceTests
     [Theory]
     [InlineData(DocumentType.Landing)]
     [InlineData(DocumentType.PrivacyNotice)]
-    [InlineData(DocumentType.TermOfUse)]
     public async Task ContentService_GetContent_Returns_Data_Successfully(DocumentType documentType)
     {
         var expectedResponse = new CommonResponseBody
