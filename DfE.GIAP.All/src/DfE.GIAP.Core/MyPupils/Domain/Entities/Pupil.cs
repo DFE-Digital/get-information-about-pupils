@@ -20,7 +20,6 @@ public sealed class Pupil : Entity<UniquePupilNumber>
         : base(identifier)
     {
         ArgumentNullException.ThrowIfNull(name);
-        ArgumentNullException.ThrowIfNull(Identifier);
         _pupilType = pupilType;
         _name = name;
         _sex = sex;
