@@ -20,7 +20,6 @@ public sealed class PupilTests
                 It.IsAny<LocalAuthorityCode>()));
     }
 
-
     [Fact]
     public void IsOfPupilType_ReturnsTrue_WhenTypesMatch()
     {
