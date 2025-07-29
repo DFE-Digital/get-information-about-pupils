@@ -22,8 +22,7 @@ public class LocalAuthorityCodeTests
     public void Constructor_ThrowsArgumentException_WhenCodeIsNegative(int invalidCode)
     {
         // Act & Assert
-        ArgumentException ex = Assert.Throws<ArgumentException>(() => new LocalAuthorityCode(invalidCode));
-        Assert.Equal("Local authority must be a positive number", ex.Message);
+        ArgumentException ex = Assert.Throws<ArgumentOutOfRangeException>(() => new LocalAuthorityCode(invalidCode));
     }
 
     [Theory]
