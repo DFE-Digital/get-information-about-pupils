@@ -1,5 +1,4 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 
@@ -7,12 +6,12 @@ internal static class CosmosDbQueryHandlerTestDoubles
 {
     internal static Mock<ICosmosDbQueryHandler> Default() => new();
 
-    internal static Mock<ICosmosDbQueryHandler> MockForGetNewsArticleById(Func<NewsArticleDto> handler)
+    internal static Mock<ICosmosDbQueryHandler> MockForReadById<T>(Func<T> handler) where T : class
     {
         Mock<ICosmosDbQueryHandler> mockHandler = Default();
 
         mockHandler
-            .Setup(t => t.ReadItemByIdAsync<NewsArticleDto>(
+            .Setup(t => t.ReadItemByIdAsync<T>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -22,12 +21,12 @@ internal static class CosmosDbQueryHandlerTestDoubles
         return mockHandler;
     }
 
-    internal static Mock<ICosmosDbQueryHandler> MockForGetNewsArticles(Func<IEnumerable<NewsArticleDto>> handler)
+    internal static Mock<ICosmosDbQueryHandler> MockForReadMany<T>(Func<IEnumerable<T>> handler) where T : class
     {
         Mock<ICosmosDbQueryHandler> mockHandler = Default();
 
         mockHandler
-            .Setup(t => t.ReadItemsAsync<NewsArticleDto>(
+            .Setup(t => t.ReadItemsAsync<T>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
