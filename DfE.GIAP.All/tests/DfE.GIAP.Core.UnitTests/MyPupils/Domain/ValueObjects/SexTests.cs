@@ -14,7 +14,7 @@ public sealed class SexTests
         Sex sex = new(input);
 
         // Assert
-        Assert.Equal(Sex.Male.ToString(), sex.ToString());
+        Assert.Equal(Sex.Male, sex);
     }
 
     [Theory]
@@ -28,7 +28,7 @@ public sealed class SexTests
         Sex sex = new(input);
 
         // Assert
-        Assert.Equal(Sex.Female.ToString(), sex.ToString());
+        Assert.Equal(Sex.Female, sex);
     }
 
     [Theory]
