@@ -2,8 +2,8 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.MyPupils;
