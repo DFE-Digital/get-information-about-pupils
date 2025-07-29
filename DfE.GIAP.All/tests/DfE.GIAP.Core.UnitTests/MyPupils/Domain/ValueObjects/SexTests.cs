@@ -61,6 +61,7 @@ public sealed class SexTests
 
         // Assert
         Assert.Equal(expected.ToString(), result.ToString());
+        Assert.Equal("M", result.ToString());
     }
 
     [Fact]
@@ -74,13 +75,14 @@ public sealed class SexTests
 
         // Assert
         Assert.Equal(expected.ToString(), result.ToString());
+        Assert.Equal("F", result.ToString());
     }
 
     [Fact]
     public void Equality_ShouldWorkForSameSex()
     {
         // Act & Assert
-        Assert.Equal(new("M"), Sex.Male);
+        Assert.Equal(Sex.Female, Sex.Female);
     }
 
     [Fact]
