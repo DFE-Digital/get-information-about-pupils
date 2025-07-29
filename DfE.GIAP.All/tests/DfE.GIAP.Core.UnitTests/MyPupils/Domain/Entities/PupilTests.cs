@@ -6,7 +6,6 @@ using DfE.GIAP.SharedTests.TestDoubles;
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.Entities;
 public sealed class PupilTests
 {
-
     [Fact]
     public void Constructor_ThrowsArgumentNullException_WhenNameIsNull()
     {
@@ -118,7 +117,7 @@ public sealed class PupilTests
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
 
         Pupil pupil = PupilBuilder.CreateBuilder(upn)
-            .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10)) // Birthday already occurred this year
+            .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10))
             .Build();
 
         // Act
@@ -153,8 +152,8 @@ public sealed class PupilTests
         // Arrange
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
 
-        Pupil pupil = // Do not supply a DateOfBirth
-            PupilBuilder.CreateBuilder(upn)
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithDateOfBirth(null)
             .Build();
 
         // Act
@@ -174,7 +173,7 @@ public sealed class PupilTests
         Pupil pupil1 = PupilBuilder.CreateBuilder(upn).Build();
         Pupil pupil2 = PupilBuilder.CreateBuilder(upn).Build();
 
-        // Act & Assert
+        // Act Assert
         Assert.Equal(pupil1, pupil2);
     }
 
@@ -186,7 +185,7 @@ public sealed class PupilTests
         Pupil pupil1 = PupilBuilder.CreateBuilder(uniquePupilNumbers[0]).Build();
         Pupil pupil2 = PupilBuilder.CreateBuilder(uniquePupilNumbers[1]).Build();
 
-        // Act & Assert
+        // Act Assert
         Assert.NotEqual(pupil1, pupil2);
     }
 }
