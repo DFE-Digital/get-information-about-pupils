@@ -2,7 +2,7 @@
 @using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
 @model MyPupilsViewModel
 
-@if ((Model.Pupils != null && Model.Pupils.Any()) || Model.InvalidUpns.Any()) // Is this Invalid correct are InvalidUpns download attemptable?
+@if ((Model.Pupils != null && Model.Pupils.Any()))
 {
     <!--<input type="hidden" name="PageLearnerNumbers" value="Model.PageLearnerNumbers" /> -->
     <!--<input type="hidden" name="Total" value="Model.Total" />-->
