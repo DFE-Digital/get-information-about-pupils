@@ -99,6 +99,7 @@ public class ManageNewsArticlesController : Controller
             return View("../Admin/ManageNewsArticles/CreateNewsArticle", manageDocumentsModel);
         }
 
+        // TODO: Change to use specific view models, move away from "ManageDocumentsViewModel"
         CommonResponseBodyViewModel userInputs = manageDocumentsModel.DocumentData;
         CreateNewsArticleRequest request = new(
             Title: userInputs.Title,
@@ -108,13 +109,11 @@ public class ManageNewsArticlesController : Controller
 
         await _createNewsArticleUseCase.HandleRequestAsync(request);
 
-        ConfirmationViewModel model = new()
+        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
         {
             Title = Messages.NewsArticle.Success.CreateTitle,
             Body = Messages.NewsArticle.Success.CreateBody,
-        };
-
-        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", model);
+        });
     }
 
     [HttpPost]
@@ -126,13 +125,11 @@ public class ManageNewsArticlesController : Controller
         DeleteNewsArticleRequest deleteRequest = new(NewsArticleIdentifier.From(articleId));
         await _deleteNewsArticleUseCase.HandleRequestAsync(deleteRequest);
 
-        manageDocumentsModel.Confirmation = new Confirmation
+        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
         {
             Title = Messages.NewsArticle.Success.DeleteTitle,
             Body = Messages.NewsArticle.Success.DeleteBody,
-        };
-
-        return View("../Admin/ManageNewsArticles/Confirmation", manageDocumentsModel);
+        });
     }
 
     [HttpGet]
@@ -188,15 +185,11 @@ public class ManageNewsArticlesController : Controller
         await _updateNewsArticleUseCase.HandleRequestAsync(
             new UpdateNewsArticleRequest(updateProperties));
 
-        // Change to speciifc confirmation view model
-        manageDocumentsModel.Confirmation = new()
+        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
         {
             Title = Messages.NewsArticle.Success.UpdateTitle,
             Body = Messages.NewsArticle.Success.UpdateBody,
-        };
-
-        ModelState.Clear();
-        return View("../Admin/ManageNewsArticles/Confirmation", manageDocumentsModel);
+        });
     }
 
     [HttpPost]
@@ -234,8 +227,8 @@ public class ManageNewsArticlesController : Controller
     private static string FormatNewsArticleName(NewsArticle news)
     {
         string status = news.Published ? "Published" : "Draft";
-        string pinned = news.Pinned ? "Pinned" : string.Empty;
+        string pinned = news.Pinned ? " | Pinned" : string.Empty;
         string date = news.ModifiedDate.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("en-GB"));
-        return $"{news.Title} | {date} | {status} | {pinned}";
+        return $"{news.Title} | {date} | {status}{pinned}";
     }
 }

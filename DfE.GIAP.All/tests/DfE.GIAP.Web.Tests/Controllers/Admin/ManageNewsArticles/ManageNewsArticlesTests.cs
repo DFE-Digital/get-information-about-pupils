@@ -101,9 +101,7 @@ public class ManageNewsArticlesControllerTests
         _deleteMock.Verify(x => x.HandleRequestAsync(It.IsAny<DeleteNewsArticleRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/Confirmation", viewResult.ViewName);
-        Assert.Equal(model, viewResult.Model);
-        Assert.NotNull(model.Confirmation);
+        Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
     }
 
     [Fact]
@@ -144,9 +142,7 @@ public class ManageNewsArticlesControllerTests
         _updateMock.Verify(x => x.HandleRequestAsync(It.IsAny<UpdateNewsArticleRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/Confirmation", viewResult.ViewName);
-        Assert.Equal(model, viewResult.Model);
-        Assert.NotNull(model.Confirmation);
+        Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
     }
 
     [Fact]
