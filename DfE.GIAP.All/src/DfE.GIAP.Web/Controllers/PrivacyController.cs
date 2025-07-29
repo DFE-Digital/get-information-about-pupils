@@ -5,10 +5,6 @@ namespace DfE.GIAP.Web.Controllers;
 
 public class PrivacyController : Controller
 {
-    public PrivacyController()
-    {
-    }
-
     [AllowWithoutConsent]
     public IActionResult Index()
     {
