@@ -28,7 +28,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
-            .AddSingleton<IMapper<Pupil, PupilDto>, MapPupilToPupilDtoMapper>()
+            .AddSingleton<IMapper<Pupil, PupilDto>, MapPupilToPupilDtoMapper>();
 
         return services;
     }
