@@ -63,7 +63,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
         UserDto userDto = Assert.Single(users);
         Assert.NotNull(userDto);
-        Assert.Equivalent(myPupils, userDto.MyPupils);
+        Assert.Equivalent(myPupils, userDto.MyPupils.Pupils);
     }
 
     [Fact]
