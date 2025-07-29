@@ -223,7 +223,7 @@ public class ManageNewsArticlesController : Controller
             .Select(news => new Document
             {
                 DocumentId = news.Id.Value,
-                DocumentName = FormatDocumentName(news)
+                DocumentName = FormatNewsArticleName(news)
             })
             .ToList();
 
@@ -231,11 +231,11 @@ public class ManageNewsArticlesController : Controller
         ViewBag.NewsDocuments = new SelectList(newsList, nameof(Document.DocumentId), nameof(Document.DocumentName));
     }
 
-    private static string FormatDocumentName(NewsArticle news)
+    private static string FormatNewsArticleName(NewsArticle news)
     {
         string status = news.Published ? "Published" : "Draft";
-        string pinned = news.Pinned ? " | Pinned" : "";
+        string pinned = news.Pinned ? "Pinned" : string.Empty;
         string date = news.ModifiedDate.ToString("dd/MM/yyyy", CultureInfo.GetCultureInfo("en-GB"));
-        return $"{news.Title} | {date} | {status}{pinned}";
+        return $"{news.Title} | {date} | {status} | {pinned}";
     }
 }
