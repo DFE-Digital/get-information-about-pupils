@@ -83,8 +83,8 @@ public class ManageNewsArticlesController : Controller
         {
             BackButton = new(
                 isBackButtonEnabled: true,
-                previousController: "ManageDocuments",
-                previousAction: "ManageDocuments")
+                previousController: "ManageNewsArticles",
+                previousAction: "ManageNewsArticles")
         };
 
         return View("../Admin/ManageNewsArticles/CreateNewsArticle", manageDocumentsModel);
