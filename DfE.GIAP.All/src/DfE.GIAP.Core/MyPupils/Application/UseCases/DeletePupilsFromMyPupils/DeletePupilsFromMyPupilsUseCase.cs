@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 using DfE.GIAP.Core.User.Application.Repository.UserWriteRepository;
 

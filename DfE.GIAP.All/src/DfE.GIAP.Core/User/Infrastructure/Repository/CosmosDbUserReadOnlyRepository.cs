@@ -1,6 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;

@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests.TestDoubles.Users;
 using Microsoft.Azure.Cosmos;
@@ -82,7 +83,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(() =>
             repository.GetUserByIdAsync(
-                new UserId(Guid.NewGuid().ToString())));
+                UserIdTestDoubles.Default()));
     }
 
     [Fact]
@@ -105,7 +106,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         // Act Assert
         await Assert.ThrowsAsync<CosmosException>(() =>
             repository.GetUserByIdAsync(
-                new UserId(Guid.NewGuid().ToString())));
+                UserIdTestDoubles.Default()));
 
         string log = Assert.Single(mockLogger.Logs);
         Assert.Contains("CosmosException in GetUserByIdAsync", log);
@@ -130,7 +131,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         // Act Assert
         await Assert.ThrowsAnyAsync<ArgumentException>(() =>
             repository.GetUserByIdAsync(
-                new UserId(Guid.NewGuid().ToString())));
+                UserIdTestDoubles.Default()));
     }
 
 
@@ -139,7 +140,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
     {
         // Arrange
         const string usersContainerName = "users";
-        UserId userId = new("user");
+        UserId userId = UserIdTestDoubles.Default();
 
         UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
 

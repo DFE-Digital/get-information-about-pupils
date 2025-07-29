@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.User.Application;
+using DfE.GIAP.SharedTests.TestDoubles.Users;
 
 namespace DfE.GIAP.Core.UnitTests.User;
 public sealed class UserIdTests
@@ -34,8 +35,8 @@ public sealed class UserIdTests
     {
         // Arrange
         const string input = "abc-123";
-        UserId userId1 = new(input);
-        UserId userId2 = new(input);
+        UserId userId1 = UserIdTestDoubles.WithId(input);
+        UserId userId2 = UserIdTestDoubles.WithId(input);
 
         // Act Assert
         Assert.Equal(userId1, userId2);
@@ -46,8 +47,8 @@ public sealed class UserIdTests
     public void Inequality_ShouldBeTrue_ForDifferentValues()
     {
         // Arrange
-        UserId userId1 = new("user-1");
-        UserId userId2 = new("user-2");
+        UserId userId1 = UserIdTestDoubles.WithId("user-1");
+        UserId userId2 = UserIdTestDoubles.WithId("user-2");
 
         // Act Assert
         Assert.NotEqual(userId1, userId2);

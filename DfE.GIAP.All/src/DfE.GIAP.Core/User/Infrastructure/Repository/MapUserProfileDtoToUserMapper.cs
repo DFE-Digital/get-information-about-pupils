@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application;
 
 namespace DfE.GIAP.Core.User.Infrastructure.Repository;
 public sealed class MapUserProfileDtoToUserMapper : IMapper<UserDto, Application.Repository.UserReadRepository.User>

@@ -1,5 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository.UserWriteRepository;
 using Microsoft.Azure.Cosmos;
 

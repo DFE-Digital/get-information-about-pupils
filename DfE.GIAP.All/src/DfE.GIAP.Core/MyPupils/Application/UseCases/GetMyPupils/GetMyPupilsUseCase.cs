@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDoma
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
