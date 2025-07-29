@@ -75,6 +75,24 @@ public sealed class PupilTests
     }
 
     [Fact]
+    public void Sex_ReturnsValue_WhenSexIsSet()
+    {
+        // Arrange
+        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
+
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithSex(Sex.Male)
+            .Build();
+
+        // Act
+        string result = pupil.Sex;
+
+        // Assert
+        Assert.False(string.IsNullOrEmpty(result));
+        Assert.Equal(Sex.Male.ToString(), result);
+    }
+
+    [Fact]
     public void Forename_ReturnsCorrectValue()
     {
         // Arrange
@@ -143,6 +161,24 @@ public sealed class PupilTests
 
         // Assert
         Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void DateOfBirth_ReturnsValue_WhenDateOfBirthIsSet()
+    {
+        // Arrange
+        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
+        DateTime dob = DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10);
+
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithDateOfBirth(dob)
+            .Build();
+
+        // Act
+        string result = pupil.DateOfBirth;
+
+        // Assert
+        Assert.Equal(dob.ToString("yyyy-MM-dd"), result);
     }
 
     [Fact]
