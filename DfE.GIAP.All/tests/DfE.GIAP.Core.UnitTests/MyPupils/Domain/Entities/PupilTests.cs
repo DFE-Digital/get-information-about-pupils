@@ -75,6 +75,60 @@ public sealed class PupilTests
     }
 
     [Fact]
+    public void Forename_ReturnsCorrectValue()
+    {
+        // Arrange
+        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
+        string expectedForename = "John";
+
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithFirstName(expectedForename)
+            .Build();
+
+        // Act
+        string result = pupil.Forename;
+
+        // Assert
+        Assert.Equal("John", result);
+    }
+
+    [Fact]
+    public void Surname_ReturnsCorrectValue()
+    {
+        // Arrange
+        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
+        string expectedSurname = "Doe";
+
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithSurname(expectedSurname)
+            .Build();
+
+        // Act
+        string result = pupil.Surname;
+
+        // Assert
+        Assert.Equal("Doe", result);
+    }
+
+    [Fact]
+    public void LocalAuthorityCode_ReturnsCorrectValue()
+    {
+        // Arrange
+        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
+        LocalAuthorityCode expectedCode = new(100);
+
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithLocalAuthorityCode(expectedCode)
+            .Build();
+
+        // Act
+        int result = pupil.LocalAuthorityCode;
+
+        // Assert
+        Assert.Equal(100, result);
+    }
+
+    [Fact]
     public void DateOfBirth_ReturnsEmptyString_WhenDateOfBirthIsNull()
     {
         // Arrange
