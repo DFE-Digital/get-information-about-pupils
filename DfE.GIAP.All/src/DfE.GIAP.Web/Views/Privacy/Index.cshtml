@@ -1,12 +1,194 @@
 ﻿@model PrivacyViewModel
 @{
-    ViewData["Title"] = @Html.Raw(Model.Response.Title);
+    ViewData["Title"] = "Privacy notice";
 }
 
 <div class="govuk-width-container">
-    <h1 id="privacy--heading--text" class="govuk-heading-xl">@Html.Raw(Model.Response.Title)</h1>
+    <h1 id="privacy--heading--text" class="govuk-heading-xl">Privacy notice</h1>
 
     <div class="govuk-grid-row">
-        @Html.Raw(Model.Response.Body)
+        <div class="govuk-grid-column-one-third">
+            <h2 class="govuk-heading-l">Contents</h2>
+
+            <p class="govuk-body">
+                <a href="#TOC1" class="govuk-link govuk-link--no-underline">Privacy notice (How we use pupil information)</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC2" class="govuk-link govuk-link--no-underline">The categories of pupil information that we process include</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC3" class="govuk-link govuk-link--no-underline">Why we provide access to pupil information</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC4" class="govuk-link govuk-link--no-underline">Collecting pupil information</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC5" class="govuk-link govuk-link--no-underline">Storing pupil data</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC6" class="govuk-link govuk-link--no-underline">Who we share pupil information with</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC7" class="govuk-link govuk-link--no-underline">Why we regularly share pupil information</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC8" class="govuk-link govuk-link--no-underline">Last updated</a>
+            </p>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <div id="TOC1">
+                <h2 class="govuk-heading-l">Privacy notice (How we use pupil information)</h2>
+                <p class="govuk-body">
+                    The Department for Education is the Data Controller for the use of personal data in this privacy notice.
+                </p>
+                <p class="govuk-body">
+                    The Get information about pupils (GIAP) website provides local authorities; multi-academy trusts; single academy trusts; local authority-maintained establishments and further education colleges with access to individual pupil level data via a secure website. This website is not open to the public.
+                </p>
+            </div>
+
+            <div id="TOC2">
+                <h2 class="govuk-heading-l">The categories of pupil information that we process include:</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>personal identifiers (such as name, date of birth and unique pupil number)</li>
+                    <li>characteristics (such as gender and free school meal eligibility)</li>
+                    <li>special educational needs (including the needs and ranking)</li>
+                    <li>assessment and attainment (such as key stage 1 and phonics results, post 16 courses enrolled for and any relevant results)</li>
+                    <li>pupil premium information</li>
+                </ul>
+            </div>
+
+            <div id="TOC3">
+                <h2 class="govuk-heading-l">Why we provide access to pupil information</h2>
+                <p class="govuk-body">The personal data provided by GIAP is essential, for establishments to fulfil their official functions and meet legal requirements. The data is collected by the department under:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li><a class="govuk-link" href="http://www.legislation.gov.uk/ukpga/1996/56/section/537A" id="privacy--section537a--link" target="_blank">Section 537A of the Education Act 1996</a></li>
+                </ul>
+                <p class="govuk-body">
+                    Attainment data is collected from local authorities via the KS1, 2, 4, 5, Phonics and EYFSP data collections. The data is collected under:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        <a class="govuk-link" href="http://www.legislation.gov.uk/ukpga/1996/56/section/29" id="privacy--education-act--link" target="_blank">the Education Act 1996 s29(3)</a>
+                    </li>
+                    <li>
+                        <a class="govuk-link" href="http://www.legislation.gov.uk/uksi/2007/2324/contents/made" id="privacy--education-regulations--link" target="_blank">the Education (School Performance Information)(England) Regulations 2007</a>
+                    </li>
+                    <li>
+                        <a class="govuk-link" href="http://www.legislation.gov.uk/uksi/2008/3093/pdfs/uksi_20083093_en.pdf" id="privacy--school-information-regulations--link" target="_blank"> regulations 5 and 8 School Information (England) Regulations 2008</a>
+                    </li>
+                </ul>
+                <p class="govuk-body">
+                    Pupil premium is calculated by the department from FSM data collected within the school census. This data is disseminated to schools and authorities via the GIAP website.
+                </p>
+                <p class="govuk-body">
+                    Under the General Data Protection Regulation (GDPR) Article 6, the lawful bases we rely on for processing pupil information are:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        Statutory obligation – all data collections are covered by legislation
+                    </li>
+                    <li>
+                        Public task – the collected data are covered by legislation and reflected for the benefit of establishments
+                    </li>
+                </ul>
+            </div>
+
+            <div id="TOC4">
+                <h2 class="govuk-heading-l">Collecting pupil information</h2>
+                <p class="govuk-body">
+                    Pupil information is provided to GIAP via the National Pupil Database and from the Attainment teams within the department.
+                </p>
+                <p class="govuk-body">
+                    The information has been collected from schools / academies / local authorities via the statutory data collections undertaken by the department.
+                </p>
+            </div>
+
+            <div id="TOC5">
+                <h2 class="govuk-heading-l">Storing pupil data</h2>
+                <p class="govuk-body">
+                    We hold pupil data securely for the set amount of time shown in our data retention schedule. A link to data retention policy for GIAP is available on the website.
+                </p>
+            </div>
+
+            <div id="TOC6">
+                <h2 class="govuk-heading-l">Who we share pupil information with</h2>
+                <p class="govuk-body">
+                    We routinely share pupil information with:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>local authorities</li>
+                    <li>multi-academy trusts</li>
+                    <li>single academy trusts</li>
+                    <li>local authority-maintained schools</li>
+                    <li>further education colleges</li>
+                </ul>
+            </div>
+
+            <div id="TOC7">
+                <h2 class="govuk-heading-l">Why we regularly share pupil information</h2>
+                <p class="govuk-body">The GIAP website provides a secure service for users to access individual pupil level data.</p>
+                <p class="govuk-body">
+                    The purpose of the system is to facilitate the ‘setting’ of pupils on joining an establishment; the monitoring of progress against attainment by pupils; the budgeting for pupils by access to pupil premium data; access to a ‘protected eligibility’ flag for free school meals and information on the pupil’s special educational needs and disabilities – to enable proper provision to be made by the establishment.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="govuk-heading-m">How long we will keep your personal data</h3>
+                <p class="govuk-body">
+                    The Department for Education will keep the individual pupil level personal data within the GIAP system for the statutory educational life of the pupil plus seven years (to cover statutory financial data retention requirements).
+                </p>
+            </div>
+
+            <div>
+                <h3 class="govuk-heading-m">Data deletion</h3>
+                <p class="govuk-body">
+                    The GIAP system will automatically delete individual pupil data from the GIAP system at the end of the pupils’ statutory educational life (plus 7 years).
+                </p>
+            </div>
+
+            <div>
+                <h3 class="govuk-heading-m">Your data protection rights</h3>
+                <p class="govuk-body">
+                    More information about how the DfE handles personal information is published here:
+                </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter" id="privacy--personal-information-charter1--link" target="_blank">
+                        https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter
+                    </a>
+                </p>
+                <p class="govuk-body">
+                    Under the Data Protection Act 2018, you are entitled to ask if we hold information relating to you and ask for a copy, by making a ‘subject access request’.
+                </p>
+                <p class="govuk-body">
+                    For further information and how to request your data, please use the ‘<a class="govuk-link" href="https://www.education.gov.uk/help/contactus" id="privacy--contact-us--link" target="_blank">
+                        contact
+                        form
+                    </a>’ in the Personal Information Charter at
+                    <a class="govuk-link" href="https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter" id="privacy--personel-information-charter2--link">https://www.gov.uk/government/organisations/department-for-education/about/personal-information-charter</a>
+                    <br>
+                    under the ‘How to find out what personal information we hold about you’ section.
+                </p>
+                <p class="govuk-body">
+                    If you need to contact us regarding any of the above, please do so via the DfE site at:
+                    <a class="govuk-link" href="https://www.gov.uk/contact-dfe" id="privacy--contact-department--link" target="_blank">https://www.gov.uk/contact-dfe</a>
+                </p>
+                <p class="govuk-body">
+                    Further information about your data protection rights appears on the Information Commissioner’s website at:
+                </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" href="https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/" id="privacy--principle-6-rights--link" target="_blank">
+                        https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/
+                    </a>
+                </p>
+            </div>
+
+            <div id="TOC8">
+                <h2 class="govuk-heading-l">Last updated</h2>
+                <p class="govuk-body">
+                    We may need to update this privacy notice periodically, so we recommend that you revisit this information from time to time. This version was last updated in June 2020.
+                </p>
+            </div>
+        </div>
     </div>
 </div>
