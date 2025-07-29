@@ -5,8 +5,8 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDoma
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
-using DfE.GIAP.Core.User.Application.Repository.UserWriteRepository;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
