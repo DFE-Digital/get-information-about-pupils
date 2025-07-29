@@ -26,7 +26,7 @@ public sealed class GetMyPupilsUseCaseTests
         User.Application.User user = new(userId, upns);
 
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, userId);
-       
+
         List<Pupil> pupils =
             upns.Select((upn) => PupilBuilder.CreateBuilder(upn).Build())
                 .ToList();
@@ -79,7 +79,7 @@ public sealed class GetMyPupilsUseCaseTests
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
-        
+
         // Act
         GetMyPupilsUseCase sut = new(
             userRepoMock.Object,
@@ -99,6 +99,6 @@ public sealed class GetMyPupilsUseCaseTests
             t => t.GetPupilsAsync(Enumerable.Empty<UniquePupilNumber>(), It.IsAny<MyPupilsQueryOptions>()), Times.Never);
 
         mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
-        
+
     }
 }

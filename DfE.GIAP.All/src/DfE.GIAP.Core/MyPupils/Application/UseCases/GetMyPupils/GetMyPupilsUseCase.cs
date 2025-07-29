@@ -29,7 +29,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
         UserId userId = new(request.UserId);
         User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
-        if(!user.UniquePupilNumbers.Any())
+        if (!user.UniquePupilNumbers.Any())
         {
             return new GetMyPupilsResponse([]);
         }
