@@ -44,15 +44,11 @@ public static class Routes
 
     }
 
-    public static class ManageDocument
+    public static class ManageNewsArticles
     {
-        public const string ManageDocuments = "manage-documents/{docType?}/{docAction?}/{newsArticleId?}";
-        public const string ManageDocumentsPreview = "manage-documents/preview";
-        public const string ManageDocumentsPublish = "manage-documents/publish";
-
-        public const string CreateNewsArticle = "manage-documents/article/create";
-        public const string DeleteNewsArticle = "manage-documents/article/delete";
-        public const string EditNewsAricle = "manage-documents/article/edit";
+        public const string CreateNewsArticle = "manage-news-articles/create";
+        public const string DeleteNewsArticle = "manage-news-articles/delete";
+        public const string EditNewsAricle = "manage-news-articles/edit";
     }
 
     public static class PrePreparedDownloads
