@@ -14,7 +14,6 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
 
         services
-            
             .AddMyPupilsInfrastructure();
 
         return services;
