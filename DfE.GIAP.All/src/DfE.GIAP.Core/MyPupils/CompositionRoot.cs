@@ -1,5 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.Services;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
@@ -14,7 +18,17 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
 
         services
+            .AddMyPupilsApplication()
             .AddMyPupilsInfrastructure();
+
+        return services;
+    }
+
+    private static IServiceCollection AddMyPupilsApplication(this IServiceCollection services)
+    {
+        services
+            .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
+            .AddSingleton<IMapper<Pupil, PupilDto>, MapPupilToPupilDtoMapper>()
 
         return services;
     }
