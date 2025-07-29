@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
@@ -88,40 +87,6 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
     }
 
     [Fact]
-    public async Task HomeController_Index_Should_Return_HomePageData()
-    {
-        // Arrange
-        Content stubContent = new()
-        {
-            Title = "Test title",
-            Body = "Test body",
-        };
-
-        HomeViewModel model = new()
-        {
-            LandingResponse = stubContent,
-        };
-
-
-        GetContentByPageKeyUseCaseResponse response = new(stubContent);
-
-        _mockGetContentByPageKeyUseCase.Setup(
-            (useCase) => useCase.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>())).ReturnsAsync(response).Verifiable();
-
-        HomeController controller = GetHomeController();
-
-        // Act
-        IActionResult result = await controller.Index();
-
-        // Assert
-        ViewResult viewResult = Assert.IsAssignableFrom<ViewResult>(result);
-        HomeViewModel viewModel = viewResult.Model as HomeViewModel;
-        Assert.Equal(model.LandingResponse.Title, viewModel.LandingResponse.Title);
-        Assert.Equal(model.LandingResponse.Body, viewModel.LandingResponse.Body);
-    }
-
-    [Fact]
     public void HomeController_IndexPost_Should_Redirect_To_NPD_Search_If_User_Is_Not_An_FE_User()
     {
         // Arrange
@@ -177,7 +142,7 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         controllerContext.HttpContext.Features.Set(_exceptionPathFeature);
 
-        return new HomeController(_mockNewsBanner, _mockGetContentByPageKeyUseCase.Object)
+        return new HomeController(_mockNewsBanner)
         {
             ControllerContext = new ControllerContext()
             {

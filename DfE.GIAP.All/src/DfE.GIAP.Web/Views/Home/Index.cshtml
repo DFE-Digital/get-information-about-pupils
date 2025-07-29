@@ -1,36 +1,55 @@
-﻿@model HomeViewModel
-@{
-    var title = string.IsNullOrEmpty(Model.LandingResponse?.Title) ? "Get information about pupils" : Model.LandingResponse.Title;
-    ViewData["Title"] = title;
-}
-
-<div class="govuk-grid-row">
+﻿<div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters">
         <h1 class="govuk-heading-xl" id="landing--heading--text">
-            @Html.Raw(title)
+            Get information about pupils (GIAP)
         </h1>
         <p class="govuk-body">
-            @Html.Raw(Model.LandingResponse?.Body)
+            'Get information about pupils' (formerly known as 'Key to Success') allows you to search the National Pupil Database to retrieve data for your school, academy, further education college, academy trust or local authority.
         </p>
 
-        @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
-        {
-            <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/national-pupil-database">
-                Search national pupil database
-                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-                </svg>
-            </a>
-        }
-        else
-        {
-            <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/pupil-premium">
-                Search further education
-                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-                </svg>
-            </a>
-        }
+        <div>
+            <h1 class="govuk-heading-l">
+                How to use GIAP
+            </h1>
+            <p class="govuk-body">
+                Local authorities, academy trusts, academies, schools and colleges can:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>search and download assessment (or SEN data for colleges) and pupil premium data using one or bulk UPNs</li>
+                <li>search for pupils using name, date of birth or gender to find assessment (or SEN data for colleges) and pupil premium data</li>
+                <li>save searches to 'My pupil list'</li>
+                <li>access pre-prepared downloads for your organisation or establishment</li>
+            </ul>
+            <p class="govuk-body">
+                The advanced search is monitored and should only be used to obtain prospective pupil data when a UPN/ULN is not available. You will only be able to view appropriate data for your establishment or organisation.
+            </p>
+            <p class="govuk-body" id="start--user-guide--text">
+                <a href="https://youtu.be/BBG3HYigspw" class="govuk-link" id="start--user-guide--link" target="_blank">A user guide is available</a>
+            </p>
+            <p class="govuk-body">
+                National and LA level data are available from
+                <a href="https://www.gov.uk/government/organisations/department-for-education/about/statistics" class="govuk-link" id="start--nala--link" target="_blank">www.gov.uk/government/organisations/department-for-education/about/statistics</a>
+            </p>
+
+            @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+            {
+                <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/national-pupil-database">
+                    Search national pupil database
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/pupil-premium">
+                    Search further education
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+            }
+        </div>
 
         @await Component.InvokeAsync("ReleaseTimetable")
 

@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Domain.Models.Common;
@@ -16,32 +15,6 @@ public class ContentServiceTests
 {
     private readonly Mock<IApiService> _mockApiService = new Mock<IApiService>();
     private readonly Mock<IOptions<AzureAppSettings>> _mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
-
-    [Theory]
-    [InlineData(DocumentType.Landing)]
-    public async Task ContentService_GetContent_Returns_Data_Successfully(DocumentType documentType)
-    {
-        var expectedResponse = new CommonResponseBody
-        {
-            Title = "Title",
-            Body = "Body",
-            Id = documentType.ToString()
-        };
-        _mockApiService.Setup(x => x.GetAsync<CommonResponseBody>(It.IsAny<Uri>())).ReturnsAsync(expectedResponse);
-
-        var url = "https://www.somewhere.com?code=testcode";
-        var urls = new AzureAppSettings() { GetContentByIDUrl = url };
-        _mockAzureAppSettings.SetupGet(x => x.Value).Returns(urls);
-
-        var contentService = new ContentService(_mockApiService.Object, _mockAzureAppSettings.Object);
-
-        // act
-        var actual = await contentService.GetContent(documentType).ConfigureAwait(false);
-
-        // assert
-        Assert.IsType<CommonResponseBody>(actual);
-        Assert.Equal(expectedResponse.Id, actual.Id);
-    }
 
     [Theory]
     [InlineData(ActionTypes.Publish)]
