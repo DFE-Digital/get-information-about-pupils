@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain;
+﻿using DfE.GIAP.Core.MyPupils.Application;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
 

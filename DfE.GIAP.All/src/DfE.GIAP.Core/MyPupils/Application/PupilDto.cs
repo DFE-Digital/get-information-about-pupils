@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain;
+﻿namespace DfE.GIAP.Core.MyPupils.Application;
 public record PupilDto
 {
     public required string UniquePupilNumber { get; init; }

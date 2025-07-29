@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
-using DfE.GIAP.Core.MyPupils.Domain;
+﻿using DfE.GIAP.Core.MyPupils.Application;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
