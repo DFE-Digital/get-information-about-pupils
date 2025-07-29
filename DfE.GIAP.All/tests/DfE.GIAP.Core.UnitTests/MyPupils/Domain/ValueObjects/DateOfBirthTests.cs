@@ -103,4 +103,17 @@ public sealed class DateOfBirthTests
         Assert.NotEqual(dob1, dob2);
         Assert.False(dob1.Equals(dob2));
     }
+
+    [Fact]
+    public void ToString_ReturnsDate_InGbLocale()
+    {
+        // Arrange
+        DateOfBirth dob = new(DateTimeTestDoubles.GenerateFor(2000, 1, 1));
+
+        // Act 
+        string output = dob.ToString();
+
+        // Assert
+        Assert.Equal("2000-01-01", output);
+    }
 }
