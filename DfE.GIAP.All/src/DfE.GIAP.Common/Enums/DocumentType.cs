@@ -6,6 +6,4 @@ public enum DocumentType
 {
     [Description("Article")]
     Article,
-    [Description("Landing")]
-    Landing,
 }
