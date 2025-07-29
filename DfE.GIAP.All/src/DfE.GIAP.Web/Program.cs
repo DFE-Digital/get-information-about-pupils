@@ -1,17 +1,13 @@
 using System.Security.Cryptography;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Contents;
+using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Core.MyPupils;
-using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Domain.Search.Learner;
-using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController;
-using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +22,7 @@ builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
     .AddContentDependencies()
-<<<<<<< HEAD
-    .AddContentPresentation()
     .AddMyPupilsDependencies()
-=======
->>>>>>> cb659c3dd7d345784b74d6e53cc4a038556bc0ae
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
