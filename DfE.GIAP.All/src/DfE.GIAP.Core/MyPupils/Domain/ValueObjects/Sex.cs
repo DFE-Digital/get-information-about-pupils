@@ -4,7 +4,7 @@ public readonly struct Sex
     private readonly char? _value;
     private const char MaleCharacterCode = 'M';
     private const char FemaleCharacterCode = 'F';
-    public Sex(string? sexCode) // TODO char
+    public Sex(string? sexCode)
     {
         char? normalisedSexCode = sexCode?.ToLowerInvariant() switch
         {
@@ -14,13 +14,14 @@ public readonly struct Sex
             _ => null
         };
 
-        // TODO VALIDATE CURRENTLY NOT as LEARNER.Sex which is a string - need to ensure values valid
+#pragma warning disable S125 // Sections of code should not be commented out
+        // TODO assumed that it can be null so not validating 
         //char[] validCodes = [MaleCharacterCode, FemaleCharacterCode];
-
         //if (!validCodes.Contains(normalisedSexCode))
         //{
         //    throw new ArgumentException($"Invalid character to represent Sex: {normalisedSexCode}");
         //}
+#pragma warning restore S125 // Sections of code should not be commented out
 
         _value = normalisedSexCode;
     }
