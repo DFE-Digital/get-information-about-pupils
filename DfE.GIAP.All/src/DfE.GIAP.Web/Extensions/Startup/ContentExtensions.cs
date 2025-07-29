@@ -12,7 +12,6 @@ internal static class ContentExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, PrivacyViewModel>, GetContentByPageKeyResponseToPrivacyViewModelMapper>();
-        services.AddSingleton<IMapper<GetContentByPageKeyUseCaseResponse, TermsOfUseViewModel>, GetContentByPageKeyResponseToTermsOfUseViewModelMapper>();
 
         return services;
     }

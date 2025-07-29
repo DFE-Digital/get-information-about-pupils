@@ -37,32 +37,18 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
         // Arrange
         ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
         Content content = ContentTestDoubles.Default();
-        GetContentByPageKeyUseCaseResponse response = new(content);
 
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
-        mockUseCase.Setup(
-            (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()))
-            .ReturnsAsync(response)
-            .Verifiable();
-
-        GlossaryController sut = new(mockUseCase.Object, _mockDownloadService);
+        GlossaryController sut = new(_mockDownloadService);
 
         // Act
         IActionResult result = await sut.Index();
 
         // Assert
-        mockUseCase.Verify(
-            (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()), Times.Once);
-
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);
 
         GlossaryViewModel? viewModel = viewResult.Model as GlossaryViewModel;
         Assert.NotNull(viewModel);
-        Assert.Equal(content.Title, viewModel.Response.Title);
-        Assert.Equal(content.Body, viewModel.Response.Body);
     }
 
     [Fact]
@@ -71,7 +57,6 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
         // Arrange
         var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
         var model = _GlossaryResultsFake.GetMetaDataFile();
-        _mockContentService.GetContent(DocumentType.Glossary).ReturnsForAnyArgs(_GlossaryResultsFake.GetCommonResponseBody());
         var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails() { ClientId = "123456", SessionId = "654321" };
         var ms = new MemoryStream();
         _mockDownloadService.GetGlossaryMetaDataDownFileAsync("", ms, azureFunctionHeaderDetails).Returns(Task.FromResult(model));
@@ -92,16 +77,7 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
         mockAzureAppSettings.Setup(x => x.Value)
             .Returns(new AzureAppSettings() { IsSessionIdStoredInCookie = false });
 
-        Content content = ContentTestDoubles.Default();
-        GetContentByPageKeyUseCaseResponse response = new(content);
-        Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> mockUseCase = new();
-        mockUseCase.Setup(
-            (t) => t.HandleRequestAsync(
-                It.IsAny<GetContentByPageKeyUseCaseRequest>()))
-            .ReturnsAsync(response)
-            .Verifiable();
-
-        return new GlossaryController(mockUseCase.Object, _mockDownloadService)
+        return new GlossaryController(_mockDownloadService)
         {
             ControllerContext = new ControllerContext()
             {

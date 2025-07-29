@@ -18,10 +18,8 @@ public class ContentServiceTests
     private readonly Mock<IOptions<AzureAppSettings>> _mockAzureAppSettings = new Mock<IOptions<AzureAppSettings>>();
 
     [Theory]
-    [InlineData(DocumentType.Glossary)]
     [InlineData(DocumentType.Landing)]
     [InlineData(DocumentType.PrivacyNotice)]
-    [InlineData(DocumentType.TermOfUse)]
     public async Task ContentService_GetContent_Returns_Data_Successfully(DocumentType documentType)
     {
         var expectedResponse = new CommonResponseBody

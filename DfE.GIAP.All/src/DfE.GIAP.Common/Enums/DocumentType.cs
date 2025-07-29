@@ -6,16 +6,8 @@ public enum DocumentType
 {
     [Description("Article")]
     Article,
-
-    [Description("Glossary")]
-    Glossary,
-
-    [Description("Terms of Use")]
-    TermOfUse,
-
     [Description("Privacy Notice")]
     PrivacyNotice,
-
     [Description("Landing")]
     Landing,
 }
