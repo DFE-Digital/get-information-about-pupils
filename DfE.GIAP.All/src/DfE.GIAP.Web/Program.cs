@@ -26,8 +26,11 @@ builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
     .AddContentDependencies()
+<<<<<<< HEAD
     .AddContentPresentation()
     .AddMyPupilsDependencies()
+=======
+>>>>>>> cb659c3dd7d345784b74d6e53cc4a038556bc0ae
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
