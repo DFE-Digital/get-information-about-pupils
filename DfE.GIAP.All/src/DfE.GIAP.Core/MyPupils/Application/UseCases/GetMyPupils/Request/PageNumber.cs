@@ -9,5 +9,6 @@ public readonly struct PageNumber
 
     public int Value { get; }
 
+    public static PageNumber Default => Page(1);
     public static PageNumber Page(int page) => new(page);
 }
