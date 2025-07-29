@@ -13,7 +13,6 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
-using DfE.GIAP.Web.Authorisation;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
@@ -30,7 +29,6 @@ namespace DfE.GIAP.Web.Controllers.MyPupilList;
 [Route(Routes.Application.MyPupilList)]
 public class MyPupilListController : Controller
 {
-    public const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
 
     private readonly ILogger<MyPupilListController> _logger;
@@ -55,8 +53,7 @@ public class MyPupilListController : Controller
         ICommonService commonService,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
-        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsFromMyPupilsuseCase,
-        IHttpContextAccessor httpContextAccessor)
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsFromMyPupilsuseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -69,9 +66,6 @@ public class MyPupilListController : Controller
 
         ArgumentNullException.ThrowIfNull(deletePupilsFromMyPupilsuseCase);
         _deletePupilsFromMyPupilsuseCase = deletePupilsFromMyPupilsuseCase;
-
-        ArgumentNullException.ThrowIfNull(httpContextAccessor);
-        _httpContextAccessor = httpContextAccessor;
 
         ArgumentNullException.ThrowIfNull(paginatedSearch);
         _paginatedSearch = paginatedSearch;

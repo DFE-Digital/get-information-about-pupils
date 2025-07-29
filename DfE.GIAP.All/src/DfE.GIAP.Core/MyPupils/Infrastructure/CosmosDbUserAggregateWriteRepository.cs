@@ -18,7 +18,7 @@ internal sealed class CosmosDbUserAggregateWriteRepository : IUserAggregateWrite
 
     public async Task SaveAsync(UserAggregateRoot userAggregate)
     {
-        IReadOnlyCollection<UniquePupilNumber> updatedPupilIds = userAggregate.GetUpdatedPupilIds();
+        IReadOnlyCollection<UniquePupilNumber> updatedPupilIds = userAggregate.GetPupilIds();
         IEnumerable<MyPupilItemDto> updatedPupils = updatedPupilIds.Select(t => new MyPupilItemDto()
         {
             UPN = t.Value
@@ -27,7 +27,10 @@ internal sealed class CosmosDbUserAggregateWriteRepository : IUserAggregateWrite
         UserDto updatedUserProfile = new()
         {
             id = userAggregate.Identifier.Value,
-            MyPupils = updatedPupils,
+            MyPupils = new MyPupilsDto()
+            {
+                Pupils = updatedPupils
+            },
             // TODO: map other fields if needed
         };
 

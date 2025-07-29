@@ -29,5 +29,5 @@ public sealed class UserAggregateRoot : AggregateRoot<UserId>
         _pupils = _pupils.Where(t => !RemovePupil(t.Identifier));
     }
 
-    public IReadOnlyCollection<UniquePupilNumber> GetUpdatedPupilIds() => _pupils.Select(t => t.Identifier).ToList().AsReadOnly();
+    public IReadOnlyCollection<UniquePupilNumber> GetPupilIds() => _pupils.Select(t => t.Identifier).ToList().AsReadOnly();
 }

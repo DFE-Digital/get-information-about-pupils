@@ -3,7 +3,7 @@
 namespace DfE.GIAP.Core.MyPupils.Application.Extensions;
 public static class UniquePupilNumberExtensions
 {
-    public static IEnumerable<UniquePupilNumber> CreateUniquePupilNumbers(this IEnumerable<string> inputs)
+    public static IEnumerable<UniquePupilNumber> ToUniquePupilNumbers(this IEnumerable<string> inputs)
     {
         IEnumerable<UniquePupilNumber> upns =
             inputs.Where(

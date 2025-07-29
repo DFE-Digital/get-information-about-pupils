@@ -12,28 +12,28 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 {
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
     private readonly IUserAggregateWriteRepository _userAggregateWriteRepository;
-    private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsDomainService;
+    private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsService;
 
     public DeletePupilsFromMyPupilsUseCase(
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserAggregateWriteRepository userAggregateWriteRepository,
-        IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsDomainService)
+        IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsService)
     {
         _userReadOnlyRepository = userReadOnlyRepository;
         _userAggregateWriteRepository = userAggregateWriteRepository;
-        _aggregatePupilsForMyPupilsDomainService = aggregatePupilsForMyPupilsDomainService;
+        _aggregatePupilsForMyPupilsService = aggregatePupilsForMyPupilsService;
     }
 
     public async Task HandleRequestAsync(
         DeletePupilsFromMyPupilsRequest request)
     {
-        IEnumerable<UniquePupilNumber> parsedPupilIdentifiers = request.PupilIdentifiers.CreateUniquePupilNumbers();
+        IEnumerable<UniquePupilNumber> parsedPupilIdentifiers = request.PupilIdentifiers.ToUniquePupilNumbers();
 
         UserId userId = new(request.UserId);
 
         User.Application.Repository.UserReadRepository.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
-        IEnumerable<Pupil> pupils = await _aggregatePupilsForMyPupilsDomainService.GetPupilsAsync(parsedPupilIdentifiers);
+        IEnumerable<Pupil> pupils = await _aggregatePupilsForMyPupilsService.GetPupilsAsync(parsedPupilIdentifiers);
 
         UserAggregateRoot userAggregate = new(user.UserId, pupils);
 

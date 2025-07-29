@@ -13,6 +13,6 @@ public sealed class MapUserProfileDtoToUserMapper : IMapper<UserDto, Application
 
         return new Application.Repository.UserReadRepository.User(
             id,
-            myPupils.Select(t => t.UPN).CreateUniquePupilNumbers());
+            myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
     }
 }
