@@ -53,14 +53,19 @@
                         }
                     </strong>
                 </div>
-                @if (Model.ToggleSelectAll)
-                {
-                    <button asp-action="@Model.FormAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</button>
+                @{
+                    string selectAllValue = Model.ToggleSelectAll ? "false" : "true";
+                    string selectAllButtonText = Model.ToggleSelectAll ? "Deselect all pupils" : "Select all pupils";
                 }
-                else
-                {
-                    <button asp-action="@Model.FormAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</button>
-                }
+
+                <button asp-action="@Model.FormAction"
+                    asp-route-pageNumber="@Model.PageNumber"
+                    asp-route-sortField="@Model.SortField"
+                    asp-route-sortDirection="@Model.SortDirection"
+                    class="govuk-button govuk-button--secondary"
+                    type="submit"
+                    name="SelectAllNoJsChecked"
+                    value="@selectAllValue">@selectAllButtonText</button>
             </div>
         }
 
@@ -111,7 +116,6 @@
                                             </th>
                                             <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
                                             <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-local-authority--text">LA</th>
-
                                         </tr>
                                     </thead>
                                     <tbody class="govuk-table__body">
@@ -120,8 +124,14 @@
                                             <tr class="govuk-table__row">
                                                 <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
                                                     <div class="govuk-checkboxes__item">
-                                                        <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber" name="SelectedPupil" type="checkbox" value="@pupil.UniquePupilNumber" @*checked="@pupil.Selected"*@>
-                                                        <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
+                                                        <input class="govuk-checkboxes__input"
+                                                                id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber"
+                                                                name="SelectedPupil"
+                                                                type="checkbox"
+                                                                value="@pupil.UniquePupilNumber"
+                                                                @(Model.SelectedPupils.Contains(pupil.UniquePupilNumber) ? "checked" : "")>
+                                                        <label class="govuk-label govuk-checkboxes__label"
+                                                                for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
                                                             <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
                                                         </label>
                                                     </div>

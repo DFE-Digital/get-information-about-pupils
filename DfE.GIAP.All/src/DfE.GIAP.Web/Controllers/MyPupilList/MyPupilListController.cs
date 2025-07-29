@@ -4,6 +4,7 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -143,7 +144,8 @@ public class MyPupilListController : Controller
         {
             PageNumber = pageNumber,
             SortField = model.SortField,
-            SortDirection = model.SortDirection
+            SortDirection = model.SortDirection,
+            //SelectedPupils = model.SelectedPupil
         };
 
         return View(Routes.MyPupilList.MyPupilListView, presentationModel);
@@ -155,6 +157,7 @@ public class MyPupilListController : Controller
         // TODO flag for ApplyToAllPupils
         // TODO also post the PaginatedOptions so the removal can happen, and the user is kept on the same reloaded page, MAY need to page back then if they remove everything on current page?
         //[FromQuery] int pageNumber,
+        bool SelectAllNoJsChecked,
         List<string> SelectedPupil)
     {
         _logger.LogInformation("Remove from my pupil list POST method is called");
@@ -162,18 +165,20 @@ public class MyPupilListController : Controller
         DeletePupilsFromMyPupilsRequest request = new(
             UserId: User.GetUserId(),
             SelectedPupil,
-            DeleteAll: false); // if the select all flag is passed toggle this
+            DeleteAll: SelectAllNoJsChecked);
 
         await _deletePupilsFromMyPupilsuseCase.HandleRequestAsync(request);
         return RedirectToAction(nameof(Index));
 
     }
 
-    public sealed class PaginatedMyPupilsRequestDto
+    public sealed class MyPupilsFormStateRequestDto
     {
         public string SortField { get; set; } = string.Empty;
         public string SortDirection { get; set; } = string.Empty;
         public int PageNumber { get; set; } = 1;
+        public bool SelectAllNoJsChecked { get; set; }
+        public IEnumerable<string> SelectedPupil { get; set; } = [];
     }
 
 

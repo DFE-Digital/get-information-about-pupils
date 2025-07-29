@@ -15,10 +15,10 @@ public sealed class CosmosDbUserWriteRepository : IUserWriteRepository
 
     public async Task SaveMyPupilsAsync(UserId userId, IEnumerable<UniquePupilNumber> updatedPupilIds)
     {
-        IEnumerable<MyPupilItemDto> updatedPupils = updatedPupilIds.Select(upn => new MyPupilItemDto
+        IEnumerable<MyPupilItemDto> updatedPupils = updatedPupilIds?.Select(upn => new MyPupilItemDto
         {
             UPN = upn.Value
-        });
+        }) ?? [];
 
         UserDto updatedUserProfile = new UserDto
         {

@@ -14,7 +14,7 @@ public sealed class MyPupilsViewModel
     public string PageHeading => "My pupil list";
 
     public IEnumerable<PupilPresentatationModel> Pupils { get; } = [];
-    public IEnumerable<Domain.Search.Learner.Learner> InvalidUpns => []; // TODO change to PupilPresentationModel
+    public IEnumerable<string> SelectedPupils { get; } = [];
     /* Old implementation that hydrated
      *     private void SetInvalid(Learner learner, MyPupilListViewModel model, bool isMasked)
             {
@@ -40,7 +40,8 @@ public sealed class MyPupilsViewModel
     public string FormAction => "MyPupilList";
 
     public bool isRemovedSuccessful => false;
-    public bool NoPupilSelected => false;
+
+    public bool IsAnyPupilsSelected => SelectedPupils.Any();
     public bool ToggleSelectAll => false;
 
     public string ErrorMessage => _error?.Message ?? string.Empty;

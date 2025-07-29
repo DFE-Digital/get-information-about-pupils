@@ -2,7 +2,7 @@
 @using static DfE.GIAP.Web.Controllers.MyPupilList.MyPupilListController
 @model MyPupilsViewModel
 
-@if (Model.NoPupilSelected)
+@if (!Model.IsAnyPupilsSelected)
 {
     <div class="govuk-error-summary">
         <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>

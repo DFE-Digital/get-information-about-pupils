@@ -52,7 +52,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         // Act
         DeletePupilsFromMyPupilsRequest request = new(
             userId.Value,
-            PupilIdentifiers: unknownPupilIdentifier,
+            DeletePupilUpns: unknownPupilIdentifier,
             DeleteAll: false);
 
         // Assert
@@ -92,7 +92,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         // Act
         DeletePupilsFromMyPupilsRequest request = new(
             userId.Value,
-            PupilIdentifiers: [deletePupilIdentifier],
+            DeletePupilUpns: [deletePupilIdentifier],
             DeleteAll: false);
 
         await sut.HandleRequestAsync(request);
@@ -105,5 +105,46 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         Assert.Equal(
             npdSearchindexDtos.Count() + pupilPremiumSearchIndexDtos.Count() - 1,
             userDto.MyPupils.Pupils.Count());
+    }
+
+    // TODO delete multiple from list
+
+    [Fact]
+    public async Task DeletePupilsFromMyPupils_Deletes_All_Items_When_DeleteAll_Is_True()
+    {
+        // Arrange
+        using AzureSearchMockFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>().Value);
+
+        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpd();
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremium();
+
+        UserId userId = UserIdTestDoubles.Default();
+
+        List<MyPupilItemDto> myPupils =
+            npdSearchindexDtos.MapToMyPupilsItemDto()
+                .Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
+
+        await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                myPupils));
+
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
+
+        // Act
+        DeletePupilsFromMyPupilsRequest request = new(
+            userId.Value,
+            DeletePupilUpns: [Guid.NewGuid().ToString()], // should be ignored if DeleteAll is enabled
+            DeleteAll: true);
+
+        await sut.HandleRequestAsync(request);
+
+        // Assert
+        IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
+        UserDto userDto = Assert.Single(users);
+        Assert.NotNull(userDto);
+        Assert.Empty(userDto.MyPupils.Pupils);
     }
 }
