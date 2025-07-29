@@ -118,7 +118,7 @@ public sealed class PupilTests
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
 
         Pupil pupil = PupilBuilder.CreateBuilder(upn)
-            .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthThatHasAlreadyOccuredThisYear()) // Birthday already occurred this year
+            .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10)) // Birthday already occurred this year
             .Build();
 
         // Act
