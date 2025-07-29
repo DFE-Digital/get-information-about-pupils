@@ -764,7 +764,7 @@ public class MyPupilListControllerTests :
         _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -791,7 +791,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -821,7 +821,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -851,7 +851,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -882,7 +882,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -910,7 +910,7 @@ public class MyPupilListControllerTests :
         var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -939,7 +939,7 @@ public class MyPupilListControllerTests :
         var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
         // act
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -969,7 +969,7 @@ public class MyPupilListControllerTests :
         var sut = GetController();
         SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -996,7 +996,7 @@ public class MyPupilListControllerTests :
         var sut = GetController();
         SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
-        var result = await sut.RemoveSelected(null);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);

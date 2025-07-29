@@ -32,7 +32,7 @@
     }
 
     <form asp-action="@Model.FormAction" method="POST">
-        <input id="toggleSelectAll" type="hidden" name="ToggleSelectAll" value="@Model.ToggleSelectAll.ToString()" />
+        <!--<input id="toggleSelectAll" type="hidden" name="ToggleSelectAll" value="@Model.SelectAll.ToString()" />-->
 
         @if (!Model.IsError && Model.Pupils != null && Model.Pupils.Any()) // TODO handle SelectAll and Downloads here
         {
@@ -43,7 +43,7 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        @if (!Model.ToggleSelectAll)
+                        @if (!Model.SelectAll)
                         {
                             <span>Please be aware that by pressing Select all pupils may take time to process</span>
                         }
@@ -54,8 +54,8 @@
                     </strong>
                 </div>
                 @{
-                    string selectAllValue = Model.ToggleSelectAll ? "false" : "true";
-                    string selectAllButtonText = Model.ToggleSelectAll ? "Deselect all pupils" : "Select all pupils";
+                    string selectAllValue = Model.SelectAll ? "false" : "true";
+                    string selectAllButtonText = Model.SelectAll ? "Deselect all pupils" : "Select all pupils";
                 }
 
                 <button asp-action="@Model.FormAction"
@@ -64,7 +64,7 @@
                     asp-route-sortDirection="@Model.SortDirection"
                     class="govuk-button govuk-button--secondary"
                     type="submit"
-                    name="SelectAllNoJsChecked"
+                    name="SelectAll"
                     value="@selectAllValue">@selectAllButtonText</button>
             </div>
         }

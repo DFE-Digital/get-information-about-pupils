@@ -156,7 +156,7 @@ public class MyPupilListController : Controller
         // TODO flag for ApplyToAllPupils
         // TODO also post the PaginatedOptions so the removal can happen, and the user is kept on the same reloaded page, MAY need to page back then if they remove everything on current page?
         //[FromQuery] int pageNumber,
-        bool SelectAllNoJsChecked,
+        bool SelectAll,
         List<string> SelectedPupil)
     {
         _logger.LogInformation("Remove from my pupil list POST method is called");
@@ -164,7 +164,7 @@ public class MyPupilListController : Controller
         DeletePupilsFromMyPupilsRequest request = new(
             UserId: User.GetUserId(),
             SelectedPupil,
-            DeleteAll: SelectAllNoJsChecked);
+            DeleteAll: SelectAll);
 
         await _deletePupilsFromMyPupilsuseCase.HandleRequestAsync(request);
         return RedirectToAction(nameof(Index));

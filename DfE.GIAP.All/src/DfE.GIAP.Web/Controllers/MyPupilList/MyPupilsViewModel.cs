@@ -12,20 +12,12 @@ public sealed class MyPupilsViewModel
     }
 
     public string PageHeading => "My pupil list";
-
+    public string FormAction => "MyPupilList";
+    public string UniquePupilNumberLabel => "UPN";
     public IEnumerable<PupilPresentatationModel> Pupils { get; } = [];
     public IEnumerable<string> SelectedPupils { get; } = [];
-    /* Old implementation that hydrated
-     *     private void SetInvalid(Learner learner, MyPupilListViewModel model, bool isMasked)
-            {
-                bool isValid = ValidationHelper.IsValidUpn(isMasked ? RbacHelper.DecodeUpn(learner.LearnerNumberId) : learner.LearnerNumber);
-                if (!isValid)
-                {
-                    model.Invalid.Add(learner);
-                }
-        }
-     * 
-     */
+    public bool IsAnyPupilsSelected => SelectAll || SelectedPupils.Any();
+    public bool SelectAll { get; set; } = false;
 
     public bool IsPreviousPageAvailable => PageNumber > 1;
     public bool IsMorePageAvailable => Pupils.Count() == PageSize;
@@ -36,13 +28,8 @@ public sealed class MyPupilsViewModel
     public string SortField { get; set; } = string.Empty;
     public string SortDirection { get; set; } = string.Empty;
 
-    public string UniquePupilNumberLabel => "UPN";
-    public string FormAction => "MyPupilList";
 
     public bool isRemovedSuccessful => false;
-
-    public bool IsAnyPupilsSelected => SelectedPupils.Any();
-    public bool ToggleSelectAll => false;
 
     public string ErrorMessage => _error?.Message ?? string.Empty;
     public bool IsError => _error is not null;
