@@ -99,8 +99,7 @@ public class MyPupilListController : Controller
     {
         _logger.LogInformation("My pupil list GET method is called");
 
-        GetMyPupilsRequest request = new(
-            new HttpContextAuthorisationContextAdaptor(_httpContextAccessor));
+        GetMyPupilsRequest request = new(UserId: User.GetUserId());
 
         GetMyPupilsResponse getMyPupilsResponse = await _getMyPupilsUseCase.HandleRequestAsync(request);
 
@@ -132,14 +131,14 @@ public class MyPupilListController : Controller
             field: model.SortField,
             direction: model.SortDirection switch
             {
-                "asc" => Direction.Ascending,
-                "desc" => Direction.Descending,
-                _ => Direction.Default
+                "asc" => SortDirection.Ascending,
+                "desc" => SortDirection.Descending,
+                _ => SortDirection.Default
             });
 
         GetMyPupilsRequest request = new(
-            new HttpContextAuthorisationContextAdaptor(_httpContextAccessor),
-            new MyPupilsQueryOptions(
+            UserId: User.GetUserId(),
+            Options: new MyPupilsQueryOptions(
                 order,
                 PageNumber.Page(pageNumber)));
 
@@ -168,7 +167,7 @@ public class MyPupilListController : Controller
         _logger.LogInformation("Remove from my pupil list POST method is called");
 
         DeletePupilsFromMyPupilsRequest request = new(
-            new HttpContextAuthorisationContextAdaptor(_httpContextAccessor),
+            UserId: User.GetUserId(),
             SelectedPupil,
             DeleteAll: false); // if the select all flag is passed toggle this
 

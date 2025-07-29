@@ -46,8 +46,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
                 userId,
                 myPupils));
 
-        IAuthorisationContext authorisationContext = AuthorisationContextTestDoubles.WithUser(userId);
-
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
@@ -55,7 +53,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         // Act
         DeletePupilsFromMyPupilsRequest request = new(
-            authorisationContext,
+            userId.Value,
             PupilIdentifiers: unknownPupilIdentifier,
             DeleteAll: false);
 
@@ -94,12 +92,11 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        Guid deletePupilIdentifier = myPupils[0].Id;
-
+        string deletePupilIdentifier = myPupils[0].UPN;
         // Act
         DeletePupilsFromMyPupilsRequest request = new(
-            authorisationContext,
-            PupilIdentifiers: [deletePupilIdentifier.ToString()],
+            userId.Value,
+            PupilIdentifiers: [deletePupilIdentifier],
             DeleteAll: false);
 
         await sut.HandleRequestAsync(request);
@@ -108,7 +105,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
         UserDto userDto = Assert.Single(users);
         Assert.NotNull(userDto);
-        Assert.DoesNotContain(userDto.MyPupils, t => t.Id == deletePupilIdentifier);
+        Assert.DoesNotContain(userDto.MyPupils, t => t.UPN == deletePupilIdentifier);
         Assert.Equal(
             npdSearchindexDtos.Count() + pupilPremiumSearchIndexDtos.Count() - 1,
             userDto.MyPupils.Count());

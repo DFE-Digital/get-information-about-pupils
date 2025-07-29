@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.Services;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
-using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
-using DfE.GIAP.Core.MyPupils.Domain.Services;
+using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 
@@ -11,62 +11,47 @@ namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
 {
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
-    private readonly IMapper<IAuthorisationContext, PupilAuthorisationContext> _authContextMapper;
-    private readonly IMapper<MyPupilsQueryOptions?, PupilSelectionDomainCriteria> _mapPupilQueryToPupilSelectionCriteria;
-    private readonly IAggregatePupilsForMyPupilsDomainService _aggregatePupilsForMyPupilsDomainService;
+    private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsApplicationService;
+    private readonly IMapper<Pupil, PupilDto> _mapPupilToPupilDtoMapper;
 
     public GetMyPupilsUseCase(
         IUserReadOnlyRepository userReadOnlyRepository,
-        IMapper<IAuthorisationContext, PupilAuthorisationContext> authContextMapper,
-        IAggregatePupilsForMyPupilsDomainService aggregatePupilsForMyPupilsDomainService,
-        IMapper<MyPupilsQueryOptions?, PupilSelectionDomainCriteria> mapPupilQueryToPupilSelectionCriteria)
+        IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsApplicationService,
+        IMapper<Pupil, PupilDto> mapPupilToPupilDtoMapper)
     {
         _userReadOnlyRepository = userReadOnlyRepository;
-        _authContextMapper = authContextMapper;
-        _aggregatePupilsForMyPupilsDomainService = aggregatePupilsForMyPupilsDomainService;
-        _mapPupilQueryToPupilSelectionCriteria = mapPupilQueryToPupilSelectionCriteria;
+        _aggregatePupilsForMyPupilsApplicationService = aggregatePupilsForMyPupilsApplicationService;
+        _mapPupilToPupilDtoMapper = mapPupilToPupilDtoMapper;
     }
 
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
-        UserId userId = new(request.AuthContext.UserId);
+        UserId userId = new(request.UserId);
 
         User.Application.Repository.UserReadRepository.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
-        PupilAuthorisationContext pupilAuthorisationContext = _authContextMapper.Map(request.AuthContext);
+        IEnumerable<Pupil> pupils = await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(user.UniquePupilNumbers, request.Options);
 
-        UserAggregateRoot userAggregateRoot = new(
-            userId,
-            user.PupilIds,
-            _aggregatePupilsForMyPupilsDomainService);
-
-        PupilSelectionDomainCriteria pupilSelectionCriteria = _mapPupilQueryToPupilSelectionCriteria.Map(request.Options);
-
-        IEnumerable<PupilDto> pupilDtos = await userAggregateRoot.GetMyPupils(
-            pupilAuthorisationContext,
-            pupilSelectionCriteria);
+        IEnumerable<PupilDto> pupilDtos = pupils.Select(_mapPupilToPupilDtoMapper.Map);
 
         return new GetMyPupilsResponse(pupilDtos);
     }
 }
 
 
-internal sealed class MapMyPupilsQueryOptionsToPupilSelectionCriteriaMapper : IMapper<MyPupilsQueryOptions?, PupilSelectionDomainCriteria>
+internal sealed class MapPupilToPupilDtoMapper : IMapper<Pupil, PupilDto>
 {
-    public PupilSelectionDomainCriteria Map(MyPupilsQueryOptions? input)
+    public PupilDto Map(Pupil pupil)
     {
-        if(input is null)
+        return new PupilDto()
         {
-            return PupilSelectionDomainCriteria.Default;
-        }
-
-        return new PupilSelectionDomainCriteria(
-            SortBy: input.Order.Field,
-            Direction: input.Order.Direction switch
-            {
-                Direction.Descending => SortDirection.Descending,
-                _ => SortDirection.Ascending
-            },
-            Page: input.Page.Value);
+            UniquePupilNumber = pupil.Identifier.Value,
+            DateOfBirth = pupil.DateOfBirth?.ToString() ?? string.Empty,
+            Forename = pupil.Forename,
+            Surname = pupil.Surname,
+            Sex = pupil.Sex,
+            IsPupilPremium = pupil.IsOfPupilType(PupilType.PupilPremium),
+            LocalAuthorityCode = pupil.LocalAuthorityCode,
+        };
     }
 }

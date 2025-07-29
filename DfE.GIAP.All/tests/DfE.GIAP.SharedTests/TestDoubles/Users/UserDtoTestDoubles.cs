@@ -16,16 +16,6 @@ public static class UserDtoTestDoubles
         id = id
     };
 
-    public static UserDto WithPupils(
-        UserId id,
-        string[]? pupils,
-        IEnumerable<MyPupilItemDto>? myPupils) => new()
-        {
-            id = id.Value,
-            PupilList = pupils!,
-            MyPupilList = myPupils!,
-        };
-
     // Uses new structure. Can deprecate ^ once confirmed
     public static UserDto WithPupils(
         UserId id,

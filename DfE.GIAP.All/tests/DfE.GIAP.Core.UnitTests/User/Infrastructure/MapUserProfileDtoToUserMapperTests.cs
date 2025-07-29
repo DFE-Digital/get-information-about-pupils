@@ -10,14 +10,12 @@ public sealed class MapUserProfileDtoToUserMapperTests
     {
         // Arrange
         UserId userId = new("user");
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 2);
-
-        string[] pupilList = ["invalid-upn-1", upns[0].Value];
+        UniquePupilNumber validUpn = UniquePupilNumberTestDoubles.Generate();
 
         IEnumerable<MyPupilItemDto> myPupilList = [
             new()
             {
-                UPN = upns[1].Value
+                UPN = validUpn.Value
             },
             new()
             {
@@ -25,7 +23,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
             }
         ];
 
-        UserDto dto = UserDtoTestDoubles.WithPupils(userId, pupilList, myPupilList);
+        UserDto dto = UserDtoTestDoubles.WithPupils(userId, myPupilList);
 
         MapUserProfileDtoToUserMapper mapper = new();
 
@@ -34,9 +32,8 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Assert
         Assert.Equal(dto.id, result.UserId.Value);
-        Assert.Equal(2, result.PupilIds.Select(t => t.UniquePupilNumber).Count()); // invalid UPNs should be filtered out
-        Assert.Contains(result.PupilIds.Select(t => t.UniquePupilNumber), upn => upn.Value == upns[0].Value);
-        Assert.Contains(result.PupilIds.Select(t => t.UniquePupilNumber), upn => upn.Value == upns[1].Value);
+        UniquePupilNumber uniquePupilNumber = Assert.Single(result.UniquePupilNumbers); // invalid UPNs should be filtered out
+        Assert.Equal(validUpn, uniquePupilNumber);
     }
 
     [Fact]
@@ -45,8 +42,6 @@ public sealed class MapUserProfileDtoToUserMapperTests
         // Arrange
         UserId userId = new("user");
 
-        string[] pupilList = ["invalid-upn-1"];
-
         IEnumerable<MyPupilItemDto> myPupilList = [
             new()
             {
@@ -54,7 +49,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
             }
         ];
 
-        UserDto dto = UserDtoTestDoubles.WithPupils(userId, pupilList, myPupilList);
+        UserDto dto = UserDtoTestDoubles.WithPupils(userId, myPupilList);
 
         MapUserProfileDtoToUserMapper mapper = new();
 
@@ -63,7 +58,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Assert
         Assert.Equal(userId.Value, result.UserId.Value);
-        Assert.Empty(result.PupilIds.Select(t => t.UniquePupilNumber));
+        Assert.Empty(result.UniquePupilNumbers);
     }
 
     [Fact]
@@ -76,11 +71,15 @@ public sealed class MapUserProfileDtoToUserMapperTests
         IEnumerable<MyPupilItemDto> myPupilList = [
             new()
             {
-                UPN = myPupilListUpn.Value
+                UPN = myPupilListUpn.Value,
+            },
+            new()
+            {
+                UPN = null!
             }
         ];
         // Arrange
-        UserDto dto = UserDtoTestDoubles.WithPupils(userId, null!, myPupilList);
+        UserDto dto = UserDtoTestDoubles.WithPupils(userId, myPupilList);
 
         MapUserProfileDtoToUserMapper mapper = new();
 
@@ -89,28 +88,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Assert
         Assert.Equal(userId, result.UserId);
-        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIds.Select(t => t.UniquePupilNumber));
+        UniquePupilNumber uniquePupilNumber = Assert.Single(result.UniquePupilNumbers);
         Assert.Equal(myPupilListUpn.Value, uniquePupilNumber.Value);
-    }
-
-
-    [Fact]
-    public void Map_HandlesNullMyPupilList_Gracefully()
-    {
-        // Arrange
-        UniquePupilNumber pupilListUpn = UniquePupilNumberTestDoubles.Generate();
-
-        UserId user = new("user");
-        UserDto dto = UserDtoTestDoubles.WithPupils(user, [pupilListUpn.Value], null!);
-
-        MapUserProfileDtoToUserMapper mapper = new();
-
-        // Act
-        Core.User.Application.Repository.UserReadRepository.User result = mapper.Map(dto);
-
-        // Assert
-        Assert.Equal(user, result.UserId);
-        UniquePupilNumber uniquePupilNumber = Assert.Single(result.PupilIds.Select(t => t.UniquePupilNumber));
-        Assert.Equal(pupilListUpn.Value, uniquePupilNumber.Value);
     }
 }

@@ -1,13 +1,10 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.Authorisation;
-using DfE.GIAP.Core.MyPupils.Domain.Entities;
+﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal sealed class PupilBuilder
 {
     private readonly UniquePupilNumber _upn;
-    private readonly PupilAuthorisationContext _authorisationContext;
-    private PupilId? _id;
     private DateTime? _dateOfBirth;
     private PupilType? _pupilType;
     private Sex? _sex;
@@ -16,17 +13,9 @@ internal sealed class PupilBuilder
     private LocalAuthorityCode? _localAuthorityCode;
 
     private PupilBuilder(
-        UniquePupilNumber upn,
-        PupilAuthorisationContext context)
+        UniquePupilNumber upn)
     {
         _upn = upn;
-        _authorisationContext = context;
-    }
-
-    internal PupilBuilder WithPupilId(Guid guid)
-    {
-        _id = new(guid);
-        return this;
     }
 
     internal PupilBuilder WithPupilType(PupilType pupilType)
@@ -74,19 +63,16 @@ internal sealed class PupilBuilder
         LocalAuthorityCode localAuthorityCode = _localAuthorityCode ?? new(100);
 
         return new Pupil(
-            identifier: _id ?? new(Guid.NewGuid()),
+            identifier: _upn,
             pupilType : _pupilType ?? PupilType.NationalPupilDatabase,
             name: name,
-            uniquePupilNumber: _upn,
             dateOfBirth: _dateOfBirth,
             sex: _sex,
-            authorisationContext: _authorisationContext,
             localAuthorityCode: localAuthorityCode);
     }
     internal static PupilBuilder CreateBuilder(
-        UniquePupilNumber upn,
-        PupilAuthorisationContext authorisationContext)
+        UniquePupilNumber upn)
     {
-        return new PupilBuilder(upn, authorisationContext);
+        return new PupilBuilder(upn);
     }
 }

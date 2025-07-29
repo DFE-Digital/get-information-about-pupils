@@ -240,8 +240,8 @@
                                             <tr class="govuk-table__row">
                                                 <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
                                                     <div class="govuk-checkboxes__item">
-                                                        <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@pupil.Id" name="SelectedPupil" type="checkbox" value="@pupil.Id" @*checked="@pupil.Selected"*@>
-                                                        <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.Id">
+                                                        <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber" name="SelectedPupil" type="checkbox" value="@pupil.UniquePupilNumber" @*checked="@pupil.Selected"*@>
+                                                        <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
                                                             <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
                                                         </label>
                                                     </div>

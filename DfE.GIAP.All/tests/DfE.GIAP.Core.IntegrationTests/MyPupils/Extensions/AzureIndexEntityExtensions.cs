@@ -9,7 +9,6 @@ internal static class AzureIndexEntityExtensions
     {
         return indexDtos.Select((indexDto) => new MyPupilItemDto()
         {
-            Id = Guid.NewGuid(),
             UPN = indexDto.UPN
         }).ToList();
     }
@@ -18,7 +17,6 @@ internal static class AzureIndexEntityExtensions
     {
         return indexDtos.Select(pupil => new PupilDto()
         {
-            Id = pupil.id,
             UniquePupilNumber = pupil.UPN,
             DateOfBirth = pupil.DOB?.ToString("yyyy-MM-dd") ?? string.Empty,
             Forename = pupil.Forename,

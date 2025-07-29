@@ -1,8 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.SharedTests.TestDoubles.Users;
@@ -145,17 +143,9 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
 
-        List<PupilIdentifier> pupilIdentifiers =
-            UniquePupilNumberTestDoubles.Generate(count: 3)
-                .Select((upn)
-                    => new PupilIdentifier(
-                        new PupilId(Guid.NewGuid()),
-                        upn))
-                .ToList();
+        List<UniquePupilNumber> pupilIdentifiers = UniquePupilNumberTestDoubles.Generate(count: 3);
 
-        Core.User.Application.Repository.UserReadRepository.User expectedUser = new(
-            userId,
-            pupilIdentifiers);
+        Core.User.Application.Repository.UserReadRepository.User expectedUser = new(userId, pupilIdentifiers);
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(() => userProfileDto);

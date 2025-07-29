@@ -6,7 +6,6 @@ public sealed class PupilPresentatationModel
 {
     public PupilPresentatationModel(PupilDto dto)
     {
-        Id = dto.Id;
         UniquePupilNumber = dto.UniquePupilNumber;
         Forename = dto.Forename;
         Surname = dto.Surname;
@@ -15,8 +14,6 @@ public sealed class PupilPresentatationModel
         Sex = dto.Sex;
         LocalAuthorityCode = dto.LocalAuthorityCode.ToString();
     }
-
-    public string Id { get; }
     public string UniquePupilNumber { get; }
     public string Forename { get; }
     public string Surname { get; }
