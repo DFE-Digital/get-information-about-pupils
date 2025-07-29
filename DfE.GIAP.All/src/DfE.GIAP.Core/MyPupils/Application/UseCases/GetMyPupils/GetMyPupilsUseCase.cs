@@ -29,9 +29,15 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
         UserId userId = new(request.UserId);
         User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
-        IEnumerable<PupilDto> pupilDtos =
+        if(!user.UniquePupilNumbers.Any())
+        {
+            return new GetMyPupilsResponse([]);
+        }
+
+        List<PupilDto> pupilDtos =
             (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(user.UniquePupilNumbers, request.Options))
-                .Select(_mapPupilToPupilDtoMapper.Map);
+                .Select(_mapPupilToPupilDtoMapper.Map)
+                    .ToList();
 
         return new GetMyPupilsResponse(pupilDtos);
     }
