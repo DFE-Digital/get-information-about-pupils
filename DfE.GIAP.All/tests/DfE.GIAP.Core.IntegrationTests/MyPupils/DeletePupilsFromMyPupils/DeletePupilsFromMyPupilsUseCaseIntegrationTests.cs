@@ -56,7 +56,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             DeleteAll: false);
 
         // Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => sut.HandleRequestAsync(request));
+        await Assert.ThrowsAsync<ArgumentException>(() => sut.HandleRequestAsync(request));
 
         IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
         UserDto userDto = Assert.Single(users);

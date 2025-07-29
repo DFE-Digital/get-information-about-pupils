@@ -26,6 +26,13 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
         User.Application.Repository.UserReadRepository.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
+        IEnumerable<string> userMyPupilsUpns = user.UniquePupilNumbers.Select(t => t.Value);
+
+        if (!request.PupilIdentifiers.All(deletePupilUpn => userMyPupilsUpns.Contains(deletePupilUpn)))
+        {
+            throw new ArgumentException($"None of the pupil identifiers {string.Join(',', request.PupilIdentifiers)} are part of the User {userId.Value} MyPupils");
+        }
+
         List<UniquePupilNumber> updatedPupilIds =
             user.UniquePupilNumbers
                 .Where(p => !request.PupilIdentifiers.ToUniquePupilNumbers().Contains(p))
