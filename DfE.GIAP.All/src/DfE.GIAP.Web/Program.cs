@@ -21,7 +21,6 @@ builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
     .AddContentDependencies()
-    .AddContentPresentation()
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
