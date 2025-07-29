@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;

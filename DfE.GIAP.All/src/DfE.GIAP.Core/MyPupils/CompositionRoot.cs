@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
@@ -14,8 +14,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -51,7 +51,7 @@ public static class CompositionRoot
         services
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
             .AddScoped<IUserWriteRepository, CosmosDbUserWriteRepository>()
-            .AddSingleton<IMapper<UserDto, User.Application.Repository.UserReadRepository.User>, MapUserProfileDtoToUserMapper>();
+            .AddSingleton<IMapper<UserDto, User.Application.User>, MapUserProfileDtoToUserMapper>();
 
         services.AddMyPupilsInfrastructureSearch();
         return services;

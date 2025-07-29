@@ -3,9 +3,8 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
+using DfE.GIAP.Core.User.Application.Repository;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
@@ -28,7 +27,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
     {
         UserId userId = new(request.UserId);
 
-        User.Application.Repository.UserReadRepository.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
+        User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
         IEnumerable<Pupil> pupils = await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(user.UniquePupilNumbers, request.Options);
 

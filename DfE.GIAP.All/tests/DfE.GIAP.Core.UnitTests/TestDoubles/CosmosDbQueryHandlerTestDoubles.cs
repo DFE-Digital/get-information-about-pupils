@@ -1,5 +1,4 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 

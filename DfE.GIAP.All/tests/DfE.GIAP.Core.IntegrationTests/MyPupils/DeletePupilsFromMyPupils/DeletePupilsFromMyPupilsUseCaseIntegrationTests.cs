@@ -2,13 +2,14 @@
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
 using DfE.GIAP.Core.MyPupils;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
-using DfE.GIAP.SharedTests.TestDoubles.Users;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.DeletePupilsFromMyPupils;
@@ -38,12 +39,12 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         UserId userId = UserIdTestDoubles.Default();
 
-        List<MyPupilItemDto> myPupils = npdSearchindexDtos.MapToMyPupilsItemDto().Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
+        List<MyPupilsItemDto> myPupils = npdSearchindexDtos.MapToMyPupilsItemDto().Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
 
         await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
             UserDtoTestDoubles.WithPupils(
                 userId,
-                myPupils));
+                myPupils.Select(t => t.UPN).ToUniquePupilNumbers()));
 
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
@@ -77,14 +78,15 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         UserId userId = UserIdTestDoubles.Default();
 
-        List<MyPupilItemDto> myPupils =
+        List<MyPupilsItemDto> myPupils =
             npdSearchindexDtos.MapToMyPupilsItemDto()
                 .Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
+
 
         await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
             UserDtoTestDoubles.WithPupils(
                 userId,
-                myPupils));
+                myPupils.Select(t => t.UPN).ToUniquePupilNumbers()));
 
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
@@ -122,14 +124,14 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         UserId userId = UserIdTestDoubles.Default();
 
-        List<MyPupilItemDto> myPupils =
+        List<MyPupilsItemDto> myPupils =
             npdSearchindexDtos.MapToMyPupilsItemDto()
                 .Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
 
         await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
             UserDtoTestDoubles.WithPupils(
                 userId,
-                myPupils));
+                myPupils.Select(t => t.UPN).ToUniquePupilNumbers()));
 
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();

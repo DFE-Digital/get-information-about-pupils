@@ -3,7 +3,6 @@ using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 
@@ -30,7 +29,7 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
             return;
         }
 
-        User.Application.Repository.UserReadRepository.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
+        User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
         IEnumerable<string> userMyPupilsUpns = user.UniquePupilNumbers.Select(t => t.Value);
 

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService;
@@ -6,8 +6,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
-using DfE.GIAP.Core.User.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
@@ -45,6 +44,7 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IUserReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IUserWriteRepository>());
-        Assert.NotNull(provider.GetService<IMapper<UserDto, Core.User.Application.Repository.UserReadRepository.User>>());
+
+        Assert.NotNull(provider.GetService<IMapper<UserDto, User.Application.User>>());
     }
 }

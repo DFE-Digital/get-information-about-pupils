@@ -3,13 +3,15 @@ using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Infrastructure.Repository;
-using DfE.GIAP.SharedTests.TestDoubles.Users;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.GetMyPupils;
@@ -37,11 +39,13 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremium();
 
         UserId userId = new(Guid.NewGuid().ToString());
-        
+
+        IEnumerable<UniquePupilNumber> upns = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).Select(t => t.UPN).ToUniquePupilNumbers();
+
         await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
             UserDtoTestDoubles.WithPupils(
                 userId,
-                myPupils: npdSearchindexDtos.MapToMyPupilsItemDto().Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto())));
+                upns));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =

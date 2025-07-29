@@ -5,9 +5,9 @@ using DfE.GIAP.Core.User.Infrastructure.Repository;
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
 internal static class AzureIndexEntityExtensions
 {
-    internal static List<MyPupilItemDto> MapToMyPupilsItemDto(this IEnumerable<AzureIndexEntity> indexDtos)
+    internal static List<MyPupilsItemDto> MapToMyPupilsItemDto(this IEnumerable<AzureIndexEntity> indexDtos)
     {
-        return indexDtos.Select((indexDto) => new MyPupilItemDto()
+        return indexDtos.Select((indexDto) => new MyPupilsItemDto()
         {
             UPN = indexDto.UPN
         }).ToList();

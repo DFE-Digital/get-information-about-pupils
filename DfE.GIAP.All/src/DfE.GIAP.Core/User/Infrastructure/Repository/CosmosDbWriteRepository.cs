@@ -1,10 +1,11 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Application.Repository.UserWriteRepository;
+using DfE.GIAP.Core.User.Application.Repository;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Azure.Cosmos;
 
-namespace DfE.GIAP.Core.User.Infrastructure.Repository.UserWriteRepository;
+namespace DfE.GIAP.Core.User.Infrastructure.Repository;
 public sealed class CosmosDbUserWriteRepository : IUserWriteRepository
 {
     private readonly ICosmosDbCommandHandler _commandHandler;
@@ -16,12 +17,12 @@ public sealed class CosmosDbUserWriteRepository : IUserWriteRepository
 
     public async Task SaveMyPupilsAsync(UserId userId, IEnumerable<UniquePupilNumber> updatedPupilIds)
     {
-        IEnumerable<MyPupilItemDto> updatedPupils = updatedPupilIds?.Select(upn => new MyPupilItemDto
+        IEnumerable<MyPupilsItemDto> updatedPupils = updatedPupilIds?.Select((upn) => new MyPupilsItemDto()
         {
             UPN = upn.Value
         }) ?? [];
 
-        UserDto updatedUserProfile = new UserDto
+        UserDto updatedUserProfile = new()
         {
             id = userId.Value,
             MyPupils = new MyPupilsDto

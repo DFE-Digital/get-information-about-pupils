@@ -216,6 +216,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
+
         Mock<ICosmosDbQueryHandler> mockQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForReadMany<NewsArticleDto>(() => []);
 
