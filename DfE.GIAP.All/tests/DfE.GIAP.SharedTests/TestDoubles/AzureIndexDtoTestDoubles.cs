@@ -1,7 +1,6 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Dto;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using Fare;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class AzureIndexDtosTestDoubles

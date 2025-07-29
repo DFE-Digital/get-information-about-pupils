@@ -35,7 +35,6 @@ public class MyPupilListController : Controller
     private readonly ICommonService _commonService;
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsuseCase;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ISelectionManager _selectionManager;
     private readonly IMyPupilListService _mplService;
@@ -169,7 +168,6 @@ public class MyPupilListController : Controller
         return RedirectToAction(nameof(Index));
 
     }
-
 
     public sealed class PaginatedMyPupilsRequestDto
     {

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
+﻿using DfE.GIAP.Core.MyPupils.Domain;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
 

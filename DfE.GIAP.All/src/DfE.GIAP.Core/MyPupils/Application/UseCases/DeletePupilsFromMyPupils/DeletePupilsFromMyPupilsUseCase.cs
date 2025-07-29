@@ -1,44 +1,39 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Repository.UserAggregate;
-using DfE.GIAP.Core.MyPupils.Application.Services;
-using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
-using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application.Repository.UserReadRepository;
+using DfE.GIAP.Core.User.Application.Repository.UserWriteRepository;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+
 internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>
 {
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
-    private readonly IUserAggregateWriteRepository _userAggregateWriteRepository;
-    private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsService;
+    private readonly IUserWriteRepository _userWriteRepository;
 
     public DeletePupilsFromMyPupilsUseCase(
         IUserReadOnlyRepository userReadOnlyRepository,
-        IUserAggregateWriteRepository userAggregateWriteRepository,
-        IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsService)
+        IUserWriteRepository userWriteRepository)
     {
         _userReadOnlyRepository = userReadOnlyRepository;
-        _userAggregateWriteRepository = userAggregateWriteRepository;
-        _aggregatePupilsForMyPupilsService = aggregatePupilsForMyPupilsService;
+        _userWriteRepository = userWriteRepository;
     }
 
-    public async Task HandleRequestAsync(
-        DeletePupilsFromMyPupilsRequest request)
+    public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
     {
-        IEnumerable<UniquePupilNumber> parsedPupilIdentifiers = request.PupilIdentifiers.ToUniquePupilNumbers();
-
+        int upnLimit = 4000;
         UserId userId = new(request.UserId);
 
         User.Application.Repository.UserReadRepository.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
-        IEnumerable<Pupil> pupils = await _aggregatePupilsForMyPupilsService.GetPupilsAsync(parsedPupilIdentifiers);
+        List<UniquePupilNumber> updatedPupilIds =
+            user.UniquePupilNumbers
+                .Where(p => !request.PupilIdentifiers.ToUniquePupilNumbers().Contains(p))
+                .Select(p => p)
+                .Distinct()
+                .Take(upnLimit)
+                .ToList();
 
-        UserAggregateRoot userAggregate = new(user.UserId, pupils);
-
-        userAggregate.RemovePupils(parsedPupilIdentifiers);
-
-        await _userAggregateWriteRepository.SaveAsync(userAggregate);
+        await _userWriteRepository.SaveMyPupilsAsync(userId, updatedPupilIds);
     }
 }

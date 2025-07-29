@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.Aggregate;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain;
 public record PupilDto
 {
     public required string UniquePupilNumber { get; init; }
@@ -7,5 +7,5 @@ public record PupilDto
     public required string DateOfBirth { get; init; }
     public required string Sex { get; init; }
     public required bool IsPupilPremium { get; init; }
-    public required int LocalAuthorityCode { get; init;  }
+    public required int LocalAuthorityCode { get; init; }
 }

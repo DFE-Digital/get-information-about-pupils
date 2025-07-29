@@ -1,9 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Domain.Aggregate;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Services;
+namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService;
 public interface IAggregatePupilsForMyPupilsApplicationService
 {
     Task<IEnumerable<Pupil>> GetPupilsAsync(

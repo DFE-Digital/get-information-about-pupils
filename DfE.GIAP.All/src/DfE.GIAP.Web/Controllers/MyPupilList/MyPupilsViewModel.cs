@@ -1,7 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Dto;
-using DfE.GIAP.Domain.Search.Learner;
-
-namespace DfE.GIAP.Web.Controllers.MyPupilList;
+﻿namespace DfE.GIAP.Web.Controllers.MyPupilList;
 
 public sealed class MyPupilsViewModel
 {

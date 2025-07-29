@@ -3,12 +3,10 @@ using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Options;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Users;
 using Microsoft.Extensions.Options;
 
@@ -86,8 +84,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             UserDtoTestDoubles.WithPupils(
                 userId,
                 myPupils));
-
-        IAuthorisationContext authorisationContext = AuthorisationContextTestDoubles.WithUser(userId);
 
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();

@@ -2,15 +2,14 @@
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Services;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Client;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Client;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Dto;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService.Mapper;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.Services.AggregatePupilsForMyPupilsDomainService;
+namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService;
 
 internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
@@ -34,7 +33,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         IEnumerable<UniquePupilNumber> uniquePupilNumbers,
         MyPupilsQueryOptions? queryOptions = null)
     {
-        if(uniquePupilNumbers.Count() == 0)
+        if (uniquePupilNumbers.Count() == 0)
         {
             return [];
         }
@@ -53,7 +52,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
                     => new DecoratedLearnerDtoWithPupilType(npdLearner, PupilType.NationalPupilDatabase));
 
         // TODO extension on DecoratedLearnerMap and reuse
-        if(npdLearners.Count() == DefaultPageSize)
+        if (npdLearners.Count() == DefaultPageSize)
         {
             return npdLearners.Select(
                 decoratedLearner =>
