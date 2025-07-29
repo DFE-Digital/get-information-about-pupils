@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" />
+    <PackageReference Include="Fare" />
     <PackageReference Include="Moq" />
   </ItemGroup>
 
