@@ -8,7 +8,6 @@ public sealed class SexTests
     [InlineData("M")]
     [InlineData("male")]
     [InlineData("MaLE")]
-    [InlineData("F")]
     [InlineData("m")]
     public void Constructor_WithValidMaleCharacters_ShouldNormaliseAndStoreCorrectly(string input)
     {

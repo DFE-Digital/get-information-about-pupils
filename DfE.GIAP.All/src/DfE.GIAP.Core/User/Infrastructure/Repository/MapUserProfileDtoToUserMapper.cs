@@ -7,7 +7,7 @@ public sealed class MapUserProfileDtoToUserMapper : IMapper<UserDto, Application
 {
     public Application.Repository.UserReadRepository.User Map(UserDto dto)
     {
-        IEnumerable<MyPupilItemDto> myPupils = dto.MyPupils ?? [];
+        IEnumerable<MyPupilItemDto> myPupils = dto.MyPupils?.Pupils ?? [];
 
         UserId id = new(dto.id!);
 

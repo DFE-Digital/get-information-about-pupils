@@ -105,9 +105,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
         UserDto userDto = Assert.Single(users);
         Assert.NotNull(userDto);
-        Assert.DoesNotContain(userDto.MyPupils, t => t.UPN == deletePupilIdentifier);
+        Assert.DoesNotContain(userDto.MyPupils.Pupils, t => t.UPN == deletePupilIdentifier);
         Assert.Equal(
             npdSearchindexDtos.Count() + pupilPremiumSearchIndexDtos.Count() - 1,
-            userDto.MyPupils.Count());
+            userDto.MyPupils.Pupils.Count());
     }
 }

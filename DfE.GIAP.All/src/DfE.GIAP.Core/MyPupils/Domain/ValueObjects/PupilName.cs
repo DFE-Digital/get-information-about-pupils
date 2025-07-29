@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.Domain;
+﻿using System.Drawing;
+using DfE.GIAP.Core.Common.Domain;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class PupilName : ValueObject<PupilName>
@@ -25,11 +26,18 @@ public sealed class PupilName : ValueObject<PupilName>
 
     private static string Normalise(string input)
     {
-        if(string.IsNullOrEmpty(input))
+        if(string.IsNullOrWhiteSpace(input))
         {
             return string.Empty;
         }
+
         string trimmedInput = input.Trim();
-        return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
+
+        if (trimmedInput.Length > 1)
+        {
+            return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
+        }
+
+        return char.ToUpperInvariant(trimmedInput[0]).ToString();
     }
 }

@@ -21,22 +21,35 @@ public class PupilNameTests
 
 
     [Theory]
-    [InlineData(null, "Smith")]
-    [InlineData("Jane", null)]
-    [InlineData("", "Smith")]
-    [InlineData("Jane", "")]
-    [InlineData("   ", "Smith")]
-    [InlineData("Jane", "  \n ")]
-    [InlineData("Jane", "   \r\n")]
-    public void Constructor_WithNullOrWhitespaceNames_ShouldThrowArgumentException(string? firstName, string? lastName)
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\n")]
+    [InlineData("\r\n ")]
+    public void Constructor_WithInvalidFirstName_Should_DefaultToEmpty(string? firstName)
     {
         // Arrange Act
-#pragma warning disable CA1806 // Do not ignore method results
-        Action act = () => new PupilName(firstName!, lastName!);
-#pragma warning restore CA1806 // Do not ignore method results
+        PupilName pupilName = new (firstName!, "Smith");
 
         // Assert
-        Assert.ThrowsAny<ArgumentException>(act);
+        Assert.Equal(string.Empty, pupilName.FirstName);
+        Assert.Equal("Smith", pupilName.Surname);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\n")]
+    [InlineData("\r\n ")]
+    public void Constructor_WithInvalidSurname_Should_DefaultToEmpty(string? surname)
+    {
+        // Arrange Act
+        PupilName pupilName = new("John", surname!);
+
+        // Assert
+        Assert.Equal("John", pupilName.FirstName);
+        Assert.Equal(string.Empty, pupilName.Surname);
     }
 
     [Theory]

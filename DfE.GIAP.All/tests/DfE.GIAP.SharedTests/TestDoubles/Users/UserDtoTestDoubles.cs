@@ -22,6 +22,9 @@ public static class UserDtoTestDoubles
         IEnumerable<MyPupilItemDto>? myPupils) => new()
         {
             id = id.Value,
-            MyPupils = myPupils!,
+            MyPupils = new()
+            {
+                Pupils = myPupils
+            },
         };
 }

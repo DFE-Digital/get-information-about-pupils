@@ -1,29 +1,43 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+﻿using System.Text.RegularExpressions;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
 public sealed class UniquePupilNumberTests
 {
-    public static TheoryData<string> ValidUpnValues => [
-            "A12345678901X", // A
-        "T98765432109Z", // T
-        "A00000000000A", // A Any 11 digits between 
-        "T11111111111B" // T Any 11 digits between
-        ];
+    public static TheoryData<string> ValidUpnValues => new()
+    {
+        "A12345678901X", // A + 11 digits + X
+        "T98765432109Z", // T + 11 digits + Z
+        "B00000000000A", // B + 11 digits + A
+        "H11111111111C", // H + 11 digits + C
+        "J12345678901X", // J + 11 digits + X
+        "N12345678901Y", // N + 11 digits + Y
+        "P12345678901Z", // P + 11 digits + Z
+        "R123456789012", // R + 12 digits
+        "W12345678901X", // W is allowed
+        "Z12345678901X",  // Z is allowed
+        "U12345678901X", // U is allowed
+        "V12345678901X", // V is allowed
+        "Q12345678901X", // Q is allowed
+    };
 
-    public static TheoryData<string> InvalidUpnValues => [
-            "B12345678901X", // Invalid prefix
-        "A1234567890X",  // Too short
-        "A1234567890123", // Too long
-        "A12345678901",  // Missing check digit
-        "A12345678901!", // Invalid check digit
-        "",              // Empty
-        "   ",           // Whitespace
-        "\r\n",          // Windows new line
-        "   \r\n ",      // Windows new line with whitespace
-        "\n",            // Unix new line
-        null!              // Null
-        ];
+    public static TheoryData<string?> InvalidUpnValues => new()
+    {
+        "I12345678901X", // Invalid prefix (I not allowed)
+        "O12345678901X", // Invalid prefix (O not allowed)
+        "S12345678901X", // Invalid prefix (S not allowed)
+        "A1234567890X",   // Too short (10 digits + letter)
+        "A1234567890123", // Too long (13 digits)
+        "A12345678901",   // Missing final char (only 11 digits)
+        "A12345678901!",  // Invalid final char (non-alphanumeric)
+        "",               // Empty
+        "   ",            // Whitespace
+        "\r\n",           // Windows new line
+        "   \r\n ",       // Windows new line with whitespace
+        "\n",             // Unix new line
+        null              // Null
+    };
+
 
     [Theory]
     [MemberData(nameof(ValidUpnValues))]
@@ -72,7 +86,6 @@ public sealed class UniquePupilNumberTests
         Assert.False(result);
         Assert.Null(constructed);
     }
-
 
     [Fact]
     public void ToString_ReturnsValue()

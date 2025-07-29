@@ -125,20 +125,6 @@
                                                             <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
                                                         </label>
                                                     </div>
-
-                                                   @*  @if (pupil.Id != null) // TODO our Identifier won't be null so can drop this
-                                                    {
-                                                        
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="govuk-checkboxes__item">
-                                                            <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@pupil.LearnerNumber" name="SelectedPupil" type="checkbox" value="@pupil.LearnerNumber" checked="@pupil.Selected">
-                                                            <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.LearnerNumber">
-                                                                <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @pupil.LearnerNumber, Name: @pupil.Forename @pupil.Surname</span>
-                                                            </label>
-                                                        </div>
-                                                    } *@
                                                 </td>
                                                 <td class="govuk-table__cell search--search-pupils-data-firstname--text">
                                                     @pupil.Forename

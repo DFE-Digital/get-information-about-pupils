@@ -8,15 +8,19 @@ public static class UniquePupilNumberTestDoubles
 
     public static List<UniquePupilNumber> Generate(int count)
     {
-        Xeger xeger = new(
-            UniquePupilNumberValidator.UpnRegex().ToString(),
+        Xeger type1Generator = new(
+            UniquePupilNumberValidator.UPN_TYPE_1.ToString(),
+            new Random());
+
+        Xeger type2Generator = new(
+            UniquePupilNumberValidator.UPN_TYPE_2.ToString(),
             new Random());
 
         List<UniquePupilNumber> upns = [];
 
         for (int i = 0; i < count; i++)
         {
-            UniquePupilNumber uniquePupilNumber = new(xeger.Generate());
+            UniquePupilNumber uniquePupilNumber = new(i % 2 == 0 ? type1Generator.Generate() : type2Generator.Generate());
             upns.Add(uniquePupilNumber);
         }
 
