@@ -24,7 +24,7 @@ internal sealed class SearchClientProvider : ISearchClientProvider
 
     public SearchClient GetClientByKey(string name)
     {
-        string indexNameFromOptions = _searchOptions.GetIndexOptionsByName(name).IndexName;
+        string indexNameFromOptions = _searchOptions.GetIndexOptionsByName(name).Name;
         return _searchClients.Single(
             (t) => t.IndexName == indexNameFromOptions);
     }

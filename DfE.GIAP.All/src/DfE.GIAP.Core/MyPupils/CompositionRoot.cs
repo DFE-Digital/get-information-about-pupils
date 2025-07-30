@@ -67,10 +67,10 @@ public static class CompositionRoot
               "Key" : "cogsearch-key",
               "Indexes": {
                  "npd": {
-                   "name": "npd"
+                   "Name": "npd"
                  },
                  "pupil-premium": {
-                   "name": "pupil-premium"
+                   "Name": "pupil-premium"
                  }
                }
 
@@ -93,7 +93,7 @@ public static class CompositionRoot
                 (options) => !string.IsNullOrEmpty(options.Url) && Uri.TryCreate(options.Url, UriKind.Absolute, out _), $"{nameof(SearchIndexOptions)}.Url must not be null or empty.")
             .Validate(
                 (options) => options.Indexes.Values.All(
-                    (indexOption) => !string.IsNullOrEmpty(indexOption.IndexName)), $"{nameof(SearchIndexOptions)}.IndexOption has an empty IndexName.")
+                    (indexOption) => !string.IsNullOrEmpty(indexOption.Name)), $"{nameof(SearchIndexOptions)}.IndexOption has an empty IndexName.")
             .ValidateOnStart();
 
 
@@ -105,7 +105,7 @@ public static class CompositionRoot
 
             SearchClient searchClient = new(
                 new Uri(options.Url),
-                indexOptions.IndexName,
+                indexOptions.Name,
                 new AzureKeyCredential(options.Key));
             return searchClient;
         });
@@ -117,7 +117,7 @@ public static class CompositionRoot
 
             SearchClient searchClient = new(
                 new Uri(options.Url),
-                indexOptions.IndexName,
+                indexOptions.Name,
                 new AzureKeyCredential(options.Key));
             return searchClient;
         });
