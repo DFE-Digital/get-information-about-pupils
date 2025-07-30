@@ -41,6 +41,19 @@ public sealed class MapPupilToPupilDtoMapperTests
     }
 
     [Fact]
+    public void Map_ThrowsNull_If_Pupil_Is_Null()
+    {
+        Pupil? pupil = null;
+        MapPupilToPupilDtoMapper mapper = new();
+
+        // Act
+        Func<PupilDto> act = () => mapper.Map(pupil!);
+
+        // Assert
+        Assert.Throws<ArgumentNullException>(act);
+    }
+
+    [Fact]
     public void Map_PupilWithNullDateOfBirth_ReturnsEmptyDateOfBirth()
     {
         // Arrange

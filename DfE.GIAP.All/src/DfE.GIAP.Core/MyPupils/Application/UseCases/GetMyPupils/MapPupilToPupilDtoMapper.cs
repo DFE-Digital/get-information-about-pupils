@@ -8,6 +8,7 @@ internal sealed class MapPupilToPupilDtoMapper : IMapper<Pupil, PupilDto>
 {
     public PupilDto Map(Pupil pupil)
     {
+        ArgumentNullException.ThrowIfNull(pupil);
         return new()
         {
             UniquePupilNumber = pupil.Identifier.Value,
