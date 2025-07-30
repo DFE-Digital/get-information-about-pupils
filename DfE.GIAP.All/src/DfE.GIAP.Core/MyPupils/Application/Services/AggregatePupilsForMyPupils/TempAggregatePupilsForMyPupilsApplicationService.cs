@@ -2,7 +2,7 @@
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.SearchClient.Provider;
+using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -43,13 +43,13 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
         const int DefaultPageSize = 20;
 
-        IEnumerable<DecoratedLearnerDtoWithPupilType> npdLearners =
+        IEnumerable<DecoratedSearchIndexDtoWithPupilType> npdLearners =
             (await SearchForLearnersByUpn(
                     client: _searchClientProvider.GetClientByKey(name: "npd"),
                     uniquePupilNumbers,
                     validatedOptions))
-                .Select((npdLearner)
-                    => new DecoratedLearnerDtoWithPupilType(npdLearner, PupilType.NationalPupilDatabase));
+                .Select((npdSearchIndexDto)
+                    => new DecoratedSearchIndexDtoWithPupilType(npdSearchIndexDto, PupilType.NationalPupilDatabase));
 
         // TODO extension on DecoratedLearnerMap and reuse
         if (npdLearners.Count() == DefaultPageSize)
@@ -65,12 +65,12 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
         // else fetch more from pp
 
-        IEnumerable<DecoratedLearnerDtoWithPupilType> pupilPremiumLearners =
+        IEnumerable<DecoratedSearchIndexDtoWithPupilType> pupilPremiumLearners =
             (await SearchForLearnersByUpn(
                     client: _searchClientProvider.GetClientByKey(name: "pupil-premium"),
                     uniquePupilNumbers,
                     validatedOptions))
-                .Select(t => new DecoratedLearnerDtoWithPupilType(t, PupilType.PupilPremium));
+                .Select(pupilPremiumSearchIndexDto => new DecoratedSearchIndexDtoWithPupilType(pupilPremiumSearchIndexDto, PupilType.PupilPremium));
 
         return npdLearners.Concat(pupilPremiumLearners)
             .Take(DefaultPageSize)
@@ -85,7 +85,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
 
 
-    private static async Task<List<Learner>> SearchForLearnersByUpn(
+    private static async Task<List<AzureIndexEntity>> SearchForLearnersByUpn(
         SearchClient client,
         IEnumerable<UniquePupilNumber> upns,
         MyPupilsQueryOptions options)
@@ -97,11 +97,11 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             return await SearchLearners(client, upnValues, options);
         }
 
-        List<Learner> learners = [];
+        List<AzureIndexEntity> learners = [];
 
         foreach (IEnumerable<string> upnsSplitPart in SplitUpnsToFitPagingLimit(upns))
         {
-            List<Learner> learnersToAdd = await SearchLearners(client, upnsSplitPart, options);
+            List<AzureIndexEntity> learnersToAdd = await SearchLearners(client, upnsSplitPart, options);
             learners.AddRange(learnersToAdd);
         }
 
@@ -109,14 +109,14 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    public static async Task<List<Learner>> SearchLearners(
+    public static async Task<List<AzureIndexEntity>> SearchLearners(
         SearchClient client,
         IEnumerable<string> upns,
         MyPupilsQueryOptions queryOptions)
     {
         const string UpnIndexField = "UPN";
 
-        List<Learner> output = [];
+        List<AzureIndexEntity> output = [];
 
         // e.g Skip and Size act as a Take
         // - page 1 with pageSize 20 -> 20 * (1-1) = 0-19 results
@@ -162,7 +162,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
         await foreach (SearchResult<AzureIndexEntity> result in results.Value.GetResultsAsync())
         {
-            output.Add((Learner)result.Document);
+            output.Add(result.Document);
         }
 
         return output;
@@ -184,6 +184,6 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             .ToList();
     }
 
-    private sealed record DecoratedLearnerDtoWithPupilType(Learner Learner, PupilType PupilType);
+    private sealed record DecoratedSearchIndexDtoWithPupilType(AzureIndexEntity Learner, PupilType PupilType);
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }

@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.SearchClient.Options;
-
-namespace DfE.GIAP.Core.MyPupils.Application.SearchClient.Options.Extensions;
+﻿namespace DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
 public static class SearchIndexOptionsExtensions
 {
     public static IndexOptions GetIndexOptionsByName(this SearchIndexOptions searchIndexOptions, string name)

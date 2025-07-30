@@ -9,8 +9,8 @@ internal sealed class MapMappableLearnerToPupilMapper : IMapper<MappableLearner,
         new(
             identifier: input.uniquePupilNumber,
             pupilType: input.PupilType,
-            name: new(input.Learner.Forename, input.Learner.Surname),
-            dateOfBirth: input.Learner.Dob,
-            sex: new Sex(input.Learner.Sex),
-            localAuthorityCode: new LocalAuthorityCode(int.Parse(input.Learner.LocalAuthority)));
+            name: new(input.SearchIndexDto.Forename, input.SearchIndexDto.Surname),
+            dateOfBirth: input.SearchIndexDto.DOB,
+            sex: new Sex(input.SearchIndexDto.Sex),
+            localAuthorityCode: new LocalAuthorityCode(int.Parse(input.SearchIndexDto.LocalAuthority)));
 }

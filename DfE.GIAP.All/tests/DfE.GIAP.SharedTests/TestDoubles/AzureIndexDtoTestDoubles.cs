@@ -20,7 +20,7 @@ public static class AzureIndexDtosTestDoubles
             .RuleFor(t => t.Surname, f => f.Name.LastName())
             .RuleFor(t => t.Sex, f =>
             {
-                char[] validSexs = [Sex.Male.ToString()[0], Sex.Female.ToString()[0]];
+                string[] validSexs = [Sex.Male.ToString(), Sex.Female.ToString()];
                 return f.PickRandom(validSexs);
             })
             .RuleFor(t => t.DOB, f => DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(f.Random.Number(1, 25)))

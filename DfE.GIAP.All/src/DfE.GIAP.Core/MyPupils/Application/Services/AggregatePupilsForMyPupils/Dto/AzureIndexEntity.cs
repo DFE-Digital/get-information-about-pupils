@@ -23,7 +23,7 @@ public class AzureIndexEntity
     public string Forename { get; set; }
 
     [JsonProperty("Sex")]
-    public char? Sex { get; set; }
+    public string Sex { get; set; }
 
     [JsonProperty("DOB")]
     public DateTime? DOB { get; set; }
@@ -33,18 +33,4 @@ public class AzureIndexEntity
 
     [JsonProperty("id")]
     public string id { get; set; }
-
-    public static explicit operator Learner(AzureIndexEntity entity)
-    {
-        return new Learner()
-        {
-            Id = entity.id,
-            UPN = entity.UPN ?? string.Empty,
-            Forename = entity.Forename,
-            Surname = entity.Surname,
-            Sex = entity.Sex?.ToString() ?? string.Empty,
-            Dob = entity.DOB,
-            LocalAuthority = entity.LocalAuthority
-        };
-    }
 }
