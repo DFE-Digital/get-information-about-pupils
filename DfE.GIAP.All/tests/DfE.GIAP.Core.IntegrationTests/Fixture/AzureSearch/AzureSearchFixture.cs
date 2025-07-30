@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;

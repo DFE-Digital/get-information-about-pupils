@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Mapper;
+namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 internal sealed class MapMappableLearnerToPupilMapper : IMapper<MappableLearner, Pupil>
 {
     public Pupil Map(MappableLearner input) =>
