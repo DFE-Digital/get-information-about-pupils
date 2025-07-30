@@ -32,7 +32,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         IEnumerable<UniquePupilNumber> uniquePupilNumbers,
         MyPupilsQueryOptions? queryOptions = null)
     {
-        if (uniquePupilNumbers.Count() == 0)
+        if (!uniquePupilNumbers.Any())
         {
             return [];
         }
