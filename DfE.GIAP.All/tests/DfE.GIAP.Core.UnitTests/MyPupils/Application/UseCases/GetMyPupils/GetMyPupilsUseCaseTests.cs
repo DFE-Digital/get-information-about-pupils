@@ -1,5 +1,4 @@
-﻿using Bogus;
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Services;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -12,7 +11,6 @@ using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.SharedTests.TestDoubles;
-using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class GetMyPupilsUseCaseTests
@@ -34,18 +32,8 @@ public sealed class GetMyPupilsUseCaseTests
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils, user.UniquePupilNumbers);
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
-
         List<PupilDto> pupilDtos = PupilDtoTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
-
-        Dictionary<Pupil, PupilDto> mappings = pupils
-            .Zip(pupilDtos, (pupil, dto) => new
-            {
-                pupil,
-                dto
-            })
-            .ToDictionary(x => x.pupil, x => x.dto);
-
-        mockMapper.MockForMany(mappings);
+        mockMapper.MockForMany(pupils, pupilDtos);
 
         GetMyPupilsRequest request = new(user.UserId.Value);
 

@@ -41,5 +41,22 @@ public static class MapperTestDoublesExtensions
 
         return mapper;
     }
+
+    public static Mock<IMapper<TIn, TOut>> MockForMany<TIn, TOut>(
+        this Mock<IMapper<TIn, TOut>> mapper,
+        List<TIn> inputs,
+        List<TOut> outputs) where TIn : notnull
+    {
+        if (inputs.Count != outputs.Count)
+        {
+            throw new ArgumentException("Inputs and outputs must have the same number of elements.");
+        }
+
+        Dictionary<TIn, TOut> mappings = inputs
+            .Zip(outputs, (input, output) => new { input, output })
+            .ToDictionary(x => x.input, x => x.output);
+
+        return mapper.MockForMany(mappings);
+    }
 }
 
