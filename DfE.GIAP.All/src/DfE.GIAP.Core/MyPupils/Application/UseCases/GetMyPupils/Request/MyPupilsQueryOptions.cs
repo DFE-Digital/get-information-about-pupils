@@ -1,7 +1,7 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 public record MyPupilsQueryOptions(OrderPupilsBy Order, PageNumber Page)
 {
-    internal static MyPupilsQueryOptions Default()
+    public static MyPupilsQueryOptions Default()
         => new(
             Order: new OrderPupilsBy(
                 field: string.Empty,

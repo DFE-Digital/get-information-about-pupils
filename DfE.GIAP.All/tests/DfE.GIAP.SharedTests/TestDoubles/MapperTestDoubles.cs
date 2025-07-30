@@ -23,8 +23,6 @@ public static class MapperTestDoubles
     }
 }
 
-
-
 public static class MapperTestDoublesExtensions
 {
     public static Mock<IMapper<TIn, TOut>> MockForMany<TIn, TOut>(
