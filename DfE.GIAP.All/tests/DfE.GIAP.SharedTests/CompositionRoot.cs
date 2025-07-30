@@ -32,8 +32,15 @@ public static class CompositionRoot
         {
             // PageContentOptions
             ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
-            // RepositoryOptions
+
+            // ContentRepositoryOptions
             ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
+
+            // SearchIndexOptions
+            ["SearchIndexOptions:Url"] = "https://localhost:44444",
+            ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
+            ["SearchIndexOptions:Indexes:npd:Name"] = "npd",
+            ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
         };
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()
