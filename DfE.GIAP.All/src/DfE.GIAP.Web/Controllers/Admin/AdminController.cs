@@ -81,7 +81,7 @@ public class AdminController : Controller
     {
         return selectedOption switch
         {
-            "ManageDocuments" => RedirectToAction("ManageDocuments", "ManageDocuments"),
+            "ManageNewsArticles" => RedirectToAction("ManageNewsArticles", "ManageNewsArticles"),
             "DownloadSecurityReportsByPupilOrStudent" => RedirectToAction("SecurityReportsByUpnUln", "SecurityReportByPupilStudentRecord"),
             "DownloadSecurityReportsByOrganisation" => RedirectToAction("SecurityReportsForYourOrganisation", "Admin"),
             "DownloadSecurityReportsBySchool" => User.IsAdmin()

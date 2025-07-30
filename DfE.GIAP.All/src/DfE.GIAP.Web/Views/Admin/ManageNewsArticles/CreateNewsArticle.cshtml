@@ -1,5 +1,4 @@
 ﻿@model ManageDocumentsViewModel
-
 @{
     ViewBag.Title = "Create news article";
 }
@@ -23,11 +22,11 @@
                 </div>
             </div>
 
-            <partial name="~/Views/Admin/ManageDocuments/_DocumentFields.cshtml" for="DocumentData" />
+            <partial name="~/Views/Admin/ManageNewsArticles/_DocumentFields.cshtml" for="DocumentData" />
 
             <div class="govuk-button-group">
-                <a asp-controller="ManageDocuments" asp-action="ManageDocuments" id="discard-document--button" name="discard" class="govuk-button govuk-button--secondary">Discard</a>
-                <button asp-controller="ManageDocuments" asp-action="CreateNewsArticle" id="CreateNewsArticle--button" name="Create" class="govuk-button">Save</button>
+                <a asp-controller="ManageNewsArticles" asp-action="ManageNewsArticles" id="discard-document--button" name="discard" class="govuk-button govuk-button--secondary">Discard</a>
+                <button asp-controller="ManageNewsArticles" asp-action="CreateNewsArticle" id="CreateNewsArticle--button" name="Create" class="govuk-button">Save</button>
             </div>
         </div>
     </form>
