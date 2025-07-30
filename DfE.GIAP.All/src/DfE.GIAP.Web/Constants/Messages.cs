@@ -13,7 +13,6 @@ public static class Messages
             public const string MyPupilListLimitExceeded = "You have reached the limit for my pupil list, please contact the Department for Education to increase this";
             public const string TitleRequired = "Title must be entered";
             public const string BodyRequired = "Body must be entered";
-            public const string DocumentRequired = "Please select a document";
             public const string NewsArticleRequired = "Please select a news article";
             public const string SecurityReportRequired = "A report must be selected";
             public const string TitleLength = "Title must be must be 64 characters or fewer";
@@ -25,24 +24,12 @@ public static class Messages
     {
         public static class Success
         {
-            public const string DeleteTitle = "News article was deleted successfully";
-            public const string DeleteBody = "Your news article was deleted successfully and your change will be reflected immediately";
-            public const string PublishTitle = "News article was published successfully";
-            public const string PublishBody = "Your news article was published successfully and your change will be reflected immediately";
             public const string CreateTitle = "News article was created successfully";
             public const string CreateBody = "Your news article was created successfully and your change will be reflected immediately";
             public const string UpdateTitle = "News article was updated successfully";
             public const string UpdateBody = "Your news article was updated successfully and your change will be reflected immediately";
-            public const string DocumentUpdatedTitle = "Document was updated successfully";
-            public const string DocumentUpdatedBody = "Your document was updated successfully and your change will be reflected immediately";
-        }
-
-        public static class Errors
-        {
-            public const string SaveDraftError = "We have been unable to save the draft article.";
-            public const string PublishError = "We have been unable to publish the article.";
-            public const string CreatedError = "We have been unable to create the article.";
-            public const string UpdatedError = "We have been unable to update the article.";
+            public const string DeleteTitle = "News article was deleted successfully";
+            public const string DeleteBody = "Your news article was deleted successfully and your change will be reflected immediately";
         }
     }
 
