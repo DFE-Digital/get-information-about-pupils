@@ -1,9 +1,9 @@
 ﻿using Azure.Search.Documents;
-using DfE.GIAP.Core.MyPupils.Application.Options;
-using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.SearchClient.Options;
+using DfE.GIAP.Core.MyPupils.Application.SearchClient.Options.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Client;
+namespace DfE.GIAP.Core.MyPupils.Application.SearchClient.Provider;
 internal sealed class SearchClientProvider : ISearchClientProvider
 {
     private readonly SearchIndexOptions _searchOptions;

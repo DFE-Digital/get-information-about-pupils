@@ -2,7 +2,7 @@
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Client;
+using DfE.GIAP.Core.MyPupils.Application.SearchClient.Provider;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;

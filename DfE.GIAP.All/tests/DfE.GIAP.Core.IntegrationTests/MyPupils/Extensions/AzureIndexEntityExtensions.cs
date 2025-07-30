@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Dto;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.User.Infrastructure.Repository;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
 internal static class AzureIndexEntityExtensions

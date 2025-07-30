@@ -1,6 +1,6 @@
 ﻿using Azure.Search.Documents;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Client;
+namespace DfE.GIAP.Core.MyPupils.Application.SearchClient.Provider;
 
 internal interface ISearchClientProvider
 {
