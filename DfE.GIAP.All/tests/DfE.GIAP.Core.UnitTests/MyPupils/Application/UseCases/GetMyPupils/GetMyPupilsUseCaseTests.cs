@@ -21,7 +21,7 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_ReturnsMappedPupils()
     {
         // Arrange
-        
+
         User.Application.User user = UserTestDoubles.Default();
 
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, user.UserId);
@@ -34,14 +34,18 @@ public sealed class GetMyPupilsUseCaseTests
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils, user.UniquePupilNumbers);
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
+
         List<PupilDto> pupilDtos = PupilDtoTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
-        for (int index = 0; index < pupils.Count; index++)
-        {
-            mockMapper
-                .Setup(m => m.Map(pupils[index]))
-                .Returns(pupilDtos[index])
-                .Verifiable();
-        }
+
+        Dictionary<Pupil, PupilDto> mappings = pupils
+            .Zip(pupilDtos, (pupil, dto) => new
+            {
+                pupil,
+                dto
+            })
+            .ToDictionary(x => x.pupil, x => x.dto);
+
+        mockMapper.MockForMany(mappings);
 
         GetMyPupilsRequest request = new(user.UserId.Value);
 

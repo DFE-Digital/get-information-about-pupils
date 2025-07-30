@@ -22,3 +22,24 @@ public static class MapperTestDoubles
         return mapper;
     }
 }
+
+
+
+public static class MapperTestDoublesExtensions
+{
+    public static Mock<IMapper<TIn, TOut>> MockForMany<TIn, TOut>(
+        this Mock<IMapper<TIn, TOut>> mapper,
+        Dictionary<TIn, TOut> mappings) where TIn : notnull
+    {
+        foreach (KeyValuePair<TIn, TOut> kvp in mappings)
+        {
+            mapper
+                .Setup(m => m.Map(kvp.Key))
+                .Returns(kvp.Value)
+                .Verifiable();
+        }
+
+        return mapper;
+    }
+}
+
