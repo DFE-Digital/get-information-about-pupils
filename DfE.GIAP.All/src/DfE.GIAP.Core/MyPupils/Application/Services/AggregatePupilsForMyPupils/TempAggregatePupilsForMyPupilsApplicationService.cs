@@ -16,11 +16,11 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
     private const int PageSplitLimit = 500; // TODO pulled from FA
     private readonly ISearchClientProvider _searchClientProvider;
-    private readonly IMapper<MappableLearner, Pupil> _mapper;
+    private readonly IMapper<DecoratedSearchIndexDto, Pupil> _mapper;
 
     public TempAggregatePupilsForMyPupilsApplicationService(
         ISearchClientProvider searchClientProvider,
-        IMapper<MappableLearner, Pupil> mapper)
+        IMapper<DecoratedSearchIndexDto, Pupil> mapper)
     {
 
         ArgumentNullException.ThrowIfNull(mapper);
@@ -43,13 +43,15 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
         const int DefaultPageSize = 20;
 
-        IEnumerable<DecoratedSearchIndexDtoWithPupilType> npdLearners =
+        IEnumerable<DecoratedSearchIndexDto> npdLearners =
             (await SearchForLearnersByUpn(
                     client: _searchClientProvider.GetClientByKey(name: "npd"),
                     uniquePupilNumbers,
                     validatedOptions))
                 .Select((npdSearchIndexDto)
-                    => new DecoratedSearchIndexDtoWithPupilType(npdSearchIndexDto, PupilType.NationalPupilDatabase));
+                    => new DecoratedSearchIndexDto(
+                        npdSearchIndexDto,
+                        PupilType.NationalPupilDatabase));
 
         // TODO extension on DecoratedLearnerMap and reuse
         if (npdLearners.Count() == DefaultPageSize)
@@ -57,29 +59,30 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             return npdLearners.Select(
                 decoratedLearner =>
                     _mapper.Map(
-                        new MappableLearner(
-                            new UniquePupilNumber(decoratedLearner.Learner.UPN),
-                            decoratedLearner.Learner,
+                        new DecoratedSearchIndexDto(
+                            decoratedLearner.SearchIndexDto,
                             decoratedLearner.PupilType)));
         }
 
         // else fetch more from pp
 
-        IEnumerable<DecoratedSearchIndexDtoWithPupilType> pupilPremiumLearners =
+        IEnumerable<DecoratedSearchIndexDto> pupilPremiumLearners =
             (await SearchForLearnersByUpn(
                     client: _searchClientProvider.GetClientByKey(name: "pupil-premium"),
                     uniquePupilNumbers,
                     validatedOptions))
-                .Select(pupilPremiumSearchIndexDto => new DecoratedSearchIndexDtoWithPupilType(pupilPremiumSearchIndexDto, PupilType.PupilPremium));
+                .Select(
+                    (pupilPremiumSearchIndexDto) => new DecoratedSearchIndexDto(
+                        pupilPremiumSearchIndexDto,
+                        PupilType.PupilPremium));
 
         return npdLearners.Concat(pupilPremiumLearners)
             .Take(DefaultPageSize)
             .Select(
                 (decoratedLearner) =>
                     _mapper.Map(
-                        new MappableLearner(
-                            new UniquePupilNumber(decoratedLearner.Learner.UPN),
-                            decoratedLearner.Learner,
+                        new DecoratedSearchIndexDto(
+                            decoratedLearner.SearchIndexDto,
                             decoratedLearner.PupilType)));
     }
 
@@ -109,7 +112,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    public static async Task<List<AzureIndexEntity>> SearchLearners(
+    private static async Task<List<AzureIndexEntity>> SearchLearners(
         SearchClient client,
         IEnumerable<string> upns,
         MyPupilsQueryOptions queryOptions)
@@ -184,6 +187,6 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             .ToList();
     }
 
-    private sealed record DecoratedSearchIndexDtoWithPupilType(AzureIndexEntity Learner, PupilType PupilType);
+    
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }

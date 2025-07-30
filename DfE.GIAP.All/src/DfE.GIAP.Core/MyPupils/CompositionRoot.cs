@@ -42,7 +42,7 @@ public static class CompositionRoot
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, TempAggregatePupilsForMyPupilsApplicationService>()
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, PupilDto>, MapPupilToPupilDtoMapper>()
-            .AddSingleton<IMapper<MappableLearner, Pupil>, MapMappableLearnerToPupilMapper>();
+            .AddSingleton<IMapper<DecoratedSearchIndexDto, Pupil>, MapDecoratedSearchIndexDtoToPupilMapper>();
 
         return services;
     }

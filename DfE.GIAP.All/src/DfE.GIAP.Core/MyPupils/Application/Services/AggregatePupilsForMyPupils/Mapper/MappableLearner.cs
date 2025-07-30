@@ -2,7 +2,6 @@
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
-internal record MappableLearner(
-    UniquePupilNumber uniquePupilNumber,
+internal sealed record DecoratedSearchIndexDto(
     AzureIndexEntity SearchIndexDto,
     PupilType PupilType);

@@ -3,11 +3,11 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
-internal sealed class MapMappableLearnerToPupilMapper : IMapper<MappableLearner, Pupil>
+internal sealed class MapDecoratedSearchIndexDtoToPupilMapper : IMapper<DecoratedSearchIndexDto, Pupil>
 {
-    public Pupil Map(MappableLearner input) =>
+    public Pupil Map(DecoratedSearchIndexDto input) =>
         new(
-            identifier: input.uniquePupilNumber,
+            identifier: new UniquePupilNumber(input.SearchIndexDto.UPN),
             pupilType: input.PupilType,
             name: new(input.SearchIndexDto.Forename, input.SearchIndexDto.Surname),
             dateOfBirth: input.SearchIndexDto.DOB,
