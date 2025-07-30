@@ -37,10 +37,10 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsApplication(this IServiceCollection services)
     {
         services
-            .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
+            
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
-            .AddScoped<IAggregatePupilsForMyPupilsApplicationService, TempAggregatePupilsForMyPupilsApplicationService>()
-            .AddSingleton<IMapper<Pupil, PupilDto>, MapPupilToPupilDtoMapper>()
+            
+            
             .AddSingleton<IMapper<MappableLearner, Pupil>, MapMappableLearnerToPupilMapper>();
 
         return services;
