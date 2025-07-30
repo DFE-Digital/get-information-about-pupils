@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
 

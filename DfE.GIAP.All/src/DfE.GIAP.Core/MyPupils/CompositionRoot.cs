@@ -2,16 +2,16 @@ using Azure;
 using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Options.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Services;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Client;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupilsDomainService.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.Core.User.Infrastructure.Repository;
@@ -27,6 +27,7 @@ public static class CompositionRoot
     {
         ArgumentNullException.ThrowIfNull(services);
 
+
         services
             .AddMyPupilsApplication()
             .AddMyPupilsInfrastructure();
@@ -39,8 +40,9 @@ public static class CompositionRoot
         services
             
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
-            
-            
+            .AddScoped<IAggregatePupilsForMyPupilsApplicationService, TempAggregatePupilsForMyPupilsApplicationService>()
+            .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
+            .AddSingleton<IMapper<Pupil, PupilDto>, MapPupilToPupilDtoMapper>()
             .AddSingleton<IMapper<MappableLearner, Pupil>, MapMappableLearnerToPupilMapper>();
 
         return services;
