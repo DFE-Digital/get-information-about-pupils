@@ -12,6 +12,7 @@ using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.SharedTests.TestDoubles;
+using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class GetMyPupilsUseCaseTests
@@ -20,18 +21,17 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_ReturnsMappedPupils()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
-        GetMyPupilsRequest request = new(userId.Value);
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);
-        User.Application.User user = new(userId, upns);
+        
+        User.Application.User user = UserTestDoubles.Default();
 
-        Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, userId);
+        Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, user.UserId);
 
         List<Pupil> pupils =
-            upns.Select((upn) => PupilBuilder.CreateBuilder(upn).Build())
+            user.UniquePupilNumbers
+                .Select((upn) => PupilBuilder.CreateBuilder(upn).Build())
                 .ToList();
 
-        Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils, upns);
+        Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils, user.UniquePupilNumbers);
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
         List<PupilDto> pupilDtos = PupilDtoTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
@@ -43,11 +43,13 @@ public sealed class GetMyPupilsUseCaseTests
                 .Verifiable();
         }
 
+        GetMyPupilsRequest request = new(user.UserId.Value);
+
         // Act
         GetMyPupilsUseCase sut = new(
             userRepoMock.Object,
             aggregateServiceMock.Object,
-            mockMapper.Object);
+        mockMapper.Object);
 
         GetMyPupilsResponse result = await sut.HandleRequestAsync(request);
 
@@ -57,10 +59,10 @@ public sealed class GetMyPupilsUseCaseTests
         Assert.Equivalent(result.Pupils, pupilDtos);
 
         userRepoMock.Verify(repo =>
-            repo.GetUserByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+            repo.GetUserByIdAsync(user.UserId, It.IsAny<CancellationToken>()), Times.Once);
 
         aggregateServiceMock.Verify(
-            t => t.GetPupilsAsync(upns, It.IsAny<MyPupilsQueryOptions>()), Times.Once);
+            t => t.GetPupilsAsync(user.UniquePupilNumbers, It.IsAny<MyPupilsQueryOptions>()), Times.Once);
 
         mockMapper.Verify(
             t => t.Map(It.IsAny<Pupil>()), Times.Exactly(pupils.Count));
@@ -71,14 +73,16 @@ public sealed class GetMyPupilsUseCaseTests
     {
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
-        GetMyPupilsRequest request = new(userId.Value);
-        User.Application.User user = new(userId, []);
+
+        User.Application.User user = UserTestDoubles.WithEmptyUpns();
 
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, userId);
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
+
+        GetMyPupilsRequest request = new(userId.Value);
 
         // Act
         GetMyPupilsUseCase sut = new(
