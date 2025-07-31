@@ -6,7 +6,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
@@ -35,7 +34,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
-    private readonly IContentService _mockContentService = Substitute.For<IContentService>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new();
     private readonly TestSession _mockSession = new();
@@ -1474,7 +1472,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
              _mockPaginatedService,
              _mockMplService,
              _mockSelectionManager,
-             _mockContentService,
              _mockDownloadService,
              _mockAppOptions)
         {

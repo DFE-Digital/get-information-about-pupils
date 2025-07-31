@@ -7,7 +7,6 @@ using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
@@ -33,16 +32,12 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
-    private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-    private readonly ICommonService _mockCommonService = Substitute.For<ICommonService>();
-    private readonly IContentService _mockContentService = Substitute.For<IContentService>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new AzureAppSettings();
-    private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
 
     private readonly TestSession _mockSession = new TestSession();
 
@@ -1938,7 +1933,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockPaginatedService,
             _mockMplService,
             _mockSelectionManager,
-            _mockContentService,
             _mockAppOptions)
         {
             ControllerContext = context
