@@ -1,22 +1,31 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Repository;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 public class CheckNewsArticleUpdatesUseCase : IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>
 {
     private readonly INewsArticleReadRepository _newsArticleReadRepository;
-    //private readonly IUserReadRepository _userReadOnlyRepository;
-    public CheckNewsArticleUpdatesUseCase(INewsArticleReadRepository newsArticleReadRepository)
+    private readonly IUserReadOnlyRepository _userReadOnlyRepository;
+
+    public CheckNewsArticleUpdatesUseCase(
+        INewsArticleReadRepository newsArticleReadRepository,
+        IUserReadOnlyRepository userReadOnlyRepository)
     {
         ArgumentNullException.ThrowIfNull(newsArticleReadRepository);
         _newsArticleReadRepository = newsArticleReadRepository;
+
+        ArgumentNullException.ThrowIfNull(userReadOnlyRepository);
+        _userReadOnlyRepository = userReadOnlyRepository;
     }
 
 
     public async Task<CheckNewsArticleUpdateResponse> HandleRequestAsync(CheckNewsArticleUpdatesRequest request)
     {
 
-        // TODO: Get user By Id
+        User user = await _userReadOnlyRepository.GetUserByIdAsync(new UserId(request.UserId));
+
         // Pass User LastAccessedDateTime to the repository
 
         bool hasUpdated = await _newsArticleReadRepository.HasArticlesBeenModifiedSinceAsync(DateTime.UtcNow.AddMinutes(-5));

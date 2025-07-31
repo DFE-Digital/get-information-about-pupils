@@ -8,8 +8,8 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Application.Repository;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Repository;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
@@ -20,7 +20,7 @@ public sealed class GetMyPupilsUseCaseTests
     {
         // Arrange
 
-        User.Application.User user = UserTestDoubles.Default();
+        User user = UserTestDoubles.Default();
 
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, user.UserId);
 
@@ -66,7 +66,7 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
-        User.Application.User user = UserTestDoubles.WithEmptyUpns();
+        User user = UserTestDoubles.WithEmptyUpns();
 
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, userId);
 

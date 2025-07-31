@@ -1,9 +1,10 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Infrastructure.Repository;
-using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Infrastructure.Repository;
+using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
+using User = DfE.GIAP.Core.Users.Application.User;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure.Repository;
 public sealed class MapUserProfileDtoToUserMapperTests
@@ -20,7 +21,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Act
         MapUserProfileDtoToUserMapper mapper = new();
-        User.Application.User result = mapper.Map(userDto);
+        User result = mapper.Map(userDto);
 
         // Assert
         Assert.Equal(userId, result.UserId);
@@ -41,7 +42,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Act
         MapUserProfileDtoToUserMapper mapper = new();
-        User.Application.User result = mapper.Map(userDto);
+        User result = mapper.Map(userDto);
 
         // Assert
         Assert.Equal(userId, result.UserId);
@@ -64,7 +65,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Act
         MapUserProfileDtoToUserMapper mapper = new();
-        User.Application.User result = mapper.Map(userDto);
+        User result = mapper.Map(userDto);
 
         // Assert
         Assert.Equal(userId, result.UserId);
@@ -87,7 +88,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
 
         // Act
         MapUserProfileDtoToUserMapper mapper = new();
-        User.Application.User result = mapper.Map(userDto);
+        User result = mapper.Map(userDto);
 
         // Assert
         Assert.Equal(userId, result.UserId);
