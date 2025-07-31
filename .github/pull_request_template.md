@@ -32,7 +32,3 @@
 - [ ] Tests added or updated
 - [ ] Documentation updated (if not needed cross out)
 - [ ] CI pass (tests, codecov, lint)
-
-## 📎 Additional Notes
-
-<!-- Any other context or information reviewers should know -->
