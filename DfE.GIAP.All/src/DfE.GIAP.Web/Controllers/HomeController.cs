@@ -6,6 +6,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
@@ -17,15 +18,20 @@ public class HomeController : Controller
 {
     private readonly ILatestNewsBanner _newsBanner;
     private readonly IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> _checkNewsArticleUpdatesUseCase;
+    private readonly ISessionProvider _sessionProvider;
     public HomeController(
         ILatestNewsBanner newsBanner,
-        IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> checkNewsArticleUpdatesUseCase)
+        IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> checkNewsArticleUpdatesUseCase,
+        ISessionProvider sessionProvider)
     {
         ArgumentNullException.ThrowIfNull(newsBanner);
         _newsBanner = newsBanner;
 
         ArgumentNullException.ThrowIfNull(checkNewsArticleUpdatesUseCase);
         _checkNewsArticleUpdatesUseCase = checkNewsArticleUpdatesUseCase;
+
+        ArgumentNullException.ThrowIfNull(sessionProvider);
+        _sessionProvider = sessionProvider;
     }
 
     [HttpGet]
@@ -33,6 +39,9 @@ public class HomeController : Controller
     {
         //CheckNewsArticleUpdateResponse checkNewsArticleUpdatesResponse = await _checkNewsArticleUpdatesUseCase
         //    .HandleRequestAsync(new CheckNewsArticleUpdatesRequest(User.GetUserId()));
+
+        //if (checkNewsArticleUpdatesResponse.HasUpdates)
+        //    _sessionProvider.SetSessionValue("showNewsBanner", "showNewsBanner");
 
         await _newsBanner.SetLatestNewsStatus();
         return View();
