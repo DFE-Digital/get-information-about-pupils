@@ -17,7 +17,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
     public CosmosDbUserReadOnlyRepository(
         ILogger<CosmosDbUserReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<UserDto, Application.User> userMapper)
+        IMapper<UserDto, User> userMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);

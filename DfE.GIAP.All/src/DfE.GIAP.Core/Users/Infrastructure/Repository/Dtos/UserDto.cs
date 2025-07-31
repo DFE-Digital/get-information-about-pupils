@@ -8,5 +8,5 @@ public sealed class UserDto
     //public DateTime? CreatedDateTime { get; set; }
     //public DateTime? RecentLoginDateTime { get; set; }
     //public DateTime? PreviousLoginDateTime { get; set; }
-    //public DateTime? LatestNewsAccessedDateTime { get; set; }
+    public DateTime LatestNewsAccessedDateTime { get; set; }
 }

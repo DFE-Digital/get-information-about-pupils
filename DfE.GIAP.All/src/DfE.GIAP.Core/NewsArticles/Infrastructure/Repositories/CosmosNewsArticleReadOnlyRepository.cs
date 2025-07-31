@@ -11,17 +11,17 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository for reading news articles from Azure Cosmos DB.
-/// Implements <see cref="INewsArticleReadRepository"/> for querying news data.
+/// Implements <see cref="INewsArticleReadOnlyRepository"/> for querying news data.
 /// </summary>
-internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
+internal class CosmosNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosNewsArticleReadRepository> _logger;
+    private readonly ILogger<CosmosNewsArticleReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
-    public CosmosNewsArticleReadRepository(
-        ILogger<CosmosNewsArticleReadRepository> logger,
+    public CosmosNewsArticleReadOnlyRepository(
+        ILogger<CosmosNewsArticleReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {

@@ -6,11 +6,11 @@ using DfE.GIAP.Core.Users.Application.Repository;
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 public class CheckNewsArticleUpdatesUseCase : IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>
 {
-    private readonly INewsArticleReadRepository _newsArticleReadRepository;
+    private readonly INewsArticleReadOnlyRepository _newsArticleReadRepository;
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
 
     public CheckNewsArticleUpdatesUseCase(
-        INewsArticleReadRepository newsArticleReadRepository,
+        INewsArticleReadOnlyRepository newsArticleReadRepository,
         IUserReadOnlyRepository userReadOnlyRepository)
     {
         ArgumentNullException.ThrowIfNull(newsArticleReadRepository);

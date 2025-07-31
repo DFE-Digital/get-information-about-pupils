@@ -12,14 +12,14 @@ internal class GetNewsArticleByIdUseCase : IUseCase<GetNewsArticleByIdRequest, G
     /// <summary>
     /// Repository for reading news articles.
     /// </summary>
-    private readonly INewsArticleReadRepository _newsArticleReadRepository;
+    private readonly INewsArticleReadOnlyRepository _newsArticleReadRepository;
 
     /// <summary>
     /// Initializes the use case with a news article repository.
     /// </summary>
     /// <param name="newsArticleReadRepository">Repository used to retrieve news articles.</param>
     /// <exception cref="ArgumentNullException">Thrown when repository is null.</exception>
-    public GetNewsArticleByIdUseCase(INewsArticleReadRepository newsArticleReadRepository)
+    public GetNewsArticleByIdUseCase(INewsArticleReadOnlyRepository newsArticleReadRepository)
     {
         ArgumentNullException.ThrowIfNull(newsArticleReadRepository);
         _newsArticleReadRepository = newsArticleReadRepository;

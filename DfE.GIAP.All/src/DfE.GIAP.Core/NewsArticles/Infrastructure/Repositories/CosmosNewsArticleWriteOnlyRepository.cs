@@ -13,15 +13,15 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 /// <remarks>This repository is responsible for handling write operations for news articles in the Cosmos DB. It
 /// uses a command handler to interact with the database and a mapper to convert between domain entities and data
 /// transfer objects.</remarks>
-internal class CosmosNewsArticleWriteRepository : INewsArticleWriteRepository
+internal class CosmosNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosNewsArticleWriteRepository> _logger;
+    private readonly ILogger<CosmosNewsArticleWriteOnlyRepository> _logger;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
     private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
-    public CosmosNewsArticleWriteRepository(
-        ILogger<CosmosNewsArticleWriteRepository> logger,
+    public CosmosNewsArticleWriteOnlyRepository(
+        ILogger<CosmosNewsArticleWriteOnlyRepository> logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
         IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {

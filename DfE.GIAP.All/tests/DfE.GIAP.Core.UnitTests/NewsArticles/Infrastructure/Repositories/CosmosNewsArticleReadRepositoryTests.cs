@@ -11,11 +11,11 @@ namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 public sealed class CosmosNewsArticleReadRepositoryTests
 {
     private readonly string _validId = "any_valid_id";
-    private readonly InMemoryLogger<CosmosNewsArticleReadRepository> _mockLogger;
+    private readonly InMemoryLogger<CosmosNewsArticleReadOnlyRepository> _mockLogger;
 
     public CosmosNewsArticleReadRepositoryTests()
     {
-        _mockLogger = LoggerTestDoubles.MockLogger<CosmosNewsArticleReadRepository>();
+        _mockLogger = LoggerTestDoubles.MockLogger<CosmosNewsArticleReadOnlyRepository>();
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadRepository(
+        Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadOnlyRepository(
             logger: null!,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object));
@@ -39,7 +39,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadRepository(
+        Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadOnlyRepository(
             logger: _mockLogger,
             cosmosDbQueryHandler: null!,
             dtoToEntityMapper: mockMapper.Object));
@@ -52,7 +52,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadRepository(
+        Assert.Throws<ArgumentNullException>(() => new CosmosNewsArticleReadOnlyRepository(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: null!));
@@ -68,7 +68,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
 
-        CosmosNewsArticleReadRepository repository = new(
+        CosmosNewsArticleReadOnlyRepository repository = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
@@ -93,7 +93,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
 
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
@@ -123,7 +123,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<NewsArticleDto, NewsArticle>(() => throw new Exception("Test exception"));
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
@@ -140,7 +140,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<NewsArticleDto, NewsArticle>(stub: null);
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
@@ -165,7 +165,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<NewsArticleDto, NewsArticle>(articleStub);
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
@@ -196,7 +196,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
 
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(cosmosExceptionGenerator);
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object);
@@ -218,7 +218,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany<NewsArticleDto>(() => []);
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);
@@ -248,7 +248,7 @@ public sealed class CosmosNewsArticleReadRepositoryTests
 
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<NewsArticleDto, NewsArticle>(It.IsAny<NewsArticle>());
 
-        CosmosNewsArticleReadRepository sut = new(
+        CosmosNewsArticleReadOnlyRepository sut = new(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object);
