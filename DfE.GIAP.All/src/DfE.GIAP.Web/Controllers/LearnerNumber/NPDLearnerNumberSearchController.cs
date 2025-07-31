@@ -3,7 +3,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
@@ -51,9 +50,8 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ISelectionManager selectionManager,
-        IContentService contentService,
         IOptions<AzureAppSettings> azureAppSettings)
-        : base(logger, paginatedSearch, mplService, selectionManager, contentService, azureAppSettings)
+        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
     {
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));

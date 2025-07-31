@@ -1,0 +1,34 @@
+﻿@model ManageDocumentsViewModel
+@{
+    ViewBag.Title = "Manage news articles";
+    var newsDocuments = ViewBag.NewsDocuments as SelectList;
+}
+
+
+<div class="govuk-width-container">
+    <partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
+
+    <h1 class="govuk-heading-xl">Manage news articles</h1>
+
+    <form method="post">
+        <div class="govuk-form-group">
+
+            @if (newsDocuments.Any())
+            {
+                <label for="select-article-dropdown" class="govuk-label">Please select a news article</label>
+                <select id="select-article-dropdown" asp-for="@Model.SelectedNewsId" class="govuk-select @(Model.HasInvalidNewsList ? "govuk-textarea--error" : "")" asp-items="ViewBag.NewsDocuments">
+                </select>
+
+                <button asp-controller="ManageNewsArticles" asp-action="SelectNewsArticle" id="select-document--button" value="Select" name="select" class="govuk-button">Select</button>
+            }
+            else
+            {
+                <p class="govuk-body">No news articles available</p>
+            }
+
+            <p class="govuk-body">
+                <a asp-controller="ManageNewsArticles" asp-action="CreateNewsArticle" id="create-new-article--button" value="Create" name="create" class="govuk-button govuk-button--secondary">Create new article</a>
+            </p>
+        </div>
+    </form>
+</div>
