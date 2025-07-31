@@ -1,21 +1,166 @@
 ﻿@model GlossaryViewModel
 @{
-    ViewData["Title"] = @Html.Raw(Model.Response.Title);
+    ViewData["Title"] = "Glossary";
 }
 
 
 <div class="govuk-width-container">
-    <h1 id="glossary--heading--text" class="govuk-heading-xl">@Html.Raw(Model.Response.Title)</h1>
+    <h1 id="glossary--heading--text" class="govuk-heading-xl">Glossary</h1>
 
     <div class="govuk-grid-row">
-        @Html.Raw(Model.Response.Body)
-
         <div class="govuk-grid-column-one-third">
-            <p></p>
+            <h2 class="govuk-heading-l">Contents</h2>
+
+            <p class="govuk-body">
+                <a href="#TOC1" class="govuk-link govuk-link--no-underline">1. Introduction</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC2" class="govuk-link govuk-link--no-underline">2. List of terms used</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC3" class="govuk-link govuk-link--no-underline">2.1 Establishment acronyms</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC4" class="govuk-link govuk-link--no-underline">2.2 System related acronyms</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC5" class="govuk-link govuk-link--no-underline">2.3 Attainment related acronyms</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC6" class="govuk-link govuk-link--no-underline">3. Search limits</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC7" class="govuk-link govuk-link--no-underline">4. Last updated</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC8" class="govuk-link govuk-link--no-underline">5. Metadata files</a>
+            </p>
         </div>
 
         <div class="govuk-grid-column-two-thirds">
-            <partial name="_MetaDataDownloadListPartial" model="@Model" />
+            <div id="TOC1">
+                <h2 class="govuk-heading-l">1. Introduction</h2>
+                <p class="govuk-body">
+                    This glossary provides information on acronyms and terminology used within the Get information about pupils (GIAP) website.
+                    The glossary is not intended to act as an instructional text on how to use the system.
+                    Information on how to use the system is provided via this <a class="govuk-link" href="https://www.youtube.com/watch?v=BBG3HYigspw&amp;feature=youtu.be" id="help--user-guide--link" target="_blank">video</a>.
+                </p>
+            </div>
+
+            <div id="TOC2">
+                <h2 class="govuk-heading-l">2. List of terms used</h2>
+            </div>
+
+            <div id="TOC3">
+                <h2 class="govuk-heading-l">2.1 Establishment acronyms</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Age range - the statutory age at which an establishment may admit pupils from and to. This information is held on Get information about schools (GIAS).</li>
+                    <li>AP - alternative provision - the marker (AP) may be added to the pupil premium column to denote that the pupil is in receipt of AP PP. This is a marker only for local authorities and will not be visible to other users.</li>
+                    <li>ATF - admissions transfer file - a file sent by a school containing the pupil's admissions data</li>
+                    <li>CIN – children in need</li>
+                    <li>CLA – children looked after. Children who have been in the care of local authorities for at least one day in the last 6 years, or who have been adopted from care.</li>
+                    <li>CTF - common transfer file - a file sent by a school containing the pupil's attainment data. GIAP will generate a CTF file for the school.</li>
+                    <li>EY - early years - from 2 to 5. This is the same as nursery school, but is not a local authority maintained nursery school or academy. These Private Voluntary Institute (PVI) providers are small businesses that provide this service.</li>
+                    <li>FE - further education - colleges that provide post 16 education that are not universities or sixth form schools.</li>
+                    <li>FSM - free school meals - a financial top-up paid on a per pupil basis to qualifying pupils specifically for school meals. This should not be confused with UIFSM - universal infant free school meals (UIFSM) which provides funding for all government funded schools to offer free school meals to pupils in reception, year 1, and year 2. Where FSM is protected, the code FSM(P) is displayed.</li>
+                    <li>HS - high school - a school / academy that caters for pupils aged 13/14 to 16/18.</li>
+                    <li>LA - local authority - the LA is responsible for state-maintained schools, whom they fund and are responsible for the administration of their admissions.</li>
+                    <li>LA/Estab No - the local authority / establishment number is a two-part number, with the first three numbers pertaining to the local authority and the last four to the establishment. These numbers are subject to change.</li>
+                    <li>Maintained school - a school that is not an academy and is state-maintained by a local authority.</li>
+                    <li>MAT - multi-academy trust - a trust consists of members, akin to company shareholders, and trustees, responsible for governance for a group of academies, they are also responsible for the administration of admissions for the academies within the trust.</li>
+                    <li>MDP - middle deemed primary - a school / academy that caters for pupils aged 7 to 13 (deemed primary as only undertake KS2 tests).</li>
+                    <li>MDS - middle deemed secondary - a school / academy that caters for pupils aged 8 to 14 (deemed secondary as undertake KS4 tests).</li>
+                    <li>NPD – national pupil database – where all school census data is held.</li>
+                    <li>NS - nursery school - a local authority-maintained establishment that caters for pupils aged 2 to 5 (please note: academies can provide nursery provision, but are classed as academies and not nursery schools).</li>
+                    <li>Post-16 - sixth form schools (as distinct from further education colleges).</li>
+                    <li>
+                        PP - pupil premium - publicly-funded schools in England get extra funding from the government to
+                        help them improve the attainment of their disadvantaged pupils. PP is in three types:
+                        <ul>
+                            <li>free school meals (FSM)</li>
+                            <li>looked-after and previously looked-after children (CLA)</li>
+                            <li>service child premium (SC)</li>
+                        </ul>
+                        The tag (P) after the PP type (above) denotes that the pupil premium is protected.<br>
+                        The tag (AP) after the PP type denotes that the pupil has alternative provision PP – this is
+                        viewable only to local authorities.
+                    </li>
+                    <li>PS - primary school - a school / academy that caters for pupils aged 4 to 11.</li>
+                    <li>SAT - single academy trust - as all academies are independent from local authority control, any academy that is not within a MAT is its own trust, with responsibility for their own admissions. A trust consists of members, akin to company shareholders, and trustees, responsible for governance of the academy.</li>
+                    <li>SEN - special educational needs.</li>
+                    <li>SEND – special educational needs and disability.</li>
+                    <li>SS - secondary school - a school / academy that caters for pupils aged 11 to 16/18.</li>
+                    <li>ULN - unique learner number - this is a pupil identifier that is issued to all pupils when they turn 14 and is the primary identifier used by further and higher education providers.</li>
+                    <li>UPN - unique pupil number - this is a pupil identifier that is issued to the pupil by the first primary school they attend and is the primary identifier used by compulsory school age educational establishments.</li>
+                    <li>URN - unique reference number - the URN is a six-digit number allocated to educational establishments by the Get information about schools (GIAS) service and is the unique identifier for all educational establishments. Whilst the LA/Estab number may change, the URN does not.</li>
+                </ul>
+            </div>
+
+            <div id="TOC4">
+                <h2 class="govuk-heading-l">2.2 System related acronyms</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        ASP - analyse school performance - the ASP system is available to the same audience as GIAP plus
+                        OfSTED. This system holds the prepared <strong>KS2</strong>, <strong>KS4</strong>,
+                        <strong>L2VA</strong>, and <strong>16-18</strong> attainment data files formally
+                        held on the KtS system (the predecessor to GIAP).
+                    </li>
+                    <li>DSI - DfE sign-in - the single sign-on service used by the Department for Education.</li>
+                    <li>GIAS - Get information about schools - the department’s official register of schools.</li>
+                    <li>
+                        LRS - learner records service - this is the system that uses the unique learner number (ULN) and
+                        maintains learner records from 14 to end of learning and this encompasses all adult learning.
+                    </li>
+                    <li>
+                        QWS - QAN web services. QAN = Qualification Accreditation Number. The 'Accreditation' term is out of
+                        date really but continues to be used in most areas (regulation now takes place, but we agreed with
+                        suppliers that QWS would retain terminology to save 'semantic' changes costing money. This is now
+                        referred to as the QN - qualification number.
+                    </li>
+                    <li>
+                        S2S - School to school - a secure file transfer system used by schools and LAs to transfer files -
+                        especially CTF.
+                    </li>
+                    <li>
+                        Section 96 - now known as: ESFA list of qualifications approved for funding 14 to 19 (we tend to add
+                        'formerly known as Section 96'...but this is an informal approach!).
+                    </li>
+                </ul>
+            </div>
+
+            <div id="TOC5">
+                <h2 class="govuk-heading-l">2.3 Attainment related acronyms</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        EYFSP – early years foundation stage profile attainment for pupils at the end of ‘reception’ year.
+                    </li>
+                    <li>KS1 – key stage attainment for pupils aged between 5 and 7.</li>
+                    <li>KS2 – key stage 2 attainment for pupils aged between 7 and 11.</li>
+                    <li>KS4 – key stage 4 attainment for pupils aged between 14 and 16.</li>
+                    <li>KS5 – key stage 5 attainment for pupils aged between 16 and 18.</li>
+                    <li>L3VA – level 3 value added attainment for pupils aged 16-18.</li>
+                    <li>Phonics – phonics attainment for pupils aged between 5 and 7.</li>
+                </ul>
+            </div>
+
+            <div id="TOC6">
+                <h2 class="govuk-heading-l">3. Search limits</h2>
+                <p class="govuk-body">
+                    The GIAP system permits UPN searches up to a maximum of 4000 UPN numbers. Where the user inputs duplicates, these will be identified and must be removed for the search to move forward.
+                </p>
+            </div>
+
+            <div id="TOC7">
+                <h2 class="govuk-heading-l">4. Last updated</h2>
+                <p class="govuk-body">We may need to update this help information periodically, so we recommend that you revisit this information from time to time. This version was last updated in November 2020.</p>
+            </div>
+            <div id="TOC8">
+                <h2 class="govuk-heading-l">5. Metadata files</h2>
+                <p class="govuk-body">
+                    These files explain the structure of the downloaded data.
+                </p>
+                <partial name="_MetaDataDownloadListPartial" model="@Model" />
+            </div>
         </div>
     </div>
 </div>

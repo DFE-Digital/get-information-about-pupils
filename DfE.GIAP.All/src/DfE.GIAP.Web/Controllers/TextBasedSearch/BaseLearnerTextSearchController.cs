@@ -7,7 +7,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
@@ -15,7 +14,6 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.ViewModels.Helper;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,7 +31,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
 
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
-    private readonly IContentService _contentService;
     private readonly IPaginatedSearchService _paginatedSearch;
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly IMyPupilListService _mplService;
@@ -80,13 +77,10 @@ public abstract class BaseLearnerTextSearchController : Controller
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
-        IContentService contentService,
         IOptions<AzureAppSettings> azureAppSettings)
     {
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
         _paginatedSearch = paginatedSearch ??
             throw new ArgumentNullException(nameof(paginatedSearch));
         _selectionManager = selectionManager ??
@@ -105,10 +99,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
-
-        var newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
-
-        model.DataReleaseTimeTable.NewsPublication = newsPublication.ConvertToViewModel();
 
         model.ShowMiddleNames = this.ShowMiddleNames;
 

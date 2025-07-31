@@ -25,8 +25,8 @@ public static class AuthenticationExtensions
     {
         AzureAppSettings appSettings = configuration.Get<AzureAppSettings>();
 
-        var overallSessionTimeout = TimeSpan.FromMinutes(appSettings.SessionTimeout);
-        var loggingEvent = new LoggingEvent();
+        TimeSpan overallSessionTimeout = TimeSpan.FromMinutes(appSettings.SessionTimeout);
+        LoggingEvent loggingEvent = new();
 
         services.AddAuthentication(options =>
         {
@@ -38,7 +38,7 @@ public static class AuthenticationExtensions
              {
                  options.ExpireTimeSpan = overallSessionTimeout;
                  options.SlidingExpiration = true;
-                 options.LogoutPath = AppSettings.DsiLogoutPath;
+                 options.LogoutPath = DsiKeys.CallbackPaths.Logout;
 
                  options.Events.OnRedirectToAccessDenied = ctx =>
                  {
@@ -60,14 +60,14 @@ public static class AuthenticationExtensions
                 options.Scope.Clear();
                 options.Scope.AddRange(
                 [
-                    AppSettings.DsiScopeOpenId,
-                    AppSettings.DsiScopeEmail,
-                    AppSettings.DsiScopeProfile,
-                    AppSettings.DsiScopeOrganisationId
+                    DsiKeys.Scope.OpenId,
+                    DsiKeys.Scope.Email,
+                    DsiKeys.Scope.Profile,
+                    DsiKeys.Scope.OrganisationId
                 ]);
                 options.SaveTokens = true;
-                options.CallbackPath = AppSettings.DsiCallbackPath;
-                options.SignedOutCallbackPath = AppSettings.DsiSignedOutCallbackPath;
+                options.CallbackPath = DsiKeys.CallbackPaths.Dsi;
+                options.SignedOutCallbackPath = DsiKeys.CallbackPaths.SignedOut;
                 options.TokenHandler = new JsonWebTokenHandler()
                 {
                     InboundClaimTypeMap = new Dictionary<string, string>(),
@@ -88,7 +88,7 @@ public static class AuthenticationExtensions
 
                     OnMessageReceived = context =>
                     {
-                        var isSpuriousAuthCbRequest =
+                        bool isSpuriousAuthCbRequest =
                             context.Request.Path == options.CallbackPath &&
                         context.Request.Method == HttpMethods.Get &&
                             !context.Request.Query.ContainsKey("code");
@@ -96,7 +96,7 @@ public static class AuthenticationExtensions
                         if (isSpuriousAuthCbRequest)
                         {
                             context.HandleResponse();
-                            context.Response.Redirect("/");
+                            context.Response.Redirect(Routes.Application.Home);
                         }
 
                         return Task.CompletedTask;
@@ -111,43 +111,41 @@ public static class AuthenticationExtensions
 
                     OnTokenValidated = async ctx =>
                     {
-                        var claims = new List<Claim>();
-                        var sessionId = Guid.NewGuid().ToString();
+                        List<Claim> claims = new();
+                        string sessionId = Guid.NewGuid().ToString();
 
                         ctx.Properties.IsPersistent = true;
-
                         ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
-                        var principal = ctx.Principal;
 
-                        var organisation = JObject.Parse(ctx.Principal.FindFirst("Organisation").Value);
-                        var organisationId = string.Empty;
-
-                        var authenticatedUserInfo = new AuthenticatedUserInfo()
+                        ClaimsPrincipal principal = ctx.Principal;
+                        AuthenticatedUserInfo authenticatedUserInfo = new()
                         {
                             UserId = ctx.Principal.FindFirst("sub").Value
                         };
 
+                        JObject organisation = JObject.Parse(ctx.Principal.FindFirst("Organisation").Value);
+                        string organisationId = string.Empty;
                         if (organisation.HasValues)
                         {
 
                             organisationId = organisation["id"].ToString();
-                            var dfeSignInApiClient = ctx.HttpContext.RequestServices.GetService<IDfeSignInApiClient>();
-                            var userAccess = await dfeSignInApiClient.GetUserInfo(appSettings.DsiServiceId, organisationId, authenticatedUserInfo.UserId);
-                            var userOrganisation = await dfeSignInApiClient.GetUserOrganisation(authenticatedUserInfo.UserId, organisationId);
-                            var userId = ctx.Principal.FindFirst("sub").Value;
-                            var userEmail = ctx.Principal.FindFirst("email").Value;
-                            var userGivenName = ctx.Principal.FindFirst("given_name").Value;
-                            var userSurname = ctx.Principal.FindFirst("family_name").Value;
-                            var userIpAddress = ctx.HttpContext.Connection.RemoteIpAddress.ToString();
-                            var organisationCategoryId = userOrganisation?.Category?.Id ?? string.Empty;
-                            var establishmentNumber = userOrganisation?.EstablishmentNumber ?? string.Empty;
-                            var localAuthorityNumber = userOrganisation?.LocalAuthority?.Code ?? string.Empty;
-                            var ukProviderReferenceNumber = userOrganisation?.UKProviderReferenceNumber ?? string.Empty;
-                            var uniqueReferenceNumber = userOrganisation?.UniqueReferenceNumber ?? string.Empty;
-                            var uniqueIdentifier = userOrganisation?.UniqueIdentifier ?? string.Empty;
+                            IDfeSignInApiClient dfeSignInApiClient = ctx.HttpContext.RequestServices.GetService<IDfeSignInApiClient>();
+                            UserAccess userAccess = await dfeSignInApiClient.GetUserInfo(appSettings.DsiServiceId, organisationId, authenticatedUserInfo.UserId);
+                            Organisation userOrganisation = await dfeSignInApiClient.GetUserOrganisation(authenticatedUserInfo.UserId, organisationId);
+                            string userId = ctx.Principal.FindFirst("sub").Value;
+                            string userEmail = ctx.Principal.FindFirst("email").Value;
+                            string userGivenName = ctx.Principal.FindFirst("given_name").Value;
+                            string userSurname = ctx.Principal.FindFirst("family_name").Value;
+                            string userIpAddress = ctx.HttpContext.Connection.RemoteIpAddress.ToString();
+                            string organisationCategoryId = userOrganisation?.Category?.Id ?? string.Empty;
+                            string establishmentNumber = userOrganisation?.EstablishmentNumber ?? string.Empty;
+                            string localAuthorityNumber = userOrganisation?.LocalAuthority?.Code ?? string.Empty;
+                            string ukProviderReferenceNumber = userOrganisation?.UKProviderReferenceNumber ?? string.Empty;
+                            string uniqueReferenceNumber = userOrganisation?.UniqueReferenceNumber ?? string.Empty;
+                            string uniqueIdentifier = userOrganisation?.UniqueIdentifier ?? string.Empty;
 
-                            var eventLogging = ctx.HttpContext.RequestServices.GetService<IEventLogging>();
-                            var hostEnvironment = ctx.HttpContext.RequestServices.GetService<IHostEnvironment>();
+                            IEventLogging eventLogging = ctx.HttpContext.RequestServices.GetService<IEventLogging>();
+                            IHostEnvironment hostEnvironment = ctx.HttpContext.RequestServices.GetService<IHostEnvironment>();
 
                             /*Handles DSI users that aren't associated to the GIAP service (DSI returns a 404 response in this scenario when calling the GetUserInfo method)*/
                             if (userAccess == null)
@@ -156,12 +154,14 @@ public static class AuthenticationExtensions
 
                                 claims.AddRange(new List<Claim>
                                 {
-                                    new Claim(CustomClaimTypes.UserId, userId),
-                                    new Claim(CustomClaimTypes.SessionId, sessionId),
-                                    new Claim(ClaimTypes.Email, userEmail),
+                                    new(CustomClaimTypes.UserId, userId),
+                                    new(CustomClaimTypes.SessionId, sessionId),
+                                    new(ClaimTypes.Email, userEmail),
                                 });
+
                                 ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
                                 ctx.HttpContext.Response.Redirect(Routes.Application.UserWithNoRole);
+
                                 return;
                             }
                             else
@@ -229,8 +229,8 @@ public static class AuthenticationExtensions
 
                             ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
 
-                            var userApiClient = ctx.HttpContext.RequestServices.GetService<ICommonService>();
-                            var userUpdateResult = await userApiClient.CreateOrUpdateUserProfile(new UserProfile { UserId = authenticatedUserInfo.UserId },
+                            ICommonService userApiClient = ctx.HttpContext.RequestServices.GetService<ICommonService>();
+                            bool userUpdateResult = await userApiClient.CreateOrUpdateUserProfile(new UserProfile { UserId = authenticatedUserInfo.UserId },
                                                                                                  new AzureFunctionHeaderDetails
                                                                                                  {
                                                                                                      ClientId = authenticatedUserInfo.UserId,
@@ -243,7 +243,6 @@ public static class AuthenticationExtensions
                         }
                     }
                 };
-
             }
         );
 

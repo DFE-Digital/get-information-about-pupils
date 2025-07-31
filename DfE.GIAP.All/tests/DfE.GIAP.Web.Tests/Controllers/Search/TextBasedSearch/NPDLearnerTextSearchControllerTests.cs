@@ -8,7 +8,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
@@ -37,7 +36,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
-    private readonly IContentService _mockContentService = Substitute.For<IContentService>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new();
     private readonly TestSession _mockSession = new();
@@ -53,9 +51,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     [Fact]
     public async Task NonUpnNationalPupilDatabase_returns_empty_page_when_first_navigated_to()
     {
-        // Arrange
-        SetupContentServicePublicationSchedule();
-
         // Act
         NPDLearnerTextSearchController sut = GetController();
         IActionResult result = await sut.NonUpnNationalPupilDatabase(null);
@@ -71,7 +66,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         _mockSelectionManager.Received().Clear();
         AssertAbstractValues(sut, model);
-        AssertContentServicePublicationValues(model);
         Assert.True(string.IsNullOrEmpty(model.SearchText));
     }
 
@@ -79,7 +73,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnNationalPupilDatabase_clears_search_when_return_to_search_is_false()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
@@ -102,7 +95,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
 
         AssertAbstractValues(sut, model);
-        AssertContentServicePublicationValues(model);
 
         Assert.True(string.IsNullOrEmpty(model.SearchText));
         Assert.False(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
@@ -112,7 +104,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnNationalPupilDatabase_return_to_search_page_persists_search()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
@@ -135,7 +126,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
 
         AssertAbstractValues(sut, model);
-        AssertContentServicePublicationValues(model);
         Assert.Equal(searchText, model.SearchText);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
     }
@@ -144,7 +134,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnNationalPupilDatabase_search_returns_results()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         string surnameFilter = null;
@@ -179,7 +168,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnNationalPupilDatabase_does_not_call_GetPage_if_model_state_not_valid()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
 
         // Act
         NPDLearnerTextSearchController sut = GetController();
@@ -202,7 +190,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnNationalPupilDatabase_populates_LearnerNumberIds_with_Id_when_UPN_0()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         NPDLearnerTextSearchController sut = GetController();
         //override default user to make admin so Ids are not masked, not testing rbac rules for this test
         sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
@@ -260,7 +247,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_Adds_DOB_month_and_year_filter_as_expected(SearchFilters searchFilter)
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
@@ -287,7 +273,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_DobErrorEmpty()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(0, 0, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -314,7 +299,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_DobErrorDayOnly()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(1, 0, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -338,7 +322,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_DobErrorDayMonthOnly()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(1, 1, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -362,7 +345,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_DayOutOfRange()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(99, 1, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -386,7 +368,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_DobErrorMonthOnly()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(0, 1, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -410,7 +391,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_DobErrorNoMonth()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(1, 0, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -434,7 +414,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_MonthOutOfRange()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(1, 99, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -458,7 +437,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_YearLimitHigh()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(1, 2, 9999);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -482,7 +460,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DobFilter_returns_DobError_when_YearLimitLow()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         SearchFilters searchFilter = SetDobFilters(1, 2, 1970);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
@@ -506,7 +483,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task SurnameFilter_Returns_to_route_with_correct_surname_filter()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         string surnameFilter = "Surname";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -532,7 +508,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task MiddlenameFilter_Returns_to_route_with_correct_middlename_filter()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         string middlenameFilter = "Middle";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -557,8 +532,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     [Fact]
     public async Task ForneameFilter_Returns_to_route_with_correct_forename_filter()
     {
-        // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         string forenameFilter = "Forename";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -587,7 +560,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task GenderFilter_Returns_to_route_with_correct_gender_filter(string genderFilter)
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), [genderFilter]);
 
@@ -615,7 +587,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task SexFilter_Returns_to_route_with_correct_sex_filter(string sexFilter)
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null, [sexFilter]);
 
@@ -641,7 +612,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task GenderFilter_returns_all_genders_when_no_gender_selected()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null);
         searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{ ""FilterName"":""Female"",""FilterType"":6}]";
@@ -667,7 +637,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task GenderFilter_returns_all_genders_when_more_than_one_gender_deselected()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null);
         searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{""FilterName"":""Female"",""FilterType"":6}, {""FilterName"":""Male"",""FilterType"":6}]";
@@ -695,7 +664,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnAddToMyPupilList_Adds_pupil_to_my_pupil_list_successfully()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         string upn = _paginatedResultsFake.GetUpn();
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -729,7 +697,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnAddToMyPupilList_Returns_to_search_page_if_no_pupil_selected()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
@@ -755,7 +722,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnAddToMyPupilList_redirects_to_InvalidUPNs_if_invalid_upn_selected()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         string upn = _paginatedResultsFake.GetUpnsWithInvalid();
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -1316,7 +1282,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task DownloadCancellationReturn_returns_to_search()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
@@ -1339,7 +1304,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
 
         AssertAbstractValues(sut, model);
-        AssertContentServicePublicationValues(model);
         Assert.Equal(searchText, model.SearchText);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
     }
@@ -1502,7 +1466,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task Sort_is_correctly_handled(string sortField, string sortDirection)
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         string surnameFilter = null;
@@ -1538,7 +1501,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task Sort_is_remembered_when_page_number_moves()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         string surnameFilter = null;
@@ -1580,7 +1542,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task Sort_is_remembered_when_returning_to_search()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
@@ -1618,7 +1579,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task Sort_is_cleared_when_page_is_reset()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         string surnameFilter = null;
@@ -1662,7 +1622,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task Sort_is_cleared_when_filters_are_set()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         string searchText = "John Smith";
         string surnameFilter = "Surname";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -1690,7 +1649,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task Sort_is_cleared_when_filters_are_removed()
     {
         // Arrange
-        SetupContentServicePublicationSchedule();
         const string searchText = "John Smith";
         const string surnameFilter = "";
         const string middlenameFilter = null;
@@ -1749,16 +1707,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
        .Returns(paginatedResponse);
     }
 
-    private void SetupContentServicePublicationSchedule()
-    {
-        CommonResponseBody expectedCommonResponseBody = new()
-        {
-            Id = "PublicationSchedule",
-            Title = "Title",
-            Body = "Body"
-        };
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(expectedCommonResponseBody);
-    }
 
     private static void AssertAbstractValues(NPDLearnerTextSearchController controller, LearnerTextSearchViewModel model)
     {
@@ -1769,12 +1717,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         Assert.Equal(controller.SearchAction, model.LearnerTextSearchAction);
         Assert.Equal(controller.SearchLearnerNumberController, model.LearnerNumberController);
         Assert.Equal(controller.SearchLearnerNumberAction, model.LearnerNumberAction);
-    }
-
-    private static void AssertContentServicePublicationValues(LearnerTextSearchViewModel model)
-    {
-        Assert.Equal("PublicationSchedule", model.DataReleaseTimeTable.NewsPublication.Id);
-        Assert.Equal("Body", model.DataReleaseTimeTable.NewsPublication.Body);
     }
 
     private NPDLearnerTextSearchController GetController(int maxMPLLimit = 4000)
@@ -1800,7 +1742,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
              _mockPaginatedService,
              _mockMplService,
              _mockSelectionManager,
-             _mockContentService,
              _mockCtfService,
              _mockDownloadService,
              _mockAppOptions)

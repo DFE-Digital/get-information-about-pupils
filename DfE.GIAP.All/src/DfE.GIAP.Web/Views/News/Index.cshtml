@@ -3,21 +3,16 @@
     ViewData["Title"] = "News";
 }
 
+<h1 class="govuk-heading-xl" id="news--heading--text">News</h1>
 @if (Model is null || Model.NewsArticles.Any() is false)
 {
-    <h1 class="govuk-heading-xl" id="news--heading--text">News</h1>
-
     @await Component.InvokeAsync("ReleaseTimetable")
-
     <p class="govuk-body">
         No news articles found.
     </p>
 }
 else
 {
-    <h1 class="govuk-heading-xl" id="news--heading--text">News</h1>
-
     @await Component.InvokeAsync("ReleaseTimetable")
-
     <partial name="_NewsArticles" model="@Model" />
 }

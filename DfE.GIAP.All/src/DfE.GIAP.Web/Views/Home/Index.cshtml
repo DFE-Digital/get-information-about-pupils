@@ -1,51 +1,142 @@
-﻿@model HomeViewModel
-@{
-    var title = string.IsNullOrEmpty(Model.LandingResponse?.Title) ? "Get information about pupils" : Model.LandingResponse.Title;
-    ViewData["Title"] = title;
+﻿@{
+    ViewData["Title"] = "Home";
 }
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters">
         <h1 class="govuk-heading-xl" id="landing--heading--text">
-            @Html.Raw(title)
+            Get information about pupils (GIAP)
         </h1>
         <p class="govuk-body">
-            @Html.Raw(Model.LandingResponse?.Body)
+            'Get information about pupils' (formerly known as 'Key to Success') allows you to search the National Pupil Database to retrieve data for your school, academy, further education college, academy trust or local authority.
         </p>
 
-        @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
-        {
-            <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/national-pupil-database">
-                Search national pupil database
-                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-                </svg>
-            </a>
-        }
-        else
-        {
-            <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/pupil-premium">
-                Search further education
-                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
-                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
-                </svg>
-            </a>
-        }
+        <div>
+            <h1 class="govuk-heading-l">
+                How to use GIAP
+            </h1>
+            <p class="govuk-body">
+                Local authorities, academy trusts, academies, schools and colleges can:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>search and download assessment (or SEN data for colleges) and pupil premium data using one or bulk UPNs</li>
+                <li>search for pupils using name, date of birth or gender to find assessment (or SEN data for colleges) and pupil premium data</li>
+                <li>save searches to 'My pupil list'</li>
+                <li>access pre-prepared downloads for your organisation or establishment</li>
+            </ul>
+            <p class="govuk-body">
+                The advanced search is monitored and should only be used to obtain prospective pupil data when a UPN/ULN is not available. You will only be able to view appropriate data for your establishment or organisation.
+            </p>
+            <p class="govuk-body" id="start--user-guide--text">
+                <a href="https://youtu.be/BBG3HYigspw" class="govuk-link" id="start--user-guide--link" target="_blank">A user guide is available</a>
+            </p>
+            <p class="govuk-body">
+                National and LA level data are available from
+                <a href="https://www.gov.uk/government/organisations/department-for-education/about/statistics" class="govuk-link" id="start--nala--link" target="_blank">www.gov.uk/government/organisations/department-for-education/about/statistics</a>
+            </p>
+
+            @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+            {
+                <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/national-pupil-database">
+                    Search national pupil database
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <a class="govuk-button govuk-button--start" id="landing--continue--btn" href="/search/pupil-premium">
+                    Search further education
+                    <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                    </svg>
+                </a>
+            }
+        </div>
 
         @await Component.InvokeAsync("ReleaseTimetable")
 
-        @if (!Model.FAQResponse.IsEmpty())
-        {
-            <div id="landing--faq--container">
-                <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id="landing--faq-heading--text">
-                    @Html.Raw(Model.FAQResponse?.Title)
-                </h2>
-                <p class="govuk-body webapp-formatted-text" id="landing--faq-description--text">
-                    @Html.Raw(Model.FAQResponse?.Body)
+        <div>
+            <h1 class="govuk-heading-l">Frequently asked questions</h1>
+
+            <h2 class="govuk-heading-m">LAST UPDATED: 25th July 2025</h2>
+
+            <div>
+                <h2 class="govuk-heading-m">Why is Key to Success (KTS) being replaced?</h2>
+                <p class="govuk-body">
+                    KTS is nearly 20 years old. Much of the technology it was built with is no longer supported as standard. This makes it increasingly difficult and expensive to maintain and enhance to meet the needs of existing and new users. Neither does it comply with the new legal accessibility requirements for public sector websites and applications or the wider government digital service standard. A discovery review in 2019 concluded the best way to meet the needs of our users going forward was to develop a new digital service. The new service is called Get information about pupils (GIAP).
                 </p>
             </div>
-        }
-
+            <div>
+                <h2 class="govuk-heading-m">How will GIAP be developed and how long will it take?</h2>
+                <p class="govuk-body">
+                    GIAP was developed using Agile methodology. This allowed the project team to provide early and continuous delivery of a replacement service for KTS. GIAP is live and is in the process of continuous improvement where we take the best ideas and evidence from user feedback. We build in ‘iterations’, so that users can get to experience the core features of the service as early as possible and provide feedback. This feedback helps us improve the existing features of the service and is factored into the design of the remaining features.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">Will the historical LA downloads be available on GIAP?</h2>
+                <p class="govuk-body">
+                    Some of the data will be migrated. However, it may be prudent to download all available files before KTS is retired.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">Students who are post-looked after are not showing on my search.</h2>
+                <p class="govuk-body">
+                    LAC pupils do not appear when a school performs a search within the pupil premium search section of GIAP. However, within the 'Data Downloads' section of GIAP, pre-prepared data downloads of pupil premium will contain LAC pupils.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">How do I find my pupil premium files</h2>
+                <p class="govuk-body">
+                    Pre-prepared pupil premium files are available to download from the 'data downloads' section.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">What features have been developed so far and what else is planned?</h2>
+                <p class="govuk-body">
+                    A GIAP user guide can be viewed in a YouTube video located on the GIAP Start page.
+                </p>
+                <p class="govuk-body">
+                    GIAP is currently running on version 2.8. Please see release notes in the News section for details of system updates, improvements, and bug fixes.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">How do I access downloaded .tab files in Excel?</h2>
+                <p class="govuk-body">
+                    If your computer does not have .tab files associated with a spreadsheet-based program (Microsoft Excel, for example), an alternative solution is:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Open your file explorer and locate the .tab file you wish to use.</li>
+                    <li>Drag and drop the .tab file onto your desktop (the unzipped version – if previously zipped).</li>
+                    <li>Open your spreadsheet.</li>
+                    <li>Drag and drop the file onto the spreadsheet - this will open the file in a new spreadsheet.</li>
+                </ul>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">Can we search on Unique Learner Numbers (ULNs) as well as Unique Pupil Numbers (UPNs)?</h2>
+                <p class="govuk-body">
+                    ULNs are available to FE Colleges and schools with pupils aged 14+, as part of the search criteria and results.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">How can I provide feedback about GIAP and take part in user research?</h2>
+                <p class="govuk-body">
+                    We would like users to continue providing feedback via the Feedback form within the top banner of the service. Here you can leave your details to get more involved with user research. We ask users not to add feedback to the Slack channel itself. If you have a specific question about the service which requires a response, a service request form can be raised by selecting the ‘contact’ link within the service.
+                </p>
+            </div>
+            <div>
+                <h2 class="govuk-heading-m">How can I get support when using the new service?</h2>
+                <p class="govuk-body">
+                    A user guide can be viewed in a YouTube video located on the GIAP Start page
+                </p>
+                <p class="govuk-body">
+                    You can access the Glossary page from the link in the footer of any GIAP page for further information on terms used and metadata.
+                </p>
+                <p class="govuk-body">
+                    You can raise a service request by selecting the 'contact' link in the footer of any GIAP page.
+                </p>
+            </div>
+        </div>
     </div>
 
     <div class="govuk-grid-column-one-quarter">

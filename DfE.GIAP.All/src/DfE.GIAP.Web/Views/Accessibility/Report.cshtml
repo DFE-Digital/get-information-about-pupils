@@ -1,12 +1,123 @@
-﻿@model AccessibilityViewModel
-@{
-    ViewData["Title"] = @Html.Raw(Model.Response.Title);
+﻿@{
+    ViewData["Title"] = "Accessibility Assessment Report";
 }
 
 <div class="govuk-width-container">
-    <h1 id="accessibility-report--heading--text" class="govuk-heading-xl">@Html.Raw(Model.Response.Title)</h1>
+    <h1 id="accessibility-report--heading--text" class="govuk-heading-xl">Accessibility assessment report</h1>
 
     <div class="govuk-grid-row">
-        @Html.Raw(Model.Response.Body)
+        <div class="govuk-grid-column-one-third">
+            <h2 class="govuk-heading-l">Contents</h2>
+
+            <p class="govuk-body">
+                <a href="#TOC1" class="govuk-link govuk-link--no-underline">Testing scope</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC2" class="govuk-link govuk-link--no-underline">Limitations</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC3" class="govuk-link govuk-link--no-underline">Testing standards</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC4" class="govuk-link govuk-link--no-underline">Devices</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC5" class="govuk-link govuk-link--no-underline">Operating Systems</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC6" class="govuk-link govuk-link--no-underline">Accessibility software</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC7" class="govuk-link govuk-link--no-underline">Test findings</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC8" class="govuk-link govuk-link--no-underline">Overall findings and recommendations</a>
+            </p>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <div id="TOC1">
+                <h2 class="govuk-heading-l">Testing scope</h2>
+                <p class="govuk-body">
+                    Through completing user journeys and automated testing, the team have completed accessibility assurance testing on your service. Testing was completed on 28/08/2020.
+                </p>
+            </div>
+
+            <div id="TOC2">
+                <h2 class="govuk-heading-l">Limitations</h2>
+                <p class="govuk-body">However, the following limitations of our testing must be noted:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>We cannot test the service on every available internet browser; therefore, we cannot guarantee universal compatibility.</li>
+                    <li>We cannot test the service within every operating system.</li>
+                    <li>We cannot test the service with every Accessibility software package.</li>
+                    <li>We cannot provide mobile app accessibility testing.</li>
+                </ul>
+            </div>
+
+            <div id="TOC3">
+                <h2 class="govuk-heading-l">Testing standards</h2>
+                <p class="govuk-body">
+                    The Web Content Accessibility Guidelines (known as WCAG 2.1) are an internationally recognised set of recommendations for improving web accessibility. Our team uses these standards in testing to help determine a service’s level of Accessibility.
+                </p>
+                <p class="govuk-body">
+                    In the UK, the Web Accessibility Regulations 2018 stipulate that public websites and mobile apps must be WCAG 2.1 Level AA compliant. In following with industry best practice and globally recognised standards, we will use the WCAG 2.1 AA standards during our testing.
+                </p>
+            </div>
+
+            <div id="TOC4">
+                <h2 class="govuk-heading-l">Devices</h2>
+                <p class="govuk-body">The team completed testing on a variety of devices; including:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>A Macbook (2016) device</li>
+                    <li>A Microsoft Surface Book (64-bit operating system - DfE Device)</li>
+                </ul>
+                <p class="govuk-body">Please note: We have not tested on a Chromebook.</p>
+            </div>
+
+            <div id="TOC5">
+                <h2 class="govuk-heading-l">Operating Systems</h2>
+                <p class="govuk-body">The team have tested the following operating systems:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>macOS</li>
+                    <li>Windows 10</li>
+                </ul>
+            </div>
+
+            <div id="TOC6">
+                <h2 class="govuk-heading-l">Accessibility software</h2>
+                <p class="govuk-body">The team tested using the following:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li><b>JAWS (2020)</b> - a screen reader (text to speech) program developed for users whose vision loss prevents them from seeing screen content or navigating with a mouse. JAWS provides speech and Braille output for the most popular computer applications.</li>
+                    <li><b>Windows Narrator</b> - a screen reader (text to speech) program inbuilt within windows 10 operating system for users with vision loss.</li>
+                    <li><b>Voiceover </b> - a screen reader (text to speech) program inbuilt within macOS operating system for users with vision loss.</li>
+                </ul>
+            </div>
+
+            <div id="TOC7">
+                <h2 class="govuk-heading-l">Test findings</h2>
+                <h3 class="govuk-heading-m">Automated Testing: General Findings</h3>
+                <p class="govuk-body"><b>No Issues Identified</b></p>
+                <p class="govuk-body">After completing automated testing on your service we did not identify any automated testing issues.</p>
+
+                <h3 class="govuk-heading-m">Manual Testing: General Findings</h3>
+                <p class="govuk-body"><b>No Issues Identified</b></p>
+                <p class="govuk-body">After completing testing on your service we did not identify any manual testing issues.</p>
+
+                <h3 class="govuk-heading-m">Other Findings: Adding Students to “My Pupil List”</h3>
+                <p class="govuk-body">We were not able to add students to “My Pupil List”, therefore this was not tested. As the service is still in development we have listed this in other findings and is not necessarily and accessibility issue but a more general issue with the service.</p>
+            </div>
+
+            <div id="TOC8">
+                <h2 class="govuk-heading-l">Overall Findings and Recommendations</h2>
+                <p class="govuk-body">Based on our testing which was completed on 28/08/2020, the system is accessible to users of assistive technology and meets WCAG 2.1 AA Level of compliance.</p>
+
+                <p class="govuk-body">
+                    For more information on accessibility statements please visit
+                    <a id="accessibility--eass--link" href="https://gds.blog.gov.uk/2019/05/21/accessibility-update-sample-accessibility-statement-monitoring-and-enforcement/" class="govuk-link" target="_blank">
+                        https://gds.blog.gov.uk/2019/05/21/accessibility-update-sample-accessibility-statement-monitoring-and-enforcement/
+                    </a>
+                </p>
+            </div>
+        </div>
     </div>
 </div>

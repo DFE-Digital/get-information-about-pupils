@@ -1,0 +1,33 @@
+﻿@model ManageDocumentsViewModel
+@{
+    ViewBag.Title = "Create news article";
+}
+
+<div class="govuk-width-container">
+    <partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
+
+    <h1 class="govuk-heading-xl">Create news article</h1>
+
+    <form method="post">
+        <div class="govuk-form-group">
+            <div class="govuk-checkboxes govuk-!-margin-bottom-4" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="DocumentData.Pinned" name="DocumentData.Pinned" type="checkbox">
+                    <label for="DocumentData_Pinned" class="govuk-label govuk-checkboxes__label">Pinned</label>
+                </div>
+
+                <div class="govuk-checkboxes__item">
+                    <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="DocumentData.Published" name="DocumentData.Published" type="checkbox">
+                    <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
+                </div>
+            </div>
+
+            <partial name="~/Views/Admin/ManageNewsArticles/_DocumentFields.cshtml" for="DocumentData" />
+
+            <div class="govuk-button-group">
+                <a asp-controller="ManageNewsArticles" asp-action="ManageNewsArticles" id="discard-document--button" name="discard" class="govuk-button govuk-button--secondary">Discard</a>
+                <button asp-controller="ManageNewsArticles" asp-action="CreateNewsArticle" id="CreateNewsArticle--button" name="Create" class="govuk-button">Save</button>
+            </div>
+        </div>
+    </form>
+</div>

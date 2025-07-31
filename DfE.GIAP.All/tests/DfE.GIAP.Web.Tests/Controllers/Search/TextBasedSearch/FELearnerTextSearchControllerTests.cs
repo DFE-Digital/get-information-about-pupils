@@ -6,7 +6,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
@@ -35,7 +34,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
         private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
         private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
         private readonly ICommonService _mockCommonService = Substitute.For<ICommonService>();
-        private readonly IContentService _mockContentService = Substitute.For<IContentService>();
         private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
         private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
         private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
@@ -74,7 +72,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
 
             _mockSelectionManager.Received().Clear();
             AssertAbstractValues(sut, model);
-            AssertContentServicePublicationValues(model);
             Assert.True(string.IsNullOrEmpty(model.SearchText));
         }
         [Fact]
@@ -104,7 +101,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var model = viewResult.Model as LearnerTextSearchViewModel;
 
             AssertAbstractValues(sut, model);
-            AssertContentServicePublicationValues(model);
 
             Assert.True(string.IsNullOrEmpty(model.SearchText));
             Assert.False(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
@@ -137,7 +133,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var model = viewResult.Model as LearnerTextSearchViewModel;
 
             AssertAbstractValues(sut, model);
-            AssertContentServicePublicationValues(model);
             Assert.Equal(searchText, model.SearchText);
             Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         }
@@ -1131,7 +1126,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 Title = "Title",
                 Body = "Body"
             };
-            _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(expectedCommonResponseBody);
         }
 
         private void AssertAbstractValues(FELearnerTextSearchController controller, LearnerTextSearchViewModel model)
@@ -1145,11 +1139,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             Assert.Equal(controller.SearchLearnerNumberAction, model.LearnerNumberAction);
         }
 
-        private void AssertContentServicePublicationValues(LearnerTextSearchViewModel model)
-        {
-            Assert.Equal("PublicationSchedule", model.DataReleaseTimeTable.NewsPublication.Id);
-            Assert.Equal("Body", model.DataReleaseTimeTable.NewsPublication.Body);
-        }
 
         private FELearnerTextSearchController GetController()
         {
@@ -1171,7 +1160,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 _mockPaginatedService,
                 _mockMplService,
                 _mockSelectionManager,
-                _mockContentService,
                 _mockDownloadService,
                 _mockAppOptions)
             {

@@ -1,12 +1,153 @@
-﻿@model AccessibilityViewModel
-@{
-    ViewData["Title"] = @Html.Raw(Model.Response.Title);
+﻿@{
+    ViewData["Title"] = "Accessibility Statement";
 }
 
 <div class="govuk-width-container">
-    <h1 id="accessibility--heading--text" class="govuk-heading-xl">@Html.Raw(Model.Response.Title)</h1>
+    <h1 id="accessibility-report--heading--text" class="govuk-heading-xl">Accessibility statement</h1>
 
     <div class="govuk-grid-row">
-        @Html.Raw(Model.Response.Body)
+        <div class="govuk-grid-column-one-third">
+            <h2 class="govuk-heading-l">Contents</h2>
+
+            <p class="govuk-body">
+                <a href="#TOC1" class="govuk-link govuk-link--no-underline">Accessibility for Get information about pupils (GIAP)</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC2" class="govuk-link govuk-link--no-underline">Using the service</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC3" class="govuk-link govuk-link--no-underline">How accessible this website is</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC4" class="govuk-link govuk-link--no-underline">What to do if you have difficulty using this service</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC5" class="govuk-link govuk-link--no-underline">Reporting accessibility problems with the website</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC6" class="govuk-link govuk-link--no-underline">Enforcement procedure</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC7" class="govuk-link govuk-link--no-underline">Contacting us</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC8" class="govuk-link govuk-link--no-underline">Technical information about this website's accessibility</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC9" class="govuk-link govuk-link--no-underline">Compliance status</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC10" class="govuk-link govuk-link--no-underline">Preparation of this accessibility statement</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC11" class="govuk-link govuk-link--no-underline">Full audit report</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC12" class="govuk-link govuk-link--no-underline">What we're doing to improve accessibility</a>
+            </p>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <div id="TOC1">
+                <h2 class="govuk-heading-l">Accessibility for Get information about pupils (GIAP)</h2>
+                <p class="govuk-body">
+                    This service is part of the wider GOV.UK website. There's a separate accessibility statement for the main GOV .UK web site.
+                </p>
+                <p class="govuk-body">
+                    The page only contains information about the Get information about pupils (GIAP) service. This is a closed service provided, via the DfE Sign-in system, to local authorities, multi and single academy trusts and schools. The service provides access to individual pupil data on attainment and pupil premium.
+                </p>
+            </div>
+
+            <div id="TOC2">
+                <h2 class="govuk-heading-l">Using the service</h2>
+                <p class="govuk-body">This service is run by the Department for Education. We want as many people as possible to be able to use this service. For example, that means you should be able to:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>change colours, contrast levels and fonts</li>
+                    <li>zoom in up to 300% without the text spilling off the screen</li>
+                    <li>navigate most of the website using just a keyboard</li>
+                    <li>navigate most of the website using speech recognition software</li>
+                    <li>listen to most of the website using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)</li>
+                </ul>
+                <p class="govuk-body">We've also made the website text as simple as possible to understand.</p>
+                <p class="govuk-body">
+                    <a href="https://mcmw.abilitynet.org.uk/" class="govuk-link" target="_blank">
+                        AbilityNet
+                    </a> has advice on making your device easier to use if you have a disability.
+                </p>
+            </div>
+
+            <div id="TOC3">
+                <h2 class="govuk-heading-l">How accessible this website is</h2>
+                <p class="govuk-body">Some people may find parts of the service difficult to use:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>some text will not reflow in a single column when you change the size of the browser window</li>
+                    <li>you cannot modify the line height or spacing of text</li>
+                    <li>you cannot skip to the main content when using a screen reader</li>
+                </ul>
+            </div>
+
+            <div id="TOC4">
+                <h2 class="govuk-heading-l">What to do if you have difficulty using this service</h2>
+                <p class="govuk-body">If you have difficulty using this service, contact us by clicking on the contact link in the page footer.</p>
+            </div>
+
+            <div id="TOC5">
+                <h2 class="govuk-heading-l">Reporting accessibility problems with the website</h2>
+                <p class="govuk-body">We're always looking to improve the accessibility of this website. If you find any problems not listed on this page or think we're not meeting accessibility requirements, please contact us using the contact link in the page footer.</p>
+            </div>
+
+            <div id="TOC6">
+                <h2 class="govuk-heading-l">Enforcement procedure</h2>
+                <p class="govuk-body">
+                    The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public
+                    Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018
+                    (the ‘accessibility regulations'). If you're not happy with how we respond to your complaint,
+                    contact the <a href="https://www.equalityadvisoryservice.com/" class="govuk-link" target="_blank">Equality Advisory and Support Service (EASS)</a>.
+                </p>
+            </div>
+
+            <div id="TOC7">
+                <h2 class="govuk-heading-l">Contacting us</h2>
+                <p class="govuk-body">You can contact us about this service using the contact link in the page footer.</p>
+                <p class="govuk-body">
+                    If your query is about anything else or you need to contact us by phone, you can find out
+                    how to contact us at <a id="accessibility--contactdfe--link" href="https://www.gov.uk/contact-dfe" class="govuk-link" target="_blank">www.gov.uk/contact-dfe</a>.
+                </p>
+            </div>
+
+            <div id="TOC8">
+                <h2 class="govuk-heading-l">Technical information about this website's accessibility</h2>
+                <p class="govuk-body">
+                    The Department for Education is committed to making this service accessible, in accordance
+                    with the <a id="accessibility--psb--link" href="https://www.legislation.gov.uk/uksi/2018/952/made" class="govuk-link" target="_blank">
+                        Public Sector Bodies (Websites and Mobile Applications) (No. 2)
+                        Accessibility Regulations 2018
+                    </a>.
+                </p>
+            </div>
+
+            <div id="TOC9">
+                <h2 class="govuk-heading-l">Compliance status</h2>
+                <p class="govuk-body">
+                    This website is fully compliant with the
+                    <a id="accessibility--wcag--link" href="https://www.w3.org/TR/WCAG21/" class="govuk-link" target="_blank">Web Content Accessibility Guidelines version 2.1</a> AA standard.
+                </p>
+            </div>
+
+            <div id="TOC10">
+                <h2 class="govuk-heading-l">Preparation of this accessibility statement</h2>
+                <p class="govuk-body">This statement was prepared on 6 October 2020. It was last reviewed on 6 October 2020.</p>
+                <p class="govuk-body">
+                    This website was last tested on 28 August 2020. The test was carried out by the Department for
+                    Education Technology Services Accessibility Compliance team.
+                    You can access the <a name="_Report" class="govuk-link" href="/accessibility/report" id="TOC11">full audit report</a> here.
+                </p>
+            </div>
+
+            <div id="TOC12">
+                <h2 class="govuk-heading-l">What we're doing to improve accessibility</h2>
+                <p class="govuk-body">We continually review and test our service with users including users of assistive technology. When accessibility issues are found we will always prioritise this within our work plans.</p>
+            </div>
+        </div>
     </div>
 </div>
