@@ -2,7 +2,6 @@
 using DfE.GIAP.Web.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace DfE.GIAP.Web.Controllers;
 
@@ -19,7 +18,7 @@ public class ServiceTimeoutController
 
     [HttpPost]
     [AllowWithoutConsent]
-    public JsonResult KeepSessionAlive() => new JsonResult("SessionPersisted");
+    public JsonResult KeepSessionAlive() => new("SessionPersisted");
 
     [HttpGet]
     [AllowWithoutConsent]
