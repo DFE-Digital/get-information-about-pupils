@@ -5,13 +5,11 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.ViewModels.Helper;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,7 +31,6 @@ namespace DfE.GIAP.Web.Controllers
         public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
         private readonly ILogger<BaseLearnerNumberController> _logger;
-        private readonly IContentService _contentService;
         private readonly IPaginatedSearchService _paginatedSearch;
         protected readonly ISelectionManager _selectionManager;
 
@@ -68,13 +65,10 @@ namespace DfE.GIAP.Web.Controllers
             IPaginatedSearchService paginatedSearch,
             IMyPupilListService mplService,
             ISelectionManager selectionManager,
-            IContentService contentService,
             IOptions<AzureAppSettings> azureAppSettings)
         {
             _logger = logger ??
                 throw new ArgumentNullException(nameof(logger));
-            _contentService = contentService ??
-                throw new ArgumentNullException(nameof(contentService));
             _paginatedSearch = paginatedSearch ??
                 throw new ArgumentNullException(nameof(paginatedSearch));
             _selectionManager = selectionManager ??
