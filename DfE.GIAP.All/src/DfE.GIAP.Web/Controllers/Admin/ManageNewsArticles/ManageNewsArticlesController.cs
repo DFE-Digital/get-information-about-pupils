@@ -11,8 +11,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Web.ViewModels.Admin;
-using DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
+using DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -61,46 +60,62 @@ public class ManageNewsArticlesController : Controller
     [Route("manage-news-articles")]
     public async Task<IActionResult> ManageNewsArticles()
     {
-        ManageDocumentsViewModel model = new()
+        GetNewsArticlesRequest request = new(NewsArticleSearchFilter.PublishedAndNotPublished);
+        GetNewsArticlesResponse response = await _getNewsArticlesUseCase
+            .HandleRequestAsync(request)
+            .ConfigureAwait(false);
+
+        List<Document> newsList = response.NewsArticles
+            .Select(news => new Document
+            {
+                DocumentId = news.Id.Value,
+                DocumentName = FormatNewsArticleName(news)
+            })
+            .ToList();
+
+        return View("../Admin/ManageNewsArticles/ManageNewsArticles", new ManageNewsArticlesViewModel()
         {
+            SelectedNewsId = string.Empty,
+            NewsArticleList = new SelectList(newsList, nameof(Document.DocumentId), nameof(Document.DocumentName)),
             BackButton = new()
             {
                 IsBackButtonEnabled = true,
                 PreviousController = "Admin",
                 PreviousAction = "Index"
             }
-        };
+        });
+    }
 
-        await LoadNewsArticles().ConfigureAwait(false);
-        return View("../Admin/ManageNewsArticles/ManageNewsArticles", model);
+    [HttpPost]
+    public IActionResult SelectNewsArticle(ManageNewsArticlesViewModel viewModel)
+    {
+        TempData["SelectedNewsId"] = viewModel.SelectedNewsId;
+        return RedirectToAction("EditNewsArticle");
     }
 
     [HttpGet]
     [Route(Routes.ManageNewsArticles.CreateNewsArticle)]
     public IActionResult CreateNewsArticle()
     {
-        ManageDocumentsViewModel manageDocumentsModel = new()
+        return View("../Admin/ManageNewsArticles/CreateNewsArticle", new CreateNewsArticleViewModel
         {
             BackButton = new(
                 isBackButtonEnabled: true,
                 previousController: "ManageNewsArticles",
                 previousAction: "ManageNewsArticles")
-        };
-
-        return View("../Admin/ManageNewsArticles/CreateNewsArticle", manageDocumentsModel);
+        });
     }
 
     [HttpPost]
     [Route(Routes.ManageNewsArticles.CreateNewsArticle)]
-    public async Task<IActionResult> CreateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
+    public async Task<IActionResult> CreateNewsArticle(CreateNewsArticleViewModel viewModel)
     {
         if (!ModelState.IsValid)
         {
-            return View("../Admin/ManageNewsArticles/CreateNewsArticle", manageDocumentsModel);
+            return View("../Admin/ManageNewsArticles/CreateNewsArticle", viewModel);
         }
 
-        // TODO: Change to use specific view models, move away from "ManageDocumentsViewModel"
-        CommonResponseBodyViewModel userInputs = manageDocumentsModel.DocumentData;
+        NewsArticleViewModel userInputs = viewModel.NewsArticle;
         CreateNewsArticleRequest request = new(
             Title: userInputs.Title,
             Body: userInputs.Body,
@@ -118,9 +133,9 @@ public class ManageNewsArticlesController : Controller
 
     [HttpPost]
     [Route(Routes.ManageNewsArticles.DeleteNewsArticle)]
-    public async Task<IActionResult> DeleteNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
+    public async Task<IActionResult> DeleteNewsArticle(ManageNewsArticlesViewModel viewModel)
     {
-        string articleId = manageDocumentsModel.SelectedNewsId;
+        string articleId = viewModel.SelectedNewsId;
 
         DeleteNewsArticleRequest deleteRequest = new(NewsArticleIdentifier.From(articleId));
         await _deleteNewsArticleUseCase.HandleRequestAsync(deleteRequest);
@@ -146,7 +161,7 @@ public class ManageNewsArticlesController : Controller
 
         ArgumentNullException.ThrowIfNull(response.NewsArticle);
 
-        ManageDocumentsViewModel manageDocumentsModel = new()
+        return View("../Admin/ManageNewsArticles/EditNewsArticle", new EditNewsArticleViewModel()
         {
             SelectedNewsId = selectedNewsId,
             NewsArticle = new NewsArticleViewModel
@@ -158,28 +173,31 @@ public class ManageNewsArticlesController : Controller
                 Published = response.NewsArticle.Published,
                 CreatedDate = response.NewsArticle.CreatedDate,
                 ModifiedDate = response.NewsArticle.ModifiedDate
+            },
+            BackButton = new BackButtonViewModel
+            {
+                IsBackButtonEnabled = true,
+                PreviousController = "ManageNewsArticles",
+                PreviousAction = "ManageNewsArticles"
             }
-        };
-
-        return View("../Admin/ManageNewsArticles/EditNewsArticle", manageDocumentsModel);
+        });
     }
 
     [HttpPost]
     [Route(Routes.ManageNewsArticles.EditNewsAricle)]
-    public async Task<IActionResult> UpdateNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
+    public async Task<IActionResult> UpdateNewsArticle(EditNewsArticleViewModel viewModel)
     {
-        // TODO: Change to use specific view models, move away from "ManageDocumentsViewModel"
         if (!ModelState.IsValid)
         {
-            return View("../Admin/ManageNewsArticles/EditNewsArticle", manageDocumentsModel);
+            return View("../Admin/ManageNewsArticles/EditNewsArticle", viewModel);
         }
 
-        UpdateNewsArticlesRequestProperties updateProperties = new(id: manageDocumentsModel.NewsArticle.Id)
+        UpdateNewsArticlesRequestProperties updateProperties = new(id: viewModel.NewsArticle.Id)
         {
-            Title = _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Title),
-            Body = _textSanitiserInvoker.Sanitise(manageDocumentsModel.NewsArticle.Body),
-            Pinned = manageDocumentsModel.NewsArticle.Pinned,
-            Published = manageDocumentsModel.NewsArticle.Published,
+            Title = _textSanitiserInvoker.Sanitise(viewModel.NewsArticle.Title),
+            Body = _textSanitiserInvoker.Sanitise(viewModel.NewsArticle.Body),
+            Pinned = viewModel.NewsArticle.Pinned,
+            Published = viewModel.NewsArticle.Published,
         };
 
         await _updateNewsArticleUseCase.HandleRequestAsync(
@@ -192,38 +210,7 @@ public class ManageNewsArticlesController : Controller
         });
     }
 
-    [HttpPost]
-    public IActionResult SelectNewsArticle(ManageDocumentsViewModel manageDocumentsModel)
-    {
-        if (string.IsNullOrEmpty(manageDocumentsModel.SelectedNewsId))
-        {
-            manageDocumentsModel.HasInvalidNewsList = true;
-            ModelState.AddModelError("SelectNewsArticle", Messages.Common.Errors.NewsArticleRequired);
-            return View("YourViewName", manageDocumentsModel);
-        }
-
-        TempData["SelectedNewsId"] = manageDocumentsModel.SelectedNewsId;
-        return RedirectToAction("EditNewsArticle");
-    }
-
     // Helper methods
-    private async Task LoadNewsArticles()
-    {
-        GetNewsArticlesRequest request = new GetNewsArticlesRequest(NewsArticleSearchFilter.PublishedAndNotPublished);
-        GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
-
-        List<Document> newsList = response.NewsArticles
-            .Select(news => new Document
-            {
-                DocumentId = news.Id.Value,
-                DocumentName = FormatNewsArticleName(news)
-            })
-            .ToList();
-
-        ViewBag.IsSuccess = newsList.Any();
-        ViewBag.NewsDocuments = new SelectList(newsList, nameof(Document.DocumentId), nameof(Document.DocumentName));
-    }
-
     private static string FormatNewsArticleName(NewsArticle news)
     {
         string status = news.Published ? "Published" : "Draft";

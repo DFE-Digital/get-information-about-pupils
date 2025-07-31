@@ -7,8 +7,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Web.Controllers.Admin.ManageNewsArticles;
-using DfE.GIAP.Web.ViewModels.Admin;
-using DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
+using DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -48,7 +47,7 @@ public class ManageNewsArticlesControllerTests
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageNewsArticles/CreateNewsArticle", viewResult.ViewName);
-        Assert.IsType<ManageDocumentsViewModel>(viewResult.Model);
+        Assert.IsType<CreateNewsArticleViewModel>(viewResult.Model);
     }
 
     [Fact]
@@ -57,7 +56,7 @@ public class ManageNewsArticlesControllerTests
         ManageNewsArticlesController controller = CreateController();
         controller.ModelState.AddModelError("Title", "Required");
 
-        ManageDocumentsViewModel model = new();
+        CreateNewsArticleViewModel model = new();
 
         IActionResult result = await controller.CreateNewsArticle(model);
 
@@ -70,9 +69,9 @@ public class ManageNewsArticlesControllerTests
     public async Task CreateNewsArticle_Post_ValidModel_CallsUseCaseAndReturnsConfirmation()
     {
         ManageNewsArticlesController controller = CreateController();
-        ManageDocumentsViewModel model = new()
+        CreateNewsArticleViewModel model = new()
         {
-            DocumentData = new()
+            NewsArticle = new()
             {
                 Title = "Test Title",
                 Body = "Test Body",
@@ -94,7 +93,7 @@ public class ManageNewsArticlesControllerTests
     public async Task DeleteNewsArticle_ValidId_CallsUseCaseAndReturnsConfirmationView()
     {
         ManageNewsArticlesController controller = CreateController();
-        ManageDocumentsViewModel model = new() { SelectedNewsId = "123" };
+        ManageNewsArticlesViewModel model = new() { SelectedNewsId = "123" };
 
         IActionResult result = await controller.DeleteNewsArticle(model);
 
@@ -110,7 +109,7 @@ public class ManageNewsArticlesControllerTests
         ManageNewsArticlesController controller = CreateController();
         controller.ModelState.AddModelError("Title", "Required");
 
-        ManageDocumentsViewModel model = new();
+        EditNewsArticleViewModel model = new();
 
         IActionResult result = await controller.UpdateNewsArticle(model);
 
@@ -123,7 +122,7 @@ public class ManageNewsArticlesControllerTests
     public async Task UpdateNewsArticle_ValidModel_CallsUseCaseAndReturnsConfirmation()
     {
         ManageNewsArticlesController controller = CreateController();
-        ManageDocumentsViewModel model = new()
+        EditNewsArticleViewModel model = new()
         {
             NewsArticle = new NewsArticleViewModel
             {
@@ -143,31 +142,5 @@ public class ManageNewsArticlesControllerTests
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
-    }
-
-    [Fact]
-    public void SelectNewsArticle_EmptyId_ReturnsSameViewWithError()
-    {
-        ManageNewsArticlesController controller = CreateController();
-        ManageDocumentsViewModel model = new() { SelectedNewsId = "" };
-
-        IActionResult result = controller.SelectNewsArticle(model);
-
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.True(model.HasInvalidNewsList);
-        Assert.True(controller.ModelState.ContainsKey("SelectNewsArticle"));
-    }
-
-    [Fact]
-    public void SelectNewsArticle_ValidId_SetsTempDataAndRedirects()
-    {
-        ManageNewsArticlesController controller = CreateController();
-        ManageDocumentsViewModel model = new() { SelectedNewsId = "123" };
-
-        IActionResult result = controller.SelectNewsArticle(model);
-
-        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal("EditNewsArticle", redirectResult.ActionName);
-        Assert.Equal("123", controller.TempData["SelectedNewsId"]);
     }
 }

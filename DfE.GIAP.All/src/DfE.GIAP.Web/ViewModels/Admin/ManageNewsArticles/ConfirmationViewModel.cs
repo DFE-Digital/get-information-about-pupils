@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.ViewModels.Admin.ManageDocuments;
+﻿namespace DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 
 public class ConfirmationViewModel
 {
