@@ -58,30 +58,6 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsInfrastructureSearch(this IServiceCollection services)
     {
         // Temporary Search Options
-
-        /*
-         {
-         "SearchIndexOptions": {
-            
-              "Url" : "https://..",
-              "Key" : "cogsearch-key",
-              "Indexes": {
-                 "npd": {
-                   "Name": "npd"
-                 },
-                 "pupil-premium": {
-                   "Name": "pupil-premium"
-                 }
-               }
-
-            }
-         * 
-         * }
-         * 
-         * 
-         */
-
-
         services.AddOptions<SearchIndexOptions>()
             .Configure<IConfiguration>((options, config) =>
             {
