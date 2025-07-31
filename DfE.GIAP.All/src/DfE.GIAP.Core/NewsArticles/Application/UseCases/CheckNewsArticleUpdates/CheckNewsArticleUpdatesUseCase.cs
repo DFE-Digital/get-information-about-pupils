@@ -23,12 +23,11 @@ public class CheckNewsArticleUpdatesUseCase : IUseCase<CheckNewsArticleUpdatesRe
 
     public async Task<CheckNewsArticleUpdateResponse> HandleRequestAsync(CheckNewsArticleUpdatesRequest request)
     {
+        User user = await _userReadOnlyRepository
+            .GetUserByIdAsync(new UserId(request.UserId));
 
-        User user = await _userReadOnlyRepository.GetUserByIdAsync(new UserId(request.UserId));
-
-        // Pass User LastAccessedDateTime to the repository
-
-        bool hasUpdated = await _newsArticleReadRepository.HasArticlesBeenModifiedSinceAsync(DateTime.UtcNow.AddMinutes(-5));
+        bool hasUpdated = await _newsArticleReadRepository
+            .HasArticlesBeenModifiedSinceAsync(user.LatestNewsAccessedDateTime);
 
         return new CheckNewsArticleUpdateResponse(hasUpdated);
     }

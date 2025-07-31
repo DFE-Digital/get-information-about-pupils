@@ -37,7 +37,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
-            .AddSingleton<IMapper<UserDto, User>, MapUserProfileDtoToUserMapper>();
+            .AddSingleton<IMapper<UserDto, User>, UserProfileDtoToUserMapper>();
 
         return services;
     }

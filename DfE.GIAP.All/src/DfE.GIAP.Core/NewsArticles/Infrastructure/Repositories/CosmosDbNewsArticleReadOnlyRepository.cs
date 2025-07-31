@@ -53,11 +53,7 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
 
     public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            _logger.LogCritical("GetNewsArticleByIdAsync called with null or empty id.");
-            throw new ArgumentException("Id must not be null or empty.", nameof(id));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
         try
         {
@@ -104,7 +100,6 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
             return [];
         }
     }
-
 
 
     public async Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime)

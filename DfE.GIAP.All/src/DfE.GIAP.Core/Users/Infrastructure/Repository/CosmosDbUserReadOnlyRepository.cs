@@ -34,6 +34,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
     {
         try
         {
+            // TODO: An assumption the users have been migrated to User container
             UserDto userDto =
                 await _cosmosDbQueryHandler.ReadItemByIdAsync<UserDto>(
                     id: id.Value,
@@ -42,8 +43,8 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
                     ctx);
 
             ArgumentNullException.ThrowIfNull(userDto);
-
             User user = _userMapper.Map(userDto);
+
             return user;
         }
         catch (CosmosException ex)
