@@ -89,7 +89,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         AdminViewModel model = new()
         {
-            SelectedAdminOption = "ManageDocuments"
+            SelectedAdminOption = "ManageNewsArticles"
         };
 
         // Act
@@ -97,8 +97,8 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         // Assert
         RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
-        Assert.Equal("ManageDocuments", viewResult.ControllerName);
-        Assert.Equal("ManageDocuments", viewResult.ActionName);
+        Assert.Equal("ManageNewsArticles", viewResult.ControllerName);
+        Assert.Equal("ManageNewsArticles", viewResult.ActionName);
     }
 
     [Fact]

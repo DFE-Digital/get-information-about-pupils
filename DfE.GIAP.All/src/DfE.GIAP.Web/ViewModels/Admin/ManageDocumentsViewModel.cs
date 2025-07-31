@@ -11,9 +11,7 @@ public class ManageDocumentsViewModel
     public Document DocumentList { get; set; }
     public CommonResponseBodyViewModel DocumentData { get; set; }
     public string SelectedNewsId { get; set; }
-    public bool HasInvalidDocumentList { get; set; }
     public bool HasInvalidNewsList { get; set; }
-    public Confirmation Confirmation { get; set; }
     public NewsArticleViewModel NewsArticle { get; set; }
     public BackButtonViewModel BackButton { get; set; }
 }
