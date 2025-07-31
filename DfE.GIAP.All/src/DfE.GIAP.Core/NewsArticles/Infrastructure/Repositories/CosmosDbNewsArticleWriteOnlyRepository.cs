@@ -13,15 +13,15 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 /// <remarks>This repository is responsible for handling write operations for news articles in the Cosmos DB. It
 /// uses a command handler to interact with the database and a mapper to convert between domain entities and data
 /// transfer objects.</remarks>
-internal class CosmosNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepository
+internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosNewsArticleWriteOnlyRepository> _logger;
+    private readonly ILogger<CosmosDbNewsArticleWriteOnlyRepository> _logger;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
     private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
-    public CosmosNewsArticleWriteOnlyRepository(
-        ILogger<CosmosNewsArticleWriteOnlyRepository> logger,
+    public CosmosDbNewsArticleWriteOnlyRepository(
+        ILogger<CosmosDbNewsArticleWriteOnlyRepository> logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
         IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {
@@ -55,7 +55,7 @@ internal class CosmosNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in CreateNewsArticleAsync.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(CreateNewsArticleAsync)}.");
             throw;
         }
     }
@@ -74,7 +74,7 @@ internal class CosmosNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in DeleteNewsArticleAsync.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(DeleteNewsArticleAsync)}.");
             throw;
         }
     }
@@ -98,7 +98,7 @@ internal class CosmosNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in UpdateNewsArticleAsync.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(UpdateNewsArticleAsync)}.");
             throw;
         }
     }

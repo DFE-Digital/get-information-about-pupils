@@ -13,15 +13,15 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 /// Repository for reading news articles from Azure Cosmos DB.
 /// Implements <see cref="INewsArticleReadOnlyRepository"/> for querying news data.
 /// </summary>
-internal class CosmosNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
+internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosNewsArticleReadOnlyRepository> _logger;
+    private readonly ILogger<CosmosDbNewsArticleReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
-    public CosmosNewsArticleReadOnlyRepository(
-        ILogger<CosmosNewsArticleReadOnlyRepository> logger,
+    public CosmosDbNewsArticleReadOnlyRepository(
+        ILogger<CosmosDbNewsArticleReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {
@@ -68,7 +68,7 @@ internal class CosmosNewsArticleReadOnlyRepository : INewsArticleReadOnlyReposit
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in GetNewsArticleByIdAsync for id: {Id}", id);
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetNewsArticleByIdAsync)} for id: {id}");
             return null;
         }
     }
@@ -100,7 +100,7 @@ internal class CosmosNewsArticleReadOnlyRepository : INewsArticleReadOnlyReposit
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in GetNewsArticlesAsync.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetNewsArticlesAsync)}.");
             return [];
         }
     }
@@ -119,7 +119,7 @@ internal class CosmosNewsArticleReadOnlyRepository : INewsArticleReadOnlyReposit
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in HasArticlesModifiedSinceAsync.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(HasArticlesBeenModifiedSinceAsync)}.");
             return false;
         }
     }
