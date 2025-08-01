@@ -11,17 +11,17 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository for reading news articles from Azure Cosmos DB.
-/// Implements <see cref="INewsArticleReadRepository"/> for querying news data.
+/// Implements <see cref="INewsArticleReadOnlyRepository"/> for querying news data.
 /// </summary>
-internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
+internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosNewsArticleReadRepository> _logger;
+    private readonly ILogger<CosmosDbNewsArticleReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
-    public CosmosNewsArticleReadRepository(
-        ILogger<CosmosNewsArticleReadRepository> logger,
+    public CosmosDbNewsArticleReadOnlyRepository(
+        ILogger<CosmosDbNewsArticleReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {
@@ -53,11 +53,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
 
     public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            _logger.LogCritical("GetNewsArticleByIdAsync called with null or empty id.");
-            throw new ArgumentException("Id must not be null or empty.", nameof(id));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
         try
         {
@@ -68,7 +64,7 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in GetNewsArticleByIdAsync for id: {Id}", id);
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetNewsArticleByIdAsync)} for id: {id}");
             return null;
         }
     }
@@ -100,8 +96,26 @@ internal class CosmosNewsArticleReadRepository : INewsArticleReadRepository
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "CosmosException in GetNewsArticlesAsync.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetNewsArticlesAsync)}.");
             return [];
+        }
+    }
+
+
+    public async Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime)
+    {
+        try
+        {
+            string isoDate = expectedTime.ToString("o");
+            string query = $"SELECT TOP 1 * FROM c WHERE c.lastModifiedTime > '{isoDate}' AND c.isPublished = true";
+
+            IEnumerable<NewsArticleDto> results = await _cosmosDbQueryHandler.ReadItemsAsync<NewsArticleDto>(ContainerName, query);
+            return results.Any();
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogCritical(ex, $"CosmosException in {nameof(HasArticlesBeenModifiedSinceAsync)}.");
+            return false;
         }
     }
 }

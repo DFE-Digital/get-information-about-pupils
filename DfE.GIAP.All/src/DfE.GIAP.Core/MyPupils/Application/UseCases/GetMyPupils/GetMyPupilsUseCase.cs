@@ -4,8 +4,8 @@ using DfE.GIAP.Core.MyPupils.Application.Services;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Application.Repository;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Repository;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
@@ -27,7 +27,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
         UserId userId = new(request.UserId);
-        User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
+        User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
         if (!user.UniquePupilNumbers.Any())
         {

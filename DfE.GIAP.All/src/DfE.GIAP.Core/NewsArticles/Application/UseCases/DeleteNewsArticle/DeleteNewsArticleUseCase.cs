@@ -10,9 +10,9 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 /// operation to the appropriate repository. The request must include a valid article ID.</remarks>
 public class DeleteNewsArticleUseCase : IUseCaseRequestOnly<DeleteNewsArticleRequest>
 {
-    private readonly INewsArticleWriteRepository _newsArticleWriteRepository;
+    private readonly INewsArticleWriteOnlyRepository _newsArticleWriteRepository;
 
-    public DeleteNewsArticleUseCase(INewsArticleWriteRepository newsArticleWriteRepository)
+    public DeleteNewsArticleUseCase(INewsArticleWriteOnlyRepository newsArticleWriteRepository)
     {
         ArgumentNullException.ThrowIfNull(newsArticleWriteRepository);
         _newsArticleWriteRepository = newsArticleWriteRepository;

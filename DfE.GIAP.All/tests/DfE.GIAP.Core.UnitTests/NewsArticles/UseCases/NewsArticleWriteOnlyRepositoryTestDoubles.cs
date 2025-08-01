@@ -1,7 +1,7 @@
 ﻿namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 internal static class NewsArticleWriteOnlyRepositoryTestDoubles
 {
-    internal static Mock<INewsArticleWriteRepository> Default() => CreateMock();
+    internal static Mock<INewsArticleWriteOnlyRepository> Default() => CreateMock();
 
-    private static Mock<INewsArticleWriteRepository> CreateMock() => new();
+    private static Mock<INewsArticleWriteOnlyRepository> CreateMock() => new();
 }

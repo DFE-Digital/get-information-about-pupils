@@ -12,7 +12,7 @@ namespace DfE.GIAP.Core.NewsArticles.Application.Repositories;
 /// publication status or individually by unique identifier. It is intended to be implemented by classes that 
 /// encapsulate data access logic, such as repositories interacting with databases, in-memory stores, or external APIs.
 /// </remarks>
-public interface INewsArticleReadRepository
+public interface INewsArticleReadOnlyRepository
 {
     /// <summary>
     /// Asynchronously retrieves a collection of news articles based on the specified search filter.
@@ -32,4 +32,7 @@ public interface INewsArticleReadRepository
     /// if found; otherwise, <see langword="null"/>.</returns>
     /// <exception cref="ArgumentException">Thrown if the id is null or empty.</exception>
     Task<NewsArticle?> GetNewsArticleByIdAsync(string id);
+
+
+    Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime);
 }

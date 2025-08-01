@@ -9,9 +9,9 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 /// </summary>
 public class CreateNewsArticleUseCase : IUseCaseRequestOnly<CreateNewsArticleRequest>
 {
-    private readonly INewsArticleWriteRepository _newsArticleWriteRepository;
+    private readonly INewsArticleWriteOnlyRepository _newsArticleWriteRepository;
 
-    public CreateNewsArticleUseCase(INewsArticleWriteRepository newsArticleWriteRepository)
+    public CreateNewsArticleUseCase(INewsArticleWriteOnlyRepository newsArticleWriteRepository)
     {
         ArgumentNullException.ThrowIfNull(newsArticleWriteRepository);
         _newsArticleWriteRepository = newsArticleWriteRepository;
