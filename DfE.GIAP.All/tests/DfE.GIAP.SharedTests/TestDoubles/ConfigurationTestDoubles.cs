@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 
-namespace DfE.GIAP.Core.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class ConfigurationTestDoubles
 {
     public static IConfigurationBuilder Default() => new ConfigurationBuilder();
@@ -34,7 +34,9 @@ public static class ConfigurationTestDoubles
             ["RepositoryOptions:Containers:0:application-data:ContainerName"] = "application-data",
             ["RepositoryOptions:Containers:0:application-data:PartitionKey"] = "/DOCTYPE",
             ["RepositoryOptions:Containers:1:news:ContainerName"] = "news",
-            ["RepositoryOptions:Containers:1:news:PartitionKey"] = "/id"
+            ["RepositoryOptions:Containers:1:news:PartitionKey"] = "/id",
+            ["RepositoryOptions:Containers:2:users:ContainerName"] = "users",
+            ["RepositoryOptions:Containers:2:users:PartitionKey"] = "/id"
         };
         builder.WithConfiguration(configurationOptions);
         return builder;

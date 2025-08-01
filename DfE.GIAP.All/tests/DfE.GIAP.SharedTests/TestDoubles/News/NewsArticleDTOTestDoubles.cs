@@ -1,6 +1,7 @@
 ﻿using Bogus;
+using DfE.GIAP.SharedTests.Extensions;
 
-namespace DfE.GIAP.Core.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.News;
 
 public static class NewsArticleDtoTestDoubles
 {

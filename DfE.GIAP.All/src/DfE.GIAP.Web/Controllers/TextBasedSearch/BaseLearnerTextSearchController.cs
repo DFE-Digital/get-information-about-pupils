@@ -673,7 +673,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         var isAdmin = User.IsAdmin();
         if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
         {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
+            model.Learners = RbacHelper.CheckRbacRulesGeneric(model.Learners.ToList(), lowAge, highAge);
         }
 
         var selected = GetSelected();
@@ -732,7 +732,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         var isAdmin = User.IsAdmin();
         if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
         {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
+            model.Learners = RbacHelper.CheckRbacRulesGeneric(model.Learners.ToList(), lowAge, highAge);
         }
 
         return model;

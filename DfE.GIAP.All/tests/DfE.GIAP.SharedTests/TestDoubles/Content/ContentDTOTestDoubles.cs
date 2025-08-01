@@ -1,7 +1,8 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
+using DfE.GIAP.SharedTests.Extensions;
 
-namespace DfE.GIAP.Core.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.Content;
 public static class ContentDtoTestDoubles
 {
     private const int CONTENT_DOCUMENTTYPE = 20;

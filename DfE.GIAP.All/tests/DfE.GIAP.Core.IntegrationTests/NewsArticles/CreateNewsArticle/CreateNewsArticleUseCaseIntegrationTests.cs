@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
@@ -38,7 +39,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         watch.Stop();
 
         // Assert
-        IEnumerable<NewsArticleDto> enumerable = await Fixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto> enumerable = await CosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));

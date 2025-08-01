@@ -1,0 +1,152 @@
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.MyPupils.Extensions;
+using DfE.GIAP.Core.MyPupils;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Search.Options;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+using DfE.GIAP.Core.User.Application;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.SharedTests.TestDoubles;
+using Microsoft.Extensions.Options;
+
+namespace DfE.GIAP.Core.IntegrationTests.MyPupils.DeletePupilsFromMyPupils;
+[Collection(IntegrationTestCollectionMarker.Name)]
+public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
+{
+    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base(cosmosDbFixture)
+    {
+
+    }
+
+    protected override Task OnInitializeAsync(IServiceCollection services)
+    {
+        services.AddMyPupilsDependencies();
+        return Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task DeletePupilsFromMyPupils_Throws_InvalidArgumentException_When_Any_PupilIdentifier_Is_Not_Part_Of_The_List()
+    {
+        // Arrange
+        using AzureSearchMockFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>().Value);
+
+        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpd();
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremium();
+
+        UserId userId = UserIdTestDoubles.Default();
+
+        List<MyPupilsItemDto> myPupils = npdSearchindexDtos.MapToMyPupilsItemDto().Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
+
+        await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                myPupils.Select(t => t.UPN).ToUniquePupilNumbers()));
+
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
+
+        IEnumerable<string> unknownPupilIdentifier = [Guid.NewGuid().ToString()];
+
+        // Act
+        DeletePupilsFromMyPupilsRequest request = new(
+            userId.Value,
+            DeletePupilUpns: unknownPupilIdentifier,
+            DeleteAll: false);
+
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => sut.HandleRequestAsync(request));
+
+        IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
+        UserDto userDto = Assert.Single(users);
+        Assert.NotNull(userDto);
+        Assert.Equivalent(myPupils, userDto.MyPupils.Pupils);
+    }
+
+    [Fact]
+    public async Task DeletePupilsFromMyPupils_Deletes_Item_When_PupilIdentifier_Is_Part_Of_The_List()
+    {
+        // Arrange
+        using AzureSearchMockFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>().Value);
+
+        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpd();
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremium();
+
+        UserId userId = UserIdTestDoubles.Default();
+
+        List<MyPupilsItemDto> myPupils =
+            npdSearchindexDtos.MapToMyPupilsItemDto()
+                .Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
+
+
+        await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                myPupils.Select(t => t.UPN).ToUniquePupilNumbers()));
+
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
+
+        string deletePupilIdentifier = myPupils[0].UPN;
+        // Act
+        DeletePupilsFromMyPupilsRequest request = new(
+            userId.Value,
+            DeletePupilUpns: [deletePupilIdentifier],
+            DeleteAll: false);
+
+        await sut.HandleRequestAsync(request);
+
+        // Assert
+        IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
+        UserDto userDto = Assert.Single(users);
+        Assert.NotNull(userDto);
+        Assert.DoesNotContain(userDto.MyPupils.Pupils, t => t.UPN == deletePupilIdentifier);
+        Assert.Equal(
+            npdSearchindexDtos.Count() + pupilPremiumSearchIndexDtos.Count() - 1,
+            userDto.MyPupils.Pupils.Count());
+    }
+
+    // TODO delete multiple from list
+
+    [Fact]
+    public async Task DeletePupilsFromMyPupils_Deletes_All_Items_When_DeleteAll_Is_True()
+    {
+        // Arrange
+        using AzureSearchMockFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>().Value);
+
+        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpd();
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremium();
+
+        UserId userId = UserIdTestDoubles.Default();
+
+        List<MyPupilsItemDto> myPupils =
+            npdSearchindexDtos.MapToMyPupilsItemDto()
+                .Concat(pupilPremiumSearchIndexDtos.MapToMyPupilsItemDto()).ToList();
+
+        await CosmosDbFixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                myPupils.Select(t => t.UPN).ToUniquePupilNumbers()));
+
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
+
+        // Act
+        DeletePupilsFromMyPupilsRequest request = new(
+            userId.Value,
+            DeletePupilUpns: [Guid.NewGuid().ToString()], // should be ignored if DeleteAll is enabled
+            DeleteAll: true);
+
+        await sut.HandleRequestAsync(request);
+
+        // Assert
+        IEnumerable<UserDto> users = await CosmosDbFixture.Database.ReadManyAsync<UserDto>();
+        UserDto userDto = Assert.Single(users);
+        Assert.NotNull(userDto);
+        Assert.Empty(userDto.MyPupils.Pupils);
+    }
+}

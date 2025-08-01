@@ -1,14 +1,18 @@
-﻿namespace DfE.GIAP.Core.IntegrationTests;
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
+
+namespace DfE.GIAP.Core.IntegrationTests;
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     private readonly IServiceCollection _services;
     private IServiceScope? _testServicesScope;
-    protected CosmosDbFixture Fixture { get; }
+    protected CosmosDbFixture CosmosDbFixture { get; }
 
     protected BaseIntegrationTest(CosmosDbFixture fixture)
     {
         _services = ServiceCollectionTestDoubles.Default();
-        Fixture = fixture;
+        CosmosDbFixture = fixture;
     }
 
     public async Task InitializeAsync()
@@ -38,7 +42,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
 
     private async Task SetupAsync()
     {
-        await Fixture.Database.ClearDatabaseAsync();
+        await CosmosDbFixture.Database.ClearDatabaseAsync();
         _services.AddSharedTestDependencies();
     }
 

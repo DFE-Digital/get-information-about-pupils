@@ -2,9 +2,9 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.News;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 
@@ -216,7 +216,9 @@ public sealed class CosmosNewsArticleReadRepositoryTests
     {
         // Arrange
         Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
-        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany<NewsArticleDto>(() => []);
+
+        Mock<ICosmosDbQueryHandler> mockQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadMany<NewsArticleDto>(() => []);
 
         CosmosNewsArticleReadRepository sut = new(
                     logger: _mockLogger,

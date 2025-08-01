@@ -1,5 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
+using DfE.GIAP.SharedTests.TestDoubles.News;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 [Collection(IntegrationTestCollectionMarker.Name)]
@@ -22,7 +24,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await Fixture.Database.WriteManyAsync(seededArticles);
+        await CosmosDbFixture.Database.WriteManyAsync(seededArticles);
 
         NewsArticleDto targetArticle = seededArticles[0];
         GetNewsArticleByIdRequest request = new(Id: targetArticle.id);
@@ -46,7 +48,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await Fixture.Database.WriteManyAsync(seededArticles);
+        await CosmosDbFixture.Database.WriteManyAsync(seededArticles);
 
         string unknownArticleId = Guid.NewGuid().ToString();
         GetNewsArticleByIdRequest request = new(Id: unknownArticleId);

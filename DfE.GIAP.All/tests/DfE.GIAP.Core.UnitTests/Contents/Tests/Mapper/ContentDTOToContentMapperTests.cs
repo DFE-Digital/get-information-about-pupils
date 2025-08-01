@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories.Mapper;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Content;
 
 namespace DfE.GIAP.Core.UnitTests.Contents.Tests.Mapper;
 public sealed class ContentDtoToContentMapperTests

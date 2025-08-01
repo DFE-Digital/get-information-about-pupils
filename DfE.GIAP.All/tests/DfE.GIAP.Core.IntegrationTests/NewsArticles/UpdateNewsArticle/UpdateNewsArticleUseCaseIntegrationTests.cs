@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
+using DfE.GIAP.SharedTests.TestDoubles.News;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
@@ -38,7 +40,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
     public async Task UpdateNullableRecordSuccessfully(NewsArticleDto seededArticle, bool requestPinned, bool requestPublished)
     {
         // Arrange
-        await Fixture.Database.WriteItemAsync(seededArticle);
+        await CosmosDbFixture.Database.WriteItemAsync(seededArticle);
         DateTime beforeRequestCreationDateTimeUtc = DateTime.UtcNow;
         Stopwatch stopWatch = Stopwatch.StartNew();
 
@@ -61,7 +63,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         stopWatch.Stop();
 
         IEnumerable<string> updatedArticleIdentifier = [seededArticle.id];
-        IEnumerable<NewsArticleDto?> articles = await Fixture.Database.ReadManyAsync<NewsArticleDto>(updatedArticleIdentifier);
+        IEnumerable<NewsArticleDto?> articles = await CosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(updatedArticleIdentifier);
         NewsArticleDto? updatedArticle = Assert.Single(articles);
 
         Assert.NotNull(updatedArticle);
