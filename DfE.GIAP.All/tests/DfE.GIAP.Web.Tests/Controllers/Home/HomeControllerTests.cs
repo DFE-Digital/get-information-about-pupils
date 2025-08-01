@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;
@@ -20,7 +19,6 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 {
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
-    private readonly Mock<IUseCase<GetContentByPageKeyUseCaseRequest, GetContentByPageKeyUseCaseResponse>> _mockGetContentByPageKeyUseCase = new();
     private readonly IExceptionHandlerPathFeature _exceptionPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
 
     public HomeControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
