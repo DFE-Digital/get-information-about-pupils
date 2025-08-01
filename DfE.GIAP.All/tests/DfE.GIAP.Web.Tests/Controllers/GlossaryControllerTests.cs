@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Core.Contents.Application.Models;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Web.Controllers;
@@ -31,7 +30,6 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
     {
         // Arrange
         ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-        Content content = ContentTestDoubles.Default();
 
         GlossaryController sut = new(_mockDownloadService);
 
