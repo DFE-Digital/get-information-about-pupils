@@ -1,5 +1,4 @@
-﻿@model ManageDocumentsViewModel
-
+﻿@model EditNewsArticleViewModel
 @{
     ViewBag.Title = "Edit news article";
 }
@@ -60,7 +59,6 @@
                 </div>
 
                 <div class="govuk-button-group">
-                    <a asp-controller="ManageNewsArticles" asp-action="ManageNewsArticles" id="discard-news-article--button" name="discard" value="Discard" class="govuk-button govuk-button--secondary">Discard</a>
                     <button asp-controller="ManageNewsArticles" asp-action="DeleteNewsArticle" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
                     <button asp-controller="ManageNewsArticles" asp-action="UpdateNewsArticle" id="update-document--button" name="update" value="Update" type="submit" class="govuk-button">Update</button>
                 </div>

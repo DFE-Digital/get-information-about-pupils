@@ -4,7 +4,6 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
@@ -77,7 +76,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
        IPaginatedSearchService paginatedSearch,
        IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
-       IContentService contentService,
        IDownloadCommonTransferFileService ctfService,
        IDownloadService downloadService,
        IOptions<AzureAppSettings> azureAppSettings)
@@ -85,7 +83,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
              paginatedSearch,
              mplService,
              selectionManager,
-             contentService,
              azureAppSettings)
     {
         _logger = logger ??

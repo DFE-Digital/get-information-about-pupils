@@ -1,11 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Contents.Application.Models;
-using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -23,7 +18,6 @@ namespace DfE.GIAP.Web.Tests.Controllers;
 public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
 {
     private readonly GlossaryResultsFake _GlossaryResultsFake;
-    private readonly IContentService _mockContentService = Substitute.For<IContentService>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
 
     public GlossaryControllerTests(GlossaryResultsFake GlossaryResultsFake)
@@ -36,7 +30,6 @@ public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
     {
         // Arrange
         ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
-        Content content = ContentTestDoubles.Default();
 
         GlossaryController sut = new(_mockDownloadService);
 
