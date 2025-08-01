@@ -1,20 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Core.Models.Editor;
 using DfE.GIAP.Web.Constants;
 
-namespace DfE.GIAP.Web.ViewModels.Admin;
-
-[ExcludeFromCodeCoverage]
-public class ManageDocumentsViewModel
-{
-    public Document DocumentList { get; set; }
-    public CommonResponseBodyViewModel DocumentData { get; set; }
-    public string SelectedNewsId { get; set; }
-    public bool HasInvalidNewsList { get; set; }
-    public NewsArticleViewModel NewsArticle { get; set; }
-    public BackButtonViewModel BackButton { get; set; }
-}
+namespace DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 
 public class NewsArticleViewModel
 {
