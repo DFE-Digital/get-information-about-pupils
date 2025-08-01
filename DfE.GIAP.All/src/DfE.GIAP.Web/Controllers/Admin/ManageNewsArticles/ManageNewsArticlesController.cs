@@ -151,10 +151,13 @@ public class ManageNewsArticlesController : Controller
     [Route(Routes.ManageNewsArticles.EditNewsAricle)]
     public async Task<IActionResult> EditNewsArticle()
     {
-        string selectedNewsId = TempData["SelectedNewsId"].ToString();
+        if (!TempData.TryGetValue("SelectedNewsId", out object selectedNewsIdObj) || selectedNewsIdObj is null)
+        {
+            return RedirectToAction("ManageNewsArticles", "ManageNewsArticles");
+        }
 
-        if (string.IsNullOrEmpty(selectedNewsId))
-            ArgumentException.ThrowIfNullOrEmpty(selectedNewsId);
+        string selectedNewsId = selectedNewsIdObj.ToString();
+        ArgumentException.ThrowIfNullOrWhiteSpace(selectedNewsId);
 
         GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
             new GetNewsArticleByIdRequest(selectedNewsId));
