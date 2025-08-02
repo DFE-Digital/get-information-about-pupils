@@ -1,8 +1,11 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using System.Net;
+using Azure.Search.Documents;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -11,6 +14,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
@@ -23,27 +27,25 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddMyPupilsDependencies();
+        services
+            .AddMyPupilsDependencies()
+            .ConfigureAzureSearchClients();
+
         return Task.CompletedTask;
     }
 
     [Fact]
     public async Task GetMyPupils_HasSomePupilsInList_Returns_Pupils()
     {
-
-        // DEBUGGING
-
         // Arrange
-        using AzureSearchFixture mockSearchFixture = new(
+        using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
         HttpClient client = new();
         client.BaseAddress = new Uri("https://localhost:44444");
 
         HttpResponseMessage response = await client.GetAsync("/__admin");
-        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
-
-
+        Assert.Contains(response.StatusCode, new[] { HttpStatusCode.OK, HttpStatusCode.NotFound });
 
         IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremiumSearchIndex();

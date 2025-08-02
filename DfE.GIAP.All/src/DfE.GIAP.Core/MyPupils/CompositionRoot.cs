@@ -1,10 +1,10 @@
-﻿using Azure;
-using Azure.Search.Documents;
+﻿using Azure.Search.Documents;
+using Azure;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
+using DfE.GIAP.Core.MyPupils.Application.Services;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
@@ -18,6 +18,8 @@ using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot
@@ -73,29 +75,7 @@ public static class CompositionRoot
 
 
         // Temporary SearchClients
-        services.AddSingleton<SearchClient>(sp =>
-        {
-            SearchIndexOptions options = sp.GetRequiredService<IOptions<SearchIndexOptions>>().Value;
-            IndexOptions indexOptions = options.GetIndexOptionsByName("npd");
-
-            SearchClient searchClient = new(
-                new Uri(options.Url),
-                indexOptions.Name,
-                new AzureKeyCredential(options.Key));
-            return searchClient;
-        });
-
-        services.AddSingleton<SearchClient>(sp =>
-        {
-            SearchIndexOptions options = sp.GetRequiredService<IOptions<SearchIndexOptions>>().Value;
-            IndexOptions indexOptions = options.GetIndexOptionsByName("pupil-premium");
-
-            SearchClient searchClient = new(
-                new Uri(options.Url),
-                indexOptions.Name,
-                new AzureKeyCredential(options.Key));
-            return searchClient;
-        });
+        services.AddSearchClients();
 
         // Temporary SearchClientProvider
         services.AddSingleton<ISearchClientProvider, SearchClientProvider>();

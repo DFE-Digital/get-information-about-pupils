@@ -6,12 +6,12 @@ using Microsoft.Extensions.Options;
 
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
-internal sealed class AzureSearchFixture : IDisposable
+internal sealed class SearchIndexFixture : IDisposable
 {
     private readonly AzureSearchIndexHostedTestServer _server;
     private readonly SearchIndexOptions _options;
 
-    public AzureSearchFixture(IOptions<SearchIndexOptions> options)
+    public SearchIndexFixture(IOptions<SearchIndexOptions> options)
     {
         _server = new AzureSearchIndexHostedTestServer(options);
         _options = options.Value;

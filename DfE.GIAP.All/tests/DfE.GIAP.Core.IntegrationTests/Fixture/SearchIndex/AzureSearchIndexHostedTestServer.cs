@@ -22,28 +22,11 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
             throw new ArgumentException($"Unable to create Search Mock fixture with Url {options.Value.Url}");
         }
 
-        // TEMP - THIS IS ONLY USED IN CI AS DOTNET-DEV-CERTS used by wiremock locally. Linux runner does not automatically trust
-        const string wireMockCiCustomCertificatePath = "/tmp/wiremock-cert/localhost.pfx";
-        WireMockCertificateSettings? certificateSettings =
-            !RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? null :
-                new WireMockCertificateSettings()
-                {
-                    X509Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(wireMockCiCustomCertificatePath, string.Empty)
-                };
-
-
-        if (certificateSettings?.X509Certificate != null)
-        {
-            Console.WriteLine($"Loaded cert: {certificateSettings.X509Certificate.Subject}");
-            Console.WriteLine($"Thumbprint: {certificateSettings.X509Certificate.Thumbprint}");
-        }
-
 
         _server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = true, // required for connections through Azure.Search.SearchClient
             Port = result.Port,
-            CertificateSettings = certificateSettings
         });
     }
     public string Url => _server.Urls[0];
