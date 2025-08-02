@@ -1,10 +1,11 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
+using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture;
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 public sealed class CosmosDbTestDatabase : IAsyncDisposable
 {
     private const string DatabaseId = "giapsearch";
@@ -85,13 +86,13 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     public async Task<IEnumerable<T>> ReadManyAsync<T>(IEnumerable<string> identifiers) where T : class
     {
         IEnumerable<T> results = await ReadManyAsync<T>();
-        IEnumerable<string> resultIdentifiers = results.Select(ExtractDocumentIdFromDto<T>);
+        IEnumerable<string> resultIdentifiers = results.Select(ExtractDocumentIdFromDto);
 
+        List<string> identifiersNotFound = identifiers.Except(resultIdentifiers).ToList();
 
-        List<string> missingIdentifiers = identifiers.Except(resultIdentifiers).ToList();
-        if (missingIdentifiers.Any())
+        if (identifiersNotFound.Count != 0)
         {
-            throw new ArgumentException($"Unable to find identifier(s): {string.Join(", ", missingIdentifiers)}");
+            throw new ArgumentException($"Unable to find identifier(s): {string.Join(", ", identifiersNotFound)}");
         }
 
         IEnumerable<T> matchingResults = results.Where(t => identifiers.Contains(ExtractDocumentIdFromDto(t)));
@@ -141,7 +142,8 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
     {
         Dictionary<Type, string> typeToContainerNameMap = new()
         {
-            {  typeof(NewsArticleDto), "news" }
+            {  typeof(NewsArticleDto), "news" },
+            {  typeof(UserDto), "users" }
         };
 
         DatabaseResponse db = await CreateDatabase(_cosmosClient);
@@ -171,19 +173,23 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
         List<ContainerResponse> containerResponses = [];
 
         // TODO hardcoded Container -> PartitionKey relationships
-        ContainerResponse applicationData = await database.CreateContainerIfNotExistsAsync(new ContainerProperties()
+        Dictionary<string, string> containers = new()
         {
-            Id = ApplicationDataContainerName,
-            PartitionKeyPath = "/DOCTYPE",
-        });
+            {  ApplicationDataContainerName, "/DOCTYPE" },
+            {  "news", "/id" },
+            {  "users", "/id" },
+        };
 
-        ContainerResponse news = await database.CreateContainerIfNotExistsAsync(new ContainerProperties()
+        foreach (KeyValuePair<string, string> container in containers)
         {
-            Id = "news",
-            PartitionKeyPath = "/id",
-        });
-        containerResponses.Add(applicationData);
-        containerResponses.Add(news);
+            ContainerResponse applicationData = await database.CreateContainerIfNotExistsAsync(new ContainerProperties()
+            {
+                Id = container.Key,
+                PartitionKeyPath = container.Value,
+            });
+            containerResponses.Add(applicationData);
+        }
+
         return containerResponses;
     }
 

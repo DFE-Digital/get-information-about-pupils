@@ -12,24 +12,17 @@ public class AzureIndexEntity
     [JsonProperty("@search.score")]
     public string Score { get; set; }
 
-    [JsonProperty("UPN")]
     public string UPN { get; set; }
 
-    [JsonProperty("Surname")]
     public string Surname { get; set; }
 
-    [JsonProperty("Forename")]
     public string Forename { get; set; }
 
-    [JsonProperty("Sex")]
     public string Sex { get; set; }
 
-    [JsonProperty("DOB")]
     public DateTime? DOB { get; set; }
 
-    [JsonProperty("LocalAuthority")]
     public string LocalAuthority { get; set; }
 
-    [JsonProperty("id")]
     public string id { get; set; }
 }

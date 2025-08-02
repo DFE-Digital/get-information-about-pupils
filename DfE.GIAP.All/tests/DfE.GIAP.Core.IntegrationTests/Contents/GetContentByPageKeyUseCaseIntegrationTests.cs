@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Contents;
 using DfE.GIAP.Core.Contents.Application.UseCases.GetContentByPageKeyUseCase;
 using DfE.GIAP.Core.Contents.Infrastructure.Repositories;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

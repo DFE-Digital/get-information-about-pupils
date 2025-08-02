@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.IntegrationTests;
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+
+namespace DfE.GIAP.Core.IntegrationTests;
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     private readonly IServiceCollection _services;
