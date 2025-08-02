@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DfE.GIAP.Core.MyPupils.Application.Services;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;

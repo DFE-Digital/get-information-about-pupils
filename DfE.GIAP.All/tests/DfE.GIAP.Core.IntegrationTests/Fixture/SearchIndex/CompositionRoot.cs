@@ -1,0 +1,28 @@
+﻿using Azure.Search.Documents;
+using DfE.GIAP.Core.MyPupils.Application.Search.Options;
+using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
+
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
+internal static class CompositionRoot
+{
+    internal static IServiceCollection ConfigureAzureSearchClients(this IServiceCollection services)
+    {
+        services.RemoveAll<ISearchClientProvider>();
+
+        services.AddSingleton<ISearchClientProvider>(sp =>
+        {
+            IEnumerable<SearchClient> originalClients = sp.GetServices<SearchClient>();
+            List<SearchClient> insecureClients =
+                originalClients
+                    .Select(client => client.WithDisabledTlsValidation())
+                    .ToList();
+
+            IOptions<SearchIndexOptions> options = sp.GetRequiredService<IOptions<SearchIndexOptions>>();
+            return new SearchClientProvider(insecureClients, options);
+        });
+        return services;
+    }
+}

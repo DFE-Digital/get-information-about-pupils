@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using Microsoft.Azure.Cosmos;
 
