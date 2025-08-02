@@ -137,6 +137,15 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      # WireMock by default uses the dev certificate ASP.Net Core generates. 
+      # Locally on Windows this is automatically trusted as part of VisualStudio, on Linux runners we need to add the certificate to enable TLS 
+      - name: Install .NET core dev certificate for WireMock.NET
+        run: |
+          dotnet dev-certs https -ep ./https.crt --format PEM
+          sudo mkdir -p /usr/local/share/ca-certificates/aspnet/
+          sudo cp ./https.crt /usr/local/share/ca-certificates/aspnet/https.crt
+          sudo update-ca-certificates
+    
       - name: Install CosmosDb Emulator TLS certificate
         run: |
           retry_count=0
