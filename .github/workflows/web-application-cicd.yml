@@ -143,6 +143,7 @@ jobs:
         run: |
           mkdir -p /tmp/wiremock-cert
 
+          # Generate self-signed certificate
           openssl req -x509 \
             -nodes \
             -days 365 \
@@ -151,14 +152,12 @@ jobs:
             -out /tmp/wiremock-cert/localhost.crt \
             -subj "/CN=localhost"
 
-          openssl pkcs12 -export \
-            -out /tmp/wiremock-cert/localhost.pfx \
-            -inkey /tmp/wiremock-cert/localhost.key \
-            -in /tmp/wiremock-cert/localhost.crt \
-            -passout pass:
-
+          # Ensure the certificate is in PEM format and contains only the cert
           sudo cp /tmp/wiremock-cert/localhost.crt /usr/local/share/ca-certificates/localhost.crt
+
+          # Update trust store
           sudo update-ca-certificates
+
 
       - name: Install CosmosDb Emulator TLS certificate
         run: |
