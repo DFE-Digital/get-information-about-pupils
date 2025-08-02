@@ -5,7 +5,6 @@ using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
@@ -63,7 +62,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddScoped<IUlnDownloadService, UlnDownloadService>();
-        services.AddScoped<IContentService, ContentService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IPrePreparedDownloadsService, PrePreparedDownloadsService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
