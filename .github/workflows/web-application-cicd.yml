@@ -157,7 +157,7 @@ jobs:
             -in /tmp/wiremock-cert/localhost.crt \
             -passout pass:
 
-          sudo cp /tmp/wiremock-cert/localhost.pfx /usr/local/share/ca-certificates/localhost.pfx
+          sudo cp /tmp/wiremock-cert/localhost.crt /usr/local/share/ca-certificates/localhost.crt
           sudo update-ca-certificates
 
       - name: Install CosmosDb Emulator TLS certificate
