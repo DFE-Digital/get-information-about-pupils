@@ -143,25 +143,42 @@ jobs:
         run: |
           mkdir -p /tmp/wiremock-cert
 
-          # Generate self-signed certificate
-          openssl req -x509 \
-            -nodes \
-            -days 365 \
-            -newkey rsa:2048 \
+          # Create OpenSSL config with SAN
+          cat > /tmp/wiremock-cert/openssl.cnf <<EOF
+          [req]
+          distinguished_name = req_distinguished_name
+          x509_extensions = v3_req
+          prompt = no
+
+          [req_distinguished_name]
+          CN = localhost
+
+          [v3_req]
+          subjectAltName = @alt_names
+
+          [alt_names]
+          DNS.1 = localhost
+          IP.1 = 127.0.0.1
+          EOF
+
+          # Generate cert with SAN
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
             -keyout /tmp/wiremock-cert/localhost.key \
             -out /tmp/wiremock-cert/localhost.crt \
-            -subj "/CN=localhost"
+            -config /tmp/wiremock-cert/openssl.cnf \
+            -extensions v3_req
 
-          # Convert to PFX format (no password)
+          # Convert to PFX
           openssl pkcs12 -export \
             -out /tmp/wiremock-cert/localhost.pfx \
             -inkey /tmp/wiremock-cert/localhost.key \
             -in /tmp/wiremock-cert/localhost.crt \
             -passout pass:
 
-          # Trust the certificate
+          # Trust the cert
           sudo cp /tmp/wiremock-cert/localhost.crt /usr/local/share/ca-certificates/localhost.crt
           sudo update-ca-certificates
+
 
       - name: Install CosmosDb Emulator TLS certificate
         run: |
