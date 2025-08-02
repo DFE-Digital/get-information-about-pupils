@@ -179,12 +179,7 @@ jobs:
           sudo cp /tmp/wiremock-cert/localhost.crt /usr/local/share/ca-certificates/localhost.crt
           sudo update-ca-certificates
           
-          dotnet dev-certs https --clean
-          dotnet dev-certs https --import /tmp/wiremock-cert/localhost.pfx
-
-          dotnet dev-certs https --check
-
-
+          openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt /tmp/wiremock-cert/localhost.crt
 
       - name: Install CosmosDb Emulator TLS certificate
         run: |
