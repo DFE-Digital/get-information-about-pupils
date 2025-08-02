@@ -9,10 +9,10 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Map
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.SharedTests;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.User.Application.Repository;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;

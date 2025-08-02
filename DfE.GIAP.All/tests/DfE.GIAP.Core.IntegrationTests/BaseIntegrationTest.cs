@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.SharedTests;
 
 namespace DfE.GIAP.Core.IntegrationTests;
 public abstract class BaseIntegrationTest : IAsyncLifetime

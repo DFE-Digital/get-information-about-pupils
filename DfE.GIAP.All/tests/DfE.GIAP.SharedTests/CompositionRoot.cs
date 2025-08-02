@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.SharedTests;
+namespace DfE.GIAP.SharedTests;
 public static class CompositionRoot
 {
     // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
@@ -49,7 +49,7 @@ public static class CompositionRoot
                 .WithConfiguration(contentConfiguration)
                 .Build();
 
-        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton(configuration);
 
         return services;
     }

@@ -31,7 +31,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_HasSomePupilsInList_Returns_Pupils()
     {
         // Arrange
-        using AzureSearchMockFixture mockSearchFixture = new(
+        using AzureSearchFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
         IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
