@@ -31,6 +31,14 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
                     X509Certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(wireMockCiCustomCertificatePath, string.Empty)
                 };
 
+
+        if (certificateSettings?.X509Certificate != null)
+        {
+            Console.WriteLine($"Loaded cert: {certificateSettings.X509Certificate.Subject}");
+            Console.WriteLine($"Thumbprint: {certificateSettings.X509Certificate.Thumbprint}");
+        }
+
+
         _server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = true, // required for connections through Azure.Search.SearchClient

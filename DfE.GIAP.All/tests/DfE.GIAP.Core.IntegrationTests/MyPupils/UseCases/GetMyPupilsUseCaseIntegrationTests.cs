@@ -30,9 +30,20 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task GetMyPupils_HasSomePupilsInList_Returns_Pupils()
     {
+
+        // DEBUGGING
+
         // Arrange
         using AzureSearchFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+
+        HttpClient client = new();
+        client.BaseAddress = new Uri("https://localhost:44444");
+
+        HttpResponseMessage response = await client.GetAsync("/__admin");
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+
 
         IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremiumSearchIndex();
