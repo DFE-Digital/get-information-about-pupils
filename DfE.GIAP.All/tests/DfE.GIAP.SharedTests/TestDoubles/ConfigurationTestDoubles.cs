@@ -1,8 +1,9 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
+using DfE.GIAP.Core.SharedTests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 
-namespace DfE.GIAP.Core.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class ConfigurationTestDoubles
 {
     public static IConfigurationBuilder Default() => new ConfigurationBuilder();
