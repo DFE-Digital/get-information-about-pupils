@@ -13,7 +13,7 @@ namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils
 internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
-    private const int PageSplitLimit = 500; // TODO pulled from FA
+    private const int DefaultPageSize = 20; // the maximum pupils returned for any query
     private readonly ISearchClientProvider _searchClientProvider;
     private readonly IMapper<DecoratedSearchIndexDto, Pupil> _mapper;
 
@@ -28,110 +28,75 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         _mapper = mapper;
     }
 
+
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(
         IEnumerable<UniquePupilNumber> uniquePupilNumbers,
         MyPupilsQueryOptions? queryOptions = null)
     {
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count(), UpnQueryLimit);
+
         if (!uniquePupilNumbers.Any())
         {
             return [];
         }
 
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count(), UpnQueryLimit);
-        MyPupilsQueryOptions validatedOptions = queryOptions ?? MyPupilsQueryOptions.Default();
+        MyPupilsQueryOptions validatedQueryOptions = queryOptions ?? MyPupilsQueryOptions.Default();
 
-        const int DefaultPageSize = 20;
+        int skip = DefaultPageSize * (validatedQueryOptions.Page.Value - 1);
 
-        IEnumerable<DecoratedSearchIndexDto> npdLearners =
-            (await SearchForLearnersByUpn(
-                    client: _searchClientProvider.GetClientByKey(name: "npd"),
-                    uniquePupilNumbers,
-                    validatedOptions))
-                .Select((npdSearchIndexDto)
-                    => new DecoratedSearchIndexDto(
-                        npdSearchIndexDto,
-                        PupilType.NationalPupilDatabase));
+        List<UniquePupilNumber> pagedUpns =
+            uniquePupilNumbers
+                .Skip(skip)
+                .Take(DefaultPageSize)
+                .ToList();
 
-        // TODO extension on DecoratedLearnerMap and reuse
-        if (npdLearners.Count() == DefaultPageSize)
+        List<DecoratedSearchIndexDto> npdResults =
+            await SearchLearners(
+                _searchClientProvider.GetClientByKey("npd"),
+                pagedUpns,
+                validatedQueryOptions,
+                PupilType.NationalPupilDatabase);
+
+        if (npdResults.Count >= DefaultPageSize) // if npd reaches page size then no need to call pupil-premium
         {
-            return npdLearners.Select(
-                decoratedLearner =>
-                    _mapper.Map(
-                        new DecoratedSearchIndexDto(
-                            decoratedLearner.SearchIndexDto,
-                            decoratedLearner.PupilType)));
+            return npdResults.Select( _mapper.Map);
         }
 
-        // else fetch more from pp
+        List<DecoratedSearchIndexDto> ppResults =
+            await SearchLearners(
+                _searchClientProvider.GetClientByKey("pupil-premium"),
+                pagedUpns,
+                validatedQueryOptions,
+                PupilType.PupilPremium);
 
-        IEnumerable<DecoratedSearchIndexDto> pupilPremiumLearners =
-            (await SearchForLearnersByUpn(
-                    client: _searchClientProvider.GetClientByKey(name: "pupil-premium"),
-                    uniquePupilNumbers,
-                    validatedOptions))
-                .Select(
-                    (pupilPremiumSearchIndexDto) => new DecoratedSearchIndexDto(
-                        pupilPremiumSearchIndexDto,
-                        PupilType.PupilPremium));
-
-        return npdLearners.Concat(pupilPremiumLearners)
+        return npdResults
+            .Concat(ppResults)
+            .DistinctBy(t => t.SearchIndexDto.UPN) // Deduplicate between indexes
             .Take(DefaultPageSize)
-            .Select(
-                (decoratedLearner) =>
-                    _mapper.Map(
-                        new DecoratedSearchIndexDto(
-                            decoratedLearner.SearchIndexDto,
-                            decoratedLearner.PupilType)));
+            .Select(_mapper.Map);
     }
 
 
-
-    private static async Task<List<AzureIndexEntity>> SearchForLearnersByUpn(
+    internal static async Task<List<DecoratedSearchIndexDto>> SearchLearners(
         SearchClient client,
         IEnumerable<UniquePupilNumber> upns,
-        MyPupilsQueryOptions options)
+        MyPupilsQueryOptions? queryOptions,
+        PupilType pupilType)
     {
-        IEnumerable<string> upnValues = upns.Select(t => t.Value);
+        MyPupilsQueryOptions validatedOptions = queryOptions ?? MyPupilsQueryOptions.Default();
 
-        if (upnValues.Count() <= PageSplitLimit)
-        {
-            return await SearchLearners(client, upnValues, options);
-        }
-
-        List<AzureIndexEntity> learners = [];
-
-        foreach (IEnumerable<string> upnsSplitPart in SplitUpnsToFitPagingLimit(upns))
-        {
-            List<AzureIndexEntity> learnersToAdd = await SearchLearners(client, upnsSplitPart, options);
-            learners.AddRange(learnersToAdd);
-        }
-
-        return learners;
-    }
-
-
-    private static async Task<List<AzureIndexEntity>> SearchLearners(
-        SearchClient client,
-        IEnumerable<string> upns,
-        MyPupilsQueryOptions queryOptions)
-    {
         const string UpnIndexField = "UPN";
 
         List<AzureIndexEntity> output = [];
 
-        // e.g Skip and Size act as a Take
-        // - page 1 with pageSize 20 -> 20 * (1-1) = 0-19 results
-        // - page 3 with pageSize 20 -> 20 * (3-1) = skips the first 40 (0-39) -> 40-59 results
-        const int PageSize = 20;
-        int resultsToSkip = PageSize * (queryOptions.Page.Value - 1);
+        string filter = upns.Count() > 1
+            ? $"search.in({UpnIndexField}, '{string.Join(",", upns.Select(t => t.Value))}')"
+            : $"UPN eq '{upns.First()}'";
 
         SearchOptions options = new()
         {
-            Size = PageSize,
-            Skip = resultsToSkip,
-            Filter = upns.Count() > 1 ? $"search.in({UpnIndexField}, '{string.Join(",", upns)}')" : $"{UpnIndexField} eq '{upns.First()}'",
-            IncludeTotalCount = true
+            Size = DefaultPageSize,
+            Filter = filter
         };
 
         options.SearchFields.Add(UpnIndexField);
@@ -143,16 +108,16 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
 
-        string sortField = queryOptions.Order.Field switch
+        string sortField = validatedOptions.Order.Field switch
         {
             "Forename" => "Forename",
             "Surname" => "Surname",
             "Sex" => "Sex",
             "DOB" => "DOB",
-            _ => "search.score()" // If unknown field is passed 1-1 mapping otherwise
+            _ => "search.score()" // If unknown field is passed
         };
 
-        string sortDirection = queryOptions.Order.Direction switch
+        string sortDirection = validatedOptions.Order.Direction switch
         {
             SortDirection.Ascending => "asc",
             _ => "desc"
@@ -167,31 +132,6 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             output.Add(result.Document);
         }
 
-        return output;
+        return output.Select(indexDto => new DecoratedSearchIndexDto(indexDto, pupilType)).ToList();
     }
-
-    internal static List<IEnumerable<string>> SplitUpnsToFitPagingLimit(IEnumerable<UniquePupilNumber> upns)
-    {
-        IEnumerable<string> upnValues = upns.Select(t => t.Value);
-
-        if (!upnValues.Any())
-        {
-            return [];
-        }
-
-        int numberOfPages = (int)Math.Ceiling((double)upnValues.Count() / PageSplitLimit);
-
-        if (numberOfPages == 0)
-        {
-            return [upnValues];
-        }
-
-        return Enumerable.Range(0, numberOfPages)
-            .Select((index)
-                => upnValues.Skip(index * PageSplitLimit).Take(PageSplitLimit))
-            .ToList();
-    }
-
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 }
