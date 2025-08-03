@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.SharedTests;
 
 namespace DfE.GIAP.Core.IntegrationTests;

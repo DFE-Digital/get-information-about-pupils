@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options;
+﻿using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -7,7 +6,7 @@ using WireMock.RequestBuilders;
 using WireMock.Server;
 using WireMock.Settings;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 internal sealed class AzureSearchIndexHostedTestServer : IDisposable
 {
     private readonly WireMockServer _server;

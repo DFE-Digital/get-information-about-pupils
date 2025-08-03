@@ -1,6 +1,4 @@
-﻿using Azure;
-using Azure.Search.Documents;
-using Azure.Search.Documents.Models;
+﻿using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
@@ -21,7 +19,6 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         ISearchClientProvider searchClientProvider,
         IMapper<DecoratedSearchIndexDto, Pupil> mapper)
     {
-
         ArgumentNullException.ThrowIfNull(mapper);
         ArgumentNullException.ThrowIfNull(searchClientProvider);
         _searchClientProvider = searchClientProvider;
@@ -50,24 +47,30 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
                 .Take(DefaultPageSize)
                 .ToList();
 
+        if (pagedUpns.Count == 0)
+        {
+            return [];
+        }
+
+        SearchOptions options = CreateSearchClientOptions(
+            pagedUpns,
+            validatedQueryOptions.Order.Field,
+            validatedQueryOptions.Order.Direction);
+
         List<DecoratedSearchIndexDto> npdResults =
-            await SearchLearners(
-                _searchClientProvider.GetClientByKey("npd"),
-                pagedUpns,
-                validatedQueryOptions,
-                PupilType.NationalPupilDatabase);
+            (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", options))
+                .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase)
+                .ToList();
 
         if (npdResults.Count >= DefaultPageSize) // if npd reaches page size then no need to call pupil-premium
         {
-            return npdResults.Select( _mapper.Map);
+            return npdResults.Select(_mapper.Map);
         }
 
         List<DecoratedSearchIndexDto> ppResults =
-            await SearchLearners(
-                _searchClientProvider.GetClientByKey("pupil-premium"),
-                pagedUpns,
-                validatedQueryOptions,
-                PupilType.PupilPremium);
+            (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", options))
+                .ToDecoratedSearchIndexDto(PupilType.PupilPremium)
+                .ToList();
 
         return npdResults
             .Concat(ppResults)
@@ -77,17 +80,9 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    internal static async Task<List<DecoratedSearchIndexDto>> SearchLearners(
-        SearchClient client,
-        IEnumerable<UniquePupilNumber> upns,
-        MyPupilsQueryOptions? queryOptions,
-        PupilType pupilType)
+    internal static SearchOptions CreateSearchClientOptions(IEnumerable<UniquePupilNumber> upns, string sortField, SortDirection sortDirection)
     {
-        MyPupilsQueryOptions validatedOptions = queryOptions ?? MyPupilsQueryOptions.Default();
-
         const string UpnIndexField = "UPN";
-
-        List<AzureIndexEntity> output = [];
 
         string filter = upns.Count() > 1
             ? $"search.in({UpnIndexField}, '{string.Join(",", upns.Select(t => t.Value))}')"
@@ -108,7 +103,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
 
-        string sortField = validatedOptions.Order.Field switch
+        string sort = sortField switch
         {
             "Forename" => "Forename",
             "Surname" => "Surname",
@@ -117,21 +112,19 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             _ => "search.score()" // If unknown field is passed
         };
 
-        string sortDirection = validatedOptions.Order.Direction switch
+        string direction = sortDirection switch
         {
             SortDirection.Ascending => "asc",
             _ => "desc"
         };
 
-        options.OrderBy.Add($"{sortField} {sortDirection}");
-
-        Response<SearchResults<AzureIndexEntity>> results = await client.SearchAsync<AzureIndexEntity>("*", options);
-
-        await foreach (SearchResult<AzureIndexEntity> result in results.Value.GetResultsAsync())
-        {
-            output.Add(result.Document);
-        }
-
-        return output.Select(indexDto => new DecoratedSearchIndexDto(indexDto, pupilType)).ToList();
+        options.OrderBy.Add($"{sort} {direction}");
+        return options;
     }
+}
+
+internal static class AzureSearchIndexDtoExtensions
+{
+    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(this IEnumerable<AzureIndexEntity> azureIndexDtos, PupilType pupilType)
+        => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? []; 
 }

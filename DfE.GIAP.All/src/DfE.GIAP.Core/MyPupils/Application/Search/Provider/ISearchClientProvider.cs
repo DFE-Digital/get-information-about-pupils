@@ -1,6 +1,8 @@
 ﻿using Azure.Search.Documents;
 namespace DfE.GIAP.Core.MyPupils.Application.Search.Provider;
-internal interface ISearchClientProvider
+public interface ISearchClientProvider
 {
-    SearchClient GetClientByKey(string name); // TODO currently leaking AzureCogSearch impl
+    Task<List<TResult>> InvokeSearchAsync<TResult>(
+        string clientKey,
+        SearchOptions options); // TODO currently leaking AzureCogSearch impl
 }

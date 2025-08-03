@@ -5,7 +5,7 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 internal static class CompositionRoot
 {
     internal static IServiceCollection ConfigureAzureSearchClients(this IServiceCollection services)

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
@@ -38,10 +38,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 20);
+        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 20);
         mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
 
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 1);
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 1);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         UserId userId = new(Guid.NewGuid().ToString());
@@ -89,10 +89,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 10);
+        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
         mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
 
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 5);
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 5);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         UserId userId = new(Guid.NewGuid().ToString());

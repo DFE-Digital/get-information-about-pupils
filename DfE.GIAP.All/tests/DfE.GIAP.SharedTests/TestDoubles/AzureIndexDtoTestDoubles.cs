@@ -3,13 +3,26 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
-public static class AzureIndexDtosTestDoubles
+public static class AzureIndexEntityDtosTestDoubles
 {
     public static List<AzureIndexEntity> Generate(int count = 10)
     {
         return CreateFaker().Generate(count);
     }
 
+    public static List<AzureIndexEntity> GenerateWithUpns(IEnumerable<UniquePupilNumber> upns)
+    {
+        List<AzureIndexEntity> generated = CreateFaker().Generate(upns.Count());
+
+        int index = 0;
+        upns.ToList().ForEach(t =>
+        {
+            generated[index].UPN = t.Value;
+            index++;
+        });
+
+        return generated;
+    }
 
     private static Faker<AzureIndexEntity> CreateFaker()
     {

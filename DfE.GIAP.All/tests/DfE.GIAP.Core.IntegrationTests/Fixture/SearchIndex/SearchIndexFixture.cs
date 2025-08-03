@@ -4,8 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
-
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
+namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 internal sealed class SearchIndexFixture : IDisposable
 {
     private readonly AzureSearchIndexHostedTestServer _server;
@@ -28,7 +27,7 @@ internal sealed class SearchIndexFixture : IDisposable
 
     public IEnumerable<AzureIndexEntity> StubNpdSearchIndex(IEnumerable<AzureIndexEntity>? values = null)
     {
-        IEnumerable<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexDtosTestDoubles.Generate() : values;
+        IEnumerable<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values;
         _server.StubSearchResponseForIndex(NpdIndexOptions.Name, azureIndexDtos);
         return azureIndexDtos;
     }
@@ -36,7 +35,7 @@ internal sealed class SearchIndexFixture : IDisposable
 
     public IEnumerable<AzureIndexEntity> StubPupilPremiumSearchIndex(IEnumerable<AzureIndexEntity>? values = null)
     {
-        IEnumerable<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexDtosTestDoubles.Generate() : values;
+        IEnumerable<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values;
         _server.StubSearchResponseForIndex(PupilPremiumIndexOptions.Name, azureIndexDtos);
 
         return azureIndexDtos;
