@@ -89,6 +89,34 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         }
     }
 
+    [Fact]
+    public async Task GetMyPupils_Requests_NoPupils_Returns_NoPupils()
+    {
+        // Arrange
+        using SearchIndexFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+
+        UserId userId = new(Guid.NewGuid().ToString());
+
+        await Fixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                upns: []));
+        // Act
+        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
+
+        GetMyPupilsResponse getMyPupilsResponse =
+            await sut.HandleRequestAsync(
+                new GetMyPupilsRequest(userId.Value));
+
+        // Assert
+        Assert.NotNull(getMyPupilsResponse);
+        Assert.NotNull(getMyPupilsResponse.Pupils);
+
+        Assert.Equivalent(Array.Empty<PupilDto>(), getMyPupilsResponse.Pupils);
+    }
+
     private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, PupilDto>
     {
         public PupilDto Map(AzureIndexEntity input)
