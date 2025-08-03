@@ -11,7 +11,7 @@ public static class AzureIndexDtosTestDoubles
     }
 
 
-    public static Faker<AzureIndexEntity> CreateFaker()
+    private static Faker<AzureIndexEntity> CreateFaker()
     {
         Faker<AzureIndexEntity> faker = new Faker<AzureIndexEntity>()
             .RuleFor(t => t.Score, f => f.Random.Double(0, 1).ToString("F2"))

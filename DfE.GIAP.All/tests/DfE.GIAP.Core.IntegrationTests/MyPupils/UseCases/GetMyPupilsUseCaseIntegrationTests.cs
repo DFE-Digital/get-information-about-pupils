@@ -1,11 +1,8 @@
-﻿using System.Net;
-using Azure.Search.Documents;
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.Fixture.AzureSearch;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -14,13 +11,13 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
+    private const int DEFAULT_USECASE_PAGESIZE = 20;
     public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
     {
     }
@@ -35,18 +32,24 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task GetMyPupils_HasSomePupilsInList_Returns_Pupils()
+    public async Task GetMyPupils_HasMoreThan20PupilsInList_Returns_NpdPupils_Up_To_PageSize()
     {
         // Arrange
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremiumSearchIndex();
+        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 20);
+        mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 1);
+        mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         UserId userId = new(Guid.NewGuid().ToString());
 
-        IEnumerable<UniquePupilNumber> upns = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).Select(t => t.UPN).ToUniquePupilNumbers();
+        IEnumerable<UniquePupilNumber> upns
+            = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
+                .Select((t) => t.UPN)
+                    .ToUniquePupilNumbers();
 
         await Fixture.Database.WriteItemAsync<UserDto>(
             UserDtoTestDoubles.WithPupils(
@@ -65,32 +68,76 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.Pupils);
 
-        MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<PupilDto> expectedPupils =
-            npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos)
-                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+        Assert.Equal(DEFAULT_USECASE_PAGESIZE, getMyPupilsResponse.Pupils.Count());
 
-        Assert.Equal(expectedPupils.Count, getMyPupilsResponse.Pupils.Count());
+        MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
+        List<PupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
 
         foreach (PupilDto expected in expectedPupils)
         {
-            PupilDto? actual = getMyPupilsResponse.Pupils.SingleOrDefault(p => p.UniquePupilNumber == expected.UniquePupilNumber);
+            PupilDto actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expected.UniquePupilNumber);
 
-            Assert.NotNull(actual);
-            Assert.Equal(expected.Forename, actual.Forename);
-            Assert.Equal(expected.Surname, actual.Surname);
-            Assert.Equal(expected.DateOfBirth, actual.DateOfBirth);
-            Assert.Equal(expected.Sex, actual.Sex);
-            Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
-            Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
-
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expected.UniquePupilNumber);
-            Assert.Equal(isPupilPremium, actual.IsPupilPremium);
+            ValidatePupilDto(expected, actual!);
+            Assert.False(actual!.IsPupilPremium);
         }
     }
 
     [Fact]
-    public async Task GetMyPupils_Requests_NoPupils_Returns_NoPupils()
+    public async Task GetMyPupils_Has_LessThan20Pupils_Returns_Npd_And_PupilPremium_Pupils()
+    {
+        // Arrange
+        using SearchIndexFixture mockSearchFixture = new(
+            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+
+        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 10);
+        mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexDtosTestDoubles.Generate(count: 5);
+        mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
+
+        UserId userId = new(Guid.NewGuid().ToString());
+
+        IEnumerable<UniquePupilNumber> upns
+            = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
+                .Select((t) => t.UPN)
+                    .ToUniquePupilNumbers();
+
+        await Fixture.Database.WriteItemAsync<UserDto>(
+            UserDtoTestDoubles.WithPupils(
+                userId,
+                upns));
+
+        // Act
+        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
+
+        GetMyPupilsResponse getMyPupilsResponse =
+            await sut.HandleRequestAsync(
+                new GetMyPupilsRequest(userId.Value));
+
+        // Assert
+        Assert.NotNull(getMyPupilsResponse);
+        Assert.NotNull(getMyPupilsResponse.Pupils);
+
+        int expectedCountOfAllPupilTypes = npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count();
+        Assert.Equal(expectedCountOfAllPupilTypes, getMyPupilsResponse.Pupils.Count());
+
+        MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
+        List<PupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+
+        foreach (PupilDto expected in expectedPupils)
+        {
+            PupilDto? actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expected.UniquePupilNumber);
+
+            ValidatePupilDto(expected, actual!);
+
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expected.UniquePupilNumber);
+            Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
+        }
+    }
+
+    [Fact]
+    public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
         using SearchIndexFixture mockSearchFixture = new(
@@ -115,6 +162,17 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(getMyPupilsResponse.Pupils);
 
         Assert.Equivalent(Array.Empty<PupilDto>(), getMyPupilsResponse.Pupils);
+    }
+
+    private static void ValidatePupilDto(PupilDto expected, PupilDto actual)
+    {
+        Assert.NotNull(actual);
+        Assert.Equal(expected.Forename, actual.Forename);
+        Assert.Equal(expected.Surname, actual.Surname);
+        Assert.Equal(expected.DateOfBirth, actual.DateOfBirth);
+        Assert.Equal(expected.Sex, actual.Sex);
+        Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
+        Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
     }
 
     private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, PupilDto>

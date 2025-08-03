@@ -170,9 +170,15 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         return output;
     }
 
-    private static List<IEnumerable<string>> SplitUpnsToFitPagingLimit(IEnumerable<UniquePupilNumber> upns)
+    internal static List<IEnumerable<string>> SplitUpnsToFitPagingLimit(IEnumerable<UniquePupilNumber> upns)
     {
         IEnumerable<string> upnValues = upns.Select(t => t.Value);
+
+        if (!upnValues.Any())
+        {
+            return [];
+        }
+
         int numberOfPages = (int)Math.Ceiling((double)upnValues.Count() / PageSplitLimit);
 
         if (numberOfPages == 0)
