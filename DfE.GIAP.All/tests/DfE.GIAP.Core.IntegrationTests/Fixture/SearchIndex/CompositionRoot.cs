@@ -15,13 +15,15 @@ internal static class CompositionRoot
         services.AddSingleton<ISearchClientProvider>(sp =>
         {
             IEnumerable<SearchClient> originalClients = sp.GetServices<SearchClient>();
+
             List<SearchClient> insecureClients =
                 originalClients
-                    .Select(client => client.WithDisabledTlsValidation())
+                    .Select(client => client.WithDisabledTlsValidation()) // Required as .NET cert store doesn't trust untrustedRoot.
                     .ToList();
 
-            IOptions<SearchIndexOptions> options = sp.GetRequiredService<IOptions<SearchIndexOptions>>();
-            return new SearchClientProvider(insecureClients, options);
+            return new SearchClientProvider(
+                insecureClients,
+                sp.GetRequiredService<IOptions<SearchIndexOptions>>());
         });
         return services;
     }

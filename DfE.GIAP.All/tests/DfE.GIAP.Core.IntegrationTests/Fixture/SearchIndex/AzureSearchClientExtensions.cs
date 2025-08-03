@@ -9,11 +9,13 @@ internal static class AzureSearchClientExtensions
     {
         SearchClientOptions insecureOptions = new()
         {
-            Transport = new HttpClientTransport(
-                new HttpClient(new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                }))
+            Transport =
+                new HttpClientTransport(
+                    new HttpClient(
+                        new HttpClientHandler
+                        {
+                            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                        }))
         };
 
         return new SearchClient(
