@@ -135,6 +135,28 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
                     (options) => expectedUpnsFilteredFor.All(t => options.Filter.Contains(t)))), Times.Once);
     }
 
+    [Fact]
+    public async Task GetPupilsAsync_ReturnsEmpty_WhenPagedUpnsCountIsZero()
+    {
+        // Arrange
+        IEnumerable<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(10); // Less than one full page
+        MyPupilsQueryOptions queryOptions = new(
+            Order: new OrderPupilsBy(string.Empty, SortDirection.Descending),
+            Page: PageNumber.Page(2)); // Page 2 skips all 10
+
+        Mock<ISearchClientProvider> searchClientProviderMock = SearchClientProviderTestDoubles.Default();
+        Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
+        TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
+
+        // Act
+        IEnumerable<Pupil> result = await service.GetPupilsAsync(upns, queryOptions);
+
+        // Assert
+        Assert.Empty(result);
+        searchClientProviderMock.Verify(p => p.InvokeSearchAsync<AzureIndexEntity>(It.IsAny<string>(), It.IsAny<SearchOptions>()), Times.Never);
+    }
+
+
     [Theory]
     [InlineData("Surname", SortDirection.Ascending, "Surname asc")]
     [InlineData("Surname", SortDirection.Descending, "Surname desc")]
