@@ -2,7 +2,6 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
@@ -69,14 +68,12 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
        IPaginatedSearchService paginatedSearch,
        IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
-       IContentService contentService,
        IDownloadService downloadService,
        IOptions<AzureAppSettings> azureAppSettings)
        : base(logger,
              paginatedSearch,
              mplService,
              selectionManager,
-             contentService,
              azureAppSettings)
     {
         _logger = logger ??

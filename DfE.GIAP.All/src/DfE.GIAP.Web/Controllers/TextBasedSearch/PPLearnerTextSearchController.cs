@@ -4,7 +4,6 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
@@ -73,10 +72,9 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
-        IContentService contentService,
         IDownloadService downloadService,
         IOptions<AzureAppSettings> azureAppSettings)
-        : base(logger, paginatedSearch, mplService, selectionManager, contentService, azureAppSettings)
+        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
     {
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));
