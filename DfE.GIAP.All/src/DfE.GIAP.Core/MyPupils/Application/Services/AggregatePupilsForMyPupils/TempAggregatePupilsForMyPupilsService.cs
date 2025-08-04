@@ -126,5 +126,5 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 internal static class AzureSearchIndexDtoExtensions
 {
     internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(this IEnumerable<AzureIndexEntity> azureIndexDtos, PupilType pupilType)
-        => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? []; 
+        => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
 }
