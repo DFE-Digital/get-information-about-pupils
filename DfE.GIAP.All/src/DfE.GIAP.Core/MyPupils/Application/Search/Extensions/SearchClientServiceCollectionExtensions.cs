@@ -47,17 +47,4 @@ public static class SearchClientServiceCollectionExtensions
 
         return services;
     }
-
-    public static IServiceCollection AddSearchClients(
-        this IServiceCollection services,
-        Action<SearchClientOptions>? configureOption)
-    {
-        IEnumerable<Action<SearchClientOptions>>? normalisedConfigureOptions
-            = configureOption != null
-                ? new[] { configureOption }
-                    : null;
-
-        return services.AddSearchClients(normalisedConfigureOptions);
-    }
-
 }

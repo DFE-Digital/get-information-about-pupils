@@ -44,7 +44,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 1);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
-        UserId userId = new(Guid.NewGuid().ToString());
+        UserId userId = UserIdTestDoubles.Default();
 
         IEnumerable<UniquePupilNumber> upns
             = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
@@ -95,7 +95,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 5);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
-        UserId userId = new(Guid.NewGuid().ToString());
+        UserId userId = UserIdTestDoubles.Default();
 
         IEnumerable<UniquePupilNumber> upns
             = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
@@ -143,7 +143,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        UserId userId = new(Guid.NewGuid().ToString());
+        UserId userId = UserIdTestDoubles.Default();
 
         await Fixture.Database.WriteItemAsync<UserDto>(
             UserDtoTestDoubles.WithPupils(
