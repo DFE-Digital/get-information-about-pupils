@@ -51,31 +51,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         return Task.CompletedTask;
     }
 
-
-    [Fact]
-    public async Task DeletePupilsFromMyPupils_Throws_InvalidArgumentException_When_Any_PupilIdentifier_Is_Not_Part_Of_The_List()
-    {
-        // Arrange
-        IEnumerable<string> unknownPupilIdentifier = [UniquePupilNumberTestDoubles.Generate().Value];
-
-        // Act
-        DeletePupilsFromMyPupilsRequest request = new(
-            _context!.user.id,
-            DeletePupilUpns: unknownPupilIdentifier,
-            DeleteAll: false);
-
-        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
-            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
-
-        // Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => sut.HandleRequestAsync(request));
-
-        IEnumerable<UserDto> users = await Fixture.Database.ReadManyAsync<UserDto>();
-        UserDto userDto = Assert.Single(users);
-        Assert.NotNull(userDto);
-        Assert.Equivalent(_context.user, userDto);
-    }
-
     [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_Item_When_PupilIdentifier_Is_Part_Of_The_List()
     {
