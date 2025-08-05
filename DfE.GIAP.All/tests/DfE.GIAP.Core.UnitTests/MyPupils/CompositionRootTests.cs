@@ -51,6 +51,8 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUserReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IMapper<UserDto, User.Application.User>>());
 
+        Assert.NotNull(provider.GetService<IUserWriteRepository>());
+
         Assert.NotNull(provider.GetService<ISearchClientProvider>());
         Assert.NotNull(provider.GetService<IEnumerable<SearchClient>>());
         Assert.NotNull(provider.GetService<IOptions<SearchIndexOptions>>());

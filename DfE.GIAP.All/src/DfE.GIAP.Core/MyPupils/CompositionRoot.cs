@@ -50,6 +50,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
+            .AddScoped<IUserWriteRepository, CosmosDbUserWriteRepository>()
             .AddSingleton<IMapper<UserDto, User.Application.User>, MapUserProfileDtoToUserMapper>()
             .AddMyPupilsInfrastructureSearch();
 
