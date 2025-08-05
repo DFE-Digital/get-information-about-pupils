@@ -53,7 +53,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         Mock<IUserWriteRepository> mockWriteRepository = UserWriteRepositoryTestDoubles.Default();
         DeletePupilsFromMyPupilsUseCase useCase = new(mockReadRepository.Object, mockWriteRepository.Object);
-        
+
         IEnumerable<string> deletePupilUpnIdentifiers = user.UniquePupilNumbers.Take(1).Select(t => t.Value);
 
         DeletePupilsFromMyPupilsRequest request = new(
