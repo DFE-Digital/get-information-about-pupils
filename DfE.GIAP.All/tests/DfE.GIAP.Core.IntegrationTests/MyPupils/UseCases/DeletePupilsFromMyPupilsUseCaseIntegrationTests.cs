@@ -58,13 +58,13 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        // Act
         string deletePupilIdentifier = _context.myPupilUpns[0].Value;
         DeletePupilsFromMyPupilsRequest request = new(
             _context.user.id,
             DeletePupilUpns: [deletePupilIdentifier],
             DeleteAll: false);
 
+        // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
@@ -86,7 +86,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        // Act
         List<string> deleteMultiplePupilIdentifiers =
         [
             _context.myPupilUpns[0].Value,
@@ -99,6 +98,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             DeletePupilUpns: deleteMultiplePupilIdentifiers,
             DeleteAll: false);
 
+        // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
@@ -122,7 +122,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        // Act
         List<string> deleteMultiplePupilIdentifiers =
         [
             _context.myPupilUpns[0].Value,
@@ -135,6 +134,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             DeletePupilUpns: deleteMultiplePupilIdentifiers,
             DeleteAll: false);
 
+        // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
@@ -158,13 +158,13 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        // Act
         bool deleteAllPupils = true;
         DeletePupilsFromMyPupilsRequest request = new(
             _context.user.id,
             DeletePupilUpns: [Guid.NewGuid().ToString()], // should be ignored if DeleteAll is enabled
             DeleteAll: deleteAllPupils);
 
+        // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
