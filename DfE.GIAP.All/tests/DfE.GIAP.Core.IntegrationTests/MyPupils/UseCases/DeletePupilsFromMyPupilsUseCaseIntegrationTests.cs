@@ -116,7 +116,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         [
             _context.myPupilUpns[0].Value,
             _context.myPupilUpns[4].Value,
-            _context.myPupilUpns[_context.myPupilUpns.Count-1].Value
+            _context.myPupilUpns[_context.myPupilUpns.Count - 1].Value
         ];
 
         DeletePupilsFromMyPupilsRequest request = new(
