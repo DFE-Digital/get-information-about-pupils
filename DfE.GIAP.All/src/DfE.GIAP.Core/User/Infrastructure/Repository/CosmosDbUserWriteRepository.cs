@@ -16,6 +16,8 @@ internal sealed class CosmosDbUserWriteRepository : IUserWriteRepository
         ICosmosDbCommandHandler commandHandler,
         ILogger<CosmosDbUserWriteRepository> logger)
     {
+        ArgumentNullException.ThrowIfNull(commandHandler);
+        ArgumentNullException.ThrowIfNull(logger);
         _commandHandler = commandHandler;
         _logger = logger;
     }

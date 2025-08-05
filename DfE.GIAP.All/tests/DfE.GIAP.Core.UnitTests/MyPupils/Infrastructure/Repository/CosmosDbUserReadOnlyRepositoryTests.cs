@@ -14,17 +14,25 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 {
 
     [Fact]
+    public void Constructor_ThrowsArgumentNullException_When_CommandHandlerIsNull()
+    {
+        // Arrange
+        Func<CosmosDbUserWriteRepository> construct = () => new CosmosDbUserWriteRepository(
+            commandHandler: null!,
+            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteRepository>());
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+
+    [Fact]
     public void Constructor_ThrowsArgumentNullException_When_LoggerIsNull()
     {
         // Arrange
-        Mock<IMapper<UserDto, User.Application.User>> mockMapper = MapperTestDoubles.Default<UserDto, User.Application.User>();
-
-        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
-
-        Func<CosmosDbUserReadOnlyRepository> construct = () => new CosmosDbUserReadOnlyRepository(
-            logger: null!,
-            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
-            userMapper: mockMapper.Object);
+        Func<CosmosDbUserWriteRepository> construct = () => new CosmosDbUserWriteRepository(
+            commandHandler: CosmosDbCommandHandlerTestDoubles.Default().Object,
+            logger: null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
