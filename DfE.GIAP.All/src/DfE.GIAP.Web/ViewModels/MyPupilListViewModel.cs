@@ -53,7 +53,7 @@ public class MyPupilListViewModel : BaseSearchViewModel
     public string Upn { get; set; }
     public IEnumerable<Learner> Learners { get; set; } = new List<Learner>();
     public bool NoPupilSelected { get; set; }
-    public string SelectAllNoJsChecked { get; set; }
+    public string SelectAll { get; set; }
     public bool ToggleSelectAll { get; set; } = false;
     public bool ShowErrors { get; set; }
     public bool Fail { get; set; }

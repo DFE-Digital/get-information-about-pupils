@@ -16,11 +16,11 @@ public sealed class MyPupilsViewModel
     public string FormAction => "MyPupilList";
     public string UniquePupilNumberLabel => "UPN";
     public IEnumerable<PupilPresentatationModel> Pupils { get; } = [];
-    public IEnumerable<string> SelectedPupils { get; } = [];
+    public IEnumerable<string> SelectedPupils { get; set; } = [];
     public bool IsAnyPupilsSelected => SelectAll || SelectedPupils.Any();
     public bool SelectAll { get; set; } = false;
 
-    public bool IsPreviousPageAvailable => PageNumber > 1;
+    public bool DisplayPreviousPage => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
     public bool IsMorePageAvailable => Pupils.Count() == DEFAULT_PAGE_SIZE;
     public bool IsNoPupilsRemaining => !Pupils.Any();
 

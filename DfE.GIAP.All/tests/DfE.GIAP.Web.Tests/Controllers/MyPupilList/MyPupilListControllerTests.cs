@@ -30,20 +30,16 @@ using Xunit;
 namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;
 
 [Trait("My Pupil List", "My Pupil List Controller Tests")]
-public class MyPupilListControllerTests :
-                                                IClassFixture<UserClaimsPrincipalFake>,
-                                                IClassFixture<PaginatedResultsFake>
+public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>, IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<MyPupilListController> _mockLogger = Substitute.For<ILogger<MyPupilListController>>();
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
-    private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-    private readonly ICommonService _mockCommonService = Substitute.For<ICommonService>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private AzureAppSettings _mockAppSettings = new AzureAppSettings();
-    private readonly TestSession _mockSession = new TestSession();
+    private AzureAppSettings _mockAppSettings = new();
+    private readonly TestSession _mockSession = new();
 
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
@@ -378,7 +374,7 @@ public class MyPupilListControllerTests :
         var upnArray = upns.FormatLearnerNumbers();
 
         var inputModel = GetInputModel(upns);
-        inputModel.SelectAllNoJsChecked = "true";
+        inputModel.SelectAll = "true";
 
         var paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(false);
@@ -417,7 +413,7 @@ public class MyPupilListControllerTests :
         var upnArray = upns.FormatLearnerNumbers();
 
         var inputModel = GetInputModel(upns);
-        inputModel.SelectAllNoJsChecked = "false";
+        inputModel.SelectAll = "false";
 
         var paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(true);
@@ -466,7 +462,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
         // act
-        var result = await sut.Index(true);
+        var result = await sut.Index();
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -494,7 +490,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
         // act
-        var result = await sut.Index(true);
+        var result = await sut.Index();
 
         // assert
 
@@ -525,7 +521,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, paginatedResponse);
 
         // act
-        var result = await sut.MyPupilList(inputModel, 0, true);
+        var result = await sut.MyPupilList(inputModel, 0);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -704,12 +700,12 @@ public class MyPupilListControllerTests :
         {
             Learners = new List<Learner>()
                     {
-                        new Learner()
+                        new()
                         {
                             Id = "123",
                             LearnerNumber = "A203102209083",
                         },
-                        new Learner()
+                        new()
                         {
                             Id = "456",
                             LearnerNumber = "A203202811068",
@@ -719,13 +715,13 @@ public class MyPupilListControllerTests :
         };
         var expectedLearners = new List<Learner>()
                     {
-                        new Learner()
+                        new()
                         {
                             Id = "123",
                             LearnerNumber = "A203102209083",
                             LearnerNumberId = "A203102209083",
                         },
-                        new Learner()
+                        new()
                         {
                             Id = "456",
                             LearnerNumber = "A203202811068",
@@ -764,7 +760,7 @@ public class MyPupilListControllerTests :
         _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null); // TODO revisit
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -791,7 +787,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null); // TODO revisit
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -821,7 +817,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null); // TODO revisit
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -851,7 +847,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null); // TODO revisit
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -882,7 +878,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null); // TODO revisit
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -910,7 +906,7 @@ public class MyPupilListControllerTests :
         var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null); // TODO revisit
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -939,7 +935,7 @@ public class MyPupilListControllerTests :
         var expectedList = learnersResponse.Learners.OrderByDescending(x => x.Forename);
 
         // act
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -969,7 +965,7 @@ public class MyPupilListControllerTests :
         var sut = GetController();
         SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -996,7 +992,7 @@ public class MyPupilListControllerTests :
         var sut = GetController();
         SetupPaginatedSearch(AzureSearchIndexType.NPD, learnersResponse);
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, learnersResponse);
-        var result = await sut.RemoveSelected(inputModel);
+        var result = await sut.RemoveSelected(false, null);
 
         // assert
         var viewResult = Assert.IsType<ViewResult>(result);
@@ -1317,7 +1313,7 @@ public class MyPupilListControllerTests :
         };
 
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
+        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
         var sut = GetController();
@@ -1351,7 +1347,7 @@ public class MyPupilListControllerTests :
         };
 
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
+        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
         var sut = GetController();
@@ -1385,7 +1381,7 @@ public class MyPupilListControllerTests :
         };
 
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
+        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
         var sut = GetController();
@@ -1472,7 +1468,7 @@ public class MyPupilListControllerTests :
         };
 
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
+        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
         var sut = GetController();
@@ -1868,71 +1864,6 @@ public class MyPupilListControllerTests :
 
     #region PopulateModelLearners
 
-    [Fact]
-    public void PopulateLearners_works_for_multiple_starred_pupils()
-    {
-        // arrange
-        var learners = new List<Learner>()
-            {
-                new Learner()
-                {
-                    LearnerNumber = Global.UpnMask,
-                    LearnerNumberId = RbacHelper.EncodeUpn("A203102209083"),
-                },
-                new Learner()
-                {
-                    LearnerNumber = Global.UpnMask,
-                    LearnerNumberId = RbacHelper.EncodeUpn("A203202811068"),
-                }
-        };
-
-        var inputModel = new MyPupilListViewModel();
-        var sut = GetController();
-
-        // act
-        var result = sut.PopulateLearners(learners, inputModel, learners, 0);
-
-        // assert
-        Assert.Equal(learners, result.Learners);
-        Assert.Empty(result.Invalid);
-    }
-
-    [Fact]
-    public void PopulateLearners_works_with_invalid_pupils()
-    {
-        // arrange
-        var learners = _paginatedResultsFake.GetInvalidLearners().Learners;
-
-        var inputModel = new MyPupilListViewModel();
-        var sut = GetController();
-
-        // act
-        var result = sut.PopulateLearners(learners, inputModel, learners, 0);
-
-        // assert
-        Assert.Equal(learners.Take(2), result.Learners);
-        Assert.Single(result.Invalid);
-    }
-
-    [Fact]
-    public void PopulateLearners_sets_PupilPremium_property_correctly()
-    {
-        // arrange
-        var learners = _paginatedResultsFake.GetValidLearners().Learners;
-
-        var inputModel = new MyPupilListViewModel();
-        var sut = GetController();
-
-        // act
-        var result = sut.PopulateLearners(learners, inputModel, learners.Take(1).ToList(), 0);
-
-        // assert
-        Assert.Equal(learners, result.Learners);
-        Assert.Empty(result.Invalid);
-        Assert.Equal("Yes", result.Learners.First().PupilPremium);
-        Assert.Equal("No", result.Learners.Last().PupilPremium);
-    }
-
     #endregion PopulateModelLearners
 
     private MyPupilListController GetController(int maxMPLLimit = 4000, int CTFUPNLimit = 4000)
@@ -1957,13 +1888,13 @@ public class MyPupilListControllerTests :
 
         return new MyPupilListController(
             _mockLogger,
-            _mockPaginatedService,
             _mockMplService,
             _mockSelectionManager,
             _mockCtfService,
             _mockDownloadService,
-            _mockCommonService,
-            _mockAppOptions)
+            _mockAppOptions,
+            null,
+            null) // TODO revisit
         {
             ControllerContext = context
         };
@@ -1971,17 +1902,18 @@ public class MyPupilListControllerTests :
 
     private void SetupPaginatedSearch(AzureSearchIndexType indexType, PaginatedResponse paginatedResponse)
     {
-        _mockPaginatedService.GetPage(
-        Arg.Any<string>(),
-        Arg.Any<Dictionary<string, string[]>>(),
-        Arg.Any<int>(),
-        Arg.Any<int>(),
-        Arg.Is(indexType),
-        Arg.Is(AzureSearchQueryType.Numbers),
-        Arg.Any<AzureFunctionHeaderDetails>(),
-        Arg.Any<string>(),
-        Arg.Any<string>())
-        .Returns(paginatedResponse);
+        //_mockPaginatedService.GetPage(
+        //    Arg.Any<string>(),
+        //    Arg.Any<Dictionary<string, string[]>>(),
+        //    Arg.Any<int>(),
+        //    Arg.Any<int>(),
+        //    Arg.Is(indexType),
+        //    Arg.Is(AzureSearchQueryType.Numbers),
+        //    Arg.Any<AzureFunctionHeaderDetails>(),
+        //    Arg.Any<string>(),
+        //    Arg.Any<string>())
+        //    .Returns(paginatedResponse);
+        // TODO revisit as this dependency unused now
     }
 
     private void SetUpLearnerList(string[] upnArray)

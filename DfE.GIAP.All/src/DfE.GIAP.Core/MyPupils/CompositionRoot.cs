@@ -1,12 +1,8 @@
-﻿using Azure;
-using Azure.Search.Documents;
-using DfE.GIAP.Core.Common.Application;
+﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
-using DfE.GIAP.Core.MyPupils.Application.Services;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
@@ -20,7 +16,6 @@ using DfE.GIAP.Core.User.Infrastructure.Repository;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot

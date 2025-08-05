@@ -38,49 +38,64 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         }
 
         MyPupilsQueryOptions validatedQueryOptions = queryOptions ?? MyPupilsQueryOptions.Default();
-
         int skip = DefaultPageSize * (validatedQueryOptions.Page.Value - 1);
+        List<UniquePupilNumber> remainingUpns = uniquePupilNumbers.Skip(skip).ToList();
 
-        List<UniquePupilNumber> pagedUpns =
-            uniquePupilNumbers
-                .Skip(skip)
+        List<DecoratedSearchIndexDto> outputResults = [];
+        int batchSize = DefaultPageSize;
+
+
+        int upnQueriedTotalCounter = 0;
+
+        // Ensure the PageSize is filled
+        while (outputResults.Count < DefaultPageSize && upnQueriedTotalCounter < remainingUpns.Count)
+        {
+            List<UniquePupilNumber> upnQueryBatch = remainingUpns.Skip(upnQueriedTotalCounter).Take(batchSize).ToList();
+
+            if (!upnQueryBatch.Any()) // nothing remaining to query for to fill the page
+            {
+                break;
+            }
+
+            SearchOptions searchOptions = CreateSearchClientOptions(
+                upnQueryBatch,
+                validatedQueryOptions.Order.Field,
+                validatedQueryOptions.Order.Direction);
+
+            List<DecoratedSearchIndexDto> npdResults =
+                (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", searchOptions))
+                    .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase)
+                    .DistinctBy(t => t.SearchIndexDto.UPN)
+                    .ToList();
+
+            outputResults.AddRange(npdResults);
+
+            if (outputResults.Count < DefaultPageSize)
+            {
+                List<DecoratedSearchIndexDto> ppResults =
+                    (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", searchOptions))
+                        .ToDecoratedSearchIndexDto(PupilType.PupilPremium)
+                        .DistinctBy(t => t.SearchIndexDto.UPN)
+                        .ToList();
+
+                outputResults.AddRange(ppResults);
+            }
+
+            outputResults = outputResults
                 .Take(DefaultPageSize)
                 .ToList();
 
-        if (pagedUpns.Count == 0)
-        {
-            return [];
+            upnQueriedTotalCounter += batchSize;
         }
 
-        SearchOptions options = CreateSearchClientOptions(
-            pagedUpns,
-            validatedQueryOptions.Order.Field,
-            validatedQueryOptions.Order.Direction);
-
-        List<DecoratedSearchIndexDto> npdResults =
-            (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", options))
-                .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase)
-                .ToList();
-
-        if (npdResults.Count >= DefaultPageSize) // if npd reaches page size then no need to call pupil-premium
-        {
-            return npdResults.Select(_mapper.Map);
-        }
-
-        List<DecoratedSearchIndexDto> ppResults =
-            (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", options))
-                .ToDecoratedSearchIndexDto(PupilType.PupilPremium)
-                .ToList();
-
-        return npdResults
-            .Concat(ppResults)
-            .DistinctBy(t => t.SearchIndexDto.UPN) // Deduplicate between indexes
-            .Take(DefaultPageSize)
-            .Select(_mapper.Map);
+        return outputResults.Select(_mapper.Map);
     }
 
 
-    internal static SearchOptions CreateSearchClientOptions(IEnumerable<UniquePupilNumber> upns, string sortField, SortDirection sortDirection)
+    internal static SearchOptions CreateSearchClientOptions(
+        IEnumerable<UniquePupilNumber> upns,
+        string sortField,
+        SortDirection sortDirection)
     {
         const string UpnIndexField = "UPN";
 
