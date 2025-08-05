@@ -141,6 +141,42 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
     }
 
     [Fact]
+    public async Task DeletePupilsFromMyPupils_Deletes_Multiples_When_Some_PupilIdentifiers_Are_Part_Of_The_List()
+    {
+        // Arrange
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
+
+        // Act
+        List<string> deleteMultiplePupilIdentifiers =
+        [
+            _context.myPupilUpns[0].Value,
+            Guid.NewGuid().ToString(), // Unknown identifier not part of the list
+            _context.myPupilUpns[_context.myPupilUpns.Count - 1].Value
+        ];
+
+        DeletePupilsFromMyPupilsRequest request = new(
+            _context.user.id,
+            DeletePupilUpns: deleteMultiplePupilIdentifiers,
+            DeleteAll: false);
+
+        await sut.HandleRequestAsync(request);
+
+        // Assert
+        IEnumerable<UserDto> users = await Fixture.Database.ReadManyAsync<UserDto>();
+
+        List<string> remainingUpnsAfterDelete =
+            _context.myPupilUpns
+                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
+                .Select(t => t.Value).ToList();
+
+        UserDto actualUserDto = Assert.Single(users);
+        Assert.NotNull(actualUserDto);
+        Assert.NotEmpty(remainingUpnsAfterDelete);
+        Assert.Equivalent(remainingUpnsAfterDelete, actualUserDto.MyPupils.Pupils.Select(t => t.UPN));
+    }
+
+    [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_All_Items_When_DeleteAll_Is_True()
     {
         // Arrange

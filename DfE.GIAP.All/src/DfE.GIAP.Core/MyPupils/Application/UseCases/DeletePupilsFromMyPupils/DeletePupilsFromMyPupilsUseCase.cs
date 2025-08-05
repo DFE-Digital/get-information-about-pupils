@@ -14,12 +14,15 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
         IUserReadOnlyRepository userReadOnlyRepository,
         IUserWriteRepository userWriteRepository)
     {
+        ArgumentNullException.ThrowIfNull(userWriteRepository);
+        ArgumentNullException.ThrowIfNull(userWriteRepository);
         _userReadOnlyRepository = userReadOnlyRepository;
         _userWriteRepository = userWriteRepository;
     }
 
     public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
     {
+        ArgumentNullException.ThrowIfNull(request);
         UserId userId = new(request.UserId);
 
         if (request.DeleteAll)
@@ -30,18 +33,17 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
         User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
-        IEnumerable<string> userMyPupilsUpns = user.UniquePupilNumbers.Select(t => t.Value);
+        IEnumerable<string> userMyPupilUpnsBeforeDelete = user.UniquePupilNumbers.Select(t => t.Value);
 
-        if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilsUpns.Contains(deleteUpn)))
+        if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilUpnsBeforeDelete.Contains(deleteUpn)))
         {
             throw new ArgumentException($"None of the pupil identifiers {string.Join(',', request.DeletePupilUpns)} are part of the User {userId.Value} MyPupils");
         }
 
         List<UniquePupilNumber> updatedMyPupilsAfterDelete =
-            userMyPupilsUpns
+            userMyPupilUpnsBeforeDelete
                 .Where(upn => !request.DeletePupilUpns.Contains(upn))
                 .ToUniquePupilNumbers()
-                .Distinct()
                 .ToList();
 
         await _userWriteRepository.SaveMyPupilsAsync(userId, updatedMyPupilsAfterDelete);
