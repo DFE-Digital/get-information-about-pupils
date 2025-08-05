@@ -50,7 +50,7 @@ internal sealed class CosmosDbUserWriteRepository : IUserWriteRepository
                 containerKey: "users",
                 partitionKeyValue: userId.Value);
         }
-        catch(CosmosException)
+        catch (CosmosException)
         {
             _logger.LogCritical("{method} Error in saving MyPupilsAsync for user: {userId}", nameof(SaveMyPupilsAsync), userId.Value);
             throw;
