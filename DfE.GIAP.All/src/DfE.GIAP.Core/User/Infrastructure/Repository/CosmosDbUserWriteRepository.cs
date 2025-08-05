@@ -26,6 +26,8 @@ internal sealed class CosmosDbUserWriteRepository : IUserWriteRepository
     {
         try
         {
+            ArgumentNullException.ThrowIfNull(userId);
+
             IEnumerable<MyPupilsItemDto> updatedPupils = updatedPupilIds?.Select((upn) => new MyPupilsItemDto()
             {
                 UPN = upn.Value
@@ -46,7 +48,7 @@ internal sealed class CosmosDbUserWriteRepository : IUserWriteRepository
             await _commandHandler.UpsertItemAsync(
                 item: updatedUserProfile,
                 containerKey: "users",
-                partitionKey: new PartitionKey(userId.Value));
+                partitionKeyValue: userId.Value);
         }
         catch(CosmosException)
         {

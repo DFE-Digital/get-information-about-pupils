@@ -12,6 +12,7 @@ using Microsoft.Azure.Cosmos;
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure.Repository;
 public sealed class CosmosDbUserReadOnlyRepositoryTests
 {
+
     [Fact]
     public void Constructor_ThrowsArgumentNullException_When_LoggerIsNull()
     {
