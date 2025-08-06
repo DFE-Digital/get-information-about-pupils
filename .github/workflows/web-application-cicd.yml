@@ -189,13 +189,13 @@ jobs:
         shell: bash
 
       - name: Download unit test coverage reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: unit-test-coverage
           path: ./coverlet/reports
 
       - name: Download integration test coverage report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: integration-test-coverage
           path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
@@ -230,7 +230,7 @@ jobs:
           fetch-depth: 0 # Fetches all history so SonarCloud can find the `main` branch
 
       - name: Download merged coverage report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: merged-coverage-report
           path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
