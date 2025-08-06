@@ -1,0 +1,79 @@
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Search.Common.Application.Adapters;
+using DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
+using DfE.GIAP.Core.Search.Common.Application.Models;
+using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Model;
+using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
+using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Request;
+using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
+
+namespace DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname;
+
+/// <summary>
+/// Use case responsible for executing a further education pupil search based on first name and/or surname.
+/// It delegates the search operation to a domain-specific adapter and returns structured results.
+/// </summary>
+public sealed class SearchByFirstNameAndOrSurnameUseCase :
+    IUseCase<SearchByFirstNameAndOrSurnameRequest, SearchByFirstNameAndOrSurnameResponse>
+{
+    private readonly ISearchCriteria _searchCriteria;
+    private readonly ISearchServiceAdapter<FurtherEducationPupilSearchResult, FurtherEducationFacets> _searchServiceAdapter;
+
+    /// <summary>
+    /// Constructs a new instance of the use case with required dependencies.
+    /// </summary>
+    /// <param name="searchCriteria">Provides configuration for search fields and facets.</param>
+    /// <param name="searchServiceAdapter">Adapter to interact with Azure Cognitive Search using domain models.</param>
+    /// <exception cref="ArgumentNullException">Thrown if either dependency is null.</exception>
+    public SearchByFirstNameAndOrSurnameUseCase(
+        ISearchCriteria searchCriteria,
+        ISearchServiceAdapter<FurtherEducationPupilSearchResult, FurtherEducationFacets> searchServiceAdapter)
+    {
+        _searchCriteria = searchCriteria ?? throw new ArgumentNullException(nameof(searchCriteria));
+        _searchServiceAdapter = searchServiceAdapter ?? throw new ArgumentNullException(nameof(searchServiceAdapter));
+    }
+
+    /// <summary>
+    /// Executes the search operation with the provided request.
+    /// Validates the keyword, applies configured search criteria, and returns results or error status.
+    /// </summary>
+    /// <param name="request">The search request containing a keyword, optional filters, and an offset.</param>
+    /// <returns>
+    /// A structured response containing matched pupil records, faceted data, total results count,
+    /// or an appropriate error status.
+    /// </returns>
+    public async Task<SearchByFirstNameAndOrSurnameResponse> HandleRequestAsync(
+        SearchByFirstNameAndOrSurnameRequest request)
+    {
+        if (request == null || string.IsNullOrWhiteSpace(request.SearchKeyword))
+        {
+            return new(SearchResponseStatus.InvalidRequest);
+        }
+
+        try
+        {
+            SearchResults<FurtherEducationPupilSearchResult, FurtherEducationFacets>? results =
+                await _searchServiceAdapter.SearchAsync(
+                    new SearchServiceAdapterRequest(
+                        request.SearchKeyword,
+                        _searchCriteria.SearchFields,
+                        _searchCriteria.Facets,
+                        request.FilterRequests,
+                        request.Offset));
+
+            return results is null
+                ? new(SearchResponseStatus.SearchServiceError)
+                : new(SearchResponseStatus.Success)
+                {
+                    PupilSearchResults = results.Results?.PupilResults,
+                    FacetedResults = results.FacetResults,
+                    TotalNumberOfResults = (int)(results.TotalNumberOfRecords ?? 0)
+                };
+        }
+        catch (Exception)
+        {
+            // Handles unexpected failures such as adapter exceptions or infrastructure issues.
+            return new(SearchResponseStatus.SearchServiceError);
+        }
+    }
+}
