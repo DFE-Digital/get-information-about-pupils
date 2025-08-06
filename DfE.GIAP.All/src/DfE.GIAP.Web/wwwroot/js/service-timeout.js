@@ -1,172 +1,150 @@
 $(document).ready(function () {
-    var clientActive = false;
-    var inActiveSessionExpirationCountdown = false;
-    var sessionExpirationModalCountdown = 180;                          // Countdown value used by the popup modal (3 minutes).
-    var sessionSignOutRoute = "../auth/signout";
-    var keepSessionAliveRoute = "/ServiceTimeout/KeepSessionAlive";
-    var SessionTimeoutValueRoute = "/ServiceTimeout/SessionTimeoutValue";
-    var currentExpirationCountdown;
-    var clientActivityCheckPulse;
-    var sessionExpirationCountdown;
-    var sessionExpirationCountDownThreshold = setSessionTimeoutValue(); // Time taken to invoke the countdown modal in seconds seconds.
-    var sessionCountdown = 0;
-    var hasInitialActiveCountdownTimestamp = false;
-    var initialActiveCountdownTimestamp;
+    const SESSION_MODAL_COUNTDOWN = 180; // 3 minutes
+    const KEEP_ALIVE_INTERVAL = 30000;   // 30 seconds
+    const SESSION_SIGNOUT_ROUTE = "../auth/signout";
+    const KEEP_SESSION_ALIVE_ROUTE = "/ServiceTimeout/KeepSessionAlive";
+    const SESSION_TIMEOUT_VALUE_ROUTE = "/ServiceTimeout/SessionTimeoutValue";
 
-    hideSessionTimeoutModal();
-    checkSessionExpirationOnUserInput();
-    checkClientActivity();
-    checkCurrentSessionExpirationStatus();
+    let sessionCountdown = SESSION_MODAL_COUNTDOWN;
+    let sessionExpirationThreshold;
+    let keepAliveTimer;
+    let countdownTimer;
+    let modalTimer;
+    let clientActive = false;
+    let modalVisible = false;
+    let lastKeepAliveTime = 0;
 
-    $('#btnContinue').click(function () {
+    init();
+
+    function init() {
         hideSessionTimeoutModal();
-        sendSessionKeepAlive('keepSessionAlive');
-        hasInitialActiveCountdownTimestamp = false;
-        inActiveSessionExpirationCountdown = false;
-    });
+        setupUserActivityTracking();
+        fetchSessionTimeoutValue()
+            .then(timeout => {
+                sessionExpirationThreshold = (timeout * 60) - SESSION_MODAL_COUNTDOWN;
+                startSessionMonitor();
+            });
+    }
 
-    $('#btnExitService').click(function () {
-        hideSessionTimeoutModal();
-        location = sessionSignOutRoute;
-    });
+    function setupUserActivityTracking() {
+        let activityDebounce;
 
-    function checkCurrentSessionExpirationStatus() {
-        checkTabFocused();
+        const markActive = () => {
+            clearTimeout(activityDebounce);
+            activityDebounce = setTimeout(() => {
+                clientActive = true;
+            }, 500);
+        };
 
-        currentExpirationCountdown = setTimeout(function () {
+        // Detect mouse, keyboard, scroll, and touch activity
+        $('body').on('mousemove keydown scroll touchstart touchmove', markActive);
+
+        // Handle tab visibility and window focus
+        const handleVisibilityOrFocus = () => {
+            if (document.visibilityState === 'visible' || document.hasFocus()) {
+                clientActive = true;
+
+                if (modalVisible) {
+                    adjustCountdownForHiddenTab();
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+        $(window).on('focus', handleVisibilityOrFocus);
+    }
+
+
+
+    function fetchSessionTimeoutValue() {
+        return $.ajax({
+            type: "GET",
+            url: SESSION_TIMEOUT_VALUE_ROUTE,
+            dataType: "json"
+        })
+            .then(value => value || 20)
+            .catch(() => 20);
+    }
+
+    function startSessionMonitor() {
+        setTimeout(() => {
             if (!clientActive) {
-                initialActiveCountdownTimestamp = Math.floor(new Date().getTime() / 1000);
-                inActiveSessionExpirationCountdown = true;
-                displaySessionExpirationCountdown();
                 showSessionTimeoutModal();
-                setTimeout(function () {
-                }, sessionExpirationModalCountdown * 1000);
+                startCountdownTimer();
+            } else {
+                sendKeepAlive();
             }
-            else {
-                sendSessionKeepAlive('keepSessionAlive');
-            }
-        }, sessionExpirationCountDownThreshold * 1000);
-    }
+        }, sessionExpirationThreshold * 1000);
 
-    function checkClientActivity() {
-        clientActivityCheckPulse = setTimeout(function () {
+        keepAliveTimer = setInterval(() => {
             if (clientActive) {
-                sendSessionKeepAlive('keepSessionAlive');
+                sendKeepAlive();
+                clientActive = false;
             }
-            else {
-                clearTimeout(clientActivityCheckPulse);
-                checkClientActivity()
-            }
-        }, 1000);
+        }, KEEP_ALIVE_INTERVAL);
     }
 
-    function sendSessionKeepAlive(request) {
+    function sendKeepAlive() {
+        const now = Date.now();
+        if (now - lastKeepAliveTime < KEEP_ALIVE_INTERVAL) return;
+        lastKeepAliveTime = now;
+
         $.ajax({
             type: "POST",
-            url: keepSessionAliveRoute,
-            dataType: "json",
-            done: function (response) {
-            },
-            fail: function (error) {
-                console.log("Error posting to " & keepSessionAliveRoute);
-            }
+            url: KEEP_SESSION_ALIVE_ROUTE,
+            dataType: "json"
+        }).fail(() => {
+            console.warn("Keep-alive request failed");
         });
-        clearTimeout(clientActivityCheckPulse);
-        clearTimeout(currentExpirationCountdown);
-        clearTimeout(sessionExpirationCountdown);
-        clientActive = false;
-        checkCurrentSessionExpirationStatus();
-        checkClientActivity();
-        checkSessionExpirationOnUserInput();
-    }
-
-    function checkSessionExpirationOnUserInput() {
-        $('body').on('mousemove keydown', function () {
-            if (!inActiveSessionExpirationCountdown) {
-                clientActive = true;
-            }
-        });
-    }
-
-    function checkTabFocused() {
-        if (document.visibilityState === 'hidden' && inActiveSessionExpirationCountdown) {
-            hasInitialActiveCountdownTimestamp = true;
-        }
-    }
-
-    document.addEventListener('visibilitychange', checkTabFocused);
-
-    function displaySessionExpirationCountdown() {
-        sessionCountdown = sessionExpirationModalCountdown;
-        sessionExpirationCountdown = setInterval(function () {
-            sessionCountdown -= 1;
-            setCountdownTimerDisplay();
-        }, 1000);
-    }
-
-    function getCountDownDisplay(counter) {
-        var minutes;
-        var countdownDisplay;
-        if (counter < 60) {
-            countdownDisplay = "".concat(counter, " ").concat(counter !== 1 ? 'seconds' : 'second');
-        } else {
-            minutes = Math.ceil(counter / 60);
-            countdownDisplay = "".concat(minutes, " ").concat(minutes === 1 ? 'minute' : 'minutes');
-        }
-        return countdownDisplay;
-    }
-
-    function setSessionTimeoutValue() {
-        var sessionTimeoutValue = JSON.parse(getSessionTimeoutValue());
-        return (sessionTimeoutValue * 60) - sessionExpirationModalCountdown;
-    }
-
-    function getSessionTimeoutValue() {
-        return $.ajax({
-            async: false,
-            type: "GET",
-            contentType: "application/json",
-            dataType: "text/plain",
-            url: SessionTimeoutValueRoute,
-            done: function () {
-            },
-            fail: function (data) {
-                console.log("Error posting to " & SessionTimeoutValueRoute);
-            }
-        })
-        .responseText;
-    }
-
-    function setCountdownTimerDisplay() {
-        var currentCountdownValue;
-        if (hasInitialActiveCountdownTimestamp && document.visibilityState === 'visible') {
-            var currentTimestamp = Math.floor(new Date().getTime() / 1000);
-            var currentTimestampOffset = currentTimestamp - initialActiveCountdownTimestamp;
-            hasInitialActiveCountdownTimestamp = false;
-            var revisedSessionStorageCountdown = sessionExpirationModalCountdown - currentTimestampOffset;
-            if (revisedSessionStorageCountdown <= 0) {
-                revisedSessionStorageCountdown = 0;
-            }
-            sessionCountdown = revisedSessionStorageCountdown;
-        }
-        currentCountdownValue = sessionCountdown;
-        $('#seconds-timer').html(getCountDownDisplay(currentCountdownValue));
-        if (currentCountdownValue <= 0) {
-            location = sessionSignOutRoute;
-            hideSessionTimeoutModal();
-        }
-    }
-
-    function hideSessionTimeoutModal() {
-        $('#seconds-timer').html(null);
-        $('#session-expire-warning-modal-overlay').hide();
-        $('#session-expire-warning-modal').hide();
     }
 
     function showSessionTimeoutModal() {
-        setCountdownTimerDisplay();
-        $('#session-expire-warning-modal-overlay').removeAttr('hidden');
+        modalVisible = true;
         $('#session-expire-warning-modal-overlay').show();
         $('#session-expire-warning-modal').show();
+        updateCountdownDisplay();
     }
-})
+
+    function hideSessionTimeoutModal() {
+        modalVisible = false;
+        $('#session-expire-warning-modal-overlay').hide();
+        $('#session-expire-warning-modal').hide();
+        $('#seconds-timer').html('');
+        clearInterval(countdownTimer);
+    }
+
+    function startCountdownTimer() {
+        countdownTimer = setInterval(() => {
+            sessionCountdown--;
+            updateCountdownDisplay();
+            if (sessionCountdown <= 0) {
+                location = SESSION_SIGNOUT_ROUTE;
+                hideSessionTimeoutModal();
+            }
+        }, 1000);
+    }
+
+    function adjustCountdownForHiddenTab() {
+        const now = Math.floor(Date.now() / 1000);
+        const offset = now - (SESSION_MODAL_COUNTDOWN - sessionCountdown);
+        sessionCountdown = Math.max(0, sessionCountdown - offset);
+    }
+
+    function updateCountdownDisplay() {
+        const display = sessionCountdown < 60
+            ? `${sessionCountdown} ${sessionCountdown !== 1 ? 'seconds' : 'second'}`
+            : `${Math.ceil(sessionCountdown / 60)} ${Math.ceil(sessionCountdown / 60) === 1 ? 'minute' : 'minutes'}`;
+        $('#seconds-timer').html(display);
+    }
+
+    $('#btnContinue').click(() => {
+        hideSessionTimeoutModal();
+        sendKeepAlive();
+        sessionCountdown = SESSION_MODAL_COUNTDOWN;
+    });
+
+    $('#btnExitService').click(() => {
+        hideSessionTimeoutModal();
+        location = SESSION_SIGNOUT_ROUTE;
+    });
+});
