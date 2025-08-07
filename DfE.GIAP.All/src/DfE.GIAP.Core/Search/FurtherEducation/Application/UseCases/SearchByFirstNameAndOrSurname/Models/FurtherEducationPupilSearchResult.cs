@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Model;
 
 namespace DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 
@@ -26,7 +25,7 @@ public sealed class FurtherEducationPupilSearchResult
     /// <summary>
     /// Gets the facet groupings returned from the search, used for aggregation or filtering context.
     /// </summary>
-    public FurtherEducationFacets? FacetedResults { get; init; }
+    public SearchFacets? FacetedResults { get; init; }
 
     /// <summary>
     /// Gets the status of the search, indicating success, failure, or other condition.

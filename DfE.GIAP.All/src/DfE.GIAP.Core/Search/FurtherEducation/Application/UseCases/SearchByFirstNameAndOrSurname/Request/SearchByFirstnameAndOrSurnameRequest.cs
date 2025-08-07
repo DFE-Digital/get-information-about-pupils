@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
+using DfE.GIAP.Core.Search.Common.Application.Models;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
 using System.ComponentModel.DataAnnotations;
 

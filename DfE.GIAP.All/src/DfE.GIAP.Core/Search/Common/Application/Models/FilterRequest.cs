@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
+﻿namespace DfE.GIAP.Core.Search.Common.Application.Models;
 
 /// <summary>
 /// Represents a search filter and its associated values, used to refine query results.

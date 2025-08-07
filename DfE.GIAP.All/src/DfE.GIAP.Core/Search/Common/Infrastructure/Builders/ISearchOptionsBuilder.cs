@@ -1,6 +1,6 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
+using DfE.GIAP.Core.Search.Common.Application.Models;
 
 namespace DfE.GIAP.Core.Search.Common.Infrastructure.Builders;
 

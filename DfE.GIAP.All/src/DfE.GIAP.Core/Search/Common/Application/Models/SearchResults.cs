@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
+﻿namespace DfE.GIAP.Core.Search.Common.Application.Models;
 
 /// <summary>
 /// Encapsulates the <see cref="EstablishmentResults"/> and <see cref="Facets"/>

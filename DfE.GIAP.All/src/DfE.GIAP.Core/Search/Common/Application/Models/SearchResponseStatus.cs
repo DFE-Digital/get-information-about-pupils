@@ -10,6 +10,10 @@ public enum SearchResponseStatus
     /// </summary>
     Success,
     /// <summary>
+    /// The search request did not return any results.
+    /// </summary>
+    NoResultsFound,
+    /// <summary>
     /// The request was not valid.
     /// </summary>
     InvalidRequest,

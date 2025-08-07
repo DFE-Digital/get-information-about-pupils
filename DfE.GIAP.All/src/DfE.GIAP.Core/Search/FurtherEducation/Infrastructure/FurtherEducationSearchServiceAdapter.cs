@@ -1,15 +1,16 @@
-﻿using Azure.Search.Documents.Models;
+﻿using Azure;
 using Azure.Search.Documents;
-using Azure;
+using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
 using DfE.GIAP.Core.Search.Common.Application.Adapters;
+using DfE.GIAP.Core.Search.Common.Application.Models;
 using DfE.GIAP.Core.Search.Common.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Common.Infrastructure.Options;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Model;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 using Microsoft.Extensions.Options;
+using Dto = DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.DataTransferObjects;
+using Model = DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 
 namespace DfE.GIAP.Core.Search.FurtherEducation.Infrastructure;
 
@@ -17,12 +18,11 @@ namespace DfE.GIAP.Core.Search.FurtherEducation.Infrastructure;
 /// Adapter implementation for further education pupil search.
 /// It delegates search execution to Azure Cognitive Search using domain-specific mappings and configuration.
 /// </summary>
-public sealed class FurtherEducationSearchServiceAdapter :
-    ISearchServiceAdapter<FurtherEducationPupilSearchResult, FurtherEducationFacets>
+public sealed class FurtherEducationSearchServiceAdapter : ISearchServiceAdapter<FurtherEducationPupils, SearchFacets>
 {
     private readonly ISearchByKeywordService _searchByKeywordService;
-    private readonly IMapper<Pageable<SearchResult<FurtherEducationPupilSearchResult>>, FurtherEducationPupilSearchResult> _searchResultMapper;
-    private readonly IMapper<Dictionary<string, IList<FacetResult>>, FurtherEducationFacets> _facetsMapper;
+    private readonly IMapper<Pageable<SearchResult<Dto.FurtherEducationPupil>>, Model.FurtherEducationPupils> _searchResultMapper;
+    private readonly IMapper<Dictionary<string, IList<FacetResult>>, SearchFacets> _facetsMapper;
     private readonly AzureSearchOptions _azureSearchOptions;
     private readonly ISearchOptionsBuilder _searchOptionsBuilder;
 
@@ -37,8 +37,8 @@ public sealed class FurtherEducationSearchServiceAdapter :
     public FurtherEducationSearchServiceAdapter(
         ISearchByKeywordService searchByKeywordService,
         IOptions<AzureSearchOptions> azureSearchOptions,
-        IMapper<Pageable<SearchResult<FurtherEducationPupilSearchResult>>, FurtherEducationPupilSearchResult> searchResultMapper,
-        IMapper<Dictionary<string, IList<FacetResult>>, FurtherEducationFacets> facetsMapper,
+        IMapper<Pageable<SearchResult<Dto.FurtherEducationPupil>>, Model.FurtherEducationPupils> searchResultMapper,
+        IMapper<Dictionary<string, IList<FacetResult>>, SearchFacets> facetsMapper,
         ISearchOptionsBuilder searchOptionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(azureSearchOptions?.Value);
@@ -61,7 +61,7 @@ public sealed class FurtherEducationSearchServiceAdapter :
     /// <exception cref="ApplicationException">
     /// Thrown when the Azure Search service fails to return valid results.
     /// </exception>
-    public async Task<SearchResults<FurtherEducationPupilSearchResult, FurtherEducationFacets>> SearchAsync(
+    public async Task<SearchResults<FurtherEducationPupils, SearchFacets>> SearchAsync(
         SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
         SearchOptions searchOptions =
@@ -75,8 +75,8 @@ public sealed class FurtherEducationSearchServiceAdapter :
                 .WithFilters(searchServiceAdapterRequest.SearchFilterRequests)
                 .Build();
 
-        Response<SearchResults<FurtherEducationPupilSearchResult>> searchResults =
-            await _searchByKeywordService.SearchAsync<FurtherEducationPupilSearchResult>(
+        Response<SearchResults<Dto.FurtherEducationPupil>> searchResults =
+            await _searchByKeywordService.SearchAsync<Dto.FurtherEducationPupil>(
                 searchServiceAdapterRequest.SearchKeyword,
                 _azureSearchOptions.SearchIndex,
                 searchOptions
@@ -84,7 +84,7 @@ public sealed class FurtherEducationSearchServiceAdapter :
             ?? throw new ApplicationException(
                 $"Unable to derive search results based on input {searchServiceAdapterRequest.SearchKeyword}.");
 
-        return new SearchResults<FurtherEducationPupilSearchResult, FurtherEducationFacets>
+        return new SearchResults<FurtherEducationPupils, SearchFacets>
         {
             Results = _searchResultMapper.Map(searchResults.Value.GetResults()),
             FacetResults = searchResults.Value.Facets != null

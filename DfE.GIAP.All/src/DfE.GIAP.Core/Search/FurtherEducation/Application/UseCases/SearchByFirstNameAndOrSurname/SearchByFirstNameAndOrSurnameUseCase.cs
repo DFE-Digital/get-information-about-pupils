@@ -1,8 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Search.Common.Application.Adapters;
-using DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
 using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Model;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Request;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
@@ -16,8 +14,8 @@ namespace DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFir
 public sealed class SearchByFirstNameAndOrSurnameUseCase :
     IUseCase<SearchByFirstNameAndOrSurnameRequest, SearchByFirstNameAndOrSurnameResponse>
 {
-    private readonly ISearchCriteria _searchCriteria;
-    private readonly ISearchServiceAdapter<FurtherEducationPupilSearchResult, FurtherEducationFacets> _searchServiceAdapter;
+    private readonly SearchCriteria _searchCriteria;
+    private readonly ISearchServiceAdapter<FurtherEducationPupils, SearchFacets> _searchServiceAdapter;
 
     /// <summary>
     /// Constructs a new instance of the use case with required dependencies.
@@ -26,8 +24,8 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
     /// <param name="searchServiceAdapter">Adapter to interact with Azure Cognitive Search using domain models.</param>
     /// <exception cref="ArgumentNullException">Thrown if either dependency is null.</exception>
     public SearchByFirstNameAndOrSurnameUseCase(
-        ISearchCriteria searchCriteria,
-        ISearchServiceAdapter<FurtherEducationPupilSearchResult, FurtherEducationFacets> searchServiceAdapter)
+        SearchCriteria searchCriteria,
+        ISearchServiceAdapter<FurtherEducationPupils, SearchFacets> searchServiceAdapter)
     {
         _searchCriteria = searchCriteria ?? throw new ArgumentNullException(nameof(searchCriteria));
         _searchServiceAdapter = searchServiceAdapter ?? throw new ArgumentNullException(nameof(searchServiceAdapter));
@@ -52,7 +50,7 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
 
         try
         {
-            SearchResults<FurtherEducationPupilSearchResult, FurtherEducationFacets>? results =
+            SearchResults<FurtherEducationPupils, SearchFacets>? results =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
                         request.SearchKeyword,
@@ -65,7 +63,7 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
                 ? new(SearchResponseStatus.SearchServiceError)
                 : new(SearchResponseStatus.Success)
                 {
-                    PupilSearchResults = results.Results?.PupilResults,
+                    PupilSearchResults = results.Results,
                     FacetedResults = results.FacetResults,
                     TotalNumberOfResults = (int)(results.TotalNumberOfRecords ?? 0)
                 };

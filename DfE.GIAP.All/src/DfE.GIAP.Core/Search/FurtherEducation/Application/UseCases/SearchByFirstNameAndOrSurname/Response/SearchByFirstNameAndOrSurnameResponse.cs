@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Model;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 
 namespace DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
@@ -33,7 +32,7 @@ public sealed class SearchByFirstNameAndOrSurnameResponse
     /// <summary>
     /// Gets the faceted aggregation results used for UI filtering, analytics, or navigation.
     /// </summary>
-    public FurtherEducationFacets? FacetedResults { get; init; }
+    public SearchFacets? FacetedResults { get; init; }
 
     /// <summary>
     /// Gets the overall status of the search execution.

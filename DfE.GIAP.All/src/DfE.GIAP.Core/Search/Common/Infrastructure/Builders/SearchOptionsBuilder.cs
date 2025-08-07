@@ -1,7 +1,7 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
-using DfE.GIAP.Core.Search.Common.Application.Adapters.Model;
+using DfE.GIAP.Core.Search.Common.Application.Models;
 
 namespace DfE.GIAP.Core.Search.Common.Infrastructure.Builders;
 
