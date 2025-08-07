@@ -142,7 +142,6 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         }
 
         var downloadFile = await _ctfService.GetCommonTransferFile(selected.ToArray(),
-                                                                model.LearnerNumber.FormatLearnerNumbers(),
                                                                 User.GetLocalAuthorityNumberForEstablishment(),
                                                                 User.GetEstablishmentNumber(),
                                                                 User.IsOrganisationEstablishment(),

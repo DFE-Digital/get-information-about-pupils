@@ -1,10 +1,12 @@
-﻿@using DfE.GIAP.Web.Controllers.MyPupilList
+﻿@using DfE.GIAP.Web.Controllers.MyPupilList;
+@using DfE.GIAP.Web.Controllers.MyPupilList.ViewModel
+
 @model MyPupilsViewModel
 @{
     ViewData["Title"] = Model.PageHeading;
 }
 
-@if (Model.isRemovedSuccessful)
+@if (Model.isRemovePupilsSuccessful)
 {
     <div class="govuk-inset-text">Selected have been removed from 'My pupil list'</div>
 }
@@ -13,13 +15,6 @@
     <h1 class="govuk-heading-xl" id="search-type--text">
         @Model.PageHeading
     </h1>
-
-    <!--<partial name="_MyPupilListNoPupilSelectedError.cshtml" model="@Model" />  TODO just handle Error setting when Remove / Download requires a selection and set the error in Model.IsError. Then delete this partial-->
-
-    @if (Model.IsError && Model.ErrorMessage.Equals(Messages.Downloads.Errors.UPNLimitExceeded))
-    {
-        <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
-    }
 
     @if (Model.IsError)
     {
@@ -31,7 +26,6 @@
             </span>
         </div>
     }
-    
 
     <form asp-action="@Model.FormAction" method="POST">
         @if (!Model.IsError && Model.Pupils != null && Model.Pupils.Any())
@@ -112,7 +106,7 @@
                                                     <div class="govuk-checkboxes__item">
                                                         <input class="govuk-checkboxes__input"
                                                                id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber"
-                                                               name="SelectedPupil"
+                                                               name="SelectedPupils"
                                                                type="checkbox"
                                                                value="@pupil.UniquePupilNumber"
                                                         @(Model.SelectAll || Model.SelectedPupils.Contains(pupil.UniquePupilNumber) ? "checked" : "")>

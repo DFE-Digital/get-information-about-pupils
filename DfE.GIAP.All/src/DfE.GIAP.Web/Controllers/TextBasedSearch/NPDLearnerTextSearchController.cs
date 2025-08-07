@@ -216,8 +216,8 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     {
         var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
 
-        var downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
-                                                                new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },
+        var downloadFile = await _ctfService.GetCommonTransferFile(
+                                                                new string[] { selectedPupil },
                                                                 User.GetLocalAuthorityNumberForEstablishment(),
                                                                 User.GetEstablishmentNumber(),
                                                                 User.IsOrganisationEstablishment(),

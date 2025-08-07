@@ -6,11 +6,9 @@ using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.MyPupilList;
@@ -483,8 +481,6 @@ public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>
         SetUpLearnerList(upns.FormatLearnerNumbers());
 
         var sut = GetController();
-        _mockSession.SetString(sut.SortFieldSessionKey, AzureSearchFields.Forename);
-        _mockSession.SetString(sut.SortDirectionSessionKey, AzureSearchSortDirections.Ascending);
 
         SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
@@ -1011,7 +1007,6 @@ public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // arrange
         _mockCtfService.GetCommonTransferFile(
             Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
             Arg.Any<string>(),
             Arg.Any<string>(),
             Arg.Any<bool>(),
@@ -1103,7 +1098,6 @@ public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         _mockCtfService.GetCommonTransferFile(
          Arg.Any<string[]>(),
-         Arg.Any<string[]>(),
          Arg.Any<string>(),
          Arg.Any<string>(),
          Arg.Any<bool>(),
@@ -1147,7 +1141,6 @@ public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>
         _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
 
         _mockCtfService.GetCommonTransferFile(
-        Arg.Any<string[]>(),
         Arg.Any<string[]>(),
         Arg.Any<string>(),
         Arg.Any<string>(),
@@ -1218,7 +1211,6 @@ public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>
         };
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
         _mockCtfService.GetCommonTransferFile(
-            Arg.Any<string[]>(),
             Arg.Any<string[]>(),
             Arg.Any<string>(),
             Arg.Any<string>(),

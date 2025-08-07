@@ -31,7 +31,6 @@ namespace DfE.GIAP.Service.Download.CTF
         }
 
         public async Task<ReturnFile> GetCommonTransferFile(string[] upns,
-                                                            string[] sortOrder,
                                                             string localAuthorityNumber,
                                                             string establishmentNumber,
                                                             bool isOrganisationEstablishment,
@@ -58,11 +57,12 @@ namespace DfE.GIAP.Service.Download.CTF
             var requestBody = new CommonTransferFile
             {
                 UPNs = upns,
+                SortOrder = upns,
                 EstablishmentNumber = establishmentNumber,
                 LocalAuthorityNumber = localAuthorityNumber,
                 IsEstablishment = isOrganisationEstablishment,
-                SortOrder = sortOrder
             };
+
             var response = await _apiProcessorService.PostAsync<CommonTransferFile, ReturnFile>(getCTFFile.ConvertToUri(),
                                                                                                 requestBody,
                                                                                                 azureFunctionHeaderDetails)

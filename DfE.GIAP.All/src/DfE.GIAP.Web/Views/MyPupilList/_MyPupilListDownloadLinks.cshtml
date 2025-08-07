@@ -1,9 +1,9 @@
-﻿@using DfE.GIAP.Web.Controllers.MyPupilList
+﻿@using DfE.GIAP.Web.Controllers.MyPupilList;
+@using DfE.GIAP.Web.Controllers.MyPupilList.ViewModel
 @model MyPupilsViewModel
 
 @if (@Model.Pupils != null && Model.Pupils.Any())
 {
-<!--<input type="hidden" name="Total" value="@*Model.Total*@" /> disabled until I can understand need in downloads--> 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-quarter">
             <button class="govuk-list webapp-button-as-link" asp-action="ToDownloadCommonTransferFileData" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" id="search--download--as--CTF--link" name="downloadASCTF" value="selected" type="submit">
