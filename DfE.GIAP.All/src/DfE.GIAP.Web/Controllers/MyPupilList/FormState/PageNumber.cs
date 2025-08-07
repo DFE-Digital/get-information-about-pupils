@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.FormState;
 public readonly struct PageNumber
 {
     public PageNumber(int page)
