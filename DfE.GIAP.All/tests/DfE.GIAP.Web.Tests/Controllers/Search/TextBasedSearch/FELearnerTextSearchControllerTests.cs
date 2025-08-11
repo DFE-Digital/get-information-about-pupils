@@ -42,7 +42,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
         private readonly TestSession _mockSession = new TestSession();
         private readonly PaginatedResultsFake _paginatedResultsFake;
         private readonly SearchFiltersFakeData _searchFiltersFake;
-
+        private readonly Mock<ISessionProvider> _mockSessionProvider = new();
         private AzureAppSettings _mockAppSettings = new AzureAppSettings();
 
         public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
@@ -116,11 +116,26 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var searchText = "John Smith";
             var searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-            // act
-            var sut = GetController();
-            _mockSession.SetString(sut.SearchSessionKey, searchText);
-            _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+            const string FurtherEducationSearchTextSessionKey = "SearchNonULN_SearchText";
+            const string PupilPremiumSearchFiltersSessionKey = "SearchNonULN_SearchFilters";
 
+            _mockSessionProvider.Setup(
+                (t) => t.ContainsSessionKey(FurtherEducationSearchTextSessionKey)).Returns(true).Verifiable();
+
+            _mockSessionProvider.Setup(
+                (t) => t.ContainsSessionKey(PupilPremiumSearchFiltersSessionKey)).Returns(true).Verifiable();
+
+            _mockSessionProvider.Setup(
+                (t) => t.GetSessionValue(FurtherEducationSearchTextSessionKey)).Returns(searchText).Verifiable();
+
+            _mockSessionProvider.Setup(
+                (t) => t.GetSessionValueOrDefault<SearchFilters>(
+                    PupilPremiumSearchFiltersSessionKey)).Returns(
+                        searchViewModel.SearchFilters).Verifiable();
+
+            // act
+            FELearnerTextSearchController sut = GetController();
+            
             SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
             var result = await sut.FurtherEducationNonUlnSearch(true);
@@ -956,9 +971,24 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             string sortDirection = "asc";
 
             // act
-            var sut = GetController();
-            _mockSession.SetString(sut.SearchSessionKey, searchText);
-            _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+            const string FurtherEducationSearchTextSessionKey = "SearchNonULN_SearchText";
+            const string PupilPremiumSearchFiltersSessionKey = "SearchNonULN_SearchFilters";
+
+            _mockSessionProvider.Setup(
+                (t) => t.ContainsSessionKey(FurtherEducationSearchTextSessionKey)).Returns(true).Verifiable();
+
+            _mockSessionProvider.Setup(
+                (t) => t.ContainsSessionKey(PupilPremiumSearchFiltersSessionKey)).Returns(true).Verifiable();
+
+            _mockSessionProvider.Setup(
+                (t) => t.GetSessionValue(FurtherEducationSearchTextSessionKey)).Returns(searchText).Verifiable();
+
+            _mockSessionProvider.Setup(
+                (t) => t.GetSessionValueOrDefault<SearchFilters>(
+                    PupilPremiumSearchFiltersSessionKey)).Returns(
+                        searchViewModel.SearchFilters).Verifiable();
+
+            FELearnerTextSearchController sut = GetController();
 
             _mockSession.SetString(sut.SortDirectionKey, sortDirection);
             _mockSession.SetString(sut.SortFieldKey, sortField);
@@ -1163,7 +1193,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 _mockPaginatedService,
                 _mockMplService,
                 _mockSelectionManager,
-                new Mock<ISessionProvider>().Object,
+                _mockSessionProvider.Object,
                 _mockDownloadService)
             {
                 ControllerContext = new ControllerContext()
