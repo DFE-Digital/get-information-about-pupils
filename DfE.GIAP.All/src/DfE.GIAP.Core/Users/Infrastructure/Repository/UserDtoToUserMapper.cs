@@ -14,7 +14,7 @@ public sealed class UserProfileDtoToUserMapper : IMapper<UserDto, User>
 
         return new User(
             id,
-            dto.LatestNewsAccessedDateTime,
-            myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
+            myPupils.Select(t => t.UPN).ToUniquePupilNumbers(),
+            dto.LatestNewsAccessedDateTime);
     }
 }

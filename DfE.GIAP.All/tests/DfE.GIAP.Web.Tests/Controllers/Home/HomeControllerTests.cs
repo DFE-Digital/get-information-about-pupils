@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Helpers.Banner;

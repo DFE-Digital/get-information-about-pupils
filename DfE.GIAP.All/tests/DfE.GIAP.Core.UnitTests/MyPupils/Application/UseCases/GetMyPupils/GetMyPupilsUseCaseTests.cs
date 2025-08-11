@@ -19,7 +19,7 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_ReturnsMappedPupils()
     {
         // Arrange
-        User.Application.User user = UserTestDoubles.Default();
+        User user = UserTestDoubles.Default();
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
 
         List<Pupil> pupils =
@@ -62,7 +62,7 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_WithEmptyPupilList_ReturnsEmptyResponse()
     {
         // Arrange
-        User.Application.User user = UserTestDoubles.WithEmptyUpns();
+        User user = UserTestDoubles.WithEmptyUpns();
 
         Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
 

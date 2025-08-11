@@ -1,20 +1,21 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Application.Repository;
-using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Repository;
+using DfE.GIAP.Core.Users.Infrastructure.Repository;
+using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.User.Infrastructure.Repository;
-internal sealed class CosmosDbUserWriteRepository : IUserWriteRepository
+namespace DfE.GIAP.Core.Users.Infrastructure.Repository;
+internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
 {
     private readonly ICosmosDbCommandHandler _commandHandler;
-    private readonly ILogger<CosmosDbUserWriteRepository> _logger;
+    private readonly ILogger<CosmosDbUserWriteOnlyRepository> _logger;
 
-    public CosmosDbUserWriteRepository(
+    public CosmosDbUserWriteOnlyRepository(
         ICosmosDbCommandHandler commandHandler,
-        ILogger<CosmosDbUserWriteRepository> logger)
+        ILogger<CosmosDbUserWriteOnlyRepository> logger)
     {
         ArgumentNullException.ThrowIfNull(commandHandler);
         ArgumentNullException.ThrowIfNull(logger);

@@ -149,7 +149,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         List<UniquePupilNumber> pupilIdentifiers = UniquePupilNumberTestDoubles.Generate(count: 3);
 
-        User expectedUser = new(userId, pupilIdentifiers);
+        User expectedUser = new(userId, pupilIdentifiers, DateTime.UtcNow);
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(() => userProfileDto);

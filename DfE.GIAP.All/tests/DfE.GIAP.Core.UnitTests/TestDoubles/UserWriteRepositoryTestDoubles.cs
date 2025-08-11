@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.User.Application.Repository;
+﻿using DfE.GIAP.Core.Users.Application.Repository;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 internal static class UserWriteRepositoryTestDoubles
 {
-    internal static Mock<IUserWriteRepository> Default() => new();
+    internal static Mock<IUserWriteOnlyRepository> Default() => new();
 }

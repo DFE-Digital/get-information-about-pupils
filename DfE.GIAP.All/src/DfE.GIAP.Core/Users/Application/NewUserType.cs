@@ -4,5 +4,5 @@ namespace DfE.GIAP.Core.Users.Application;
 
 public record User(
     UserId UserId,
-    DateTime LatestNewsAccessedDateTime,
-    IEnumerable<UniquePupilNumber> UniquePupilNumbers);
+    IEnumerable<UniquePupilNumber> UniquePupilNumbers,
+    DateTime LatestNewsAccessedDateTime);

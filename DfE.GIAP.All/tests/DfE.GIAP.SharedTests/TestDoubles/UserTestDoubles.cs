@@ -8,7 +8,7 @@ public static class UserTestDoubles
     {
         UserId userId = UserIdTestDoubles.Default();
         List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 10);
-        User user = new(userId, upns);
+        User user = new(userId, upns, DateTime.UtcNow);
         return user;
     }
 
@@ -17,7 +17,7 @@ public static class UserTestDoubles
     public static User WithUpns(IEnumerable<UniquePupilNumber> upns)
     {
         UserId userId = UserIdTestDoubles.Default();
-        User user = new(userId, upns);
+        User user = new(userId, upns, DateTime.UtcNow);
         return user;
     }
 }

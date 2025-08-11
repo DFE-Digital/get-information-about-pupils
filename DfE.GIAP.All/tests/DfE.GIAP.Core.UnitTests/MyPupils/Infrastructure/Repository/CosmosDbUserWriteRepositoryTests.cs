@@ -2,9 +2,9 @@
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Infrastructure.Repository;
-using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Infrastructure.Repository;
+using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
@@ -17,9 +17,9 @@ public sealed class CosmosDbUserWriteRepositoryTests
     public void Constructor_ThrowsArgumentNullException_When_CommandHandlerIsNull()
     {
         // Arrange
-        Func<CosmosDbUserWriteRepository> construct = () => new CosmosDbUserWriteRepository(
+        Func<CosmosDbUserWriteOnlyRepository> construct = () => new CosmosDbUserWriteOnlyRepository(
             commandHandler: null!,
-            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteRepository>());
+            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>());
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -30,7 +30,7 @@ public sealed class CosmosDbUserWriteRepositoryTests
     public void Constructor_ThrowsArgumentNullException_When_LoggerIsNull()
     {
         // Arrange
-        Func<CosmosDbUserWriteRepository> construct = () => new CosmosDbUserWriteRepository(
+        Func<CosmosDbUserWriteOnlyRepository> construct = () => new CosmosDbUserWriteOnlyRepository(
             commandHandler: CosmosDbCommandHandlerTestDoubles.Default().Object,
             logger: null!);
 
@@ -45,9 +45,9 @@ public sealed class CosmosDbUserWriteRepositoryTests
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
             CosmosDbCommandHandlerTestDoubles.MockThrowUpsertItemAsync<UserDto>(new Exception("test exception"));
 
-        CosmosDbUserWriteRepository repository = new(
+        CosmosDbUserWriteOnlyRepository repository = new(
             commandHandler: mockCosmosDbQueryHandler.Object,
-            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteRepository>());
+            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>());
 
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() =>
@@ -64,9 +64,9 @@ public sealed class CosmosDbUserWriteRepositoryTests
             CosmosDbCommandHandlerTestDoubles.MockThrowUpsertItemAsync<UserDto>(
                 CosmosExceptionTestDoubles.Default());
 
-        InMemoryLogger<CosmosDbUserWriteRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteRepository>();
+        InMemoryLogger<CosmosDbUserWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
 
-        CosmosDbUserWriteRepository repository = new(
+        CosmosDbUserWriteOnlyRepository repository = new(
             commandHandler: mockCosmosDbQueryHandler.Object,
             logger: inMemoryLogger);
 
@@ -85,8 +85,8 @@ public sealed class CosmosDbUserWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
-        InMemoryLogger<CosmosDbUserWriteRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteRepository>();
-        CosmosDbUserWriteRepository repository = new(commandHandlerDouble.Object, inMemoryLogger);
+        InMemoryLogger<CosmosDbUserWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
+        CosmosDbUserWriteOnlyRepository repository = new(commandHandlerDouble.Object, inMemoryLogger);
 
         UserId userId = UserIdTestDoubles.Default();
 
@@ -110,8 +110,8 @@ public sealed class CosmosDbUserWriteRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
-        InMemoryLogger<CosmosDbUserWriteRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteRepository>();
-        CosmosDbUserWriteRepository repository = new(commandHandlerDouble.Object, inMemoryLogger);
+        InMemoryLogger<CosmosDbUserWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
+        CosmosDbUserWriteOnlyRepository repository = new(commandHandlerDouble.Object, inMemoryLogger);
 
         UserId userId = UserIdTestDoubles.Default();
         List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);

@@ -1,7 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.User.Application.Repository;
-public interface IUserWriteRepository
+namespace DfE.GIAP.Core.Users.Application.Repository;
+
+public interface IUserWriteOnlyRepository
 {
     Task SaveMyPupilsAsync(
         UserId userId,

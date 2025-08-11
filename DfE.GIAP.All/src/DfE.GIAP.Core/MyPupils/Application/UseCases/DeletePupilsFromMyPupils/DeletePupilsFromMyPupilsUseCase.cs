@@ -1,18 +1,18 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Application.Repository;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Repository;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>
 {
     private readonly IUserReadOnlyRepository _userReadOnlyRepository;
-    private readonly IUserWriteRepository _userWriteRepository;
+    private readonly IUserWriteOnlyRepository _userWriteRepository;
 
     public DeletePupilsFromMyPupilsUseCase(
         IUserReadOnlyRepository userReadOnlyRepository,
-        IUserWriteRepository userWriteRepository)
+        IUserWriteOnlyRepository userWriteRepository)
     {
         ArgumentNullException.ThrowIfNull(userWriteRepository);
         ArgumentNullException.ThrowIfNull(userWriteRepository);
@@ -31,7 +31,7 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
             return;
         }
 
-        User.Application.User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
+        User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
 
         IEnumerable<string> userMyPupilUpnsBeforeDelete = user.UniquePupilNumbers.Select(t => t.Value);
 

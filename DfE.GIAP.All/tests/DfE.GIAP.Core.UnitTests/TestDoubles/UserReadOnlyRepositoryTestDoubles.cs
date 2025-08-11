@@ -6,7 +6,7 @@ internal static class UserReadOnlyRepositoryTestDoubles
 {
     internal static Mock<IUserReadOnlyRepository> Default() => new();
 
-    internal static Mock<IUserReadOnlyRepository> MockForGetUserById(User.Application.User stub)
+    internal static Mock<IUserReadOnlyRepository> MockForGetUserById(User stub)
     {
         Mock<IUserReadOnlyRepository> repoMock = Default();
 

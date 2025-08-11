@@ -20,18 +20,18 @@ public class HomeController : Controller
     private readonly IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> _checkNewsArticleUpdatesUseCase;
     private readonly ISessionProvider _sessionProvider;
     public HomeController(
-        ILatestNewsBanner newsBanner,
-        IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> checkNewsArticleUpdatesUseCase,
-        ISessionProvider sessionProvider)
+        ILatestNewsBanner newsBanner
+        //IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> checkNewsArticleUpdatesUseCase,
+        /*ISessionProvider sessionProvider*/)
     {
         ArgumentNullException.ThrowIfNull(newsBanner);
         _newsBanner = newsBanner;
 
-        ArgumentNullException.ThrowIfNull(checkNewsArticleUpdatesUseCase);
-        _checkNewsArticleUpdatesUseCase = checkNewsArticleUpdatesUseCase;
+        //ArgumentNullException.ThrowIfNull(checkNewsArticleUpdatesUseCase);
+        //_checkNewsArticleUpdatesUseCase = checkNewsArticleUpdatesUseCase;
 
-        ArgumentNullException.ThrowIfNull(sessionProvider);
-        _sessionProvider = sessionProvider;
+        //ArgumentNullException.ThrowIfNull(sessionProvider);
+        //_sessionProvider = sessionProvider;
     }
 
     [HttpGet]
