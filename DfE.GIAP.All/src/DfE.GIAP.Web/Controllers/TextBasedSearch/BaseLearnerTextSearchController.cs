@@ -33,7 +33,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
     private readonly IPaginatedSearchService _paginatedSearch;
-    protected readonly ITextSearchSelectionManager _selectionManager;
+    private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
     private readonly IMyPupilListService _mplService;
     protected readonly AzureAppSettings _appSettings;
