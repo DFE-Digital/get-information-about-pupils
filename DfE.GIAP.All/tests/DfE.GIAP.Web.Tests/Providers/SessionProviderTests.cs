@@ -101,12 +101,12 @@ public class SessionProviderTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Methods_ThrowArgumentNullException_WhenKeyIsNullOrEmpty(string invalidKey)
+    public void Methods_ThrowArgumentNullException_WhenKeyIsNullOrEmpty(string? invalidKey)
     {
-        Assert.Throws<ArgumentNullException>(() => _sessionProvider.SetSessionValue(invalidKey, "val"));
-        Assert.Throws<ArgumentNullException>(() => _sessionProvider.GetSessionValue(invalidKey));
-        Assert.Throws<ArgumentNullException>(() => _sessionProvider.RemoveSessionValue(invalidKey));
-        Assert.Throws<ArgumentNullException>(() => _sessionProvider.ContainsSessionKey(invalidKey));
+        Assert.ThrowsAny<ArgumentException>(() => _sessionProvider.SetSessionValue(invalidKey, "val"));
+        Assert.ThrowsAny<ArgumentException>(() => _sessionProvider.GetSessionValue(invalidKey));
+        Assert.ThrowsAny<ArgumentException>(() => _sessionProvider.RemoveSessionValue(invalidKey));
+        Assert.ThrowsAny<ArgumentException>(() => _sessionProvider.ContainsSessionKey(invalidKey));
     }
 
     [Fact]
