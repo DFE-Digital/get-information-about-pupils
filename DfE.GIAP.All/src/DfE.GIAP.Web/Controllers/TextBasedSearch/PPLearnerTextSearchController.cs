@@ -12,6 +12,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -23,7 +24,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
-    private readonly AzureAppSettings _appSettings;
 
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
@@ -68,19 +68,21 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
 
-    public PPLearnerTextSearchController(ILogger<PPLearnerTextSearchController> logger,
+    public PPLearnerTextSearchController(
+        ILogger<PPLearnerTextSearchController> logger,
+        IOptions<AzureAppSettings> azureAppSettings,
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
-        IDownloadService downloadService,
-        IOptions<AzureAppSettings> azureAppSettings)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
+        ISessionProvider sessionProvider,
+        IDownloadService downloadService)
+        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings, sessionProvider)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
-        _appSettings = azureAppSettings.Value;
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
     }
 
 

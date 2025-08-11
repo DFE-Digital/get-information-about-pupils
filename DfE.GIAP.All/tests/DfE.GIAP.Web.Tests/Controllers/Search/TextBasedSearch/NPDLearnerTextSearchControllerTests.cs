@@ -15,6 +15,7 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
@@ -1739,12 +1741,14 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         return new NPDLearnerTextSearchController(
              _mockLogger,
+             _mockAppOptions,
              _mockPaginatedService,
              _mockMplService,
              _mockSelectionManager,
              _mockCtfService,
-             _mockDownloadService,
-             _mockAppOptions)
+             new Mock<ISessionProvider>().Object,
+             _mockDownloadService
+             )
         {
             ControllerContext = new ControllerContext()
             {
