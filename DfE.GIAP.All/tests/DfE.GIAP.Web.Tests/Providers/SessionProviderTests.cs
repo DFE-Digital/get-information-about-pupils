@@ -137,7 +137,7 @@ public class SessionProviderTests
 
         _sessionMock.Setup(s => s.Set(key, It.Is<byte[]>(b => b.SequenceEqual(expectedBytes))));
 
-        _sessionProvider.SetSessionObject(key, obj);
+        _sessionProvider.SetSessionValue(key, obj);
 
         _sessionMock.Verify(s => s.Set(key, It.Is<byte[]>(b => b.SequenceEqual(expectedBytes))), Times.Once);
     }
@@ -152,7 +152,7 @@ public class SessionProviderTests
 
         _sessionMock.Setup(s => s.TryGetValue(key, out bytes)).Returns(true);
 
-        TestObject result = _sessionProvider.GetSessionObject<TestObject>(key);
+        TestObject result = _sessionProvider.GetSessionValueOrDefault<TestObject>(key);
 
         Assert.Equal(obj, result);
     }
@@ -165,7 +165,7 @@ public class SessionProviderTests
 
         _sessionMock.Setup(s => s.TryGetValue(key, out outBytes)).Returns(false);
 
-        TestObject result = _sessionProvider.GetSessionObject<TestObject>(key);
+        TestObject result = _sessionProvider.GetSessionValueOrDefault<TestObject>(key);
 
         Assert.Null(result);
     }
