@@ -106,21 +106,24 @@ public abstract class BaseLearnerTextSearchController : Controller
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
-        var model = new LearnerTextSearchViewModel();
+        LearnerTextSearchViewModel model = new();
 
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
         if (returnToSearch ?? false)
         {
-            if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-                model.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
-
-            if (this.HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
-                model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
+            if(_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            {
+                model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+            }
+            if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+            {
+                model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
+            }
 
             SetSortOptions(model);
 
@@ -208,24 +211,30 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
-        this.HttpContext.Session.SetString(SearchSessionKey, model.SearchText);
-
+        _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
+        
         if (model.SearchFilters != null)
-            this.HttpContext.Session.SetObject(SearchFiltersSessionKey, model.SearchFilters);
-
+        {
+            _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
+        }
+        
         return View(SearchView, model);
     }
 
     [NonAction]
     public virtual async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
     {
-        if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-            model.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
-        if (this.HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
-            model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
-
+        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+        {
+            model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+        }
+        if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+        {
+            model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
+        }
+        
         return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
     }
 
