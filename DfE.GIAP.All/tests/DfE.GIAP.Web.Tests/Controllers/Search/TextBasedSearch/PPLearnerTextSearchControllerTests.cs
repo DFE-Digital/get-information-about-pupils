@@ -107,6 +107,8 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         // Act
+
+
         PPLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
