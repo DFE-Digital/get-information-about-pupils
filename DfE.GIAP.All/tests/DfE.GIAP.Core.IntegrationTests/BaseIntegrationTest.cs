@@ -1,4 +1,8 @@
-﻿namespace DfE.GIAP.Core.IntegrationTests;
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+using DfE.GIAP.SharedTests;
+
+namespace DfE.GIAP.Core.IntegrationTests;
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     private readonly IServiceCollection _services;
@@ -39,7 +43,9 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     private async Task SetupAsync()
     {
         await Fixture.Database.ClearDatabaseAsync();
-        _services.AddSharedTestDependencies();
+        _services
+            .AddSharedTestDependencies()
+            .ConfigureAzureSearchClients();
     }
 
     public async Task DisposeAsync()

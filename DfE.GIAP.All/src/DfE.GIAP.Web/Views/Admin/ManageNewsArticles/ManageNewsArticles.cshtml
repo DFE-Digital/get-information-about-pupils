@@ -1,7 +1,6 @@
-﻿@model ManageDocumentsViewModel
+﻿@model ManageNewsArticlesViewModel
 @{
     ViewBag.Title = "Manage news articles";
-    var newsDocuments = ViewBag.NewsDocuments as SelectList;
 }
 
 
@@ -13,10 +12,10 @@
     <form method="post">
         <div class="govuk-form-group">
 
-            @if (newsDocuments.Any())
+            @if (Model.NewsArticleList.Any())
             {
                 <label for="select-article-dropdown" class="govuk-label">Please select a news article</label>
-                <select id="select-article-dropdown" asp-for="@Model.SelectedNewsId" class="govuk-select @(Model.HasInvalidNewsList ? "govuk-textarea--error" : "")" asp-items="ViewBag.NewsDocuments">
+                <select id="select-article-dropdown" asp-for="@Model.SelectedNewsId" class="govuk-select" asp-items="@Model.NewsArticleList">
                 </select>
 
                 <button asp-controller="ManageNewsArticles" asp-action="SelectNewsArticle" id="select-document--button" value="Select" name="select" class="govuk-button">Select</button>

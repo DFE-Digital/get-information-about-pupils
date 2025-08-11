@@ -10,7 +10,7 @@ public sealed class MyPupilsQueryOptionsTests
         MyPupilsQueryOptions result = MyPupilsQueryOptions.Default();
 
         // Assert
-        OrderPupilsBy expectedOrder = new(field: string.Empty, SortDirection.Default);
+        OrderPupilsBy expectedOrder = new(field: string.Empty, SortDirection.Descending);
         Assert.Equal(expectedOrder, result.Order);
         Assert.Equal(PageNumber.Default, result.Page);
     }

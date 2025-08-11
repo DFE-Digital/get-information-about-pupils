@@ -5,6 +5,6 @@ public record MyPupilsQueryOptions(OrderPupilsBy Order, PageNumber Page)
         => new(
             Order: new OrderPupilsBy(
                 field: string.Empty,
-                SortDirection.Default),
-            Page: PageNumber.Default);
+                SortDirection.Descending),
+            Page: PageNumber.Page(1));
 }

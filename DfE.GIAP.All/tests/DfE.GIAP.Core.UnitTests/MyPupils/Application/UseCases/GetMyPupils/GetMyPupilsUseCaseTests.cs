@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Services;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
@@ -19,10 +19,8 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_ReturnsMappedPupils()
     {
         // Arrange
-
-        User user = UserTestDoubles.Default();
-
-        Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, user.UserId);
+        User.Application.User user = UserTestDoubles.Default();
+        Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
 
         List<Pupil> pupils =
             user.UniquePupilNumbers
@@ -64,17 +62,15 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_WithEmptyPupilList_ReturnsEmptyResponse()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        User.Application.User user = UserTestDoubles.WithEmptyUpns();
 
-        User user = UserTestDoubles.WithEmptyUpns();
-
-        Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user, userId);
+        Mock<IUserReadOnlyRepository> userRepoMock = UserReadOnlyRepositoryTestDoubles.MockForGetUserById(user);
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(user.UserId.Value);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -89,7 +85,9 @@ public sealed class GetMyPupilsUseCaseTests
         Assert.Empty(result.Pupils);
 
         userRepoMock.Verify(repo =>
-            repo.GetUserByIdAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+            repo.GetUserByIdAsync(
+                user.UserId,
+                It.IsAny<CancellationToken>()), Times.Once);
 
         mockAggregateService.Verify(
             t => t.GetPupilsAsync(Enumerable.Empty<UniquePupilNumber>(), It.IsAny<MyPupilsQueryOptions>()), Times.Never);

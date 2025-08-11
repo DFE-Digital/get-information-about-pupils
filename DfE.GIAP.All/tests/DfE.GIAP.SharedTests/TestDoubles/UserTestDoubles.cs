@@ -12,10 +12,12 @@ public static class UserTestDoubles
         return user;
     }
 
-    public static User WithEmptyUpns()
+    public static User WithEmptyUpns() => WithUpns([]);
+
+    public static User WithUpns(IEnumerable<UniquePupilNumber> upns)
     {
         UserId userId = UserIdTestDoubles.Default();
-        User user = new(userId, []);
+        User user = new(userId, upns);
         return user;
     }
 }

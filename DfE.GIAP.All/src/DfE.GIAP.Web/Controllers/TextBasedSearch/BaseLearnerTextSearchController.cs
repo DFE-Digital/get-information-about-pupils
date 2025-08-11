@@ -14,6 +14,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -32,9 +33,10 @@ public abstract class BaseLearnerTextSearchController : Controller
 
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
     private readonly IPaginatedSearchService _paginatedSearch;
-    protected readonly ITextSearchSelectionManager _selectionManager;
+    private readonly ITextSearchSelectionManager _selectionManager;
+    private readonly ISessionProvider _sessionProvider;
     private readonly IMyPupilListService _mplService;
-    private readonly AzureAppSettings _appSettings;
+    protected readonly AzureAppSettings _appSettings;
 
     public abstract string PageHeading { get; }
     public abstract string SearchSessionKey { get; }
@@ -77,16 +79,26 @@ public abstract class BaseLearnerTextSearchController : Controller
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+        ISessionProvider sessionProvider)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _paginatedSearch = paginatedSearch ??
-            throw new ArgumentNullException(nameof(paginatedSearch));
-        _selectionManager = selectionManager ??
-            throw new ArgumentNullException(nameof(selectionManager));
-        _mplService = mplService ??
-            throw new ArgumentNullException(nameof(mplService));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(paginatedSearch);
+        _paginatedSearch = paginatedSearch;
+
+        ArgumentNullException.ThrowIfNull(selectionManager);
+        _selectionManager = selectionManager;
+
+        ArgumentNullException.ThrowIfNull(sessionProvider);
+        _sessionProvider = sessionProvider;
+
+        ArgumentNullException.ThrowIfNull(mplService);
+        _mplService = mplService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
     }
 
