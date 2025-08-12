@@ -1,5 +1,6 @@
 ﻿@using DfE.GIAP.Web.Controllers.MyPupilList;
 @using DfE.GIAP.Web.Controllers.MyPupilList.ViewModel
+@using DfE.GIAP.Web.Helpers
 
 @model MyPupilsViewModel
 @{
@@ -27,16 +28,18 @@
         </div>
     }
 
+    @{
+        string selectAllButtonValue = Model.IsAnyPupilsSelected ? "false" : "true";
+        string selectAllButtonText = Model.IsAnyPupilsSelected ? "Deselect all pupils" : "Select all pupils";
+    }
+
     <form asp-action="@Model.FormAction" method="POST">
         @if (!Model.IsError && Model.Pupils != null && Model.Pupils.Any())
         {
             <partial name="~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml" model="Model" />
 
             <div class="download-block">
-                @{
-                    string selectAllValue = Model.SelectAll ? "false" : "true";
-                    string selectAllButtonText = Model.SelectAll ? "Deselect all pupils" : "Select all pupils";
-                }
+
                 <button asp-action="@Model.FormAction"
                         asp-route-pageNumber="@Model.PageNumber"
                         asp-route-sortField="@Model.SortField"
@@ -44,18 +47,22 @@
                         class="govuk-button govuk-button--secondary"
                         type="submit"
                         name="SelectAll"
-                        value="@selectAllValue">@selectAllButtonText</button>
+                        value="@selectAllButtonValue">@selectAllButtonText</button>
             </div>
         }
 
         <div class="govuk-grid-row">
             @if(@Model.IsNoPupilsRemaining)
             {
+                var noPupilsMessage = Model.PageNumber == 1 ?
+                    ApplicationLabels.SearchMyPupilListNoPupilFound :
+                    ApplicationLabels.MyPupilListNoMorePupils;
+                
                 <div id="results--detail-warningmessage" class="govuk-warning-text">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        <span>@ApplicationLabels.SearchMyPupilListNoPupilFound</span> <!-- TODO need to adjust message if not on Page 1 (no pupils in list vs no remaining pupils)-->
+                        <span>@noPupilsMessage</span>
                     </strong>
                 </div>
             }
@@ -64,6 +71,12 @@
                 <div class="result-table @(Model.IsError ? "hide-for-non-js" : "")">
                     <div id="pupil--list--table">
                         <div class="giap--pupil-list">
+                            @{
+                                string currentPageOfPupils = string.Join(',', Model.Pupils?.Select(t => t.UniquePupilNumber).ToList() ?? []);
+                            }
+
+                            <input type="hidden" name="CurrentPageOfPupils" value="@currentPageOfPupils" />
+
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-fieldset__legend govuk-visually-hidden">Do you want to select</legend>
                                 <table class="govuk-table">
@@ -99,8 +112,10 @@
                                     </thead>
                                     <tbody class="govuk-table__body">
                                         @foreach (var pupil in Model.Pupils)
-
                                         {
+                                          
+                                            var currentPageUpns = Model.Pupils?.Select(p => p.UniquePupilNumber).ToHashSet() ?? new();
+
                                             <tr class="govuk-table__row">
                                                 <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
                                                     <div class="govuk-checkboxes__item">
@@ -109,7 +124,8 @@
                                                                name="SelectedPupils"
                                                                type="checkbox"
                                                                value="@pupil.UniquePupilNumber"
-                                                        @(Model.SelectAll || Model.SelectedPupils.Contains(pupil.UniquePupilNumber) ? "checked" : "")>
+                                                               @(pupil.IsSelected ? "checked" : string.Empty) />
+    
                                                         <label class="govuk-label govuk-checkboxes__label"
                                                                for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
                                                             <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>

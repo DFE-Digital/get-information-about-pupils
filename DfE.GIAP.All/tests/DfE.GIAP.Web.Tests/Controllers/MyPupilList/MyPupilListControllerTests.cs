@@ -1880,11 +1880,10 @@ public class MyPupilListControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         return new MyPupilListController(
             _mockLogger,
-            _mockMplService,
-            _mockSelectionManager,
             _mockCtfService,
             _mockDownloadService,
             _mockAppOptions,
+            null,
             null,
             null) // TODO revisit
         {
