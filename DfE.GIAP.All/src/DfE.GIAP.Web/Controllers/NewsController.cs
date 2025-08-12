@@ -49,6 +49,9 @@ public class NewsController : Controller
         if (_sessionProvider.ContainsSessionKey(SessionKeys.ShowNewsBannerKey))
             _sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, false);
 
-        return Redirect(returnUrl);
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+        else
+            return RedirectToAction("Index", "Home");
     }
 }
