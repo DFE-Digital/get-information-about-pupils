@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
 
 namespace DfE.GIAP.Core.Users.Infrastructure.Repository;
-public sealed class UserProfileDtoToUserMapper : IMapper<UserDto, User>
+public sealed class UserDtoToUserMapper : IMapper<UserDto, User>
 {
     public User Map(UserDto dto)
     {
@@ -15,6 +15,6 @@ public sealed class UserProfileDtoToUserMapper : IMapper<UserDto, User>
         return new User(
             id,
             myPupils.Select(t => t.UPN).ToUniquePupilNumbers(),
-            dto.LatestNewsAccessedDateTime);
+            dto.LastLoggedIn);
     }
 }

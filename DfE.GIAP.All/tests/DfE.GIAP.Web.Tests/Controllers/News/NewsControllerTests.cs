@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Controllers;
-using DfE.GIAP.Web.Helpers.Banner;
+using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -39,9 +39,9 @@ public class NewsControllerTests
         mockGetNewsArticlesUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetNewsArticlesRequest>()))
             .ReturnsAsync(new GetNewsArticlesResponse(listArticleData));
 
-        ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
+        ISessionProvider _sessionProvider = new Mock<ISessionProvider>().Object;
 
-        NewsController controller = new(_mockNewsBanner, mockGetNewsArticlesUseCase.Object);
+        NewsController controller = new(_sessionProvider, mockGetNewsArticlesUseCase.Object);
 
         // Act
         IActionResult result = await controller.Index();
@@ -53,21 +53,18 @@ public class NewsControllerTests
 
 
     [Fact]
-    public async Task DismissNewsBanner_redirects_to_ProvidedURL()
+    public void DismissNewsBanner_redirects_to_ProvidedURL()
     {
         // Arrange
-        Mock<ILatestNewsBanner> mockNewsBanner = new();
-        mockNewsBanner.Setup(t => t.RemoveLatestNewsStatus()).Verifiable();
-
+        Mock<ISessionProvider> sessionProvider = new();
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> mockGetNewsArticlesUseCase = new();
-        NewsController controller = new(mockNewsBanner.Object, mockGetNewsArticlesUseCase.Object);
+        NewsController controller = new(sessionProvider.Object, mockGetNewsArticlesUseCase.Object);
 
         // Act
-        IActionResult result = await controller.DismissNewsBanner("testURL");
+        IActionResult result = controller.DismissNewsBanner("testURL");
 
         // Assert
         RedirectResult viewResult = Assert.IsType<RedirectResult>(result, exactMatch: false);
-        Assert.Equal("testURL?returnToSearch=true", viewResult.Url);
-        mockNewsBanner.Verify(t => t.RemoveLatestNewsStatus(), Times.Once);
+        Assert.Equal("testURL", viewResult.Url);
     }
 }

@@ -37,7 +37,7 @@ public class SessionProvider : ISessionProvider
 
     public void RemoveSessionValue(string key)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(key);
+        ArgumentException.ThrowIfNullOrEmpty(key);
         Session.Remove(key);
     }
 

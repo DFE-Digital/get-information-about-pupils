@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Helpers.Banner;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,16 +11,17 @@ namespace DfE.GIAP.Web.Controllers;
 [Route(Routes.Application.News)]
 public class NewsController : Controller
 {
-    private readonly ILatestNewsBanner _newsBanner;
+    private readonly ISessionProvider _sessionProvider;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public NewsController(
-        ILatestNewsBanner newsBanner,
+        ISessionProvider sessionProvider,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticleUseCase)
     {
-        ArgumentNullException.ThrowIfNull(newsBanner);
+        ArgumentNullException.ThrowIfNull(sessionProvider);
+        _sessionProvider = sessionProvider;
+
         ArgumentNullException.ThrowIfNull(getNewsArticleUseCase);
-        _newsBanner = newsBanner;
         _getNewsArticlesUseCase = getNewsArticleUseCase;
     }
 
@@ -35,15 +36,19 @@ public class NewsController : Controller
             NewsArticles = response.NewsArticles,
         };
 
-        await _newsBanner.RemoveLatestNewsStatus();
+        if (_sessionProvider.ContainsSessionKey(SessionKeys.ShowNewsBannerKey))
+            _sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, false);
+
         return View(model);
     }
 
     [HttpGet]
     [Route("dismiss")]
-    public async Task<IActionResult> DismissNewsBanner([FromQuery] string returnUrl)
+    public IActionResult DismissNewsBanner([FromQuery] string returnUrl)
     {
-        await _newsBanner.RemoveLatestNewsStatus();
-        return Redirect($"{returnUrl}?returnToSearch=true");
+        if (_sessionProvider.ContainsSessionKey(SessionKeys.ShowNewsBannerKey))
+            _sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, false);
+
+        return Redirect(returnUrl);
     }
 }

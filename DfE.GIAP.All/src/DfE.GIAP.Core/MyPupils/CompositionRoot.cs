@@ -49,7 +49,7 @@ public static class CompositionRoot
         services
             .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
             .AddScoped<IUserWriteOnlyRepository, CosmosDbUserWriteOnlyRepository>()
-            .AddSingleton<IMapper<UserDto, User>, UserProfileDtoToUserMapper>()
+            .AddSingleton<IMapper<UserDto, User>, UserDtoToUserMapper>()
             .AddMyPupilsInfrastructureSearch();
 
         return services;

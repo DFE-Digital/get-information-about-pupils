@@ -53,7 +53,11 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
 
     public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(id);
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            _logger.LogCritical("GetNewsArticleByIdAsync called with null or empty id.");
+            throw new ArgumentException("Id must not be null or empty.", nameof(id));
+        }
 
         try
         {
@@ -107,7 +111,7 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         try
         {
             string isoDate = expectedTime.ToString("o");
-            string query = $"SELECT TOP 1 * FROM c WHERE c.lastModifiedTime > '{isoDate}' AND c.isPublished = true";
+            string query = $"SELECT TOP 1 * FROM c WHERE c.ModifiedDate > '{isoDate}' AND c.Published = true";
 
             IEnumerable<NewsArticleDto> results = await _cosmosDbQueryHandler.ReadItemsAsync<NewsArticleDto>(ContainerName, query);
             return results.Any();

@@ -20,7 +20,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         UserDto userDto = UserDtoTestDoubles.WithPupils(userId, upns);
 
         // Act
-        UserProfileDtoToUserMapper mapper = new();
+        UserDtoToUserMapper mapper = new();
         User result = mapper.Map(userDto);
 
         // Assert
@@ -41,7 +41,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         };
 
         // Act
-        UserProfileDtoToUserMapper mapper = new();
+        UserDtoToUserMapper mapper = new();
         User result = mapper.Map(userDto);
 
         // Assert
@@ -64,7 +64,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         };
 
         // Act
-        UserProfileDtoToUserMapper mapper = new();
+        UserDtoToUserMapper mapper = new();
         User result = mapper.Map(userDto);
 
         // Assert
@@ -87,7 +87,7 @@ public sealed class MapUserProfileDtoToUserMapperTests
         };
 
         // Act
-        UserProfileDtoToUserMapper mapper = new();
+        UserDtoToUserMapper mapper = new();
         User result = mapper.Map(userDto);
 
         // Assert
