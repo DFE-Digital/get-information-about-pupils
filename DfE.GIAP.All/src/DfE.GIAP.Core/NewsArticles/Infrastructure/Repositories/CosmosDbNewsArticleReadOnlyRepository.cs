@@ -105,8 +105,16 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         }
     }
 
-
-    public async Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime)
+    /// <summary>
+    /// Determines whether any published news article has been modified since the specified time.
+    /// </summary>
+    /// <remarks>This method queries a Cosmos DB container to check for any published news articles with a
+    /// modification date later than the specified time. If a <see cref="CosmosException"/> occurs during the query, the
+    /// method logs the exception and returns <see langword="false"/>.</remarks>
+    /// <param name="expectedTime">The point in time to compare against, in UTC. Only articles modified after this time will be considered.</param>
+    /// <returns><see langword="true"/> if at least one published news article has been modified since the specified time;
+    /// otherwise, <see langword="false"/>. Returns <see langword="false"/> if an error occurs during the operation.</returns>
+    public async Task<bool> HasAnyNewsArticleBeenModifiedSinceAsync(DateTime expectedTime)
     {
         try
         {
@@ -118,7 +126,7 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(HasArticlesBeenModifiedSinceAsync)}.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(HasAnyNewsArticleBeenModifiedSinceAsync)}.");
             return false;
         }
     }

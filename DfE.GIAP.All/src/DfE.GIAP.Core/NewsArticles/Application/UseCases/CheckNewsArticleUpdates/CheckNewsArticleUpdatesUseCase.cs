@@ -27,7 +27,7 @@ public class CheckNewsArticleUpdatesUseCase : IUseCase<CheckNewsArticleUpdatesRe
             .GetUserByIdAsync(new UserId(request.UserId));
 
         bool hasUpdated = await _newsArticleReadRepository
-            .HasArticlesBeenModifiedSinceAsync(user.LatestNewsAccessedDateTime);
+            .HasAnyNewsArticleBeenModifiedSinceAsync(user.LatestNewsAccessedDateTime);
 
         return new CheckNewsArticleUpdateResponse(hasUpdated);
     }

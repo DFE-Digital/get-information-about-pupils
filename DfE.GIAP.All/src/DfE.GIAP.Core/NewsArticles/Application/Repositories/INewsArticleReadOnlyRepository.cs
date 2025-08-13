@@ -33,6 +33,13 @@ public interface INewsArticleReadOnlyRepository
     /// <exception cref="ArgumentException">Thrown if the id is null or empty.</exception>
     Task<NewsArticle?> GetNewsArticleByIdAsync(string id);
 
-
-    Task<bool> HasArticlesBeenModifiedSinceAsync(DateTime expectedTime);
+    /// <summary>
+    /// Determines whether any news article has been modified since the specified time.
+    /// </summary>
+    /// <remarks>This method is asynchronous and returns a task that completes when the operation is finished.
+    /// Use this method to check for updates to news articles after a specific timestamp.</remarks>
+    /// <param name="expectedTime">The point in time to compare against. Only articles modified after this time will be considered.</param>
+    /// <returns><see langword="true"/> if at least one news article has been modified since <paramref name="expectedTime"/>;
+    /// otherwise, <see langword="false"/>.</returns>
+    Task<bool> HasAnyNewsArticleBeenModifiedSinceAsync(DateTime expectedTime);
 }
