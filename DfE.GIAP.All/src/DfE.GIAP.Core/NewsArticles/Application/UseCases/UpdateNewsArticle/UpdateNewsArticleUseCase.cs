@@ -7,10 +7,10 @@ namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 public class UpdateNewsArticleUseCase : IUseCaseRequestOnly<UpdateNewsArticleRequest>
 {
-    private readonly INewsArticleWriteRepository _newsArticleWriteRepository;
+    private readonly INewsArticleWriteOnlyRepository _newsArticleWriteRepository;
     private readonly IMapper<UpdateNewsArticlesRequestProperties, NewsArticle> _mapper;
 
-    public UpdateNewsArticleUseCase(INewsArticleWriteRepository newsArticleWriteRepository, IMapper<UpdateNewsArticlesRequestProperties, NewsArticle> mapper)
+    public UpdateNewsArticleUseCase(INewsArticleWriteOnlyRepository newsArticleWriteRepository, IMapper<UpdateNewsArticlesRequestProperties, NewsArticle> mapper)
     {
         ArgumentNullException.ThrowIfNull(newsArticleWriteRepository);
         ArgumentNullException.ThrowIfNull(mapper);

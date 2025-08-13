@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
@@ -13,17 +12,9 @@ namespace DfE.GIAP.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILatestNewsBanner _newsBanner;
-    public HomeController(ILatestNewsBanner newsBanner)
-    {
-        ArgumentNullException.ThrowIfNull(newsBanner);
-        _newsBanner = newsBanner;
-    }
-
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        await _newsBanner.SetLatestNewsStatus();
         return View();
     }
 

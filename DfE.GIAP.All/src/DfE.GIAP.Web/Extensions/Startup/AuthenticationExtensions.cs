@@ -16,6 +16,9 @@ using NuGet.Packaging;
 using System.Security.Claims;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -111,7 +114,6 @@ public static class AuthenticationExtensions
 
                     OnTokenValidated = async ctx =>
                     {
-                        List<Claim> claims = new();
                         string sessionId = Guid.NewGuid().ToString();
 
                         ctx.Properties.IsPersistent = true;
@@ -147,6 +149,7 @@ public static class AuthenticationExtensions
                             IEventLogging eventLogging = ctx.HttpContext.RequestServices.GetService<IEventLogging>();
                             IHostEnvironment hostEnvironment = ctx.HttpContext.RequestServices.GetService<IHostEnvironment>();
 
+                            List<Claim> claims = new();
                             /*Handles DSI users that aren't associated to the GIAP service (DSI returns a 404 response in this scenario when calling the GetUserInfo method)*/
                             if (userAccess == null)
                             {
@@ -229,6 +232,7 @@ public static class AuthenticationExtensions
 
                             ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
 
+                            // TODO: We need to update the users last active time to be now, instead of using this below...
                             ICommonService userApiClient = ctx.HttpContext.RequestServices.GetService<ICommonService>();
                             bool userUpdateResult = await userApiClient.CreateOrUpdateUserProfile(new UserProfile { UserId = authenticatedUserInfo.UserId },
                                                                                                  new AzureFunctionHeaderDetails
@@ -237,7 +241,17 @@ public static class AuthenticationExtensions
                                                                                                      SessionId = sessionId
                                                                                                  });
 
-                            //Logging Event
+
+                            ISessionProvider sessionProvider = ctx.HttpContext.RequestServices.GetService<ISessionProvider>();
+                            IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> useCase = ctx.HttpContext.RequestServices.GetService<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>>();
+
+                            CheckNewsArticleUpdateResponse checkNewsArticleUpdatesResponse = await useCase
+                                    .HandleRequestAsync(new CheckNewsArticleUpdatesRequest(authenticatedUserInfo.UserId));
+
+                            if (checkNewsArticleUpdatesResponse.HasUpdates)
+                                sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, true);
+
+                            //TODO: replace this stuff later, logging Event
                             _ = await userApiClient.CreateLoggingEvent(loggingEvent);
                             eventLogging.TrackEvent(1120, $"User log in successful", authenticatedUserInfo.UserId, sessionId, hostEnvironment.ContentRootPath);
                         }

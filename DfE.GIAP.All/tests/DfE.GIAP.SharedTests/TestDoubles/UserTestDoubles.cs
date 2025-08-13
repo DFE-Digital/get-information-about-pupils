@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.User.Application;
+using DfE.GIAP.Core.Users.Application;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class UserTestDoubles
@@ -8,7 +8,7 @@ public static class UserTestDoubles
     {
         UserId userId = UserIdTestDoubles.Default();
         List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 10);
-        User user = new(userId, upns);
+        User user = new(userId, upns, DateTime.UtcNow);
         return user;
     }
 
@@ -17,7 +17,7 @@ public static class UserTestDoubles
     public static User WithUpns(IEnumerable<UniquePupilNumber> upns)
     {
         UserId userId = UserIdTestDoubles.Default();
-        User user = new(userId, upns);
+        User user = new(userId, upns, DateTime.UtcNow);
         return user;
     }
 }

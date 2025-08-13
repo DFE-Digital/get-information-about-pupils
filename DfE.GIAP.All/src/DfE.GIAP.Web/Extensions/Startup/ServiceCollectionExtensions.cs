@@ -14,7 +14,6 @@ using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Session;
@@ -73,7 +72,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddScoped<IMyPupilListService, MyPupilListService>();
         services.AddTransient<IEventLogging, EventLogging>();
-        services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
         return services;

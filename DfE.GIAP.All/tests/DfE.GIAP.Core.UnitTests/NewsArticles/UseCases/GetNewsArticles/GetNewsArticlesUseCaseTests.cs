@@ -19,7 +19,7 @@ public sealed class GetNewsArticlesUseCaseTests
     public async Task HandleRequest_ThrowsNullException_When_RequestIsNull()
     {
         // Arrange
-        Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleReadOnlyRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
         GetNewsArticlesUseCase sut = new(mockRepository.Object);
         Func<Task> act = () => sut.HandleRequestAsync(request: null!);
 
@@ -32,7 +32,7 @@ public sealed class GetNewsArticlesUseCaseTests
     {
         // Arrange
         const string expectedExceptionMessage = "Error occurs";
-        Mock<INewsArticleReadRepository> mockRepository =
+        Mock<INewsArticleReadOnlyRepository> mockRepository =
             NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => throw new Exception(expectedExceptionMessage));
         GetNewsArticlesUseCase sut = new(mockRepository.Object);
         GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
@@ -47,7 +47,7 @@ public sealed class GetNewsArticlesUseCaseTests
     public async Task HandleRequest_ReturnsEmpty_When_RepositoryReturnsEmpty()
     {
         // Arrange
-        Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(Enumerable.Empty<NewsArticle>);
+        Mock<INewsArticleReadOnlyRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(Enumerable.Empty<NewsArticle>);
         GetNewsArticlesUseCase sut = new(repo.Object);
         GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
 
@@ -90,7 +90,7 @@ public sealed class GetNewsArticlesUseCaseTests
 
         List<NewsArticle> unorderedUnpinnedArticles = [unpinnedOldest, pinnedMiddle, unpinnedNewest, pinnedOldest, pinnedNewest, unpinnedMiddle];
 
-        Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => unorderedUnpinnedArticles);
+        Mock<INewsArticleReadOnlyRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => unorderedUnpinnedArticles);
         GetNewsArticlesUseCase sut = new(repo.Object);
         GetNewsArticlesRequest request = new(It.IsAny<NewsArticleSearchFilter>());
 
@@ -117,7 +117,7 @@ public sealed class GetNewsArticlesUseCaseTests
     [InlineData(NewsArticleSearchFilter.PublishedAndNotPublished)]
     public async Task HandleRequest_CallsQueryHandler_Once_With_IsArchived_IsPublished(NewsArticleSearchFilter newsArticleSearchStatus)
     {
-        Mock<INewsArticleReadRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => []);
+        Mock<INewsArticleReadOnlyRepository> repo = NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticles(() => []);
         GetNewsArticlesUseCase sut = new(repo.Object);
         GetNewsArticlesRequest request = new(newsArticleSearchStatus);
 

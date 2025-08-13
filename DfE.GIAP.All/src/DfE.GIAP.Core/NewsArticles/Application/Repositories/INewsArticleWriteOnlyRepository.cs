@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.NewsArticles.Application.Repositories;
 /// </summary>
 /// <remarks>This interface is intended for write operations related to news articles. Implementations should
 /// handle persistence and validation of the provided data.</remarks>
-public interface INewsArticleWriteRepository
+public interface INewsArticleWriteOnlyRepository
 {
     /// <summary>
     /// Asynchronously creates a new news article in the system.
