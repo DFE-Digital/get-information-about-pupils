@@ -1,49 +1,49 @@
 ﻿namespace DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 
 /// <summary>
-/// Encapsulates the results of a further education pupil search.
+/// Encapsulates the results of a further education learner search.
 /// Provides a read-only collection interface and ensures immutability at the boundary.
 /// </summary>
-public sealed class FurtherEducationPupils
+public sealed class FurtherEducationLearners
 {
     // Internal mutable list to hold search results; encapsulated within the class
-    private readonly List<FurtherEducationPupil> _furtherEducationPupils;
+    private readonly List<FurtherEducationLearner> _learners;
 
     /// <summary>
-    /// Read-only view of the pupil results.
+    /// Read-only view of the learner results.
     /// Guarantees that consumers cannot modify the internal list.
     /// </summary>
-    public IReadOnlyCollection<FurtherEducationPupil> Pupils => _furtherEducationPupils.AsReadOnly();
+    public IReadOnlyCollection<FurtherEducationLearner> Learners => _learners.AsReadOnly();
 
     /// <summary>
-    /// Gets the total number of pupils in the results.
+    /// Gets the total number of learners in the results.
     /// Useful for quick metrics or UI display.
     /// </summary>
-    public int Count => _furtherEducationPupils.Count;
+    public int Count => _learners.Count;
 
     /// <summary>
     /// Default constructor.
     /// Initializes an empty result set.
     /// </summary>
-    public FurtherEducationPupils()
+    public FurtherEducationLearners()
     {
-        _furtherEducationPupils = [];
+        _learners = [];
     }
 
     /// <summary>
-    /// Constructs the result set from an incoming sequence of pupils.
+    /// Constructs the result set from an incoming sequence of learners.
     /// Uses defensive programming to handle potential null inputs.
     /// </summary>
-    /// <param name="furtherEducationPupils">Sequence of pupils to populate the result set.</param>
-    public FurtherEducationPupils(IEnumerable<FurtherEducationPupil> furtherEducationPupils)
+    /// <param name="furtherEducationPupils">Sequence of learners to populate the result set.</param>
+    public FurtherEducationLearners(IEnumerable<FurtherEducationLearner> furtherEducationPupils)
     {
-        _furtherEducationPupils = furtherEducationPupils?.ToList() ?? [];
+        _learners = furtherEducationPupils?.ToList() ?? [];
     }
 
     /// <summary>
     /// Static factory method to create an empty result set.
     /// Improves readability and conveys intent more clearly than a constructor.
     /// </summary>
-    public static FurtherEducationPupils CreateEmpty() => new();
+    public static FurtherEducationLearners CreateEmpty() => new();
 }
 

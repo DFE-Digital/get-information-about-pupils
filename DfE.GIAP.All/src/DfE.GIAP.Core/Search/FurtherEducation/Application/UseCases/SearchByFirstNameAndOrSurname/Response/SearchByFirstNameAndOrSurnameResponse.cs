@@ -14,7 +14,7 @@ public sealed class SearchByFirstNameAndOrSurnameResponse
     /// </summary>
     /// <param name="status">Indicates the outcome of the search operation.</param>
     /// <param name="totalNumberOfResults">
-    /// The total number of matching pupil records found. Defaults to zero if null or negative.
+    /// The total number of matching learner records found. Defaults to zero if null or negative.
     /// </param>
     public SearchByFirstNameAndOrSurnameResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
     {
@@ -25,9 +25,9 @@ public sealed class SearchByFirstNameAndOrSurnameResponse
     }
 
     /// <summary>
-    /// Gets the collection of pupil search results returned by the query.
+    /// Gets the collection of learner search results returned by the query.
     /// </summary>
-    public FurtherEducationPupils? PupilSearchResults { get; init; }
+    public FurtherEducationLearners? LearnerSearchResults { get; init; }
 
     /// <summary>
     /// Gets the faceted aggregation results used for UI filtering, analytics, or navigation.
@@ -40,7 +40,7 @@ public sealed class SearchByFirstNameAndOrSurnameResponse
     public SearchResponseStatus Status { get; }
 
     /// <summary>
-    /// Gets the total number of pupils matched by the search criteria.
+    /// Gets the total number of learner's matched by the search criteria.
     /// Guaranteed to be non-negative.
     /// </summary>
     public int TotalNumberOfResults { get; init; } = 0;

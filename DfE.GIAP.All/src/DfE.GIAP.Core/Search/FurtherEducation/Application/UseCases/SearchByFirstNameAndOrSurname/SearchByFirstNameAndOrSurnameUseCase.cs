@@ -15,7 +15,7 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
     IUseCase<SearchByFirstNameAndOrSurnameRequest, SearchByFirstNameAndOrSurnameResponse>
 {
     private readonly SearchCriteria _searchCriteria;
-    private readonly ISearchServiceAdapter<FurtherEducationPupils, SearchFacets> _searchServiceAdapter;
+    private readonly ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> _searchServiceAdapter;
 
     /// <summary>
     /// Constructs a new instance of the use case with required dependencies.
@@ -25,7 +25,7 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
     /// <exception cref="ArgumentNullException">Thrown if either dependency is null.</exception>
     public SearchByFirstNameAndOrSurnameUseCase(
         SearchCriteria searchCriteria,
-        ISearchServiceAdapter<FurtherEducationPupils, SearchFacets> searchServiceAdapter)
+        ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> searchServiceAdapter)
     {
         _searchCriteria = searchCriteria ?? throw new ArgumentNullException(nameof(searchCriteria));
         _searchServiceAdapter = searchServiceAdapter ?? throw new ArgumentNullException(nameof(searchServiceAdapter));
@@ -50,7 +50,7 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
 
         try
         {
-            SearchResults<FurtherEducationPupils, SearchFacets>? results =
+            SearchResults<FurtherEducationLearners, SearchFacets>? results =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
                         request.SearchKeyword,
@@ -63,13 +63,15 @@ public sealed class SearchByFirstNameAndOrSurnameUseCase :
                 ? new(SearchResponseStatus.SearchServiceError)
                 : new(SearchResponseStatus.Success)
                 {
-                    PupilSearchResults = results.Results,
+                    LearnerSearchResults = results.Results,
                     FacetedResults = results.FacetResults,
                     TotalNumberOfResults = (int)(results.TotalNumberOfRecords ?? 0)
                 };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            // TODO: Log the exception details for diagnostics.
+            Console.WriteLine($"Search operation failed: {ex.Message}");
             // Handles unexpected failures such as adapter exceptions or infrastructure issues.
             return new(SearchResponseStatus.SearchServiceError);
         }

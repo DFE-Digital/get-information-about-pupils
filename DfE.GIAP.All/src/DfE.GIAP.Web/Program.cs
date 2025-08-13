@@ -1,11 +1,19 @@
 using System.Security.Cryptography;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
+using DfE.GIAP.Core.Search;
+using DfE.GIAP.Core.Search.Common.Application.Models;
+using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
+using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
+using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
+using DfE.GIAP.Web.ViewModels.Search;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +27,7 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
+    .AddSearchDependencies(configuration)
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
@@ -34,7 +43,31 @@ builder.Services
     .AddAzureAppConfiguration()
     .AddFeatureFlagConfiguration(configuration);
 
-WebApplication app = builder.Build();
+builder.Services.AddSingleton<IMapper<
+    FurtherEducationLearner, Learner>,
+    FurtherEducationLearnerToViewModelMapper>();
+
+builder.Services.AddSingleton<IMapper<
+    (LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse), LearnerTextSearchViewModel>,
+    LearnerSearchResponseToViewModelMapper>();
+
+builder.Services.AddSingleton<IMapper<
+    FilterData, FilterRequest>, FilterRequestMapper>();
+
+builder.Services.AddSingleton<IMapper<
+    Dictionary<string, string[]>,
+    IList<FilterRequest>>, FiltersRequestMapper>();
+
+builder.Services.AddSingleton<IMapper<
+    FurtherEducationLearner, Learner>, FurtherEducationLearnerToViewModelMapper>();
+
+builder.Services.AddSingleton<IMapper<
+    SearchFacet, FilterData>, FilterResponseMapper>();
+
+builder.Services.AddSingleton<IMapper<
+    SearchFacets, List<FilterData>>, FiltersResponseMapper>();
+
+    WebApplication app = builder.Build();
 
 // Error handling
 if (app.Environment.IsLocal())
