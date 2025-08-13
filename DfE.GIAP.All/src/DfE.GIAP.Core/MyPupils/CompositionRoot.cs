@@ -12,9 +12,9 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repository;
-using DfE.GIAP.Core.Users.Infrastructure.Repository;
-using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repository;
+using DfE.GIAP.Core.Users.Application.Repositories;
 
 namespace DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 public class CheckNewsArticleUpdatesUseCase : IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>

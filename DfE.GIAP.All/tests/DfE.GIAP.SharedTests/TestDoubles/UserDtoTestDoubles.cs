@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repository;
-using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class UserDtoTestDoubles

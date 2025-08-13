@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.Users.Application.Repository;
+namespace DfE.GIAP.Core.Users.Application.Repositories;
 
 public interface IUserWriteOnlyRepository
 {

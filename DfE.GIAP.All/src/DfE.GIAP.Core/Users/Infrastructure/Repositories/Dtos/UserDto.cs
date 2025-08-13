@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
+﻿namespace DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 #nullable disable
 public sealed class UserDto
 {

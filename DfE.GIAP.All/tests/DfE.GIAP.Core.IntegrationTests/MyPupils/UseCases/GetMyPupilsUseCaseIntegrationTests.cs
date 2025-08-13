@@ -9,7 +9,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 

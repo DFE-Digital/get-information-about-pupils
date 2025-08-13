@@ -1,13 +1,13 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repository;
-using DfE.GIAP.Core.Users.Infrastructure.Repository;
-using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.Users.Infrastructure.Repository;
+namespace DfE.GIAP.Core.Users.Infrastructure.Repositories;
 internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
 {
     private readonly ICosmosDbCommandHandler _commandHandler;

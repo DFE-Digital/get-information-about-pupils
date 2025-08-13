@@ -1,13 +1,13 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repository;
-using DfE.GIAP.Core.Users.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using User = DfE.GIAP.Core.Users.Application.User;
 
-namespace DfE.GIAP.Core.Users.Infrastructure.Repository;
+namespace DfE.GIAP.Core.Users.Infrastructure.Repositories;
 internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
 {
     private const string ContainerName = "users";
