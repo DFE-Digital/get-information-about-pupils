@@ -29,18 +29,23 @@ public static class NewsArticleDtoTestDoubles
         return articles;
     }
 
+    public static NewsArticleDto GenerateEmpty() => new()
+    {
+        id = Guid.NewGuid().ToString(),
+        Title = null!,
+        Body = null!,
+    };
+
     private static Faker<NewsArticleDto> CreateGenerator()
     {
         return new Faker<NewsArticleDto>()
             .StrictMode(true)
-            .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
-            .RuleFor(t => t.Published, (f) => f.Random.Bool())
             .RuleFor(t => t.id, (f) => f.Random.Guid().ToString())
-            .RuleFor(t => t.DraftBody, (f) => f.Lorem.Words().Merge())
-            .RuleFor(t => t.DraftTitle, (f) => f.Lorem.Words().Merge())
-            .RuleFor(t => t.ModifiedDate, (f) => f.Date.Recent())
-            .RuleFor(t => t.CreatedDate, (f) => f.Date.Recent())
             .RuleFor(t => t.Title, (f) => f.Lorem.Words().Merge())
-            .RuleFor(t => t.Body, (f) => f.Lorem.Words().Merge());
+            .RuleFor(t => t.Body, (f) => f.Lorem.Words().Merge())
+            .RuleFor(t => t.Published, (f) => f.Random.Bool())
+            .RuleFor(t => t.Pinned, (f) => f.Random.Bool())
+            .RuleFor(t => t.CreatedDate, (f) => f.Date.Recent())
+            .RuleFor(t => t.ModifiedDate, (f) => f.Date.Recent());
     }
 }

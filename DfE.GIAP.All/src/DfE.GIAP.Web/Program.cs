@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using DfE.GIAP.Common.Helpers.HostEnvironment;
+using DfE.GIAP.Common.AppSettings;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
-using DfE.GIAP.Core.Contents;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
@@ -19,15 +19,15 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
-    .AddContentDependencies()
-    .AddContentPresentation()
     .AddRoutingConfiguration()
     .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
     .AddApplicationInsightsTelemetry()
     .AddAllServices()
-    .AddClarity(configuration)
+    .AddWebProviders()
+    .AddSettings<ClaritySettings>(configuration, "Clarity")
+    .AddSettings<GoogleTagManager>(configuration, "GoogleTagManager")
     .AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
@@ -71,8 +71,8 @@ app.Use(async (context, next) =>
     {
         string nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
         context.Items["CSPNonce"] = nonce;
-        
-        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms 'nonce-{nonce}'; object-src 'none';";
+
+        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms https://www.googletagmanager.com 'nonce-{nonce}'; object-src 'none';";
     }
 
     await next();

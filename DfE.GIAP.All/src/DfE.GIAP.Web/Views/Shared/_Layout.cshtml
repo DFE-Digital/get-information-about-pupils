@@ -1,4 +1,6 @@
-﻿@inject Microsoft.Extensions.Options.IOptions<ClaritySettings> ClarityOptions
+﻿@inject IOptions<ClaritySettings> ClarityOptions
+@inject IOptions<GoogleTagManager> GoogleTagManager
+
 @{
     var CSPNonce = Context.Items["CSPNonce"] as string;
 }
@@ -27,7 +29,7 @@
 
     @RenderSection("Head", required: false)
     @if (!string.IsNullOrEmpty(ClarityOptions.Value.ProjectId))
-    { 
+    {
         <script nonce="@CSPNonce">
             (function(c,l,a,r,i,t,y){
                 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -36,22 +38,36 @@
             })(window, document, "clarity", "script", "@ClarityOptions.Value.ProjectId");
         </script>
     }
+
+    @if (!string.IsNullOrEmpty(GoogleTagManager.Value.ContainerId))
+    {
+        <script nonce="@CSPNonce">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','@GoogleTagManager.Value.ContainerId');</script>
+    }
 </head>
 
 <body class="govuk-template__body govuk-frontend-supported">
-    <partial name="_CookieBannerPartial" />
-    <partial name="Layout/_LayoutHeader" />
-    <partial name="_ServiceTimeout" />
 
-    <div class="govuk-width-container">
-        <main class="govuk-main-wrapper" id="main-content" role="main">
-            @RenderBody()
-        </main>
-    </div>
+@if (!string.IsNullOrEmpty(GoogleTagManager.Value.ContainerId))
+{
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=@GoogleTagManager.Value.ContainerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+}
+<partial name="_CookieBannerPartial"/>
+<partial name="Layout/_LayoutHeader"/>
+<partial name="_ServiceTimeout"/>
 
-    <partial name="Layout/_LayoutFooter" />
-    <script src="~/js/giap.min.js" asp-append-version="true"></script>
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper" id="main-content" role="main">
+        @RenderBody()
+    </main>
+</div>
 
-    @RenderSection("Scripts", required: false)
+<partial name="Layout/_LayoutFooter"/>
+<script src="~/js/giap.min.js" asp-append-version="true"></script>
+
+@RenderSection("Scripts", required: false)
 </body>
 </html>

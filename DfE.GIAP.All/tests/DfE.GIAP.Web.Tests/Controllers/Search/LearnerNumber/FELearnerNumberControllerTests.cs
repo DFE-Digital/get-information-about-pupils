@@ -7,7 +7,6 @@ using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.MPL;
@@ -33,16 +32,12 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
-    private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-    private readonly ICommonService _mockCommonService = Substitute.For<ICommonService>();
-    private readonly IContentService _mockContentService = Substitute.For<IContentService>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new AzureAppSettings();
-    private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
 
     private readonly TestSession _mockSession = new TestSession();
 
@@ -65,8 +60,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
-
         // act
         var sut = GetController();
         var result = await sut.PupilUlnSearch(null);
@@ -83,9 +76,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockSelectionManager.Received().Clear();
 
         AssertAbstractValues(sut, model);
-
-        Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Id, newsPubCommonResponse.Id);
-        Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Body, newsPubCommonResponse.Body);
     }
 
     [Fact]
@@ -97,8 +87,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         // act
         var sut = GetController();
@@ -117,9 +105,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockSelectionManager.Received().Clear();
 
         AssertAbstractValues(sut, model);
-
-        Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Id, newsPubCommonResponse.Id);
-        Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Body, newsPubCommonResponse.Body);
     }
 
     [Fact]
@@ -131,8 +116,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         // act
         var sut = GetController();
@@ -156,9 +139,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockSelectionManager.Received().Clear();
 
         AssertAbstractValues(sut, model);
-
-        Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Id, newsPubCommonResponse.Id);
-        Assert.Equal(model.DataReleaseTimeTable.NewsPublication.Body, newsPubCommonResponse.Body);
     }
 
     [Fact]
@@ -170,8 +150,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         // act
         var sut = GetController();
@@ -196,7 +174,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUlns().FormatLearnerNumbers().ToHashSet());
 
         // act
@@ -219,8 +196,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(_paginatedResultsFake.GetUlns(), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.DataReleaseTimeTable.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.DataReleaseTimeTable.NewsPublication.Body);
         Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
     }
 
@@ -234,7 +209,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -266,8 +240,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
     }
 
@@ -281,7 +253,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -314,8 +285,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         model.Learners.AssertSelected(true);
     }
 
@@ -329,7 +298,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -372,8 +340,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
     }
 
     [Fact]
@@ -386,7 +352,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -429,8 +394,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
         Assert.False(model.ToggleSelectAll);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
     }
 
     [Fact]
@@ -442,8 +405,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -482,8 +443,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Arg.Is<IEnumerable<string>>(l => l.SequenceEqual(new List<string> { "7621706219" })));
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
     }
 
     [Fact]
@@ -496,7 +455,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var inputModel = new LearnerNumberSearchViewModel() { LearnerNumberLabel = "ULN" };
 
         // act
@@ -516,8 +474,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         AssertAbstractValues(sut, model);
         Assert.Equal(Messages.Search.Errors.EnterULNs, model.SearchBoxErrorMessage);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
     }
 
     [Fact]
@@ -530,7 +486,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlnsWithInvalid();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -573,7 +528,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlnsWithNotFound();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -616,7 +570,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlnsWithDuplicates();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -659,7 +612,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -718,7 +670,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         const string TestSortDirection = "ASC";
         const string TestSortField = "TEST_FIELD";
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -774,7 +725,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -817,8 +767,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -867,8 +815,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -919,8 +865,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
-
         var ulns = _paginatedResultsFake.GetUlns();
 
         var inputModel = new LearnerNumberSearchViewModel()
@@ -954,8 +898,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         model.Learners.AssertSelected(true);
 
         Assert.Equal(model.SortField, sortField);
@@ -971,8 +913,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -1017,8 +957,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -1033,8 +971,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
 
@@ -1079,8 +1015,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
         Assert.False(model.ToggleSelectAll);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -1096,7 +1030,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUlns().FormatLearnerNumbers().ToHashSet());
 
         // act
@@ -1123,8 +1056,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(_paginatedResultsFake.GetUlns(), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.DataReleaseTimeTable.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.DataReleaseTimeTable.NewsPublication.Body);
         Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1141,7 +1072,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUlns().FormatLearnerNumbers().ToHashSet());
 
         // act
@@ -1169,7 +1099,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1202,8 +1131,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1219,7 +1146,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1253,8 +1179,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1270,7 +1194,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1304,8 +1227,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1321,7 +1242,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1353,8 +1273,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1370,7 +1288,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1404,8 +1321,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1421,7 +1336,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1455,8 +1369,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1472,7 +1384,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1506,8 +1417,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1523,7 +1432,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1557,8 +1465,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1574,7 +1480,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1609,8 +1514,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1626,7 +1529,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Body = "test"
         };
 
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1660,8 +1562,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
-        Assert.Equal(newsPubCommonResponse.Id, model.NewsPublication.Id);
-        Assert.Equal(newsPubCommonResponse.Body, model.NewsPublication.Body);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUlns().FormatLearnerNumbers()));
 
         Assert.Equal(model.SortField, sortField);
@@ -1680,8 +1580,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
@@ -1763,8 +1661,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             Id = "0",
             Body = "test"
         };
-
-        _mockContentService.GetContent(DocumentType.PublicationSchedule).Returns(newsPubCommonResponse);
 
         var ulns = _paginatedResultsFake.GetUlns();
         var inputModel = new LearnerNumberSearchViewModel()
@@ -2037,7 +1933,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockPaginatedService,
             _mockMplService,
             _mockSelectionManager,
-            _mockContentService,
             _mockAppOptions)
         {
             ControllerContext = context

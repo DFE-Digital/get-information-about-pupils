@@ -1,19 +1,18 @@
 ﻿using System.Diagnostics;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
+public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _fixture;
+    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
 
-    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture fixture)
+    protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        _fixture = fixture;
+        services.AddNewsArticleDependencies();
+        return Task.CompletedTask;
     }
-
-    public async Task InitializeAsync() => await _fixture.Database.ClearDatabaseAsync();
-    public Task DisposeAsync() => Task.CompletedTask;
 
     [Theory]
     [InlineData(true, true)]
@@ -21,16 +20,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
     public async Task CreateNewsArticles_Creates_Article(bool isPublished, bool isPinned)
     {
         // Arrange
-        IServiceCollection services =
-            ServiceCollectionTestDoubles.Default()
-                .AddSharedDependencies()
-                .AddNewsArticleDependencies();
-
-        IServiceProvider provider = services.BuildServiceProvider();
-        using IServiceScope scope = provider.CreateScope();
-
-        IUseCaseRequestOnly<CreateNewsArticleRequest> sut =
-            scope.ServiceProvider.GetService<IUseCaseRequestOnly<CreateNewsArticleRequest>>()!;
+        IUseCaseRequestOnly<CreateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<CreateNewsArticleRequest>>()!;
 
         const string stubArticleTitle = "Test title";
         const string stubArticleBody = "Test body";
@@ -49,7 +39,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
         watch.Stop();
 
         // Assert
-        IEnumerable<NewsArticleDto> enumerable = await _fixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto> enumerable = await Fixture.Database.ReadManyAsync<NewsArticleDto>();
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));
@@ -57,10 +47,6 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : IAsyncLifetime
         Assert.Equal(stubArticleBody, newsArticleDto.Body);
         Assert.Equal(isPublished, newsArticleDto.Published);
         Assert.Equal(isPinned, newsArticleDto.Pinned);
-        Assert.Equal(7, newsArticleDto.DOCTYPE);
-
-        Assert.Equal(string.Empty, newsArticleDto.DraftTitle);
-        Assert.Equal(string.Empty, newsArticleDto.DraftBody);
 
         Assert.InRange(newsArticleDto.CreatedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
         Assert.InRange(newsArticleDto.ModifiedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);

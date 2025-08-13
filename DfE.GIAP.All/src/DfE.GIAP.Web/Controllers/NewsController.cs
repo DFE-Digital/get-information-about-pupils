@@ -1,51 +1,40 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Service.Content;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using DfE.GIAP.Core.Models.Common;
-using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-using DfE.GIAP.Core.NewsArticles.Application.Enums;
 
 namespace DfE.GIAP.Web.Controllers;
 
 [Route(Routes.Application.News)]
 public class NewsController : Controller
 {
-    private readonly IContentService _contentService;
     private readonly ILatestNewsBanner _newsBanner;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public NewsController(
-        IContentService contentService,
         ILatestNewsBanner newsBanner,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticleUseCase)
     {
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
-        _newsBanner = newsBanner ??
-            throw new ArgumentNullException(nameof(newsBanner));
-        _getNewsArticlesUseCase = getNewsArticleUseCase ??
-            throw new ArgumentNullException(nameof(getNewsArticleUseCase));
+        ArgumentNullException.ThrowIfNull(newsBanner);
+        ArgumentNullException.ThrowIfNull(getNewsArticleUseCase);
+        _newsBanner = newsBanner;
+        _getNewsArticlesUseCase = getNewsArticleUseCase;
     }
 
     [Route("")]
     public async Task<IActionResult> Index()
     {
-        CommonResponseBody newsPublication = await _contentService.GetContent(DocumentType.PublicationSchedule).ConfigureAwait(false);
-        CommonResponseBody newsMaintenance = await _contentService.GetContent(DocumentType.PlannedMaintenance).ConfigureAwait(false);
-
         GetNewsArticlesRequest request = new(NewsArticleSearchFilter.Published);
         GetNewsArticlesResponse response = await _getNewsArticlesUseCase.HandleRequestAsync(request).ConfigureAwait(false);
 
         NewsViewModel model = new()
         {
             NewsArticles = response.NewsArticles,
-            NewsMaintenance = newsMaintenance,
-            NewsPublication = newsPublication
         };
+
         await _newsBanner.RemoveLatestNewsStatus();
         return View(model);
     }

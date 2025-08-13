@@ -1,0 +1,21 @@
+﻿using DfE.GIAP.Core.User.Application;
+using DfE.GIAP.Core.User.Application.Repository;
+
+namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+internal static class UserReadOnlyRepositoryTestDoubles
+{
+    internal static Mock<IUserReadOnlyRepository> Default() => new();
+
+    internal static Mock<IUserReadOnlyRepository> MockForGetUserById(User.Application.User stub)
+    {
+        Mock<IUserReadOnlyRepository> repoMock = Default();
+
+        repoMock.Setup(t => t.GetUserByIdAsync(
+                stub.UserId,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(stub)
+            .Verifiable();
+
+        return repoMock;
+    }
+}

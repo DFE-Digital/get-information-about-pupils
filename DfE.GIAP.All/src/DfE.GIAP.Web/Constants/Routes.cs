@@ -16,14 +16,13 @@ public static class Routes
     public static class Application
     {
         public const string Admin = "admin";
-        public const string Consent = "consent";
+        public const string Consent = "/consent";
         public const string Error = "error";
-        public const string Home = "home";
+        public const string Home = "/";
         public const string News = "news";
         public const string UserWithNoRole = "user-with-no-role";
         public const string MyPupilList = "my-pupil-list";
         public const string PupilPremium = "pupil-premium";
-        public const string Landing = "landing";
         public const string Search = "search";
         public const string SimulateError = "simulate-error";
     }
@@ -45,15 +44,11 @@ public static class Routes
 
     }
 
-    public static class ManageDocument
+    public static class ManageNewsArticles
     {
-        public const string ManageDocuments = "manage-documents/{docType?}/{docAction?}/{newsArticleId?}";
-        public const string ManageDocumentsPreview = "manage-documents/preview";
-        public const string ManageDocumentsPublish = "manage-documents/publish";
-
-        public const string CreateNewsArticle = "manage-documents/article/create";
-        public const string DeleteNewsArticle = "manage-documents/article/delete";
-        public const string EditNewsAricle = "manage-documents/article/edit";
+        public const string CreateNewsArticle = "manage-news-articles/create";
+        public const string DeleteNewsArticle = "manage-news-articles/delete";
+        public const string EditNewsAricle = "manage-news-articles/edit";
     }
 
     public static class PrePreparedDownloads

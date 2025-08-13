@@ -1,44 +1,42 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers.CookieManager;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Service.MPL;
-using DfE.GIAP.Service.News;
 using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.ViewModels;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
+using DfE.GIAP.Web.Providers.Cookie;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddAppConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddAppConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AzureAppSettings>(configuration);
 
         return services;
     }
 
-    public static IServiceCollection AddFeatureFlagConfiguration(this IServiceCollection services, IConfigurationManager configuration)
+    internal static IServiceCollection AddFeatureFlagConfiguration(this IServiceCollection services, IConfigurationManager configuration)
     {
         services.AddFeatureManagement(configuration);
 
@@ -53,20 +51,17 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddAllServices(this IServiceCollection services)
+    internal static IServiceCollection AddAllServices(this IServiceCollection services)
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
-        services.AddScoped<INewsService, NewsService>();
         services.AddScoped<IBlobStorageService, BlobStorageService>();
-        services.AddScoped<ICookieManager, CookieManager>();
         services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
         services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
         services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddScoped<IUlnDownloadService, UlnDownloadService>();
-        services.AddScoped<IContentService, ContentService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IPrePreparedDownloadsService, PrePreparedDownloadsService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
@@ -77,14 +72,22 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddScoped<IMyPupilListService, MyPupilListService>();
-        services.AddSingleton<ITelemetryInitializer, TelemetryInitializer>();
         services.AddTransient<IEventLogging, EventLogging>();
         services.AddScoped<ILatestNewsBanner, LatestNewsBanner>();
-        services.AddScoped<ISessionProvider, SessionProvider>();
+        services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
+
         return services;
     }
 
-    public static IServiceCollection AddHstsConfiguration(this IServiceCollection services)
+    internal static IServiceCollection AddWebProviders(this IServiceCollection services)
+    {
+        services.AddScoped<ISessionProvider, SessionProvider>();
+        services.AddScoped<ICookieProvider, CookieProvider>();
+
+        return services;
+    }
+
+    internal static IServiceCollection AddHstsConfiguration(this IServiceCollection services)
     {
         services.AddHsts(options =>
         {
@@ -96,7 +99,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddFormOptionsConfiguration(this IServiceCollection services)
+    internal static IServiceCollection AddFormOptionsConfiguration(this IServiceCollection services)
     {
         services.Configure<FormOptions>(x =>
         {
@@ -113,7 +116,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddAuthConfiguration(this IServiceCollection services)
+    internal static IServiceCollection AddAuthConfiguration(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
             .AddPolicy(Policy.RequireAdminApproverAccess, policy =>
@@ -133,7 +136,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCookieAndSessionConfiguration(this IServiceCollection services)
+    internal static IServiceCollection AddCookieAndSessionConfiguration(this IServiceCollection services)
     {
         services.AddSession(options =>
         {
@@ -163,7 +166,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddRoutingConfiguration(this IServiceCollection services)
+    internal static IServiceCollection AddRoutingConfiguration(this IServiceCollection services)
     {
         services.AddRouting(options =>
         {
@@ -173,11 +176,10 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddClarity(this IServiceCollection services, IConfigurationManager configuration)
+    internal static IServiceCollection AddSettings<T>(this IServiceCollection services, IConfigurationManager configuration, string sectionName)
+        where T : class
     {
-
-        services.Configure<ClaritySettings>(configuration.GetSection("Clarity"));
-
+        services.Configure<T>(configuration.GetSection(sectionName));
         return services;
     }
 }

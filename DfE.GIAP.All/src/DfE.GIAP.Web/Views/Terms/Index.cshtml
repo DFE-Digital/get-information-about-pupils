@@ -1,13 +1,458 @@
-﻿@model TermsOfUseViewModel
-@{
-    ViewData["Title"] = @Html.Raw(Model.Response.Title);
+﻿@{
+    ViewData["Title"] = "Terms of use";
 }
 
 <div class="govuk-width-container">
-    <h1 id="termsofuse--heading--text" class="govuk-heading-xl">@Html.Raw(Model.Response.Title)</h1>
+    <h1 id="termsofuse--heading--text" class="govuk-heading-xl">Terms of use</h1>
 
     <div class="govuk-grid-row">
-        @Html.Raw(Model.Response.Body)
+        <div class="govuk-grid-column-one-third">
+            <h2 class="govuk-heading-l">Contents</h2>
+
+            <p class="govuk-body">
+                <a href="#TOC1" class="govuk-link govuk-link--no-underline">1. Using the Get Information About Pupils (GIAP) website</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC2" class="govuk-link govuk-link--no-underline">2. Get Information About Pupils (GIAP) Website Terms of Use</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC3" class="govuk-link govuk-link--no-underline">3. Acceptance of terms</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC4" class="govuk-link govuk-link--no-underline">4. Other terms that apply</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC5" class="govuk-link govuk-link--no-underline">5. Accessing the GIAP website - authorised users and approvers</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC6" class="govuk-link govuk-link--no-underline">6. Using and sharing personal data and sensitive personal data from GIAP</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC7" class="govuk-link govuk-link--no-underline">7. Website availability</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC8" class="govuk-link govuk-link--no-underline">8. Limitation of liability</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC9" class="govuk-link govuk-link--no-underline">9. Our responsibility for damage suffered by you</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC10" class="govuk-link govuk-link--no-underline">10. Virus protection</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC11" class="govuk-link govuk-link--no-underline">11. Viruses, hacking and other offences</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC12" class="govuk-link govuk-link--no-underline">12. Hoax messages and phishing</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC13" class="govuk-link govuk-link--no-underline">13. Links to external websites</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC14" class="govuk-link govuk-link--no-underline">14. Governing law</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC15" class="govuk-link govuk-link--no-underline">15. General</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC16" class="govuk-link govuk-link--no-underline">16. Audit</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC17" class="govuk-link govuk-link--no-underline">17. System access levels</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC18" class="govuk-link govuk-link--no-underline">18. Non-UPN searches</a>
+            </p>
+            <p class="govuk-body">
+                <a href="#TOC19" class="govuk-link govuk-link--no-underline">19. Last updated</a>
+            </p>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <div id="TOC1">
+                <h2 class="govuk-heading-l">1. Using the Get Information About Pupils (GIAP) website</h2>
+                <p class="govuk-body">
+                    Please read these terms of use carefully before using this website. We recommend that you keep a copy for your records.
+                </p>
+                <p class="govuk-body">
+                    GIAP contains highly sensitive personal information about pupils in schools and colleges. It is your responsibility to ensure that any personal data or sensitive personal data you access in GIAP cannot be viewed or used by any unauthorised persons. Your username and password are specific to you and must not be shared with any other person.
+                </p>
+            </div>
+
+            <div id="TOC2">
+                <h2 class="govuk-heading-l">2. Get Information About Pupils (GIAP) Website Terms of Use</h2>
+                <p class="govuk-body">
+                    The GIAP website is operated by the <strong>Department for Education</strong> ('<strong>DfE</strong>, <strong>we</strong>
+                    or <strong>us</strong>').
+                    These terms of use apply to all and authorised users of the GIAP website ('<strong>you</strong>').
+                </p>
+                <p class="govuk-body">
+                    In these terms of use, the following definitions apply:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        '<strong>approver</strong>' means an authorised user within an organisation, with additional
+                        responsibilities for GIAP, including checking and verifying proposed authorised users' suitability
+                        for access; and set-up, administration and deletion of authorised users' GIAP accounts
+                    </li>
+                    <li>
+                        '<strong>authorised user</strong>' means a person authorised to use GIAP, with a unique active
+                        username that is linked to him/her within GIAP, working for the organisation to which the username
+                        is issued
+                    </li>
+                    <li>
+                        '<strong>data controller</strong>' has the meaning given to it in the General Data Protection
+                        Regulation (GDPR) and the Data Protection Act (DPA) 2018. DfE is the data controller in relation to
+                        the personal data and the sensitive personal data held in the GIAP website
+                    </li>
+                    <li>
+                        '<strong>data subject</strong>' means the living individual who is the subject of the personal data
+                        or the sensitive personal data
+                    </li>
+                    <li>
+                        '<strong>personal data</strong>' means data about a living individual who can be identified from
+                        that data or from that data and other information which is in, or likely to come into, the data
+                        controller's possession.
+                    </li>
+                    <li>
+                        '<strong>processing</strong>' has the meaning set out in GDPR and the DPA 2018 and in
+                        relation to personal data, means obtaining, recording or holding the information or data or
+                        carrying out any operation or set of operations on the information or data, including:
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>
+                                organisation, adaptation or alteration of the information or data
+                            </li>
+                            <li>retrieval, consultation or use of the information or data</li>
+                            <li>
+                                disclosure of the information or data by transmission, dissemination or otherwise
+                                making available
+                            </li>
+                            <li>
+                                alignment, combination, blocking, erasure or destruction of the information or data
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>'protected data'</strong> means any personal data and/or any sensitive personal data and any
+                        data derived from it in any form such as text, drawings, diagrams, images or sounds (together with
+                        any database made up of any of these) which are embodied in any electronic, magnetic, optical or
+                        tangible media.
+                    </li>
+                </ul>
+            </div>
+
+            <div id="TOC3">
+                <h2 class="govuk-heading-l">3. Acceptance of terms</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        these terms and conditions of use, (together with the documents they refer to), set out the
+                        terms of use for GIAP and its subdirectories and subdomains ('<strong>our</strong> /
+                        <strong>the website</strong>'). They apply to all authorised users and visitors.
+                    </li>
+                    <li>
+                        please read these terms of use carefully before you start. By using the website, you indicate
+                        that you accept these terms of use and that you agree to abide by them. If you do not agree to
+                        these terms of use, you must not access or use this website.
+                    </li>
+                    <li>
+                        in order to access the secure part of this website you must select the box at the bottom of this
+                        page to confirm you accept these terms of use.
+                    </li>
+                    <li>
+                        these terms of use may be amended at any time. Revised terms of use take effect immediately from
+                        the time they are published and continued use of the website will be deemed acceptance of
+                        updated or amended terms.
+                    </li>
+                </ul>
+            </div>
+
+            <div id="TOC4">
+                <h2 class="govuk-heading-l">4. Other terms that apply</h2>
+                <p class="govuk-body">These terms of use refer to the following additional terms, which also apply to your use of our website:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        Our privacy policy, which sets out the terms on which we process any personal data we collect
+                        from you, or that you provide to us. By using our website, you consent to such processing and
+                        you warrant that all data provided by you is accurate.
+                    </li>
+                </ul>
+            </div>
+
+            <div id="TOC5">
+                <h2 class="govuk-heading-l">5. Accessing the GIAP website - authorised users and approvers</h2>
+                <p class="govuk-body">You must treat your username, password or other information issued to you as part of our security procedures as confidential and not disclose it to a third party.</p>
+                <p class="govuk-body">
+                    You <strong>must</strong>:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>comply with the password guidance at registration</li>
+                    <li>
+                        change your password on a regular basis and whenever there is any indication of possible system
+                        or password compromise
+                    </li>
+                    <li>only connect to the GIAP website using a secured internet connection</li>
+                    <li>
+                        ensure screens on devices accessing GIAP outside the workplace cannot be read by other people
+                    </li>
+                    <li>ensure you log-off GIAP after completing your session.</li>
+                </ul>
+                <p class="govuk-body">
+                    You must not allow anyone else to use your username and password to access GIAP or:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        keep a record (e.g. paper, software file or PDA) of your username and password, unless this can
+                        be stored securely in accordance with government standards
+                    </li>
+                    <li>include passwords in any automated log-on processor</li>
+                    <li>access personal data or sensitive personal data in GIAP from outside the UK</li>
+                </ul>
+                <p class="govuk-body">
+                    We have the right to disable any username or password, whether chosen by you or allocated by us/an
+                    approver, at any time, if in our reasonable opinion you have failed to comply with any of these terms of
+                    use. If you know or suspect that anyone other than you knows your username or password, you must
+                    promptly notify us using the
+                    <a id="termsofuse--sign-in-help--link" href="https://help.signin.education.gov.uk/contact" class="govuk-link" target="_blank">
+                        DfE Sign-in Help
+                    </a> page.
+                </p>
+                <p class="govuk-body">
+                    If you are an approver, you accept responsibility for the secure management of GIAP usernames within
+                    your organisation and for ensuring your organisation has appropriate security measures in place to
+                    protect personal data and sensitive personal data accessed in GIAP.
+                </p>
+                <p class="govuk-body">
+                    You <strong>must</strong> comply with the conditions below:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        ensure that identity and other appropriate checks have been made on an individual before
+                        issuing a username and password, including checking a person's suitability to access children's
+                        personal data and sensitive personal data
+                    </li>
+                    <li>
+                        only issue a non-transferable username and password that is linked to an individual authorised
+                        user and transmit these to the authorised user in a secure manner
+                    </li>
+                    <li>
+                        check the identity of authorised users before resetting passwords
+                    </li>
+                    <li>
+                        ensure authorised users receive appropriate data protection and information security awareness
+                        training and regular updates
+                    </li>
+                    <li>
+                        ensure that on termination of employment an authorised user's username is removed from the
+                        GIAP system and verify that the authorised user no longer retains any personal data or sensitive
+                        personal data obtained from GIAP
+                    </li>
+                    <li>
+                        review the list of usernames under your control every three months to ensure that the list
+                        does not contain names that should have been removed
+                    </li>
+                    <li>
+                        inform the GIAP helpdesk of any suspected security incident that may compromise GIAP as soon as
+                        is practically possible.
+                    </li>
+                </ul>
+                <p class="govuk-body">You <strong> must never</strong>:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        ask authorised users to disclose passwords; or send unsolicited emails to authorised users
+                        asking them to logon to GIAP
+                    </li>
+                    <li>recycle a username or password</li>
+                    <li>transfer your approver privileges to another authorised user</li>
+                </ul>
+                <p class="govuk-body">
+                    Help of this can be found at:
+                    <br>
+                    <a id="termsofuse--sign-in-approver--link" href="https://help.signin.education.gov.uk/contact/approver" class="govuk-link" target="_blank">
+                        https://help.signin.education.gov.uk/contact/approver
+                    </a>
+                </p>
+            </div>
+
+            <div id="TOC6">
+                <h2 class="govuk-heading-l">6. Using and sharing personal data and sensitive personal data from GIAP</h2>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>
+                        GIAP contains personal data and sensitive personal data about pupils in schools and colleges.
+                        You must ensure that any personal data and any sensitive personal data you access in GIAP cannot
+                        be viewed or used by any unauthorised persons.
+                    </li>
+                    <li>
+                        you agree to comply with data protection and privacy laws including, but not limited to, the
+                        Data Protection Act 2018 and GDPR, where they apply in relation to personal data and sensitive
+                        personal data processed in connection with GIAP.
+                    </li>
+                    <li>
+                        you agree only to use the personal data and sensitive personal data you access in GIAP for
+                        lawful educational purposes, in the interests of individual pupils and not for any other
+                        purpose. You are only permitted to share personal data and sensitive personal data from GIAP
+                        with those who you are satisfied need the data to discharge a statutory education function.
+                    </li>
+                    <li>
+                        you must not retain personal data from GIAP on local authorities' systems, or on electronic or
+                        paper-based records, for pupils who are not on the roll of schools within your local authority.
+                    </li>
+                    <li>
+                        you must not retain personal data from GIAP on local authorities’ systems, or on electronic or paper-based records, for pupils for which you have no statutory responsibility (i.e. children not on the roll of a school within your authority or are looked after children / children in need under the responsibility of your authority).
+                    </li>
+                    <li>
+                        you must not print, save, or record in any way, any html pages from the GIAP website that
+                        contain pupil-specific information. This restriction does not apply to PDF/XLS/CSV/CTF/Tab files
+                        that are downloaded from GIAP.
+                    </li>
+                    <li>
+                        if you are not an authorised user, you must not access or try to access personal data or
+                        sensitive personal data held in GIAP <strong>by any method</strong>. This does not limit your rights, if
+                        applicable, as a data subject under the DPA 2018 and GDPR.
+                    </li>
+                    <li>
+                        data protections laws should never be used as an excuse for failure to protect a child from a
+                        real risk of harm. For further information see:
+                        <a id="termsofuse--safeguarding-practitioners-information--link" class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/safeguarding-practitioners-information-sharing-advice">
+                            https://www.gov.uk/government/publications/safeguarding-practitioners-information-sharing-advice
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="TOC7">
+                <h2 class="govuk-heading-l">7. Website availability</h2>
+                <p class="govuk-body">We do not guarantee that our website, or any content on it, will always be available or be uninterrupted. We may suspend or withdraw or restrict the availability of all or any part of our website for technical, operational or legal reasons without notice. We will not be liable if for any reason the website is unavailable at any time or for any period.</p>
+            </div>
+
+            <div id="TOC8">
+                <h2 class="govuk-heading-l">8. Limitation of liability</h2>
+                <p class="govuk-body">
+                    The GIAP service and content on our website are provided 'as is' and 'as available'. We make no representations, warranties or guarantees, whether express or implied by law, including the implied warranties of satisfactory quality, fitness for a particular purpose, non-infringement, or compatibility in relation to the GIAP website or its content, or that it is accurate, secure, complete or up-to-date.
+                </p>
+                <p class="govuk-body">
+                    We do not warrant or represent that the functions contained in this website will be uninterrupted or error-free, that defects will be corrected or that this site, or the service that makes it available, are free of viruses and represent the full functionality, accuracy or reliability of the website content.
+                </p>
+            </div>
+
+            <div id="TOC9">
+                <h2 class="govuk-heading-l">9. Our responsibility for damage suffered by you</h2>
+                <p class="govuk-body">
+                    We do not exclude or limit in any way our liability to you where it would be unlawful to do so. This includes liability for death or personal injury caused by our proven negligence or fraud or fraudulent misrepresentation.
+                </p>
+            </div>
+
+            <div id="TOC10">
+                <h2 class="govuk-heading-l">10. Virus protection</h2>
+                <p class="govuk-body">We make every effort to check and test GIAP for viruses at every stage of production. You must make sure that the way you use GIAP doesn't expose you to the risk of viruses, malicious computer code or other forms of interference which can damage your computer system.</p>
+                <p class="govuk-body">
+                    We're not responsible for any loss, disruption or damage to your data or computer system that might happen when you use GIAP.
+                </p>
+            </div>
+
+            <div id="TOC11">
+                <h2 class="govuk-heading-l">11. Viruses, hacking and other offences</h2>
+                <p class="govuk-body">
+                    When using GIAP, you must not introduce viruses, trojans, worms, logic bombs or any other material that's malicious or technologically harmful.
+                </p>
+                <p class="govuk-body">
+                    You must not try to gain unauthorised access to GIAP, the server on which it's stored, or any server, computer or database connected to it.
+                </p>
+                <p class="govuk-body">
+                    You must not attack GIAP in any way. This includes denial-of-service attacks.
+                </p>
+                <p class="govuk-body">
+                    We'll report any attacks or attempts to gain unauthorised access to GIAP to the relevant law enforcement authorities and share information about you with them.
+                </p>
+            </div>
+
+            <div id="TOC12">
+                <h2 class="govuk-heading-l">12. Hoax messages and phishing</h2>
+                <p class="govuk-body">
+                    DfE, local authorities, multi-academy trusts or school approvers will never send an unsolicited email to you asking you to log-on to GIAP or ask for your password. You must not respond to such a request. If you receive such a request, please report it to your approver who should then report it to us.
+                </p>
+            </div>
+
+            <div id="TOC13">
+                <h2 class="govuk-heading-l">13. Links to external websites</h2>
+                <p class="govuk-body">
+                    Links on GIAP will lead to other websites which are not under our control. We are not responsible for the content of any linked site. Listing and linking should not be taken as an endorsement of any kind and we accept no liability for the content. We cannot guarantee that these links will work all the time and have no control over the availability of the linked pages.
+                </p>
+            </div>
+
+            <div id="TOC14">
+                <h2 class="govuk-heading-l">14. Governing law</h2>
+                <p class="govuk-body">
+                    These terms of use, their subject matter and their formation (and any non-contractual disputes or claims) are governed by English law. We both agree to the exclusive jurisdiction of the courts of England and Wales.
+                </p>
+            </div>
+
+            <div id="TOC15">
+                <h2 class="govuk-heading-l">15. General</h2>
+                <p class="govuk-body">
+                    Our failure or delay to exercise or enforce any right in these terms of use does not mean that we waive our right to enforce these rights on another occasion.
+                </p>
+                <p class="govuk-body">
+                    If any of these terms of use is held to be illegal, invalid or otherwise unenforceable for any reason, it shall be severed and deleted from these terms of use and the remaining terms of use shall survive and remain in full force and effect and continue to be binding and enforceable.
+                </p>
+            </div>
+
+            <div id="TOC16">
+                <h2 class="govuk-heading-l">16. Audit</h2>
+                <p class="govuk-body">
+                    A comprehensive log of usage will be kept and audited by the department.
+                </p>
+            </div>
+
+            <div id="TOC17">
+                <h2 class="govuk-heading-l">17. System access levels</h2>
+                <p class="govuk-body">
+                    The GIAP system is available to:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>local authorities - full access</li>
+                    <li>multi-academy trusts – full access</li>
+                    <li>single-academy trusts - full access</li>
+                    <li>local authority maintained schools – standard access</li>
+                </ul>
+                <p class="govuk-body">
+                    Local authority maintained schools have standard access (as MATs and SATs have additional responsibilities that do not apply to maintained schools) and will need to contact their LA for some LA responsibility features of the system.
+                </p>
+                <p class="govuk-body">
+                    FE colleges and Post-16 schools have the same level of access as maintained schools.
+                </p>
+                <p class="govuk-body">
+                    Access for establishments (‘establishments’ excludes LAs and MATs) is also regulated by the age range of the establishment.
+                </p>
+            </div>
+
+            <div id="TOC18">
+                <h2 class="govuk-heading-l">18. Non-UPN searches</h2>
+                <p class="govuk-body">Where an establishment / organisation is to search for a pupil using the non-UPN search function, it can only be used to search for a pupil that <strong>has joined or is going to join the establishment</strong>.</p>
+                <p class="govuk-body">
+                    There is no other scenario to search for a pupil using the non-UPN search. The pupil must have joined or be about to join the establishment / organisation without UPN details.
+                </p>
+                <p class="govuk-body">
+                    This element is referenced on the GIAP consent page, where the statement:
+                </p>
+                <p class="govuk-body">
+                    ‘I confirm that I have read and understood the conditions under which I can search for pupil data’
+                </p>
+                <p class="govuk-body">
+                    shows that the user has agreed to this requirement.
+                </p>
+                <p class="govuk-body">
+                    shows that the user has agreed to this requirement.
+                </p>
+                <p class="govuk-body"><strong>Please note:</strong> ALL non-UPN searched are logged on the system and repeat searches will be notified to the establishment / organisation approver and DfE system administrators for investigation.</p>
+            </div>
+
+            <div id="TOC19">
+                <h2 class="govuk-heading-l">19. Last updated</h2>
+                <p class="govuk-body">
+                    We may need to update this terms of use information periodically, so we recommend that you revisit this information from time to time. This version was last updated in June 2020.
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 

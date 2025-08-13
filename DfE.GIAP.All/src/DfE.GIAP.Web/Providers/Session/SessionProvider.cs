@@ -1,80 +1,58 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 
-namespace DfE.GIAP.Web.Providers.Session
+namespace DfE.GIAP.Web.Providers.Session;
+
+public class SessionProvider : ISessionProvider
 {
-    public class SessionProvider : ISessionProvider
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public SessionProvider(IHttpContextAccessor httpContextAccessor)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        ArgumentNullException.ThrowIfNull(httpContextAccessor);
+        _httpContextAccessor = httpContextAccessor;
+    }
 
-        public SessionProvider(IHttpContextAccessor httpContextAccessor)
+    private ISession Session => _httpContextAccessor.HttpContext?.Session
+        ?? throw new InvalidOperationException("HttpContext or Session is not available. Make sure session middleware is properly configured.");
+
+    public void SetSessionValue(string key, string value)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        Session.SetString(key, value);
+    }
+
+    public void SetSessionValue<T>(string key, T value) => SetSessionValue(key, JsonSerializer.Serialize(value));
+
+    public string? GetSessionValue(string key)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        return Session.GetString(key);
+    }
+
+    public T? GetSessionValueOrDefault<T>(string key)
+    {
+        string json = GetSessionValue(key);
+        return json == null ? default(T) : JsonSerializer.Deserialize<T>(json);
+    }
+
+    public void RemoveSessionValue(string key)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(key);
+        Session.Remove(key);
+    }
+
+    public bool ContainsSessionKey(string key)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        return Session.Keys.Contains(key);
+    }
+
+    public void ClearSession()
+    {
+        List<string> keys = Session.Keys.ToList();
+        foreach (string key in keys)
         {
-            _httpContextAccessor = httpContextAccessor ??
-                throw new ArgumentNullException(nameof(httpContextAccessor));
-        }
-
-        private ISession Session => _httpContextAccessor.HttpContext?.Session
-            ?? throw new InvalidOperationException("HttpContext or Session is not available. Make sure session middleware is properly configured.");
-
-        public void SetSessionValue(string key, string value)
-        {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key), "Session key cannot be null or empty.");
-
-            Session.SetString(key, value);
-        }
-
-        public string GetSessionValue(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key), "Session key cannot be null or empty.");
-
-            return Session.GetString(key);
-        }
-
-        public void RemoveSessionValue(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key), "Session key cannot be null or empty.");
-
             Session.Remove(key);
-        }
-
-        public bool ContainsSessionKey(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key), "Session key cannot be null or empty.");
-
-            return Session.Keys.Contains(key);
-        }
-
-        public void ClearSession()
-        {
-            var keys = Session.Keys.ToList();
-            foreach (var key in keys)
-            {
-                Session.Remove(key);
-            }
-        }
-
-        public void SetSessionObject<T>(string key, T obj)
-        {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key));
-
-            var json = JsonSerializer.Serialize(obj);
-            Session.SetString(key, json);
-        }
-
-        public T GetSessionObject<T>(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException(nameof(key));
-
-            var json = Session.GetString(key);
-            return json == null ? default : JsonSerializer.Deserialize<T>(json);
         }
     }
 }

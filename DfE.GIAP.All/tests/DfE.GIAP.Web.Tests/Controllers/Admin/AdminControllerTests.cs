@@ -13,14 +13,11 @@ using Moq;
 using NSubstitute;
 using DfE.GIAP.Common.Enums;
 using Xunit;
-using System.Threading.Tasks;
 using DfE.GIAP.Web.ViewModels.Admin;
-using System.Collections.Generic;
 using DfE.GIAP.Domain.Models.SecurityReports;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Claims;
-using DfE.GIAP.Web.ViewModels.Admin;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin;
 
@@ -89,7 +86,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         AdminViewModel model = new()
         {
-            SelectedAdminOption = "ManageDocuments"
+            SelectedAdminOption = "ManageNewsArticles"
         };
 
         // Act
@@ -97,8 +94,8 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         // Assert
         RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
-        Assert.Equal("ManageDocuments", viewResult.ControllerName);
-        Assert.Equal("ManageDocuments", viewResult.ActionName);
+        Assert.Equal("ManageNewsArticles", viewResult.ControllerName);
+        Assert.Equal("ManageNewsArticles", viewResult.ActionName);
     }
 
     [Fact]

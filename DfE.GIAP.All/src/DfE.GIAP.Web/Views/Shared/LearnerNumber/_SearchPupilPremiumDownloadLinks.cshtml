@@ -2,12 +2,12 @@
 {
     <input type="hidden" name="ReturnUpns" value="@Model.LearnerNumber" />
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-list govuk-button--secondary" asp-action="ToDownloadSelectedPupilPremiumDataUPN" id="search--download-selected--pp--link" name="downloadPP" value="selected">
+        <button class="govuk-list govuk-button govuk-button--secondary" asp-action="ToDownloadSelectedPupilPremiumDataUPN" id="search--download-selected--pp--link" name="downloadPP" value="selected">
             @Model.DownloadSelectedLink
         </button>
     </div>
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-list govuk-button--secondary" asp-action="PPAddToMyPupilList" id="search--my-pupil--List--link" name="myPupilList" value="selected">
+        <button class="govuk-list govuk-button govuk-button--secondary" asp-action="PPAddToMyPupilList" id="search--my-pupil--List--link" name="myPupilList" value="selected">
             @Model.AddSelectedToMyPupilListLink
         </button>
     </div>

@@ -9,11 +9,15 @@
 
 ## 🧪 Changes Made
 
-- [ ] Feature added
-- [ ] Bug fix
-- [ ] Refactoring
-- [ ] Documentation update
-- [ ] Other (please describe):
+- [ ] feat – New feature
+- [ ] fix – Bug fix
+- [ ] docs – Documentation only changes
+- [ ] refactor – Code change that neither fixes a bug nor adds a feature
+- [ ] chore – Maintenance tasks (e.g., build, config, dependencies)
+- [ ] pipeline – CI/CD or workflow updates
+- [ ] tests – Adding or updating tests
+- [ ] other – Please describe:
+
 
 ## 📝 Description
 
@@ -32,7 +36,3 @@
 - [ ] Tests added or updated
 - [ ] Documentation updated (if not needed cross out)
 - [ ] CI pass (tests, codecov, lint)
-
-## 📎 Additional Notes
-
-<!-- Any other context or information reviewers should know -->

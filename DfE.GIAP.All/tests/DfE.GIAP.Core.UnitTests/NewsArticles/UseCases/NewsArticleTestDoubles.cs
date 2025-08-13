@@ -17,8 +17,6 @@ internal static class NewsArticleTestDoubles
             .UseSeed(13487123)
             .StrictMode(true)
             .RuleFor((target) => target.Id, (faker) => NewsArticleIdentifier.From(faker.Lorem.Word()))
-            .RuleFor((target) => target.DraftTitle, (faker) => faker.Lorem.Words().Merge())
-            .RuleFor((target) => target.DraftBody, (faker) => faker.Lorem.Words().Merge())
             .RuleFor((target) => target.Title, (faker) => faker.Lorem.Words().Merge())
             .RuleFor((target) => target.Body, (faker) => faker.Lorem.Words().Merge())
             .RuleFor((target) => target.CreatedDate, (faker) => faker.Date.Recent())
