@@ -41,6 +41,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly TestSession _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
+    private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
     public PPLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -106,11 +107,27 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
+
+        const string PupilPremiumSearchTextSessionKey = "SearchPPNonUPN_SearchText";
+        const string PupilPremiumSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters";
+
+        _mockSessionProvider.Setup(
+            (t) => t.ContainsSessionKey(PupilPremiumSearchTextSessionKey)).Returns(true).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.ContainsSessionKey(PupilPremiumSearchFiltersSessionKey)).Returns(true).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.GetSessionValue(PupilPremiumSearchTextSessionKey)).Returns(searchText).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.GetSessionValueOrDefault<SearchFilters>(
+                PupilPremiumSearchFiltersSessionKey)).Returns(
+                    searchViewModel.SearchFilters).Verifiable();
+
         // Act
         PPLearnerTextSearchController sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-
+        
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.NonUpnPupilPremiumDatabase(true);
@@ -993,6 +1010,23 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
+        const string PupilPremiumSearchTextSessionKey = "SearchPPNonUPN_SearchText";
+        const string PupilPremiumSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters"; 
+
+        _mockSessionProvider.Setup(
+            (t) => t.ContainsSessionKey(PupilPremiumSearchTextSessionKey)).Returns(true).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.ContainsSessionKey(PupilPremiumSearchFiltersSessionKey)).Returns(true).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.GetSessionValue(PupilPremiumSearchTextSessionKey)).Returns(searchText).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.GetSessionValueOrDefault<SearchFilters>(
+                PupilPremiumSearchFiltersSessionKey)).Returns(
+                    searchViewModel.SearchFilters).Verifiable();
+
         // act
         PPLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
@@ -1281,11 +1315,26 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string sortField = "Forename";
         string sortDirection = "asc";
 
+        const string PupilPremiumSearchTextSessionKey = "SearchPPNonUPN_SearchText";
+        const string PupilPremiumSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters";
+
+        _mockSessionProvider.Setup(
+            (t) => t.ContainsSessionKey(PupilPremiumSearchTextSessionKey)).Returns(true).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.ContainsSessionKey(PupilPremiumSearchFiltersSessionKey)).Returns(true).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.GetSessionValue(PupilPremiumSearchTextSessionKey)).Returns(searchText).Verifiable();
+
+        _mockSessionProvider.Setup(
+            (t) => t.GetSessionValueOrDefault<SearchFilters>(
+                PupilPremiumSearchFiltersSessionKey)).Returns(
+                    searchViewModel.SearchFilters).Verifiable();
+
         // act
         PPLearnerTextSearchController sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-
+        
         _mockSession.SetString(sut.SortDirectionKey, sortDirection);
         _mockSession.SetString(sut.SortFieldKey, sortField);
 
@@ -1475,7 +1524,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
              _mockPaginatedService,
              _mockMplService,
              _mockSelectionManager,
-             new Mock<ISessionProvider>().Object,
+             _mockSessionProvider.Object,
              _mockDownloadService)
         {
             ControllerContext = new ControllerContext()
