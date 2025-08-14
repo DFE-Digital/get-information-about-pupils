@@ -4,7 +4,7 @@
     {
         public const string Forename = "Forename";
         public const string Middlenames = "Middlenames";
-        public const string Surname = "Surname";
+        public const string Surname = "SurnameXXXX";
         public const string Gender = "Gender";
         public const string Sex = "Sex";
         public const string DOB = "DOB";

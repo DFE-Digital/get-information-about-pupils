@@ -18,6 +18,7 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -101,6 +102,8 @@ public class FELearnerTextSearchController :  Controller
         Dictionary<string, string[]>,
         IList<FilterRequest>> _filtersRequestMapper;
 
+    private readonly IFiltersRequestBuilder _filtersRequestBuilder;
+
     public FELearnerTextSearchController(
         IUseCase<
             SearchByFirstNameAndOrSurnameRequest,
@@ -111,6 +114,7 @@ public class FELearnerTextSearchController :  Controller
         IMapper<
             Dictionary<string, string[]>,
             IList<FilterRequest>> filtersRequestMapper,
+        IFiltersRequestBuilder filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
            IPaginatedSearchService paginatedSearch,
            IMyPupilListService mplService,
@@ -138,6 +142,8 @@ public class FELearnerTextSearchController :  Controller
         _mplService = mplService ??
             throw new ArgumentNullException(nameof(mplService));
         _appSettings = azureAppSettings.Value;
+        _filtersRequestBuilder = filtersRequestBuilder ??
+            throw new ArgumentNullException(nameof(filtersRequestBuilder));
     }
 
 
@@ -862,8 +868,11 @@ public class FELearnerTextSearchController :  Controller
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        Dictionary<string, string[]> filtersRequest =
+            _filtersRequestBuilder.GenerateFilterRequest(model, currentFilters);
+
         IList<FilterRequest> filterRequests =
-            _filtersRequestMapper.Map(GenerateRequestModel(model, currentFilters));
+            _filtersRequestMapper.Map(filtersRequest);
 
         SearchByFirstNameAndOrSurnameResponse searchResponse =
             await _furtherEducationTestSearchUseCase.HandleRequestAsync(
@@ -875,96 +884,7 @@ public class FELearnerTextSearchController :  Controller
         return _learnerSearchResponseToViewModelMapper.Map((model, searchResponse));
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        #region DELETE
-        //model = await GetPupilsByNameForSearchBuilder(
-        //    model,
-        //    IndexType,
-        //    currentFilters,
-        //    model.PageNumber,
-        //    first,
-        //    sortField,
-        //    sortDirection).ConfigureAwait(false);
-
-        //return model;
-
-        #endregion
     }
-
-    #region DELETE
-    //private async Task<LearnerTextSearchViewModel> GetPupilsByNameForSearchBuilder(
-    //    LearnerTextSearchViewModel model,
-    //    AzureSearchIndexType indexType,
-    //    List<CurrentFilterDetail> currentFilters,
-    //    int pageNumber,
-    //    bool first,
-    //    string sortField = "",
-    //    string sortDirection = "")
-    //{
-    //    var requestFilters = GenerateRequestModel(model, currentFilters);
-    //    PaginatedResponse result = await _paginatedSearch.GetPage(
-    //      model.SearchText,
-    //      requestFilters,
-    //      first ? _appSettings.MaximumNonUPNResults : PAGESIZE,
-    //      pageNumber,
-    //      indexType,
-    //      AzureSearchQueryType.Text,
-    //      AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-    //      sortField,
-    //      sortDirection
-    //      );
-
-    //    ParseGender(ref result);
-    //    ParseSex(ref result);
-
-    //    var lowAge = User.GetOrganisationLowAge();
-    //    var highAge = User.GetOrganisationHighAge();
-
-    //    if (result.Count > model.MaximumResults)
-    //    {
-    //        model.Learners = result.Learners.Take(model.MaximumResults).ToList();
-    //    }
-    //    else
-    //    {
-    //        model.Learners = result.Learners;
-    //    }
-
-    //    model.Count = (int)result.Count;
-    //    model.Total = result.Count ?? result.Learners.Count;
-
-    //    model.Filters = result.Filters;
-
-    //    SetLearnerNumberId(model);
-
-    //    var isAdmin = User.IsAdmin();
-
-    //    if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-    //    {
-    //        model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-    //    }
-
-    //    var selected = GetSelected();
-
-    //    if (!string.IsNullOrEmpty(selected))
-    //    {
-    //        foreach (var learner in model.Learners)
-    //        {
-    //            if (!string.IsNullOrEmpty(learner.LearnerNumberId))
-    //            {
-    //                learner.Selected = selected.Contains(learner.LearnerNumberId);
-    //            }
-    //        }
-    //    }
-
-    //    model.Learners = first ? result.Learners.Take(PAGESIZE) : result.Learners;
-
-    //    model.PageLearnerNumbers = String.Join(',', model.Learners.Select(l => l.LearnerNumberId));
-
-    //    model.ShowOverLimitMessage = model.Total > 100000;
-
-    //    return model;
-    //}
-    #endregion
 
     private async Task<InvalidLearnerNumberSearchViewModel> GetInvalidPupil(InvalidLearnerNumberSearchViewModel model, AzureSearchIndexType indexType)
     {
@@ -1004,120 +924,6 @@ public class FELearnerTextSearchController :  Controller
         }
 
         return model;
-    }
-
-    private Dictionary<string, string[]> GenerateRequestModel(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters)
-    {
-        var requestFilters = new Dictionary<string, string[]>();
-        List<string> surnameList = new List<string>();
-        List<string> middlenameList = new List<string>();
-        List<string> forenameList = new List<string>();
-        List<string> dobList = new List<string>();
-
-        if (currentFilters != null)
-        {
-            foreach (var filter in currentFilters)
-            {
-                if (filter.FilterType == FilterType.Surname)
-                {
-                    surnameList.Add(filter.FilterName);
-                }
-                if (filter.FilterType == FilterType.MiddleName)
-                {
-                    middlenameList.Add(filter.FilterName);
-                }
-                if (filter.FilterType == FilterType.Forename)
-                {
-                    forenameList.Add(filter.FilterName);
-                }
-                if (filter.FilterType == FilterType.Dob)
-                {
-                    if (!model.FilterErrors.DobError)
-                    {
-                        if (model.SearchFilters.CustomFilterText.DobDay == 0 && model.SearchFilters.CustomFilterText.DobMonth == 0 &&
-                            model.SearchFilters.CustomFilterText.DobYear == 0)
-                        {
-                            PupilHelper.ConvertFilterNameToCustomDOBFilterText(filter.FilterName, out int dobDay, out int dobMonth, out int dobYear);
-                            model.SearchFilters.CustomFilterText.DobDay = dobDay;
-                            model.SearchFilters.CustomFilterText.DobMonth = dobMonth;
-                            model.SearchFilters.CustomFilterText.DobYear = dobYear;
-                        }
-
-                        if (model.SearchFilters.CustomFilterText.DobDay > 0 && model.SearchFilters.CustomFilterText.DobMonth > 0 && model.SearchFilters.CustomFilterText.DobYear > 0)
-                        {
-                            dobList.Add(DateTime.Parse(filter.FilterName, new CultureInfo("en-GB")).ToString("yyy-MM-dd", new CultureInfo("en-GB")));
-                            requestFilters.Add("dob", dobList.ToArray());
-                        }
-                        else
-                        {
-                            if (model.SearchFilters.CustomFilterText.DobMonth == 0)
-                                requestFilters.Add("dobyear", new string[] { model.SearchFilters.CustomFilterText.DobYear.ToString() });
-                            else
-                            {
-                                requestFilters.Add("dobmonth", new string[] { model.SearchFilters.CustomFilterText.DobMonth.ToString() });
-                                requestFilters.Add("dobyear", new string[] { model.SearchFilters.CustomFilterText.DobYear.ToString() });
-                            }
-                        }
-                    }
-                }
-                if (filter.FilterType == FilterType.Gender)
-                {
-                    var currentSelectedGenderList = new List<string>();
-                    if (model.SelectedGenderValues != null)
-                        currentSelectedGenderList = model.SelectedGenderValues.ToList();
-                    if (!currentSelectedGenderList.Any(x => x.Equals(filter.FilterName.Substring(0, 1))))
-                        currentSelectedGenderList.Add(filter.FilterName.Substring(0, 1));
-                    model.SelectedGenderValues = currentSelectedGenderList.ToArray();
-                }
-
-                if (filter.FilterType == FilterType.Sex)
-                {
-                    var currentSelectedSexList = new List<string>();
-                    if (model.SelectedSexValues != null)
-                        currentSelectedSexList = model.SelectedSexValues.ToList();
-                    if (!currentSelectedSexList.Any(x => x.Equals(filter.FilterName.Substring(0, 1))))
-                        currentSelectedSexList.Add(filter.FilterName.Substring(0, 1));
-                    model.SelectedSexValues = currentSelectedSexList.ToArray();
-                }
-            }
-        }
-
-        if (surnameList.ToArray().Length > 0)
-            requestFilters.Add("SurnameLC", surnameList.ToArray());
-
-        if (middlenameList.ToArray().Length > 0)
-            requestFilters.Add("middlenames", middlenameList.ToArray());
-
-        if (forenameList.ToArray().Length > 0)
-            requestFilters.Add("ForenameLC", forenameList.ToArray());
-
-        if (model.SelectedGenderValues != null && model.SelectedGenderValues.Length > 0)
-            requestFilters.Add("Sex", model.SelectedGenderValues.ToArray());
-
-        if (model.SelectedSexValues != null && model.SelectedSexValues.Length > 0)
-            requestFilters.Add("sex", model.SelectedSexValues.ToArray());
-
-        return requestFilters;
-    }
-
-    private void ParseGender(ref PaginatedResponse result)
-    {
-        var genderFilter = result.Filters.Where(filterData =>
-            filterData.Name.Equals("Gender")).ToList();
-
-        genderFilter.ForEach(filterData =>
-            filterData.Items.ForEach(filterDataItem =>
-                filterDataItem.Value = filterDataItem.Value.SwitchGenderToParseName()));
-    }
-
-    private void ParseSex(ref PaginatedResponse result)
-    {
-        var sexFilter = result.Filters.Where(filterData =>
-            filterData.Name.Equals("Sex")).ToList();
-
-        sexFilter.ForEach(filterData =>
-            filterData.Items.ForEach(filterDataItem =>
-                filterDataItem.Value = filterDataItem.Value.SwitchSexToParseName()));
     }
 
     private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
@@ -1400,22 +1206,6 @@ public class FELearnerTextSearchController :  Controller
     {
         this.HttpContext.Session.Remove(SortDirectionKey);
         this.HttpContext.Session.Remove(SortFieldKey);
-    }
-
-
-    private void SetLearnerNumberId(LearnerTextSearchViewModel model)
-    {
-
-        foreach (var learner in model.Learners)
-        {
-            learner.LearnerNumberId = learner.LearnerNumber switch
-            {
-                "0" => learner.Id,
-                _ => learner.LearnerNumber,
-            };
-
-        }
-
     }
 
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)

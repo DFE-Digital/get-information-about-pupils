@@ -72,7 +72,8 @@ public static class CompositionRoot
             .AddSingleton<IMapper<Pageable<SearchResult<Dto.FurtherEducationLearner>>, FurtherEducationLearners>, PageableSearchResultsToFurtherEducationLearnerResultsMapper>()
             .AddSingleton<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>, AzureFacetResultToEstablishmentFacetsMapper>()
             .AddScoped<IUseCase<SearchByFirstNameAndOrSurnameRequest, SearchByFirstNameAndOrSurnameResponse>, SearchByFirstNameAndOrSurnameUseCase>()
-            .AddScoped<SearchCollectionValuedFilterExpression>();
+            .AddScoped<SearchCollectionValuedFilterExpression>()
+            .AddScoped<SearchByEqualityFilterExpression>();
 
         services.AddSingleton<ISearchFilterExpressionFactory>(provider =>
         {
@@ -88,7 +89,10 @@ public static class CompositionRoot
                             .ServiceProvider.GetRequiredService<LessThanOrEqualToExpression>(),
                     ["SearchCollectionValuedFilterExpression"] = () =>
                         scopedSearchFilterExpressionProvider.
-                            ServiceProvider.GetRequiredService<SearchCollectionValuedFilterExpression>()
+                            ServiceProvider.GetRequiredService<SearchCollectionValuedFilterExpression>(),
+                    ["SearchByEqualityFilterExpression"] = () =>
+                        scopedSearchFilterExpressionProvider
+                            .ServiceProvider.GetRequiredService<SearchByEqualityFilterExpression>()
                 };
 
             return new SearchFilterExpressionFactory(searchFilterExpressions);

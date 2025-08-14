@@ -8,6 +8,9 @@ using DfE.GIAP.Core.Search.Common.Application.Models;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
 using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
@@ -46,28 +49,52 @@ builder.Services
 builder.Services.AddSingleton<IMapper<
     FurtherEducationLearner, Learner>,
     FurtherEducationLearnerToViewModelMapper>();
-
 builder.Services.AddSingleton<IMapper<
     (LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse), LearnerTextSearchViewModel>,
     LearnerSearchResponseToViewModelMapper>();
-
 builder.Services.AddSingleton<IMapper<
     FilterData, FilterRequest>, FilterRequestMapper>();
-
 builder.Services.AddSingleton<IMapper<
     Dictionary<string, string[]>,
     IList<FilterRequest>>, FiltersRequestMapper>();
-
 builder.Services.AddSingleton<IMapper<
     FurtherEducationLearner, Learner>, FurtherEducationLearnerToViewModelMapper>();
-
 builder.Services.AddSingleton<IMapper<
     SearchFacet, FilterData>, FilterResponseMapper>();
-
 builder.Services.AddSingleton<IMapper<
     SearchFacets, List<FilterData>>, FiltersResponseMapper>();
+builder.Services.AddSingleton<
+    IFilterHandlerRegistry, FilterHandlerRegistry>();
+builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("SurnameLC"));
+builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("ForenameLC"));
+builder.Services.AddSingleton<IFilterHandler>(new DobFilterHandler());
+builder.Services.AddSingleton<IFiltersRequestBuilder, FiltersRequestBuilder>();
+builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
+{
+    Dictionary<string, IFilterHandler> handlers = new()
+    {
+        { "SurnameLC", new NameFilterHandler("SurnameLC") },
+        { "ForenameLC", new NameFilterHandler("ForenameLC") },
+        { "DOB", new DobFilterHandler() }
+    };
 
-    WebApplication app = builder.Build();
+    return new FilterHandlerRegistry(handlers);
+});
+builder.Services.AddSingleton(new GenderFilterHandler("Gender"));
+builder.Services.AddSingleton(new GenderFilterHandler("Sex"));
+builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
+{
+    Dictionary<string, IFilterHandler> handlers = new()
+    {
+        { "Gender", new GenderFilterHandler("Gender") },
+        { "Sex", new GenderFilterHandler("Sex") }
+    };
+
+    return new FilterHandlerRegistry(handlers);
+});
+
+
+WebApplication app = builder.Build();
 
 // Error handling
 if (app.Environment.IsLocal())
