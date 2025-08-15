@@ -21,9 +21,14 @@ public class SessionProvider : ISessionProvider
         Session.SetString(key, value);
     }
 
-    public void SetSessionValue<T>(string key, T value) => SetSessionValue(key, JsonSerializer.Serialize(value));
+    public void SetSessionValue<T>(string key, T value)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        string json = JsonSerializer.Serialize(value);
+        Session.SetString(key, json);
+    }
 
-    public string? GetSessionValue(string key)
+    public string GetSessionValue(string key)
     {
         ArgumentException.ThrowIfNullOrEmpty(key);
         return Session.GetString(key);
@@ -31,13 +36,14 @@ public class SessionProvider : ISessionProvider
 
     public T? GetSessionValueOrDefault<T>(string key)
     {
+        ArgumentException.ThrowIfNullOrEmpty(key);
         string json = GetSessionValue(key);
-        return json == null ? default(T) : JsonSerializer.Deserialize<T>(json);
+        return json == null ? default : JsonSerializer.Deserialize<T>(json);
     }
 
     public void RemoveSessionValue(string key)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(key);
+        ArgumentException.ThrowIfNullOrEmpty(key);
         Session.Remove(key);
     }
 
