@@ -19,15 +19,13 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
+    .AddAppSettings(configuration)
     .AddRoutingConfiguration()
-    .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
     .AddApplicationInsightsTelemetry()
     .AddAllServices()
     .AddWebProviders()
-    .AddSettings<ClaritySettings>(configuration, "Clarity")
-    .AddSettings<GoogleTagManager>(configuration, "GoogleTagManager")
     .AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
@@ -60,23 +58,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
-
-ClaritySettings claritySettings = configuration
-    .GetSection("Clarity")
-    .Get<ClaritySettings>();
-
-app.Use(async (context, next) =>
-{
-    if (claritySettings != null && !string.IsNullOrEmpty(claritySettings.ProjectId))
-    {
-        string nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-        context.Items["CSPNonce"] = nonce;
-
-        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms https://www.googletagmanager.com 'nonce-{nonce}'; object-src 'none';";
-    }
-
-    await next();
-});
 
 // Endpoint configuration
 app.MapControllerRoute(
