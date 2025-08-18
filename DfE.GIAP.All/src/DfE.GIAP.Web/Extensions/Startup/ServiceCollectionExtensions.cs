@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
 using DfE.GIAP.Web.Providers.Cookie;
+using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -31,7 +32,11 @@ public static class ServiceCollectionExtensions
 {
     internal static IServiceCollection AddAppConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
     {
+        // Bind AzureAppSettings from root or a named section
         services.Configure<AzureAppSettings>(configuration);
+
+        // Bind BlobStorageOptions from a dedicated section
+        services.Configure<BlobStorageOptions>(configuration.GetSection(nameof(BlobStorageOptions)));
 
         return services;
     }

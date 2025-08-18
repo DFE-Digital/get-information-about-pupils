@@ -1,5 +1,9 @@
-﻿using DfE.GIAP.Common.Enums;
+﻿using System.Net.Mime;
+using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
+using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePreparedFile;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.LoggingEvent;
 using DfE.GIAP.Service.Common;
@@ -9,18 +13,24 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.DSIUser;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 
 namespace DfE.GIAP.Web.Controllers.PreparedDownload;
 
 [Route(Routes.PrePreparedDownloads.PreparedDownloadsController)]
 public class PreparedDownloadsController : Controller
 {
+    private readonly IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> _downloadPrePreparedFileUseCase;
     private readonly IPrePreparedDownloadsService _prePreparedDownloadsService;
     private readonly ICommonService _commonService;
 
-    public PreparedDownloadsController(ICommonService commonService, IPrePreparedDownloadsService prePreparedDownloadsService)
+    public PreparedDownloadsController(
+        IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> downloadPrePreparedFileUseCase,
+        ICommonService commonService,
+        IPrePreparedDownloadsService prePreparedDownloadsService)
     {
+        ArgumentNullException.ThrowIfNull(downloadPrePreparedFileUseCase);
+        _downloadPrePreparedFileUseCase = downloadPrePreparedFileUseCase;
+
         _commonService = commonService ??
             throw new ArgumentNullException(nameof(commonService));
         _prePreparedDownloadsService = prePreparedDownloadsService ??
@@ -48,9 +58,26 @@ public class PreparedDownloadsController : Controller
 
         return View("~/Views/PrePreparedDownloads/PrePreparedDownload.cshtml", model);
     }
+
     [Route(Routes.PrePreparedDownloads.DownloadPrePreparedFileAction)]
     public async Task<FileStreamResult> DownloadPrePreparedFile(string name, DateTime fileUploadedDate)
     {
+        BlobStoragePathContext folderContext = new()
+        {
+            OrganisationType = User.GetOrganisationType(),
+            UniqueIdentifier = User.GetUniqueIdentifier(),
+            LocalAuthorityNumber = User.GetLocalAuthorityNumberForLocalAuthority(),
+            UniqueReferenceNumber = User.GetUniqueReferenceNumber()
+        };
+
+        DownloadPrePreparedFileRequest request = new(name, folderContext);
+        DownloadPrePreparedFileResponse response = await _downloadPrePreparedFileUseCase.HandleRequestAsync(request);
+
+        return new FileStreamResult(response.FileStream, response.ContentType)
+        {
+            FileDownloadName = response.FileName
+        };
+
 
         var loggingEvent = new LoggingEvent
         {
