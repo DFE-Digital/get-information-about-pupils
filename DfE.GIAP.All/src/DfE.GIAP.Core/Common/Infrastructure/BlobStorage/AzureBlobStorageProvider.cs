@@ -13,7 +13,7 @@ public class AzureBlobStorageProvider : IBlobStorageProvider
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task<IEnumerable<string>> ListBlobNamesAsync(string containerName, string directory)
+    public async Task<IEnumerable<string>> ListBlobsAsync(string containerName, string directory)
     {
         BlobContainerClient containerClient = _blobServiceClient
             .GetBlobContainerClient(containerName);

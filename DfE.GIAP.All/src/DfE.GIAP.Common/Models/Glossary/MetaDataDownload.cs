@@ -1,14 +1,20 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Core.Models.Glossary
+namespace DfE.GIAP.Core.Models.Glossary;
+
+[ExcludeFromCodeCoverage]
+public class MetaDataDownload
 {
-    [ExcludeFromCodeCoverage]
-    public class MetaDataDownload
-    {
-        public string Name { get; set; }
-        public DateTime Date { get; set; }
-        public string FileName { get; set; }
-        public string Link { get; set; }
-    }
+    public string Name { get; set; }
+
+    public DateTime Date { get; set; }
+
+    public string FileName =>
+         string.IsNullOrEmpty(Name) ? null : Name.Split('/').Last();
+
+    public string DisplayName =>
+        string.IsNullOrEmpty(FileName) ? null :
+        FileName.Contains('.') ? FileName.Substring(0, FileName.LastIndexOf('.')) : FileName;
+
+    public string Link { get; set; }
 }

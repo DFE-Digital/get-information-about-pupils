@@ -8,26 +8,30 @@ using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Microsoft.Extensions.Hosting;
+using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Service.Download;
 
 public class DownloadService : IDownloadService
 {
-    private readonly IApiService _apiProcessorService;
     private AzureAppSettings _azureAppSettings;
+    private readonly IBlobStorageProvider _blobStorageProvider;
+    private readonly IApiService _apiProcessorService;
     private readonly IBlobStorageService _blobStorageService;
     private readonly IEventLogging _eventLogging;
     private readonly IHostEnvironment _hostEnvironment;
 
     public DownloadService(
-        IApiService apiProcessorService,
         IOptions<AzureAppSettings> azureFunctionUrls,
+        IBlobStorageProvider blobStorageProvider,
+        IApiService apiProcessorService,
         IBlobStorageService blobStorageService,
         IEventLogging eventLogging,
         IHostEnvironment hostEnvironment)
     {
-        _apiProcessorService = apiProcessorService;
         _azureAppSettings = azureFunctionUrls.Value;
+        _blobStorageProvider = blobStorageProvider;
+        _apiProcessorService = apiProcessorService;
         _blobStorageService = blobStorageService;
         _eventLogging = eventLogging;
         _hostEnvironment = hostEnvironment;
@@ -35,15 +39,17 @@ public class DownloadService : IDownloadService
 
     public async Task<IEnumerable<MetaDataDownload>> GetGlossaryMetaDataDownloadList()
     {
-        var downloadList = await _blobStorageService.GetFileList($"{_azureAppSettings.MetaDataDownloadListDirectory}/");
+        IEnumerable<BlobItemInfo> blobItems = await _blobStorageProvider
+            .ListBlobsWithMetadataAsync("giapdownloads", _azureAppSettings.MetaDataDownloadListDirectory);
 
-        foreach (var item in downloadList)
+        if (!blobItems.Any())
+            return Enumerable.Empty<MetaDataDownload>();
+
+        return blobItems.Select(item => new MetaDataDownload
         {
-            item.FileName = StringHelper.GetMetaDataFileName(item.FileName);
-            item.Name = StringHelper.GetMetaDataName(item.FileName);
-        }
-
-        return downloadList.Any() ? downloadList : Enumerable.Empty<MetaDataDownload>();
+            Name = item.Name,
+            Date = item.LastModified.Value.DateTime
+        });
     }
 
     public Task GetGlossaryMetaDataDownFileAsync(string fileName, Stream stream, AzureFunctionHeaderDetails azureFunctionHeaderDetails)

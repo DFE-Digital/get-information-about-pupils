@@ -11,7 +11,7 @@ public interface IBlobStorageProvider
     /// <param name="containerName">The name of the blob container.</param>
     /// <param name="directory">The virtual directory path within the container.</param>
     /// <returns>A collection of blob names.</returns>
-    Task<IEnumerable<string>> ListBlobNamesAsync(string containerName, string directory);
+    Task<IEnumerable<string>> ListBlobsAsync(string containerName, string directory);
 
     /// <summary>
     /// Lists blobs along with their metadata within a specified virtual directory.

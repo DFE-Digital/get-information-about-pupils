@@ -15,7 +15,7 @@ using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 namespace DfE.GIAP.Service.BlobStorage
 {
     [ExcludeFromCodeCoverage]
-    public class BlobStorageService: IBlobStorageService
+    public class BlobStorageService : IBlobStorageService
     {
         private readonly BlobContainerClient _container;
         private readonly AzureAppSettings _azureAppSettings;
@@ -36,11 +36,10 @@ namespace DfE.GIAP.Service.BlobStorage
             try
             {
                 return _container
-                     .GetBlobs(prefix:directory)?
+                     .GetBlobs(prefix: directory)?
                      .Select(b => new MetaDataDownload()
                      {
                          Name = b.Name,
-                         FileName = b.Name,
                          Date = b.Properties.LastModified.Value.Date
                      }).ToList();
             }

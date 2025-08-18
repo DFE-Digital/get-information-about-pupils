@@ -6,7 +6,7 @@
 
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.MetaDataDownloadList[i].Name)</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.MetaDataDownloadList[i].DisplayName)</td>
                 <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(Model.MetaDataDownloadList[i].Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))</td>
                 <td class="govuk-table__cell">
                     <a asp-action="GetBulkUploadTemplateFile" asp-controller="Glossary" asp-route-name="@Html.Raw(Model.MetaDataDownloadList[i].FileName)" class="downloads--downloads-data-link--link govuk-link" id="downloads--downloads-data-link--link-@i">@Html.Raw(Model.MetaDataDownloadList[i].FileName)</a>
