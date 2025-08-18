@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Cryptography;
+using DfE.GIAP.Common.AppSettings;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -12,7 +13,11 @@ public static class ApplicationBuilderExtensions
 
         app.Use(async (context, next) =>
         {
-            var headers = context.Response.Headers;
+            IHeaderDictionary headers = context.Response.Headers;
+
+            // Generate nonce and store in context
+            string nonce = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+            context.Items["CSPNonce"] = nonce;
 
             // Remove specified headers
             if (securityHeaders?.Remove is not null)
@@ -30,7 +35,11 @@ public static class ApplicationBuilderExtensions
                 {
                     if (!string.IsNullOrWhiteSpace(header.Value))
                     {
-                        headers[header.Key] = header.Value;
+                        string value = header.Key.Equals("Content-Security-Policy", StringComparison.OrdinalIgnoreCase)
+                            ? header.Value.Replace("{nonce}", nonce)
+                            : header.Value;
+
+                        headers[header.Key] = value;
                     }
                 }
             }
