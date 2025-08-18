@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Common.AppSettings;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
