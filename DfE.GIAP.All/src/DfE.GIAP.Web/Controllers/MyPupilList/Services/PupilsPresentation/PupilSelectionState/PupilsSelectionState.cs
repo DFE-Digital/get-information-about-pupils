@@ -8,16 +8,14 @@ public sealed class PupilsSelectionState
     private SelectAllPupilsState _state;
     public PupilsSelectionState()
     {
-        Clear();
+        ResetState();
     }
 
     public bool IsAllPupilsSelected => _state == SelectAllPupilsState.SelectAll;
 
-    public IEnumerable<string> SelectedPupils => _pupilsToSelectedMap.Where(t => t.Value).Select(t => t.Key);
-
-    public void AddPupils(IEnumerable<string> upns)
+    public IEnumerable<string> GetSelectedPupils()
     {
-        upns?.ToList().ForEach((upn) => _pupilsToSelectedMap[upn] = false);
+        return _pupilsToSelectedMap.Where(t => t.Value).Select(t => t.Key);
     }
 
     public bool IsPupilSelected(string upn)
@@ -27,6 +25,11 @@ public sealed class PupilsSelectionState
             return false;
         }
         return true;
+    }
+
+    public void AddPupils(IEnumerable<string> upns)
+    {
+        upns?.ToList().ForEach((upn) => _pupilsToSelectedMap[upn] = false);
     }
 
     public void SelectAll()
@@ -47,17 +50,11 @@ public sealed class PupilsSelectionState
         }
     }
 
-    public void MarkSelected(string upn)
-    {
-        _pupilsToSelectedMap[upn] = true;
-    }
+    public void MarkSelected(string upn) => _pupilsToSelectedMap[upn] = true;
 
-    public void MarkDeselected(string upn)
-    {
-        _pupilsToSelectedMap[upn] = false;
-    }
+    public void MarkDeselected(string upn) => _pupilsToSelectedMap[upn] = false;
 
-    public void Clear()
+    public void ResetState()
     {
         _pupilsToSelectedMap.Clear();
         _state = SelectAllPupilsState.NotSpecified;

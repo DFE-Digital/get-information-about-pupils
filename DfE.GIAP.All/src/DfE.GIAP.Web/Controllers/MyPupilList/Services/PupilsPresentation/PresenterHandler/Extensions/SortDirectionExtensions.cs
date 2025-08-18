@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Order;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Extensions;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Extensions;
 
 public static class SortDirectionExtensions
 {

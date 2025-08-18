@@ -65,8 +65,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    internal static SearchOptions CreateSearchClientOptions(
-        IEnumerable<UniquePupilNumber> upns)
+    internal static SearchOptions CreateSearchClientOptions(IEnumerable<UniquePupilNumber> upns)
     {
         const string UpnIndexField = "UPN";
 

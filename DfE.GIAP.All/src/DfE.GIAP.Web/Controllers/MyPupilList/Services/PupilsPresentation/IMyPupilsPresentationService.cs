@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Response;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presenter;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
 
 public interface IMyPupilsPresentationService
 {

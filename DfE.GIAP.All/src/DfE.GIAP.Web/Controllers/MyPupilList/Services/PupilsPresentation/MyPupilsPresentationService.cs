@@ -2,43 +2,41 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Extensions;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Extensions;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Provider;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Provider;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Response;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Response;
-using DfE.GIAP.Web.Providers.Session;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presenter;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
 
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {
-    
+    private readonly IPresentPupilOptionsProvider _presentPupilOptionsProvider;
     private readonly IPupilSelectionStateProvider _pupilSelectionStateProvider;
-    private readonly ISessionProvider _sessionProvider;
     private readonly IMapper<MyPupilsFormStateRequestDto, PresentPupilsOptions> _mapPresentOptions;
     private readonly IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel> _mapToViewModel;
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IEnumerable<IPupilDtoPresentationHandler> _pupilDtoPresentationHandlers;
 
     public MyPupilsPresentationService(
+        IPresentPupilOptionsProvider presentPupilOptionsProvider,
+        IPupilSelectionStateProvider pupilSelectionStateProvider,
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
         IEnumerable<IPupilDtoPresentationHandler> pupilPresentationHandlers,
-        ISessionProvider sessionProvider,
         IMapper<MyPupilsFormStateRequestDto, PresentPupilsOptions> mapPresentOptions,
-        IPupilSelectionStateProvider pupilSelectionStateProvider,
         IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel> mapToViewModel)
     {
+        _pupilSelectionStateProvider = pupilSelectionStateProvider;
+        _presentPupilOptionsProvider = presentPupilOptionsProvider;
         _getMyPupilsUseCase = getMyPupilsUseCase;
         _pupilDtoPresentationHandlers = pupilPresentationHandlers;
-        _sessionProvider = sessionProvider;
         _mapPresentOptions = mapPresentOptions;
-        _pupilSelectionStateProvider = pupilSelectionStateProvider;
         _mapToViewModel = mapToViewModel;
+
     }
 
     public async Task<GetPupilsForUserFromPresentationStateResponse> GetPupilsForUserFromPresentationStateAsync(string userId)
@@ -46,15 +44,12 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         GetMyPupilsRequest getPupilsRequest = new(userId);
         GetMyPupilsResponse response = await _getMyPupilsUseCase.HandleRequestAsync(getPupilsRequest);
 
-        PresentPupilsOptions options =
-            _sessionProvider.ContainsSessionKey(nameof(PresentPupilsOptions)) ?
-                _sessionProvider.GetSessionValueOrDefault<PresentPupilsOptions>(nameof(PresentPupilsOptions)) :
-                    PresentPupilsOptions.Default;
+        PresentPupilsOptions presentPupilOptions = _presentPupilOptionsProvider.GetOptions();
 
         IEnumerable<PupilDto> results =
             _pupilDtoPresentationHandlers.Aggregate(
                 response.Pupils,
-                (current, handler) => handler.Handle(current, options));
+                (current, handler) => handler.Handle(current, presentPupilOptions));
 
         PupilsSelectionState pupilSelectionState = _pupilSelectionStateProvider.GetState();
 
@@ -68,9 +63,9 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             pupilSelectionStates,
             pupilSelectionStates.Any(t => t.IsSelected),
             pupilSelectionState.IsAllPupilsSelected,
-            options.Page,
-            options.SortBy,
-            options.SortDirection.ToFormSortDirection());
+            presentPupilOptions.Page,
+            presentPupilOptions.SortBy,
+            presentPupilOptions.SortDirection.ToFormSortDirection());
     }
 
     public async Task<IEnumerable<string>> GetSelectedPupilsForUserAsync(string userId)
@@ -84,24 +79,19 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             return response.Pupils.Select(t => t.UniquePupilNumber);
         }
 
-        return pupilsSelectionState.SelectedPupils;
+        return pupilsSelectionState.GetSelectedPupils();
     }
 
 
     // TODO state pattern
     public void UpdatePresentationState(MyPupilsFormStateRequestDto updateStateRequest)
     {
-
-        PresentPupilsOptions options = _mapPresentOptions.Map(updateStateRequest);
-
-        _sessionProvider.SetSessionValue(nameof(PresentPupilsOptions), options);
+        _presentPupilOptionsProvider.SetOptions(
+            options: _mapPresentOptions.Map(updateStateRequest));
 
         PupilsSelectionState selectionState = _pupilSelectionStateProvider.GetState();
 
-        IEnumerable<string> currentPageOfPupils =
-            updateStateRequest.CurrentPageOfPupils.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(t => t.ReplaceLineEndings().Trim())
-                .Where(UniquePupilNumberValidator.Validate); // TODO move out of Domain into cross-cutting or creating an application-validator?
+        IEnumerable<string> currentPageOfPupils = updateStateRequest.ParseCurrentPageOfPupils();
 
         selectionState.AddPupils(currentPageOfPupils);
 
@@ -132,9 +122,9 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         }
 
-        _pupilSelectionStateProvider.UpdateState(selectionState);        
+        _pupilSelectionStateProvider.UpdateState(selectionState);
     }
 
-    public void ClearPresentationState() => _pupilSelectionStateProvider.GetState().Clear();
+    public void ClearPresentationState() => _pupilSelectionStateProvider.GetState().ResetState();
 }
 

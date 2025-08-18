@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.ViewModel;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Web.Controllers.MyPupilList.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
@@ -23,4 +24,12 @@ public sealed class MyPupilsFormStateRequestDto
     [FromQuery]
     public string SortDirection { get; set; } = string.Empty;
     public MyPupilsErrorModel Error { get; set; } = null; // Used by other actions to error when posting back to the form
+
+    public IEnumerable<string> ParseCurrentPageOfPupils()
+    {
+        return CurrentPageOfPupils
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(t => t.ReplaceLineEndings().Trim())
+                .Where(UniquePupilNumberValidator.Validate);
+    }
 }
