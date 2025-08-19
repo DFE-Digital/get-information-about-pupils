@@ -6,11 +6,11 @@ namespace DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePre
 internal class DownloadPrePreparedFileUseCase : IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse>
 {
     private readonly IBlobStorageProvider _blobStorageProvider;
-    private readonly IBlobStoragePathBuilder _folderPathBuilder;
+    private readonly IBlobStoragePathResolver _folderPathBuilder;
 
     public DownloadPrePreparedFileUseCase(
         IBlobStorageProvider blobStorageProvider,
-        IBlobStoragePathBuilder folderPathBuilder)
+        IBlobStoragePathResolver folderPathBuilder)
     {
         ArgumentNullException.ThrowIfNull(blobStorageProvider);
         _blobStorageProvider = blobStorageProvider;
@@ -21,7 +21,7 @@ internal class DownloadPrePreparedFileUseCase : IUseCase<DownloadPrePreparedFile
 
     public async Task<DownloadPrePreparedFileResponse> HandleRequestAsync(DownloadPrePreparedFileRequest request)
     {
-        string directory = _folderPathBuilder.BuildPath(request.FolderContext);
+        string directory = _folderPathBuilder.ResolvePath(request.PathContext);
         Stream stream = await _blobStorageProvider.DownloadAsync("giapdownloads", $"{directory}{request.FileName}");
 
         return new DownloadPrePreparedFileResponse(stream, request.FileName);

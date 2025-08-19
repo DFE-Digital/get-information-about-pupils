@@ -20,7 +20,7 @@ public static class CompositionRoot
     {
         return services
             .RegisterApplicationUseCases()
-            .RegisterApplicationFolderPathing();
+            .RegisterApplicationPathContext();
     }
 
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
@@ -29,14 +29,10 @@ public static class CompositionRoot
             .AddScoped<IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse>, DownloadPrePreparedFileUseCase>();
     }
 
-    private static IServiceCollection RegisterApplicationFolderPathing(this IServiceCollection services)
+    private static IServiceCollection RegisterApplicationPathContext(this IServiceCollection services)
     {
         return services
-            .AddScoped<IBlobStoragePathBuilder, BlobStoragePathResolver>()
-            .AddScoped<IBlobStoragePathStrategy, LocalAuthorityPathStrategy>()
-            .AddScoped<IBlobStoragePathStrategy, MultiAcademyTrustPathStrategy>()
-            .AddScoped<IBlobStoragePathStrategy, SingleAcademyTrustPathStrategy>()
-            .AddScoped<IBlobStoragePathStrategy, EstablishmentPathStrategy>();
+            .AddScoped<IBlobStoragePathResolver, AzureBlobStoragePathResolver>();
     }
 
     // Infrastructure 

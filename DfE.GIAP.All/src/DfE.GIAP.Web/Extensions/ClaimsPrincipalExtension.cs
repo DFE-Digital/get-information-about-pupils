@@ -237,20 +237,20 @@ public static class ClaimsPrincipalExtension
         return academyList;
     }
 
-    public static OrganisationType GetOrganisationType(this ClaimsPrincipal principal)
+    public static OrganisationScope GetOrganisationType(this ClaimsPrincipal principal)
     {
         if (principal.IsOrganisationLocalAuthority())
-            return OrganisationType.LocalAuthority;
+            return OrganisationScope.LocalAuthority;
 
         if (principal.IsOrganisationMultiAcademyTrust())
-            return OrganisationType.MultiAcademyTrust;
+            return OrganisationScope.MultiAcademyTrust;
 
         if (principal.IsOrganisationSingleAcademyTrust())
-            return OrganisationType.SingleAcademyTrust;
+            return OrganisationScope.SingleAcademyTrust;
 
         if (principal.IsOrganisationEstablishment())
-            return OrganisationType.Establishment;
+            return OrganisationScope.Establishment;
 
-        return OrganisationType.Unknown;
+        return OrganisationScope.Unknown;
     }
 }

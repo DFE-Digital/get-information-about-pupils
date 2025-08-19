@@ -8,3 +8,5 @@ public class GlossaryViewModel
 {
     public List<MetaDataDownload> MetaDataDownloadList = new();
 }
+
+
