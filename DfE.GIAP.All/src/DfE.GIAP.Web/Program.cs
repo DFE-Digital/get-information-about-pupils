@@ -6,7 +6,7 @@ using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Core.PrePreparedDownloads;
+using DfE.GIAP.Core.PreparedDownloads;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

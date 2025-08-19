@@ -1,11 +1,11 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Infrastructure;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePreparedFile;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.GetPrePreparedFiles;
+using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.GIAP.Core.PrePreparedDownloads;
+namespace DfE.GIAP.Core.PreparedDownloads;
 public static class CompositionRoot
 {
     public static IServiceCollection AddPrePreparedDownloadsDependencies(this IServiceCollection services)
@@ -27,8 +27,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
     {
         return services
-            .AddScoped<IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse>, DownloadPrePreparedFileUseCase>()
-            .AddScoped<IUseCase<GetPrePreparedFilesRequest, GetPrePreparedFilesResponse>, GetPrePreparedFilesUseCase>();
+            .AddScoped<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>, DownloadPreparedFileUseCase>()
+            .AddScoped<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>, GetPreparedFilesUseCase>();
     }
 
     private static IServiceCollection RegisterApplicationPathContext(this IServiceCollection services)

@@ -2,14 +2,14 @@
 
 <table class="govuk-table">
     <tbody class="govuk-table__body" id="help--metadata-files--table">
-        @for (var i = 0; i < Model.PrePreparedMetadataFiles.Count(); i++)
+        @for (var i = 0; i < Model.PreparedMetadataFiles.Count(); i++)
 
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PrePreparedMetadataFiles[i].DisplayName)</td>
-                <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(Model.PrePreparedMetadataFiles[i].Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PreparedMetadataFiles[i].DisplayName)</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(Model.PreparedMetadataFiles[i].Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))</td>
                 <td class="govuk-table__cell">
-                    <a asp-action="GetBulkUploadTemplateFile" asp-controller="Glossary" asp-route-name="@Html.Raw(Model.PrePreparedMetadataFiles[i].FileName)" class="downloads--downloads-data-link--link govuk-link" id="downloads--downloads-data-link--link-@i">@Html.Raw(Model.PrePreparedMetadataFiles[i].FileName)</a>
+                    <a asp-action="GetBulkUploadTemplateFile" asp-controller="Glossary" asp-route-name="@Html.Raw(Model.PreparedMetadataFiles[i].FileName)" class="downloads--downloads-data-link--link govuk-link" id="downloads--downloads-data-link--link-@i">@Html.Raw(Model.PreparedMetadataFiles[i].FileName)</a>
                 </td>
             </tr>
         }

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
+﻿namespace DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 
 public interface IBlobStoragePathResolver
 {

@@ -3,62 +3,31 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.ApiProcessor;
 using Microsoft.Extensions.Options;
-using DfE.GIAP.Core.Models.Glossary;
-using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Microsoft.Extensions.Hosting;
-using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Service.Download;
 
 public class DownloadService : IDownloadService
 {
     private AzureAppSettings _azureAppSettings;
-    private readonly IBlobStorageProvider _blobStorageProvider;
     private readonly IApiService _apiProcessorService;
-    private readonly IBlobStorageService _blobStorageService;
     private readonly IEventLogging _eventLogging;
     private readonly IHostEnvironment _hostEnvironment;
 
     public DownloadService(
         IOptions<AzureAppSettings> azureFunctionUrls,
-        IBlobStorageProvider blobStorageProvider,
         IApiService apiProcessorService,
-        IBlobStorageService blobStorageService,
         IEventLogging eventLogging,
         IHostEnvironment hostEnvironment)
     {
         _azureAppSettings = azureFunctionUrls.Value;
-        _blobStorageProvider = blobStorageProvider;
         _apiProcessorService = apiProcessorService;
-        _blobStorageService = blobStorageService;
         _eventLogging = eventLogging;
         _hostEnvironment = hostEnvironment;
     }
 
-    public async Task<IEnumerable<MetaDataDownload>> GetGlossaryMetaDataDownloadList()
-    {
-        IEnumerable<BlobItemInfo> blobItems = await _blobStorageProvider
-            .ListBlobsWithMetadataAsync("giapdownloads", _azureAppSettings.MetaDataDownloadListDirectory);
-
-        if (!blobItems.Any())
-            return Enumerable.Empty<MetaDataDownload>();
-
-        return blobItems.Select(item => new MetaDataDownload
-        {
-            Name = item.Name,
-            Date = item.LastModified.Value.DateTime
-        });
-    }
-
-    public Task GetGlossaryMetaDataDownFileAsync(string fileName, Stream stream, AzureFunctionHeaderDetails azureFunctionHeaderDetails)
-    {
-
-        var file = _blobStorageService.DownloadFileAsync($"{_azureAppSettings.MetaDataDownloadListDirectory}/", fileName, stream, azureFunctionHeaderDetails);
-
-        return file;
-    }
 
     public async Task<ReturnFile> GetCSVFile(string[] selectedPupils,
                                              string[] sortOrder,

@@ -20,8 +20,4 @@
 		<InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
 		<InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="PrePreparedDownloads\Infrastructure\" />
-	</ItemGroup>
 </Project>

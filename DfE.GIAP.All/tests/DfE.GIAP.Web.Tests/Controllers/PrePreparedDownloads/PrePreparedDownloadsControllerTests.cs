@@ -65,7 +65,7 @@ public class PrePreparedDownloadsControllerTests : IClassFixture<PreparedDownloa
         ViewResult viewResult = Assert.IsType<ViewResult>(result, exactMatch: false);
         Assert.NotNull(viewResult);
 
-        PrePreparedDownloadsViewModel? viewModel = viewResult.Model as PrePreparedDownloadsViewModel;
+        PreparedDownloadsViewModel? viewModel = viewResult.Model as PreparedDownloadsViewModel;
         Assert.NotNull(viewModel);
 
         Assert.Equal("~/Views/PrePreparedDownloads/PrePreparedDownload.cshtml", viewResult.ViewName);
@@ -91,10 +91,10 @@ public class PrePreparedDownloadsControllerTests : IClassFixture<PreparedDownloa
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
 
-        PrePreparedDownloadsViewModel? viewModel = viewResult.Model as PrePreparedDownloadsViewModel;
+        PreparedDownloadsViewModel? viewModel = viewResult.Model as PreparedDownloadsViewModel;
         Assert.NotNull(viewModel);
 
-        Assert.Equal(results.Count, viewModel.PrePreparedDownloadList.Count);
+        Assert.Equal(results.Count, viewModel.PreparedDownloadFiles.Count);
 
     }
     [Fact]

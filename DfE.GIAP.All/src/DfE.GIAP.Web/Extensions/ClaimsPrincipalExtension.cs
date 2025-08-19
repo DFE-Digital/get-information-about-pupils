@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.Enums;
+using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 using static DfE.GIAP.Web.Constants.DsiKeys;

@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.PrePreparedDownloads.Application.Enums;
-namespace DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
+﻿using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
+namespace DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 
 public class BlobStoragePathContext
 {

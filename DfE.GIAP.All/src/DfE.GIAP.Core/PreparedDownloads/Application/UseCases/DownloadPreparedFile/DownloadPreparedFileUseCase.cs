@@ -1,14 +1,14 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
+using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 
-namespace DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePreparedFile;
-internal class DownloadPrePreparedFileUseCase : IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse>
+namespace DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
+internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>
 {
     private readonly IBlobStorageProvider _blobStorageProvider;
     private readonly IBlobStoragePathResolver _folderPathBuilder;
 
-    public DownloadPrePreparedFileUseCase(
+    public DownloadPreparedFileUseCase(
         IBlobStorageProvider blobStorageProvider,
         IBlobStoragePathResolver folderPathBuilder)
     {
@@ -19,11 +19,11 @@ internal class DownloadPrePreparedFileUseCase : IUseCase<DownloadPrePreparedFile
         _folderPathBuilder = folderPathBuilder;
     }
 
-    public async Task<DownloadPrePreparedFileResponse> HandleRequestAsync(DownloadPrePreparedFileRequest request)
+    public async Task<DownloadPreparedFileResponse> HandleRequestAsync(DownloadPreparedFileRequest request)
     {
         string directory = _folderPathBuilder.ResolvePath(request.PathContext);
         Stream stream = await _blobStorageProvider.DownloadAsync("giapdownloads", $"{directory}{request.FileName}");
 
-        return new DownloadPrePreparedFileResponse(stream, request.FileName);
+        return new DownloadPreparedFileResponse(stream, request.FileName);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Web.ViewModels;
 
-public class PrePreparedFileViewModel
+public class PreparedFileViewModel
 {
     public string Name { get; set; }
 

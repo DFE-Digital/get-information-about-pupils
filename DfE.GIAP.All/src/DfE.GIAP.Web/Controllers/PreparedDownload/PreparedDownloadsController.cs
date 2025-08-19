@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePreparedFile;
-using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.GetPrePreparedFiles;
+using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.ViewModels;
@@ -13,12 +13,12 @@ namespace DfE.GIAP.Web.Controllers.PreparedDownload;
 [Route(Routes.PrePreparedDownloads.PreparedDownloadsController)]
 public class PreparedDownloadsController : Controller
 {
-    private readonly IUseCase<GetPrePreparedFilesRequest, GetPrePreparedFilesResponse> _getPrePreparedFilesUseCase;
-    private readonly IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> _downloadPrePreparedFileUseCase;
+    private readonly IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> _getPrePreparedFilesUseCase;
+    private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
 
     public PreparedDownloadsController(
-         IUseCase<GetPrePreparedFilesRequest, GetPrePreparedFilesResponse> getPrePreparedFilesUseCase,
-        IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> downloadPrePreparedFileUseCase)
+         IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
+        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase)
     {
         ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);
         _getPrePreparedFilesUseCase = getPrePreparedFilesUseCase;
@@ -36,14 +36,14 @@ public class PreparedDownloadsController : Controller
             localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
             uniqueReferenceNumber: User.GetUniqueReferenceNumber());
 
-        GetPrePreparedFilesRequest request = new(pathContext);
-        GetPrePreparedFilesResponse response = await _getPrePreparedFilesUseCase
+        GetPreparedFilesRequest request = new(pathContext);
+        GetPreparedFilesResponse response = await _getPrePreparedFilesUseCase
             .HandleRequestAsync(request);
 
-        PrePreparedDownloadsViewModel model = new()
+        PreparedDownloadsViewModel model = new()
         {
-            PrePreparedDownloadList = response.BlobStorageItems
-            .Select(item => new PrePreparedFileViewModel
+            PreparedDownloadFiles = response.BlobStorageItems
+            .Select(item => new PreparedFileViewModel
             {
                 Name = item.Name,
                 Date = item.LastModified?.UtcDateTime ?? DateTime.MinValue
@@ -64,8 +64,8 @@ public class PreparedDownloadsController : Controller
             localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
             uniqueReferenceNumber: User.GetUniqueReferenceNumber());
 
-        DownloadPrePreparedFileRequest request = new(name, pathContext);
-        DownloadPrePreparedFileResponse response = await _downloadPrePreparedFileUseCase
+        DownloadPreparedFileRequest request = new(name, pathContext);
+        DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
             .HandleRequestAsync(request);
 
         return new FileStreamResult(response.FileStream, response.ContentType)

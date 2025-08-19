@@ -1,4 +1,4 @@
-﻿@model PrePreparedDownloadsViewModel
+﻿@model PreparedDownloadsViewModel
 
 @{
     ViewData["Title"] = "Pre-prepared downloads";
@@ -18,13 +18,13 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body" id="help--preprepared-files--table">
-        @for (var i = 0; i < Model.PrePreparedDownloadList.Count(); i++)
+        @for (var i = 0; i < Model.PreparedDownloadFiles.Count(); i++)
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PrePreparedDownloadList[i].DisplayName)</td>
-                <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(DateTimeHelper.ConvertDateTimeToString(Model.PrePreparedDownloadList[i].Date))</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayName)</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(DateTimeHelper.ConvertDateTimeToString(Model.PreparedDownloadFiles[i].Date))</td>
                 <td class="govuk-table__cell">
-                    <a class="govuk-link" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PrePreparedDownloadList[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PrePreparedDownloadList[i].Date)" id="downloads--downloads-data-link--link-@i">@Html.Raw(Model.PrePreparedDownloadList[i].FileName)</a>
+                    <a class="govuk-link" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PreparedDownloadFiles[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PreparedDownloadFiles[i].Date)" id="downloads--downloads-data-link--link-@i">@Html.Raw(Model.PreparedDownloadFiles[i].FileName)</a>
                 </td>
             </tr>
         }

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.PrePreparedDownloads.Application.Enums;
+﻿namespace DfE.GIAP.Core.PreparedDownloads.Application.Enums;
 public enum OrganisationScope
 {
     LocalAuthority,
