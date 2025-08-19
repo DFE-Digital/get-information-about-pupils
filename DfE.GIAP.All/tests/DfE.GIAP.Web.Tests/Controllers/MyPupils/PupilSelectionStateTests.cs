@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
-using DfE.GIAP.Web.Tests.TestDoubles;
+using DfE.GIAP.Web.Tests.Controllers.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
 
