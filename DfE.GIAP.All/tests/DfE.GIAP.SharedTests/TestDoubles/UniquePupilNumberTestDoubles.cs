@@ -28,4 +28,6 @@ public static class UniquePupilNumberTestDoubles
         return upns;
     }
 
+
+    public static List<string> GenerateAsValues(int count) => Generate(count).Select(t => t.Value).ToList();
 }

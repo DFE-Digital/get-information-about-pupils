@@ -1,58 +1,83 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState;
 
 public sealed class PupilsSelectionState
 {
     private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
-    private SelectAllPupilsState _state;
-    public PupilsSelectionState()
-    {
-        ResetState();
-    }
+    private SelectAllPupilsState _state = SelectAllPupilsState.NotSpecified;
 
     public bool IsAllPupilsSelected => _state == SelectAllPupilsState.SelectAll;
 
-    public IEnumerable<string> GetSelectedPupils()
-    {
-        return _pupilsToSelectedMap.Where(t => t.Value).Select(t => t.Key);
-    }
-
     public bool IsPupilSelected(string upn)
     {
-        if (!_pupilsToSelectedMap.TryGetValue(upn, out bool selected) || !selected)
+        if (IsAllPupilsSelected)
         {
-            return false;
+            return true;
         }
-        return true;
+
+        if (_pupilsToSelectedMap.TryGetValue(upn, out bool selected))
+        {
+            return selected;
+        }
+
+        return false;
     }
 
-    public void AddPupils(IEnumerable<string> upns)
+    public IReadOnlyCollection<string> GetSelectedPupils()
     {
-        upns?.ToList().ForEach((upn) => _pupilsToSelectedMap[upn] = false);
+        return _pupilsToSelectedMap
+            .Where(t => t.Value)
+            .Select(t => t.Key)
+            .ToList()
+            .AsReadOnly();
     }
 
-    public void SelectAll()
+    public void AddPupils(IEnumerable<string> upns) => UpdatePupilSelectionState(upns, isSelected: false);
+
+    public void SelectAllPupils()
     {
         _state = SelectAllPupilsState.SelectAll;
-        foreach (string item in _pupilsToSelectedMap.Keys)
+
+        if (_pupilsToSelectedMap.Keys.Count == 0)
         {
-            _pupilsToSelectedMap[item] = true;
+            return;
         }
+
+        UpdatePupilSelectionState(_pupilsToSelectedMap.Keys, isSelected: true);
     }
 
-    public void DeselectAll()
+    public void DeselectAllPupils()
     {
         _state = SelectAllPupilsState.DeselectAll;
-        foreach (string item in _pupilsToSelectedMap.Keys)
+
+        if (_pupilsToSelectedMap.Keys.Count == 0)
         {
-            _pupilsToSelectedMap[item] = false;
+            return;
         }
+        UpdatePupilSelectionState(_pupilsToSelectedMap.Keys, isSelected: false);
     }
 
-    public void MarkSelected(string upn) => _pupilsToSelectedMap[upn] = true;
+    public void UpdatePupilSelectionState(IEnumerable<string> upns, bool isSelected)
+    {
+        ArgumentNullException.ThrowIfNull(upns);
 
-    public void MarkDeselected(string upn) => _pupilsToSelectedMap[upn] = false;
+        if (!upns.Any())
+        {
+            throw new ArgumentException("Upns is empty");
+        }
+
+        foreach (string upn in upns)
+        {
+            if (!UniquePupilNumberValidator.Validate(upn))
+            {
+                throw new ArgumentException("Invalid UPN requested");
+            }
+
+            _pupilsToSelectedMap[upn] = isSelected;
+        }
+    }
 
     public void ResetState()
     {

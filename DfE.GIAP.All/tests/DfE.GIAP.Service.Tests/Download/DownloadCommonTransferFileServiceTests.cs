@@ -51,7 +51,7 @@ namespace DfE.GIAP.Service.Tests.Download
             var downloadCTFService = new DownloadCommonTransferFileService(apiProcessorService, mockAppSettings.Object, eventLogging.Object, hostEnvironment.Object);
 
             // Act
-            var actual = await downloadCTFService.GetCommonTransferFile(upns, upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+            var actual = await downloadCTFService.GetCommonTransferFile(upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
 
             // Assert
             Assert.IsType<ReturnFile>(actual);

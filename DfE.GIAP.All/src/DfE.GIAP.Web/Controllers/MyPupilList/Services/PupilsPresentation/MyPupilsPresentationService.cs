@@ -97,31 +97,24 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         if (updateStateRequest.SelectAll.HasValue && updateStateRequest.SelectAll.Value)
         {
-            selectionState.SelectAll();
-
+            selectionState.SelectAllPupils();
+            _pupilSelectionStateProvider.UpdateState(selectionState);
+            return;
         }
-        else if (updateStateRequest.SelectAll.HasValue && !updateStateRequest.SelectAll.Value)
+
+        if (updateStateRequest.SelectAll.HasValue && !updateStateRequest.SelectAll.Value)
         {
-            selectionState.DeselectAll();
-        }
-        else
-        {
-            // No SelectAll specified — apply individual selections only
-            IEnumerable<string> selected = updateStateRequest.SelectedPupils ?? Enumerable.Empty<string>();
-            IEnumerable<string> deselected = currentPageOfPupils.Except(selected);
-
-            foreach (string upn in selected)
-            {
-                selectionState.MarkSelected(upn);
-            }
-
-            foreach (string upn in deselected)
-            {
-                selectionState.MarkDeselected(upn);
-            }
-
+            selectionState.DeselectAllPupils();
+            _pupilSelectionStateProvider.UpdateState(selectionState);
+            return;
         }
 
+        // No SelectAll specified — apply individual selections only
+        IEnumerable<string> selected = updateStateRequest.SelectedPupils ?? Enumerable.Empty<string>();
+        IEnumerable<string> deselected = currentPageOfPupils.Except(selected);
+
+        selectionState.UpdatePupilSelectionState(selected, isSelected: true);
+        selectionState.UpdatePupilSelectionState(deselected, isSelected: false);
         _pupilSelectionStateProvider.UpdateState(selectionState);
     }
 

@@ -14,9 +14,10 @@ public sealed class MapPupilToPupilDtoMapperTests
     {
         // Arrange
         UniquePupilNumber uniquePupilNumber = UniquePupilNumberTestDoubles.Generate();
+
         DateTime dob = DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10);
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(uniquePupilNumber)
+
+        Pupil pupil = PupilBuilder.CreateBuilder(uniquePupilNumber)
             .WithFirstName("John")
             .WithSurname("Doe")
             .WithDateOfBirth(dob)
@@ -57,10 +58,9 @@ public sealed class MapPupilToPupilDtoMapperTests
     public void Map_PupilWithNullDateOfBirth_ReturnsEmptyDateOfBirth()
     {
         // Arrange
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
-                .WithDateOfBirth(null!)
-                .Build();
+        Pupil pupil = PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
+            .WithDateOfBirth(null!)
+            .Build();
 
         MapPupilToPupilDtoMapper mapper = new();
 
@@ -75,10 +75,9 @@ public sealed class MapPupilToPupilDtoMapperTests
     public void Map_PupilWithNullSex_ReturnsEmptySex()
     {
         // Arrange
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
-                .WithSex(null!)
-                .Build();
+        Pupil pupil = PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
+            .WithSex(null!)
+            .Build();
 
         MapPupilToPupilDtoMapper mapper = new();
 
@@ -93,10 +92,9 @@ public sealed class MapPupilToPupilDtoMapperTests
     public void Map_PupilNotPupilPremium_ReturnsFalseForIsPupilPremium()
     {
         // Arrange
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
-                .WithPupilType(PupilType.NationalPupilDatabase)
-                .Build();
+        Pupil pupil = PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
+            .WithPupilType(PupilType.NationalPupilDatabase)
+            .Build();
 
         MapPupilToPupilDtoMapper mapper = new();
 
