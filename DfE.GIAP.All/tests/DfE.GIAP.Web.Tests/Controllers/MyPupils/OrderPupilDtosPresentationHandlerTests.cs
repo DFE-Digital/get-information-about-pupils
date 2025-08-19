@@ -10,7 +10,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.MyPupils;
 public sealed class OrderPupilDtosPresentationHandlerTests
 {
     [Fact]
-    public void Test()
+    public void Handle_SortBy_Empty_Returns_Unsorted_Pupils()
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey: string.Empty);
@@ -28,7 +28,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     }
 
     [Fact]
-    public void Test2()
+    public void Handle_SortBy_UnknownKey_Throws_ArgumentException()
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey: "unknown-sortByKey");
@@ -45,7 +45,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     [InlineData("forename", SortDirection.Descending)]
     [InlineData("FORENAME", SortDirection.Ascending)]
     [InlineData("foRENamE", SortDirection.Descending)]
-    public void Test3(string sortKey, SortDirection sortDirection)
+    public void Handle_SortBy_Forename_Returns_SortedPupils_By_Forename(string sortKey, SortDirection sortDirection)
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
@@ -71,7 +71,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     [InlineData("surname", SortDirection.Descending)]
     [InlineData("SURNAME", SortDirection.Ascending)]
     [InlineData("suRnAme", SortDirection.Descending)]
-    public void Test4(string sortKey, SortDirection sortDirection)
+    public void Handle_SortBy_Surname_Returns_SortedPupils_By_Surname(string sortKey, SortDirection sortDirection)
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
@@ -96,7 +96,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     [InlineData("dob", SortDirection.Descending)]
     [InlineData("DOB", SortDirection.Ascending)]
     [InlineData("dOB", SortDirection.Descending)]
-    public void Test5(string sortKey, SortDirection sortDirection)
+    public void Handle_SortBy_DateOfBirth_Returns_SortedPupils_By_DateOfBirth(string sortKey, SortDirection sortDirection)
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
@@ -122,7 +122,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     [InlineData("sex", SortDirection.Descending)]
     [InlineData("SEX", SortDirection.Ascending)]
     [InlineData("seX", SortDirection.Descending)]
-    public void Test6(string sortKey, SortDirection sortDirection)
+    public void Handle_SortBy_Sex_Returns_SortedPupils_By_Sex(string sortKey, SortDirection sortDirection)
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
@@ -143,4 +143,3 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         Assert.Equal(expected, response);
     }
 }
-
