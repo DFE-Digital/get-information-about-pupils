@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.GetPrePreparedFiles;
-internal class GetPrePreparedFilesResponse
-{
-}
+public record GetPrePreparedFilesResponse(IEnumerable<BlobItemInfo> BlobStorageItems);

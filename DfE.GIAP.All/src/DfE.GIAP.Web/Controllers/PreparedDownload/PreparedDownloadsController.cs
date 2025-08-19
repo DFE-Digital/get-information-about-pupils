@@ -1,11 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
 using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePreparedFile;
-using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.PreparedDownloads;
+using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.GetPrePreparedFiles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,48 +13,53 @@ namespace DfE.GIAP.Web.Controllers.PreparedDownload;
 [Route(Routes.PrePreparedDownloads.PreparedDownloadsController)]
 public class PreparedDownloadsController : Controller
 {
+    private readonly IUseCase<GetPrePreparedFilesRequest, GetPrePreparedFilesResponse> _getPrePreparedFilesUseCase;
     private readonly IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> _downloadPrePreparedFileUseCase;
-    private readonly IPrePreparedDownloadsService _prePreparedDownloadsService;
 
     public PreparedDownloadsController(
-        IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> downloadPrePreparedFileUseCase,
-        ICommonService commonService,
-        IPrePreparedDownloadsService prePreparedDownloadsService)
+         IUseCase<GetPrePreparedFilesRequest, GetPrePreparedFilesResponse> getPrePreparedFilesUseCase,
+        IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse> downloadPrePreparedFileUseCase)
     {
+        ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);
+        _getPrePreparedFilesUseCase = getPrePreparedFilesUseCase;
+
         ArgumentNullException.ThrowIfNull(downloadPrePreparedFileUseCase);
         _downloadPrePreparedFileUseCase = downloadPrePreparedFileUseCase;
-
-        _prePreparedDownloadsService = prePreparedDownloadsService ??
-            throw new ArgumentNullException(nameof(prePreparedDownloadsService));
-
     }
-    [HttpGet]
-    public async Task<IActionResult> GetPreparedDownloadsAsync()
-    {
-        var downloadList = await _prePreparedDownloadsService.GetPrePreparedDownloadsList(AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-                                                                                          User.IsOrganisationLocalAuthority(),
-                                                                                          User.IsOrganisationMultiAcademyTrust(),
-                                                                                          User.IsOrganisationEstablishment(),
-                                                                                          User.IsOrganisationSingleAcademyTrust(),
-                                                                                          User.GetEstablishmentNumber(),
-                                                                                          User.GetUniqueIdentifier(),
-                                                                                          User.GetLocalAuthorityNumberForLocalAuthority(),
-                                                                                          User.GetUniqueReferenceNumber())
-                                                                                          .ConfigureAwait(false);
 
-        var model = new PrePreparedDownloadsViewModel
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        BlobStoragePathContext pathContext = BlobStoragePathContext.Create(
+            organisationScope: User.GetOrganisationScope(),
+            uniqueIdentifier: User.GetUniqueIdentifier(),
+            localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
+            uniqueReferenceNumber: User.GetUniqueReferenceNumber());
+
+        GetPrePreparedFilesRequest request = new(pathContext);
+        GetPrePreparedFilesResponse response = await _getPrePreparedFilesUseCase
+            .HandleRequestAsync(request);
+
+        PrePreparedDownloadsViewModel model = new()
         {
-            PrePreparedDownloadList = downloadList.OrderByDescending(x => x.Date).ToList()
+            PrePreparedDownloadList = response.BlobStorageItems
+            .Select(item => new PrePreparedFileViewModel
+            {
+                Name = item.Name,
+                Date = item.LastModified?.UtcDateTime ?? DateTime.MinValue
+            })
+            .OrderByDescending(x => x.Date)
+            .ToList()
         };
 
-        return View("~/Views/PrePreparedDownloads/PrePreparedDownload.cshtml", model);
+        return View(model);
     }
 
     [Route(Routes.PrePreparedDownloads.DownloadPrePreparedFileAction)]
-    public async Task<FileStreamResult> DownloadPrePreparedFile(string name, DateTime fileUploadedDate)
+    public async Task<FileStreamResult> DownloadPrePreparedFile(string name)
     {
         BlobStoragePathContext pathContext = BlobStoragePathContext.Create(
-            organisationScope: User.GetOrganisationType(),
+            organisationScope: User.GetOrganisationScope(),
             uniqueIdentifier: User.GetUniqueIdentifier(),
             localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
             uniqueReferenceNumber: User.GetUniqueReferenceNumber());

@@ -237,7 +237,7 @@ public static class ClaimsPrincipalExtension
         return academyList;
     }
 
-    public static OrganisationScope GetOrganisationType(this ClaimsPrincipal principal)
+    public static OrganisationScope GetOrganisationScope(this ClaimsPrincipal principal)
     {
         if (principal.IsOrganisationLocalAuthority())
             return OrganisationScope.LocalAuthority;

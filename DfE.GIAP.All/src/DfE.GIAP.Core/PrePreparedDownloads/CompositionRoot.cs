@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.PrePreparedDownloads.Application.FolderPath;
 using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.DownloadPrePreparedFile;
+using DfE.GIAP.Core.PrePreparedDownloads.Application.UseCases.GetPrePreparedFiles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.PrePreparedDownloads;
@@ -26,7 +27,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
     {
         return services
-            .AddScoped<IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse>, DownloadPrePreparedFileUseCase>();
+            .AddScoped<IUseCase<DownloadPrePreparedFileRequest, DownloadPrePreparedFileResponse>, DownloadPrePreparedFileUseCase>()
+            .AddScoped<IUseCase<GetPrePreparedFilesRequest, GetPrePreparedFilesResponse>, GetPrePreparedFilesUseCase>();
     }
 
     private static IServiceCollection RegisterApplicationPathContext(this IServiceCollection services)

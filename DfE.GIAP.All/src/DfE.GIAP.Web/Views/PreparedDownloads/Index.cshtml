@@ -21,7 +21,7 @@
         @for (var i = 0; i < Model.PrePreparedDownloadList.Count(); i++)
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PrePreparedDownloadList[i].Name)</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PrePreparedDownloadList[i].DisplayName)</td>
                 <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(DateTimeHelper.ConvertDateTimeToString(Model.PrePreparedDownloadList[i].Date))</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PrePreparedDownloadList[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PrePreparedDownloadList[i].Date)" id="downloads--downloads-data-link--link-@i">@Html.Raw(Model.PrePreparedDownloadList[i].FileName)</a>
