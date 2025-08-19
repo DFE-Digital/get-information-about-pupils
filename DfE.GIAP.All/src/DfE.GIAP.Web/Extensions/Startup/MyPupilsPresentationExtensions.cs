@@ -22,11 +22,11 @@ public static class MyPupilsPresentationExtensions
             .AddMyPupilsDependencies()
             .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>()
             .AddScoped<IPupilSelectionStateProvider, PupilSelectionStateProvider>()
-            .AddScoped<IPresentPupilOptionsProvider, PresentPupilOptionsProvider>()
+            .AddScoped<IPupilsPresentationOptionsProvider, PupilsPresentationOptionsProvider>()
             .AddSingleton<IPupilDtoPresentationHandler, OrderPupilDtosPresentationHandler>()
             .AddSingleton<IPupilDtoPresentationHandler, PaginatePupilDtosPresentationHandler>()
             .AddSingleton<IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel>, MapPupilDtoWithSelectionStateDecoratorToPupilPresentationViewModelMapper>()
-            .AddSingleton<IMapper<MyPupilsFormStateRequestDto, PresentPupilsOptions>, MapMyPupilsFormStateRequestDtoToPresentationOptions>();
+            .AddSingleton<IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions>, MapMyPupilsFormStateRequestDtoToPresentationOptions>();
             
         return services;
     }

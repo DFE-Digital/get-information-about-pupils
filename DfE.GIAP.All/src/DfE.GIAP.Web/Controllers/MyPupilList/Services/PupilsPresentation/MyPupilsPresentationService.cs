@@ -15,19 +15,19 @@ namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
 
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {
-    private readonly IPresentPupilOptionsProvider _presentPupilOptionsProvider;
+    private readonly IPupilsPresentationOptionsProvider _presentPupilOptionsProvider;
     private readonly IPupilSelectionStateProvider _pupilSelectionStateProvider;
-    private readonly IMapper<MyPupilsFormStateRequestDto, PresentPupilsOptions> _mapPresentOptions;
+    private readonly IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions> _mapPresentOptions;
     private readonly IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel> _mapToViewModel;
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IEnumerable<IPupilDtoPresentationHandler> _pupilDtoPresentationHandlers;
 
     public MyPupilsPresentationService(
-        IPresentPupilOptionsProvider presentPupilOptionsProvider,
+        IPupilsPresentationOptionsProvider presentPupilOptionsProvider,
         IPupilSelectionStateProvider pupilSelectionStateProvider,
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
         IEnumerable<IPupilDtoPresentationHandler> pupilPresentationHandlers,
-        IMapper<MyPupilsFormStateRequestDto, PresentPupilsOptions> mapPresentOptions,
+        IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions> mapPresentOptions,
         IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel> mapToViewModel)
     {
         _pupilSelectionStateProvider = pupilSelectionStateProvider;
@@ -44,7 +44,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         GetMyPupilsRequest getPupilsRequest = new(userId);
         GetMyPupilsResponse response = await _getMyPupilsUseCase.HandleRequestAsync(getPupilsRequest);
 
-        PresentPupilsOptions presentPupilOptions = _presentPupilOptionsProvider.GetOptions();
+        PupilsPresentationOptions presentPupilOptions = _presentPupilOptionsProvider.GetOptions();
 
         IEnumerable<PupilDto> results =
             _pupilDtoPresentationHandlers.Aggregate(
@@ -83,7 +83,6 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
     }
 
 
-    // TODO state pattern
     public void UpdatePresentationState(MyPupilsFormStateRequestDto updateStateRequest)
     {
         _presentPupilOptionsProvider.SetOptions(

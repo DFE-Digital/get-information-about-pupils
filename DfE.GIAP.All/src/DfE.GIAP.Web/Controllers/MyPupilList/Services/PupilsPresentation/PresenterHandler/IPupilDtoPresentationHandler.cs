@@ -5,5 +5,5 @@ namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Prese
 
 public interface IPupilDtoPresentationHandler
 {
-    IEnumerable<PupilDto> Handle(IEnumerable<PupilDto> pupils, PresentPupilsOptions options);
+    IEnumerable<PupilDto> Handle(IEnumerable<PupilDto> pupils, PupilsPresentationOptions options);
 }

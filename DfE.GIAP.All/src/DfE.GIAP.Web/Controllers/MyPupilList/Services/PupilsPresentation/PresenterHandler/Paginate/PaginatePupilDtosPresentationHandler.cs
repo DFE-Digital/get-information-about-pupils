@@ -6,7 +6,7 @@ namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Prese
 
 public sealed class PaginatePupilDtosPresentationHandler : IPupilDtoPresentationHandler
 {
-    public IEnumerable<PupilDto> Handle(IEnumerable<PupilDto> pupils, PresentPupilsOptions options)
+    public IEnumerable<PupilDto> Handle(IEnumerable<PupilDto> pupils, PupilsPresentationOptions options)
     {
         const int DefaultPageSize = 20;
         PageNumber page = PageNumber.Page(options.Page);

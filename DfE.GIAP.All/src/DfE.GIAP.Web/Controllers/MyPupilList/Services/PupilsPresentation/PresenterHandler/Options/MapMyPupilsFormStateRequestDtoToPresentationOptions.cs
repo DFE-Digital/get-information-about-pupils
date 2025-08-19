@@ -3,9 +3,9 @@ using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Presenter
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
 
-public sealed class MapMyPupilsFormStateRequestDtoToPresentationOptions : IMapper<MyPupilsFormStateRequestDto, PresentPupilsOptions>
+public sealed class MapMyPupilsFormStateRequestDtoToPresentationOptions : IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions>
 {
-    public PresentPupilsOptions Map(MyPupilsFormStateRequestDto input)
+    public PupilsPresentationOptions Map(MyPupilsFormStateRequestDto input)
     {
         return new(
             input.PageNumber,

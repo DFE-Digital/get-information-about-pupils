@@ -1,7 +1,5 @@
-﻿using System.Globalization;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Order;
@@ -12,13 +10,13 @@ public sealed class OrderPupilDtosPresentationHandler : IPupilDtoPresentationHan
         {
             { "forename", (t) => t.Forename },
             { "surname", (t) => t.Surname },
-            { "dob", (t) => DateTime.Parse(t.DateOfBirth, new CultureInfo("en-GB")) },
+            { "dob", (t) => t.ParseDateOfBirth() },
             { "sex", (t) => t.Sex }
         };
 
     public IEnumerable<PupilDto> Handle(
         IEnumerable<PupilDto> pupils,
-        PresentPupilsOptions options)
+        PupilsPresentationOptions options)
     {
         if (string.IsNullOrEmpty(options.SortBy))
         {
