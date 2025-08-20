@@ -14,4 +14,15 @@ public static class PupilPresentationOptionsTestDoubles
             SortBy: sortKey,
             SortDirection: sortDirection);
     }
+
+    public static PupilsPresentationOptions Create(int page)
+    {
+        return new(
+            Page: page,
+            SortBy: It.IsAny<string>(),
+            SortDirection: It.IsAny<SortDirection>());
+    }
+
+    public static PupilsPresentationOptions CreateWithValidPage() => Create(page: 1);
+
 }

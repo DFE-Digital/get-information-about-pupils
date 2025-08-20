@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Extensions;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
@@ -11,7 +12,7 @@ using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSele
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Response;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Response;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation;
 
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {

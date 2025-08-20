@@ -12,6 +12,11 @@ public sealed class PaginatePupilDtosPresentationHandler : IPupilDtoPresentation
         PageNumber page = PageNumber.Page(options.Page);
         int skip = DefaultPageSize * (page.Value - 1);
 
+        if(skip >= pupils.Count())
+        {
+            return [];
+        }
+
         List<PupilDto> pagedResults = pupils
             .Skip(skip)
             .Take(DefaultPageSize)

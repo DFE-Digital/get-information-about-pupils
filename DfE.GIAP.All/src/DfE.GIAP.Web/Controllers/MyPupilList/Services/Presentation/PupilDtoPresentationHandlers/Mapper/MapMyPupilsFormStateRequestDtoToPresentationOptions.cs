@@ -1,7 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Order;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Mapper;
 
 public sealed class MapMyPupilsFormStateRequestDtoToPresentationOptions : IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions>
 {
