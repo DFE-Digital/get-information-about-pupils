@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddAppSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AzureAppSettings>(configuration)
-            .Configure<ClarityOptions>(configuration.GetSection(ClarityOptions.SectionName))
+            .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
             .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName));
 
         return services;

@@ -1,6 +1,6 @@
 namespace DfE.GIAP.Web.Config;
 
-public class ClarityOptions
+public class MicrosoftClarityOptions
 {
     public const string SectionName = "Clarity";
 
