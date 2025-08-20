@@ -13,13 +13,13 @@ using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +33,8 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddAppSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AzureAppSettings>(configuration)
-            .Configure<ClaritySettings>(configuration.GetSection("Clarity"))
-            .Configure<GoogleTagManager>(configuration.GetSection("GoogleTagManager"));
+            .Configure<ClarityOptions>(configuration.GetSection(ClarityOptions.SectionName))
+            .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName));
 
         return services;
     }
