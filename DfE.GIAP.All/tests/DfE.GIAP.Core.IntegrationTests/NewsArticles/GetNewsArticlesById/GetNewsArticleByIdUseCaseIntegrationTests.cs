@@ -26,7 +26,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
         await Fixture.Database.WriteManyAsync(seededArticles);
 
         NewsArticleDto targetArticle = seededArticles[0];
-        GetNewsArticleByIdRequest request = new(Id: targetArticle.id);
+        GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.From(targetArticle.id));
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
@@ -49,8 +49,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
         await Fixture.Database.WriteManyAsync(seededArticles);
 
-        string unknownArticleId = Guid.NewGuid().ToString();
-        GetNewsArticleByIdRequest request = new(Id: unknownArticleId);
+        GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.New());
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
