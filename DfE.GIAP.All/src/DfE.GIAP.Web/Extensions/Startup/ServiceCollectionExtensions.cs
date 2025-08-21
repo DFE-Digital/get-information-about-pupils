@@ -5,7 +5,6 @@ using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
@@ -18,21 +17,24 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
+using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
-using DfE.GIAP.Web.Providers.Cookie;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
 public static class ServiceCollectionExtensions
 {
-    internal static IServiceCollection AddAppConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddAppSettings(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<AzureAppSettings>(configuration);
+        services.Configure<AzureAppSettings>(configuration)
+            .Configure<ClaritySettings>(configuration.GetSection("Clarity"))
+            .Configure<GoogleTagManager>(configuration.GetSection("GoogleTagManager"));
 
         return services;
     }
@@ -63,7 +65,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddScoped<IUlnDownloadService, UlnDownloadService>();
-        services.AddScoped<IContentService, ContentService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IPrePreparedDownloadsService, PrePreparedDownloadsService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
@@ -126,7 +127,7 @@ public static class ServiceCollectionExtensions
 
         services.AddControllersWithViews(config =>
         {
-            var policy = new AuthorizationPolicyBuilder()
+            AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
                              .RequireAuthenticatedUser()
                              .RequireClaim(ClaimTypes.Role)
                              .Build();
@@ -175,13 +176,6 @@ public static class ServiceCollectionExtensions
             options.LowercaseUrls = true;
         });
 
-        return services;
-    }
-
-    internal static IServiceCollection AddSettings<T>(this IServiceCollection services, IConfigurationManager configuration, string sectionName)
-        where T : class
-    {
-        services.Configure<T>(configuration.GetSection(sectionName));
         return services;
     }
 }

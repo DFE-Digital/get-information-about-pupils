@@ -2,7 +2,6 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
@@ -10,6 +9,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -60,30 +60,29 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
-
-    private readonly IDownloadService _downloadService;
-    private readonly AzureAppSettings _appSettings;
     private readonly ILogger<FELearnerTextSearchController> _logger;
+    private readonly IDownloadService _downloadService;
 
-    public FELearnerTextSearchController(ILogger<FELearnerTextSearchController> logger,
+    public FELearnerTextSearchController(
+       ILogger<FELearnerTextSearchController> logger,
+       IOptions<AzureAppSettings> azureAppSettings,
        IPaginatedSearchService paginatedSearch,
        IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
-       IContentService contentService,
-       IDownloadService downloadService,
-       IOptions<AzureAppSettings> azureAppSettings)
+       ISessionProvider sessionProvider,
+       IDownloadService downloadService)
        : base(logger,
              paginatedSearch,
              mplService,
              selectionManager,
-             contentService,
-             azureAppSettings)
+             azureAppSettings,
+             sessionProvider)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
-        _appSettings = azureAppSettings.Value;
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
     }
 
 

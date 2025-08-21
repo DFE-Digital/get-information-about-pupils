@@ -72,4 +72,19 @@ internal static class CosmosDbCommandHandlerTestDoubles
         return mockHandler;
     }
 
+    internal static Mock<ICosmosDbCommandHandler> MockThrowUpsertItemAsync<TInput>(Exception exception) where TInput : class
+    {
+        Mock<ICosmosDbCommandHandler> mockHandler = Default();
+
+        mockHandler
+            .Setup((handler)
+                => handler.UpsertItemAsync(
+                    It.IsAny<TInput>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception);
+
+        return mockHandler;
+    }
 }

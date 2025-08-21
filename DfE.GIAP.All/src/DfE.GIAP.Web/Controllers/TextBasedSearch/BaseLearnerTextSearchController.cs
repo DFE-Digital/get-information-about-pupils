@@ -7,7 +7,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Content;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
@@ -15,7 +14,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.ViewModels.Helper;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -33,11 +32,11 @@ public abstract class BaseLearnerTextSearchController : Controller
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
 
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
-    private readonly IContentService _contentService;
     private readonly IPaginatedSearchService _paginatedSearch;
-    protected readonly ITextSearchSelectionManager _selectionManager;
+    private readonly ITextSearchSelectionManager _selectionManager;
+    private readonly ISessionProvider _sessionProvider;
     private readonly IMyPupilListService _mplService;
-    private readonly AzureAppSettings _appSettings;
+    protected readonly AzureAppSettings _appSettings;
 
     public abstract string PageHeading { get; }
     public abstract string SearchSessionKey { get; }
@@ -80,19 +79,26 @@ public abstract class BaseLearnerTextSearchController : Controller
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
-        IContentService contentService,
-        IOptions<AzureAppSettings> azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+        ISessionProvider sessionProvider)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _contentService = contentService ??
-            throw new ArgumentNullException(nameof(contentService));
-        _paginatedSearch = paginatedSearch ??
-            throw new ArgumentNullException(nameof(paginatedSearch));
-        _selectionManager = selectionManager ??
-            throw new ArgumentNullException(nameof(selectionManager));
-        _mplService = mplService ??
-            throw new ArgumentNullException(nameof(mplService));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(paginatedSearch);
+        _paginatedSearch = paginatedSearch;
+
+        ArgumentNullException.ThrowIfNull(selectionManager);
+        _selectionManager = selectionManager;
+
+        ArgumentNullException.ThrowIfNull(sessionProvider);
+        _sessionProvider = sessionProvider;
+
+        ArgumentNullException.ThrowIfNull(mplService);
+        _mplService = mplService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
     }
 
@@ -100,21 +106,24 @@ public abstract class BaseLearnerTextSearchController : Controller
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
-        var model = new LearnerTextSearchViewModel();
+        LearnerTextSearchViewModel model = new();
 
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
         if (returnToSearch ?? false)
         {
-            if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-                model.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
-
-            if (this.HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
-                model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
+            if(_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            {
+                model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+            }
+            if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+            {
+                model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
+            }
 
             SetSortOptions(model);
 
@@ -202,24 +211,30 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
-        this.HttpContext.Session.SetString(SearchSessionKey, model.SearchText);
-
+        _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
+        
         if (model.SearchFilters != null)
-            this.HttpContext.Session.SetObject(SearchFiltersSessionKey, model.SearchFilters);
-
+        {
+            _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
+        }
+        
         return View(SearchView, model);
     }
 
     [NonAction]
     public virtual async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
     {
-        if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-            model.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
-        if (this.HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
-            model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
-
+        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+        {
+            model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+        }
+        if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+        {
+            model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
+        }
+        
         return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
     }
 

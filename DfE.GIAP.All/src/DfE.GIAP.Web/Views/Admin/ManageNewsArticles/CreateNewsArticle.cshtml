@@ -1,4 +1,4 @@
-﻿@model ManageDocumentsViewModel
+﻿@model CreateNewsArticleViewModel
 @{
     ViewBag.Title = "Create news article";
 }
@@ -12,17 +12,45 @@
         <div class="govuk-form-group">
             <div class="govuk-checkboxes govuk-!-margin-bottom-4" data-module="govuk-checkboxes">
                 <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="DocumentData_Pinned" asp-for="DocumentData.Pinned" name="DocumentData.Pinned" type="checkbox">
-                    <label for="DocumentData_Pinned" class="govuk-label govuk-checkboxes__label">Pinned</label>
+                    <input class="govuk-checkboxes__input" id="NewsArticle_Pinned" asp-for="NewsArticle.Pinned" name="NewsArticle.Pinned" type="checkbox">
+                    <label for="NewsArticle_Pinned" class="govuk-label govuk-checkboxes__label">Pinned</label>
                 </div>
 
                 <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="DocumentData_Published" asp-for="DocumentData.Published" name="DocumentData.Published" type="checkbox">
-                    <label for="DocumentData_Published" class="govuk-label govuk-checkboxes__label">Published</label>
+                    <input class="govuk-checkboxes__input" id="NewsArticle_Published" asp-for="NewsArticle.Published" name="NewsArticle.Published" type="checkbox">
+                    <label for="NewsArticle_Published" class="govuk-label govuk-checkboxes__label">Published</label>
                 </div>
             </div>
 
-            <partial name="~/Views/Admin/ManageNewsArticles/_DocumentFields.cshtml" for="DocumentData" />
+            <div class="@Html.ClassWithError("NewsArticle.Title", "govuk-form-group govuk-character-count", "govuk-form-group--error")"
+                 data-module="govuk-character-count"
+                 data-maxlength="64">
+                <label class="govuk-label" for="news-article-title">
+                    Title
+                </label>
+                <span id="news-article-title-error" class="govuk-error-message">
+                    <span asp-validation-for="NewsArticle.Title"></span>
+                </span>
+                <input class="@Html.ClassWithError("NewsArticle.Title", "govuk-input govuk-js-character-count", "govuk-input--error")"
+                       id="news-article-title"
+                       asp-for="NewsArticle.Title" />
+                <div id="news-article-title-info" class="govuk-hint govuk-character-count__message">
+                    You can enter up to 64 characters
+                </div>
+            </div>
+
+            <div class="@Html.ClassWithError("NewsArticle.Body", "govuk-form-group", "govuk-form-group--error")">
+                <label class="govuk-label" for="news-article-body">
+                    Body
+                </label>
+                <span id="news-article-body-error" class="govuk-error-message">
+                    <span asp-validation-for="NewsArticle.Body"></span>
+                </span>
+                <textarea class="@Html.ClassWithError("NewsArticle.Body", "govuk-textarea", "govuk-textarea--error")"
+                          id="news-article-body"
+                          asp-for="NewsArticle.Body"
+                          rows="5"></textarea>
+            </div>
 
             <div class="govuk-button-group">
                 <a asp-controller="ManageNewsArticles" asp-action="ManageNewsArticles" id="discard-document--button" name="discard" class="govuk-button govuk-button--secondary">Discard</a>
