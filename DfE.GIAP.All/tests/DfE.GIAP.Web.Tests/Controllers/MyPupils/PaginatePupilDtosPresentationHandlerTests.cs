@@ -12,7 +12,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     private const int DEFAULT_PAGE_SIZE = 20;
 
     [Fact]
-    public void Test0()
+    public void Handle_Throws_When_PageNumber_Is_LessThan_1()
     {
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: 0);
 
@@ -24,7 +24,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     }
 
     [Fact]
-    public void Test1()
+    public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.CreateWithValidPage();
@@ -44,7 +44,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     [Theory]
     [InlineData(10)]
     [InlineData(DEFAULT_PAGE_SIZE)]
-    public void Test2(int pupilDtosCount)
+    public void Handle_Returns_Pupils_Up_To_PageSize(int pupilDtosCount)
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: 1);
@@ -62,7 +62,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     }
 
     [Fact]
-    public void Test3()
+    public void Handle_Returns_PageOfPupils_When_PageNumber_Requested()
     {
         // Arrange
         PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: 2);
@@ -80,7 +80,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     }
 
     [Fact]
-    public void Test4()
+    public void Handle_Returns_PartialPage_Of_Pupils_When_PageNumber_Requested()
     {
         // Arrange
         const int fullPagesOfPupils = 4;
