@@ -1,4 +1,5 @@
-﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Paginate;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
+
 public readonly struct PageNumber
 {
     public PageNumber(int page)

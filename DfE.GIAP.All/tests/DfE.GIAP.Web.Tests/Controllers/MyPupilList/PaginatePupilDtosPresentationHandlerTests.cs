@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Paginate;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
 using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupils;
+namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;
 public sealed class PaginatePupilDtosPresentationHandlerTests
 {
     private const int DEFAULT_PAGE_SIZE = 20;

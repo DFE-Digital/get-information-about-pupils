@@ -1,8 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Paginate;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
 
 public sealed class PaginatePupilDtosPresentationHandler : IPupilDtoPresentationHandler
 {
@@ -12,7 +11,7 @@ public sealed class PaginatePupilDtosPresentationHandler : IPupilDtoPresentation
         PageNumber page = PageNumber.Page(options.Page);
         int skip = DefaultPageSize * (page.Value - 1);
 
-        if(skip >= pupils.Count())
+        if (skip >= pupils.Count())
         {
             return [];
         }
