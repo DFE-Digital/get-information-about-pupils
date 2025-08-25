@@ -11,9 +11,9 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
 {
     public class PreparedDownloadsResultsFake
     {
-        public PrePreparedDownloadsViewModel GetGetPrePreparedDownloadsDetails()
+        public PreparedDownloadsViewModel GetGetPrePreparedDownloadsDetails()
         {
-            return new PrePreparedDownloadsViewModel() {PrePreparedDownloadList = GetPrePreparedDownloadsList() };
+            return new PreparedDownloadsViewModel() {PreparedDownloadFiles = GetPrePreparedDownloadsList() };
         }
         public List<PrePreparedDownloads> GetPrePreparedDownloadsList()
         {
