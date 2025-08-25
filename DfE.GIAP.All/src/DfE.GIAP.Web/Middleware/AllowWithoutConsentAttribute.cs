@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace DfE.GIAP.Web.Middleware;
 
-namespace DfE.GIAP.Web.Middleware
+public class AllowWithoutConsentAttribute : Attribute
 {
-    public class AllowWithoutConsentAttribute : Attribute
-    {
-    }
 }

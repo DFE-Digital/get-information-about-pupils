@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using DfE.GIAP.Web.Config;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -6,9 +6,9 @@ public static class ApplicationBuilderExtensions
 {
     public static IApplicationBuilder UseSecurityHeadersMiddleware(this IApplicationBuilder app, IConfiguration configuration)
     {
-        SecurityHeadersSettings securityHeaders = configuration
-            .GetSection(SecurityHeadersSettings.SectionName)
-            .Get<SecurityHeadersSettings>();
+        SecurityHeadersOptions securityHeaders = configuration
+            .GetSection(SecurityHeadersOptions.SectionName)
+            .Get<SecurityHeadersOptions>();
 
         app.Use(async (context, next) =>
         {

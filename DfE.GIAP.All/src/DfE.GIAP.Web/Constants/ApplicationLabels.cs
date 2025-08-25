@@ -26,4 +26,3 @@ public static class ApplicationLabels
 
     public const string TABDownloadFormat = "TAB";
 }
-

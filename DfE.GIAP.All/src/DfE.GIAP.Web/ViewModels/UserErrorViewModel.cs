@@ -6,5 +6,4 @@ namespace DfE.GIAP.Web.ViewModels;
 public class UserErrorViewModel
 {
     public string UserErrorMessage { get; set; }
-    public BackButtonViewModel BackButton { get; set; }
 }

@@ -1,21 +1,12 @@
-﻿namespace DfE.GIAP.Common.Enums
+﻿namespace DfE.GIAP.Common.Enums;
+
+public enum ReturnRoute
 {
-    public enum ReturnRoute
-    {
-        PupilPremium,
-
-        NationalPupilDatabase,
-
-        NonPupilPremium,
-
-        NonNationalPupilDatabase,
-
-        MyPupilList,
-
-        UniqueLearnerNumber,
-
-        NonUniqueLearnerNumber,
-
-        InvalidUPNs
-    }
+    PupilPremium,
+    NationalPupilDatabase,
+    NonPupilPremium,
+    NonNationalPupilDatabase,
+    MyPupilList,
+    UniqueLearnerNumber,
+    NonUniqueLearnerNumber,
 }
