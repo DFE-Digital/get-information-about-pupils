@@ -1061,7 +1061,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         _mockCtfService.GetCommonTransferFile(
         Arg.Any<string[]>(),
-        Arg.Any<string[]>(),
         Arg.Any<string>(),
         Arg.Any<string>(),
         Arg.Any<bool>(),
@@ -1151,7 +1150,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         _mockCtfService.GetCommonTransferFile(
         Arg.Any<string[]>(),
-        Arg.Any<string[]>(),
         Arg.Any<string>(),
         Arg.Any<string>(),
         Arg.Any<bool>(),
@@ -1219,7 +1217,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         };
 
         _mockCtfService.GetCommonTransferFile(
-       Arg.Any<string[]>(),
+       
        Arg.Any<string[]>(),
        Arg.Any<string>(),
        Arg.Any<string>(),

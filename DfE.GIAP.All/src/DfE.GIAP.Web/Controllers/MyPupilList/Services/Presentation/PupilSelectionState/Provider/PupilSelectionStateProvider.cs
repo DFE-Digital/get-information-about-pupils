@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider.DataTransferObjects;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider.DataTransferObjects;
 using DfE.GIAP.Web.Providers.Session;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider;

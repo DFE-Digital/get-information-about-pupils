@@ -27,6 +27,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
+
         ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count(), UpnQueryLimit);
 
         if (!uniquePupilNumbers.Any())

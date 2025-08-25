@@ -10,7 +10,10 @@ public static class UserDtoTestDoubles
         id = Guid.NewGuid().ToString()
     };
 
+    public static UserDto WithId(string id) => WithId(new UserId(id));
     public static UserDto WithId(UserId id) => WithPupils(id, []);
+    public static UserDto WithPupils(string id, IEnumerable<UniquePupilNumber> upns) => WithPupils(new UserId(id), upns);
+
     public static UserDto WithPupils(
         UserId id,
         IEnumerable<UniquePupilNumber> upns)

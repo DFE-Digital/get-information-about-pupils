@@ -1,21 +1,49 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
-using DfE.GIAP.Core.SharedTests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class ConfigurationTestDoubles
 {
-    public static IConfigurationBuilder Default() => new ConfigurationBuilder();
+    public static IConfigurationBuilder DefaultConfigurationBuilder() => new ConfigurationBuilder();
 
-    public static IConfigurationBuilder WithConfiguration(this IConfigurationBuilder builder, Dictionary<string, string> config)
+    public static IConfiguration GetTestConfiguration()
     {
-        builder.Add(
-            new MemoryConfigurationSource()
-            {
-                InitialData = config!
-            });
-        return builder;
+        Dictionary<string, string> contentConfiguration = new()
+        {
+            // SearchIndexOptions
+            ["SearchIndexOptions:Url"] = "https://localhost:44444",
+            ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
+            ["SearchIndexOptions:Indexes:npd:Name"] = "npd",
+            ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
+
+            // FeatureFlagOptions
+            ["FeatureFlagAppConfigUrl"] = "Endpoint=https://featureflags.azconfig.io;Id=ID;Secret=SECRET",
+
+            // BlobStorageOptions
+            // NOTE these are not secrets just stubbed data
+            ["StorageAccountName"] = "AZURE_STORAGE_ACCOUNTNAME",
+            ["StorageAccountKey"] = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;",
+            ["StorageContainerName"] = "AZURE_STORAGE_CONTAINERNAME",
+
+            // DSI
+            ["DsiClientId"] = "test-client-id",
+            ["DsiClientSecret"] = "client_secret",
+            ["DsiMetadataAddress"] = "https://integrationtest.example",
+            ["DsiRedirectUrlAfterSignout"] = "REDIRECT_URL",
+            ["DsiServiceId"] = "SERVICE_ID",
+
+        };
+
+        IConfiguration configuration = DefaultConfigurationBuilder()
+                .WithLocalCosmosDb()
+                .Add(new MemoryConfigurationSource()
+                {
+                    InitialData = contentConfiguration
+                })
+                .Build();
+
+        return configuration;
     }
 
     public static IConfigurationBuilder WithLocalCosmosDb(this IConfigurationBuilder builder)
@@ -39,7 +67,10 @@ public static class ConfigurationTestDoubles
             ["RepositoryOptions:Containers:2:users:ContainerName"] = "users",
             ["RepositoryOptions:Containers:2:users:PartitionKey"] = "/id"
         };
-        builder.WithConfiguration(configurationOptions);
+        builder.Add(new MemoryConfigurationSource()
+        {
+            InitialData = configurationOptions
+        });
         return builder;
     }
 }

@@ -1,6 +1,7 @@
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 

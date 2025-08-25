@@ -37,13 +37,9 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
         private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
         private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
         private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-        private readonly ICommonService _mockCommonService = Substitute.For<ICommonService>();
         private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-        private AzureAppSettings _mockAppSettings = new AzureAppSettings();
-        private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
-
-        private readonly TestSession _mockSession = new TestSession();
-
+        private AzureAppSettings _mockAppSettings = new();
+        private readonly TestSession _mockSession = new();
         private readonly PaginatedResultsFake _paginatedResultsFake;
 
         public NPDLearnerNumberSearchControllerTests(PaginatedResultsFake paginatedResultsFake)
@@ -1703,7 +1699,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
 
             _mockCtfService.GetCommonTransferFile(
                 Arg.Any<string[]>(),
-                Arg.Any<string[]>(),
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<bool>(),
@@ -1801,7 +1796,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
 
             _mockCtfService.GetCommonTransferFile(
              Arg.Any<string[]>(),
-             Arg.Any<string[]>(),
              Arg.Any<string>(),
              Arg.Any<string>(),
              Arg.Any<bool>(),
@@ -1849,7 +1843,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             };
 
             _mockCtfService.GetCommonTransferFile(
-                Arg.Any<string[]>(),
                 Arg.Any<string[]>(),
                 Arg.Any<string>(),
                 Arg.Any<string>(),

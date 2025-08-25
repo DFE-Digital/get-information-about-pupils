@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles;
 
 public static class LoggerTestDoubles
 {

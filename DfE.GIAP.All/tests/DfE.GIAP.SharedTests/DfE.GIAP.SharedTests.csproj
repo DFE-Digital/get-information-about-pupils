@@ -10,6 +10,8 @@
     <PackageReference Include="Bogus" />
     <PackageReference Include="Fare" />
     <PackageReference Include="Moq" />
+    <PackageReference Include="WireMock.Net" />
+    <PackageReference Include="xunit" />
   </ItemGroup>
 
   <ItemGroup>

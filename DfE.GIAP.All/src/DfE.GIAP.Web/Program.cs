@@ -1,9 +1,10 @@
 using System.Security.Cryptography;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 
@@ -19,6 +20,7 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
+    .AddMyPupils()
     .AddAppSettings(configuration)
     .AddRoutingConfiguration()
     .AddHstsConfiguration()

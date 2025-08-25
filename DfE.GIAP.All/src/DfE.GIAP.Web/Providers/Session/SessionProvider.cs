@@ -28,7 +28,7 @@ public class SessionProvider : ISessionProvider
         Session.SetString(key, json);
     }
 
-    public string? GetSessionValue(string key)
+    public string GetSessionValue(string key)
     {
         ArgumentException.ThrowIfNullOrEmpty(key);
         return Session.GetString(key);
@@ -36,8 +36,9 @@ public class SessionProvider : ISessionProvider
 
     public T? GetSessionValueOrDefault<T>(string key)
     {
+        ArgumentException.ThrowIfNullOrEmpty(key);
         string json = GetSessionValue(key);
-        return json == null ? default(T) : JsonSerializer.Deserialize<T>(json);
+        return json == null ? default : JsonSerializer.Deserialize<T>(json);
     }
 
     public void RemoveSessionValue(string key)

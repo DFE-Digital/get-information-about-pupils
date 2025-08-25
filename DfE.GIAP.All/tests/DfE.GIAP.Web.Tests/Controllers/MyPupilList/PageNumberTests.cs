@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;

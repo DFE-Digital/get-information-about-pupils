@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
-using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
-using DfE.GIAP.Core.MyPupils;
+﻿using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
@@ -8,6 +6,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
+using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 

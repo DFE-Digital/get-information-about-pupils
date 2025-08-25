@@ -1,239 +1,144 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
-using DfE.GIAP.Domain.Models.User;
-using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.MPL;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Response;
+using DfE.GIAP.Web.Controllers.MyPupilList.ViewModel;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
-using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Reflection;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList;
 
 [Route(Routes.Application.MyPupilList)]
 public class MyPupilListController : Controller
 {
-    public const int PAGESIZE = 20;
-    public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
-
     private readonly ILogger<MyPupilListController> _logger;
-    private readonly ICommonService _commonService;
-    private readonly IPaginatedSearchService _paginatedSearch;
-    private readonly ISelectionManager _selectionManager;
-    private readonly IMyPupilListService _mplService;
+    private readonly IMyPupilsPresentationService _myPupilsPresentationService;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
 
-    public string SortFieldSessionKey = "SearchMPL_SortField";
-    public string SortDirectionSessionKey = "SearchMPL_SortDirection";
-
     public MyPupilListController(
         ILogger<MyPupilListController> logger,
-        IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
-        ISelectionManager selectionManager,
+        IMyPupilsPresentationService myPupilsPresentationService,
+        IOptions<AzureAppSettings> azureAppSettings,
         IDownloadCommonTransferFileService ctfService,
-        IDownloadService downloadService,
-        ICommonService commonService,
-        IOptions<AzureAppSettings> azureAppSettings)
+        IDownloadService downloadService)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-        _commonService = commonService;
-        _paginatedSearch = paginatedSearch;
-        _selectionManager = selectionManager;
-        _mplService = mplService;
-        _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
+        _myPupilsPresentationService = myPupilsPresentationService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(ctfService);
+        _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
     }
 
     [HttpGet]
-    public Task<IActionResult> Index(bool returnToMPL = false)
+    public async Task<IActionResult> Index(MyPupilsErrorModel? error = null)
     {
         _logger.LogInformation("My pupil list GET method is called");
-        return Search(returnToMPL);
+
+        GetPupilsForUserFromPresentationStateResponse response = await _myPupilsPresentationService.GetPupilsForUserFromPresentationStateAsync(User.GetUserId());
+
+        MyPupilsViewModel viewModel = new(
+            pupils: response.Pupils,
+            error:!string.IsNullOrEmpty(error?.Message) ? error : null)
+        {
+            PageNumber = response.Page,
+            SortDirection = response.SortDirection,
+            SortField = response.SortBy,
+            IsAnyPupilsSelected = response.IsAnyPupilsSelected,
+            SelectAll = response.IsAllPupilsSelected,
+        };
+
+        return View(Routes.MyPupilList.MyPupilListView, viewModel);
     }
 
+
     [HttpPost]
-    public Task<IActionResult> MyPupilList(
-        MyPupilListViewModel model,
-        [FromQuery] int pageNumber,
-        bool calledByController = false,
-        bool failedDownload = false)
+    public async Task<IActionResult> MyPupilList(MyPupilsFormStateRequestDto formDto)
     {
-        _logger.LogInformation("My pupil list UPN POST method called");
-        return Search(
-            model,
-            pageNumber,
-            ControllerContext.HttpContext.Request.Query.ContainsKey("pageNumber"),
-            calledByController,
-            failedDownload);
+        _logger.LogInformation("My pupil list POST method called");
+
+        if (formDto.Error is not null)
+        {
+            return await Index(formDto.Error);
+        }
+
+        if (!ModelState.IsValid)
+        {
+            MyPupilsErrorModel error = new(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
+            return await Index(error);
+        }
+
+        _myPupilsPresentationService.UpdatePresentationState(formDto);
+        
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost]
     [Route(Routes.MyPupilList.RemoveSelected)]
-    public async Task<IActionResult> RemoveSelected(MyPupilListViewModel model)
+    public async Task<IActionResult> RemoveSelected(MyPupilsFormStateRequestDto formDto)
     {
         _logger.LogInformation("Remove from my pupil list POST method is called");
 
-        SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
-
-        HashSet<string> selectedPupils = GetSelected(model.Upn.FormatLearnerNumbers());
-        if (selectedPupils == null || selectedPupils.Count == 0)
+        if (!ModelState.IsValid)
         {
-            model.NoPupilSelected = true;
-            return await MyPupilList(model, model.PageNumber);
+            MyPupilsErrorModel error = new(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
+            return await Index(error);
         }
 
-        IEnumerable<MyPupilListItem> learnerList = await GetLearnerListForCurrentUser();
-        IEnumerable<string> decryptedSelectedPupils = RbacHelper.DecryptUpnCollection(selectedPupils);
-        UserProfile userProfile = new()
+        if (formDto.SelectedPupils.Count == 0 || !formDto.SelectAll.HasValue)
         {
-            UserId = User.GetUserId(),
-            IsPupilListUpdated = true,
-            MyPupilList = learnerList.Where(x => !decryptedSelectedPupils.Contains(x.PupilId)).ToList()
-        };
+            MyPupilsErrorModel myPupilsErrorModel = new(Messages.Common.Errors.NoPupilsSelected);
+            return await Index(myPupilsErrorModel);
+        }
 
-        await _commonService.CreateOrUpdateUserProfile(userProfile, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
+        await _myPupilsPresentationService.DeletePupils(userId: User.GetUserId(), formDto);
 
-        model.Upn = GetMyPupilListStringSeparatedBy(userProfile.MyPupilList, "\n");
-        model.Removed = true;
-
-        int pagesRemaining = NumberOfPagesRemainingAfterSelectedPupilsRemoved(model.Total, selectedPupils.Count);
-        SetRevisedCurrentPageNumber(pagesRemaining, model);
-
-        return (pagesRemaining > 0)
-            ? await MyPupilList(model, model.PageNumber, true)
-            : await Index();
+        return RedirectToAction(nameof(Index));
     }
+
+    // Downloads
 
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
-    public Task<IActionResult> ToDownloadCommonTransferFileData(MyPupilListViewModel model)
-        => HandleDownloadRequest(model, DownloadType.CTF);
+    public Task<IActionResult> ToDownloadCommonTransferFileData(MyPupilsFormStateRequestDto formDto) => HandleDownloadRequest(DownloadType.CTF, formDto);
 
     [HttpPost]
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
-    public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(MyPupilListViewModel model)
-        => HandleDownloadRequest(model, DownloadType.PupilPremium);
+    public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(MyPupilsFormStateRequestDto formDto) => HandleDownloadRequest(DownloadType.PupilPremium, formDto);
 
     [HttpPost]
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
-    public Task<IActionResult> ToDownloadSelectedNPDDataUPN(MyPupilListViewModel model)
-        => HandleDownloadRequest(model, DownloadType.NPD);
-
-    private async Task<IActionResult> HandleDownloadRequest(MyPupilListViewModel model, DownloadType downloadType)
-    {
-        SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
-        var selectedPupils = GetSelected(model.Upn.FormatLearnerNumbers());
-
-        if (selectedPupils == null || selectedPupils.Count == 0)
-        {
-            model.NoPupilSelected = true;
-            return await MyPupilList(model, model.PageNumber, true);
-        }
-
-        if (downloadType == DownloadType.CTF && selectedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
-        {
-            model.ErrorDetails = Messages.Downloads.Errors.UPNLimitExceeded;
-            return await MyPupilList(model, model.PageNumber, true);
-        }
-
-        if (PupilHelper.CheckIfStarredPupil(selectedPupils.ToArray()) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
-        {
-            PrepareStarredPupilConfirmation(model, selectedPupils, downloadType);
-            return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
-        }
-
-        return downloadType switch
-        {
-            DownloadType.CTF => await DownloadCommonTransferFileData(model, selectedPupils.ToArray()),
-            DownloadType.PupilPremium => await DownloadPupilPremiumData(model, selectedPupils.ToArray()),
-            DownloadType.NPD => await DownloadSelectedNationalPupilDatabaseData(string.Join(',', selectedPupils), model.Upn, selectedPupils.Count),
-            _ => await MyPupilList(model, model.PageNumber, true)
-        };
-    }
-
-    private void PrepareStarredPupilConfirmation(MyPupilListViewModel model, HashSet<string> selectedPupils, DownloadType downloadType)
-    {
-        var confirmationModel = model.StarredPupilConfirmationViewModel;
-        confirmationModel.SelectedPupil = string.Join(',', selectedPupils);
-        PopulateConfirmationViewModel(confirmationModel, model);
-        confirmationModel.DownloadType = downloadType;
-    }
-
-    private async Task<IActionResult> DownloadCommonTransferFileData(MyPupilListViewModel model, string[] selectedPupils)
-    {
-        var downloadFile = await _ctfService.GetCommonTransferFile(
-            selectedPupils,
-            model.Upn.FormatLearnerNumbers(),
-            User.GetLocalAuthorityNumberForEstablishment(),
-            User.GetEstablishmentNumber(),
-            User.IsOrganisationEstablishment(),
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            ReturnRoute.MyPupilList);
-
-        if (downloadFile.Bytes != null)
-            return SearchDownloadHelper.DownloadFile(downloadFile);
-
-        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        return await MyPupilList(model, model.PageNumber, true, true);
-    }
-
-    private async Task<IActionResult> DownloadPupilPremiumData(MyPupilListViewModel model, string[] selectedPupils)
-    {
-        var userOrganisation = new UserOrganisation
-        {
-            IsAdmin = User.IsAdmin(),
-            IsEstablishment = User.IsOrganisationEstablishment(),
-            IsLa = User.IsOrganisationLocalAuthority(),
-            IsMAT = User.IsOrganisationMultiAcademyTrust(),
-            IsSAT = User.IsOrganisationSingleAcademyTrust()
-        };
-
-        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(
-            selectedPupils, selectedPupils, true,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            ReturnRoute.MyPupilList, userOrganisation);
-
-        if (downloadFile == null)
-            return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
-
-        if (downloadFile.Bytes != null)
-            return SearchDownloadHelper.DownloadFile(downloadFile);
-
-        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        return await MyPupilList(model, model.PageNumber, true, true);
-    }
+    public Task<IActionResult> ToDownloadSelectedNPDDataUPN(MyPupilsFormStateRequestDto formDto) => HandleDownloadRequest(DownloadType.NPD, formDto);
 
     [HttpPost]
     [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(
         string selectedPupilsJoined,
-        string learnerNumber,
         int selectedPupilsCount)
     {
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupilsJoined,
-            LearnerNumber = learnerNumber,
             ErrorDetails = (string)TempData["ErrorDetails"],
             SelectedPupilsCount = selectedPupilsCount,
             DownloadFileType = DownloadFileType.CSV,
@@ -241,8 +146,11 @@ public class MyPupilListController : Controller
         };
 
         SearchDownloadHelper.AddDownloadDataTypes(
-            searchDownloadViewModel, User, User.GetOrganisationLowAge(),
-            User.GetOrganisationHighAge(), User.IsOrganisationLocalAuthority(),
+            searchDownloadViewModel,
+            User,
+            User.GetOrganisationLowAge(),
+            User.GetOrganisationHighAge(),
+            User.IsOrganisationLocalAuthority(),
             User.IsOrganisationAllAges());
 
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
@@ -251,13 +159,18 @@ public class MyPupilListController : Controller
         searchDownloadViewModel.SearchAction = "MyPupilList";
         searchDownloadViewModel.DownloadRoute = Routes.NationalPupilDatabase.LearnerNumberDownloadFile;
 
-        var selectedPupils = selectedPupilsJoined.Split(',');
+        string[] selectedPupils = selectedPupilsJoined.Split(',');
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
-            var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-            var disabledTypes = await _downloadService.CheckForNoDataAvailable(
-                selectedPupils, selectedPupils, downloadTypeArray,
-                AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
+            string[] downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
+            IEnumerable<CheckDownloadDataType> disabledTypes = await _downloadService.CheckForNoDataAvailable(
+                selectedPupils,
+                selectedPupils,
+                downloadTypeArray,
+                AzureFunctionHeaderDetails.Create(
+                    User.GetUserId(),
+                    User.GetSessionId()));
+
             SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
         }
 
@@ -271,7 +184,7 @@ public class MyPupilListController : Controller
     {
         if (!string.IsNullOrEmpty(model.SelectedPupils))
         {
-            var selectedPupils = model.SelectedPupils.Split(',');
+            string[] selectedPupils = model.SelectedPupils.Split(',');
 
             if (model.SelectedDownloadOptions == null)
             {
@@ -279,12 +192,14 @@ public class MyPupilListController : Controller
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                var downloadFile = model.DownloadFileType == DownloadFileType.CSV
+                ReturnFile downloadFile = model.DownloadFileType == DownloadFileType.CSV
                     ? await _downloadService.GetCSVFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase)
                     : await _downloadService.GetTABFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase);
 
                 if (downloadFile == null)
+                {
                     return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+                }
 
                 if (downloadFile.Bytes != null)
                 {
@@ -302,338 +217,109 @@ public class MyPupilListController : Controller
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;
-            return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
+            return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.SelectedPupilsCount);
         }
 
         return RedirectToAction(Global.MyPupilListAction, Global.MyPupilListControllerName);
     }
 
-    [HttpPost]
-    [Route(Routes.MyPupilList.DownloadNonUPNConfirmationReturn)]
-    public async Task<IActionResult> DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel model)
+
+    private async Task<IActionResult> HandleDownloadRequest(
+        DownloadType downloadType,
+        MyPupilsFormStateRequestDto formDto)
     {
-        model.ConfirmationError = !model.ConfirmationGiven;
-        PopulateConfirmationViewModel(model);
 
-        if (model.ConfirmationGiven)
+        IEnumerable<string> selectedPupils =  await _myPupilsPresentationService.GetSelectedPupilsForUserAsync(User.GetUserId());
+
+        if (!selectedPupils.Any())
         {
-            var joinedLearnerNumbers = model.SelectedPupil.Split(",");
-            if (PupilHelper.CheckIfStarredPupil(model.SelectedPupil))
-            {
-                model.SelectedPupil = string.Join(",", RbacHelper.DecryptUpnCollection(joinedLearnerNumbers));
-            }
-
-            await _mplService.UpdatePupilMasks(model.SelectedPupil.Split(",").ToList(), false, User.GetUserId(), AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
-
-            return model.DownloadType switch
-            {
-                DownloadType.CTF => await DownloadCommonTransferFileData(new MyPupilListViewModel { SelectedPupil = model.SelectedPupil.Split(",").ToList(), Upn = model.LearnerNumbers }, model.SelectedPupil.Split(",")),
-                DownloadType.NPD => await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupil, model.LearnerNumbers, joinedLearnerNumbers.Length),
-                DownloadType.PupilPremium => await DownloadPupilPremiumData(new MyPupilListViewModel { SelectedPupil = model.SelectedPupil.Split(",").ToList(), Upn = model.LearnerNumbers }, model.SelectedPupil.Split(",")),
-                _ => ConfirmationForStarredPupil(model)
-            };
+            MyPupilsErrorModel error = new(Messages.Common.Errors.NoPupilsSelected);
+            return await Index(error);
         }
 
-        return ConfirmationForStarredPupil(model);
-    }
-
-    [HttpPost]
-    [Route(Routes.MyPupilList.DownloadCancellationReturn)]
-    public Task<IActionResult> DownloadCancellationReturn(LearnerTextSearchViewModel model)
-        => Search(true);
-
-    [NonAction]
-    public IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
-        => View(Global.StarredPupilConfirmationView, model);
-
-    [NonAction]
-    private async Task<IActionResult> Search(bool returnToMPL)
-    {
-        MyPupilListViewModel model = new();
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetModelApplicationLabels(model);
-        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
-
-        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
-
-        if (returnToMPL && HttpContext.Session.Keys.Contains(SortFieldSessionKey) && HttpContext.Session.Keys.Contains(SortDirectionSessionKey))
+        if (downloadType == DownloadType.CTF && selectedPupils.Count() > _appSettings.CommonTransferFileUPNLimit)
         {
-            model.SortField = HttpContext.Session.GetString(SortFieldSessionKey);
-            model.SortDirection = HttpContext.Session.GetString(SortDirectionSessionKey);
+            MyPupilsErrorModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
+            return View(Routes.MyPupilList.MyPupilListView, error);
         }
 
-        model.Upn = GetMyPupilListStringSeparatedBy(learnerList, "\n");
-        model.MyPupilList = learnerList.ToList();
-
-        model = await GetPupilsForSearchBuilder(model, 0, !returnToMPL);
-        model.PageNumber = 0;
-        model.PageSize = PAGESIZE;
-
-        return View(Routes.MyPupilList.MyPupilListView, model);
-    }
-
-    [NonAction]
-    public async Task<IActionResult> Search(MyPupilListViewModel model, int pageNumber, bool hasQueryItem = false, bool calledByController = false, bool failedDownload = false)
-    {
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetModelApplicationLabels(model);
-        MyPupilListViewModel.MaximumUPNsPerSearch = _appSettings.MaximumUPNsPerSearch;
-
-        var notPaged = !hasQueryItem && !calledByController;
-        var allSelected = false;
-
-        model.SearchBoxErrorMessage = !ModelState.IsValid ? PupilHelper.GenerateValidationMessageUpnSearch(ModelState) : null;
-        model.Upn = SecurityHelper.SanitizeText(model.Upn);
-
-        if (ModelState.IsValid)
+        return downloadType switch
         {
-            if (!string.IsNullOrEmpty(model.SelectAllNoJsChecked))
-            {
-                var selectAll = Convert.ToBoolean(model.SelectAllNoJsChecked);
-                var upns = model.Upn.FormatLearnerNumbers();
-                if (selectAll)
-                {
-                    _selectionManager.AddAll(upns);
-                    model.ToggleSelectAll = true;
-                }
-                else
-                {
-                    _selectionManager.RemoveAll(upns);
-                    model.ToggleSelectAll = false;
-                }
-
-                model.SelectAllNoJsChecked = null;
-                allSelected = true;
-            }
-
-            if (!notPaged && !allSelected && !failedDownload)
-            {
-                SetSelections(model.PageLearnerNumbers.Split(','), model.SelectedPupil);
-            }
-
-            model = await GetPupilsForSearchBuilder(model, pageNumber, notPaged);
-            model.PageNumber = pageNumber;
-            model.PageSize = PAGESIZE;
-        }
-
-        HttpContext.Session.SetString(SortFieldSessionKey, model.SortField ?? "");
-        HttpContext.Session.SetString(SortDirectionSessionKey, model.SortDirection ?? "");
-
-        return View(Routes.MyPupilList.MyPupilListView, model);
-    }
-
-
-    // Helper methods
-    private async Task<MyPupilListViewModel> GetPupilsForSearchBuilder(
-        MyPupilListViewModel model,
-        int pageNumber,
-        bool first)
-    {
-        if (string.IsNullOrEmpty(model.Upn))
-        {
-            model.NoPupil = true;
-            return model;
-        }
-
-        string[] upnArray = model.Upn.FormatLearnerNumbers();
-        var learnerList = await GetLearnerListForCurrentUser();
-        string learnerListSearchText = GetMyPupilListStringSeparatedBy(learnerList, ",");
-
-        var ppResult = await _paginatedSearch.GetPage(
-            learnerListSearchText, null, _appSettings.MaximumULNsPerSearch, 0,
-            AzureSearchIndexType.PupilPremium, AzureSearchQueryType.Numbers,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            model.SortField ?? "", model.SortDirection ?? "");
-
-        var npdResult = await _paginatedSearch.GetPage(
-            learnerListSearchText, null, _appSettings.MaximumULNsPerSearch, 0,
-            AzureSearchIndexType.NPD, AzureSearchQueryType.Numbers,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            model.SortField ?? "", model.SortDirection ?? "");
-
-        var learners = npdResult.Learners.Union(ppResult.Learners).ToList();
-
-        if (!learners.Any())
-        {
-            model.NoPupil = true;
-            return model;
-        }
-
-        model.MyPupilList = learnerList.ToList();
-        var whiteListUPNs = model.MyPupilList.Where(x => !x.IsMasked).Select(x => x.PupilId);
-
-        learners.ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        var unionLearnerNumbers = ProcessStarredPupils(learners, whiteListUPNs);
-
-        model.Upn = string.Join("\n", unionLearnerNumbers);
-
-        if (first)
-        {
-            var decryptedLearnerNumbers = RbacHelper.DecryptUpnCollection(unionLearnerNumbers);
-            var missing = upnArray.Except(decryptedLearnerNumbers).ToList();
-            HttpContext.Session.SetString(MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(missing));
-            _selectionManager.RemoveAll(unionLearnerNumbers);
-            model.ToggleSelectAll = false;
-        }
-        else
-        {
-            var selected = GetSelected(unionLearnerNumbers.ToArray());
-            foreach (var learner in learners)
-            {
-                learner.Selected = selected.Contains(learner.LearnerNumber.Equals(Global.UpnMask) ? learner.LearnerNumberId : learner.LearnerNumber);
-            }
-            model.ToggleSelectAll = selected.Any();
-        }
-
-        PopulateLearners(learners, model, ppResult.Learners, pageNumber);
-        return model;
-    }
-
-    public MyPupilListViewModel PopulateLearners(IEnumerable<Learner> learners, MyPupilListViewModel model, List<Learner> ppLearners, int pageNumber)
-    {
-        foreach (var learner in learners)
-        {
-            var isMasked = learner.LearnerNumber.Equals(Global.UpnMask);
-            SetPupilPremiumLabel(learner, ppLearners, isMasked);
-            SetInvalid(learner, model, isMasked);
-        }
-
-        learners = learners.Except(model.Invalid);
-
-        if (!string.IsNullOrWhiteSpace(model.SortField))
-        {
-            learners = SetSort(learners, model.SortField, model.SortDirection);
-        }
-
-        model.Total = learners.Count();
-        model.Learners = learners.Skip(PAGESIZE * pageNumber).Take(PAGESIZE);
-        model.PageLearnerNumbers = PopulatePageLearnerNumbers(model.Learners, model.Invalid);
-
-        return model;
-    }
-
-    private void SetPupilPremiumLabel(Learner learner, List<Learner> ppLearners, bool isMasked)
-    {
-        var itemExists = ppLearners.Exists(x => isMasked
-            ? (x.LearnerNumber == RbacHelper.DecodeUpn(learner.LearnerNumberId))
-            : (x.LearnerNumber == learner.LearnerNumber));
-        learner.PupilPremium = itemExists ? "Yes" : "No";
-    }
-
-    private void SetInvalid(Learner learner, MyPupilListViewModel model, bool isMasked)
-    {
-        bool isValid = ValidationHelper.IsValidUpn(isMasked ? RbacHelper.DecodeUpn(learner.LearnerNumberId) : learner.LearnerNumber);
-        if (!isValid)
-            model.Invalid.Add(learner);
-    }
-
-    private MyPupilListViewModel PopulatePageText(MyPupilListViewModel model)
-    {
-        model.PageHeading = ApplicationLabels.SearchMyPupilListPageHeading;
-        model.LearnerNumberLabel = Global.LearnerNumberLabel;
-        return model;
-    }
-
-    private MyPupilListViewModel PopulateNavigation(MyPupilListViewModel model)
-    {
-        model.ShowLocalAuthority = _appSettings.UseLAColumn;
-        model.DownloadLinksPartial = "~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml";
-        model.SearchAction = "MyPupilList";
-        return model;
-    }
-
-    private IEnumerable<string> ProcessStarredPupils(IEnumerable<Learner> learners, IEnumerable<string> whiteList)
-    {
-        var isAdmin = User.IsAdmin();
-        var lowAge = User.GetOrganisationLowAge();
-        var highAge = User.GetOrganisationHighAge();
-
-        if (!isAdmin)
-        {
-            var learnersExemptFromMask = learners.Where(x => whiteList.Contains(x.LearnerNumber));
-            var learnersNotExempt = learners.Where(x => !whiteList.Contains(x.LearnerNumber));
-            learnersNotExempt = RbacHelper.CheckRbacRulesGeneric<Learner>(learnersNotExempt.ToList(), lowAge, highAge);
-            learners = learnersNotExempt.Union(learnersExemptFromMask);
-        }
-
-        return learners.Select(l => l.LearnerNumberId);
-    }
-
-    private HashSet<string> GetSelected(string[] available)
-    {
-        var missing = JsonConvert.DeserializeObject<List<string>>(HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY));
-        var actuallyAvailable = missing != null ? available.Except(missing).ToArray() : available;
-        return _selectionManager.GetSelected(actuallyAvailable);
-    }
-
-    private void SetSelections(IEnumerable<string> available, IEnumerable<string> selected)
-    {
-        var toAdd = selected ?? Enumerable.Empty<string>();
-        var toRemove = available.Except(toAdd);
-        _selectionManager.AddAll(toAdd);
-        _selectionManager.RemoveAll(toRemove);
-    }
-
-    private void PopulateConfirmationViewModel(StarredPupilConfirmationViewModel model, MyPupilListViewModel mplModel = null)
-    {
-        model.ConfirmationReturnController = Global.MyPupilListControllerName;
-        model.ConfirmationReturnAction = Global.MyPupilListDownloadConfirmationReturnAction;
-        model.CancelReturnController = Global.MyPupilListControllerName;
-        model.CancelReturnAction = Global.MyPupilListDownloadCancellationReturnAction;
-        if (mplModel != null)
-            model.LearnerNumbers = mplModel.Upn;
-    }
-
-    private string PopulatePageLearnerNumbers(IEnumerable<Learner> learners, IEnumerable<Learner> invalid)
-    {
-        var pageLearnerNumbers = learners.Select(l => l.LearnerNumber).Where(l => !l.Equals(Global.UpnMask));
-        var pageLearnerNumberIds = learners.Where(l => !string.IsNullOrEmpty(l.LearnerNumberId)).Select(l => l.LearnerNumberId);
-        var pageInvalidLearnerNumbers = invalid.Select(l => l.LearnerNumber).Where(l => !l.Equals(Global.UpnMask));
-        var pageInvalidLearnerNumberIds = invalid.Where(l => !string.IsNullOrEmpty(l.LearnerNumberId)).Select(l => l.LearnerNumberId);
-        var pageUnionLearnerNumbers = pageLearnerNumbers.Union(pageLearnerNumberIds).Union(pageInvalidLearnerNumbers).Union(pageInvalidLearnerNumberIds);
-        return string.Join(',', pageUnionLearnerNumbers);
-    }
-
-    private IEnumerable<Learner> SetSort(IEnumerable<Learner> learners, string sortField, string sortDirection)
-    {
-        PropertyInfo prop = typeof(Learner).GetProperty(sortField);
-        return sortDirection switch
-        {
-            AzureSearchSortDirections.Ascending => learners.OrderBy(x => prop.GetValue(x)),
-            AzureSearchSortDirections.Descending => learners.OrderByDescending(x => prop.GetValue(x)),
-            _ => learners
+            DownloadType.CTF => await DownloadCommonTransferFileData(formDto, selectedPupils.ToArray()),
+            DownloadType.PupilPremium => await DownloadPupilPremiumData(formDto, selectedPupils.ToArray()),
+            DownloadType.NPD => await DownloadSelectedNationalPupilDatabaseData(string.Join(',', selectedPupils), selectedPupils.Count()),
+            _ => await Index(new MyPupilsErrorModel(Messages.Downloads.Errors.UnknownDownloadType))
         };
     }
 
-    private int NumberOfPagesRemainingAfterSelectedPupilsRemoved(int total, int toRemove)
+    private async Task<IActionResult> DownloadCommonTransferFileData(MyPupilsFormStateRequestDto formRequestDto, string[] selectedPupils)
     {
-        int remaining = total - toRemove;
-        if (remaining <= 0)
-            return 0;
+        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
+            selectedPupils,
+            User.GetLocalAuthorityNumberForEstablishment(),
+            User.GetEstablishmentNumber(),
+            User.IsOrganisationEstablishment(),
+            AzureFunctionHeaderDetails.Create(
+                User.GetUserId(),
+                User.GetSessionId()),
+            ReturnRoute.MyPupilList);
 
-        // Integer division, add one if there's a remainder
-        return (remaining + PAGESIZE - 1) / PAGESIZE;
+        if (downloadFile.Bytes != null)
+        {
+            return SearchDownloadHelper.DownloadFile(downloadFile);
+        }
+
+        MyPupilsFormStateRequestDto errorFormState = new()
+        {
+            SelectAll = formRequestDto.SelectAll,
+            SelectedPupils = formRequestDto.SelectedPupils,
+            CurrentPageOfPupils = formRequestDto.CurrentPageOfPupils,
+            PageNumber = formRequestDto.PageNumber,
+            SortDirection = formRequestDto.SortDirection,
+            SortField = formRequestDto.SortField,
+            Error = new MyPupilsErrorModel(Messages.Downloads.Errors.NoDataForSelectedPupils)
+        }; 
+
+        return await MyPupilList(errorFormState);
     }
 
-    private void SetRevisedCurrentPageNumber(int pagesRemaining, MyPupilListViewModel model)
+    private async Task<IActionResult> DownloadPupilPremiumData(MyPupilsFormStateRequestDto formRequestDto, string[] selectedPupils)
     {
-        // If there are no pages, set to 0, else set to last page (zero-based)
-        model.PageNumber = pagesRemaining > 0 ? pagesRemaining - 1 : 0;
-    }
+        UserOrganisation userOrganisation = new()
+        {
+            IsAdmin = User.IsAdmin(),
+            IsEstablishment = User.IsOrganisationEstablishment(),
+            IsLa = User.IsOrganisationLocalAuthority(),
+            IsMAT = User.IsOrganisationMultiAcademyTrust(),
+            IsSAT = User.IsOrganisationSingleAcademyTrust()
+        };
 
-    private Task<IEnumerable<MyPupilListItem>> GetLearnerListForCurrentUser()
-        => _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
+        ReturnFile downloadFile = await _downloadService.GetPupilPremiumCSVFile(
+            selectedPupils, selectedPupils, true,
+            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
+            ReturnRoute.MyPupilList, userOrganisation);
 
-    private string GetMyPupilListStringSeparatedBy(IEnumerable<MyPupilListItem> myPupilList, string separator)
-        => string.Join(separator, myPupilList.Select(item => item.PupilId));
+        if (downloadFile == null)
+        {
+            return RedirectToAction(actionName: Routes.Application.Error, controllerName: Routes.Application.Home);
+        }
 
-    private void SetModelApplicationLabels(MyPupilListViewModel model)
-    {
-        model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
-        model.RemoveSelectedToMyPupilListLink = ApplicationLabels.RemoveSelectedToMyPupilListLink;
-        model.DownloadSelectedNPDDataLink = ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
-        model.DownloadSelectedPupilPremiumDataLink = ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
+        if (downloadFile.Bytes != null)
+        {
+            return SearchDownloadHelper.DownloadFile(downloadFile);
+        }
+
+        MyPupilsFormStateRequestDto errorFormState = new()
+        {
+            SelectAll = formRequestDto.SelectAll,
+            SelectedPupils = formRequestDto.SelectedPupils,
+            CurrentPageOfPupils = formRequestDto.CurrentPageOfPupils,
+            PageNumber = formRequestDto.PageNumber,
+            SortDirection = formRequestDto.SortDirection,
+            SortField = formRequestDto.SortField,
+            Error = new MyPupilsErrorModel(Messages.Downloads.Errors.NoDataForSelectedPupils)
+        };
+
+        return await MyPupilList(errorFormState);
     }
 }

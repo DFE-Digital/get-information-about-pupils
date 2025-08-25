@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases.UpdateNewsArticle;
 public sealed class UpdateNewsArticleUseCaseTests

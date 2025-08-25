@@ -1,6 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 
-namespace DfE.GIAP.Core.SharedTests;
+namespace DfE.GIAP.SharedTests;
 public static class RepositoryOptionsFactory
 {
 #pragma warning disable S1075 // URIs should not be hardcoded
