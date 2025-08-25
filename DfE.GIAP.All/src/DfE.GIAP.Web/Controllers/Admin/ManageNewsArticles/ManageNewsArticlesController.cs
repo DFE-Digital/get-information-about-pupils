@@ -160,7 +160,7 @@ public class ManageNewsArticlesController : Controller
         ArgumentException.ThrowIfNullOrWhiteSpace(selectedNewsId);
 
         GetNewsArticleByIdResponse response = await _getNewsArticleByIdUseCase.HandleRequestAsync(
-            new GetNewsArticleByIdRequest(selectedNewsId));
+            new GetNewsArticleByIdRequest(NewsArticleIdentifier.From(selectedNewsId)));
 
         ArgumentNullException.ThrowIfNull(response.NewsArticle);
 

@@ -36,13 +36,8 @@ internal class GetNewsArticleByIdUseCase : IUseCase<GetNewsArticleByIdRequest, G
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        if (string.IsNullOrWhiteSpace(request.Id))
-        {
-            throw new ArgumentException("News Article Id cannot be null or empty.");
-        }
-
         // Retrieve the news article from the repository
-        NewsArticle? newsArticleResult = await _newsArticleReadRepository.GetNewsArticleByIdAsync(request.Id);
+        NewsArticle? newsArticleResult = await _newsArticleReadRepository.GetNewsArticleByIdAsync(request.Id.Value);
 
         // Return the response containing the retrieved article
         return new GetNewsArticleByIdResponse(newsArticleResult);
