@@ -10,7 +10,6 @@ public record PupilDto
     public required string Sex { get; init; }
     public required bool IsPupilPremium { get; init; }
     public required int LocalAuthorityCode { get; init; }
-
     public DateTime ParseDateOfBirth()
     {
         return DateTime.TryParse(

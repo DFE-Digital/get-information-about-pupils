@@ -25,8 +25,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    public async Task<IEnumerable<Pupil>> GetPupilsAsync(
-        IEnumerable<UniquePupilNumber> uniquePupilNumbers)
+    public async Task<IEnumerable<Pupil>> GetPupilsAsync(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
 
         ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count(), UpnQueryLimit);
@@ -88,13 +87,16 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
 
-        // options.OrderBy.Add($"{UpnIndexField} asc"); // is score determinisitc enough?
+        // options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
+
         return options;
     }
 }
 
 internal static class AzureSearchIndexDtoExtensions
 {
-    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(this IEnumerable<AzureIndexEntity> azureIndexDtos, PupilType pupilType)
-        => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
+    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(
+        this IEnumerable<AzureIndexEntity> azureIndexDtos,
+        PupilType pupilType)
+            => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
 }
