@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider.DataTransferObjects;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState;
