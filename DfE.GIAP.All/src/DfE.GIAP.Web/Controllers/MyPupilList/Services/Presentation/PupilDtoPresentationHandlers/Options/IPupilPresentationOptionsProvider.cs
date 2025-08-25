@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
+﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
 
 public interface IPupilsPresentationOptionsProvider
 {

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Providers.Session;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
 
 public sealed class PupilsPresentationOptionsProvider : IPupilsPresentationOptionsProvider
 {
@@ -16,7 +16,10 @@ public sealed class PupilsPresentationOptionsProvider : IPupilsPresentationOptio
         PupilsPresentationOptions options =
             _sessionProvider.ContainsSessionKey(nameof(PupilsPresentationOptions)) ?
                 _sessionProvider.GetSessionValueOrDefault<PupilsPresentationOptions>(nameof(PupilsPresentationOptions)) :
-                    PupilsPresentationOptions.Default;
+                    new(
+                        Page: 1,
+                        SortBy: string.Empty,
+                        SortDirection: SortDirection.Descending);
 
         return options;
     }

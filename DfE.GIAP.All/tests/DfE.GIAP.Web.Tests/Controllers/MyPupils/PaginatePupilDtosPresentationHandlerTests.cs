@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Paginate;
-using DfE.GIAP.Web.Tests.Controllers.MyPupils.TestDoubles;
+using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
 

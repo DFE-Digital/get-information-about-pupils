@@ -1,9 +1,8 @@
 ﻿using System.Linq.Expressions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Options;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PresenterHandler.Order;
-
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.OrderHandler;
 public sealed class OrderPupilDtosPresentationHandler : IPupilDtoPresentationHandler
 {
     private static readonly Dictionary<string, Expression<Func<PupilDto, IComparable>>> s_sortKeyToExpression = new()
