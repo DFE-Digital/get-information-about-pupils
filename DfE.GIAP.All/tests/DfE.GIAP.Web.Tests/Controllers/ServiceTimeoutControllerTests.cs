@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using System;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Home
+namespace DfE.GIAP.Web.Tests.Controllers
 {
     public class ServiceTimeoutControllerTests
     {

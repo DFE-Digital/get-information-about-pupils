@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Response;
+﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Response;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Response;
 

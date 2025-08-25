@@ -7,5 +7,5 @@ public interface IMyPupilsPresentationService
     Task<GetPupilsForUserFromPresentationStateResponse> GetPupilsForUserFromPresentationStateAsync(string userId);
     Task<IEnumerable<string>> GetSelectedPupilsForUserAsync(string userId);
     void UpdatePresentationState(MyPupilsFormStateRequestDto updateStateRequest);
-    void ClearPresentationState();
+    Task DeletePupils(string userId, MyPupilsFormStateRequestDto formDto);
 }

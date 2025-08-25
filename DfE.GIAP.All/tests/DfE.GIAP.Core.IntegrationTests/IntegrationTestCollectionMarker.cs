@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 
 namespace DfE.GIAP.Core.IntegrationTests;
 [CollectionDefinition(Name)]
 public sealed class IntegrationTestCollectionMarker : ICollectionFixture<CosmosDbFixture>
 {
-    public const string Name = "IntegrationTests";
+    public const string Name = "CoreIntegrationTests";
 }

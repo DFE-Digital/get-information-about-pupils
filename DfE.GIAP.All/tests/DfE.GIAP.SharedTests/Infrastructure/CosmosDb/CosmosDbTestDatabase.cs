@@ -1,22 +1,36 @@
 ﻿using System.Net;
-using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
+using Xunit;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 public sealed class CosmosDbTestDatabase : IAsyncDisposable
 {
-    private const string DatabaseId = "giapsearch";
     private const string ApplicationDataContainerName = "application-data";
+    // TODO consider dynamically pass than construct with
+    private readonly string _databaseName;
     private readonly CosmosClient _cosmosClient;
 
-    public CosmosDbTestDatabase(RepositoryOptions options)
+    public CosmosDbTestDatabase(
+        string uri,
+        string cosmosAuthKey,
+        string databaseName)
     {
+        if(!Uri.TryCreate(uri, UriKind.Absolute, out Uri? result))
+        {
+            throw new ArgumentException($"Invalid CosmosDb uri provided: {uri}");
+        }
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(cosmosAuthKey);
+        ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
+
+        _databaseName = databaseName;
+
         _cosmosClient = new(
-            accountEndpoint: options.EndpointUri,
-            authKeyOrResourceToken: options.PrimaryKey,
+            accountEndpoint: uri,
+            authKeyOrResourceToken: cosmosAuthKey,
             new CosmosClientOptions()
             {
                 ConnectionMode = ConnectionMode.Gateway,
@@ -66,7 +80,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
         }
     }
 
-    public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(DatabaseId).DeleteAsync();
+    public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(_databaseName).DeleteAsync();
 
     public async Task<IEnumerable<T>> ReadManyAsync<T>() where T : class
     {
@@ -161,10 +175,10 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
                 .ToString() ?? throw new ArgumentException("Unable to find id on written document");
 
 
-    private static async Task<DatabaseResponse> CreateDatabase(CosmosClient client)
+    private async Task<DatabaseResponse> CreateDatabase(CosmosClient client)
     {
         // TODO guard for failed db creation
-        return await client!.CreateDatabaseIfNotExistsAsync(DatabaseId);
+        return await client!.CreateDatabaseIfNotExistsAsync(_databaseName);
     }
 
     private static async Task<List<ContainerResponse>> CreateAllContainers(Database database)

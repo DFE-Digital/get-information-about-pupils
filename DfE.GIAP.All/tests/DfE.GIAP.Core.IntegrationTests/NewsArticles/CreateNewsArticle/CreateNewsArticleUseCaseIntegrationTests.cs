@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
 [Collection(IntegrationTestCollectionMarker.Name)]

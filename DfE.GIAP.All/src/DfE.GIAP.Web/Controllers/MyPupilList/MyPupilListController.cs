@@ -1,8 +1,6 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -23,7 +21,6 @@ namespace DfE.GIAP.Web.Controllers.MyPupilList;
 public class MyPupilListController : Controller
 {
     private readonly ILogger<MyPupilListController> _logger;
-    private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsuseCase;
     private readonly IMyPupilsPresentationService _myPupilsPresentationService;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
@@ -32,7 +29,6 @@ public class MyPupilListController : Controller
     public MyPupilListController(
         ILogger<MyPupilListController> logger,
         IMyPupilsPresentationService myPupilsPresentationService,
-        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsFromMyPupilsuseCase,
         IOptions<AzureAppSettings> azureAppSettings,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService)
@@ -43,9 +39,6 @@ public class MyPupilListController : Controller
         ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
         _myPupilsPresentationService = myPupilsPresentationService;
 
-        ArgumentNullException.ThrowIfNull(deletePupilsFromMyPupilsuseCase);
-        _deletePupilsFromMyPupilsuseCase = deletePupilsFromMyPupilsuseCase;
-        
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
@@ -118,16 +111,10 @@ public class MyPupilListController : Controller
             return await Index(myPupilsErrorModel);
         }
 
-        DeletePupilsFromMyPupilsRequest deletePupilsRequest = new(
-            UserId: User.GetUserId(),
-            DeletePupilUpns: formDto.SelectedPupils,
-            DeleteAll: formDto.SelectAll ?? false);
+        await _myPupilsPresentationService.DeletePupils(userId: User.GetUserId(), formDto);
 
-        await _deletePupilsFromMyPupilsuseCase.HandleRequestAsync(deletePupilsRequest);
-        _myPupilsPresentationService.ClearPresentationState();
         return RedirectToAction(nameof(Index));
     }
-
 
     // Downloads
 

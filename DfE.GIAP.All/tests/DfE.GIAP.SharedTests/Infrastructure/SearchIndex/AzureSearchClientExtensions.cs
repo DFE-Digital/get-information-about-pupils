@@ -2,7 +2,7 @@
 using Azure.Core.Pipeline;
 using Azure.Search.Documents;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 internal static class AzureSearchClientExtensions
 {
     internal static SearchClient WithDisabledTlsValidation(this SearchClient original)

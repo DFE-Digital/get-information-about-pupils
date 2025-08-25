@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
@@ -16,17 +17,19 @@ namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation;
 
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {
+    private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsuseCase;
+    private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IPupilsPresentationOptionsProvider _presentPupilOptionsProvider;
     private readonly IPupilSelectionStateProvider _pupilSelectionStateProvider;
     private readonly IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions> _mapPresentOptions;
     private readonly IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel> _mapToViewModel;
-    private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IEnumerable<IPupilDtoPresentationHandler> _pupilDtoPresentationHandlers;
 
     public MyPupilsPresentationService(
+        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsFromMyPupilsuseCase,
         IPupilsPresentationOptionsProvider presentPupilOptionsProvider,
         IPupilSelectionStateProvider pupilSelectionStateProvider,
-        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
         IEnumerable<IPupilDtoPresentationHandler> pupilPresentationHandlers,
         IMapper<MyPupilsFormStateRequestDto, PupilsPresentationOptions> mapPresentOptions,
         IMapper<PupilDtoWithPupilSelectionStateDto, PupilPresentatationViewModel> mapToViewModel)
@@ -37,7 +40,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         _pupilDtoPresentationHandlers = pupilPresentationHandlers;
         _mapPresentOptions = mapPresentOptions;
         _mapToViewModel = mapToViewModel;
-
+        _deletePupilsFromMyPupilsuseCase = deletePupilsFromMyPupilsuseCase;
     }
 
     public async Task<GetPupilsForUserFromPresentationStateResponse> GetPupilsForUserFromPresentationStateAsync(string userId)
@@ -52,17 +55,18 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
                 response.Pupils,
                 (current, handler) => handler.Handle(current, presentPupilOptions));
 
+        // TODO below into a handler? IGetPupilViewModels -> 
         PupilsSelectionState pupilSelectionState = _pupilSelectionStateProvider.GetState();
 
-        IEnumerable<PupilPresentatationViewModel> pupilSelectionStates
+        IEnumerable<PupilPresentatationViewModel> pupilViewModels
             = results
                 .Select(t => new PupilDtoWithPupilSelectionStateDto(t, pupilSelectionState.IsPupilSelected(t.UniquePupilNumber)))
                 .Select(_mapToViewModel.Map);
 
 
         return new GetPupilsForUserFromPresentationStateResponse(
-            pupilSelectionStates,
-            pupilSelectionStates.Any(t => t.IsSelected),
+            pupilViewModels,
+            pupilViewModels.Any(t => t.IsSelected),
             pupilSelectionState.IsAllPupilsSelected,
             presentPupilOptions.Page,
             presentPupilOptions.SortBy,
@@ -118,6 +122,16 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         _pupilSelectionStateProvider.UpdateState(selectionState);
     }
 
-    public void ClearPresentationState() => _pupilSelectionStateProvider.GetState().ResetState();
+    public async Task DeletePupils(string userId, MyPupilsFormStateRequestDto formDto)
+    {
+        DeletePupilsFromMyPupilsRequest deletePupilsRequest = new(
+            UserId: userId,
+            DeletePupilUpns: formDto.SelectedPupils,
+            DeleteAll: formDto.SelectAll ?? false);
+
+        await _deletePupilsFromMyPupilsuseCase.HandleRequestAsync(deletePupilsRequest);
+
+        _pupilSelectionStateProvider.GetState().ResetState();
+    }
 }
 

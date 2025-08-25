@@ -4,8 +4,10 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
-internal sealed class SearchIndexFixture : IDisposable
+namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
+
+// TODO genericise fixture
+public sealed class SearchIndexFixture : IDisposable
 {
     private readonly AzureSearchIndexHostedTestServer _server;
     private readonly SearchIndexOptions _options;
@@ -16,7 +18,7 @@ internal sealed class SearchIndexFixture : IDisposable
         _options = options.Value;
     }
 
-    internal string BaseUrl => _server.Url;
+    public string BaseUrl => _server.Url;
     private IndexOptions NpdIndexOptions => _options.GetIndexOptionsByName("npd");
     private IndexOptions PupilPremiumIndexOptions => _options.GetIndexOptionsByName("pupil-premium");
 

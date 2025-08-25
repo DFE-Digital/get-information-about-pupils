@@ -6,7 +6,7 @@ using WireMock.RequestBuilders;
 using WireMock.Server;
 using WireMock.Settings;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 internal sealed class AzureSearchIndexHostedTestServer : IDisposable
 {
     private readonly WireMockServer _server;
@@ -30,6 +30,7 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
     }
     public string Url => _server.Urls[0];
 
+    // TODO extend to stub a search response generic
     public void StubSearchResponseForIndex(
         string indexName,
         IEnumerable<AzureIndexEntity> indexDocuments)
