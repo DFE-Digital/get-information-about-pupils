@@ -6,10 +6,10 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Extensions;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Provider;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Response;
 using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.Response;
 

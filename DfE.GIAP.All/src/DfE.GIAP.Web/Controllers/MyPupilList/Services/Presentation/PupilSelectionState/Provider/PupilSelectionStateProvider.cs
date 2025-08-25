@@ -1,10 +1,11 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider.DataTransferObjects;
 using DfE.GIAP.Web.Providers.Session;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Provider;
+namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider;
 
 public sealed class PupilSelectionStateProvider : IPupilSelectionStateProvider
 {
+    private static string SessionKey => nameof(PupilSelectionStateDto);
     private readonly ISessionProvider _sessionProvider;
 
     public PupilSelectionStateProvider(
@@ -12,9 +13,6 @@ public sealed class PupilSelectionStateProvider : IPupilSelectionStateProvider
     {
         _sessionProvider = sessionProvider;
     }
-
-    private string SessionKey => nameof(PupilSelectionStateDto);
-
 
     public PupilsSelectionState GetState()
     {

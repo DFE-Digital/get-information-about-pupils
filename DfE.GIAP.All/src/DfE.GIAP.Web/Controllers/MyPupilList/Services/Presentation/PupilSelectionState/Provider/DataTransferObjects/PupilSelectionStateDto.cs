@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState.Dto;
+﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState.Provider.DataTransferObjects;
 
 public sealed class PupilSelectionStateDto
 {

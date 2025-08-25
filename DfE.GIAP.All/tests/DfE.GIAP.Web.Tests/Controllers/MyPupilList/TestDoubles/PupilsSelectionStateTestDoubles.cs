@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.PupilsPresentation.PupilSelectionState;
+using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupils.TestDoubles;
-public static class PupilSelectionStateTestDoubles
+namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
+public static class PupilsSelectionStateTestDoubles
 {
     public static PupilsSelectionState CreateEmpty()
     {
