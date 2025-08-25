@@ -1,13 +1,11 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState;
+using DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState;
+using Moq;
 
 namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 public static class PupilsSelectionStateTestDoubles
 {
-    public static PupilsSelectionState CreateEmpty()
-    {
-        return new PupilsSelectionState();
-    }
+    public static Mock<IPupilsSelectionState> Default() => new();
 
     public static PupilsSelectionState CreateWithPupilUniquePupilNumbers(IEnumerable<string> upns, bool selected = false)
     {
