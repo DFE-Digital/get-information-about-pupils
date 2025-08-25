@@ -25,7 +25,6 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/js/axios.min.js" asp-append-version="true"></script>
-    <script src="~/js/service-timeout.js" asp-append-version="true"></script>
 
     @RenderSection("Head", required: false)
     @if (!string.IsNullOrEmpty(ClarityOptions.Value.ProjectId))
@@ -41,33 +40,33 @@
 
     @if (!string.IsNullOrEmpty(GoogleTagManager.Value.ContainerId))
     {
-        <script nonce="@CSPNonce">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','@GoogleTagManager.Value.ContainerId');</script>
+        <script nonce="@CSPNonce">
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                    })(window,document,'script','dataLayer','@GoogleTagManager.Value.ContainerId');</script>
     }
 </head>
 
 <body class="govuk-template__body govuk-frontend-supported">
 
-@if (!string.IsNullOrEmpty(GoogleTagManager.Value.ContainerId))
-{
-    <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=@GoogleTagManager.Value.ContainerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
-}
-<partial name="_CookieBannerPartial"/>
-<partial name="Layout/_LayoutHeader"/>
-<partial name="_ServiceTimeout"/>
+    @if (!string.IsNullOrEmpty(GoogleTagManager.Value.ContainerId))
+    {
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=@GoogleTagManager.Value.ContainerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+    }
+    <partial name="_CookieBannerPartial" />
+    <partial name="Layout/_LayoutHeader" />
 
-<div class="govuk-width-container">
-    <main class="govuk-main-wrapper" id="main-content" role="main">
-        @RenderBody()
-    </main>
-</div>
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper" id="main-content" role="main">
+            @RenderBody()
+        </main>
+    </div>
 
-<partial name="Layout/_LayoutFooter"/>
-<script src="~/js/giap.min.js" asp-append-version="true"></script>
+    <partial name="Layout/_LayoutFooter" />
+    <script src="~/js/giap.min.js" asp-append-version="true"></script>
 
-@RenderSection("Scripts", required: false)
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
