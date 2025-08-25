@@ -35,7 +35,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
         }
 
         List<PupilDto> pupilDtos =
-            (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(user.UniquePupilNumbers, request.Options))
+            (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(user.UniquePupilNumbers))
                 .Select(_mapPupilToPupilDtoMapper.Map)
                     .ToList();
 
