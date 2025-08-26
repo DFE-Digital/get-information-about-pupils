@@ -3,7 +3,6 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
@@ -26,9 +25,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    public async Task<IEnumerable<Pupil>> GetPupilsAsync(
-        IEnumerable<UniquePupilNumber> uniquePupilNumbers,
-        MyPupilsQueryOptions? queryOptions = null)
+    public async Task<IEnumerable<Pupil>> GetPupilsAsync(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count(), UpnQueryLimit);
 
@@ -37,50 +34,36 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             return [];
         }
 
-        MyPupilsQueryOptions validatedQueryOptions = queryOptions ?? MyPupilsQueryOptions.Default();
+        List<DecoratedSearchIndexDto> allResults = [];
 
-        int skip = DefaultPageSize * (validatedQueryOptions.Page.Value - 1);
-
-        List<UniquePupilNumber> pagedUpns =
-            uniquePupilNumbers
-                .Skip(skip)
-                .Take(DefaultPageSize)
-                .ToList();
-
-        if (pagedUpns.Count == 0)
+        const int maxIndexQuerySize = 500;
+        foreach (UniquePupilNumber[] upnBatch in uniquePupilNumbers.Chunk(maxIndexQuerySize))
         {
-            return [];
+            SearchOptions searchOptions = CreateSearchClientOptions(upnBatch);
+
+            IEnumerable<DecoratedSearchIndexDto> npdResults =
+                (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", searchOptions))
+                    .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase);
+
+            IEnumerable<DecoratedSearchIndexDto> ppResults =
+                (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", searchOptions))
+                    .ToDecoratedSearchIndexDto(PupilType.PupilPremium);
+
+            allResults.AddRange(npdResults);
+            allResults.AddRange(ppResults);
         }
 
-        SearchOptions options = CreateSearchClientOptions(
-            pagedUpns,
-            validatedQueryOptions.Order.Field,
-            validatedQueryOptions.Order.Direction);
+        // Deduplicate
+        List<Pupil> distinctResults = allResults
+            .DistinctBy(x => x.SearchIndexDto.UPN)
+            .Select(_mapper.Map)
+            .ToList();
 
-        List<DecoratedSearchIndexDto> npdResults =
-            (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", options))
-                .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase)
-                .ToList();
-
-        if (npdResults.Count >= DefaultPageSize) // if npd reaches page size then no need to call pupil-premium
-        {
-            return npdResults.Select(_mapper.Map);
-        }
-
-        List<DecoratedSearchIndexDto> ppResults =
-            (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", options))
-                .ToDecoratedSearchIndexDto(PupilType.PupilPremium)
-                .ToList();
-
-        return npdResults
-            .Concat(ppResults)
-            .DistinctBy(t => t.SearchIndexDto.UPN) // Deduplicate between indexes
-            .Take(DefaultPageSize)
-            .Select(_mapper.Map);
+        return distinctResults;
     }
 
 
-    internal static SearchOptions CreateSearchClientOptions(IEnumerable<UniquePupilNumber> upns, string sortField, SortDirection sortDirection)
+    internal static SearchOptions CreateSearchClientOptions(IEnumerable<UniquePupilNumber> upns)
     {
         const string UpnIndexField = "UPN";
 
@@ -103,28 +86,16 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
 
-        string sort = sortField switch
-        {
-            "Forename" => "Forename",
-            "Surname" => "Surname",
-            "Sex" => "Sex",
-            "DOB" => "DOB",
-            _ => "search.score()" // If unknown field is passed
-        };
+        // options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
 
-        string direction = sortDirection switch
-        {
-            SortDirection.Ascending => "asc",
-            _ => "desc"
-        };
-
-        options.OrderBy.Add($"{sort} {direction}");
         return options;
     }
 }
 
 internal static class AzureSearchIndexDtoExtensions
 {
-    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(this IEnumerable<AzureIndexEntity> azureIndexDtos, PupilType pupilType)
-        => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
+    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(
+        this IEnumerable<AzureIndexEntity> azureIndexDtos,
+        PupilType pupilType)
+            => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
 }
