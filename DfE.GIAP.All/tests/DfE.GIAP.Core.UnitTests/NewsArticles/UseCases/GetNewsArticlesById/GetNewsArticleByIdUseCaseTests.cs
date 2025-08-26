@@ -25,22 +25,6 @@ public sealed class GetNewsArticleByIdUseCaseTests
         await Assert.ThrowsAsync<ArgumentNullException>(act);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("\n")]
-    public async Task HandleRequest_ThrowsNullException_When_RequestIdIsNullOrEmpty(string? id)
-    {
-        // Arrange
-        Mock<INewsArticleReadRepository> mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.Default();
-        GetNewsArticleByIdUseCase sut = new(mockRepository.Object);
-        GetNewsArticleByIdRequest request = new(id!);
-        Func<Task> act = () => sut.HandleRequestAsync(request!);
-
-        // Act Assert 
-        await Assert.ThrowsAsync<ArgumentException>(act);
-    }
 
     [Fact]
     public async Task HandleRequest_BubblesException_When_RepositoryThrows()
@@ -50,7 +34,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         INewsArticleReadRepository mockRepository =
             NewsArticleReadOnlyRepositoryTestDoubles.MockForGetNewsArticleById(() => throw new Exception(expectedExceptionMessage));
         GetNewsArticleByIdUseCase sut = new(mockRepository);
-        GetNewsArticleByIdRequest request = new(_validId);
+        GetNewsArticleByIdRequest request = new(NewsArticleIdentifier.From(_validId));
         Func<Task> act = () => sut.HandleRequestAsync(request);
 
         // Act Assert
@@ -65,7 +49,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         NewsArticle? repositoryResponse = null;
         INewsArticleReadRepository mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.MockFor(repositoryResponse);
         GetNewsArticleByIdUseCase sut = new(mockRepository);
-        GetNewsArticleByIdRequest request = new(_validId);
+        GetNewsArticleByIdRequest request = new(NewsArticleIdentifier.From(_validId));
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
@@ -82,7 +66,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         NewsArticle? repositoryResponse = NewsArticleTestDoubles.Create();
         INewsArticleReadRepository mockRepository = NewsArticleReadOnlyRepositoryTestDoubles.MockFor(repositoryResponse);
         GetNewsArticleByIdUseCase sut = new(mockRepository);
-        GetNewsArticleByIdRequest request = new(_validId);
+        GetNewsArticleByIdRequest request = new(NewsArticleIdentifier.From(_validId));
 
         // Act
         GetNewsArticleByIdResponse response = await sut.HandleRequestAsync(request);
