@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Domain;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
