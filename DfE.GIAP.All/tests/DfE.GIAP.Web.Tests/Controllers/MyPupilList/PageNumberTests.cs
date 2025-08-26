@@ -1,6 +1,7 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
+using Xunit;
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
+namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;
 public class PageNumberTests
 {
     [Theory]

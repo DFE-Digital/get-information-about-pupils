@@ -11,11 +11,10 @@ public static class Messages
             public const string NoConfirmationSelection = "You have not selected a confirmation option";
             public const string NoContinueSelection = "Please select an option";
             public const string MyPupilListLimitExceeded = "You have reached the limit for my pupil list, please contact the Department for Education to increase this";
+            public const string TitleLength = "Title must be must be 64 characters or fewer";
             public const string TitleRequired = "Title must be entered";
             public const string BodyRequired = "Body must be entered";
-            public const string NewsArticleRequired = "Please select a news article";
             public const string SecurityReportRequired = "A report must be selected";
-            public const string TitleLength = "Title must be must be 64 characters or fewer";
             public const string NoPupilsSelected = "You have not selected any pupils";
         }
     }

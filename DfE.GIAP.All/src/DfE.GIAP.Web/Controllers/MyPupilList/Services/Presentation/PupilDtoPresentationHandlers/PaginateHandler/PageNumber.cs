@@ -1,4 +1,5 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
+
 public readonly struct PageNumber
 {
     public PageNumber(int page)
@@ -8,7 +9,5 @@ public readonly struct PageNumber
     }
 
     public int Value { get; }
-
-    public static PageNumber Default => Page(1);
     public static PageNumber Page(int page) => new(page);
 }
