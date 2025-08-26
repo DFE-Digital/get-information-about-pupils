@@ -27,7 +27,7 @@ public sealed class GetMyPupilsUseCaseTests
                 .Select((upn) => PupilBuilder.CreateBuilder(upn).Build())
                 .ToList();
 
-        Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils, user.UniquePupilNumbers);
+        Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
         List<PupilDto> pupilDtos = PupilDtoTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
@@ -52,7 +52,7 @@ public sealed class GetMyPupilsUseCaseTests
             repo.GetUserByIdAsync(user.UserId, It.IsAny<CancellationToken>()), Times.Once);
 
         aggregateServiceMock.Verify(
-            t => t.GetPupilsAsync(user.UniquePupilNumbers, It.IsAny<MyPupilsQueryOptions>()), Times.Once);
+            t => t.GetPupilsAsync(user.UniquePupilNumbers), Times.Once);
 
         mockMapper.Verify(
             t => t.Map(It.IsAny<Pupil>()), Times.Exactly(pupils.Count));
@@ -90,7 +90,7 @@ public sealed class GetMyPupilsUseCaseTests
                 It.IsAny<CancellationToken>()), Times.Once);
 
         mockAggregateService.Verify(
-            t => t.GetPupilsAsync(Enumerable.Empty<UniquePupilNumber>(), It.IsAny<MyPupilsQueryOptions>()), Times.Never);
+            t => t.GetPupilsAsync(Enumerable.Empty<UniquePupilNumber>()), Times.Never);
 
         mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
 

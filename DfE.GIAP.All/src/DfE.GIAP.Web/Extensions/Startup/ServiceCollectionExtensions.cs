@@ -13,24 +13,27 @@ using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
+using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
-using DfE.GIAP.Web.Providers.Cookie;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
 public static class ServiceCollectionExtensions
 {
-    internal static IServiceCollection AddAppConfigurationSettings(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddAppSettings(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<AzureAppSettings>(configuration);
+        services.Configure<AzureAppSettings>(configuration)
+            .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
+            .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName));
 
         return services;
     }
@@ -122,7 +125,7 @@ public static class ServiceCollectionExtensions
 
         services.AddControllersWithViews(config =>
         {
-            var policy = new AuthorizationPolicyBuilder()
+            AuthorizationPolicy policy = new AuthorizationPolicyBuilder()
                              .RequireAuthenticatedUser()
                              .RequireClaim(ClaimTypes.Role)
                              .Build();
@@ -171,13 +174,6 @@ public static class ServiceCollectionExtensions
             options.LowercaseUrls = true;
         });
 
-        return services;
-    }
-
-    internal static IServiceCollection AddSettings<T>(this IServiceCollection services, IConfigurationManager configuration, string sectionName)
-        where T : class
-    {
-        services.Configure<T>(configuration.GetSection(sectionName));
         return services;
     }
 }

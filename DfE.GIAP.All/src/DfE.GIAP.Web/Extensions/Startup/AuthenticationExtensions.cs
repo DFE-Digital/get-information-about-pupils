@@ -1,24 +1,22 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.LoggingEvent;
 using DfE.GIAP.Domain.Models.User;
+using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.DsiApiClient;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.DSIUser;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json.Linq;
 using NuGet.Packaging;
-using System.Security.Claims;
-using DfE.GIAP.Service.ApplicationInsightsTelemetry;
-using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -37,229 +35,222 @@ public static class AuthenticationExtensions
             options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
         })
-            .AddCookie(options =>
-             {
-                 options.ExpireTimeSpan = overallSessionTimeout;
-                 options.SlidingExpiration = true;
-                 options.LogoutPath = DsiKeys.CallbackPaths.Logout;
-
-                 options.Events.OnRedirectToAccessDenied = ctx =>
-                 {
-                     ctx.Response.StatusCode = 403;
-                     ctx.Response.Redirect($"/{Routes.Application.UserWithNoRole}");
-                     return Task.CompletedTask;
-                 };
-             })
-            .AddOpenIdConnect(options =>
-            {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.MetadataAddress = appSettings.DsiMetadataAddress;
-                options.ClientId = appSettings.DsiClientId;
-                options.ClientSecret = appSettings.DsiClientSecret;
-                options.ResponseType = OpenIdConnectResponseType.Code;
-                options.RequireHttpsMetadata = true;
-                options.GetClaimsFromUserInfoEndpoint = true;
-
-                options.Scope.Clear();
-                options.Scope.AddRange(
-                [
-                    DsiKeys.Scope.OpenId,
-                    DsiKeys.Scope.Email,
-                    DsiKeys.Scope.Profile,
-                    DsiKeys.Scope.OrganisationId
-                ]);
-                options.SaveTokens = true;
-                options.CallbackPath = DsiKeys.CallbackPaths.Dsi;
-                options.SignedOutCallbackPath = DsiKeys.CallbackPaths.SignedOut;
-                options.TokenHandler = new JsonWebTokenHandler()
-                {
-                    InboundClaimTypeMap = new Dictionary<string, string>(),
-                    TokenLifetimeInMinutes = 90,
-                    SetDefaultTimesOnTokenCreation = true
-                };
-
-                options.ProtocolValidator = new OpenIdConnectProtocolValidator
-                {
-                    RequireSub = true,
-                    RequireStateValidation = false,
-                    NonceLifetime = TimeSpan.FromMinutes(60)
-                };
-
-                options.DisableTelemetry = true;
-                options.Events = new OpenIdConnectEvents
-                {
-
-                    OnMessageReceived = context =>
-                    {
-                        bool isSpuriousAuthCbRequest =
-                            context.Request.Path == options.CallbackPath &&
-                        context.Request.Method == HttpMethods.Get &&
-                            !context.Request.Query.ContainsKey("code");
-
-                        if (isSpuriousAuthCbRequest)
-                        {
-                            context.HandleResponse();
-                            context.Response.Redirect(Routes.Application.Home);
-                        }
-
-                        return Task.CompletedTask;
-                    },
-
-
-                    OnRemoteFailure = ctx =>
-                    {
-                        ctx.HandleResponse();
-                        return Task.FromException(ctx.Failure);
-                    },
-
-                    OnTokenValidated = async ctx =>
-                    {
-                        string sessionId = Guid.NewGuid().ToString();
-
-                        ctx.Properties.IsPersistent = true;
-                        ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(overallSessionTimeout);
-
-                        ClaimsPrincipal principal = ctx.Principal;
-                        AuthenticatedUserInfo authenticatedUserInfo = new()
-                        {
-                            UserId = ctx.Principal.FindFirst("sub").Value
-                        };
-
-                        JObject organisation = JObject.Parse(ctx.Principal.FindFirst("Organisation").Value);
-                        string organisationId = string.Empty;
-                        if (organisation.HasValues)
-                        {
-
-                            organisationId = organisation["id"].ToString();
-                            IDfeSignInApiClient dfeSignInApiClient = ctx.HttpContext.RequestServices.GetService<IDfeSignInApiClient>();
-                            UserAccess userAccess = await dfeSignInApiClient.GetUserInfo(appSettings.DsiServiceId, organisationId, authenticatedUserInfo.UserId);
-                            Organisation userOrganisation = await dfeSignInApiClient.GetUserOrganisation(authenticatedUserInfo.UserId, organisationId);
-                            string userId = ctx.Principal.FindFirst("sub").Value;
-                            string userEmail = ctx.Principal.FindFirst("email").Value;
-                            string userGivenName = ctx.Principal.FindFirst("given_name").Value;
-                            string userSurname = ctx.Principal.FindFirst("family_name").Value;
-                            string userIpAddress = ctx.HttpContext.Connection.RemoteIpAddress.ToString();
-                            string organisationCategoryId = userOrganisation?.Category?.Id ?? string.Empty;
-                            string establishmentNumber = userOrganisation?.EstablishmentNumber ?? string.Empty;
-                            string localAuthorityNumber = userOrganisation?.LocalAuthority?.Code ?? string.Empty;
-                            string ukProviderReferenceNumber = userOrganisation?.UKProviderReferenceNumber ?? string.Empty;
-                            string uniqueReferenceNumber = userOrganisation?.UniqueReferenceNumber ?? string.Empty;
-                            string uniqueIdentifier = userOrganisation?.UniqueIdentifier ?? string.Empty;
-
-                            IEventLogging eventLogging = ctx.HttpContext.RequestServices.GetService<IEventLogging>();
-                            IHostEnvironment hostEnvironment = ctx.HttpContext.RequestServices.GetService<IHostEnvironment>();
-
-                            List<Claim> claims = new();
-                            /*Handles DSI users that aren't associated to the GIAP service (DSI returns a 404 response in this scenario when calling the GetUserInfo method)*/
-                            if (userAccess == null)
-                            {
-                                eventLogging.TrackEvent(2502, $"User log in unsuccessful - user not associated with GIAP service", authenticatedUserInfo.UserId, sessionId, hostEnvironment.ContentRootPath);
-
-                                claims.AddRange(new List<Claim>
-                                {
-                                    new(CustomClaimTypes.UserId, userId),
-                                    new(CustomClaimTypes.SessionId, sessionId),
-                                    new(ClaimTypes.Email, userEmail),
-                                });
-
-                                ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
-                                ctx.HttpContext.Response.Redirect(Routes.Application.UserWithNoRole);
-
-                                return;
-                            }
-                            else
-                            {
-
-                                if (userAccess.Roles != null && userAccess.Roles.Any())
-                                {
-                                    claims.AddRange(userAccess.Roles.Select(role => new Claim(ClaimTypes.Role, role.Code)));
-
-                                    authenticatedUserInfo.IsAdmin = userAccess.Roles.Any(x => x.Code == Roles.Admin);
-                                    authenticatedUserInfo.IsApprover = userAccess.Roles.Any(x => x.Code == Roles.Approver);
-                                    authenticatedUserInfo.IsUser = userAccess.Roles.Any(x => x.Code == Roles.User);
-                                }
-
-                                claims.AddRange(new List<Claim>
-                                {
-                                    new Claim(CustomClaimTypes.UserId, userId),
-                                    new Claim(CustomClaimTypes.SessionId, sessionId),
-                                    new Claim(ClaimTypes.GivenName, userGivenName),
-                                    new Claim(ClaimTypes.Surname, userSurname),
-                                    new Claim(ClaimTypes.Email, userEmail),
-                                    new Claim(CustomClaimTypes.OrganisationId, organisationId),
-                                    new Claim(CustomClaimTypes.OrganisationName, userOrganisation.Name),
-                                    new Claim(CustomClaimTypes.OrganisationCategoryId, organisationCategoryId),
-                                    new Claim(CustomClaimTypes.OrganisationEstablishmentTypeId, userOrganisation?.EstablishmentType?.Id ?? string.Empty),
-                                    new Claim(CustomClaimTypes.OrganisationLowAge, userOrganisation?.StatutoryLowAge ?? "0"),
-                                    new Claim(CustomClaimTypes.OrganisationHighAge, userOrganisation?.StatutoryHighAge ?? "0"),
-                                    new Claim(CustomClaimTypes.EstablishmentNumber, establishmentNumber),
-                                    new Claim(CustomClaimTypes.LocalAuthorityNumber, localAuthorityNumber ),
-                                    new Claim(CustomClaimTypes.UniqueReferenceNumber, uniqueReferenceNumber ),
-                                    new Claim(CustomClaimTypes.UniqueIdentifier, uniqueIdentifier),
-                                    new Claim(CustomClaimTypes.UKProviderReferenceNumber,ukProviderReferenceNumber ),
-                                    new Claim(CustomClaimTypes.IsAdmin, authenticatedUserInfo.IsAdmin.ToString()),
-                                    new Claim(CustomClaimTypes.IsApprover, authenticatedUserInfo.IsApprover.ToString()),
-                                    new Claim(CustomClaimTypes.IsUser, authenticatedUserInfo.IsUser.ToString())
-
-                                });
-
-                                loggingEvent = new LoggingEvent
-                                {
-                                    UserGuid = userId,
-                                    UserEmail = userEmail,
-                                    UserGivenName = userGivenName,
-                                    UserSurname = userSurname,
-                                    UserIpAddress = userIpAddress,
-                                    OrganisationGuid = organisationId,
-                                    OrganisationName = userOrganisation.Name,
-                                    OrganisationCategoryID = organisationCategoryId,
-                                    OrganisationType = DSIUserHelper.GetOrganisationType(organisationCategoryId),
-                                    EstablishmentNumber = establishmentNumber,
-                                    LocalAuthorityNumber = localAuthorityNumber,
-                                    UKProviderReferenceNumber = ukProviderReferenceNumber,
-                                    UniqueReferenceNumber = uniqueReferenceNumber,
-                                    UniqueIdentifier = uniqueIdentifier,
-                                    GIAPUserRole = DSIUserHelper.GetGIAPUserRole(authenticatedUserInfo.IsAdmin,
-                                                                                 authenticatedUserInfo.IsApprover,
-                                                                                 authenticatedUserInfo.IsUser),
-                                    ActionName = LogEventActionType.UserLoggedIn.ToString(),
-                                    ActionDescription = LogEventActionType.UserLoggedIn.LogEventActionDescription(),
-                                    SessionId = sessionId
-                                };
-
-                            }
-
-
-                            ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
-
-                            // TODO: We need to update the users last active time to be now, instead of using this below...
-                            ICommonService userApiClient = ctx.HttpContext.RequestServices.GetService<ICommonService>();
-                            bool userUpdateResult = await userApiClient.CreateOrUpdateUserProfile(new UserProfile { UserId = authenticatedUserInfo.UserId },
-                                                                                                 new AzureFunctionHeaderDetails
-                                                                                                 {
-                                                                                                     ClientId = authenticatedUserInfo.UserId,
-                                                                                                     SessionId = sessionId
-                                                                                                 });
-
-
-                            ISessionProvider sessionProvider = ctx.HttpContext.RequestServices.GetService<ISessionProvider>();
-                            IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> useCase = ctx.HttpContext.RequestServices.GetService<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>>();
-
-                            CheckNewsArticleUpdateResponse checkNewsArticleUpdatesResponse = await useCase
-                                    .HandleRequestAsync(new CheckNewsArticleUpdatesRequest(authenticatedUserInfo.UserId));
-
-                            if (checkNewsArticleUpdatesResponse.HasUpdates)
-                                sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, true);
-
-                            //TODO: replace this stuff later, logging Event
-                            _ = await userApiClient.CreateLoggingEvent(loggingEvent);
-                            eventLogging.TrackEvent(1120, $"User log in successful", authenticatedUserInfo.UserId, sessionId, hostEnvironment.ContentRootPath);
-                        }
-                    }
-                };
-            }
-        );
+            .AddCookie(options => ConfigureCookieOptions(options, overallSessionTimeout))
+            .AddOpenIdConnect(options => ConfigureOpenIdConnectOptions(options, appSettings, overallSessionTimeout));
 
         return services;
+    }
+
+    private static void ConfigureCookieOptions(CookieAuthenticationOptions options, TimeSpan sessionTimeout)
+    {
+        options.ExpireTimeSpan = sessionTimeout;
+        options.SlidingExpiration = true;
+        options.LogoutPath = DsiKeys.CallbackPaths.Logout;
+
+        options.Events.OnRedirectToAccessDenied = ctx =>
+        {
+            ctx.Response.StatusCode = 403;
+            ctx.Response.Redirect($"/{Routes.Application.UserWithNoRole}");
+            return Task.CompletedTask;
+        };
+    }
+
+    private static void ConfigureOpenIdConnectOptions(OpenIdConnectOptions options, AzureAppSettings appSettings, TimeSpan sessionTimeout)
+    {
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.MetadataAddress = appSettings.DsiMetadataAddress;
+        options.ClientId = appSettings.DsiClientId;
+        options.ClientSecret = appSettings.DsiClientSecret;
+        options.ResponseType = OpenIdConnectResponseType.Code;
+        options.RequireHttpsMetadata = true;
+        options.GetClaimsFromUserInfoEndpoint = true;
+
+        options.Scope.Clear();
+        options.Scope.AddRange([
+            DsiKeys.Scope.OpenId,
+            DsiKeys.Scope.Email,
+            DsiKeys.Scope.Profile,
+            DsiKeys.Scope.OrganisationId
+        ]);
+
+        options.SaveTokens = true;
+        options.CallbackPath = DsiKeys.CallbackPaths.Dsi;
+        options.SignedOutCallbackPath = DsiKeys.CallbackPaths.SignedOut;
+        options.TokenHandler = new JsonWebTokenHandler
+        {
+            InboundClaimTypeMap = new Dictionary<string, string>(),
+            TokenLifetimeInMinutes = 90,
+            SetDefaultTimesOnTokenCreation = true
+        };
+        options.ProtocolValidator = new OpenIdConnectProtocolValidator
+        {
+            RequireSub = true,
+            RequireStateValidation = false,
+            NonceLifetime = TimeSpan.FromMinutes(60)
+        };
+        options.DisableTelemetry = true;
+        options.Events = new OpenIdConnectEvents
+        {
+            OnMessageReceived = HandleMessageReceived,
+            OnRemoteFailure = HandleRemoteFailure,
+            OnTokenValidated = ctx => HandleTokenValidated(ctx, appSettings, sessionTimeout)
+        };
+    }
+
+    private static Task HandleMessageReceived(MessageReceivedContext context)
+    {
+        bool isSpuriousAuthCbRequest =
+            context.Request.Path == context.Options.CallbackPath &&
+            context.Request.Method == HttpMethods.Get &&
+            !context.Request.Query.ContainsKey("code");
+
+        if (isSpuriousAuthCbRequest)
+        {
+            context.HandleResponse();
+            context.Response.Redirect(Routes.Application.Home);
+        }
+        return Task.CompletedTask;
+    }
+
+    private static Task HandleRemoteFailure(RemoteFailureContext ctx)
+    {
+        ctx.HandleResponse();
+        return Task.FromException(ctx.Failure);
+    }
+
+    private static async Task HandleTokenValidated(TokenValidatedContext ctx, AzureAppSettings appSettings, TimeSpan sessionTimeout)
+    {
+        string sessionId = Guid.NewGuid().ToString();
+        ctx.Properties.IsPersistent = true;
+        ctx.Properties.ExpiresUtc = DateTime.UtcNow.Add(sessionTimeout);
+
+        ClaimsPrincipal principal = ctx.Principal;
+        string userId = principal.FindFirst("sub")?.Value ?? string.Empty;
+        string userEmail = principal.FindFirst("email")?.Value ?? string.Empty;
+        string userGivenName = principal.FindFirst("given_name")?.Value ?? string.Empty;
+        string userSurname = principal.FindFirst("family_name")?.Value ?? string.Empty;
+        string organisationJson = principal.FindFirst("Organisation")?.Value ?? "{}";
+        JObject organisation = JObject.Parse(organisationJson);
+        string organisationId = organisation["id"]?.ToString() ?? string.Empty;
+
+        IDfeSignInApiClient dfeSignInApiClient = ctx.HttpContext.RequestServices.GetService<IDfeSignInApiClient>();
+        IEventLogging eventLogging = ctx.HttpContext.RequestServices.GetService<IEventLogging>();
+        IHostEnvironment hostEnvironment = ctx.HttpContext.RequestServices.GetService<IHostEnvironment>();
+        ICommonService userApiClient = ctx.HttpContext.RequestServices.GetService<ICommonService>();
+
+        List<Claim> claims = new()
+        {
+            new(CustomClaimTypes.UserId, userId),
+            new(CustomClaimTypes.SessionId, sessionId),
+            new(ClaimTypes.Email, userEmail)
+        };
+
+        AuthenticatedUserInfo authenticatedUserInfo = new() { UserId = userId };
+        if (!organisation.HasValues)
+        {
+            ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
+            ctx.HttpContext.Response.Redirect(Routes.Application.UserWithNoRole);
+            return;
+        }
+
+        // HTTP requets to DfE Sign-In API to get user access and organisation details
+        UserAccess userAccess = await dfeSignInApiClient
+            .GetUserInfo(appSettings.DsiServiceId, organisationId, userId);
+        Organisation userOrganisation = await dfeSignInApiClient
+            .GetUserOrganisation(userId, organisationId);
+
+        if (userAccess is null)
+        {
+            eventLogging.TrackEvent(2502, "User log in unsuccessful - user not associated with GIAP service", userId, sessionId, hostEnvironment.ContentRootPath);
+            ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
+            ctx.HttpContext.Response.Redirect(Routes.Application.UserWithNoRole);
+            return;
+        }
+
+        AddRoleClaims(claims, userAccess, authenticatedUserInfo);
+        AddOrganisationClaims(claims, userOrganisation, organisationId, authenticatedUserInfo);
+
+        ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
+
+        await UpdateUserProfile(userApiClient, authenticatedUserInfo, sessionId);
+
+        LoggingEvent loggingEvent = CreateLoggingEvent(userId, userEmail, userGivenName, userSurname, ctx.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, userOrganisation, organisationId, authenticatedUserInfo, sessionId);
+        await userApiClient.CreateLoggingEvent(loggingEvent);
+        eventLogging.TrackEvent(1120, "User log in successful", userId, sessionId, hostEnvironment.ContentRootPath);
+    }
+
+    private static void AddRoleClaims(List<Claim> claims, UserAccess userAccess, AuthenticatedUserInfo userInfo)
+    {
+        if (userAccess.Roles is not null && userAccess.Roles.Any())
+        {
+            claims.AddRange(userAccess.Roles.Select(role => new Claim(ClaimTypes.Role, role.Code)));
+
+            userInfo.IsAdmin = userAccess.Roles.Any(x => x.Code == Roles.Admin);
+            userInfo.IsApprover = userAccess.Roles.Any(x => x.Code == Roles.Approver);
+            userInfo.IsUser = userAccess.Roles.Any(x => x.Code == Roles.User);
+        }
+        claims.Add(new Claim(CustomClaimTypes.IsAdmin, userInfo.IsAdmin.ToString()));
+        claims.Add(new Claim(CustomClaimTypes.IsApprover, userInfo.IsApprover.ToString()));
+        claims.Add(new Claim(CustomClaimTypes.IsUser, userInfo.IsUser.ToString()));
+    }
+
+    private static void AddOrganisationClaims(List<Claim> claims, Organisation org, string organisationId, AuthenticatedUserInfo userInfo)
+    {
+        claims.Add(new Claim(CustomClaimTypes.OrganisationId, organisationId));
+        claims.Add(new Claim(CustomClaimTypes.OrganisationName, org?.Name ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.OrganisationCategoryId, org?.Category?.Id ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.OrganisationEstablishmentTypeId, org?.EstablishmentType?.Id ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.OrganisationLowAge, org?.StatutoryLowAge ?? "0"));
+        claims.Add(new Claim(CustomClaimTypes.OrganisationHighAge, org?.StatutoryHighAge ?? "0"));
+        claims.Add(new Claim(CustomClaimTypes.EstablishmentNumber, org?.EstablishmentNumber ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.LocalAuthorityNumber, org?.LocalAuthority?.Code ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.UniqueReferenceNumber, org?.UniqueReferenceNumber ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.UniqueIdentifier, org?.UniqueIdentifier ?? string.Empty));
+        claims.Add(new Claim(CustomClaimTypes.UKProviderReferenceNumber, org?.UKProviderReferenceNumber ?? string.Empty));
+    }
+
+    private static async Task UpdateUserProfile(ICommonService userApiClient, AuthenticatedUserInfo userInfo, string sessionId)
+    {
+        await userApiClient.CreateOrUpdateUserProfile(
+            new UserProfile { UserId = userInfo.UserId },
+            new AzureFunctionHeaderDetails
+            {
+                ClientId = userInfo.UserId,
+                SessionId = sessionId
+            });
+    }
+
+    private static LoggingEvent CreateLoggingEvent(
+        string userId,
+        string userEmail,
+        string userGivenName,
+        string userSurname,
+        string userIpAddress,
+        Organisation org,
+        string organisationId,
+        AuthenticatedUserInfo userInfo,
+        string sessionId)
+    {
+        return new LoggingEvent
+        {
+            UserGuid = userId,
+            UserEmail = userEmail,
+            UserGivenName = userGivenName,
+            UserSurname = userSurname,
+            UserIpAddress = userIpAddress,
+            OrganisationGuid = organisationId,
+            OrganisationName = org?.Name ?? string.Empty,
+            OrganisationCategoryID = org?.Category?.Id ?? string.Empty,
+            OrganisationType = DSIUserHelper.GetOrganisationType(org?.Category?.Id ?? string.Empty),
+            EstablishmentNumber = org?.EstablishmentNumber ?? string.Empty,
+            LocalAuthorityNumber = org?.LocalAuthority?.Code ?? string.Empty,
+            UKProviderReferenceNumber = org?.UKProviderReferenceNumber ?? string.Empty,
+            UniqueReferenceNumber = org?.UniqueReferenceNumber ?? string.Empty,
+            UniqueIdentifier = org?.UniqueIdentifier ?? string.Empty,
+            GIAPUserRole = DSIUserHelper.GetGIAPUserRole(userInfo.IsAdmin, userInfo.IsApprover, userInfo.IsUser),
+            ActionName = LogEventActionType.UserLoggedIn.ToString(),
+            ActionDescription = LogEventActionType.UserLoggedIn.LogEventActionDescription(),
+            SessionId = sessionId
+        };
     }
 }

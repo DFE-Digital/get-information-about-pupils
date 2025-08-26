@@ -21,7 +21,12 @@ public class SessionProvider : ISessionProvider
         Session.SetString(key, value);
     }
 
-    public void SetSessionValue<T>(string key, T value) => SetSessionValue(key, JsonSerializer.Serialize(value));
+    public void SetSessionValue<T>(string key, T value)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        string json = JsonSerializer.Serialize(value);
+        Session.SetString(key, json);
+    }
 
     public string? GetSessionValue(string key)
     {
