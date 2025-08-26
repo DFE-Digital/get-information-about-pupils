@@ -47,7 +47,7 @@ public sealed class GetPupilsForUserFromPresentationStateHandler : IGetPupilsFor
                 response.Pupils,
                 (current, handler) => handler.Handle(current, presentPupilOptions));
 
-        IPupilsSelectionState pupilSelectionState = _pupilSelectionStateProvider.GetState();
+        IMyPupilsPupilSelectionState pupilSelectionState = _pupilSelectionStateProvider.GetState();
 
         IEnumerable<PupilDtoWithSelectionState> pupilDtosWithSelectionState =
             results.Select((pupilDto)

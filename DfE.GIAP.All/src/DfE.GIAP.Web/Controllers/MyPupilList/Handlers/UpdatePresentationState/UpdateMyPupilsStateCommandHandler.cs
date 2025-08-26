@@ -33,7 +33,7 @@ public sealed class UpdateMyPupilsStateCommandHandler : IUpdateMyPupilsStateComm
 
         _presentPupilOptionsProvider.Set(options: _formStateToPresentationStateMapper.Map(request));
 
-        IPupilsSelectionState selectionState = _pupilSelectionStateProvider.GetState();
+        IMyPupilsPupilSelectionState selectionState = _pupilSelectionStateProvider.GetState();
 
         IEnumerable<string> currentPageOfPupils = request.ParseCurrentPageOfPupils();
 

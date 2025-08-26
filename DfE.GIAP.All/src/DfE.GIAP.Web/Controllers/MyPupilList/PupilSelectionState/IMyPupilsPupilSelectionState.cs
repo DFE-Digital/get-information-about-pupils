@@ -1,17 +1,16 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState.Provider.DataTransferObjects;
+﻿namespace DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState;
 
-namespace DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState;
-
-public interface IPupilsSelectionState
+public interface IMyPupilsPupilSelectionState
 {
     bool IsAllPupilsSelected { get; }
     bool IsAnyPupilsSelected { get; }
+    bool IsAllPupilsDeselected { get; }
     bool IsPupilSelected(string upn);
+    IReadOnlyDictionary<string, bool> GetPupilsWithSelectionState();
     IReadOnlyCollection<string> GetSelectedPupils();
     void AddPupils(IEnumerable<string> upns);
     void SelectAllPupils();
     void DeselectAllPupils();
     void UpdatePupilSelectionState(IEnumerable<string> upns, bool isSelected);
-    void ResetState();
-    PupilSelectionStateDto ToDto();
+    void ClearPupilsAndState();
 }

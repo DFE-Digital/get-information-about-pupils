@@ -21,7 +21,7 @@ public class GetSelectedPupilsForUserHandler : IGetSelectedPupilsForUserHandler
 
     public async Task<IEnumerable<string>> GetSelectedPupilsForUserAsync(string userId)
     {
-        IPupilsSelectionState pupilsSelectionState = _pupilSelectionStateProvider.GetState();
+        IMyPupilsPupilSelectionState pupilsSelectionState = _pupilSelectionStateProvider.GetState();
 
         if (pupilsSelectionState.IsAllPupilsSelected)
         {

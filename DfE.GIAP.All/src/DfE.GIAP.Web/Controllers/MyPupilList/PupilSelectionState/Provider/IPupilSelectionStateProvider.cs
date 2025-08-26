@@ -2,6 +2,6 @@
 
 public interface IPupilSelectionStateProvider
 {
-    IPupilsSelectionState GetState();
-    void SetState(IPupilsSelectionState state);
+    IMyPupilsPupilSelectionState GetState();
+    void SetState(IMyPupilsPupilSelectionState state);
 }

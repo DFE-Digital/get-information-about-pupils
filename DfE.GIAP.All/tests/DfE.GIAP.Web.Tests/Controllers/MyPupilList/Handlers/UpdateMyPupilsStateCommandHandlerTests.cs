@@ -83,7 +83,7 @@ public sealed class UpdateMyPupilsStateCommandHandlerTests
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapper = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<IMyPupilsPresentationStateProvider> myPupilsPresentationStateProvider = MyPupilsPresentationStateProviderTestDoubles.Default();
         Mock<IPupilSelectionStateProvider> pupilSelectionStateProvider = PupilSelectionStateProviderTestDoubles.Default();
-        Mock<IPupilsSelectionState> initialState = PupilsSelectionStateTestDoubles.Default();
+        Mock<IMyPupilsPupilSelectionState> initialState = PupilsSelectionStateTestDoubles.Default();
         MyPupilsFormStateRequestDto request = MyPupilsFormStateRequestDtoTestDoubles.CreateWithSelectionState(selectAll: true);
         Assert.NotEmpty(request.ParseCurrentPageOfPupils());
 
@@ -108,7 +108,7 @@ public sealed class UpdateMyPupilsStateCommandHandlerTests
         pupilSelectionStateProvider.Verify(t => t.GetState(), Times.Once);
         initialState.Verify(t => t.AddPupils(request.ParseCurrentPageOfPupils()), Times.Once);
         initialState.Verify(t => t.SelectAllPupils(), Times.Once);
-        pupilSelectionStateProvider.Verify(t => t.SetState(It.IsAny<IPupilsSelectionState>()), Times.Once);
+        pupilSelectionStateProvider.Verify(t => t.SetState(It.IsAny<IMyPupilsPupilSelectionState>()), Times.Once);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public sealed class UpdateMyPupilsStateCommandHandlerTests
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapper = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<IMyPupilsPresentationStateProvider> myPupilsPresentationStateProvider = MyPupilsPresentationStateProviderTestDoubles.Default();
         Mock<IPupilSelectionStateProvider> pupilSelectionStateProvider = PupilSelectionStateProviderTestDoubles.Default();
-        Mock<IPupilsSelectionState> initialState = PupilsSelectionStateTestDoubles.Default();
+        Mock<IMyPupilsPupilSelectionState> initialState = PupilsSelectionStateTestDoubles.Default();
 
         MyPupilsFormStateRequestDto request = MyPupilsFormStateRequestDtoTestDoubles.CreateWithSelectionState(selectAll: false);
 
@@ -144,7 +144,7 @@ public sealed class UpdateMyPupilsStateCommandHandlerTests
         pupilSelectionStateProvider.Verify(t => t.GetState(), Times.Once);
         initialState.Verify(t => t.AddPupils(request.ParseCurrentPageOfPupils()), Times.Once);
         initialState.Verify(t => t.DeselectAllPupils(), Times.Once);
-        pupilSelectionStateProvider.Verify(t => t.SetState(It.IsAny<IPupilsSelectionState>()), Times.Once);
+        pupilSelectionStateProvider.Verify(t => t.SetState(It.IsAny<IMyPupilsPupilSelectionState>()), Times.Once);
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public sealed class UpdateMyPupilsStateCommandHandlerTests
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapper = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<IMyPupilsPresentationStateProvider> myPupilsPresentationStateProvider = MyPupilsPresentationStateProviderTestDoubles.Default();
         Mock<IPupilSelectionStateProvider> pupilSelectionStateProvider = PupilSelectionStateProviderTestDoubles.Default();
-        Mock<IPupilsSelectionState> initialState = PupilsSelectionStateTestDoubles.Default();
+        Mock<IMyPupilsPupilSelectionState> initialState = PupilsSelectionStateTestDoubles.Default();
 
         List<UniquePupilNumber> pageOfPupils = UniquePupilNumberTestDoubles.Generate(20);
         List<UniquePupilNumber> selectedPupilsOnPage = pageOfPupils.Skip(10).ToList();
@@ -193,6 +193,6 @@ public sealed class UpdateMyPupilsStateCommandHandlerTests
         initialState.Verify(t => t.AddPupils(request.ParseCurrentPageOfPupils()), Times.Once);
         initialState.Verify(t => t.UpdatePupilSelectionState(selectedPupilValuesOnPage, true), Times.Once);
         initialState.Verify(t => t.UpdatePupilSelectionState(deselectedPupilsValuesOnPage, false), Times.Once);
-        pupilSelectionStateProvider.Verify(t => t.SetState(It.IsAny<IPupilsSelectionState>()), Times.Once);
+        pupilSelectionStateProvider.Verify(t => t.SetState(It.IsAny<IMyPupilsPupilSelectionState>()), Times.Once);
     }
 }

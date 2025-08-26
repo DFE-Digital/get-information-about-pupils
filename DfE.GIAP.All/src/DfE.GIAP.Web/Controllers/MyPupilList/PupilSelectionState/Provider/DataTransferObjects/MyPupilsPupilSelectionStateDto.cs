@@ -2,8 +2,8 @@
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState.Provider.DataTransferObjects;
 
-public sealed class PupilSelectionStateDto
+public sealed class MyPupilsPupilSelectionStateDto
 {
     public Dictionary<string, bool> PupilUpnToSelectedMap { get; set; } = [];
-    public SelectAllPupilsState State { get; set; } = SelectAllPupilsState.NotSpecified;
+    public PupilSelectionModeDto State { get; set; } = PupilSelectionModeDto.NotSpecified;
 }

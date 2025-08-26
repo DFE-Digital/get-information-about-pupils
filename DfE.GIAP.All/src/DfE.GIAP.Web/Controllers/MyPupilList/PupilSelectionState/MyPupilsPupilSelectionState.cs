@@ -1,15 +1,25 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState.Provider.DataTransferObjects;
-using Mono.TextTemplating;
 
 namespace DfE.GIAP.Web.Controllers.MyPupilList.PupilSelectionState;
 
-public sealed class PupilsSelectionState : IPupilsSelectionState
+public sealed class MyPupilsPupilSelectionState : IMyPupilsPupilSelectionState
 {
-    private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
+    private readonly IDictionary<string, bool> _pupilsToSelectedMap;
     private SelectAllPupilsState _state = SelectAllPupilsState.NotSpecified;
 
+    public MyPupilsPupilSelectionState()
+    {
+        _pupilsToSelectedMap = new Dictionary<string, bool>();
+    }
+
+    public MyPupilsPupilSelectionState(IDictionary<string, bool> pupilsToSelectedMap)
+    {
+        ArgumentNullException.ThrowIfNull(pupilsToSelectedMap);
+        _pupilsToSelectedMap = pupilsToSelectedMap;
+    }
+
     public bool IsAllPupilsSelected => _state == SelectAllPupilsState.SelectAll;
+    public bool IsAllPupilsDeselected => _state == SelectAllPupilsState.DeselectAll;
     public bool IsAnyPupilsSelected => IsAllPupilsSelected || GetSelectedPupils().Count != 0;
     public bool IsPupilSelected(string upn)
     {
@@ -25,6 +35,8 @@ public sealed class PupilsSelectionState : IPupilsSelectionState
 
         return false;
     }
+
+    public IReadOnlyDictionary<string, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
 
     public IReadOnlyCollection<string> GetSelectedPupils()
     {
@@ -75,29 +87,16 @@ public sealed class PupilsSelectionState : IPupilsSelectionState
         }
     }
 
-    public void ResetState()
+    public void ClearPupilsAndState()
     {
         _pupilsToSelectedMap.Clear();
         _state = SelectAllPupilsState.NotSpecified;
     }
 
-    public PupilSelectionStateDto ToDto() => new()
+    private enum SelectAllPupilsState
     {
-        PupilUpnToSelectedMap = new(_pupilsToSelectedMap),
-        State = _state
-    };
-
-    public static PupilsSelectionState FromDto(PupilSelectionStateDto dto)
-    {
-        PupilsSelectionState state = new()
-        {
-            _state = dto.State
-        };
-
-        foreach (KeyValuePair<string, bool> kvp in dto.PupilUpnToSelectedMap)
-        {
-            state._pupilsToSelectedMap[kvp.Key] = kvp.Value;
-        }
-        return state;
+        SelectAll,
+        DeselectAll,
+        NotSpecified
     }
 }
