@@ -1,4 +1,4 @@
-﻿@inject IOptions<MicrosoftClarityOptions> MicrosoftClarityOptions
+@inject IOptions<MicrosoftClarityOptions> MicrosoftClarityOptions
 @inject IOptions<GoogleTagManagerOptions> GoogleTagManagerOptions
 
 @{
@@ -25,7 +25,6 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/js/axios.min.js" asp-append-version="true"></script>
-    <script src="~/js/service-timeout.js" asp-append-version="true"></script>
 
     @RenderSection("Head", required: false)
     @if (!string.IsNullOrWhiteSpace(MicrosoftClarityOptions.Value.ProjectId))
@@ -58,7 +57,6 @@
     }
     <partial name="_CookieBannerPartial" />
     <partial name="Layout/_LayoutHeader" />
-    <partial name="_ServiceTimeout" />
 
     <div class="govuk-width-container">
         <main class="govuk-main-wrapper" id="main-content" role="main">
