@@ -25,7 +25,7 @@ public sealed class GetNewsArticleByIdUseCaseTests
         await Assert.ThrowsAsync<ArgumentNullException>(act);
     }
 
-   
+
     [Fact]
     public async Task HandleRequest_BubblesException_When_RepositoryThrows()
     {
