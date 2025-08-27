@@ -267,4 +267,93 @@ public sealed class CosmosNewsArticleReadRepositoryTests
             (mapper) => mapper.Map(It.IsAny<NewsArticleDto>()),
             Times.Exactly(newsArticleDTOs.Count));
     }
+
+    [Fact]
+    public async Task HasAnyNewsArticleBeenModifiedSinceAsync_ReturnsTrue_When_ArticleModifiedAfterExpectedTime()
+    {
+        // Arrange
+        DateTime expectedTime = DateTime.UtcNow.AddDays(-1);
+        List<NewsArticleDto> articles = new()
+        {
+            new NewsArticleDto
+            {
+                id = "1",
+                Title = "Test",
+                Body = "Body",
+                Published = true,
+                Pinned = false,
+                CreatedDate = expectedTime.AddHours(-1),
+                ModifiedDate = expectedTime.AddMinutes(1)
+            }
+        };
+
+        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(() => articles);
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
+
+        CosmosDbNewsArticleReadOnlyRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbQueryHandler: mockQueryHandler.Object,
+            dtoToEntityMapper: mockMapper.Object);
+
+        // Act
+        bool result = await sut.HasAnyNewsArticleBeenModifiedSinceAsync(expectedTime);
+
+        // Assert
+        Assert.True(result);
+        mockQueryHandler.Verify(
+            h => h.ReadItemsAsync<NewsArticleDto>(It.IsAny<string>(), It.IsAny<string>(), default),
+            Times.Once());
+    }
+
+    [Fact]
+    public async Task HasAnyNewsArticleBeenModifiedSinceAsync_ReturnsFalse_When_NoArticleModifiedAfterExpectedTime()
+    {
+        // Arrange
+        DateTime expectedTime = DateTime.UtcNow;
+        List<NewsArticleDto> articles = new(); // No articles returned
+
+        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(() => articles);
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
+
+        CosmosDbNewsArticleReadOnlyRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbQueryHandler: mockQueryHandler.Object,
+            dtoToEntityMapper: mockMapper.Object);
+
+        // Act
+        bool result = await sut.HasAnyNewsArticleBeenModifiedSinceAsync(expectedTime);
+
+        // Assert
+        Assert.False(result);
+        mockQueryHandler.Verify(
+            h => h.ReadItemsAsync<NewsArticleDto>(It.IsAny<string>(), It.IsAny<string>(), default),
+            Times.Once());
+    }
+
+    [Fact]
+    public async Task HasAnyNewsArticleBeenModifiedSinceAsync_ReturnsFalse_When_CosmosExceptionThrown()
+    {
+        // Arrange
+        DateTime expectedTime = DateTime.UtcNow;
+        Func<IEnumerable<NewsArticleDto>> cosmosExceptionGenerator =
+            CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<IEnumerable<NewsArticleDto>>();
+
+        Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(cosmosExceptionGenerator);
+        Mock<IMapper<NewsArticleDto, NewsArticle>> mockMapper = MapperTestDoubles.Default<NewsArticleDto, NewsArticle>();
+
+        CosmosDbNewsArticleReadOnlyRepository sut = new(
+            logger: _mockLogger,
+            cosmosDbQueryHandler: mockQueryHandler.Object,
+            dtoToEntityMapper: mockMapper.Object);
+
+        // Act
+        bool result = await sut.HasAnyNewsArticleBeenModifiedSinceAsync(expectedTime);
+
+        // Assert
+        Assert.False(result);
+        Assert.Contains("CosmosException in HasAnyNewsArticleBeenModifiedSinceAsync.", _mockLogger.Logs.Single());
+        mockQueryHandler.Verify(
+            h => h.ReadItemsAsync<NewsArticleDto>(It.IsAny<string>(), It.IsAny<string>(), default),
+            Times.Once());
+    }
 }
