@@ -4,5 +4,5 @@ namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils;
 
 public interface IGetMyPupilsHandler
 {
-    Task<IEnumerable<PupilViewModel>> HandleAsync(GetMyPupilsRequest request);
+    Task<PupilsViewModel> HandleAsync(GetMyPupilsRequest request);
 }

@@ -9,6 +9,7 @@ public sealed class MyPupilsPupilSelectionState
 
     public bool IsAllPupilsSelected => _state == SelectAllPupilsState.SelectAll;
     public bool IsAllPupilsDeselected => _state == SelectAllPupilsState.DeselectAll;
+    public bool IsAnyPupilSelected => IsAllPupilsSelected || _pupilsToSelectedMap.Values.Any(t => t);
 
     public bool IsPupilSelected(string upn)
     {

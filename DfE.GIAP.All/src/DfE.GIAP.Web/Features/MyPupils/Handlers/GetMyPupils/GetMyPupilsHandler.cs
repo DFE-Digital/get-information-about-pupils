@@ -21,7 +21,7 @@ public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<PupilViewModel>> HandleAsync(GetMyPupilsRequest request)
+    public async Task<PupilsViewModel> HandleAsync(GetMyPupilsRequest request)
     {
         GetPaginatedMyPupilsRequest paginatedMyPupilsRequest = new(request.UserId, request.PresentationState);
 
@@ -32,8 +32,8 @@ public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
                         pupil,
                         isSelected: request.SelectionState.IsPupilSelected(pupil.UniquePupilNumber)));
 
-        IEnumerable<PupilViewModel> pupilPresentationViewModels = results.Select(_mapper.Map);
+        IEnumerable<PupilViewModel> pupils = results.Select(_mapper.Map);
 
-        return pupilPresentationViewModels;
+        return PupilsViewModel.Create(pupils);
     }
 }
