@@ -1,12 +1,11 @@
-﻿// Import shared interfaces and models used across the application
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Common.Application.Models;
 using DfE.GIAP.Domain.Search.Learner;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 
 /// <summary>
-/// Maps <see cref="FilterData"/> from the domain layer into a <see cref="FilterRequest"/> 
+/// Maps <see cref="FilterData"/> from the domain layer into a <see cref="FilterRequest"/>.
 /// suitable for the application layer.
 /// </summary>
 public sealed class FilterRequestMapper : IMapper<FilterData, FilterRequest>
@@ -22,13 +21,12 @@ public sealed class FilterRequestMapper : IMapper<FilterData, FilterRequest>
         ArgumentNullException.ThrowIfNull(input);
 
         // Project each item value to object to satisfy IList<object> requirement
-        // This cast is necessary because List<string> is not implicitly convertible to List<object>
+        // This cast is necessary because List<string> is not implicitly convertible to List<object>.
         IList<object> filterValues =
             input.Items
-                .Select(item => (object)item.Value)
-                .ToList();
+                .ConvertAll(item => (object)item.Value);
 
-        // Construct and return the FilterRequest using the mapped values
+        // Construct and return the FilterRequest using the mapped values.
         return new FilterRequest(
             filterName: input.Name,
             filterValues: filterValues);

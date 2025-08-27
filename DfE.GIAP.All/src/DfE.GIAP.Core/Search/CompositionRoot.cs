@@ -1,6 +1,8 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Common.Application.Adapters;
@@ -13,15 +15,12 @@ using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstna
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
 using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure;
 using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.Mappers;
+using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.SearchFilterExpressions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Dto = DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.DataTransferObjects;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
-using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.SearchFilterExpressions;
+using Dto = DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search;
 
@@ -38,20 +37,6 @@ public static class CompositionRoot
     /// <param name="configuration">The application configuration instance.</param>
     /// <returns>The updated service collection.</returns>
     public static IServiceCollection AddSearchDependencies(this IServiceCollection services, IConfiguration configuration)
-    {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(configuration);
-
-        return services.RegisterFurtherEducationSearchDependencies(configuration);
-    }
-
-    /// <summary>
-    /// Registers Further Education-specific search services, mappers, options, and use cases.
-    /// </summary>
-    /// <param name="services">The service collection to register dependencies into.</param>
-    /// <param name="configuration">The application configuration instance.</param>
-    /// <returns>The updated service collection.</returns>
-    public static IServiceCollection RegisterFurtherEducationSearchDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
@@ -97,7 +82,6 @@ public static class CompositionRoot
 
             return new SearchFilterExpressionFactory(searchFilterExpressions);
         });
-
 
         // Register shared cognitive search and filter services
         services.AddDefaultCognitiveSearchServices(configuration);

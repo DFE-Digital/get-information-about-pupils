@@ -4,18 +4,36 @@ using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstna
 using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.ViewModels.Search;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 
 /// <summary>
-/// TODO: we'll sort this probs best not to use a tuple here, just using at the mo for convenience!
+/// Maps a <see cref="LearnerSearchMappingContext"/> — which contains both the search response
+/// and the existing view model — into a fully populated <see cref="LearnerTextSearchViewModel"/>.
+/// This mapper bridges domain-layer search results with UI-facing representations.
 /// </summary>
 public sealed class LearnerSearchResponseToViewModelMapper :
-    IMapper<(LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse), LearnerTextSearchViewModel>
+    IMapper<LearnerSearchMappingContext, LearnerTextSearchViewModel>
 {
+    // Mapper for converting individual FurtherEducationLearner domain entities into UI-facing Learner view models.
     private readonly IMapper<FurtherEducationLearner, Learner> _furtherEducationLearnerToViewModelMapper;
+
+    // Mapper for converting facet meta-data (SearchFacets) into structured filter data for the view model.
     private readonly IMapper<SearchFacets, List<FilterData>> _filtersResponseMapper;
 
+    /// <summary>
+    /// Constructs a new instance of <see cref="LearnerSearchResponseToViewModelMapper"/>.
+    /// </summary>
+    /// <param name="furtherEducationLearnerToViewModelMapper">
+    /// Mapper used to convert individual learners from domain to view model.
+    /// </param>
+    /// <param name="filtersResponseMapper">
+    /// Mapper used to convert facet meta-data into filter data for the UI.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if either mapper dependency is null, ensuring safe construction.
+    /// </exception>
     public LearnerSearchResponseToViewModelMapper(
         IMapper<FurtherEducationLearner, Learner> furtherEducationLearnerToViewModelMapper,
         IMapper<SearchFacets, List<FilterData>> filtersResponseMapper)
@@ -26,107 +44,80 @@ public sealed class LearnerSearchResponseToViewModelMapper :
             throw new ArgumentNullException(nameof(filtersResponseMapper));
     }
 
-    public LearnerTextSearchViewModel Map((LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse) input)
+    /// <summary>
+    /// Maps the search response and existing model into a fully populated <see cref="LearnerTextSearchViewModel"/>.
+    /// </summary>
+    /// <param name="input">Encapsulated context containing the view model and search response.</param>
+    /// <returns>A populated <see cref="LearnerTextSearchViewModel"/> ready for UI rendering.</returns>
+    public LearnerTextSearchViewModel Map(LearnerSearchMappingContext input)
     {
-        LearnerTextSearchViewModel model = input.Item1;
-        SearchByFirstNameAndOrSurnameResponse result = input.Item2;
+        // Map facet filters from the response into structured filter data for the view model.
+        input.Model.Filters = _filtersResponseMapper.Map(input.Response.FacetedResults);
 
-        // Map facet results to filters.
-        model.Filters = _filtersResponseMapper.Map(result.FacetedResults);
+        // Map each learner from domain to view model using the injected learner mapper.
+        List<Learner> learners = input.Response.LearnerSearchResults.Learners
+            .Select(_furtherEducationLearnerToViewModelMapper.Map)
+            .ToList();
 
+        // Apply result limit if the total exceeds the configured maximum.
+        input.Model.Learners =
+            input.Response.TotalNumberOfResults > input.Model.MaximumResults
+                ? learners.Take(input.Model.MaximumResults).ToList()
+                : learners;
 
-        //ParseGender(ref result);
-        //ParseSex(ref result);
+        // Populate meta-data fields for pagination and UI messaging.
+        input.Model.Count = input.Response.TotalNumberOfResults;
+        input.Model.Total = input.Response.LearnerSearchResults.Count;
+        input.Model.ShowOverLimitMessage = input.Model.Total > 100_000;
 
-        //var lowAge = User.GetOrganisationLowAge();
-        //var highAge = User.GetOrganisationHighAge();
-
-        IList<Learner> learners =
-            result.LearnerSearchResults.Learners
-                .Select(learner => _furtherEducationLearnerToViewModelMapper.Map(learner))
-                .ToList();
-
-        if (result.TotalNumberOfResults > model.MaximumResults)
-        {
-            model.Learners = learners.Take(model.MaximumResults).ToList();
-        }
-        else
-        {
-            model.Learners = learners; // need a mapping here!!!!
-        }
-
-        model.Count = result.TotalNumberOfResults;
-        model.Total = result.LearnerSearchResults.Count;
-
-        //model.Filters = result.Filters; // need to map back from facets
-
-        //SetLearnerNumberId(model);
-
-        //var isAdmin = User.IsAdmin();
-        //if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-        //{
-        //    model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-        //}
-
-        //var selected = GetSelected();
-
-        //if (!string.IsNullOrEmpty(selected))
-        //{
-        //    foreach (var learner in model.Learners)
-        //    {
-        //        if (!string.IsNullOrEmpty(learner.LearnerNumberId))
-        //        {
-        //            learner.Selected = selected.Contains(learner.LearnerNumberId);
-        //        }
-        //    }
-        //}
-        model.Learners = learners;
-
-        //model.PageLearnerNumbers = String.Join(',', model.Learners.Select(l => l.LearnerNumberId));
-
-        model.ShowOverLimitMessage = model.Total > 100000;
-
-        return model;
-
-
-
+        return input.Model;
     }
 
+    /// <summary>
+    /// Encapsulates the inputs required to map a learner search response into a view model.
+    /// This wrapper replaces tuple usage to improve readability, semantic clarity, and extensibility.
+    /// </summary>
+    public sealed class LearnerSearchMappingContext
+    {
+        /// <summary>
+        /// The existing view model instance to be populated with search results.
+        /// Typically contains user-entered filters, pagination settings, and result limits.
+        /// </summary>
+        public LearnerTextSearchViewModel Model { get; init; }
 
+        /// <summary>
+        /// The search response returned from the application layer.
+        /// Contains learner results, facet filters, and metadata such as total counts.
+        /// </summary>
+        public SearchByFirstNameAndOrSurnameResponse Response { get; init; }
 
-    //private void SetLearnerNumberId(LearnerTextSearchViewModel model)
-    //{
+        /// <summary>
+        /// Constructs a new <see cref="LearnerSearchMappingContext"/> with required inputs.
+        /// Performs null checks to ensure safe downstream mapping.
+        /// </summary>
+        /// <param name="model">The target view model to populate.</param>
+        /// <param name="response">The search response to map from.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if either <paramref name="model"/> or <paramref name="response"/> is null.
+        /// </exception>
+        public LearnerSearchMappingContext(
+            LearnerTextSearchViewModel model,
+            SearchByFirstNameAndOrSurnameResponse response)
+        {
+            Model = model ?? throw new ArgumentNullException(nameof(model));
+            Response = response ?? throw new ArgumentNullException(nameof(response));
+        }
 
-    //    foreach (var learner in model.Learners)
-    //    {
-    //        learner.LearnerNumberId = learner.LearnerNumber switch
-    //        {
-    //            "0" => learner.Id,
-    //            _ => learner.LearnerNumber,
-    //        };
-
-    //    }
-
-    //}
-
-
-    //private void ParseGender(ref SearchByFirstNameAndOrSurnameResponse result)
-    //{
-    //    var genderFilter = result.FacetedResults.Filters.Where(filterData =>
-    //        filterData.Name.Equals("Gender")).ToList();
-
-    //    genderFilter.ForEach(filterData =>
-    //        filterData.Items.ForEach(filterDataItem =>
-    //            filterDataItem.Value = filterDataItem.Value.SwitchGenderToParseName()));
-    //}
-
-    //private void ParseSex(ref SearchByFirstNameAndOrSurnameResponse result)
-    //{
-    //    var sexFilter = result.Filters.Where(filterData =>
-    //        filterData.Name.Equals("Sex")).ToList();
-
-    //    sexFilter.ForEach(filterData =>
-    //        filterData.Items.ForEach(filterDataItem =>
-    //            filterDataItem.Value = filterDataItem.Value.SwitchSexToParseName()));
-    //}
+        /// <summary>
+        /// Factory method for creating a new <see cref="LearnerSearchMappingContext"/>.
+        /// Improves readability and discoverability when constructing context objects.
+        /// </summary>
+        /// <param name="model">The target view model to populate.</param>
+        /// <param name="response">The search response to map from.</param>
+        /// <returns>A new instance of <see cref="LearnerSearchMappingContext"/>.</returns>
+        public static LearnerSearchMappingContext Create(
+            LearnerTextSearchViewModel model,
+            SearchByFirstNameAndOrSurnameResponse response) =>
+            new(model, response);
+    }
 }

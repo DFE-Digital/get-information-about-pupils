@@ -12,6 +12,11 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
 public class DobFilterHandler : IFilterHandler
 {
     /// <summary>
+    /// Date format expected in the filter value (e.g., "15/3/2005").
+    /// </summary>
+    private const string FilterValueDateFormat = "d/M/yyyy";
+
+    /// <summary>
     /// ISO 8601 format used for full DOB filtering.
     /// </summary>
     private const string DateOfBirthStringFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
@@ -23,7 +28,10 @@ public class DobFilterHandler : IFilterHandler
     /// <param name="filter">Current filter meta-data.</param>
     /// <param name="model">User-entered search model.</param>
     /// <param name="requestFilters">Dictionary to populate with DOB filter values.</param>
-    public void Apply(CurrentFilterDetail filter, LearnerTextSearchViewModel model, Dictionary<string, string[]> requestFilters)
+    public void Apply(
+        CurrentFilterDetail filter,
+        LearnerTextSearchViewModel model,
+        Dictionary<string, string[]> requestFilters)
     {
         // Skip processing if DOB input has validation errors.
         if (model.FilterErrors.DobError) return;
@@ -33,7 +41,9 @@ public class DobFilterHandler : IFilterHandler
         // If no DOB components are entered, attempt to parse from filter name (fall-back).
         if (dobText.DobDay == 0 && dobText.DobMonth == 0 && dobText.DobYear == 0)
         {
-            PupilHelper.ConvertFilterNameToCustomDOBFilterText(filter.FilterName, out int day, out int month, out int year);
+            PupilHelper.ConvertFilterNameToCustomDOBFilterText(
+                filter.FilterName, out int day, out int month, out int year);
+
             dobText.DobDay = day;
             dobText.DobMonth = month;
             dobText.DobYear = year;
@@ -42,7 +52,7 @@ public class DobFilterHandler : IFilterHandler
         // Apply full DOB filter if all components are present.
         if (dobText.DobDay > 0 && dobText.DobMonth > 0 && dobText.DobYear > 0)
         {
-            AddFullDobFilter(filter.FilterName, requestFilters);
+            AddIsoDobFilter(filter.FilterName, requestFilters);
         }
         else
         {
@@ -56,11 +66,22 @@ public class DobFilterHandler : IFilterHandler
     /// </summary>
     /// <param name="filterValue">Raw filter string to parse into a date.</param>
     /// <param name="requestFilters">Dictionary to populate with ISO DOB.</param>
-    private void AddFullDobFilter(string filterValue, Dictionary<string, string[]> requestFilters)
+    private static void AddIsoDobFilter(
+        string filterValue,
+        Dictionary<string, string[]> requestFilters)
     {
-        DateTime parsedDate = DateTime.ParseExact(filterValue, "d/M/yyyy", CultureInfo.InvariantCulture);
-        string isoDate = parsedDate.ToString(DateOfBirthStringFormat, CultureInfo.InvariantCulture);
-        requestFilters[FilterKeys.Dob] = [isoDate];
+        if (DateTime.TryParseExact(
+                filterValue,
+                FilterValueDateFormat,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out DateTime parsedDate))
+        {
+            string isoDate =
+                parsedDate.ToString(DateOfBirthStringFormat, CultureInfo.InvariantCulture);
+
+            requestFilters[FilterKeys.Dob] = [isoDate];
+        }
     }
 
     /// <summary>
@@ -68,18 +89,19 @@ public class DobFilterHandler : IFilterHandler
     /// </summary>
     /// <param name="dobText">User-entered DOB components.</param>
     /// <param name="requestFilters">Dictionary to populate with partial DOB values.</param>
-    private void AddPartialDobFilter(CustomFilterText dobText, Dictionary<string, string[]> requestFilters)
+    private static void AddPartialDobFilter(
+        CustomFilterText dobText,
+        Dictionary<string, string[]> requestFilters)
     {
         if (dobText.DobMonth == 0)
         {
-            // Year-only filter - TODO: we need to configure these with the appropriate search filter expressions i.e. equals for this!
-            requestFilters[FilterKeys.DobYear] = [dobText.DobYear.ToString()];
+            requestFilters[FilterKeys.DobYear] =
+                [dobText.DobYear.ToString()];
         }
         else
         {
-            // Month and year filter - TODO: we need to configure these with the appropriate search filter expressions i.e. contains!
-            requestFilters[FilterKeys.DobMonth] = [dobText.DobMonth.ToString()];
-            requestFilters[FilterKeys.DobYear] = [dobText.DobYear.ToString()];
+            requestFilters[FilterKeys.DobYearMonth] =
+                [$"{dobText.DobYear}-{dobText.DobMonth:D2}"];
         }
     }
 
@@ -99,13 +121,12 @@ public class DobFilterHandler : IFilterHandler
         /// Key for year-only DOB filter (e.g., "2005").
         /// Used when only the year is known or entered.
         /// </summary>
-        public const string DobYear = "dobyear";
+        public const string DobYear = "DOBYear";
 
         /// <summary>
         /// Key for month component of DOB (e.g., "3").
         /// Used in combination with DobYear when day is missing.
         /// </summary>
-        public const string DobMonth = "dobmonth";
+        public const string DobYearMonth = "DOBYearMonth";
     }
-
 }

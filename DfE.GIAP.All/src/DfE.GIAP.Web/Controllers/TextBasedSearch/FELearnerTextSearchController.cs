@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.Json;
+﻿using System.Text.Json;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
@@ -27,6 +26,7 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
 
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
@@ -95,26 +95,26 @@ public class FELearnerTextSearchController :  Controller
         SearchByFirstNameAndOrSurnameResponse> _furtherEducationTestSearchUseCase;
 
     private readonly IMapper<
-        (LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse),
+        LearnerSearchMappingContext,
         LearnerTextSearchViewModel> _learnerSearchResponseToViewModelMapper;
 
     private readonly IMapper<
         Dictionary<string, string[]>,
         IList<FilterRequest>> _filtersRequestMapper;
 
-    private readonly IFiltersRequestBuilder _filtersRequestBuilder;
+    private readonly IFiltersRequestFactory _filtersRequestBuilder;
 
     public FELearnerTextSearchController(
         IUseCase<
             SearchByFirstNameAndOrSurnameRequest,
             SearchByFirstNameAndOrSurnameResponse> furtherEducationTestSearchUseCase,
         IMapper<
-            (LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse),
+            LearnerSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<
             Dictionary<string, string[]>,
             IList<FilterRequest>> filtersRequestMapper,
-        IFiltersRequestBuilder filtersRequestBuilder,
+        IFiltersRequestFactory filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
            IPaginatedSearchService paginatedSearch,
            IMyPupilListService mplService,
@@ -811,17 +811,6 @@ public class FELearnerTextSearchController :  Controller
         return View(SearchView, searchViewModel);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="model"></param>
-    /// <param name="surnameFilter"></param>
-    /// <param name="middlenameFilter"></param>
-    /// <param name="foremameFilter"></param>
-    /// <param name="searchByRemove"></param>
-    /// <param name="sortField"></param>
-    /// <param name="sortDirection"></param>
-    /// <returns></returns>
     private async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
         LearnerTextSearchViewModel model,
         string surnameFilter,
@@ -831,6 +820,8 @@ public class FELearnerTextSearchController :  Controller
         string sortField = "",
         string sortDirection = "")
     {
+
+        #region
         List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
@@ -865,6 +856,7 @@ public class FELearnerTextSearchController :  Controller
 
         var first = hasCustomFilters || model.PageNumber != 0 ? false : true;
 
+        #endregion
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -881,7 +873,8 @@ public class FELearnerTextSearchController :  Controller
                     filterRequests: filterRequests))
             .ConfigureAwait(false);
 
-        return _learnerSearchResponseToViewModelMapper.Map((model, searchResponse));
+        return _learnerSearchResponseToViewModelMapper.Map(
+            LearnerSearchMappingContext.Create(model, searchResponse));
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }

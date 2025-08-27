@@ -5,10 +5,10 @@ using DfE.GIAP.Web.ViewModels.Search;
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
 
 /// <summary>
-/// Builds a structured filter request payload for learner search.
+/// Creates a structured filter request payload for learner search.
 /// Delegates filter logic to registered handlers via the IFilterHandlerRegistry.
 /// </summary>
-public class FiltersRequestBuilder : IFiltersRequestBuilder
+public class FiltersRequestFactory : IFiltersRequestFactory
 {
     /// <summary>
     /// Registry that maps filter types to their corresponding handler implementations.
@@ -19,7 +19,7 @@ public class FiltersRequestBuilder : IFiltersRequestBuilder
     /// Constructs a FiltersRequestBuilder with a filter handler registry.
     /// </summary>
     /// <param name="registry">Registry used to apply semantic filter logic.</param>
-    public FiltersRequestBuilder(IFilterHandlerRegistry registry)
+    public FiltersRequestFactory(IFilterHandlerRegistry registry)
     {
         _registry = registry;
     }
@@ -38,13 +38,15 @@ public class FiltersRequestBuilder : IFiltersRequestBuilder
         // Initialize an empty filter dictionary.
         Dictionary<string, string[]> requestFilters = [];
 
-        if (model.SelectedGenderValues != null &&
-            model.SelectedGenderValues.Length != 0)
+        // Gender is setup a bit differently and we only care is we have a single value selected,
+        // otherwise we can ignore (the assumption being we return both male and female by default).
+        if (model.SelectedGenderValues?.Length == 1)
         {
             currentFilters.Add(new CurrentFilterDetail() {
-                FilterName = model.SelectedGenderValues.FirstOrDefault(), FilterType = FilterType.Gender });
-            currentFilters.Add(new CurrentFilterDetail() {
-                FilterName = model.SelectedGenderValues.FirstOrDefault(), FilterType = FilterType.Sex });
+                FilterName =
+                    model.SelectedGenderValues.FirstOrDefault(),
+                    FilterType = FilterType.Gender
+            });
         }
 
         // Apply filters only if the list is non-null and non-empty.

@@ -4,10 +4,10 @@ using DfE.GIAP.Web.ViewModels.Search;
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
 
 /// <summary>
-/// Defines a contract for building structured filter request payloads.
+/// Defines a contract for creating structured filter request payloads.
 /// Implementations convert user-entered search inputs and active filters into API-ready dictionaries.
 /// </summary>
-public interface IFiltersRequestBuilder
+public interface IFiltersRequestFactory
 {
     /// <summary>
     /// Generates a dictionary of filter keys and values based on the current search model and active filters.

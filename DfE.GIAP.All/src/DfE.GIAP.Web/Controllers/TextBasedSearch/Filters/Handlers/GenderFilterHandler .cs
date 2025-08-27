@@ -52,7 +52,7 @@ public class GenderFilterHandler : IFilterHandler
         }
 
         // Add the initial if it's not already present.
-        if (!filterData.Items.Any(i => i.Value == initial))
+        if (!filterData.Items.Any(filterDataItem => filterDataItem.Value == initial))
         {
             filterData.Items.Add(new FilterDataItem { Value = initial });
         }

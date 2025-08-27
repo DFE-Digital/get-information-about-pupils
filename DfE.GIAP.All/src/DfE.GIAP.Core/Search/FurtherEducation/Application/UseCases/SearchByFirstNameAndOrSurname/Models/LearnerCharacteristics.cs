@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.Domain;
+﻿using System.ComponentModel;
+using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstNameAndOrSurname.Models;
@@ -64,16 +65,19 @@ public sealed class LearnerCharacteristics : ValueObject<LearnerCharacteristics>
         /// <summary>
         /// Represents a male learner.
         /// </summary>
+        [Description("M")]
         Male,
 
         /// <summary>
         /// Represents a female learner.
         /// </summary>
+        [Description("F")]
         Female,
 
         /// <summary>
         /// Represents a learner who identifies as another gender.
         /// </summary>
+        [Description("Unspecified")]
         Other
     }
 }

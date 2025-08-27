@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +51,7 @@ builder.Services.AddSingleton<IMapper<
     FurtherEducationLearner, Learner>,
     FurtherEducationLearnerToViewModelMapper>();
 builder.Services.AddSingleton<IMapper<
-    (LearnerTextSearchViewModel, SearchByFirstNameAndOrSurnameResponse), LearnerTextSearchViewModel>,
+    LearnerSearchMappingContext, LearnerTextSearchViewModel>,
     LearnerSearchResponseToViewModelMapper>();
 builder.Services.AddSingleton<IMapper<
     FilterData, FilterRequest>, FilterRequestMapper>();
@@ -68,31 +69,20 @@ builder.Services.AddSingleton<
 builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("SurnameLC"));
 builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("ForenameLC"));
 builder.Services.AddSingleton<IFilterHandler>(new DobFilterHandler());
-builder.Services.AddSingleton<IFiltersRequestBuilder, FiltersRequestBuilder>();
+builder.Services.AddSingleton<IFiltersRequestFactory, FiltersRequestFactory>();
+builder.Services.AddSingleton(new GenderFilterHandler("Gender"));
 builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
 {
     Dictionary<string, IFilterHandler> handlers = new()
     {
         { "SurnameLC", new NameFilterHandler("SurnameLC") },
         { "ForenameLC", new NameFilterHandler("ForenameLC") },
-        { "DOB", new DobFilterHandler() }
+        { "DOB", new DobFilterHandler() },
+        { "Gender", new GenderFilterHandler("Gender") }
     };
 
     return new FilterHandlerRegistry(handlers);
 });
-builder.Services.AddSingleton(new GenderFilterHandler("Gender"));
-builder.Services.AddSingleton(new GenderFilterHandler("Sex"));
-builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
-{
-    Dictionary<string, IFilterHandler> handlers = new()
-    {
-        { "Gender", new GenderFilterHandler("Gender") },
-        { "Sex", new GenderFilterHandler("Sex") }
-    };
-
-    return new FilterHandlerRegistry(handlers);
-});
-
 
 WebApplication app = builder.Build();
 

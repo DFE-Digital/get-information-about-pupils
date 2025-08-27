@@ -28,6 +28,11 @@ public class FurtherEducationLearner
     public string? Sex { get; set; }
 
     /// <summary>
+    /// Gets or sets the pupil's gender (e.g., Male, Female).
+    /// </summary>
+    public string? Gender { get; set; }
+
+    /// <summary>
     /// Gets or sets the pupil's date of birth.
     /// Nullable to support incomplete or anonymized records.
     /// </summary>

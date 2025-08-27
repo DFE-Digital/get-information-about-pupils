@@ -35,7 +35,7 @@ public sealed class SearchResultToFurtherEducationLearnerMapper : IMapper<Dto.Fu
             new LearnerName(input.Forename, input.Surname),
             new LearnerCharacteristics(
                 input.DOB.Value,
-                ParseGender(input.Sex) // Handles nulls and unknowns gracefully
+                ParseGender(input.Sex, input.Gender) // Handles nulls and unknowns gracefully
             )
         );
     }
@@ -44,17 +44,18 @@ public sealed class SearchResultToFurtherEducationLearnerMapper : IMapper<Dto.Fu
     /// Converts a string representation like "M", "F", or "O" to a <see cref="Gender"/> enum value.
     /// Defaults to <see cref="Gender.Other"/> if input is null, empty, or unrecognized.
     /// </summary>
-    /// <param name="input">The input string (e.g., "M", "F", "O").</param>
+    /// <param name="sex">The input string (e.g., "M", "F", "O").</param>
+    /// /// <param name="gender">The input string (e.g., "M", "F", "O").</param>
     /// <returns>The corresponding <see cref="Gender"/> enum value.</returns>
-    private static Gender ParseGender(string? input)
+    private static Gender ParseGender(string? sex, string? gender)
     {
         // Return 'Other' if input is null, whitespace, or doesn't match known codes
-        if (string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(sex))
         {
-            return Gender.Other;
+            sex = gender;
         }
 
-        return input.Trim().ToUpperInvariant() switch
+        return sex?.Trim().ToUpperInvariant() switch
         {
             "M" => Gender.Male,
             "F" => Gender.Female,
