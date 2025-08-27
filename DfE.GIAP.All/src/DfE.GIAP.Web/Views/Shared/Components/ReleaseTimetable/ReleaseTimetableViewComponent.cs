@@ -35,6 +35,7 @@ public class ReleaseTimetableViewModel
 
 public class ReleaseTimetableViewComponent : ViewComponent
 {
+    public const string Name = "ReleaseTimetable";
     public IViewComponentResult Invoke()
     {
         ReleaseTimetableViewModel model = new()

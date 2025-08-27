@@ -12,6 +12,7 @@ public class NewsBannerViewModel
 
 public class NewsBannerViewComponent : ViewComponent
 {
+    public const string Name = "NewsBanner";
     private readonly ISessionProvider _sessionProvider;
 
     public NewsBannerViewComponent(ISessionProvider sessionProvider)
