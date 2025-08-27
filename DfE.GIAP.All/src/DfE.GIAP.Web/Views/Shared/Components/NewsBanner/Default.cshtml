@@ -1,10 +1,6 @@
-﻿@inject ISessionProvider sessionProvider
-@{
-    bool consentGiven = string.Equals(sessionProvider.GetSessionValue(SessionKeys.ConsentKey), SessionKeys.ConsentValue, StringComparison.OrdinalIgnoreCase);
-}
+﻿@model NewsBannerViewModel
 
-@if (sessionProvider.ContainsSessionKey(SessionKeys.ShowNewsBannerKey) &&
-    sessionProvider.GetSessionValueOrDefault<bool>(SessionKeys.ShowNewsBannerKey) && consentGiven)
+@if (Model.ShowBanner && Model.ConsentGiven)
 {
     <div class="govuk-phase-banner webapp-news-banner" id="news--banner--alert">
         <div class="govuk-width-container">

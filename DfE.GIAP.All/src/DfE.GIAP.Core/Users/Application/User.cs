@@ -2,7 +2,4 @@
 
 namespace DfE.GIAP.Core.Users.Application;
 
-public record User(
-    UserId UserId,
-    IEnumerable<UniquePupilNumber> UniquePupilNumbers,
-    DateTime LatestNewsAccessedDateTime);
+public record User(UserId UserId, IEnumerable<UniquePupilNumber> UniquePupilNumbers, DateTime LastLoggedIn);

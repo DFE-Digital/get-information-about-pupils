@@ -183,7 +183,7 @@ public static class AuthenticationExtensions
 
         ISessionProvider sessionProvider = ctx.HttpContext.RequestServices.GetService<ISessionProvider>();
         if (checkNewsArticleUpdatesResponse.HasUpdates)
-            sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, true);
+            sessionProvider.SetSessionValue<bool>(SessionKeys.ShowNewsBannerKey, true);
 
 
         LoggingEvent loggingEvent = CreateLoggingEvent(userId, userEmail, userGivenName, userSurname, ctx.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, userOrganisation, organisationId, authenticatedUserInfo, sessionId);

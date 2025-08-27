@@ -4,7 +4,5 @@ namespace DfE.GIAP.Core.Users.Application.Repositories;
 
 public interface IUserWriteOnlyRepository
 {
-    Task SaveMyPupilsAsync(
-        UserId userId,
-        IEnumerable<UniquePupilNumber> updatedPupilIds);
+    Task SaveMyPupilsAsync(UserId userId, IEnumerable<UniquePupilNumber> updatedPupilIds);
 }
