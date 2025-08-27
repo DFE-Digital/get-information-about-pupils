@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.PaginateHandler;
+using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers.Paginate;
+using DfE.GIAP.Web.Features.MyPupils.PresentationState;
 using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
@@ -14,7 +14,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     [Fact]
     public void Handle_Throws_When_PageNumber_Is_LessThan_1()
     {
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: 0);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 0);
 
         PaginatePupilDtosPresentationHandler sut = new();
 
@@ -27,7 +27,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.CreateWithValidPage();
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.CreateWithValidPage();
 
         List<PupilDto> pupils = [];
 
@@ -47,7 +47,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_Pupils_Up_To_PageSize(int pupilDtosCount)
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: 1);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 1);
 
         List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: pupilDtosCount);
 
@@ -65,7 +65,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_PageOfPupils_When_PageNumber_Requested()
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: 2);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 2);
 
         List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
@@ -85,7 +85,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         const int fullPagesOfPupils = 4;
         const int pageRequested = fullPagesOfPupils + 1;
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(page: pageRequested);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: pageRequested);
 
         int inputPupilCount = (DEFAULT_PAGE_SIZE * fullPagesOfPupils) + 3;
         List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: inputPupilCount);

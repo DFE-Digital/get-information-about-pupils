@@ -1,25 +1,17 @@
-﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilSelectionState;
+﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 public static class PupilsSelectionStateTestDoubles
 {
-    public static PupilsSelectionState CreateEmpty()
+    public static MyPupilsPupilSelectionState CreateEmpty()
     {
-        return new PupilsSelectionState();
+        return new MyPupilsPupilSelectionState();
     }
 
-    public static PupilsSelectionState CreateWithPupilUniquePupilNumbers(IEnumerable<string> upns, bool selected = false)
+    public static MyPupilsPupilSelectionState CreateWithSelectionState(IEnumerable<string> upns, bool selected = false)
     {
-        PupilsSelectionState state = new();
-        state.AddPupils(upns);
-        state.UpdatePupilSelectionState(upns, selected);
+        MyPupilsPupilSelectionState state = new();
+        state.UpsertPupilSelectionState(upns, selected);
         return state;
-    }
-
-    public static PupilsSelectionState CreateWithSelectedPupils(int count)
-    {
-        List<string> upns = UniquePupilNumberTestDoubles.Generate(count).Select(t => t.Value).ToList();
-        return CreateWithPupilUniquePupilNumbers(upns, selected: true);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
-using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.OrderHandler;
+using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers.Order;
+using DfE.GIAP.Web.Features.MyPupils.PresentationState;
 using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
@@ -14,7 +14,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Empty_Returns_Unsorted_Pupils()
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey: string.Empty);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey: string.Empty);
 
         List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 10);
 
@@ -32,7 +32,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_UnknownKey_Throws_ArgumentException()
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey: "unknown-sortByKey");
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey: "unknown-sortByKey");
 
         OrderPupilDtosPresentationHandler sut = new();
 
@@ -49,7 +49,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Forename_Returns_SortedPupils_By_Forename(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
         IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
 
@@ -75,7 +75,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Surname_Returns_SortedPupils_By_Surname(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
         IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
 
@@ -100,7 +100,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_DateOfBirth_Returns_SortedPupils_By_DateOfBirth(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
         IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
 
@@ -126,7 +126,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Sex_Returns_SortedPupils_By_Sex(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        PupilsPresentationOptions options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
         IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
 

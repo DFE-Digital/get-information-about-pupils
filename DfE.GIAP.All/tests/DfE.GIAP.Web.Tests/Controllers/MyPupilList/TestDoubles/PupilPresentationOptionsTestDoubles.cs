@@ -1,12 +1,12 @@
-﻿using DfE.GIAP.Web.Controllers.MyPupilList.Services.Presentation.PupilDtoPresentationHandlers.Options;
+﻿using DfE.GIAP.Web.Features.MyPupils.PresentationState;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 public static class PupilPresentationOptionsTestDoubles
 {
-    public static PupilsPresentationOptions Create(string sortKey) => Create(sortKey, It.IsAny<SortDirection>());
+    public static MyPupilsPresentationState Create(string sortKey) => Create(sortKey, It.IsAny<SortDirection>());
 
-    public static PupilsPresentationOptions Create(string sortKey, SortDirection sortDirection)
+    public static MyPupilsPresentationState Create(string sortKey, SortDirection sortDirection)
     {
         return new(
             Page: It.IsAny<int>(),
@@ -14,7 +14,7 @@ public static class PupilPresentationOptionsTestDoubles
             SortDirection: sortDirection);
     }
 
-    public static PupilsPresentationOptions Create(int page)
+    public static MyPupilsPresentationState Create(int page)
     {
         return new(
             Page: page,
@@ -22,6 +22,6 @@ public static class PupilPresentationOptionsTestDoubles
             SortDirection: It.IsAny<SortDirection>());
     }
 
-    public static PupilsPresentationOptions CreateWithValidPage() => Create(page: 1);
+    public static MyPupilsPresentationState CreateWithValidPage() => Create(page: 1);
 
 }
