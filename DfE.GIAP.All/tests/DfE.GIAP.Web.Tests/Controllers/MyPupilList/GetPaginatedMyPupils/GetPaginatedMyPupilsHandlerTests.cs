@@ -39,14 +39,10 @@ public sealed class GetPaginatedMyPupilsHandlerTests
     [Fact]
     public async Task HandleAsync_Calls_UseCaseOnce_And_PresentationHandlerOnce_And_Returns_Result()
     {
+        // Arrange
         UserId userId = UserIdTestDoubles.Default();
-
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
         Mock<IPupilDtosPresentationHandler> mockHandler = new();
-        
-        GetPaginatedMyPupilsHandler sut = new(
-            useCaseMock.Object,
-            mockHandler.Object);
 
         PupilDtos stubPupilDtos = PupilDtoTestDoubles.Generate(count: 20);
         MyPupilsPresentationState stubPupilsPresentationState = MyPupilsPresentationStateTestDoubles.CreateWithValidPage();
@@ -64,12 +60,18 @@ public sealed class GetPaginatedMyPupilsHandlerTests
             .Returns(stubPupilDtos)
             .Verifiable();
 
+        // Act
+        GetPaginatedMyPupilsHandler sut = new(
+            useCaseMock.Object,
+            mockHandler.Object);
+
         PupilDtos response =
             await sut.HandleAsync(
                 new GetPaginatedMyPupilsRequest(
                     UserId: userId.Value,
                     PresentationState: stubPupilsPresentationState));
 
+        // Assert
         Assert.NotNull(response);
         Assert.Equal(response, stubPupilDtos);
 
