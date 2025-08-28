@@ -4,9 +4,7 @@ using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.Search;
-using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
@@ -18,6 +16,7 @@ using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
 using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
+using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -48,9 +47,6 @@ builder.Services
     .AddFeatureFlagConfiguration(configuration);
 
 builder.Services.AddSingleton<IMapper<
-    FurtherEducationLearner, Learner>,
-    FurtherEducationLearnerToViewModelMapper>();
-builder.Services.AddSingleton<IMapper<
     LearnerSearchMappingContext, LearnerTextSearchViewModel>,
     LearnerSearchResponseToViewModelMapper>();
 builder.Services.AddSingleton<IMapper<
@@ -59,7 +55,7 @@ builder.Services.AddSingleton<IMapper<
     Dictionary<string, string[]>,
     IList<FilterRequest>>, FiltersRequestMapper>();
 builder.Services.AddSingleton<IMapper<
-    FurtherEducationLearner, Learner>, FurtherEducationLearnerToViewModelMapper>();
+    Learner, DfE.GIAP.Domain.Search.Learner.Learner>, LearnerToViewModelMapper>();
 builder.Services.AddSingleton<IMapper<
     SearchFacet, FilterData>, FilterResponseMapper>();
 builder.Services.AddSingleton<IMapper<

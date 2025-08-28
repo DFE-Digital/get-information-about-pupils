@@ -5,22 +5,22 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Common.Application.Adapters;
-using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.Common.Infrastructure.Builders;
-using DfE.GIAP.Core.Search.Common.Infrastructure.Options;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Request;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
-using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure;
-using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.Mappers;
-using DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.SearchFilterExpressions;
+using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases;
+using DfE.GIAP.Core.Search.Application.UseCases.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Infrastructure;
+using DfE.GIAP.Core.Search.Infrastructure.Builders;
+using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.Mappers;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
+using DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
-using Dto = DfE.GIAP.Core.Search.FurtherEducation.Infrastructure.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search;
 
@@ -50,13 +50,13 @@ public static class CompositionRoot
 
         // Register core search services and mappers
         services
-            .AddScoped<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>, FurtherEducationSearchServiceAdapter>()
+            .AddScoped<ISearchServiceAdapter<Learners, SearchFacets>, SearchServiceAdapter>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>()
-            .AddSingleton<IMapper<Pageable<SearchResult<Dto.FurtherEducationLearner>>, FurtherEducationLearners>, PageableSearchResultsToFurtherEducationLearnerResultsMapper>()
-            .AddSingleton<IMapper<Dto.FurtherEducationLearner, FurtherEducationLearner>, SearchResultToFurtherEducationLearnerMapper>()
-            .AddSingleton<IMapper<Pageable<SearchResult<Dto.FurtherEducationLearner>>, FurtherEducationLearners>, PageableSearchResultsToFurtherEducationLearnerResultsMapper>()
+            .AddSingleton<IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners>, PageableSearchResultsToLearnerResultsMapper>()
+            .AddSingleton<IMapper<LearnerDataTransferObject, Learner>, SearchResultToLearnerMapper>()
+            .AddSingleton<IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners>, PageableSearchResultsToLearnerResultsMapper>()
             .AddSingleton<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>, AzureFacetResultToEstablishmentFacetsMapper>()
-            .AddScoped<IUseCase<SearchByFirstNameAndOrSurnameRequest, SearchByFirstNameAndOrSurnameResponse>, SearchByFirstNameAndOrSurnameUseCase>()
+            .AddScoped<IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>, SearchByKeyWordsUseCase>()
             .AddScoped<SearchCollectionValuedFilterExpression>()
             .AddScoped<SearchByEqualityFilterExpression>();
 

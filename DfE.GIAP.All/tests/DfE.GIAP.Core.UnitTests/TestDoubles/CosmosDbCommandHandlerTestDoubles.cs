@@ -17,7 +17,7 @@ internal static class CosmosDbCommandHandlerTestDoubles
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(handler)
+            .Returns(handler)
             .Verifiable();
 
         return mockHandler;
@@ -27,7 +27,7 @@ internal static class CosmosDbCommandHandlerTestDoubles
     {
         Mock<ICosmosDbCommandHandler> mockHandler = Default();
 
-        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task> setup = mockHandler
+        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task> setup = (Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task>)mockHandler
             .Setup(h => h.DeleteItemAsync<NewsArticleDto>(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
@@ -52,7 +52,8 @@ internal static class CosmosDbCommandHandlerTestDoubles
     {
         Mock<ICosmosDbCommandHandler> mockHandler = Default();
 
-        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task<NewsArticleDto>> setup = mockHandler
+        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task<NewsArticleDto>> setup =
+            (Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task<NewsArticleDto>>)mockHandler
             .Setup(h => h.ReplaceItemAsync(
                 It.IsAny<NewsArticleDto>(),
                 It.IsAny<string>(),

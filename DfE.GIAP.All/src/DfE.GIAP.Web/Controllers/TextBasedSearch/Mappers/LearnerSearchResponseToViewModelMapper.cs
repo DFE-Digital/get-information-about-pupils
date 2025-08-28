@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
+using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.ViewModels.Search;
 using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
@@ -17,7 +16,7 @@ public sealed class LearnerSearchResponseToViewModelMapper :
     IMapper<LearnerSearchMappingContext, LearnerTextSearchViewModel>
 {
     // Mapper for converting individual FurtherEducationLearner domain entities into UI-facing Learner view models.
-    private readonly IMapper<FurtherEducationLearner, Learner> _furtherEducationLearnerToViewModelMapper;
+    private readonly IMapper<Core.Search.Application.Models.Learner.Learner, Learner> _furtherEducationLearnerToViewModelMapper;
 
     // Mapper for converting facet meta-data (SearchFacets) into structured filter data for the view model.
     private readonly IMapper<SearchFacets, List<FilterData>> _filtersResponseMapper;
@@ -35,7 +34,7 @@ public sealed class LearnerSearchResponseToViewModelMapper :
     /// Thrown if either mapper dependency is null, ensuring safe construction.
     /// </exception>
     public LearnerSearchResponseToViewModelMapper(
-        IMapper<FurtherEducationLearner, Learner> furtherEducationLearnerToViewModelMapper,
+        IMapper<Core.Search.Application.Models.Learner.Learner, Learner> furtherEducationLearnerToViewModelMapper,
         IMapper<SearchFacets, List<FilterData>> filtersResponseMapper)
     {
         _furtherEducationLearnerToViewModelMapper = furtherEducationLearnerToViewModelMapper ??
@@ -52,12 +51,14 @@ public sealed class LearnerSearchResponseToViewModelMapper :
     public LearnerTextSearchViewModel Map(LearnerSearchMappingContext input)
     {
         // Map facet filters from the response into structured filter data for the view model.
-        input.Model.Filters = _filtersResponseMapper.Map(input.Response.FacetedResults);
+        input.Model.Filters =
+            _filtersResponseMapper.Map(input.Response.FacetedResults);
 
         // Map each learner from domain to view model using the injected learner mapper.
-        List<Learner> learners = input.Response.LearnerSearchResults.Learners
-            .Select(_furtherEducationLearnerToViewModelMapper.Map)
-            .ToList();
+        List<Learner> learners =
+            input.Response.LearnerSearchResults.LearnerCollection
+                .Select(_furtherEducationLearnerToViewModelMapper.Map)
+                .ToList();
 
         // Apply result limit if the total exceeds the configured maximum.
         input.Model.Learners =
@@ -87,9 +88,9 @@ public sealed class LearnerSearchResponseToViewModelMapper :
 
         /// <summary>
         /// The search response returned from the application layer.
-        /// Contains learner results, facet filters, and metadata such as total counts.
+        /// Contains learner results, facet filters, and meta-data such as total counts.
         /// </summary>
-        public SearchByFirstNameAndOrSurnameResponse Response { get; init; }
+        public SearchByKeyWordsResponse Response { get; init; }
 
         /// <summary>
         /// Constructs a new <see cref="LearnerSearchMappingContext"/> with required inputs.
@@ -102,7 +103,7 @@ public sealed class LearnerSearchResponseToViewModelMapper :
         /// </exception>
         public LearnerSearchMappingContext(
             LearnerTextSearchViewModel model,
-            SearchByFirstNameAndOrSurnameResponse response)
+            SearchByKeyWordsResponse response)
         {
             Model = model ?? throw new ArgumentNullException(nameof(model));
             Response = response ?? throw new ArgumentNullException(nameof(response));
@@ -117,7 +118,7 @@ public sealed class LearnerSearchResponseToViewModelMapper :
         /// <returns>A new instance of <see cref="LearnerSearchMappingContext"/>.</returns>
         public static LearnerSearchMappingContext Create(
             LearnerTextSearchViewModel model,
-            SearchByFirstNameAndOrSurnameResponse response) =>
+            SearchByKeyWordsResponse response) =>
             new(model, response);
     }
 }

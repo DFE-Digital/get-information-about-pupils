@@ -7,9 +7,9 @@ using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Core.Search.Common.Application.Models;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Request;
-using DfE.GIAP.Core.Search.FurtherEducation.Application.UseCases.SearchByFirstnameAndOrSurname.Response;
+using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
@@ -91,8 +91,8 @@ public class FELearnerTextSearchController :  Controller
     private readonly IMyPupilListService _mplService;
     private readonly AzureAppSettings _appSettings;
     private readonly IUseCase<
-        SearchByFirstNameAndOrSurnameRequest,
-        SearchByFirstNameAndOrSurnameResponse> _furtherEducationTestSearchUseCase;
+        SearchByKeyWordsRequest,
+        SearchByKeyWordsResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         LearnerSearchMappingContext,
@@ -106,8 +106,8 @@ public class FELearnerTextSearchController :  Controller
 
     public FELearnerTextSearchController(
         IUseCase<
-            SearchByFirstNameAndOrSurnameRequest,
-            SearchByFirstNameAndOrSurnameResponse> furtherEducationTestSearchUseCase,
+            SearchByKeyWordsRequest,
+            SearchByKeyWordsResponse> furtherEducationSearchUseCase,
         IMapper<
             LearnerSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
@@ -128,8 +128,8 @@ public class FELearnerTextSearchController :  Controller
             throw new ArgumentNullException(nameof(downloadService));
         _appSettings = azureAppSettings.Value;
 
-        _furtherEducationTestSearchUseCase = furtherEducationTestSearchUseCase ??
-            throw new ArgumentNullException(nameof(furtherEducationTestSearchUseCase));
+        _furtherEducationSearchUseCase = furtherEducationSearchUseCase ??
+            throw new ArgumentNullException(nameof(furtherEducationSearchUseCase));
         _learnerSearchResponseToViewModelMapper = learnerSearchResponseToViewModelMapper ??
             throw new ArgumentNullException(nameof(learnerSearchResponseToViewModelMapper));
         _filtersRequestMapper = filtersRequestMapper ??
@@ -866,9 +866,9 @@ public class FELearnerTextSearchController :  Controller
         IList<FilterRequest> filterRequests =
             _filtersRequestMapper.Map(filtersRequest);
 
-        SearchByFirstNameAndOrSurnameResponse searchResponse =
-            await _furtherEducationTestSearchUseCase.HandleRequestAsync(
-                new SearchByFirstNameAndOrSurnameRequest(
+        SearchByKeyWordsResponse searchResponse =
+            await _furtherEducationSearchUseCase.HandleRequestAsync(
+                new SearchByKeyWordsRequest(
                     searchKeyword: model.SearchText,
                     filterRequests: filterRequests))
             .ConfigureAwait(false);

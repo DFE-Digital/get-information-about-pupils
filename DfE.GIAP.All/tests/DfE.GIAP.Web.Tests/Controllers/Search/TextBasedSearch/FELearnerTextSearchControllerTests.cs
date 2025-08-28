@@ -1,8 +1,13 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Common;
@@ -11,6 +16,7 @@ using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -23,6 +29,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
 {
@@ -40,6 +47,14 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
         private readonly TestSession _mockSession = new TestSession();
         private readonly PaginatedResultsFake _paginatedResultsFake;
         private readonly SearchFiltersFakeData _searchFiltersFake;
+        private readonly IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse> _mockUseCase =
+            Substitute.For<IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>>();
+        private readonly IMapper<LearnerSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
+            Substitute.For<IMapper<LearnerSearchMappingContext, LearnerTextSearchViewModel>>();
+        private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
+            Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
+        private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
+
 
         private AzureAppSettings _mockAppSettings = new AzureAppSettings();
 
@@ -1156,6 +1171,10 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var mockTempData = new TempDataDictionary(httpContextStub, _mockTempDataProvider);
 
             return new FELearnerTextSearchController(
+                _mockUseCase,
+                _mockLearnerSearchResponseToViewModelMapper,
+                _mockFiltersRequestMapper,
+                _mockFiltersRequestBuilder,
                 _mockLogger,
                 _mockPaginatedService,
                 _mockMplService,

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Core.Search.Common.Application.Models;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 
