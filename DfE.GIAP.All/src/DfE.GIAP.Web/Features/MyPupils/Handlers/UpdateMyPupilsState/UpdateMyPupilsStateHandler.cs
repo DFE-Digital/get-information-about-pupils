@@ -40,7 +40,7 @@ public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
         GetPaginatedMyPupilsRequest getPaginatedMyPupilsRequest = new(request.UserId, request.CurrentPresentationState);
 
         IEnumerable<string> currentPageOfPupils =
-            (await _getPaginatedMyPupilsHandler.GetPaginatedPupilsAsync(getPaginatedMyPupilsRequest)).Pupils
+            (await _getPaginatedMyPupilsHandler.HandleAsync(getPaginatedMyPupilsRequest)).Pupils
                 .Select(t => t.UniquePupilNumber);
         
         _presentPupilOptionsProvider.SetState(

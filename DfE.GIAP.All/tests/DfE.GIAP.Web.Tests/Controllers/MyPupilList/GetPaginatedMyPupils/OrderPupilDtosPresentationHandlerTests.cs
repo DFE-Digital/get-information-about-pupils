@@ -14,7 +14,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Empty_Returns_Unsorted_Pupils()
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey: string.Empty);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(sortKey: string.Empty);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 10);
 
@@ -32,7 +32,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_UnknownKey_Throws_ArgumentException()
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey: "unknown-sortByKey");
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(sortKey: "unknown-sortByKey");
 
         OrderPupilDtosPresentationHandler sut = new();
 
@@ -49,7 +49,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Forename_Returns_SortedPupils_By_Forename(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
@@ -75,7 +75,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_Surname_Returns_SortedPupils_By_Surname(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
@@ -101,7 +101,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     public void Handle_SortBy_DateOfBirth_Returns_SortedPupils_By_DateOfBirth(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
@@ -128,7 +128,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     {
 
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 

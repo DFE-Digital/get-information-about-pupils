@@ -11,7 +11,7 @@ public sealed class PupilSelectionStateTests
     public void Default_State_Is_Empty()
     {
         // Arrange Act
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
 
         // Assert
         Assert.False(state.IsAllPupilsSelected);
@@ -22,7 +22,7 @@ public sealed class PupilSelectionStateTests
     public void SelectAllPupils_Updates_State_WithEmptyPupils()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
 
         // Act
         state.SelectAllPupils();
@@ -37,7 +37,7 @@ public sealed class PupilSelectionStateTests
     {
         // Arrange
         List<string> upns = UniquePupilNumberTestDoubles.GenerateAsValues(count: 3);
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateWithSelectionState(upns);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateWithSelectionState(upns);
 
         // Act
         state.SelectAllPupils();
@@ -52,7 +52,7 @@ public sealed class PupilSelectionStateTests
     {
         // Arrange
         List<string> upns = UniquePupilNumberTestDoubles.GenerateAsValues(count: 3);
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateWithSelectionState(upns);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateWithSelectionState(upns);
 
         // Act
         state.UpsertPupilWithSelectedState([upns[0]], true);
@@ -71,7 +71,7 @@ public sealed class PupilSelectionStateTests
     {
         // Arrange
         List<string> upns = UniquePupilNumberTestDoubles.GenerateAsValues(count: 3);
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateWithSelectionState(upns);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateWithSelectionState(upns);
 
         // Act
         state.SelectAllPupils();
@@ -88,7 +88,7 @@ public sealed class PupilSelectionStateTests
     {
         // Arrange
         List<string> upns = UniquePupilNumberTestDoubles.GenerateAsValues(count: 2);
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateWithSelectionState(upns);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateWithSelectionState(upns);
         string selectedUpn = upns[0];
         state.UpsertPupilWithSelectedState([selectedUpn], true);
 
@@ -105,7 +105,7 @@ public sealed class PupilSelectionStateTests
     public void AddPupils_WithNullOrEmpty_Throws()
     {
         // Arrange Act
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
 
         // Assert
         Assert.Throws<ArgumentNullException>(() => state.UpsertPupilWithSelectedState(null, It.IsAny<bool>()));
@@ -116,7 +116,7 @@ public sealed class PupilSelectionStateTests
     public void AddPupils_WithInvalidUpn_Throws()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
         List<string> invalidUpns = ["INVALID_UPN"];
 
         // Act & Assert
@@ -129,7 +129,7 @@ public sealed class PupilSelectionStateTests
     public void AddPupils_WithDuplicateUpns_DoesNotThrowOrDuplicate()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
 
         // Act
@@ -145,7 +145,7 @@ public sealed class PupilSelectionStateTests
     public void UpdateSelectionState_OnUnknownUpn_AddsAndMarksSelected()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
 
         // Act
@@ -160,7 +160,7 @@ public sealed class PupilSelectionStateTests
     public void UpdateSelectionState_OnUnknownUpn_AddsAndMarksDeselected()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
 
         // Act
@@ -176,7 +176,7 @@ public sealed class PupilSelectionStateTests
     public void UpdateSelectionState_WithInvalidUpn_Throws()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
         List<string> invalidUpns = ["INVALID-1", "INVALID-2"];
 
         // Act & Assert
@@ -187,7 +187,7 @@ public sealed class PupilSelectionStateTests
     public void UpdateSelectionState_WithMixedValidAndInvalidUpns_Throws()
     {
         // Arrange
-        MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.CreateEmpty();
         string validUpn = UniquePupilNumberTestDoubles.Generate().Value;
         List<string> mixedUpns = [validUpn, "INVALID_UPN"];
 

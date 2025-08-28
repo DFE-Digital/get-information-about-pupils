@@ -4,5 +4,5 @@ namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils;
 
 public interface IGetPaginatedMyPupilsHandler
 {
-    Task<PupilDtos> GetPaginatedPupilsAsync(GetPaginatedMyPupilsRequest request);
+    Task<PupilDtos> HandleAsync(GetPaginatedMyPupilsRequest request);
 }

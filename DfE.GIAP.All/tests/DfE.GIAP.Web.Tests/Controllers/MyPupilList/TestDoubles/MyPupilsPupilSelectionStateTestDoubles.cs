@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
-public static class PupilsSelectionStateTestDoubles
+public static class MyPupilsPupilSelectionStateTestDoubles
 {
     public static MyPupilsPupilSelectionState CreateEmpty()
     {

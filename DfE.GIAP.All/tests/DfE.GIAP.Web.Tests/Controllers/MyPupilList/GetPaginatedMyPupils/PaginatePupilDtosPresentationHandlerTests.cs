@@ -14,7 +14,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     [Fact]
     public void Handle_Throws_When_PageNumber_Is_LessThan_1()
     {
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 0);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(page: 0);
 
         PaginatePupilDtosPresentationHandler sut = new();
 
@@ -27,7 +27,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.CreateWithValidPage();
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.CreateWithValidPage();
 
         PupilDtos pupils = PupilDtos.Empty();
 
@@ -47,7 +47,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_Pupils_Up_To_PageSize(int pupilDtosCount)
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 1);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(page: 1);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: pupilDtosCount);
 
@@ -65,7 +65,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_PageOfPupils_When_PageNumber_Requested()
     {
         // Arrange
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 2);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(page: 2);
 
         PupilDtos pupils = PupilDtoTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
@@ -85,7 +85,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         const int fullPagesOfPupils = 4;
         const int pageRequested = fullPagesOfPupils + 1;
-        MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: pageRequested);
+        MyPupilsPresentationState options = MyPupilsPresentationStateTestDoubles.Create(page: pageRequested);
 
         int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
         PupilDtos pupilDtos = PupilDtoTestDoubles.Generate(count: inputPupilCount);

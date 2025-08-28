@@ -28,7 +28,7 @@ public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
             request.PresentationState);
 
         IEnumerable<PupilDtoWithSelectionStateDecorator> results =
-            (await _getPaginatedMyPupilsQueryHandler.GetPaginatedPupilsAsync(paginatedPupilsRequest))
+            (await _getPaginatedMyPupilsQueryHandler.HandleAsync(paginatedPupilsRequest))
                 .Pupils.Select((pupil)
                     => PupilDtoWithSelectionStateDecorator.Create(
                             pupil,
