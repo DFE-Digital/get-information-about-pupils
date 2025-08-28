@@ -2,8 +2,8 @@
 
 public class BlobStorageOptions
 {
-    public string? AccountName { get; set; }
-    public string? AccountKey { get; set; }
-    public string? ContainerName { get; set; }
-    public string? EndpointSuffix { get; set; } = "core.windows.net"; // Optional override
+    public string AccountName { get; set; } = string.Empty;
+    public string AccountKey { get; set; } = string.Empty;
+    public string ContainerName { get; set; } = string.Empty;
+    public string EndpointSuffix { get; set; } = string.Empty;
 }

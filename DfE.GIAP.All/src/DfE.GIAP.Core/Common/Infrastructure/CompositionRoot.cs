@@ -11,15 +11,20 @@ internal static class CompositionRoot
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton<IBlobStorageProvider>(sp =>
+        services.TryAddSingleton<IBlobStorageService>(sp =>
         {
             BlobStorageOptions options = sp.GetRequiredService<IOptions<BlobStorageOptions>>().Value;
 
             ArgumentException.ThrowIfNullOrWhiteSpace(options.AccountName);
             ArgumentException.ThrowIfNullOrWhiteSpace(options.AccountKey);
             ArgumentException.ThrowIfNullOrWhiteSpace(options.ContainerName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(options.EndpointSuffix);
 
-            string connectionString = $"DefaultEndpointsProtocol=https;AccountName={options.AccountName};AccountKey={options.AccountKey};EndpointSuffix={options.EndpointSuffix}";
+            string connectionString =
+            $"AccountName={options.AccountName};" +
+            $"AccountKey={options.AccountKey};" +
+            $"EndpointSuffix={options.EndpointSuffix};" +
+            $"DefaultEndpointsProtocol=https;";
 
             BlobServiceClient blobServiceClient = new(connectionString);
             return new AzureBlobStorageProvider(blobServiceClient);

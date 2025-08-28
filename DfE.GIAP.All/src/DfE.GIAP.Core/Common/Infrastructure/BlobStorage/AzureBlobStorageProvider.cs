@@ -4,7 +4,7 @@ using Azure.Storage.Blobs.Models;
 
 namespace DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
-public class AzureBlobStorageProvider : IBlobStorageProvider
+public class AzureBlobStorageProvider : IBlobStorageService
 {
     private readonly BlobServiceClient _blobServiceClient;
 
@@ -13,13 +13,13 @@ public class AzureBlobStorageProvider : IBlobStorageProvider
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task<IEnumerable<string>> ListBlobsAsync(string containerName, string directory)
+    public async Task<IEnumerable<string>> ListBlobsByNamesAsync(string containerName, string directory, CancellationToken cancellationToken = default)
     {
         BlobContainerClient containerClient = _blobServiceClient
             .GetBlobContainerClient(containerName);
-        List<string> blobNames = new();
 
-        await foreach (BlobItem blob in containerClient.GetBlobsAsync(prefix: directory))
+        List<string> blobNames = new();
+        await foreach (BlobItem blob in containerClient.GetBlobsAsync(prefix: directory, cancellationToken: cancellationToken))
         {
             blobNames.Add(blob.Name);
         }
@@ -27,15 +27,15 @@ public class AzureBlobStorageProvider : IBlobStorageProvider
         return blobNames;
     }
 
-    public async Task<IEnumerable<BlobItemInfo>> ListBlobsWithMetadataAsync(string containerName, string directory)
+    public async Task<IEnumerable<BlobItemMetadata>> ListBlobsWithMetadataAsync(string containerName, string directory, CancellationToken cancellationToken = default)
     {
         BlobContainerClient containerClient = _blobServiceClient
             .GetBlobContainerClient(containerName);
 
-        List<BlobItemInfo> result = new();
-        await foreach (BlobItem blob in containerClient.GetBlobsAsync(prefix: directory))
+        List<BlobItemMetadata> result = new();
+        await foreach (BlobItem blob in containerClient.GetBlobsAsync(prefix: directory, cancellationToken: cancellationToken))
         {
-            result.Add(new BlobItemInfo
+            result.Add(new BlobItemMetadata
             {
                 Name = blob.Name,
                 LastModified = blob.Properties.LastModified,
@@ -47,22 +47,25 @@ public class AzureBlobStorageProvider : IBlobStorageProvider
         return result;
     }
 
-    public async Task<bool> ExistsAsync(string containerName, string blobPath)
+    public async Task<bool> BlobExistsAsync(string containerName, string blobPath, CancellationToken cancellationToken = default)
     {
         BlobClient blobClient = _blobServiceClient
             .GetBlobContainerClient(containerName)
             .GetBlobClient(blobPath);
 
-        return await blobClient.ExistsAsync();
+        return await blobClient.ExistsAsync(cancellationToken);
     }
 
-    public async Task<Stream> DownloadAsync(string containerName, string blobPath)
+    public async Task<Stream> DownloadBlobAsStreamAsync(string containerName, string blobPath, CancellationToken cancellationToken = default)
     {
         BlobClient blobClient = _blobServiceClient
             .GetBlobContainerClient(containerName)
             .GetBlobClient(blobPath);
 
-        Response<BlobDownloadInfo> response = await blobClient.DownloadAsync();
+        if (!await BlobExistsAsync(containerName, blobPath, cancellationToken))
+            throw new FileNotFoundException($"Blob '{blobPath}' not found in container '{containerName}'.");
+
+        Response<BlobDownloadInfo> response = await blobClient.DownloadAsync(cancellationToken);
         return response.Value.Content;
     }
 }

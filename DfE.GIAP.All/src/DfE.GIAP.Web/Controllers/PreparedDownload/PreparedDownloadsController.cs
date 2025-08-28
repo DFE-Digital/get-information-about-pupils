@@ -17,7 +17,7 @@ public class PreparedDownloadsController : Controller
     private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
 
     public PreparedDownloadsController(
-         IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
+        IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
         IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase)
     {
         ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);

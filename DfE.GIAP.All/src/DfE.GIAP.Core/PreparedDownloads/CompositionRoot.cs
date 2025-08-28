@@ -20,8 +20,7 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
         return services
-            .RegisterApplicationUseCases()
-            .RegisterApplicationPathContext();
+            .RegisterApplicationUseCases();
     }
 
     private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
@@ -29,12 +28,6 @@ public static class CompositionRoot
         return services
             .AddScoped<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>, DownloadPreparedFileUseCase>()
             .AddScoped<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>, GetPreparedFilesUseCase>();
-    }
-
-    private static IServiceCollection RegisterApplicationPathContext(this IServiceCollection services)
-    {
-        return services
-            .AddScoped<IBlobStoragePathResolver, AzureBlobStoragePathResolver>();
     }
 
     // Infrastructure 
