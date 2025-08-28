@@ -5,6 +5,5 @@ public enum OrganisationScope
     MultiAcademyTrust,
     SingleAcademyTrust,
     Establishment,
-    AllUsers,
-    Unknown
+    AllUsers
 }

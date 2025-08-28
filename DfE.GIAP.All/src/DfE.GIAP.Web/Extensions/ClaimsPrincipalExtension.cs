@@ -251,6 +251,6 @@ public static class ClaimsPrincipalExtension
         if (principal.IsOrganisationEstablishment())
             return OrganisationScope.Establishment;
 
-        return OrganisationScope.Unknown;
+        throw new NotImplementedException();
     }
 }
