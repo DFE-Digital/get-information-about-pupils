@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using Fare;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
@@ -27,4 +28,5 @@ public static class UniquePupilNumberTestDoubles
         return upns;
     }
 
+    public static List<string> GenerateAsValues(int count) => Generate(count).Select(t => t.Value).ToList();
 }
