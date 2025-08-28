@@ -53,18 +53,18 @@ public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
     }
 
     private void UpdatePupilSelectionState(
-        SelectAllStateRequestDto selectAllState,
+        MyPupilsFormSelectAllStateRequestDto selectAllState,
         IEnumerable<string> currentPageOfPupils,
         IEnumerable<string> selectedPupilsOnPage)
     {
         MyPupilsPupilSelectionState currentState = _pupilSelectionStateProvider.GetState();
 
-        if (selectAllState == SelectAllStateRequestDto.SelectAll)
+        if (selectAllState == MyPupilsFormSelectAllStateRequestDto.SelectAll)
         {
             currentState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: true);
             currentState.SelectAllPupils();
         }
-        else if (selectAllState == SelectAllStateRequestDto.DeselectAll)
+        else if (selectAllState == MyPupilsFormSelectAllStateRequestDto.DeselectAll)
         {
             currentState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: false);
             currentState.DeselectAllPupils();
