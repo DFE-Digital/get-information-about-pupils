@@ -1,12 +1,12 @@
 ﻿using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
+using DfE.GIAP.Core.MyPupils.Application.Search;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
@@ -43,11 +43,11 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
             IEnumerable<DecoratedSearchIndexDto> npdResults =
                 (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", searchOptions))
-                    .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase);
+                    .DecorateDtoWithPupilType(PupilType.NationalPupilDatabase);
 
             IEnumerable<DecoratedSearchIndexDto> ppResults =
                 (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", searchOptions))
-                    .ToDecoratedSearchIndexDto(PupilType.PupilPremium);
+                    .DecorateDtoWithPupilType(PupilType.PupilPremium);
 
             allResults.AddRange(npdResults);
             allResults.AddRange(ppResults);
@@ -90,12 +90,4 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
 
         return options;
     }
-}
-
-internal static class AzureSearchIndexDtoExtensions
-{
-    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(
-        this IEnumerable<AzureIndexEntity> azureIndexDtos,
-        PupilType pupilType)
-            => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
 }

@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;
+namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.GetPaginatedMyPupils;
 public sealed class PaginatePupilDtosPresentationHandlerTests
 {
     private const int DEFAULT_PAGE_SIZE = 20;
@@ -18,7 +18,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
 
         PaginatePupilDtosPresentationHandler sut = new();
 
-        Action act = () => sut.Handle(It.IsAny<IEnumerable<PupilDto>>(), options);
+        Action act = () => sut.Handle(It.IsAny<PupilDtos>(), options);
 
         Assert.Throws<ArgumentOutOfRangeException>(act);
     }
@@ -29,16 +29,16 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.CreateWithValidPage();
 
-        List<PupilDto> pupils = [];
+        PupilDtos pupils = PupilDtos.Empty();
 
         PaginatePupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
         // Assert
-        Assert.NotNull(response);
-        Assert.Empty(response);
+        Assert.NotNull(response.Pupils);
+        Assert.Empty(response.Pupils);
     }
 
     [Theory]
@@ -49,16 +49,16 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 1);
 
-        List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: pupilDtosCount);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: pupilDtosCount);
 
         PaginatePupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
         // Assert
-        Assert.NotNull(response);
-        Assert.Equal(pupils, response);
+        Assert.NotNull(response.Pupils);
+        Assert.Equal(pupils.Pupils, response.Pupils);
     }
 
     [Fact]
@@ -67,16 +67,16 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: 2);
 
-        List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
         PaginatePupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
         // Assert
-        Assert.NotNull(response);
-        Assert.Empty(response);
+        Assert.NotNull(response.Pupils);
+        Assert.Empty(response.Pupils);
     }
 
     [Fact]
@@ -87,17 +87,17 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         const int pageRequested = fullPagesOfPupils + 1;
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(page: pageRequested);
 
-        int inputPupilCount = (DEFAULT_PAGE_SIZE * fullPagesOfPupils) + 3;
-        List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: inputPupilCount);
+        int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
+        PupilDtos pupilDtos = PupilDtoTestDoubles.Generate(count: inputPupilCount);
 
         PaginatePupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupilDtos, options);
 
         // Assert
-        IEnumerable<PupilDto> expectedPagedPupils = pupils.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
-        Assert.Equal(3, response.Count());
-        Assert.Equal(response, expectedPagedPupils);
+        IEnumerable<PupilDto> expectedPagedPupils = pupilDtos.Pupils.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
+        Assert.Equal(3, response.Count);
+        Assert.Equal(response.Pupils, expectedPagedPupils);
     }
 }

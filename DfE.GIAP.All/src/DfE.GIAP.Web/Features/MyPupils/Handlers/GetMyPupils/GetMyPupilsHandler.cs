@@ -23,14 +23,16 @@ public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 
     public async Task<PupilsViewModel> HandleAsync(GetMyPupilsRequest request)
     {
-        GetPaginatedMyPupilsRequest paginatedMyPupilsRequest = new(request.UserId, request.PresentationState);
+        GetPaginatedMyPupilsRequest paginatedPupilsRequest = new(
+            request.UserId,
+            request.PresentationState);
 
         IEnumerable<PupilDtoWithSelectionStateDecorator> results =
-            (await _getPaginatedMyPupilsQueryHandler.GetPaginatedPupilsAsync(paginatedMyPupilsRequest))
-                .Select((pupil)
+            (await _getPaginatedMyPupilsQueryHandler.GetPaginatedPupilsAsync(paginatedPupilsRequest))
+                .Pupils.Select((pupil)
                     => PupilDtoWithSelectionStateDecorator.Create(
-                        pupil,
-                        isSelected: request.SelectionState.IsPupilSelected(pupil.UniquePupilNumber)));
+                            pupil,
+                            isSelected: request.SelectionState.IsPupilSelected(pupil.UniquePupilNumber)));
 
         IEnumerable<PupilViewModel> pupils = results.Select(_mapper.Map);
 

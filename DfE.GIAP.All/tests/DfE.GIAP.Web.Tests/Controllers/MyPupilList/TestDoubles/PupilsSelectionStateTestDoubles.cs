@@ -11,7 +11,7 @@ public static class PupilsSelectionStateTestDoubles
     public static MyPupilsPupilSelectionState CreateWithSelectionState(IEnumerable<string> upns, bool selected = false)
     {
         MyPupilsPupilSelectionState state = new();
-        state.UpsertPupilSelectionState(upns, selected);
+        state.UpsertPupilWithSelectedState(upns, selected);
         return state;
     }
 }

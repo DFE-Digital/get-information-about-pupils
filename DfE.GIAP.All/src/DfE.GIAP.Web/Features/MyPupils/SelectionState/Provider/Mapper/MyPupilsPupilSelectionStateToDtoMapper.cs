@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider.DataTransferObjects;
 
 namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider.Mapper;
@@ -8,13 +7,16 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
 {
     public MyPupilsPupilSelectionStateDto Map(MyPupilsPupilSelectionState source)
     {
+#pragma warning disable S3358 // Ternary operators should not be nested
         return new MyPupilsPupilSelectionStateDto
         {
             PupilUpnToSelectedMap = source.GetPupilsWithSelectionState().ToDictionary(),
-            State = source.IsAllPupilsSelected ?
+            State =
+            source.IsAllPupilsSelected ?
                 PupilSelectionModeDto.SelectAll :
-                    source.IsAllPupilsDeselected ?
+                source.IsAllPupilsDeselected ?
                     PupilSelectionModeDto.DeselectAll : PupilSelectionModeDto.NotSpecified
         };
+#pragma warning restore S3358 // Ternary operators should not be nested
     }
 }

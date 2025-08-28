@@ -55,8 +55,8 @@ public sealed class PupilSelectionStateTests
         MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateWithSelectionState(upns);
 
         // Act
-        state.UpsertPupilSelectionState([upns[0]], true);
-        state.UpsertPupilSelectionState([upns[1]], false);
+        state.UpsertPupilWithSelectedState([upns[0]], true);
+        state.UpsertPupilWithSelectedState([upns[1]], false);
 
         // Assert
         Assert.True(state.IsPupilSelected(upns[0]));
@@ -90,7 +90,7 @@ public sealed class PupilSelectionStateTests
         List<string> upns = UniquePupilNumberTestDoubles.GenerateAsValues(count: 2);
         MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateWithSelectionState(upns);
         string selectedUpn = upns[0];
-        state.UpsertPupilSelectionState([selectedUpn], true);
+        state.UpsertPupilWithSelectedState([selectedUpn], true);
 
         // Act
         state.ResetState();
@@ -108,8 +108,8 @@ public sealed class PupilSelectionStateTests
         MyPupilsPupilSelectionState state = PupilsSelectionStateTestDoubles.CreateEmpty();
 
         // Assert
-        Assert.Throws<ArgumentNullException>(() => state.UpsertPupilSelectionState(null, It.IsAny<bool>()));
-        Assert.Throws<ArgumentException>(() => state.UpsertPupilSelectionState([], It.IsAny<bool>()));
+        Assert.Throws<ArgumentNullException>(() => state.UpsertPupilWithSelectedState(null, It.IsAny<bool>()));
+        Assert.Throws<ArgumentException>(() => state.UpsertPupilWithSelectedState([], It.IsAny<bool>()));
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public sealed class PupilSelectionStateTests
         List<string> invalidUpns = ["INVALID_UPN"];
 
         // Act & Assert
-        ArgumentException ex = Assert.Throws<ArgumentException>(() => state.UpsertPupilSelectionState(invalidUpns, It.IsAny<bool>()));
+        ArgumentException ex = Assert.Throws<ArgumentException>(() => state.UpsertPupilWithSelectedState(invalidUpns, It.IsAny<bool>()));
         Assert.Equal("Invalid UPN requested", ex.Message);
     }
 
@@ -133,7 +133,7 @@ public sealed class PupilSelectionStateTests
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
 
         // Act
-        state.UpsertPupilSelectionState([upn, upn], true);
+        state.UpsertPupilWithSelectedState([upn, upn], true);
 
         // Assert
         Assert.Single(state.GetPupilsWithSelectionState());
@@ -149,7 +149,7 @@ public sealed class PupilSelectionStateTests
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
 
         // Act
-        state.UpsertPupilSelectionState([upn], true);
+        state.UpsertPupilWithSelectedState([upn], true);
 
         // Assert
         Assert.True(state.IsPupilSelected(upn));
@@ -164,7 +164,7 @@ public sealed class PupilSelectionStateTests
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
 
         // Act
-        state.UpsertPupilSelectionState([upn], false);
+        state.UpsertPupilWithSelectedState([upn], false);
 
 
         // Assert
@@ -180,7 +180,7 @@ public sealed class PupilSelectionStateTests
         List<string> invalidUpns = ["INVALID-1", "INVALID-2"];
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => state.UpsertPupilSelectionState(invalidUpns, It.IsAny<bool>()));
+        Assert.Throws<ArgumentException>(() => state.UpsertPupilWithSelectedState(invalidUpns, It.IsAny<bool>()));
     }
 
     [Fact]
@@ -192,6 +192,6 @@ public sealed class PupilSelectionStateTests
         List<string> mixedUpns = [validUpn, "INVALID_UPN"];
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => state.UpsertPupilSelectionState(mixedUpns, It.IsAny<bool>()));
+        Assert.Throws<ArgumentException>(() => state.UpsertPupilWithSelectedState(mixedUpns, It.IsAny<bool>()));
     }
 }

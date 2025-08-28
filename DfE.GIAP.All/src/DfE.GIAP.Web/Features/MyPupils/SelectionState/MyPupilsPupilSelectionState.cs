@@ -37,7 +37,9 @@ public sealed class MyPupilsPupilSelectionState
             return;
         }
 
-        UpsertPupilSelectionState(_pupilsToSelectedMap.Keys, isSelected: true);
+        UpsertPupilWithSelectedState(
+            _pupilsToSelectedMap.Keys,
+            isSelected: true);
     }
 
     public void DeselectAllPupils()
@@ -48,10 +50,13 @@ public sealed class MyPupilsPupilSelectionState
         {
             return;
         }
-        UpsertPupilSelectionState(_pupilsToSelectedMap.Keys, isSelected: false);
+
+        UpsertPupilWithSelectedState(
+            _pupilsToSelectedMap.Keys,
+            isSelected: false);
     }
 
-    public void UpsertPupilSelectionState(IEnumerable<string> upns, bool isSelected)
+    public void UpsertPupilWithSelectedState(IEnumerable<string> upns, bool isSelected)
     {
         ArgumentNullException.ThrowIfNull(upns);
 

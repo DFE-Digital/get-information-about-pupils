@@ -1,5 +1,5 @@
 ﻿using Azure.Search.Documents;
-namespace DfE.GIAP.Core.MyPupils.Application.Search.Provider;
+namespace DfE.GIAP.Core.MyPupils.Application.Search;
 public interface ISearchClientProvider
 {
     Task<List<TResult>> InvokeSearchAsync<TResult>(

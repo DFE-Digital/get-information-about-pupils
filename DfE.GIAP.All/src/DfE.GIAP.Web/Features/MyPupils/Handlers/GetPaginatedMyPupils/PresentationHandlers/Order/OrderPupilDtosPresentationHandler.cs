@@ -4,7 +4,7 @@ using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationH
 using DfE.GIAP.Web.Features.MyPupils.PresentationState;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers.Order;
-public sealed class OrderPupilDtosPresentationHandler : IPupilPresentationHandler
+public sealed class OrderPupilDtosPresentationHandler : IPupilDtosPresentationHandler
 {
     private static readonly Dictionary<string, Expression<Func<PupilDto, IComparable>>> s_sortKeyToExpression = new()
         {
@@ -14,8 +14,8 @@ public sealed class OrderPupilDtosPresentationHandler : IPupilPresentationHandle
             { "sex", (t) => t.Sex }
         };
 
-    public IEnumerable<PupilDto> Handle(
-        IEnumerable<PupilDto> pupils,
+    public PupilDtos Handle(
+        PupilDtos pupils,
         MyPupilsPresentationState options)
     {
         if (string.IsNullOrEmpty(options.SortBy))
@@ -29,8 +29,11 @@ public sealed class OrderPupilDtosPresentationHandler : IPupilPresentationHandle
             throw new ArgumentException($"Unable to find sortable expression for {options.SortBy}");
         }
 
-        return options.SortDirection == SortDirection.Ascending ?
-                    pupils.AsQueryable().OrderBy(expression) :
-                    pupils.AsQueryable().OrderByDescending(expression);
+        IEnumerable<PupilDto> outputPupils
+            = options.SortDirection == SortDirection.Ascending ?
+                    pupils.Pupils.AsQueryable().OrderBy(expression) :
+                    pupils.Pupils.AsQueryable().OrderByDescending(expression);
+
+        return PupilDtos.Create(outputPupils);
     }
 }

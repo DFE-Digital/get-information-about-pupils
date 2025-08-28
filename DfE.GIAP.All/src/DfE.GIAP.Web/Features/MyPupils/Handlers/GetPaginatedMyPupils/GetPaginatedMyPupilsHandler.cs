@@ -8,27 +8,23 @@ namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils;
 public sealed class GetPaginatedMyPupilsHandler : IGetPaginatedMyPupilsHandler
 {
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _useCase;
-    private readonly IEnumerable<IPupilPresentationHandler> _presentationHandler;
+    private readonly IPupilDtosPresentationHandler _presentationHandler;
 
     public GetPaginatedMyPupilsHandler(
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> useCase,
-        IEnumerable<IPupilPresentationHandler> presentationHandler)
+        IPupilDtosPresentationHandler presentationHandler)
     {
         _presentationHandler = presentationHandler;
         _useCase = useCase;
     }
 
-    public async Task<IEnumerable<PupilDto>> GetPaginatedPupilsAsync(GetPaginatedMyPupilsRequest request)
+    public async Task<PupilDtos> GetPaginatedPupilsAsync(GetPaginatedMyPupilsRequest request)
     {
         GetMyPupilsRequest getPupilsRequest = new(request.UserId);
         GetMyPupilsResponse response = await _useCase.HandleRequestAsync(getPupilsRequest);
 
-        IEnumerable<PupilDto> results =
-            _presentationHandler.Aggregate(
-                seed: response.Pupils,
-                func: (currentPupils, handler) => handler.Handle(currentPupils, request.PresentationState));
+        PupilDtos results = _presentationHandler.Handle(response.PupilDtos, request.PresentationState);
 
         return results;
     }
 }
-

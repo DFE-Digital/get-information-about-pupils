@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;
+namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.GetPaginatedMyPupils;
 
 public sealed class OrderPupilDtosPresentationHandlerTests
 {
@@ -16,12 +16,12 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey: string.Empty);
 
-        List<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 10);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 10);
 
         OrderPupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
         // Assert
         Assert.NotNull(response);
@@ -37,7 +37,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         OrderPupilDtosPresentationHandler sut = new();
 
         // Act Assert
-        Action act = () => sut.Handle(It.IsAny<IEnumerable<PupilDto>>(), options);
+        Action act = () => sut.Handle(It.IsAny<PupilDtos>(), options);
         Assert.Throws<ArgumentException>(act);
     }
 
@@ -51,20 +51,20 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
-        IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
         OrderPupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
         // Assert
         IEnumerable<PupilDto> expected =
             sortDirection == SortDirection.Ascending ?
-                pupils.OrderBy(t => t.Forename) :
-                pupils.OrderByDescending(t => t.Forename);
+                pupils.Pupils.OrderBy(t => t.Forename) :
+                pupils.Pupils.OrderByDescending(t => t.Forename);
 
-        Assert.Equal(expected, response);
+        Assert.Equal(expected, response.Pupils);
     }
 
     [Theory]
@@ -77,19 +77,20 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
-        IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
         OrderPupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
+
         IEnumerable<PupilDto> expected =
             sortDirection == SortDirection.Ascending ?
-                pupils.OrderBy(t => t.Surname) :
-                pupils.OrderByDescending(t => t.Surname);
+                pupils.Pupils.OrderBy(t => t.Surname) :
+                pupils.Pupils.OrderByDescending(t => t.Surname);
 
         // Assert
-        Assert.Equal(expected, response);
+        Assert.Equal(expected, response.Pupils);
     }
 
     [Theory]
@@ -102,20 +103,20 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
-        IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
         OrderPupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
-        // Assert
         IEnumerable<PupilDto> expected =
             sortDirection == SortDirection.Ascending ?
-                pupils.OrderBy(t => t.ParseDateOfBirth()) :
-                pupils.OrderByDescending(t => t.ParseDateOfBirth());
+                pupils.Pupils.OrderBy(t => t.ParseDateOfBirth()) :
+                pupils.Pupils.OrderByDescending(t => t.ParseDateOfBirth());
 
-        Assert.Equal(expected, response);
+        // Assert
+        Assert.Equal(expected, response.Pupils);
     }
 
     [Theory]
@@ -125,22 +126,22 @@ public sealed class OrderPupilDtosPresentationHandlerTests
     [InlineData("seX", SortDirection.Descending)]
     public void Handle_SortBy_Sex_Returns_SortedPupils_By_Sex(string sortKey, SortDirection sortDirection)
     {
+
         // Arrange
         MyPupilsPresentationState options = PupilPresentationOptionsTestDoubles.Create(sortKey, sortDirection);
 
-        IEnumerable<PupilDto> pupils = PupilDtoTestDoubles.Generate(count: 20);
+        PupilDtos pupils = PupilDtoTestDoubles.Generate(count: 20);
 
         OrderPupilDtosPresentationHandler sut = new();
 
         // Act
-        IEnumerable<PupilDto> response = sut.Handle(pupils, options);
+        PupilDtos response = sut.Handle(pupils, options);
 
-        // Assert
         IEnumerable<PupilDto> expected =
             sortDirection == SortDirection.Ascending ?
-                pupils.OrderBy(t => t.Sex) :
-                pupils.OrderByDescending(t => t.Sex);
-
-        Assert.Equal(expected, response);
+                pupils.Pupils.OrderBy(t => t.Sex) :
+                pupils.Pupils.OrderByDescending(t => t.Sex);
+        // Assert
+        Assert.Equal(expected, response.Pupils);
     }
 }

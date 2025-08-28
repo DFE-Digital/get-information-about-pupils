@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.Search;
 public sealed class SearchIndexOptionExtensionsTests

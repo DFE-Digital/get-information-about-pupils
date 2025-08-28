@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Features.MyPupils.PresentationState;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers;
 
-public interface IPupilPresentationHandler
+public interface IPupilDtosPresentationHandler
 {
-    IEnumerable<PupilDto> Handle(IEnumerable<PupilDto> pupils, MyPupilsPresentationState options);
+    PupilDtos Handle(PupilDtos pupils, MyPupilsPresentationState state);
 }

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;

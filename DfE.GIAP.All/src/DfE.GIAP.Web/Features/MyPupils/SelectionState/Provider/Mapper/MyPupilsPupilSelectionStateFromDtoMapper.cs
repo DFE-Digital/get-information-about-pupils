@@ -23,10 +23,10 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
             case PupilSelectionModeDto.NotSpecified:
             default:
                 IEnumerable<string> selectedPupils = state.GetPupilsWithSelectionState().Where(t => t.Value).Select(t => t.Key);
-                state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
+                state.UpsertPupilWithSelectedState(selectedPupils, isSelected: true);
 
                 IEnumerable<string> notSelectedPupils = state.GetPupilsWithSelectionState().Where(t => !t.Value).Select(t => t.Key);
-                state.UpsertPupilSelectionState(notSelectedPupils, isSelected: false);
+                state.UpsertPupilWithSelectedState(notSelectedPupils, isSelected: false);
                 break;
         }
 

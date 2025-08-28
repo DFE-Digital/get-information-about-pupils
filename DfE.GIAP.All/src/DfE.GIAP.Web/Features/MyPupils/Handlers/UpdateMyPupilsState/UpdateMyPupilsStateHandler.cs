@@ -40,7 +40,7 @@ public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
         GetPaginatedMyPupilsRequest getPaginatedMyPupilsRequest = new(request.UserId, request.CurrentPresentationState);
 
         IEnumerable<string> currentPageOfPupils =
-            (await _getPaginatedMyPupilsHandler.GetPaginatedPupilsAsync(getPaginatedMyPupilsRequest))
+            (await _getPaginatedMyPupilsHandler.GetPaginatedPupilsAsync(getPaginatedMyPupilsRequest)).Pupils
                 .Select(t => t.UniquePupilNumber);
         
         _presentPupilOptionsProvider.SetState(
@@ -61,20 +61,20 @@ public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
 
         if (selectAllState == SelectAllStateRequestDto.SelectAll)
         {
-            currentState.UpsertPupilSelectionState(currentPageOfPupils, isSelected: true);
+            currentState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: true);
             currentState.SelectAllPupils();
         }
         else if (selectAllState == SelectAllStateRequestDto.DeselectAll)
         {
-            currentState.UpsertPupilSelectionState(currentPageOfPupils, isSelected: false);
+            currentState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: false);
             currentState.DeselectAllPupils();
         }
         else
         {
             IEnumerable<string> deselectedOnPage = currentPageOfPupils.Except(selectedPupilsOnPage);
 
-            currentState.UpsertPupilSelectionState(selectedPupilsOnPage, isSelected: true);
-            currentState.UpsertPupilSelectionState(deselectedOnPage, isSelected: false);
+            currentState.UpsertPupilWithSelectedState(selectedPupilsOnPage, isSelected: true);
+            currentState.UpsertPupilWithSelectedState(deselectedOnPage, isSelected: false);
         }
 
         _pupilSelectionStateProvider.SetState(currentState);
