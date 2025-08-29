@@ -2,6 +2,8 @@
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.LoggingEvent;
 using DfE.GIAP.Domain.Models.User;
@@ -10,6 +12,7 @@ using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Helpers.DSIUser;
+using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -173,6 +176,15 @@ public static class AuthenticationExtensions
         ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
 
         await UpdateUserProfile(userApiClient, authenticatedUserInfo, sessionId);
+
+        IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> useCase = ctx.HttpContext.RequestServices.GetService<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>>();
+        CheckNewsArticleUpdateResponse checkNewsArticleUpdatesResponse = await useCase
+                .HandleRequestAsync(new CheckNewsArticleUpdatesRequest(authenticatedUserInfo.UserId));
+
+        ISessionProvider sessionProvider = ctx.HttpContext.RequestServices.GetService<ISessionProvider>();
+        if (checkNewsArticleUpdatesResponse.HasUpdates)
+            sessionProvider.SetSessionValue<bool>(SessionKeys.ShowNewsBannerKey, true);
+
 
         LoggingEvent loggingEvent = CreateLoggingEvent(userId, userEmail, userGivenName, userSurname, ctx.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, userOrganisation, organisationId, authenticatedUserInfo, sessionId);
         await userApiClient.CreateLoggingEvent(loggingEvent);

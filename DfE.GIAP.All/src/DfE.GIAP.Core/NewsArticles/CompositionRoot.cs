@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
@@ -37,6 +38,7 @@ public static class CompositionRoot
         return services
             .AddScoped<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>, GetNewsArticlesUseCase>()
             .AddScoped<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>, GetNewsArticleByIdUseCase>()
+            .AddScoped<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>, CheckNewsArticleUpdatesUseCase>()
             .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeleteNewsArticleRequest>, DeleteNewsArticleUseCase>()
             .AddScoped<IUseCaseRequestOnly<UpdateNewsArticleRequest>, UpdateNewsArticleUseCase>();
@@ -53,8 +55,9 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         return services
-            .AddScoped<INewsArticleReadRepository, CosmosNewsArticleReadRepository>()
-            .AddScoped<INewsArticleWriteRepository, CosmosNewsArticleWriteRepository>();
+            .AddTemporaryCosmosClient()
+            .AddScoped<INewsArticleReadOnlyRepository, CosmosDbNewsArticleReadOnlyRepository>()
+            .AddScoped<INewsArticleWriteOnlyRepository, CosmosDbNewsArticleWriteOnlyRepository>();
     }
 
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)

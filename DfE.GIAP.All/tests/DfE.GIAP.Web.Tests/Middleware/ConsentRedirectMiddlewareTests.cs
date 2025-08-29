@@ -35,7 +35,7 @@ public class ConsentRedirectMiddlewareTests
         // Arrange
         var context = CreateContext(true);
         var sessionProvider = Substitute.For<ISessionProvider>();
-        sessionProvider.GetSessionValue(SessionKeys.ConsentKey).Returns(SessionKeys.ConsentValue);
+        sessionProvider.GetSessionValueOrDefault<string>(SessionKeys.ConsentKey).Returns(SessionKeys.ConsentValue);
         var middleware = CreateMiddleware(sessionProvider);
 
         // Act
