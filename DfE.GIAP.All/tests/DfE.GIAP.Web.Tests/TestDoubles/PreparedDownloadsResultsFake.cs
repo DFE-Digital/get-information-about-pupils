@@ -5,15 +5,17 @@ using System.Net.Mime;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 
-public class PreparedDownloadsResultsFake
+namespace DfE.GIAP.Web.Tests.TestDoubles
 {
-    public PrePreparedDownloadsViewModel GetGetPrePreparedDownloadsDetails()
+    public class PreparedDownloadsResultsFake
     {
-        return new PrePreparedDownloadsViewModel() {PrePreparedDownloadList = GetPrePreparedDownloadsList() };
-    }
-    public List<PrePreparedDownloads> GetPrePreparedDownloadsList()
-    {
-        var list = new List<PrePreparedDownloads>();
+        public PreparedDownloadsViewModel GetGetPrePreparedDownloadsDetails()
+        {
+            return new PreparedDownloadsViewModel() {PreparedDownloadFiles = GetPrePreparedDownloadsList() };
+        }
+        public List<PrePreparedDownloads> GetPrePreparedDownloadsList()
+        {
+            var list = new List<PrePreparedDownloads>();
 
         list.Add(new PrePreparedDownloads() { Name = "PrePrepare downlaod file Name", FileName = "PrePreparedDownloadTest File Name", Date = Convert.ToDateTime("08/06/2030"), Link = "PrePreparedDownload Test Link" });
 

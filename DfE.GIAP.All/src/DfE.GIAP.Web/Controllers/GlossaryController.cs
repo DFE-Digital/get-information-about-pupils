@@ -1,52 +1,69 @@
-﻿using DfE.GIAP.Service.Download;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
+using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
+using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
-using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Middleware;
-using DfE.GIAP.Core.Models.Glossary;
 
 namespace DfE.GIAP.Web.Controllers;
 
 public class GlossaryController : Controller
 {
-    private readonly IDownloadService _downloadService;
+    private readonly IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> _getPrePreparedFilesUseCase;
+    private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
 
-    public GlossaryController(IDownloadService downloadService)
+    public GlossaryController(
+        IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
+        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase)
     {
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
+        ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);
+        _getPrePreparedFilesUseCase = getPrePreparedFilesUseCase;
+
+        ArgumentNullException.ThrowIfNull(downloadPrePreparedFileUseCase);
+        _downloadPrePreparedFileUseCase = downloadPrePreparedFileUseCase;
     }
 
     [AllowWithoutConsent]
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        IEnumerable<MetaDataDownload> downloadList = await _downloadService
-            .GetGlossaryMetaDataDownloadList()
-            .ConfigureAwait(false);
+        BlobStoragePathContext pathContext = BlobStoragePathContext
+             .Create(OrganisationScope.AllUsers);
+
+        GetPreparedFilesRequest request = new(pathContext);
+        GetPreparedFilesResponse response = await _getPrePreparedFilesUseCase
+            .HandleRequestAsync(request);
 
         GlossaryViewModel model = new()
         {
-            MetaDataDownloadList = downloadList.OrderByDescending(x => x.Date).ToList()
+            PreparedMetadataFiles = response.BlobStorageItems
+            .Select(item => new PreparedFileViewModel
+            {
+                Name = item.Name,
+                Date = item.LastModified?.UtcDateTime ?? DateTime.MinValue
+            })
+            .OrderByDescending(x => x.Date)
+            .ToList()
         };
 
         return View(model);
-
     }
 
     [HttpGet]
     public async Task<FileStreamResult> GetBulkUploadTemplateFile(string name)
     {
-        MemoryStream ms = new();
-        await _downloadService
-            .GetGlossaryMetaDataDownFileAsync(name, ms, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
+        BlobStoragePathContext pathContext = BlobStoragePathContext
+            .Create(OrganisationScope.AllUsers);
 
-        ms.Position = 0;
-        return new FileStreamResult(ms, MediaTypeNames.Text.Plain)
+        DownloadPreparedFileRequest request = new(name, pathContext);
+        DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
+            .HandleRequestAsync(request);
+
+        return new FileStreamResult(response.FileStream, response.ContentType)
         {
-            FileDownloadName = name
+            FileDownloadName = response.FileName
         };
     }
 }

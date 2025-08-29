@@ -1,103 +1,76 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.LoggingEvent;
-using DfE.GIAP.Service.Common;
-using DfE.GIAP.Service.PreparedDownloads;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
+using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Helpers.DSIUser;
+using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 
 namespace DfE.GIAP.Web.Controllers.PreparedDownload;
 
 [Route(Routes.PrePreparedDownloads.PreparedDownloadsController)]
 public class PreparedDownloadsController : Controller
 {
-    private readonly IPrePreparedDownloadsService _prePreparedDownloadsService;
-    private readonly ICommonService _commonService;
+    private readonly IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> _getPrePreparedFilesUseCase;
+    private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
 
-    public PreparedDownloadsController(ICommonService commonService, IPrePreparedDownloadsService prePreparedDownloadsService)
+    public PreparedDownloadsController(
+        IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
+        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase)
     {
-        _commonService = commonService ??
-            throw new ArgumentNullException(nameof(commonService));
-        _prePreparedDownloadsService = prePreparedDownloadsService ??
-            throw new ArgumentNullException(nameof(prePreparedDownloadsService));
+        ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);
+        _getPrePreparedFilesUseCase = getPrePreparedFilesUseCase;
 
+        ArgumentNullException.ThrowIfNull(downloadPrePreparedFileUseCase);
+        _downloadPrePreparedFileUseCase = downloadPrePreparedFileUseCase;
     }
+
     [HttpGet]
-    public async Task<IActionResult> GetPreparedDownloadsAsync()
+    public async Task<IActionResult> Index()
     {
-        var downloadList = await _prePreparedDownloadsService.GetPrePreparedDownloadsList(AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-                                                                                          User.IsOrganisationLocalAuthority(),
-                                                                                          User.IsOrganisationMultiAcademyTrust(),
-                                                                                          User.IsOrganisationEstablishment(),
-                                                                                          User.IsOrganisationSingleAcademyTrust(),
-                                                                                          User.GetEstablishmentNumber(),
-                                                                                          User.GetUniqueIdentifier(),
-                                                                                          User.GetLocalAuthorityNumberForLocalAuthority(),
-                                                                                          User.GetUniqueReferenceNumber())
-                                                                                          .ConfigureAwait(false);
+        BlobStoragePathContext pathContext = BlobStoragePathContext.Create(
+            organisationScope: User.GetOrganisationScope(),
+            uniqueIdentifier: User.GetUniqueIdentifier(),
+            localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
+            uniqueReferenceNumber: User.GetUniqueReferenceNumber());
 
-        var model = new PrePreparedDownloadsViewModel
+        GetPreparedFilesRequest request = new(pathContext);
+        GetPreparedFilesResponse response = await _getPrePreparedFilesUseCase
+            .HandleRequestAsync(request);
+
+        PreparedDownloadsViewModel model = new()
         {
-            PrePreparedDownloadList = downloadList.OrderByDescending(x => x.Date).ToList()
+            PreparedDownloadFiles = response.BlobStorageItems
+            .Select(item => new PreparedFileViewModel
+            {
+                Name = item.Name,
+                Date = item.LastModified?.UtcDateTime ?? DateTime.MinValue
+            })
+            .OrderByDescending(x => x.Date)
+            .ToList()
         };
 
-        return View("~/Views/PrePreparedDownloads/PrePreparedDownload.cshtml", model);
+        return View(model);
     }
+
     [Route(Routes.PrePreparedDownloads.DownloadPrePreparedFileAction)]
-    public async Task<FileStreamResult> DownloadPrePreparedFile(string name, DateTime fileUploadedDate)
+    public async Task<FileStreamResult> DownloadPrePreparedFile(string name)
     {
+        BlobStoragePathContext pathContext = BlobStoragePathContext.Create(
+            organisationScope: User.GetOrganisationScope(),
+            uniqueIdentifier: User.GetUniqueIdentifier(),
+            localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
+            uniqueReferenceNumber: User.GetUniqueReferenceNumber());
 
-        var loggingEvent = new LoggingEvent
+        DownloadPreparedFileRequest request = new(name, pathContext);
+        DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
+            .HandleRequestAsync(request);
+
+        return new FileStreamResult(response.FileStream, response.ContentType)
         {
-            UserGuid = User.GetUserId(),
-            UserEmail = User.GetUserEmail(),
-            UserGivenName = User.GetUserGivenName(),
-            UserSurname = User.GetUserSurname(),
-            OrganisationGuid = User.GetOrganisationId(),
-            OrganisationName = User.GetOrganisationName(),
-            EstablishmentNumber = User.GetEstablishmentNumber(),
-            LocalAuthorityNumber = User.GetLocalAuthorityNumberForEstablishment(),
-            OrganisationCategoryID = User.GetOrganisationCategoryID(),
-            UKProviderReferenceNumber = User.GetUKProviderReferenceNumber(),
-            UniqueIdentifier = User.GetUniqueIdentifier(),
-            UniqueReferenceNumber = User.GetUniqueReferenceNumber(),
-            OrganisationType = DSIUserHelper.GetOrganisationType(User.GetOrganisationCategoryID()),
-            GIAPUserRole = DSIUserHelper.GetGIAPUserRole(User.IsAdmin(),
-                                                         User.IsApprover(),
-                                                         User.IsNormal()),
-            SessionId = User.GetSessionId()
-        };
-
-        loggingEvent.ActionName = LogEventActionType.DownloadPrePreparedFile.ToString();
-        loggingEvent.ActionDescription = LogEventActionType.DownloadPrePreparedFile.LogEventActionDescription();
-        loggingEvent.PrePreparedDownloadsFileName = name;
-        loggingEvent.PrePreparedDownloadsFileUploadedDate = DateTimeHelper.ConvertDateTimeToString(fileUploadedDate);
-        //Logging Event
-        _ = await _commonService.CreateLoggingEvent(loggingEvent);
-
-        var ms = new MemoryStream();
-        await _prePreparedDownloadsService.PrePreparedDownloadsFileAsync(name,
-                                                                         ms,
-                                                                         AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-                                                                         User.IsOrganisationLocalAuthority(),
-                                                                         User.IsOrganisationMultiAcademyTrust(),
-                                                                         User.IsOrganisationEstablishment(),
-                                                                         User.IsOrganisationSingleAcademyTrust(),
-                                                                         User.GetEstablishmentNumber(),
-                                                                         User.GetUniqueIdentifier(),
-                                                                         User.GetLocalAuthorityNumberForLocalAuthority(),
-                                                                         User.GetUniqueReferenceNumber());
-
-        ms.Position = 0;
-
-        return new FileStreamResult(ms, MediaTypeNames.Text.Plain)
-        {
-            FileDownloadName = name
+            FileDownloadName = response.FileName
         };
     }
 }
