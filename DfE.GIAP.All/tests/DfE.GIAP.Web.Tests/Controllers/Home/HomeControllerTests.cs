@@ -1,15 +1,12 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
-using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using NSubstitute;
 using Xunit;
 
@@ -18,7 +15,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Home;
 public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 {
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
-    private readonly ILatestNewsBanner _mockNewsBanner = new Mock<ILatestNewsBanner>().Object;
     private readonly IExceptionHandlerPathFeature _exceptionPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
 
     public HomeControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
@@ -140,7 +136,7 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         controllerContext.HttpContext.Features.Set(_exceptionPathFeature);
 
-        return new HomeController(_mockNewsBanner)
+        return new HomeController()
         {
             ControllerContext = new ControllerContext()
             {

@@ -14,7 +14,6 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
-using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -37,10 +36,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
         private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
         private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
         private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-        private readonly ICommonService _mockCommonService = Substitute.For<ICommonService>();
         private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
         private AzureAppSettings _mockAppSettings = new AzureAppSettings();
-        private readonly ILatestNewsBanner _mockNewsBanner = Substitute.For<ILatestNewsBanner>();
 
         private readonly TestSession _mockSession = new TestSession();
 

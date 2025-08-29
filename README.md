@@ -1,9 +1,32 @@
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=DFE-Digital_get-information-about-pupils)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=bugs)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+
 # Get Information About Pupils
 
-GIAP (Get Information about pupils) is a replacement of the existing KtS (Key to Success) service that has been in operation for around 15 years. The GIAP service consists of a web application, a data pipeline, a database and set of Azure functions.
+The Get Information About Pupils (GIAP) service allows education professionals to search
+the [National Pupil Database](https://www.find-npd-data.education.gov.uk/) to retrieve pupil data.
+GIAP is the replacement for the legacy service Key to Success (KtS).
+It allows education professionals to search the National Pupil Database to retrieve pupil data,
+and the following to access pupil-level census and attainment data:
 
-[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=DFE-Digital_get-information-about-pupils)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=bugs)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
+- schools
+- academies
+- further education colleges
+- academy trusts
+- local authorities
+
+GIAP also allows users to create and maintain their own custom lists of pupils,
+making it easy to track the progress of specific groups or cohorts over time.
+
+The service provides access to [pupil premium](https://www.gov.uk/government/publications/pupil-premium/pupil-premium)
+funding allocation, helping schools effectively manage the financial aspects of new student enrolment from the start.
+
+https://www.gov.uk/guidance/get-information-about-pupil-giap
 
 ## Status pages
 
@@ -21,17 +44,58 @@ Related repositories
 
 - [get-information-about-pupils-wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
 
-### Installation process
+### Development quick-start
 
-Clone the repository on your local machine in a suitable location
-
+Prerequisites
+- [Git](https://git-scm.com/downloads) (for getting a copy of the source code and contributing changes)
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (for building and running the C#/.NET web
+application)
+- [Node.js](https://nodejs.org/en/download/) (for building web artefacts: (S)CSS, JS, etc.)
+- IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
+- Local environment configured to authenticate to the GitHub NuGet feed
+    - Create a classic [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `read:packages` scope from your GitHub account (fine-grained tokens [do not support package scopes](https://github.com/github/roadmap/issues/558)).
+    - Add the NuGet source to your local environment by filling in the placeholders and running:
+    ```sh
+    dotnet nuget add source --username <YOUR_GITHUB_USERNAME> --password <YOUR_PERSONAL_ACCESS_TOKEN> --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+    ```
+Clone the repository
 ```sh
 git clone https://github.com/DFE-Digital/get-information-about-pupils
 ```
+Install node dependencies, then build and package the web artefacts (JS, CSS, etc.)
+```sh
+## DfE.GIAP.All/DfE.GIAP.Web/
+npm install
+npm run gulp
+```
 
-GIAP has been developed using .NET Core so you will need an appropriate IDE (or text file browser if you wish). Either Visual Studio Code (with .NET C# support) or Visual Studio would be preferable, this was developed using Visual Studio 2019/2022. 
+If you have `gulp` installed globally (`npm install -g gulp`), you can run `gulp` directly:
+```sh
+## DfE.GIAP.All/DfE.GIAP.Web/
+gulp
+```
+Build the C#/.NET solution
+```sh
+## cd DfE.GIAP.All/
+dotnet build
+```
 
-Load the solution and build it (F5 or use the menu). Ensure Dfe.GIAP.WEB project is set as default and run the application.
+Confirm tests are passing locally
+```sh
+## cd DfE.GIAP.All/
+dotnet test
+```
+
+Run the application
+```sh
+## cd DfE.GIAP.All/DfE.GIAP.Web/
+dotnet run
+```
+
+If using Visual Studio, ensure the `DfE.GIAP.Web` project is set as the startup project and run it (F5 or use the
+menu).
+
+
 
 ### Architecture
 
@@ -58,18 +122,15 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 - DSI (DfE sign-in)
 - [CosmosDb Infrastructure library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
 
-### Build and Test
-
-Press Ctrl+Shift+B (if you are using Visual Studio) to build the project. To run all tests in Visaul Studio, select Tests from top menu and run all unit tests.
-Unit tests live in the Unit Test project folder and use XUnit, NSubstitute, and Moq. There exists testing projects for Common Layer, Service Layer, and Web Layer.
-Unit tests should be written in the form {TARGET CLASS OR MODULE}_{EXPECTED_OUTCOME}_WHEN_{CONDITION}
 
 ### Settings
 
-There are a number of key settings contained in the `appsettings.json` file. It is recommended to create an `appsettings.local.json` file to store values as they won't be checked into source control as `.gitignore`. An example is provided for reference, additionally a launchSettings.json is required in Properties.
+There are a number of key settings contained in the `appsettings.json` file.
+It is recommended to create an `appsettings.local.json` file to store values as they won't be checked into source control as `.gitignore`.
 
-> launchSettings.json
+An example is provided for reference, additionally a launchSettings.json is required in Properties.
 
+### launchSettings.json
 ```json
 {
   "iisSettings": {
@@ -100,13 +161,9 @@ There are a number of key settings contained in the `appsettings.json` file. It 
 }
 ```
 
-> appsettings.local.json
-
+### appsettings.local.json
 ```json
-
 {
-  "AppVersion": "2.Local",
-  "SessionTimeout": 20,
   "IsSessionIdStoredInCookie": true,
   "MaximumNonUPNResults": 100,
   "MaximumNonULNResults": 100,
@@ -137,33 +194,15 @@ There are a number of key settings contained in the `appsettings.json` file. It 
   "FeatureManagement": {
     "FurtherEducation": true
   },
-  "SecurityHeaders": {
-    "Remove": [
-      "Server",
-      "X-Powered-By"
-    ],
-    "Add": {
-      "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-      "X-XSS-Protection": "0",
-      "X-Content-Type-Options": "nosniff",
-      "X-Frame-Options": "DENY",
-      "Content-Security-Policy": "default-src 'self';"
-    }
-  },
   "GetUserProfileUrl": "http://localhost:7071/api/get-user-profile?code=",
   "GetLatestNewsStatusUrl": "http://localhost:7071/api/get-latest-news-status?code=",
   "DeleteNewsArticleUrl": "http://localhost:7071/api/delete-news-article?code=",
   "DownloadPupilsByUPNsCSVUrl": "http://localhost:7071/api/download-pupils-by-upns-csv?code=",
   "DownloadPupilsByUPNsTABUrl": "http://localhost:7071/api/download-pupils-by-upns-tab?code=",
   "DownloadPupilPremiumByUPNFforCSVUrl": "http://localhost:7071/api/download-pupil-premium-by-upns-csv?code=",
-  "GetContentByIDUrl": "http://localhost:7071/api/get-content-by-id?code=",
   "QueryLAByCodeUrl": "http://localhost:7071/api/get-la-by-code?code=",
   "QueryLAGetAllUrl": "http://localhost:7071/api/get-la-all?code=",
   "GetAcademiesURL": "http://localhost:7071/api/get-academies?code=",
-  "QueryNewsArticleUrl": "http://localhost:7071/api/get-news-article-by-id?code=",
-  "QueryNewsArticlesUrl": "http://localhost:7071/api/get-news-articles?code=",
-  "UpdateNewsDocumentUrl": "http://localhost:7071/api/update-news-document?code=",
-  "UpdateNewsPropertyUrl": "http://localhost:7071/api/update-news-article-property?code=",
   "LoggingEventUrl": "http://localhost:7071/api/logging-event?code=",
   "CreateOrUpdateUserProfileUrl": "http://localhost:7071/api/create-or-update-user-profile?code=",
   "DownloadCommonTransferFileUrl": "http://localhost:7071/api/download-common-transfer-file?code=",
@@ -179,22 +218,21 @@ There are a number of key settings contained in the `appsettings.json` file. It 
   "SetLatestNewsStatusUrl": "http://localhost:7071/api/set-latest-news-status?code=",
   "FeatureFlagAppConfigUrl": "Endpoint="
 }
-
 ```
 
-### Continual Integration (CI)
+## Continual Integration (CI)
 
 `giap-web` has an [build pipeline](./github/ci.yml) which runs on each commit.
 
 The solution depends on the DfEDigital GitHub Packages NuGet Feed.
 
-### Logging
+## Logging
 
 GIAP uses Application Insights to log auditing, warnings, and errors.
 
-### Gulp Runner
+## Gulp Runner
 
-In this project, we have a Gulp task which combines the JS files and CSS files into a minified version. We’re using npm to install dependencies. We need to install Gulp globally. Assuming you have node and npm installed already.
+We have a Gulp task which combines the JS files and CSS files into a minified version. We’re using npm to install dependencies. We need to install Gulp globally. Assuming you have node and npm installed already.
 
 ```sh
 npm install -g gulp

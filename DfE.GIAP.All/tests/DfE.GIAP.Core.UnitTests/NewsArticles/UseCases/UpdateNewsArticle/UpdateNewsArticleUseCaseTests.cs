@@ -55,7 +55,7 @@ public sealed class UpdateNewsArticleUseCaseTests
     public void Constructor_ThrowsNullException_When_CreatedWithNullMapper()
     {
         // Arrange
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         Func<UpdateNewsArticleUseCase> construct = () => new UpdateNewsArticleUseCase(mockRepository.Object, null!);
 
         // Act Assert
@@ -66,7 +66,7 @@ public sealed class UpdateNewsArticleUseCaseTests
     public async Task HandleRequestAsync_ThrowsNullException_When_RequestIsNull()
     {
         Mock<IMapper<UpdateNewsArticlesRequestProperties, NewsArticle>> mockMapper = MapperTestDoubles.Default<UpdateNewsArticlesRequestProperties, NewsArticle>();
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         UpdateNewsArticleUseCase sut = new(mockRepository.Object, mockMapper.Object);
 
         Func<Task> act = () => sut.HandleRequestAsync(request: null!);
@@ -80,7 +80,7 @@ public sealed class UpdateNewsArticleUseCaseTests
     [Fact]
     public async Task HandleRequestAsync_ThrowsNullException_When_NewsArticleIsNull()
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         Mock<IMapper<UpdateNewsArticlesRequestProperties, NewsArticle>> mockMapper = MapperTestDoubles.Default<UpdateNewsArticlesRequestProperties, NewsArticle>();
 
         UpdateNewsArticleUseCase sut = new(mockRepository.Object, mockMapper.Object);
@@ -100,7 +100,7 @@ public sealed class UpdateNewsArticleUseCaseTests
         // Arrange
         NewsArticle stub = NewsArticleTestDoubles.Create();
         Mock<IMapper<UpdateNewsArticlesRequestProperties, NewsArticle>> mockMapper = MapperTestDoubles.MockFor<UpdateNewsArticlesRequestProperties, NewsArticle>(() => stub);
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         UpdateNewsArticleUseCase sut = new(mockRepository.Object, mockMapper.Object);
 
         UpdateNewsArticlesRequestProperties requestProperties = new(id: "Any valid id");

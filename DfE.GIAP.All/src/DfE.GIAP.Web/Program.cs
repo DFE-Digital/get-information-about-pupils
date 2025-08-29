@@ -1,11 +1,9 @@
-using System.Security.Cryptography;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
-using DfE.GIAP.Web.ViewModels;
+using DfE.GIAP.Core.Users;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,17 +15,18 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Services configuration
 builder.Services
+    .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
     .AddNewsArticleDependencies()
+    .AddUserDependencies();
+
+builder.Services
     .AddRoutingConfiguration()
-    .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
     .AddApplicationInsightsTelemetry()
     .AddAllServices()
     .AddWebProviders()
-    .AddSettings<ClaritySettings>(configuration, "Clarity")
-    .AddSettings<GoogleTagManager>(configuration, "GoogleTagManager")
     .AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
@@ -60,23 +59,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
-
-ClaritySettings claritySettings = configuration
-    .GetSection("Clarity")
-    .Get<ClaritySettings>();
-
-app.Use(async (context, next) =>
-{
-    if (claritySettings != null && !string.IsNullOrEmpty(claritySettings.ProjectId))
-    {
-        string nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-        context.Items["CSPNonce"] = nonce;
-
-        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms https://www.googletagmanager.com 'nonce-{nonce}'; object-src 'none';";
-    }
-
-    await next();
-});
 
 // Endpoint configuration
 app.MapControllerRoute(

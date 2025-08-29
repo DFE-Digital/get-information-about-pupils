@@ -8,8 +8,8 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.User.Application;
-using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
+using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
@@ -17,7 +17,6 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private const int DEFAULT_USECASE_PAGESIZE = 20;
     public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
     {
     }
@@ -32,58 +31,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task GetMyPupils_HasMoreThan20PupilsInList_Returns_NpdPupils_Up_To_PageSize()
-    {
-        // Arrange
-        using SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
-
-        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 20);
-        mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
-
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 1);
-        mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
-
-        UserId userId = UserIdTestDoubles.Default();
-
-        IEnumerable<UniquePupilNumber> upns
-            = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
-                .Select((t) => t.UPN)
-                    .ToUniquePupilNumbers();
-
-        await Fixture.Database.WriteItemAsync<UserDto>(
-            UserDtoTestDoubles.WithPupils(
-                userId,
-                upns));
-
-        // Act
-        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
-            ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
-
-        GetMyPupilsResponse getMyPupilsResponse =
-            await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId.Value));
-
-        // Assert
-        Assert.NotNull(getMyPupilsResponse);
-        Assert.NotNull(getMyPupilsResponse.Pupils);
-
-        Assert.Equal(DEFAULT_USECASE_PAGESIZE, getMyPupilsResponse.Pupils.Count());
-
-        MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<PupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
-
-        foreach (PupilDto expected in expectedPupils)
-        {
-            PupilDto actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expected.UniquePupilNumber);
-
-            ValidatePupilDto(expected, actual!);
-            Assert.False(actual!.IsPupilPremium);
-        }
-    }
-
-    [Fact]
-    public async Task GetMyPupils_Has_LessThan20Pupils_Returns_Npd_And_PupilPremium_Pupils()
+    public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
         // Arrange
         using SearchIndexFixture mockSearchFixture = new(
@@ -92,7 +40,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
         mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
 
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 5);
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         UserId userId = UserIdTestDoubles.Default();
@@ -118,20 +66,24 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Assert
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.Pupils);
-
-        int expectedCountOfAllPupilTypes = npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count();
-        Assert.Equal(expectedCountOfAllPupilTypes, getMyPupilsResponse.Pupils.Count());
+        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.Pupils.Count());
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
         List<PupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
 
-        foreach (PupilDto expected in expectedPupils)
+        foreach (PupilDto expectedPupil in expectedPupils)
         {
-            PupilDto? actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expected.UniquePupilNumber);
+            PupilDto? actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
 
-            ValidatePupilDto(expected, actual!);
+            Assert.NotNull(actual);
+            Assert.Equal(expectedPupil.Forename, actual.Forename);
+            Assert.Equal(expectedPupil.Surname, actual.Surname);
+            Assert.Equal(expectedPupil.DateOfBirth, actual.DateOfBirth);
+            Assert.Equal(expectedPupil.Sex, actual.Sex);
+            Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
+            Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expected.UniquePupilNumber);
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expectedPupil.UniquePupilNumber);
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
@@ -162,17 +114,6 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(getMyPupilsResponse.Pupils);
 
         Assert.Equivalent(Array.Empty<PupilDto>(), getMyPupilsResponse.Pupils);
-    }
-
-    private static void ValidatePupilDto(PupilDto expected, PupilDto actual)
-    {
-        Assert.NotNull(actual);
-        Assert.Equal(expected.Forename, actual.Forename);
-        Assert.Equal(expected.Surname, actual.Surname);
-        Assert.Equal(expected.DateOfBirth, actual.DateOfBirth);
-        Assert.Equal(expected.Sex, actual.Sex);
-        Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
-        Assert.Equal(expected.LocalAuthorityCode, actual.LocalAuthorityCode);
     }
 
     private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, PupilDto>
