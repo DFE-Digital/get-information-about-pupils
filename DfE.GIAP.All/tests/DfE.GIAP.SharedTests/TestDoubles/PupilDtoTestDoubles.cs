@@ -5,15 +5,15 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class PupilDtoTestDoubles
 {
+    public static PupilDto Generate() => Generate(1).Pupils.Single();
 
-    public static PupilDto Generate() => Generate(1).Single();
-
-    public static List<PupilDto> Generate(int count)
+    public static PupilDtos Generate(int count)
     {
-        return CreateGenerator().Generate(count);
+        List<PupilDto> pupilDtos = CreateGenerator().Generate(count);
+        return PupilDtos.Create(pupilDtos);
     }
 
-    public static List<PupilDto> GenerateWithUniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
+    public static PupilDtos GenerateWithUniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
         Faker<PupilDto> generator = CreateGenerator();
         List<PupilDto> output = [];
@@ -34,7 +34,7 @@ public static class PupilDtoTestDoubles
             output.Add(outputPupil);
         });
 
-        return output;
+        return PupilDtos.Create(output);
     }
 
     private static Faker<PupilDto> CreateGenerator()

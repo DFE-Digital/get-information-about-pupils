@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Application.Repository;
@@ -31,7 +31,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
         if (!user.UniquePupilNumbers.Any())
         {
-            return new GetMyPupilsResponse([]);
+            return new GetMyPupilsResponse(PupilDtos.Empty());
         }
 
         List<PupilDto> pupilDtos =
@@ -39,6 +39,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
                 .Select(_mapPupilToPupilDtoMapper.Map)
                     .ToList();
 
-        return new GetMyPupilsResponse(pupilDtos);
+        return new GetMyPupilsResponse(
+            PupilDtos.Create(pupilDtos));
     }
 }

@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
@@ -29,8 +29,8 @@ public sealed class GetMyPupilsUseCaseTests
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
         Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
-        List<PupilDto> pupilDtos = PupilDtoTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
-        mockMapper.MockForMany(pupils, pupilDtos);
+        PupilDtos pupilDtos = PupilDtoTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
+        mockMapper.MockMappingForMany(pupils, pupilDtos.Pupils.ToList());
 
         GetMyPupilsRequest request = new(user.UserId.Value);
 
@@ -40,12 +40,12 @@ public sealed class GetMyPupilsUseCaseTests
             aggregateServiceMock.Object,
         mockMapper.Object);
 
-        GetMyPupilsResponse result = await sut.HandleRequestAsync(request);
+        GetMyPupilsResponse response = await sut.HandleRequestAsync(request);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Equal(pupilDtos.Count, result.Pupils.Count());
-        Assert.Equivalent(result.Pupils, pupilDtos);
+        Assert.NotNull(response);
+        Assert.Equal(pupilDtos.Count, response.PupilDtos.Count);
+        Assert.Equivalent(response.PupilDtos, pupilDtos);
 
         userRepoMock.Verify(repo =>
             repo.GetUserByIdAsync(user.UserId, It.IsAny<CancellationToken>()), Times.Once);
@@ -81,7 +81,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result.Pupils);
+        Assert.Empty(result.PupilDtos.Pupils);
 
         userRepoMock.Verify(repo =>
             repo.GetUserByIdAsync(

@@ -4,9 +4,9 @@ using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.Core.User.Infrastructure.Repository.Dtos;
@@ -65,15 +65,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
-        Assert.NotNull(getMyPupilsResponse.Pupils);
-        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.Pupils.Count());
+        Assert.NotNull(getMyPupilsResponse.PupilDtos);
+        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.PupilDtos.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
         List<PupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
 
         foreach (PupilDto expectedPupil in expectedPupils)
         {
-            PupilDto? actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
+            PupilDto? actual = getMyPupilsResponse.PupilDtos.Pupils.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
 
             Assert.NotNull(actual);
             Assert.Equal(expectedPupil.Forename, actual.Forename);
@@ -111,9 +111,9 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
-        Assert.NotNull(getMyPupilsResponse.Pupils);
+        Assert.NotNull(getMyPupilsResponse.PupilDtos);
 
-        Assert.Equivalent(Array.Empty<PupilDto>(), getMyPupilsResponse.Pupils);
+        Assert.Equivalent(PupilDtos.Empty(), getMyPupilsResponse.PupilDtos);
     }
 
     private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, PupilDto>
