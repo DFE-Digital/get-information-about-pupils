@@ -48,7 +48,7 @@ public class ConsentController : Controller
     {
         if (viewModel.ConsentGiven)
         {
-            _sessionProvider.SetSessionValue(SessionKeys.ConsentKey, SessionKeys.ConsentValue);
+            _sessionProvider.SetSessionValue<string>(SessionKeys.ConsentKey, SessionKeys.ConsentValue);
             return Redirect(Routes.Application.Home);
         }
 

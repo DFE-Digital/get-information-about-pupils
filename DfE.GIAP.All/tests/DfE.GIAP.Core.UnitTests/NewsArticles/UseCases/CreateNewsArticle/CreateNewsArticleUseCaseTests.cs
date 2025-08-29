@@ -16,7 +16,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [Fact]
     public async Task HandleRequestAsync_ThrowsNullException_When_RequestIsNull()
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
         Func<Task> act = () => sut.HandleRequestAsync(request: null!);
@@ -30,7 +30,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [Fact]
     public async Task HandleRequestAsync_ThrowsArgumentException_When_TitleIsNull()
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
         CreateNewsArticleRequest request = new(null!, "body", true, true);
@@ -48,7 +48,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [InlineData("\n")]
     public async Task HandleRequestAsync_ThrowsArgumentException_When_TitleIsEmpty(string title)
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
         CreateNewsArticleRequest request = new(title, "body", true, true);
@@ -63,7 +63,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [Fact]
     public async Task HandleRequestAsync_ThrowsArgumentException_When_BodyIsNull()
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
         CreateNewsArticleRequest request = new("title", null!, true, true);
@@ -82,7 +82,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [InlineData("\n")]
     public async Task HandleRequestAsync_ThrowsArgumentException_When_BodyIsEmpty(string body)
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
         CreateNewsArticleRequest request = new("title", body, true, true);
@@ -98,7 +98,7 @@ public sealed class CreateNewsArticleUseCaseTests
     [Fact]
     public async Task HandleRequestAsync_CallsRepository_When_ArticleIsValid()
     {
-        Mock<INewsArticleWriteRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
+        Mock<INewsArticleWriteOnlyRepository> mockRepository = NewsArticleWriteOnlyRepositoryTestDoubles.Default();
         CreateNewsArticleUseCase sut = new(mockRepository.Object);
 
         CreateNewsArticleRequest request = new("title", "body", true, true);
