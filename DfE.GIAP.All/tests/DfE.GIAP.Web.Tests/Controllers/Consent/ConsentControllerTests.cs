@@ -220,6 +220,6 @@ public sealed class ConsentControllerTests
 
         // Ensure session is set
         mockSessionProvider.Verify(
-            s => s.SetSessionValue(SessionKeys.ConsentKey, SessionKeys.ConsentValue), Times.Once);
+            s => s.SetSessionValue<string>(SessionKeys.ConsentKey, SessionKeys.ConsentValue), Times.Once);
     }
 }

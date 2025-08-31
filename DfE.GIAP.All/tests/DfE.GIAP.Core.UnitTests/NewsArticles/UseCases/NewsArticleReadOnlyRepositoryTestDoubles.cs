@@ -4,11 +4,11 @@ namespace DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
 
 internal static class NewsArticleReadOnlyRepositoryTestDoubles
 {
-    internal static Mock<INewsArticleReadRepository> Default() => CreateMock();
+    internal static Mock<INewsArticleReadOnlyRepository> Default() => CreateMock();
 
-    internal static INewsArticleReadRepository MockFor(NewsArticle? repositoryResponse = null)
+    internal static INewsArticleReadOnlyRepository MockFor(NewsArticle? repositoryResponse = null)
     {
-        Mock<INewsArticleReadRepository> mock = CreateMock();
+        Mock<INewsArticleReadOnlyRepository> mock = CreateMock();
 
         mock.Setup(
                 (repository) => repository.GetNewsArticleByIdAsync(It.IsAny<string>()))
@@ -17,9 +17,9 @@ internal static class NewsArticleReadOnlyRepositoryTestDoubles
         return mock.Object;
     }
 
-    internal static INewsArticleReadRepository MockForGetNewsArticleById(Func<NewsArticle> repositoryResponse)
+    internal static INewsArticleReadOnlyRepository MockForGetNewsArticleById(Func<NewsArticle> repositoryResponse)
     {
-        Mock<INewsArticleReadRepository> mock = CreateMock();
+        Mock<INewsArticleReadOnlyRepository> mock = CreateMock();
 
         mock.Setup((repository) => repository.GetNewsArticleByIdAsync(It.IsAny<string>()))
              .ReturnsAsync(repositoryResponse).Verifiable();
@@ -27,9 +27,9 @@ internal static class NewsArticleReadOnlyRepositoryTestDoubles
         return mock.Object;
     }
 
-    internal static Mock<INewsArticleReadRepository> MockForGetNewsArticles(Func<IEnumerable<NewsArticle>> repositoryResponse)
+    internal static Mock<INewsArticleReadOnlyRepository> MockForGetNewsArticles(Func<IEnumerable<NewsArticle>> repositoryResponse)
     {
-        Mock<INewsArticleReadRepository> mock = CreateMock();
+        Mock<INewsArticleReadOnlyRepository> mock = CreateMock();
 
         mock.Setup(
                 (repository) => repository.GetNewsArticlesAsync(It.IsAny<NewsArticleSearchFilter>()))
@@ -39,5 +39,5 @@ internal static class NewsArticleReadOnlyRepositoryTestDoubles
         return mock;
     }
 
-    private static Mock<INewsArticleReadRepository> CreateMock() => new();
+    private static Mock<INewsArticleReadOnlyRepository> CreateMock() => new();
 }
