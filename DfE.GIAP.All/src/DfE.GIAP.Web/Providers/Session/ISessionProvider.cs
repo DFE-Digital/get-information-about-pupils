@@ -1,4 +1,8 @@
-﻿namespace DfE.GIAP.Web.Providers.Session;
+﻿using System.Text.Json;
+using DfE.GIAP.Core.Common.CrossCutting;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+
+namespace DfE.GIAP.Web.Providers.Session;
 
 public interface ISessionProvider
 {

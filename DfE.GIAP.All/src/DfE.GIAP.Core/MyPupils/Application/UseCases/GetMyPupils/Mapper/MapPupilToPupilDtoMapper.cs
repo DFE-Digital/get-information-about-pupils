@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
 internal sealed class MapPupilToPupilDtoMapper : IMapper<Pupil, PupilDto>
 {
     public PupilDto Map(Pupil pupil)

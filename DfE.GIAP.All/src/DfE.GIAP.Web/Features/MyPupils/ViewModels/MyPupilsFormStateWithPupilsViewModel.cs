@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.PresentationState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 namespace DfE.GIAP.Web.Features.MyPupils.ViewModels;
 

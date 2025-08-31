@@ -1,9 +1,8 @@
-﻿using DfE.GIAP.Web.Features.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationState;
+﻿using DfE.GIAP.Web.Features.MyPupils.State;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.UpdateMyPupilsState;
 
 public record UpdateMyPupilsStateRequest(
     string UserId,
-    MyPupilsPresentationState CurrentPresentationState,
+    MyPupilsState State,
     MyPupilsFormStateRequestDto UpdateStateInput);

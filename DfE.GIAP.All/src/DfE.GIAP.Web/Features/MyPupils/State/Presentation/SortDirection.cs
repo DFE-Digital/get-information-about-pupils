@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.PresentationState;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 public enum SortDirection
 {

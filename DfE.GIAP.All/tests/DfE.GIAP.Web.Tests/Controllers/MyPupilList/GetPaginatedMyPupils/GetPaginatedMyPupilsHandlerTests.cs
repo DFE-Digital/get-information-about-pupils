@@ -5,7 +5,7 @@ using DfE.GIAP.Core.User.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PresentationState;
+using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;

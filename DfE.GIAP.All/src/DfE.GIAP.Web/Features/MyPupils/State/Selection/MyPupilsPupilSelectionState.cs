@@ -6,10 +6,12 @@ public sealed class MyPupilsPupilSelectionState
 {
     private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
     private SelectAllPupilsState _state = SelectAllPupilsState.NotSpecified;
-
     public bool IsAllPupilsSelected => _state == SelectAllPupilsState.SelectAll;
     public bool IsAllPupilsDeselected => _state == SelectAllPupilsState.DeselectAll;
     public bool IsAnyPupilSelected => IsAllPupilsSelected || _pupilsToSelectedMap.Values.Any(t => t);
+    public IEnumerable<string> CurrentPageOfPupils { get; set; }
+
+    public static MyPupilsPupilSelectionState CreateDefault() => new();
 
     public bool IsPupilSelected(string upn)
     {

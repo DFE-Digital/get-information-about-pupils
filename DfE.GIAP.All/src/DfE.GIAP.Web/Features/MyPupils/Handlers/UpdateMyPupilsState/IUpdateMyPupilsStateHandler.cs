@@ -2,6 +2,6 @@
 
 public interface IUpdateMyPupilsStateHandler
 {
-    Task HandleAsync(UpdateMyPupilsStateRequest request);
+    void HandleAsync(UpdateMyPupilsStateRequest request);
 }
 

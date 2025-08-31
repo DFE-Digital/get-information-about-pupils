@@ -8,7 +8,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils;
 public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
-    private readonly IMapper<PupilDtoWithSelectionStateDecorator, PupilViewModel> _mapper;
+    private readonly IMapper<PupilDtoWithSelectionStateDecorator, PupilViewModel> _mapDtoToPupilViewModel;
 
     public GetMyPupilsHandler(
         IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
@@ -18,24 +18,23 @@ public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
         _getPaginatedMyPupilsQueryHandler = getPaginatedMyPupilsQueryHandler;
 
         ArgumentNullException.ThrowIfNull(mapper);
-        _mapper = mapper;
+        _mapDtoToPupilViewModel = mapper;
     }
 
     public async Task<PupilsViewModel> HandleAsync(GetMyPupilsRequest request)
     {
         GetPaginatedMyPupilsRequest paginatedPupilsRequest = new(
             request.UserId,
-            request.PresentationState);
+            request.State.PresentationState);
 
-        IEnumerable<PupilDtoWithSelectionStateDecorator> results =
+        IEnumerable<PupilDtoWithSelectionStateDecorator> paginatedMyPupilsWithSelectionState =
             (await _getPaginatedMyPupilsQueryHandler.HandleAsync(paginatedPupilsRequest))
                 .Pupils.Select((pupil)
                     => PupilDtoWithSelectionStateDecorator.Create(
                             pupil,
-                            isSelected: request.SelectionState.IsPupilSelected(pupil.UniquePupilNumber)));
+                            isSelected: request.State.SelectionState.IsPupilSelected(pupil.UniquePupilNumber)));
 
-        IEnumerable<PupilViewModel> pupils = results.Select(_mapper.Map);
-
-        return PupilsViewModel.Create(pupils);
+        IEnumerable<PupilViewModel> pupilViewModels = paginatedMyPupilsWithSelectionState.Select(_mapDtoToPupilViewModel.Map);
+        return PupilsViewModel.Create(pupilViewModels);
     }
 }

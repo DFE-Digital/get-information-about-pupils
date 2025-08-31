@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PresentationState;
+using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers.Order;
 public sealed class OrderPupilDtosPresentationHandler : IPupilDtosPresentationHandler
@@ -16,21 +15,21 @@ public sealed class OrderPupilDtosPresentationHandler : IPupilDtosPresentationHa
 
     public PupilDtos Handle(
         PupilDtos pupils,
-        MyPupilsPresentationState options)
+        MyPupilsPresentationState state)
     {
-        if (string.IsNullOrEmpty(options.SortBy))
+        if (string.IsNullOrEmpty(state.SortBy))
         {
             return pupils;
         }
 
-        if (!s_sortKeyToExpression.TryGetValue(options.SortBy.ToLowerInvariant(), out Expression<Func<PupilDto, IComparable>> expression)
+        if (!s_sortKeyToExpression.TryGetValue(state.SortBy.ToLowerInvariant(), out Expression<Func<PupilDto, IComparable>> expression)
                 || expression is null)
         {
-            throw new ArgumentException($"Unable to find sortable expression for {options.SortBy}");
+            throw new ArgumentException($"Unable to find sortable expression for {state.SortBy}");
         }
 
         IEnumerable<PupilDto> outputPupils
-            = options.SortDirection == SortDirection.Ascending ?
+            = state.SortDirection == SortDirection.Ascending ?
                     pupils.Pupils.AsQueryable().OrderBy(expression) :
                     pupils.Pupils.AsQueryable().OrderByDescending(expression);
 

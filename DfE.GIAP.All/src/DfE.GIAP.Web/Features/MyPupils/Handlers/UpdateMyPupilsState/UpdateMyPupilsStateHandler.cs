@@ -1,82 +1,63 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationState;
-using DfE.GIAP.Web.Features.MyPupils.PresentationState.Provider;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+using DfE.GIAP.Web.Features.Session.Command;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.UpdateMyPupilsState;
 
 public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
 {
     private readonly IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState> _formDtoToPresentationStateMapper;
-    private readonly IMyPupilsPresentationStateProvider _presentPupilOptionsProvider;
-    private readonly IMyPupilsPupilSelectionStateProvider _pupilSelectionStateProvider;
-    private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsHandler;
+    private readonly IMapper<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto> _mapSelectionStateToDto;
+    private readonly ISessionCommandHandler<MyPupilsPresentationState> _presentationStateSessionComandHandler;
+    private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
 
     public UpdateMyPupilsStateHandler(
-        IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState> formStateToPresentationStateMapper,
-        IMyPupilsPresentationStateProvider presentPupilOptionsProvider,
-        IMyPupilsPupilSelectionStateProvider pupilSelectionStateProvider,
-        IGetPaginatedMyPupilsHandler getPaginatedMyPupilsHandler)
+        IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState> formDtoToPresentationStateMapper,
+        IMapper<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto> mapSelectionStateToDto,
+        ISessionCommandHandler<MyPupilsPresentationState> presentationStateSessionComandHandler,
+        ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler)
     {
-        ArgumentNullException.ThrowIfNull(formStateToPresentationStateMapper);
-        _formDtoToPresentationStateMapper = formStateToPresentationStateMapper;
-
-        ArgumentNullException.ThrowIfNull(presentPupilOptionsProvider);
-        _presentPupilOptionsProvider = presentPupilOptionsProvider;
-
-        ArgumentNullException.ThrowIfNull(pupilSelectionStateProvider);
-        _pupilSelectionStateProvider = pupilSelectionStateProvider;
-
-        ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsHandler);
-        _getPaginatedMyPupilsHandler = getPaginatedMyPupilsHandler;
+        _formDtoToPresentationStateMapper = formDtoToPresentationStateMapper;
+        _mapSelectionStateToDto = mapSelectionStateToDto;
+        _presentationStateSessionComandHandler = presentationStateSessionComandHandler;
+        _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
     }
 
-    public async Task HandleAsync(UpdateMyPupilsStateRequest request)
+    public void HandleAsync(UpdateMyPupilsStateRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        GetPaginatedMyPupilsRequest getPaginatedMyPupilsRequest = new(request.UserId, request.CurrentPresentationState);
+        MyPupilsPresentationState updatedPresentationState = _formDtoToPresentationStateMapper.Map(request.UpdateStateInput);
 
-        IEnumerable<string> currentPageOfPupils =
-            (await _getPaginatedMyPupilsHandler.HandleAsync(getPaginatedMyPupilsRequest)).Pupils
-                .Select(t => t.UniquePupilNumber);
-        
-        _presentPupilOptionsProvider.SetState(
-            state: _formDtoToPresentationStateMapper.Map(request.UpdateStateInput));
+        MyPupilsPupilSelectionState selectionState = request.State.SelectionState;
 
-        UpdatePupilSelectionState(
-            selectAllState: request.UpdateStateInput.SelectAllState,
-            currentPageOfPupils,
-            selectedPupilsOnPage: request.UpdateStateInput.SelectedPupils ?? Enumerable.Empty<string>());
-    }
+        IEnumerable<string> currentPageOfPupils = request.State.SelectionState.CurrentPageOfPupils;
 
-    private void UpdatePupilSelectionState(
-        MyPupilsFormSelectAllStateRequestDto selectAllState,
-        IEnumerable<string> currentPageOfPupils,
-        IEnumerable<string> selectedPupilsOnPage)
-    {
-        MyPupilsPupilSelectionState currentState = _pupilSelectionStateProvider.GetState();
-
-        if (selectAllState == MyPupilsFormSelectAllStateRequestDto.SelectAll)
+        if (request.UpdateStateInput.SelectAllState == MyPupilsFormSelectAllStateRequestDto.SelectAll)
         {
-            currentState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: true);
-            currentState.SelectAllPupils();
+            selectionState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: true);
+            selectionState.SelectAllPupils();
         }
-        else if (selectAllState == MyPupilsFormSelectAllStateRequestDto.DeselectAll)
+        else if (request.UpdateStateInput.SelectAllState == MyPupilsFormSelectAllStateRequestDto.DeselectAll)
         {
-            currentState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: false);
-            currentState.DeselectAllPupils();
+            selectionState.UpsertPupilWithSelectedState(currentPageOfPupils, isSelected: false);
+            selectionState.DeselectAllPupils();
         }
         else
         {
+            IEnumerable<string> selectedPupilsOnPage = request.UpdateStateInput.SelectedPupils ?? Enumerable.Empty<string>();
             IEnumerable<string> deselectedOnPage = currentPageOfPupils.Except(selectedPupilsOnPage);
 
-            currentState.UpsertPupilWithSelectedState(selectedPupilsOnPage, isSelected: true);
-            currentState.UpsertPupilWithSelectedState(deselectedOnPage, isSelected: false);
+            selectionState.UpsertPupilWithSelectedState(selectedPupilsOnPage, isSelected: true);
+            selectionState.UpsertPupilWithSelectedState(deselectedOnPage, isSelected: false);
         }
 
-        _pupilSelectionStateProvider.SetState(currentState);
+        _presentationStateSessionComandHandler.StoreInSession(updatedPresentationState);
+
+        _selectionStateSessionCommandHandler.StoreInSession(
+            selectionState,
+            mapSessionObjectToDto: _mapSelectionStateToDto);
     }
 }
