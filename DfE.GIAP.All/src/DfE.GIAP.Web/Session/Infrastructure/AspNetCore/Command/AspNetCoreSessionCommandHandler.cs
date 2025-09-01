@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Session.Abstraction;
 
 namespace DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Command;
 
-public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHandler<TValue>
+public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHandler<TValue> where TValue : class
 {
     private readonly IAspNetCoreSessionProvider _sessionProvider;
     private readonly ISessionObjectKeyResolver _sessionKeyResolver;

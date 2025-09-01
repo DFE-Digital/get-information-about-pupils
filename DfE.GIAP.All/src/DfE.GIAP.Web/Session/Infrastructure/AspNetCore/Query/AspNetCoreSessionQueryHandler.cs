@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Session.Abstraction;
 
 namespace DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
 
-public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQueryHandler<TSessionObject>
+public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQueryHandler<TSessionObject> where TSessionObject : class
 {
     private readonly IAspNetCoreSessionProvider _sessionProvider;
     private readonly ISessionObjectKeyResolver _sessionKeyResolver;
