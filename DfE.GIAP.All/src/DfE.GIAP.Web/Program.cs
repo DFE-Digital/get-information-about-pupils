@@ -4,6 +4,7 @@ using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Core.Users;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,10 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
+    .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies();
+
 
 builder.Services
     .AddRoutingConfiguration()
