@@ -382,14 +382,6 @@ public class FELearnerTextSearchController :  Controller
         GetPersistedSexFiltersForViewModel(model);
         model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
         model.LearnerNumberLabel = LearnerNumberLabel;
-        var notPaged = hasQueryItem || calledByController;
-
-        if (notPaged && !model.NoPupilSelected)
-        {
-            SetSelections(
-                model.PageLearnerNumbers.Split(','),
-                model.SelectedPupil);
-        }
 
         if (resetSelection || searchByRemove != null)
         {
@@ -822,7 +814,8 @@ public class FELearnerTextSearchController :  Controller
     {
 
         #region
-        List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
+        List<CurrentFilterDetail> currentFilters =
+            SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
         model.ShowMiddleNames = this.ShowMiddleNames;
@@ -870,7 +863,8 @@ public class FELearnerTextSearchController :  Controller
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new SearchByKeyWordsRequest(
                     searchKeyword: model.SearchText,
-                    filterRequests: filterRequests))
+                    filterRequests: filterRequests,
+                    offset: model.Offset))
             .ConfigureAwait(false);
 
         return _learnerSearchResponseToViewModelMapper.Map(

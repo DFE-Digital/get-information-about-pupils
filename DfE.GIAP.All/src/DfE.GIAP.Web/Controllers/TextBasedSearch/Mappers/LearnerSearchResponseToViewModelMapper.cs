@@ -67,8 +67,8 @@ public sealed class LearnerSearchResponseToViewModelMapper :
                 : learners;
 
         // Populate meta-data fields for pagination and UI messaging.
-        input.Model.Count = input.Response.TotalNumberOfResults;
-        input.Model.Total = input.Response.LearnerSearchResults.Count;
+        input.Model.Count = input.Response.LearnerSearchResults.Count;
+        input.Model.Total = input.Response.TotalNumberOfResults;
         input.Model.ShowOverLimitMessage = input.Model.Total > 100_000;
 
         return input.Model;
