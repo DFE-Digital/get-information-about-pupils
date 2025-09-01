@@ -27,7 +27,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList;
+namespace DfE.GIAP.Web.Tests.Features.MyPupilList;
 
 [Trait("My Pupil List", "My Pupil List Controller Tests")]
 public class MyPupilListControllerTests :

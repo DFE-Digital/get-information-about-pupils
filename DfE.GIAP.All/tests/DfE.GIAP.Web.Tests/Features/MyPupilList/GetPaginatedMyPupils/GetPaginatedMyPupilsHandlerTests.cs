@@ -6,11 +6,11 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
-using DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.MyPupilList.TestDoubles;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.GetPaginatedMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupilList.GetPaginatedMyPupils;
 public sealed class GetPaginatedMyPupilsHandlerTests
 {
 

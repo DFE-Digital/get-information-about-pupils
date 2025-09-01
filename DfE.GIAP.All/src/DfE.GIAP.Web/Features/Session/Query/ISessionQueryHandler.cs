@@ -4,5 +4,5 @@ namespace DfE.GIAP.Web.Features.Session.Query;
 
 public interface ISessionQueryHandler<TSessionObject>
 {
-    SessionQueryResponse<TSessionObject> Handle();
+    SessionQueryResponse<TSessionObject> Get();
 }

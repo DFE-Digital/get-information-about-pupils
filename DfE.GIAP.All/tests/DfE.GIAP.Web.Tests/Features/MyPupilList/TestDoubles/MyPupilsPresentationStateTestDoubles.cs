@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.Controllers.MyPupilList.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.MyPupilList.TestDoubles;
 public static class MyPupilsPresentationStateTestDoubles
 {
     public static MyPupilsPresentationState CreateWithValidPage() => Create(page: 1);

@@ -32,17 +32,13 @@ public static class CompositionRoot
     {
         // GetPaginatedMyPupilsHandler
         services.AddScoped<IGetPaginatedMyPupilsHandler, GetPaginatedMyPupilsHandler>();
-
         services.AddSingleton<OrderPupilDtosPresentationHandler>();
         services.AddSingleton<PaginatePupilDtosPresentationHandler>();
-
         services.AddSingleton<IPupilDtosPresentationHandler>(sp =>
         {
-            
-            return new ChainedEvaluationPupilDtosPresentationHandler(
-                    current: sp.GetRequiredService<OrderPupilDtosPresentationHandler>())
-                .ChainNext(
-                    next: sp.GetRequiredService<PaginatePupilDtosPresentationHandler>());
+            return
+                new ChainedEvaluationPupilDtosPresentationHandler(sp.GetRequiredService<OrderPupilDtosPresentationHandler>())
+                    .ChainNext(sp.GetRequiredService<PaginatePupilDtosPresentationHandler>());
         });
 
         // GetMyPupilsHandler

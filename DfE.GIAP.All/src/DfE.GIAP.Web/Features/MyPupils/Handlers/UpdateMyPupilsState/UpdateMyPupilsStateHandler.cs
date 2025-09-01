@@ -25,7 +25,7 @@ public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
     }
 
-    public void HandleAsync(UpdateMyPupilsStateRequest request)
+    public void Handle(UpdateMyPupilsStateRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 

@@ -13,12 +13,14 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
         IAspNetCoreSessionProvider sessionProvider,
         ISessionObjectKeyResolver sessionKeyResolver)
     {
-        ArgumentNullException.ThrowIfNull(sessionKeyResolver);
+        ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
+
+        ArgumentNullException.ThrowIfNull(sessionKeyResolver);
         _sessionKeyResolver = sessionKeyResolver;
     }
 
-    public SessionQueryResponse<TSessionObject> Handle()
+    public SessionQueryResponse<TSessionObject> Get()
     {
         string sessionObjectKey = _sessionKeyResolver.Resolve(typeof(TSessionObject));
 
