@@ -67,7 +67,10 @@ public sealed class AspNetCoreSessionCommandHandlerTests
     public void StoreInSession_ResolvesKey_And_Stores_Serialized_Value()
     {
         Mock<ISessionObjectKeyResolver> keyResolver = new();
-        keyResolver.Setup(t => t.Resolve<StubSessionObject>()).Returns(It.IsAny<string>());
+        keyResolver
+            .Setup(t => t.Resolve<StubSessionObject>())
+            .Returns(It.IsAny<string>())
+            .Verifiable();
 
         Mock<ISession> sessionMock = new();
         sessionMock
