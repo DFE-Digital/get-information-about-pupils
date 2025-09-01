@@ -1,15 +1,18 @@
-﻿using DfE.GIAP.Web.Features.Session.Command;
+﻿using DfE.GIAP.Web.Features.Session.Abstractions;
+using DfE.GIAP.Web.Features.Session.Abstractions.Command;
+using DfE.GIAP.Web.Features.Session.Abstractions.Query;
+using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore.Command;
+using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore.Query;
 using DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Provider;
 using DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
-using DfE.GIAP.Web.Features.Session.Query;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Web.Features.Session;
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddSessionServices(this IServiceCollection services)
+    public static IServiceCollection AddAspNetCoreSessionServices(this IServiceCollection services)
     {
         services.TryAddScoped<IAspNetCoreSessionProvider, AspNetCoreSessionProvider>();
 

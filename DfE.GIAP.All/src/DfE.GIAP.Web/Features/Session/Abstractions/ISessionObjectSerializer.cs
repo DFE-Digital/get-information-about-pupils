@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
+﻿namespace DfE.GIAP.Web.Features.Session.Abstractions;
 
 public interface ISessionObjectSerializer<TSessionObject>
 {

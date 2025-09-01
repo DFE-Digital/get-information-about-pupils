@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.Session.Infrastructure.Provider;
+﻿namespace DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore;
 
 public sealed class AspNetCoreSessionProvider : IAspNetCoreSessionProvider
 {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DfE.GIAP.Web.Features.Session.Abstractions;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
 

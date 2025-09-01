@@ -1,11 +1,8 @@
 ﻿using System.Text;
-using DfE.GIAP.Web.Features.Session;
-using DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Provider;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
-using DfE.GIAP.Web.Features.Session.Query;
-using DfE.GIAP.Web.Tests.TestDoubles;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using DfE.GIAP.Web.Features.Session.Abstractions;
+using DfE.GIAP.Web.Features.Session.Abstractions.Query;
+using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore.Query;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -62,8 +59,8 @@ public sealed class AspNetCoreSessionQueryHandlerTests
 
         Mock<ISession> sessionMock = new();
         sessionMock
-              .Setup(s => s.TryGetValue(stubSessionObjectKey, out It.Ref<byte[]>.IsAny!))
-              .Returns(false);
+            .Setup(s => s.TryGetValue(stubSessionObjectKey, out It.Ref<byte[]>.IsAny!))
+            .Returns(false);
 
         Mock<IAspNetCoreSessionProvider> sessionProviderMock = new();
         sessionProviderMock.Setup(t => t.GetSession()).Returns(sessionMock.Object);

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
-using DfE.GIAP.Web.Features.Session.Command;
+using DfE.GIAP.Web.Features.Session.Abstractions.Command;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.UpdateMyPupilsState;
 

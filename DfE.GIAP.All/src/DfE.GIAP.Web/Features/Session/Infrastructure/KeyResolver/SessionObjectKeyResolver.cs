@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
+﻿using DfE.GIAP.Web.Features.Session.Abstractions;
+
+namespace DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
 
 public sealed class SessionObjectKeyResolver : ISessionObjectKeyResolver
 {

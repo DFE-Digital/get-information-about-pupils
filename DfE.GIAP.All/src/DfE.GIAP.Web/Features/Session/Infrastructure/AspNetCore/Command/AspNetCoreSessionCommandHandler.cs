@@ -1,8 +1,7 @@
-﻿using DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Provider;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
+﻿using DfE.GIAP.Web.Features.Session.Abstractions;
+using DfE.GIAP.Web.Features.Session.Abstractions.Command;
 
-namespace DfE.GIAP.Web.Features.Session.Command;
+namespace DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore.Command;
 
 public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHandler<TValue>
 {
@@ -25,7 +24,7 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    private string SessionObjectAccessKey => _sessionKeyResolver.Resolve(typeof(TValue));
+    private string SessionObjectAccessKey => _sessionKeyResolver.Resolve<TValue>();
 
     public void StoreInSession(TValue value)
     {

@@ -1,8 +1,7 @@
-﻿using DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Provider;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
+﻿using DfE.GIAP.Web.Features.Session.Abstractions;
+using DfE.GIAP.Web.Features.Session.Abstractions.Query;
 
-namespace DfE.GIAP.Web.Features.Session.Query;
+namespace DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore.Query;
 
 public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQueryHandler<TSessionObject>
 {
@@ -25,26 +24,21 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
+    private string SessionObjectKey => _sessionKeyResolver.Resolve<TSessionObject>();
+
     public SessionQueryResponse<TSessionObject> GetSessionObject()
     {
-        string sessionObjectKey = _sessionKeyResolver.Resolve<TSessionObject>();
-
         ISession session = _sessionProvider.GetSession();
 
-        if ((string.IsNullOrWhiteSpace(sessionObjectKey)) || !session.TryGetValue(sessionObjectKey, out byte[] _))
+        if (string.IsNullOrWhiteSpace(SessionObjectKey) || !session.TryGetValue(SessionObjectKey, out byte[] _))
         {
-            return new SessionQueryResponse<TSessionObject>(
-                result: default,
-                valueExists: false);
+            return SessionQueryResponse<TSessionObject>.NoValue();
         }
 
-        string sessionValue = session.GetString(sessionObjectKey);
+        string sessionValue = session.GetString(SessionObjectKey);
 
-        TSessionObject outputValue = _sessionObjectSerializer.Deserialize(input: sessionValue)!;
+        TSessionObject outputValue = _sessionObjectSerializer.Deserialize(sessionValue)!;
 
-        return new SessionQueryResponse<TSessionObject>(
-            result: outputValue,
-            valueExists: true);
+        return SessionQueryResponse<TSessionObject>.Create(outputValue);
     }
-
 }
