@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
-using DfE.GIAP.Web.Features.Session.Abstractions.Query;
+using DfE.GIAP.Web.Session.Abstraction.Query;
 
 namespace DfE.GIAP.Web.Features.MyPupils.State;
 

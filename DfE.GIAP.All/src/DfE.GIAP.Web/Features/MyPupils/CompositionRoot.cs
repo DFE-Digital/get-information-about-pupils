@@ -11,8 +11,8 @@ using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels;
-using DfE.GIAP.Web.Features.Session.Abstractions;
-using DfE.GIAP.Web.Features.Session.Infrastructure.Serialization;
+using DfE.GIAP.Web.Session.Abstraction;
+using DfE.GIAP.Web.Session.Infrastructure.Serialization;
 
 namespace DfE.GIAP.Web.Features.MyPupils;
 
@@ -49,7 +49,7 @@ public static class CompositionRoot
         // UpdateMyPupilsStateHandler
         services.AddScoped<IUpdateMyPupilsStateHandler, UpdateMyPupilsStateHandler>();
 
-        // Session
+        // Session - PupilSelectionState
         services.AddSingleton<MyPupilsPupilSelectionStateToDtoMapper>();
         services.AddSingleton<MyPupilsPupilSelectionStateFromDtoMapper>();
         services.AddScoped<ISessionObjectSerializer<MyPupilsPupilSelectionState>>(sp =>
