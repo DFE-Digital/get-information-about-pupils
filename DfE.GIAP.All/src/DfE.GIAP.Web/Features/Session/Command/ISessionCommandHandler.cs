@@ -2,10 +2,7 @@
 
 namespace DfE.GIAP.Web.Features.Session.Command;
 
-public interface ISessionCommandHandler<TValue>
+public interface ISessionCommandHandler<in TValue>
 {
     void StoreInSession(TValue value);
-    void StoreInSession<TDataTransferObject>(
-        TValue value,
-        IMapper<TValue, TDataTransferObject> mapSessionObjectToDto);
 }

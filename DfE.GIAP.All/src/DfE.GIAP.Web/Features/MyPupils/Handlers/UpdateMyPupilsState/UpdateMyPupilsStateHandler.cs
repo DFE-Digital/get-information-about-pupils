@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Provider.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.Session.Command;
 
@@ -9,18 +8,15 @@ namespace DfE.GIAP.Web.Features.MyPupils.Handlers.UpdateMyPupilsState;
 public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
 {
     private readonly IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState> _formDtoToPresentationStateMapper;
-    private readonly IMapper<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto> _mapSelectionStateToDto;
     private readonly ISessionCommandHandler<MyPupilsPresentationState> _presentationStateSessionComandHandler;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
 
     public UpdateMyPupilsStateHandler(
         IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState> formDtoToPresentationStateMapper,
-        IMapper<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto> mapSelectionStateToDto,
         ISessionCommandHandler<MyPupilsPresentationState> presentationStateSessionComandHandler,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler)
     {
         _formDtoToPresentationStateMapper = formDtoToPresentationStateMapper;
-        _mapSelectionStateToDto = mapSelectionStateToDto;
         _presentationStateSessionComandHandler = presentationStateSessionComandHandler;
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
     }
@@ -55,9 +51,6 @@ public sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
         }
 
         _presentationStateSessionComandHandler.StoreInSession(updatedPresentationState);
-
-        _selectionStateSessionCommandHandler.StoreInSession(
-            selectionState,
-            mapSessionObjectToDto: _mapSelectionStateToDto);
+        _selectionStateSessionCommandHandler.StoreInSession(selectionState);
     }
 }
