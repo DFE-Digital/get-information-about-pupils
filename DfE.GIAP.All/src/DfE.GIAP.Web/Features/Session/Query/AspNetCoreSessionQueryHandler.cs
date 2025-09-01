@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using DfE.GIAP.Web.Features.Session.Infrastructure.KeyResolver;
 using DfE.GIAP.Web.Features.Session.Infrastructure.Provider;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 
 namespace DfE.GIAP.Web.Features.Session.Query;
 
@@ -20,13 +21,13 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
         _sessionKeyResolver = sessionKeyResolver;
     }
 
-    public SessionQueryResponse<TSessionObject> Get()
+    public SessionQueryResponse<TSessionObject> GetSessionObject()
     {
         string sessionObjectKey = _sessionKeyResolver.Resolve(typeof(TSessionObject));
 
         ISession session = _sessionProvider.GetSession();
 
-        if (!session.ContainsKey(sessionObjectKey))
+        if ((string.IsNullOrWhiteSpace(sessionObjectKey)) || !session.TryGetValue(sessionObjectKey, out byte[] _))
         {
             return new SessionQueryResponse<TSessionObject>(
                 result: default,
@@ -41,4 +42,5 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
             result: outputValue,
             valueExists: true);
     }
+
 }

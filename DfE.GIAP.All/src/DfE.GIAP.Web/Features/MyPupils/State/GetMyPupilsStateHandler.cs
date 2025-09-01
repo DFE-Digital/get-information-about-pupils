@@ -18,13 +18,13 @@ public sealed class GetMyPupilsStateHandler : IGetMyPupilsStateHandler
     }
     public MyPupilsState GetState()
     {
-        SessionQueryResponse<MyPupilsPresentationState> sessionPresentationStateResponse = _presentationStateSessionQueryHandler.Get();
+        SessionQueryResponse<MyPupilsPresentationState> sessionPresentationStateResponse = _presentationStateSessionQueryHandler.GetSessionObject();
 
         MyPupilsPresentationState myPupilsPresentationState = sessionPresentationStateResponse.HasValue ?
             sessionPresentationStateResponse.Value :
                 MyPupilsPresentationState.CreateDefault();
 
-        SessionQueryResponse<MyPupilsPupilSelectionState> selectionState = _selectionStateSessionQueryHandler.Get();
+        SessionQueryResponse<MyPupilsPupilSelectionState> selectionState = _selectionStateSessionQueryHandler.GetSessionObject();
 
         MyPupilsPupilSelectionState myPupilsSelectionState = selectionState.HasValue ?
             selectionState.Value :
