@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore;
+﻿using DfE.GIAP.Web.Features.Session.Infrastructure.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -53,5 +48,26 @@ public sealed class AspNetCoreSessionProviderTests
         // Assert
         InvalidOperationException noContextException = Assert.Throws<InvalidOperationException>(() => sut.GetSession());
         Assert.Contains("Session", noContextException.Message);
+    }
+
+    [Fact]
+    public void GetSession_Returns_Session()
+    {
+        // Arrange
+        Mock<IHttpContextAccessor> httpContextAccessorMock = new();
+        Mock<ISession> sessionMock = new();
+        DefaultHttpContext httpContextStub = new()
+        {
+            Session = sessionMock.Object
+        };
+        httpContextAccessorMock.SetupGet(t => t.HttpContext).Returns(httpContextStub);
+
+        // Act
+        AspNetCoreSessionProvider sut = new(httpContextAccessorMock.Object);
+
+        // Assert
+        ISession session = sut.GetSession();
+        Assert.NotNull(session);
+        Assert.Same(sessionMock.Object, session);
     }
 }

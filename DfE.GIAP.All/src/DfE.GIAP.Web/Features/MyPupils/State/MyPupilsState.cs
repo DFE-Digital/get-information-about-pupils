@@ -6,4 +6,3 @@ namespace DfE.GIAP.Web.Features.MyPupils.State;
 public record MyPupilsState(
     MyPupilsPresentationState PresentationState,
     MyPupilsPupilSelectionState SelectionState);
-

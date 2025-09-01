@@ -49,17 +49,15 @@ public static class CompositionRoot
         // UpdateMyPupilsStateHandler
         services.AddScoped<IUpdateMyPupilsStateHandler, UpdateMyPupilsStateHandler>();
 
-        // MyPupilsPupilSelectionState
-        services.AddSingleton<IMapper<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto>, MyPupilsPupilSelectionStateToDtoMapper>();
-        services.AddSingleton<IMapper<MyPupilsPupilSelectionStateDto, MyPupilsPupilSelectionState>, MyPupilsPupilSelectionStateFromDtoMapper>();
-
         // Session
+        services.AddSingleton<MyPupilsPupilSelectionStateToDtoMapper>();
+        services.AddSingleton<MyPupilsPupilSelectionStateFromDtoMapper>();
         services.AddScoped<ISessionObjectSerializer<MyPupilsPupilSelectionState>>(sp =>
         {
             return new MappedToDataTransferObjectSessionObjectSerializer<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto>
             (
-                sp.GetRequiredService<IMapper<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto>>(),
-                sp.GetRequiredService<IMapper<MyPupilsPupilSelectionStateDto, MyPupilsPupilSelectionState>>());
+                sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
+                sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
         });
 
         return services;

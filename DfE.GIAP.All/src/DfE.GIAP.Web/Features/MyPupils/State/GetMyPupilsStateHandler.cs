@@ -16,6 +16,7 @@ public sealed class GetMyPupilsStateHandler : IGetMyPupilsStateHandler
         _presentationStateSessionQueryHandler = presentationStateSessionQueryHandler;
         _selectionStateSessionQueryHandler = selectionStateSessionQueryHandler;
     }
+
     public MyPupilsState GetState()
     {
         SessionQueryResponse<MyPupilsPresentationState> sessionPresentationStateResponse = _presentationStateSessionQueryHandler.GetSessionObject();
