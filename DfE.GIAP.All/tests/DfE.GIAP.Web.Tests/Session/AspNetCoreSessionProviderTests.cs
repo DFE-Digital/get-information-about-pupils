@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.Web.Tests.TestDoubles.Http;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -20,8 +21,7 @@ public sealed class AspNetCoreSessionProviderTests
     public void GetSession_Throws_When_HttpContext_Is_Null()
     {
         // Arrange
-        Mock<IHttpContextAccessor> httpContextAccessorMock = new();
-        httpContextAccessorMock.SetupGet(t => t.HttpContext).Returns(() => null);
+        Mock<IHttpContextAccessor> httpContextAccessorMock = IHttpContextAccessorTestDoubles.WithHttpContext(null);
 
         // Act
         AspNetCoreSessionProvider sut = new(httpContextAccessorMock.Object);
@@ -35,12 +35,8 @@ public sealed class AspNetCoreSessionProviderTests
     public void GetSession_Throws_When_Session_Is_Null()
     {
         // Arrange
-        Mock<IHttpContextAccessor> httpContextAccessorMock = new();
-        DefaultHttpContext httpContextStub = new()
-        {
-            Session = null!
-        };
-        httpContextAccessorMock.SetupGet(t => t.HttpContext).Returns(httpContextStub);
+        HttpContext httpContextStub = HttpContextTestDoubles.WithSession(null!);
+        Mock<IHttpContextAccessor> httpContextAccessorMock = IHttpContextAccessorTestDoubles.WithHttpContext(httpContextStub);
 
         // Act
         AspNetCoreSessionProvider sut = new(httpContextAccessorMock.Object);
@@ -54,13 +50,10 @@ public sealed class AspNetCoreSessionProviderTests
     public void GetSession_Returns_Session()
     {
         // Arrange
-        Mock<IHttpContextAccessor> httpContextAccessorMock = new();
         Mock<ISession> sessionMock = new();
-        DefaultHttpContext httpContextStub = new()
-        {
-            Session = sessionMock.Object
-        };
-        httpContextAccessorMock.SetupGet(t => t.HttpContext).Returns(httpContextStub);
+        HttpContext httpContextStub = HttpContextTestDoubles.WithSession(sessionMock.Object);
+        Mock<IHttpContextAccessor> httpContextAccessorMock = IHttpContextAccessorTestDoubles.WithHttpContext(httpContextStub);
+
 
         // Act
         AspNetCoreSessionProvider sut = new(httpContextAccessorMock.Object);

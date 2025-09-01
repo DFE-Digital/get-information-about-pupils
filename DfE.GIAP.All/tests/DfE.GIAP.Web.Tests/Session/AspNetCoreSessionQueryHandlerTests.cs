@@ -1,8 +1,8 @@
-﻿using System.Text;
-using DfE.GIAP.Web.Session.Abstraction;
+﻿using DfE.GIAP.Web.Session.Abstraction;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
 using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
+using DfE.GIAP.Web.Tests.Session.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -14,10 +14,14 @@ public sealed class AspNetCoreSessionQueryHandlerTests
     public void Constructor_Throws_When_SessionProvider_Is_Null()
     {
         // Arrange
-        Mock<ISessionObjectKeyResolver> keyResolver = new();
-        Mock<ISessionObjectSerializer<StubSessionObject>> sessionObjectSerializer = new();
+        Mock<ISessionObjectKeyResolver> keyResolverMock = ISessionObjectKeyResolverTestDoubles.Default();
+        Mock<ISessionObjectSerializer<StubSessionObject>> sessionObjectSerializerMock = ISessionObjectSerializerTestDoubles.Default<StubSessionObject>();
+
         Func<AspNetCoreSessionQueryHandler<StubSessionObject>> construct =
-            () => new AspNetCoreSessionQueryHandler<StubSessionObject>(null, keyResolver.Object, sessionObjectSerializer.Object);
+            () => new AspNetCoreSessionQueryHandler<StubSessionObject>(
+                null,
+                keyResolverMock.Object,
+                sessionObjectSerializerMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -27,10 +31,14 @@ public sealed class AspNetCoreSessionQueryHandlerTests
     public void Constructor_Throws_When_SessionKeyResolver_Is_Null()
     {
         // Arrange
-        Mock<IAspNetCoreSessionProvider> sessionProvider = new();
-        Mock<ISessionObjectSerializer<StubSessionObject>> sessionObjectSerializer = new();
+        Mock<IAspNetCoreSessionProvider> sessionProviderMock = new();
+        Mock<ISessionObjectSerializer<StubSessionObject>> sessionObjectSerializerMock = ISessionObjectSerializerTestDoubles.Default<StubSessionObject>();
+
         Func<AspNetCoreSessionQueryHandler<StubSessionObject>> construct =
-            () => new AspNetCoreSessionQueryHandler<StubSessionObject>(sessionProvider.Object, null, sessionObjectSerializer.Object);
+            () => new AspNetCoreSessionQueryHandler<StubSessionObject>(
+                sessionProviderMock.Object,
+                null,
+                sessionObjectSerializerMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -40,10 +48,13 @@ public sealed class AspNetCoreSessionQueryHandlerTests
     public void Constructor_Throws_When_Serializer_Is_Null()
     {
         // Arrange
-        Mock<ISessionObjectKeyResolver> keyResolver = new();
-        Mock<IAspNetCoreSessionProvider> sessionProvider = new();
+        Mock<ISessionObjectKeyResolver> keyResolverMock = ISessionObjectKeyResolverTestDoubles.Default();
+        Mock<IAspNetCoreSessionProvider> sessionProviderMock = new();
         Func<AspNetCoreSessionQueryHandler<StubSessionObject>> construct =
-            () => new AspNetCoreSessionQueryHandler<StubSessionObject>(sessionProvider.Object, keyResolver.Object, null);
+            () => new AspNetCoreSessionQueryHandler<StubSessionObject>(
+                sessionProviderMock.Object,
+                keyResolverMock.Object,
+                null);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -54,27 +65,13 @@ public sealed class AspNetCoreSessionQueryHandlerTests
     {
         // Arrange
         const string stubSessionObjectKey = "key";
-        Mock<ISessionObjectKeyResolver> keyResolverMock = new();
-        keyResolverMock
-            .Setup(keyResolver => keyResolver.Resolve<StubSessionObject>())
-            .Returns(stubSessionObjectKey)
-            .Verifiable();
+        Mock<ISessionObjectKeyResolver> keyResolverMock = ISessionObjectKeyResolverTestDoubles.MockFor<StubSessionObject>(stubSessionObjectKey);
 
-        Mock<ISession> sessionMock = new();
-        sessionMock
-            .Setup(s => s.TryGetValue(stubSessionObjectKey, out It.Ref<byte[]>.IsAny!))
-            .Returns(false)
-            .Verifiable();
+        Mock<ISession> sessionMock = ISessionTestDoubles.MockForTryGetValue(key: stubSessionObjectKey, tryGetResult: false);
+        Mock<IAspNetCoreSessionProvider> sessionProviderMock = IAspNetCoreSessionProviderTestDoubles.MockWithSession(sessionMock.Object);
+        Mock<ISessionObjectSerializer<StubSessionObject>> sessionObjectSerializerMock = ISessionObjectSerializerTestDoubles.Default<StubSessionObject>();
 
-        Mock<IAspNetCoreSessionProvider> sessionProviderMock = new();
-        sessionProviderMock
-            .Setup(sessionProvider => sessionProvider.GetSession())
-            .Returns(sessionMock.Object)
-            .Verifiable();
-
-        Mock<ISessionObjectSerializer<StubSessionObject>> serializer = new();
-
-        AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, serializer.Object);
+        AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, sessionObjectSerializerMock.Object);
 
         // Act
         SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.GetSessionObject();
@@ -91,29 +88,16 @@ public sealed class AspNetCoreSessionQueryHandlerTests
     public void Session_Contains_Key_Returns_Deserialised_Object()
     {
         // Arrange
-        const string stubSessionObjectKey = "key";
-        Mock<ISessionObjectKeyResolver> keyResolver = new();
-        keyResolver.Setup(t => t.Resolve<StubSessionObject>()).Returns(stubSessionObjectKey);
+        const string stubSessionObjectKey = "test-key";
+        Mock<ISessionObjectKeyResolver> keyResolverMock = ISessionObjectKeyResolverTestDoubles.MockFor<StubSessionObject>(resolvedKey: stubSessionObjectKey);
 
-        byte[] stubTryGetSessionValueBytes = Encoding.UTF8.GetBytes("test-value");
-        Mock<ISession> sessionMock = new();
-        sessionMock
-            .Setup(session => session.TryGetValue(It.IsAny<string>(), out stubTryGetSessionValueBytes!))
-            .Returns(true);
-
-        Mock<IAspNetCoreSessionProvider> sessionProviderMock = new();
-        sessionProviderMock
-            .Setup(provider => provider.GetSession())
-            .Returns(sessionMock.Object);
+        Mock<ISession> sessionMock = ISessionTestDoubles.MockForTryGetValue(key: stubSessionObjectKey, true);
+        Mock<IAspNetCoreSessionProvider> sessionProviderMock = IAspNetCoreSessionProviderTestDoubles.MockWithSession(sessionMock.Object);
 
         StubSessionObject stubSessionObject = new();
-        Mock<ISessionObjectSerializer<StubSessionObject>> serializer = new();
-        serializer
-            .Setup((serializer) => serializer.Deserialize(It.IsAny<string>()))
-            .Returns(stubSessionObject)
-            .Verifiable();
-
-        AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolver.Object, serializer.Object);
+        Mock<ISessionObjectSerializer<StubSessionObject>> serializer = ISessionObjectSerializerTestDoubles.MockDeserialize(stubSessionObject);
+        
+        AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, serializer.Object);
 
         // Act
         SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.GetSessionObject();
@@ -122,8 +106,9 @@ public sealed class AspNetCoreSessionQueryHandlerTests
         Assert.Equal(stubSessionObject, sessionQueryResponse.Value);
         Assert.True(sessionQueryResponse.HasValue);
 
+        keyResolverMock.Verify(t => t.Resolve<StubSessionObject>(), Times.Once);
         sessionProviderMock.Verify(t => t.GetSession(), Times.Once);
-        serializer.Verify(t => t.Deserialize("test-value"), Times.Once);
+        serializer.Verify(t => t.Deserialize(stubSessionObjectKey), Times.Once);
     }
 
     public class StubSessionObject { }

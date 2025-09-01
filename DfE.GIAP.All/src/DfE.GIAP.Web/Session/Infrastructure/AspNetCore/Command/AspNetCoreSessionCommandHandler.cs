@@ -24,8 +24,6 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    private string SessionObjectAccessKey => _sessionKeyResolver.Resolve<TValue>();
-
     public void StoreInSession(TValue value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -34,6 +32,6 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
 
         _sessionProvider
             .GetSession()
-            .SetString(SessionObjectAccessKey, json);
+            .SetString(key: _sessionKeyResolver.Resolve<TValue>(), json);
     }
 }

@@ -24,18 +24,18 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    private string SessionObjectKey => _sessionKeyResolver.Resolve<TSessionObject>();
-
     public SessionQueryResponse<TSessionObject> GetSessionObject()
     {
         ISession session = _sessionProvider.GetSession();
 
-        if (string.IsNullOrWhiteSpace(SessionObjectKey) || !session.TryGetValue(SessionObjectKey, out byte[] _))
+        string sessionObjectAccessKey = _sessionKeyResolver.Resolve<TSessionObject>();
+
+        if (string.IsNullOrWhiteSpace(sessionObjectAccessKey) || !session.TryGetValue(sessionObjectAccessKey, out byte[] _))
         {
             return SessionQueryResponse<TSessionObject>.NoValue();
         }
 
-        string sessionValue = session.GetString(SessionObjectKey);
+        string sessionValue = session.GetString(sessionObjectAccessKey);
 
         TSessionObject outputValue = _sessionObjectSerializer.Deserialize(sessionValue)!;
 
