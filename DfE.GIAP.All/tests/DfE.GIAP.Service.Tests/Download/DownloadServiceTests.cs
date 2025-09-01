@@ -1,9 +1,7 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Models.Glossary;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.ApiProcessor;
-using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Tests.FakeData;
 using DfE.GIAP.Service.Tests.FakeHttpHandlers;
@@ -12,12 +10,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Xunit;
 

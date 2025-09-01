@@ -1,8 +1,4 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Core.Models.Glossary;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DfE.GIAP.Service.Tests.FakeData
 {

@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Infrastructure;
-using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,18 +33,6 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
     {
         return services
-            .AddBlobStorageProvider()
-            .RegisterInfrastructureRepositories()
-            .RegisterInfrastructureMappers();
-    }
-
-    private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
-    {
-        return services;
-    }
-
-    private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
-    {
-        return services;
+            .AddBlobStorageProvider();
     }
 }
