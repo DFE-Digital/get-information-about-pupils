@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Session.Infrastructure.Serialization;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -20,11 +19,11 @@ public class MappedToDataTransferObjectSessionObjectSerializerTests
             Source: "System",
             Version: 2);
 
-        DataTransferObjectStub expectedDto = new()
+        DtoStub expectedDto = new()
         {
             Id = expectedSessionObject.Id.ToString(),
             CreatedAt = expectedSessionObject.CreatedAt.ToString("O"),
-            Metadata = new NestedTypeStub()
+            Metadata = new NestedDtoStub()
             {
                 Source = expectedSessionObject.Source,
                 Version = expectedSessionObject.Version
@@ -32,9 +31,9 @@ public class MappedToDataTransferObjectSessionObjectSerializerTests
         };
 
 
-        MappedToDataTransferObjectSessionObjectSerializer<SessionObjectStub, DataTransferObjectStub> serializer = new(
-                MapperTestDoubles.MockFor<SessionObjectStub, DataTransferObjectStub>(expectedDto).Object,
-                MapperTestDoubles.MockFor<DataTransferObjectStub, SessionObjectStub>(expectedSessionObject).Object
+        MappedToDataTransferObjectSessionObjectSerializer<SessionObjectStub, DtoStub> serializer = new(
+                MapperTestDoubles.MockFor<SessionObjectStub, DtoStub>(expectedDto).Object,
+                MapperTestDoubles.Default<DtoStub, SessionObjectStub>().Object
             );
 
         // Act
@@ -55,11 +54,11 @@ public class MappedToDataTransferObjectSessionObjectSerializerTests
     public void Deserialize_ShouldMapDtoBackToComplexObject()
     {
         // Arrange
-        DataTransferObjectStub dto = new()
+        DtoStub dto = new()
         {
             Id = Guid.NewGuid().ToString(),
             CreatedAt = DateTime.UtcNow.ToString("O"),
-            Metadata = new NestedTypeStub()
+            Metadata = new NestedDtoStub()
             {
                 Source = "System",
                 Version = 2
@@ -74,33 +73,30 @@ public class MappedToDataTransferObjectSessionObjectSerializerTests
             Source: dto.Metadata.Source,
             Version: dto.Metadata.Version);
 
-        MappedToDataTransferObjectSessionObjectSerializer<SessionObjectStub, DataTransferObjectStub> serializer = new(
-            MapperTestDoubles.MockFor<SessionObjectStub, DataTransferObjectStub>(dto).Object,
-            MapperTestDoubles.MockFor<DataTransferObjectStub, SessionObjectStub>(expectedSessionObject).Object);
+        MappedToDataTransferObjectSessionObjectSerializer<SessionObjectStub, DtoStub> serializer = new(
+            MapperTestDoubles.Default<SessionObjectStub, DtoStub>().Object,
+            MapperTestDoubles.MockFor<DtoStub, SessionObjectStub>(expectedSessionObject).Object);
 
         // Act
-        SessionObjectStub result = serializer.Deserialize(dtoAsJson);
+        SessionObjectStub actualResult = serializer.Deserialize(dtoAsJson);
 
         // Assert
-        Assert.Equal(expectedSessionObject.Id, result.Id);
-        Assert.Equal(expectedSessionObject.CreatedAt, result.CreatedAt);
-        Assert.Equal(expectedSessionObject.Source, result.Source);
-        Assert.Equal(expectedSessionObject.Version, result.Version);
+        Assert.Equal(expectedSessionObject, actualResult);
     }
 
     public record SessionObjectStub(Guid Id, DateTime CreatedAt, string Source, int Version);
 
-    public class NestedTypeStub
-    {
-        public string Source { get; set; }
-        public int Version { get; set; }
-    }
-
-    public class DataTransferObjectStub
+    public sealed class DtoStub
     {
         public string Id { get; set; }
         public string CreatedAt { get; set; }
-        public NestedTypeStub Metadata { get; set; }
+        public NestedDtoStub Metadata { get; set; }
+    }
+
+    public sealed class NestedDtoStub
+    {
+        public string Source { get; set; }
+        public int Version { get; set; }
     }
 }
 
