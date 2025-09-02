@@ -7,7 +7,7 @@ public sealed class UserDtoToUserMapper : IMapper<UserDto, User>
 {
     public User Map(UserDto dto)
     {
-        
+
         UserId id = new(dto.id!);
 
         return new User(

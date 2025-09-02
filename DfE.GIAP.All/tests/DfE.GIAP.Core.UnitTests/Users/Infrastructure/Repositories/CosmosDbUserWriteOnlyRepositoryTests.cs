@@ -7,7 +7,6 @@ using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
@@ -69,7 +68,7 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
             mapToDto: MapperTestDoubles.Default<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>().Object);
 
         UserId userId = UserIdTestDoubles.Default();
-        
+
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() =>
             repository.SaveMyPupilsAsync(userId, UniquePupilNumbers.Create([])));
@@ -157,7 +156,7 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(inMemoryLogger, commandHandlerDouble.Object, mapper.Object);
-            
+
 
         // Act
         await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);

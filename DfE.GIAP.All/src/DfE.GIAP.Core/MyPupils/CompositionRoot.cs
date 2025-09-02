@@ -53,7 +53,7 @@ public static class CompositionRoot
         services
             .AddScoped<IMyPupilsReadOnlyRepository, CosmosDbMyPupilsReadOnlyRepository>()
             .AddScoped<IMyPupilsWriteOnlyRepository, CosmosDbMyPupilsWriteOnlyRepository>()
-            .AddSingleton<IMapper<MyPupilsDocumentDto,Application.Repositories.MyPupils>, MyPupilsDocumentDtoToMyPupilsMapper>()
+            .AddSingleton<IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils>, MyPupilsDocumentDtoToMyPupilsMapper>()
             .AddSingleton<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>, MyPupilsDocumentMappableToMyPupilsDocumentDtoMapper>()
             .AddMyPupilsInfrastructureSearch();
 
