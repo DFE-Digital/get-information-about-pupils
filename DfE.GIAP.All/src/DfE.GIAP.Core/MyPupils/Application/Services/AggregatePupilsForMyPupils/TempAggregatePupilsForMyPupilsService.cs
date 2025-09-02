@@ -25,11 +25,11 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     }
 
 
-    public async Task<IEnumerable<Pupil>> GetPupilsAsync(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
+    public async Task<IEnumerable<Pupil>> GetPupilsAsync(UniquePupilNumbers uniquePupilNumbers)
     {
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count(), UpnQueryLimit);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count, UpnQueryLimit);
 
-        if (!uniquePupilNumbers.Any())
+        if (uniquePupilNumbers.IsEmpty)
         {
             return [];
         }
@@ -37,7 +37,7 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
         List<DecoratedSearchIndexDto> allResults = [];
 
         const int maxIndexQuerySize = 500;
-        foreach (UniquePupilNumber[] upnBatch in uniquePupilNumbers.Chunk(maxIndexQuerySize))
+        foreach (UniquePupilNumber[] upnBatch in uniquePupilNumbers.GetUniquePupilNumbers().Chunk(maxIndexQuerySize))
         {
             SearchOptions searchOptions = CreateSearchClientOptions(upnBatch);
 

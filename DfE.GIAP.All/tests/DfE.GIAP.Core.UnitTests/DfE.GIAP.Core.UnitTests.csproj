@@ -5,6 +5,14 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="MyPupils\Infrastructure\**" />
+    <Compile Remove="Users\Application\**" />
+    <EmbeddedResource Remove="MyPupils\Infrastructure\**" />
+    <EmbeddedResource Remove="Users\Application\**" />
+    <None Remove="MyPupils\Infrastructure\**" />
+    <None Remove="Users\Application\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
@@ -20,11 +28,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MyPupils\Infrastructure\" />
-    <Folder Include="Users\Application\" />
   </ItemGroup>
 
 </Project>

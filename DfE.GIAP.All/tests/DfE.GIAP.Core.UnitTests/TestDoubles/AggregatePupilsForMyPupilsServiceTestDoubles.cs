@@ -12,7 +12,7 @@ internal static class AggregatePupilsForMyPupilsServiceTestDoubles
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockService = Default();
 
         mockService.Setup(
-                (service) => service.GetPupilsAsync(It.IsAny<IEnumerable<UniquePupilNumber>>()))
+                (service) => service.GetPupilsAsync(It.IsAny<UniquePupilNumbers>()))
             .ReturnsAsync(pupils)
             .Verifiable();
 
