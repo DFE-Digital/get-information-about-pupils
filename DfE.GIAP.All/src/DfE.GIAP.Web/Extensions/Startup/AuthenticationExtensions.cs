@@ -231,16 +231,6 @@ public static class AuthenticationExtensions
         claims.Add(new Claim(CustomClaimTypes.UKProviderReferenceNumber, org?.UKProviderReferenceNumber ?? string.Empty));
     }
 
-    //private static async Task UpdateUserProfile(ICommonService userApiClient, AuthenticatedUserInfo userInfo, string sessionId)
-    //{
-    //    await userApiClient.CreateOrUpdateUserProfile(
-    //        new UserProfile { UserId = userInfo.UserId },
-    //        new AzureFunctionHeaderDetails
-    //        {
-    //            ClientId = userInfo.UserId,
-    //            SessionId = sessionId
-    //        });
-    //}
 
     private static LoggingEvent CreateLoggingEvent(
         string userId,
