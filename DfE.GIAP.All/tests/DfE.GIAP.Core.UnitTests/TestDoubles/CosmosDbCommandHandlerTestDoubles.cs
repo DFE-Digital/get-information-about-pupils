@@ -72,7 +72,7 @@ internal static class CosmosDbCommandHandlerTestDoubles
         return mockHandler;
     }
 
-    internal static Mock<ICosmosDbCommandHandler> MockThrowUpsertItemAsync<TInput>(Exception exception) where TInput : class
+    internal static Mock<ICosmosDbCommandHandler> MockUpsertItemAsyncThrows<TInput>(Exception exception) where TInput : class
     {
         Mock<ICosmosDbCommandHandler> mockHandler = Default();
 

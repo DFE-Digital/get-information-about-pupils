@@ -8,6 +8,8 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -50,10 +52,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
                 .Select((t) => t.UPN)
                     .ToUniquePupilNumbers();
 
-        await Fixture.Database.WriteItemAsync<UserDto>(
-            UserDtoTestDoubles.WithPupils(
+        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+            MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
-                upns));
+                upns: UniquePupilNumbers.Create(uniquePupilNumbers: upns)));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -97,10 +99,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         UserId userId = UserIdTestDoubles.Default();
 
-        await Fixture.Database.WriteItemAsync<UserDto>(
-            UserDtoTestDoubles.WithPupils(
+        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+            MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
-                upns: []));
+                upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
             ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();

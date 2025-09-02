@@ -113,7 +113,6 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         string log = Assert.Single(mockLogger.Logs);
         Assert.Contains("CosmosException in GetUserByIdAsync", log);
-
     }
 
     [Fact]
@@ -147,9 +146,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
 
-        List<UniquePupilNumber> pupilIdentifiers = UniquePupilNumberTestDoubles.Generate(count: 3);
-
-        User expectedUser = new(userId, pupilIdentifiers, DateTime.UtcNow);
+        User expectedUser = new(userId, DateTime.UtcNow);
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForReadById(() => userProfileDto);
