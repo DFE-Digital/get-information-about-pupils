@@ -22,7 +22,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         Mock<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>> mockMapper =
             MapperTestDoubles.Default<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>();
 
-        Func<CosmosDbMyPupilsReadOnlyRepository> construct = () => new CosmosDbMyPupilsReadOnlyRepository(
+        Func<CosmosDbMyPupilsReadOnlyRepository> construct = () => new(
             logger: null!,
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
             mockMapper.Object);
@@ -135,7 +135,8 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
                 stub: myPupils);
 
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Default();
-        Mock<ICosmosDbQueryHandler> cosmosDbQueryHandlerMock = CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(() => myPupilsDocumentDto);
+        Mock<ICosmosDbQueryHandler> cosmosDbQueryHandlerMock =
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(() => myPupilsDocumentDto);
 
         CosmosDbMyPupilsReadOnlyRepository sut = new(
             logger: mockLogger,

@@ -8,9 +8,11 @@ internal sealed class MyPupilsDocumentDtoToMyPupilsMapper : IMapper<MyPupilsDocu
 {
     public Application.Repositories.MyPupils Map(MyPupilsDocumentDto input)
     {
+        ArgumentNullException.ThrowIfNull(input);
+
         UniquePupilNumbers uniquePupilNumbers =
             UniquePupilNumbers.Create(
-                uniquePupilNumbers: input.MyPupils.Pupils.Select(t => t.UPN).ToUniquePupilNumbers());
+                uniquePupilNumbers: input.MyPupils?.Pupils?.Select(t => t.UPN).ToUniquePupilNumbers() ?? []);
 
         return new(uniquePupilNumbers);
     }
