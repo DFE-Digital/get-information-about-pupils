@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Mapper;
+namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read.Mapper;
 internal sealed class MyPupilsDocumentDtoToMyPupilsMapper : IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils>
 {
     public Application.Repositories.MyPupils Map(MyPupilsDocumentDto input)

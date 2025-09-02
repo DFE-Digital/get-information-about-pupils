@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Mapper;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read.Mapper;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 
