@@ -4,14 +4,13 @@ using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
@@ -67,15 +66,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
-        Assert.NotNull(getMyPupilsResponse.Pupils);
-        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.Pupils.Count());
+        Assert.NotNull(getMyPupilsResponse.MyPupils);
+        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<PupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
 
-        foreach (PupilDto expectedPupil in expectedPupils)
+        foreach (MyPupilDto expectedPupil in expectedPupils)
         {
-            PupilDto? actual = getMyPupilsResponse.Pupils.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
+            MyPupilDto? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
 
             Assert.NotNull(actual);
             Assert.Equal(expectedPupil.Forename, actual.Forename);
@@ -113,14 +112,13 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
-        Assert.NotNull(getMyPupilsResponse.Pupils);
-
-        Assert.Equivalent(Array.Empty<PupilDto>(), getMyPupilsResponse.Pupils);
+        Assert.NotNull(getMyPupilsResponse.MyPupils);
+        Assert.Empty(getMyPupilsResponse.MyPupils.Values);
     }
 
-    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, PupilDto>
+    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, MyPupilDto>
     {
-        public PupilDto Map(AzureIndexEntity input)
+        public MyPupilDto Map(AzureIndexEntity input)
         {
             return new()
             {
