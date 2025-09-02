@@ -61,7 +61,7 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockUpsertItemAsyncThrows<UserDto>(new Exception("test exception"));
+            CosmosDbCommandHandlerTestDoubles.MockUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: new Exception("test exception"));
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
             logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
