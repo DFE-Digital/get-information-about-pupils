@@ -16,6 +16,9 @@ internal sealed class PupilViewModelFactory : IPupilsViewModelFactory
 
     public PupilsViewModel CreateViewModel(MyPupilDtos myPupils, MyPupilsPupilSelectionState selectionState)
     {
+        ArgumentNullException.ThrowIfNull(myPupils);
+        ArgumentNullException.ThrowIfNull(selectionState);
+
         IEnumerable<PupilViewModel> pupils = myPupils.Values.Select(dto =>
         {
             bool IsPupilSelected = selectionState.IsPupilSelected(dto.UniquePupilNumber);
