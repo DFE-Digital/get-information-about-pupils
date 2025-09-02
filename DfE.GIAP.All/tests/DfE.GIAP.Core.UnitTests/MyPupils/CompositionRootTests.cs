@@ -54,7 +54,7 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IMapper<DecoratedSearchIndexDto, Pupil>>());
         Assert.NotNull(provider.GetService<IMapper<Pupil, PupilDto>>());
 
-        Assert.NotNull(provider.GetService<IUserReadOnlyRepository>());
+        Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>>());
         Assert.NotNull(provider.GetService<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>>());
 
