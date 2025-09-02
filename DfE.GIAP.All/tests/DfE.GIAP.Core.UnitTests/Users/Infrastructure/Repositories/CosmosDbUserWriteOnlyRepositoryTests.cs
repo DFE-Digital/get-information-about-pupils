@@ -60,11 +60,11 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockThrowUpsertItemAsync<UserDto>(new Exception("test exception"));
+            CosmosDbCommandHandlerTestDoubles.MockUpsertItemAsyncThrows<UserDto>(new Exception("test exception"));
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
-            cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
+            cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             mapToDto: MapperTestDoubles.Default<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>().Object);
 
         UserId userId = UserIdTestDoubles.Default();
@@ -79,15 +79,17 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockThrowUpsertItemAsync<UserDto>(
-                CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles.MockUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: CosmosExceptionTestDoubles.Default());
 
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
 
+        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>(stub: It.IsAny<MyPupilsDocumentDto>());
+
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
-            cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             logger: inMemoryLogger,
-            mapToDto: MapperTestDoubles.Default<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>().Object);
+            cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
+            mapToDto: mapperMock.Object);
 
         // Act Assert
         UserId userId = UserIdTestDoubles.Default();
