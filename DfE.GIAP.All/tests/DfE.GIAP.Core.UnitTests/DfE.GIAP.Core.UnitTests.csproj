@@ -6,11 +6,8 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="MyPupils\Infrastructure\**" />
     <Compile Remove="Users\Application\**" />
-    <EmbeddedResource Remove="MyPupils\Infrastructure\**" />
     <EmbeddedResource Remove="Users\Application\**" />
-    <None Remove="MyPupils\Infrastructure\**" />
     <None Remove="Users\Application\**" />
   </ItemGroup>
 

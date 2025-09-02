@@ -21,7 +21,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
     public CosmosDbMyPupilsReadOnlyRepository(
         ILogger<CosmosDbMyPupilsReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils> myPupilsDtoToMyPupils)
+        IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils> mapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -29,8 +29,8 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
 
-        ArgumentNullException.ThrowIfNull(myPupilsDtoToMyPupils);
-        _myPupilsDtoToMyPupils = myPupilsDtoToMyPupils;
+        ArgumentNullException.ThrowIfNull(mapper);
+        _myPupilsDtoToMyPupils = mapper;
     }
 
     public async Task<Application.Repositories.MyPupils> GetMyPupils(UserId userId, CancellationToken ctx = default)

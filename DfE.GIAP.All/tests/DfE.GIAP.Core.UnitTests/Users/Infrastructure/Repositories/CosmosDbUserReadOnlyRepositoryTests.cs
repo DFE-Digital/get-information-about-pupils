@@ -113,7 +113,6 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         string log = Assert.Single(mockLogger.Logs);
         Assert.Contains("CosmosException in GetUserByIdAsync", log);
-
     }
 
     [Fact]

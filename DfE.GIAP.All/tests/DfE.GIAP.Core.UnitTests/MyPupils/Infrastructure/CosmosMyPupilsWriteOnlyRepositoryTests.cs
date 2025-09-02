@@ -10,8 +10,8 @@ using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
-namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
-public sealed class CosmosDbUserWriteOnlyRepositoryTests
+namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
+public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
 {
     private const string MyPupilsContainerName = "mypupils";
 
