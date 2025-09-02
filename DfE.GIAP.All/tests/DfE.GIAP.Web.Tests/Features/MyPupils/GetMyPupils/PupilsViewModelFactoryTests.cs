@@ -4,7 +4,6 @@ using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel.Factory;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using Moq;
 using Xunit;
 

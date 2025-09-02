@@ -21,9 +21,12 @@ internal sealed class PupilViewModelFactory : IPupilsViewModelFactory
 
         IEnumerable<PupilViewModel> pupils = myPupils.Values.Select(dto =>
         {
-            bool IsPupilSelected = selectionState.IsPupilSelected(dto.UniquePupilNumber);
             PupilViewModel mappedViewModel = _mapMyPupilDtoToPupilViewModel.Map(dto);
-            return mappedViewModel with { IsSelected = IsPupilSelected };
+
+            return mappedViewModel with
+            {
+                IsSelected = selectionState.IsPupilSelected(dto.UniquePupilNumber)
+            };
         });
 
         return PupilsViewModel.Create(pupils);
