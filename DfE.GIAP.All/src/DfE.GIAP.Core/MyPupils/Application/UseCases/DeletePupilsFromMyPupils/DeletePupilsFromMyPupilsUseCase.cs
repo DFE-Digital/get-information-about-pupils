@@ -32,7 +32,7 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
             return;
         }
 
-        Repositories.MyPupils myPupils = await _myPupilsReadOnlyRepository.GetMyPupils(userId);
+        Repositories.MyPupils myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsAsync(userId);
 
         IEnumerable<string> userMyPupilUpnsBeforeDelete = myPupils.Pupils.AsValues();
 

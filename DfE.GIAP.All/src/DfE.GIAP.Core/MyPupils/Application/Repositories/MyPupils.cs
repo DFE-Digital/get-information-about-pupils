@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
-public sealed class MyPupils
+public record MyPupils
 {
     public MyPupils(UniquePupilNumbers pupilNumbers)
     {
@@ -9,5 +9,5 @@ public sealed class MyPupils
         Pupils = pupilNumbers;
     }
 
-    public UniquePupilNumbers Pupils { get; }
+    public UniquePupilNumbers Pupils { get; init; }
 }

@@ -33,7 +33,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
         UserId userId = new(request.UserId);
-        Repositories.MyPupils myPupils = await _myPupilsReadOnlyRepository.GetMyPupils(userId);
+        Repositories.MyPupils myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsAsync(userId);
 
         if (myPupils.Pupils.IsEmpty)
         {

@@ -1,8 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
 using Microsoft.Azure.Cosmos;
@@ -33,7 +31,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         _myPupilsDtoToMyPupils = mapper;
     }
 
-    public async Task<Application.Repositories.MyPupils> GetMyPupils(UserId userId, CancellationToken ctx = default)
+    public async Task<Application.Repositories.MyPupils> GetMyPupilsAsync(UserId userId, CancellationToken ctx = default)
     {
         try
         {
@@ -51,21 +49,8 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupils)}.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsAsync)}.");
             throw;
         }
-    }
-}
-
-
-internal sealed class MyPupilsDocumentDtoToMyPupilsMapper : IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils>
-{
-    public Application.Repositories.MyPupils Map(MyPupilsDocumentDto input)
-    {
-        UniquePupilNumbers uniquePupilNumbers =
-            UniquePupilNumbers.Create(
-                uniquePupilNumbers: input.MyPupils.Pupils.Select(t => t.UPN).ToUniquePupilNumbers());
-
-        return new(uniquePupilNumbers);
     }
 }

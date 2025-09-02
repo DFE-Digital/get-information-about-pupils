@@ -10,7 +10,7 @@ internal static class IMyPupilsReadOnlyRepositoryTestDoubles
     {
         Mock<IMyPupilsReadOnlyRepository> mock = Default();
         mock.Setup(
-                (repo) => repo.GetMyPupils(
+                (repo) => repo.GetMyPupilsAsync(
                     It.IsAny<UserId>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(stub);
