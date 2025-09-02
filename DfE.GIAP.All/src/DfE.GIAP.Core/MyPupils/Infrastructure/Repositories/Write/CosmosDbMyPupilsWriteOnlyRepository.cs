@@ -7,7 +7,7 @@ using DfE.GIAP.Core.Users.Application;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories;
+namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRepository
 {
     private readonly ILogger<CosmosDbMyPupilsWriteOnlyRepository> _logger;
@@ -38,7 +38,7 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
             MyPupilsDocumentDto updatedDocument = _mapToDto.Map(
                 new MyPupilsDocumentDtoMappable(userId, updatedMyPupils));
 
-            await _cosmosDbCommandHandler.UpsertItemAsync<MyPupilsDocumentDto>(
+            await _cosmosDbCommandHandler.UpsertItemAsync(
                 item: updatedDocument,
                 containerKey: "mypupils",
                 partitionKeyValue: userId.Value);
@@ -48,31 +48,5 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
             _logger.LogCritical("{method} Error in saving MyPupilsAsync for user: {userId}", nameof(SaveMyPupilsAsync), userId.Value);
             throw;
         }
-    }
-}
-
-public record MyPupilsDocumentDtoMappable(UserId UserId, UniquePupilNumbers Upns);
-
-internal sealed class MyPupilsDocumentMappableToMyPupilsDocumentDtoMapper : IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>
-{
-    public MyPupilsDocumentDto Map(MyPupilsDocumentDtoMappable input)
-    {
-        IEnumerable<MyPupilsPupilItemDto> updatedPupils = input.Upns.AsValues()?.Select((upn) => new MyPupilsPupilItemDto()
-        {
-            UPN = upn
-        }) ?? [];
-
-        MyPupilsDto pupilsDto = new()
-        {
-            Pupils = updatedPupils,
-        };
-
-        MyPupilsDocumentDto documentDto = new()
-        {
-            id = input.UserId.Value,
-            MyPupils = pupilsDto
-        };
-
-        return documentDto;
     }
 }

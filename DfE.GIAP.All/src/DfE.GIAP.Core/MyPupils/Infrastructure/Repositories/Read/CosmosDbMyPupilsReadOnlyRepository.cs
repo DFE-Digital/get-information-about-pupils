@@ -6,8 +6,7 @@ using DfE.GIAP.Core.Users.Application;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories;
-
+namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 
 internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepository
 {
