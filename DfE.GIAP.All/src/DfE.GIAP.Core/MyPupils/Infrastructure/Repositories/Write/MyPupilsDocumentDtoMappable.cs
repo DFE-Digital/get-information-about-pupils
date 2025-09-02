@@ -2,4 +2,4 @@
 using DfE.GIAP.Core.Users.Application;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
-internal record MyPupilsDocumentDtoMappable(UserId UserId, UniquePupilNumbers Upns);
+public record MyPupilsDocumentDtoMappable(UserId UserId, UniquePupilNumbers Upns);
