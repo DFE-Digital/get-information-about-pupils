@@ -62,6 +62,43 @@ public sealed class GetMyPupilsUseCaseTests
     }
 
     [Fact]
+    public async Task HandleRequestAsync_WithNullRepositoryResponse_ReturnsEmptyResponse()
+    {
+        // Arrange
+        UserId userId = UserIdTestDoubles.Default();
+
+        Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockFor(null!);
+
+        Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
+
+        Mock<IMapper<Pupil, PupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, PupilDto>();
+
+        GetMyPupilsRequest request = new(userId.Value);
+
+        // Act
+        GetMyPupilsUseCase sut = new(
+            userRepoMock.Object,
+            mockAggregateService.Object,
+            mockMapper.Object);
+
+        GetMyPupilsResponse result = await sut.HandleRequestAsync(request);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Empty(result.Pupils);
+
+        userRepoMock.Verify(repo =>
+            repo.GetMyPupilsOrDefaultAsync(
+                userId,
+                It.IsAny<CancellationToken>()), Times.Once);
+
+        mockAggregateService.Verify(
+            t => t.GetPupilsAsync(It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
+
+        mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
+    }
+
+    [Fact]
     public async Task HandleRequestAsync_WithEmptyPupilList_ReturnsEmptyResponse()
     {
         // Arrange
@@ -100,6 +137,6 @@ public sealed class GetMyPupilsUseCaseTests
             t => t.GetPupilsAsync(It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
 
         mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
-
     }
 }
+
