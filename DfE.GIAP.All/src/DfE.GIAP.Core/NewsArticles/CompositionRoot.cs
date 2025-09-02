@@ -3,7 +3,6 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;

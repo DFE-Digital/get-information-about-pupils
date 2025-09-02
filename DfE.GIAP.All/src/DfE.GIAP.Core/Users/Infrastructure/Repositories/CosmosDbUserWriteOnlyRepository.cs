@@ -1,6 +1,4 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
@@ -24,41 +22,6 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
         _logger = logger;
     }
 
-    public async Task SaveMyPupilsAsync(UserId userId, IEnumerable<UniquePupilNumber> updatedPupilIds)
-    {
-        try
-        {
-            ArgumentNullException.ThrowIfNull(userId);
-
-            IEnumerable<MyPupilsItemDto> updatedPupils = updatedPupilIds?.Select((upn) => new MyPupilsItemDto()
-            {
-                UPN = upn.Value
-            }) ?? [];
-
-            MyPupilsDto updatedMyPupils = new()
-            {
-                Pupils = updatedPupils
-            };
-
-            UserDto updatedUserProfile = new()
-            {
-                id = userId.Value,
-                MyPupils = updatedMyPupils,
-                // TODO: map other fields if needed
-            };
-
-            await _commandHandler.UpsertItemAsync(
-                item: updatedUserProfile,
-                containerKey: ContainerName,
-                partitionKeyValue: userId.Value);
-        }
-        catch (CosmosException)
-        {
-            _logger.LogCritical("{method} Error in saving MyPupilsAsync for user: {userId}", nameof(SaveMyPupilsAsync), userId.Value);
-            throw;
-        }
-    }
-
     public async Task UpsertUserAsync(User user)
     {
         try
@@ -69,13 +32,6 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
             {
                 id = user.UserId.Value,
                 LastLoggedIn = user.LastLoggedIn,
-                MyPupils = new MyPupilsDto
-                {
-                    Pupils = user.UniquePupilNumbers?.Select(upn => new MyPupilsItemDto
-                    {
-                        UPN = upn.Value
-                    }) ?? []
-                }
             };
 
             await _commandHandler.UpsertItemAsync(

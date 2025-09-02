@@ -26,7 +26,7 @@ public class CreateUserIfNotExistsUseCase : IUseCaseRequestOnly<CreateUserIfNotE
         if (existingUser is not null)
             return;
 
-        User userToSave = new(userId, [], DateTime.UtcNow);
+        User userToSave = new(userId, DateTime.UtcNow);
         await _userWriteOnlyRepository.UpsertUserAsync(userToSave);
     }
 }
