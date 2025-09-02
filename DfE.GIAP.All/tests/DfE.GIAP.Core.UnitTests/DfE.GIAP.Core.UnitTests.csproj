@@ -5,11 +5,6 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Users\Application\**" />
-    <EmbeddedResource Remove="Users\Application\**" />
-    <None Remove="Users\Application\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
