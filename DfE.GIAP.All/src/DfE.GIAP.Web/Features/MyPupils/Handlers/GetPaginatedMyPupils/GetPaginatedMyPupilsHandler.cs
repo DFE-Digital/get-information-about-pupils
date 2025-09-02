@@ -21,11 +21,13 @@ internal sealed class GetPaginatedMyPupilsHandler : IGetPaginatedMyPupilsHandler
         _presentationHandler = presentationHandler;
     }
 
-    public async Task<MyPupilDtos> HandleAsync(GetPaginatedMyPupilsRequest request)
+    public async Task<PaginatedMyPupilsResponse> HandleAsync(GetPaginatedMyPupilsRequest request)
     {
         GetMyPupilsRequest getPupilsRequest = new(request.UserId);
         GetMyPupilsResponse response = await _useCase.HandleRequestAsync(getPupilsRequest);
         MyPupilDtos results = _presentationHandler.Handle(response.MyPupils, request.PresentationState);
-        return results;
+        return new(results);
     }
 }
+
+public record PaginatedMyPupilsResponse(MyPupilDtos Pupils);

@@ -65,7 +65,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
             useCaseMock.Object,
             mockHandler.Object);
 
-        MyPupilDtos response =
+        PaginatedMyPupilsResponse response =
             await sut.HandleAsync(
                 new GetPaginatedMyPupilsRequest(
                     UserId: userId.Value,
@@ -73,7 +73,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(response, stubPupilDtos);
+        Assert.Equal(response.Pupils, stubPupilDtos);
 
         useCaseMock.Verify(useCase => useCase.HandleRequestAsync(new GetMyPupilsRequest(userId.Value)), Times.Once);
         mockHandler.Verify(t => t.Handle(stubPupilDtos, stubPupilsPresentationState), Times.Once);
