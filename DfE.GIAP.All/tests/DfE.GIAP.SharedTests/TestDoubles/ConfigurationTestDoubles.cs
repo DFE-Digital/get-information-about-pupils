@@ -37,7 +37,9 @@ public static class ConfigurationTestDoubles
             ["RepositoryOptions:Containers:1:news:ContainerName"] = "news",
             ["RepositoryOptions:Containers:1:news:PartitionKey"] = "/id",
             ["RepositoryOptions:Containers:2:users:ContainerName"] = "users",
-            ["RepositoryOptions:Containers:2:users:PartitionKey"] = "/id"
+            ["RepositoryOptions:Containers:2:users:PartitionKey"] = "/id",
+            ["RepositoryOptions:Containers:3:mypupils:ContainerName"] = "mypupils",
+            ["RepositoryOptions:Containers:3:mypupils:PartitionKey"] = "/id"
         };
         builder.WithConfiguration(configurationOptions);
         return builder;

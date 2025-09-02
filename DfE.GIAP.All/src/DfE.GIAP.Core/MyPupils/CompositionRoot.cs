@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
@@ -10,11 +11,12 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read.Mapper;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write.Mapper;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -47,9 +49,10 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsInfrastructure(this IServiceCollection services)
     {
         services
-            .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
-            .AddScoped<IUserWriteOnlyRepository, CosmosDbUserWriteOnlyRepository>()
-            .AddSingleton<IMapper<UserDto, User>, UserDtoToUserMapper>()
+            .AddScoped<IMyPupilsReadOnlyRepository, CosmosDbMyPupilsReadOnlyRepository>()
+            .AddScoped<IMyPupilsWriteOnlyRepository, CosmosDbMyPupilsWriteOnlyRepository>()
+            .AddSingleton<IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils>, MyPupilsDocumentDtoToMyPupilsMapper>()
+            .AddSingleton<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>, MyPupilsDocumentMappableToMyPupilsDocumentDtoMapper>()
             .AddMyPupilsInfrastructureSearch();
 
         return services;

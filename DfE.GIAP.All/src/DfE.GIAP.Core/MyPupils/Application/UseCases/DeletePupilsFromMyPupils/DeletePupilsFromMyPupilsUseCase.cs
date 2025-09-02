@@ -1,23 +1,24 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repositories;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>
 {
-    private readonly IUserReadOnlyRepository _userReadOnlyRepository;
-    private readonly IUserWriteOnlyRepository _userWriteRepository;
+    private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
+    private readonly IMyPupilsWriteOnlyRepository _myPupilsWriteOnlyRepository;
 
     public DeletePupilsFromMyPupilsUseCase(
-        IUserReadOnlyRepository userReadOnlyRepository,
-        IUserWriteOnlyRepository userWriteRepository)
+        IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
+        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository)
     {
-        ArgumentNullException.ThrowIfNull(userWriteRepository);
-        ArgumentNullException.ThrowIfNull(userWriteRepository);
-        _userReadOnlyRepository = userReadOnlyRepository;
-        _userWriteRepository = userWriteRepository;
+        ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
+        _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
+
+        ArgumentNullException.ThrowIfNull(myPupilsWriteOnlyRepository);
+        _myPupilsWriteOnlyRepository = myPupilsWriteOnlyRepository;
     }
 
     public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
@@ -27,13 +28,13 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
         if (request.DeleteAll)
         {
-            await _userWriteRepository.SaveMyPupilsAsync(userId, []);
+            await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(userId, UniquePupilNumbers.Create(uniquePupilNumbers: []));
             return;
         }
 
-        User user = await _userReadOnlyRepository.GetUserByIdAsync(userId);
+        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(userId);
 
-        IEnumerable<string> userMyPupilUpnsBeforeDelete = user.UniquePupilNumbers.Select(t => t.Value);
+        IEnumerable<string> userMyPupilUpnsBeforeDelete = myPupils!.Pupils.AsValues();
 
         if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilUpnsBeforeDelete.Contains(deleteUpn)))
         {
@@ -46,6 +47,8 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
                 .ToUniquePupilNumbers()
                 .ToList();
 
-        await _userWriteRepository.SaveMyPupilsAsync(userId, updatedMyPupilsAfterDelete);
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(
+            userId,
+            UniquePupilNumbers.Create(updatedMyPupilsAfterDelete));
     }
 }
