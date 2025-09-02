@@ -52,7 +52,7 @@ public sealed class GetMyPupilsUseCaseTests
         Assert.Equivalent(result.Pupils, pupilDtos);
 
         readRepositoryMock.Verify(repo =>
-            repo.GetMyPupilsAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+            repo.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
 
         aggregateServiceMock.Verify(
             t => t.GetPupilsAsync(myPupils.Pupils), Times.Once);
@@ -92,7 +92,7 @@ public sealed class GetMyPupilsUseCaseTests
         Assert.Empty(result.Pupils);
 
         userRepoMock.Verify(repo =>
-            repo.GetMyPupilsAsync(
+            repo.GetMyPupilsOrDefaultAsync(
                 userId,
                 It.IsAny<CancellationToken>()), Times.Once);
 

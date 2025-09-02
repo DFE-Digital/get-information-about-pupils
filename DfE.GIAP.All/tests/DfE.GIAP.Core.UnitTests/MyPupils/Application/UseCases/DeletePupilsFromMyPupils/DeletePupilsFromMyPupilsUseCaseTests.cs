@@ -66,7 +66,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         // Assert
         readRepositoryMock.Verify(
-            (repo) => repo.GetMyPupilsAsync(
+            (repo) => repo.GetMyPupilsOrDefaultAsync(
                 userId,
                 It.IsAny<CancellationToken>()),
             Times.Once);
@@ -95,7 +95,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         Core.MyPupils.Application.Repositories.MyPupils myPupils = new(upns);
 
         readRepositoryMock
-            .Setup((repo) => repo.GetMyPupilsAsync(
+            .Setup((repo) => repo.GetMyPupilsOrDefaultAsync(
                 It.IsAny<UserId>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(myPupils);
@@ -112,7 +112,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         // Assert
         readRepositoryMock.Verify(
-            (repo) => repo.GetMyPupilsAsync(
+            (repo) => repo.GetMyPupilsOrDefaultAsync(
                 userId,
                 It.IsAny<CancellationToken>()),
             Times.Once);

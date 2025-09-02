@@ -1,4 +1,5 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+﻿using System.Net;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
@@ -30,7 +31,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         _myPupilsDtoToMyPupils = mapper;
     }
 
-    public async Task<Application.Repositories.MyPupils> GetMyPupilsAsync(UserId userId, CancellationToken ctx = default)
+    public async Task<Application.Repositories.MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default)
     {
         try
         {
@@ -41,14 +42,22 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
                     partitionKeyValue: userId.Value,
                     ctx);
 
-            ArgumentNullException.ThrowIfNull(userDto);
-            Application.Repositories.MyPupils myPupils = _myPupilsDtoToMyPupils.Map(userDto);
+            if(userDto is null)
+            {
+                return null;
+            }
 
-            return myPupils;
+            return _myPupilsDtoToMyPupils.Map(userDto);
         }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            _logger.LogInformation(ex, "Could not find MyPupils for User id {userid}", userId.Value);
+            return null;
+        }
+
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsAsync)}.");
+            _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsOrDefaultAsync)}.");
             throw;
         }
     }

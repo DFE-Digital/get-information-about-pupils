@@ -3,5 +3,5 @@
 namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 public interface IMyPupilsReadOnlyRepository
 {
-    Task<MyPupils> GetMyPupilsAsync(UserId userId, CancellationToken ctx = default);
+    Task<MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default);
 }

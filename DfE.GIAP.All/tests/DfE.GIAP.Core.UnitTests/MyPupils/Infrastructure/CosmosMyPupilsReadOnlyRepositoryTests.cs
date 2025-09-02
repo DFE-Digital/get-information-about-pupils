@@ -87,7 +87,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(() =>
-            repository.GetMyPupilsAsync(
+            repository.GetMyPupilsOrDefaultAsync(
                 UserIdTestDoubles.Default(),
                 It.IsAny<CancellationToken>()));
     }
@@ -112,7 +112,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         // Act Assert
         await Assert.ThrowsAsync<CosmosException>(() =>
-            repository.GetMyPupilsAsync(
+            repository.GetMyPupilsOrDefaultAsync(
                 UserIdTestDoubles.Default(),
                 It.IsAny<CancellationToken>()));
 
@@ -144,7 +144,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             mapper: mockMapper.Object);
 
         // Act
-        Core.MyPupils.Application.Repositories.MyPupils response = await sut.GetMyPupilsAsync(userId, It.IsAny<CancellationToken>());
+        Core.MyPupils.Application.Repositories.MyPupils? response = await sut.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>());
 
         // Assert
 
