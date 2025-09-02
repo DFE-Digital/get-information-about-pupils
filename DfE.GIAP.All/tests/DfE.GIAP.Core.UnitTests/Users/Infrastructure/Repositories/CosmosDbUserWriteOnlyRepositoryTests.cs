@@ -110,12 +110,12 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(uniquePupilNumbers: []);
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Create(userId, uniquePupilNumbers);
 
+        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>(stub: myPupilsDocumentDto);
+
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
 
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
-
-        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapperMock =
-            MapperTestDoubles.MockFor<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>(stub: myPupilsDocumentDto);
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
             logger: inMemoryLogger,
@@ -142,23 +142,29 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
     public async Task SaveMyPupilsAsync_MapsUpnsAndCallsUpsert_WithExpectedDto()
     {
         // Arrange
-        Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
-        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
-        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapper = MapperTestDoubles.Default<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>();
-
-        CosmosDbMyPupilsWriteOnlyRepository repository = new(inMemoryLogger, commandHandlerDouble.Object, mapper.Object);
-
         UserId userId = UserIdTestDoubles.Default();
-        UniquePupilNumbers upns =
+        UniquePupilNumbers uniquePupilNumbers =
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 3));
 
+        MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Create(userId, uniquePupilNumbers);
+
+        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapper =
+            MapperTestDoubles.MockFor<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>(stub: myPupilsDocumentDto);
+
+        Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
+
+        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
+
+        CosmosDbMyPupilsWriteOnlyRepository repository = new(inMemoryLogger, commandHandlerDouble.Object, mapper.Object);
+            
+
         // Act
-        await repository.SaveMyPupilsAsync(userId, upns);
+        await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);
 
         // Assert
 
-        IEnumerable<string> expectedUpnsToWrite = upns.AsValues();
+        IEnumerable<string> expectedUpnsToWrite = uniquePupilNumbers.AsValues();
 
         commandHandlerDouble.Verify(handler =>
             handler.UpsertItemAsync(
