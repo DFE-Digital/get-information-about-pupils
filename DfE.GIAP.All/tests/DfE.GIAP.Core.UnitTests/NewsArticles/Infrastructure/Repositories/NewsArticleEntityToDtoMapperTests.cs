@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
-using DfE.GIAP.Core.UnitTests.NewsArticles.UseCases;
+using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 
