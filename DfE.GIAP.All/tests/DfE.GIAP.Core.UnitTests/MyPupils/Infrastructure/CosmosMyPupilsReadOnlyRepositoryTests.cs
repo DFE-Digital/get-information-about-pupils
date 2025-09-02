@@ -1,4 +1,5 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+﻿using System.Net;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
@@ -93,7 +94,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     }
 
     [Fact]
-    public async Task GetMyPupilsAsync_LogsAndRethrows_When_CosmosExceptionIsThrown()
+    public async Task GetMyPupilsAsync_LogsAndRethrows_When_CosmosException_Non404_IsThrown()
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
@@ -118,6 +119,36 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         string log = Assert.Single(mockLogger.Logs);
         Assert.Contains("CosmosException in GetMyPupilsOrDefaultAsync", log);
+    }
+
+    [Fact]
+    public async Task GetMyPupilsAsync_LogsAndReturnsNull_When_CosmosException_404_IsThrown()
+    {
+        // Arrange
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
+                () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.NotFound));
+
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+
+        Mock<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>> mockMapper =
+            MapperTestDoubles.Default<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>();
+
+        CosmosDbMyPupilsReadOnlyRepository repository = new(
+            logger: mockLogger,
+            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
+            mapper: mockMapper.Object);
+
+        // Act Assert
+
+        UserId userId = UserIdTestDoubles.Default(); 
+        Core.MyPupils.Application.Repositories.MyPupils? myPupils =
+            await repository.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>());
+
+        Assert.Null(myPupils);
+
+        string log = Assert.Single(mockLogger.Logs);
+        Assert.Contains($"Could not find MyPupils for User id {userId.Value}", log);
     }
 
     [Fact]

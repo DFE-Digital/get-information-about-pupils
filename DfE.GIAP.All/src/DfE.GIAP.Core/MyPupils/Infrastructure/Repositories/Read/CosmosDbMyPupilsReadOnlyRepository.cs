@@ -51,7 +51,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         }
         catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            _logger.LogInformation(ex, "Could not find MyPupils for User id {userid}", userId.Value);
+            _logger.LogInformation(ex, "Could not find MyPupils for User id {UserId}", userId.Value);
             return null;
         }
 

@@ -13,6 +13,13 @@ internal static class CosmosExceptionTestDoubles
             It.IsAny<string>(),
             It.IsAny<double>());
 
+    internal static CosmosException WithStatusCode(HttpStatusCode code) => new(
+        It.IsAny<string>(),
+        code,
+        It.IsAny<int>(),
+        It.IsAny<string>(),
+        It.IsAny<double>());
+
     // <T> allows us to pass this Func<T> to anything that should yield T.
     internal static Func<T> ThrowsCosmosExceptionDelegate<T>() => () => throw Default();
 }
