@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -29,7 +29,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(uniquePupilNumber.Value, result.UniquePupilNumber);
@@ -48,7 +48,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        Func<PupilDto> act = () => mapper.Map(pupil!);
+        Func<MyPupilDto> act = () => mapper.Map(pupil!);
 
         // Assert
         Assert.Throws<ArgumentNullException>(act);
@@ -65,7 +65,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.DateOfBirth);
@@ -82,7 +82,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.Sex);
@@ -99,7 +99,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.False(result.IsPupilPremium);
