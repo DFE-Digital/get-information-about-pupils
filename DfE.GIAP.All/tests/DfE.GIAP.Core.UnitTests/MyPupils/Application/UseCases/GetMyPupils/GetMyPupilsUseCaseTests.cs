@@ -21,7 +21,7 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
         Core.MyPupils.Application.Repositories.MyPupils myPupils = MyPupilsTestDoubles.Default();
-        Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
+        Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockFor(myPupils);
 
         List<Pupil> pupils =
             myPupils.Pupils
