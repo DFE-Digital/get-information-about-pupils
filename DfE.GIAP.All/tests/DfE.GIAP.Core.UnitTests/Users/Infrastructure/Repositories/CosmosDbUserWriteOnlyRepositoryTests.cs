@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
@@ -105,20 +106,23 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
     public async Task SaveMyPupilsAsync_WithEmptyUpns_UpsertsEmptyPupilList()
     {
         // Arrange
+        UserId userId = UserIdTestDoubles.Default();
+        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(uniquePupilNumbers: []);
+        MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Create(userId, uniquePupilNumbers);
+
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
+
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
-        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapper = MapperTestDoubles.Default<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>();
+
+        Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>(stub: myPupilsDocumentDto);
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
-            inMemoryLogger,
-            commandHandlerDouble.Object,
-            mapper.Object);
-
-        UserId userId = UserIdTestDoubles.Default();
+            logger: inMemoryLogger,
+            cosmosDbCommandHandler: commandHandlerDouble.Object,
+            mapToDto: mapperMock.Object);
 
         // Act
-
-        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create([]);
         await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);
 
         // Assert
