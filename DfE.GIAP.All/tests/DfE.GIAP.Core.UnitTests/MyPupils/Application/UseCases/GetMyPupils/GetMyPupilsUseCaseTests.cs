@@ -20,6 +20,7 @@ public sealed class GetMyPupilsUseCaseTests
     {
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
+
         Core.MyPupils.Application.Repositories.MyPupils myPupils = MyPupilsTestDoubles.Default();
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockFor(myPupils);
 
@@ -66,7 +67,11 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
-        Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
+        Core.MyPupils.Application.Repositories.MyPupils myPupils =
+            MyPupilsTestDoubles.Create(
+                UniquePupilNumbers.Create(uniquePupilNumbers: []));
+
+        Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockFor(myPupils);
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
