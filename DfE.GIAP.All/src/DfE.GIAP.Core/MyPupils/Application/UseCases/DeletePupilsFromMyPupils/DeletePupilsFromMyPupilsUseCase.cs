@@ -47,6 +47,8 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
                 .ToUniquePupilNumbers()
                 .ToList();
 
-        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(userId, myPupils.Pupils);
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(
+            userId,
+            UniquePupilNumbers.Create(updatedMyPupilsAfterDelete));
     }
 }

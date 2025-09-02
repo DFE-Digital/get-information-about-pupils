@@ -11,4 +11,9 @@ public static class MyPupilsTestDoubles
     public static Core.MyPupils.Application.Repositories.MyPupils Default()
         => new(UniquePupilNumbers.Create(
                     uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 10)));
+
+    public static Core.MyPupils.Application.Repositories.MyPupils Create(UniquePupilNumbers uniquePupilNumbers)
+    {
+        return new(uniquePupilNumbers);
+    }
 }
