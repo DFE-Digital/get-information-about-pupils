@@ -38,7 +38,6 @@ public static class CompositionRoot
         return services
             .AddScoped<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>, GetNewsArticlesUseCase>()
             .AddScoped<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>, GetNewsArticleByIdUseCase>()
-            .AddScoped<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>, CheckNewsArticleUpdatesUseCase>()
             .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeleteNewsArticleRequest>, DeleteNewsArticleUseCase>()
             .AddScoped<IUseCaseRequestOnly<UpdateNewsArticleRequest>, UpdateNewsArticleUseCase>();

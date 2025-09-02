@@ -1,6 +1,10 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Application.Repositories;
+using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
+using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
+using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +23,16 @@ public static class CompositionRoot
     // Application
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
-        return services;
+        return services
+            .RegisterApplicationUseCases();
+    }
+
+    private static IServiceCollection RegisterApplicationUseCases(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse>, GetUnreadUserNewsUseCase>()
+            .AddScoped<IUseCaseRequestOnly<CreateUserIfNotExistsRequest>, CreateUserIfNotExistsUseCase>()
+            .AddScoped<IUseCaseRequestOnly<UpdateLastLoggedInRequest>, UpdateLastLoggedInUseCase>();
     }
 
     // Infrastructure
@@ -33,7 +46,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         return services
-            .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>();
+            .AddScoped<IUserReadOnlyRepository, CosmosDbUserReadOnlyRepository>()
+            .AddScoped<IUserWriteOnlyRepository, CosmosDbUserWriteOnlyRepository>();
     }
 
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)

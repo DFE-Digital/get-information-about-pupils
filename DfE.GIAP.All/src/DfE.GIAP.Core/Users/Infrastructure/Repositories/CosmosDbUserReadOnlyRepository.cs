@@ -1,4 +1,5 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+﻿using System.Net;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Application.Repositories;
@@ -53,4 +54,30 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         }
     }
 
+    public async Task<User?> GetUserByIdIfExistsAsync(
+        UserId id,
+        CancellationToken ctx = default)
+    {
+        try
+        {
+            UserDto? userDto =
+                await _cosmosDbQueryHandler.ReadItemByIdAsync<UserDto>(
+                    id: id.Value,
+                    containerKey: ContainerName,
+                    partitionKeyValue: id.Value,
+                    ctx);
+
+            return userDto is not null ? _userMapper.Map(userDto) : null;
+        }
+        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            _logger.LogInformation("User with ID '{UserId}' not found (404).", id.Value);
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"CosmosException in {nameof(GetUserByIdIfExistsAsync)}");
+            throw;
+        }
+    }
 }
