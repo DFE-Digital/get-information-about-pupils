@@ -180,4 +180,127 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
 
         mockMapper.Verify(m => m.Map(userProfileDto), Times.Once);
     }
+
+
+    [Fact]
+    public async Task GetUserByIdIfExistsAsync_ReturnsMappedUser_When_UserExists()
+    {
+        // Arrange
+        const string usersContainerName = "users";
+        UserId userId = UserIdTestDoubles.Default();
+
+        UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
+        User expectedUser = new(userId, DateTime.UtcNow);
+
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadById(() => userProfileDto);
+
+        InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
+        Mock<IMapper<UserDto, User>> mockMapper = MapperTestDoubles.Default<UserDto, User>();
+
+        mockMapper
+            .Setup(m => m.Map(userProfileDto))
+            .Returns(expectedUser);
+
+        CosmosDbUserReadOnlyRepository repository = new(
+            logger: mockLogger,
+            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
+            userMapper: mockMapper.Object);
+
+        // Act
+        User? result = await repository.GetUserByIdIfExistsAsync(userId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expectedUser, result);
+
+        mockCosmosDbQueryHandler.Verify((handler) =>
+            handler.ReadItemByIdAsync<UserDto>(
+                userId.Value,
+                usersContainerName,
+                userId.Value,
+                It.IsAny<CancellationToken>()), Times.Once);
+
+        mockMapper.Verify(m => m.Map(userProfileDto), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetUserByIdIfExistsAsync_ReturnsNull_When_UserDoesNotExist()
+    {
+        // Arrange
+        UserId userId = UserIdTestDoubles.Default();
+
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(null!);
+
+        InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
+        Mock<IMapper<UserDto, User>> mockMapper = MapperTestDoubles.Default<UserDto, User>();
+
+        CosmosDbUserReadOnlyRepository repository = new(
+            logger: mockLogger,
+            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
+            userMapper: mockMapper.Object);
+
+        // Act
+        User? result = await repository.GetUserByIdIfExistsAsync(userId);
+
+        // Assert
+        Assert.Null(result);
+        mockMapper.Verify(m => m.Map(It.IsAny<UserDto>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetUserByIdIfExistsAsync_ReturnsNull_When_CosmosExceptionWithNotFoundIsThrown()
+    {
+        // Arrange
+        UserId userId = UserIdTestDoubles.Default();
+
+        CosmosException notFoundException = CosmosExceptionTestDoubles.WithStatusCode(System.Net.HttpStatusCode.NotFound);
+
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(() => throw notFoundException);
+
+        InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
+        Mock<IMapper<UserDto, User>> mockMapper = MapperTestDoubles.Default<UserDto, User>();
+
+        CosmosDbUserReadOnlyRepository repository = new(
+            logger: mockLogger,
+            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
+            userMapper: mockMapper.Object);
+
+        // Act
+        User? result = await repository.GetUserByIdIfExistsAsync(userId);
+
+        // Assert
+        Assert.Null(result);
+        Assert.Contains("User with ID", mockLogger.Logs.Single());
+        mockMapper.Verify(m => m.Map(It.IsAny<UserDto>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetUserByIdIfExistsAsync_ThrowsAndLogs_When_ExceptionOccurs()
+    {
+        // Arrange
+        UserId userId = UserIdTestDoubles.Default();
+
+        Exception genericException = new Exception("test exception");
+
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(() => throw genericException);
+
+        InMemoryLogger<CosmosDbUserReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
+        Mock<IMapper<UserDto, User>> mockMapper = MapperTestDoubles.Default<UserDto, User>();
+
+        CosmosDbUserReadOnlyRepository repository = new(
+            logger: mockLogger,
+            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
+            userMapper: mockMapper.Object);
+
+        // Act & Assert
+        Exception ex = await Assert.ThrowsAsync<Exception>(() =>
+            repository.GetUserByIdIfExistsAsync(userId));
+
+        Assert.Equal(genericException, ex);
+        Assert.Contains("CosmosException in GetUserByIdIfExistsAsync", mockLogger.Logs.Single());
+    }
 }
