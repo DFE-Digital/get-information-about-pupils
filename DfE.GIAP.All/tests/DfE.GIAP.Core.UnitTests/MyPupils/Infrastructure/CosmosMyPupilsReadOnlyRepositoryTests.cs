@@ -117,7 +117,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
                 It.IsAny<CancellationToken>()));
 
         string log = Assert.Single(mockLogger.Logs);
-        Assert.Contains("CosmosException in GetMyPupilsAsync", log);
+        Assert.Contains("CosmosException in GetMyPupilsOrDefaultAsync", log);
     }
 
     [Fact]
