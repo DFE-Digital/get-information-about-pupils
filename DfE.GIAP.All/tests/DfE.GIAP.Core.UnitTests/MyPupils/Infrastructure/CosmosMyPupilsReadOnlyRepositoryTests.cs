@@ -141,7 +141,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         // Act Assert
 
-        UserId userId = UserIdTestDoubles.Default(); 
+        UserId userId = UserIdTestDoubles.Default();
         Core.MyPupils.Application.Repositories.MyPupils? myPupils =
             await repository.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>());
 

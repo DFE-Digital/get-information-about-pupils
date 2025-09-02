@@ -42,7 +42,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
                     partitionKeyValue: userId.Value,
                     ctx);
 
-            if(userDto is null)
+            if (userDto is null)
             {
                 return null;
             }
