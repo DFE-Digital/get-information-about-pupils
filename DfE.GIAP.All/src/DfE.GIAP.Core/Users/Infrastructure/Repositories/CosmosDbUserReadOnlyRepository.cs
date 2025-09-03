@@ -76,7 +76,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"CosmosException in {nameof(GetUserByIdIfExistsAsync)}");
+            _logger.LogError(ex, $"Exception in {nameof(GetUserByIdIfExistsAsync)}");
             throw;
         }
     }

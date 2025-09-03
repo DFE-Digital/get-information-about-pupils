@@ -1,10 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
+using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.SharedTests.TestDoubles;
+using Microsoft.Azure.Cosmos;
+using User = DfE.GIAP.Core.Users.Application.User;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
-internal class CosmosDbUserWriteOnlyRepositoryTests
+
+public sealed class CosmosDbUserWriteOnlyRepositoryTests
 {
+    private readonly InMemoryLogger<CosmosDbUserWriteOnlyRepository> _mockLogger;
+
+    public CosmosDbUserWriteOnlyRepositoryTests()
+    {
+        _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
+    }
+
+    [Fact]
+    public void Constructor_ThrowsNullException_When_ReceivesNullCommandHandler()
+    {
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new CosmosDbUserWriteOnlyRepository(
+                commandHandler: null!,
+                logger: _mockLogger));
+    }
+
+    [Fact]
+    public void Constructor_ThrowsNullException_When_ReceivesNullLogger()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = new();
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new CosmosDbUserWriteOnlyRepository(
+                commandHandler: mockCommandHandler.Object,
+                logger: null!));
+    }
+
+    [Fact]
+    public async Task UpsertUserAsync_ThrowsArgumentNullException_When_UserIsNull()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        CosmosDbUserWriteOnlyRepository sut = new(
+            commandHandler: mockCommandHandler.Object,
+            logger: _mockLogger);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => sut.UpsertUserAsync(null!));
+    }
+
+    [Fact]
+    public async Task UpsertUserAsync_Calls_CommandHandler_When_UserIsValid()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        CosmosDbUserWriteOnlyRepository sut = new(
+            commandHandler: mockCommandHandler.Object,
+            logger: _mockLogger);
+
+        // Act
+        await sut.UpsertUserAsync(UserTestDoubles.Default());
+
+        // Assert
+        mockCommandHandler.Verify(m => m.UpsertItemAsync(It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpsertUserAsync_BubblesException_When_CosmosException()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler =
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<UserDto>(
+                CosmosExceptionTestDoubles.Default());
+
+        CosmosDbUserWriteOnlyRepository sut = new(
+            commandHandler: mockCommandHandler.Object,
+            logger: _mockLogger);
+
+        // Act
+        Func<Task> act = () => sut.UpsertUserAsync(UserTestDoubles.Default());
+
+        // Act & Assert
+        await Assert.ThrowsAsync<CosmosException>(act);
+        Assert.Equal("CosmosException in UpsertUserAsync.", _mockLogger.Logs.Single());
+        mockCommandHandler.Verify(m => m.UpsertItemAsync(
+            It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
+    }
 }

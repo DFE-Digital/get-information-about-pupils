@@ -41,7 +41,7 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, "{method} Error upserting user: {userId}", nameof(UpsertUserAsync), user.UserId.Value);
+            _logger.LogCritical(ex, $"CosmosException in {nameof(UpsertUserAsync)}.");
             throw;
         }
     }

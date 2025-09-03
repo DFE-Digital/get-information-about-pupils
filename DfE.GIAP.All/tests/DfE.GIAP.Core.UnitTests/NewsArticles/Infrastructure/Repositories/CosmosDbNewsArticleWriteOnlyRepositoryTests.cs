@@ -7,11 +7,11 @@ using DfE.GIAP.Core.UnitTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
-public sealed class CosmosNewsArticleWriteRepositoryTests
+public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
 {
     private readonly InMemoryLogger<CosmosDbNewsArticleWriteOnlyRepository> _mockLogger;
 
-    public CosmosNewsArticleWriteRepositoryTests()
+    public CosmosDbNewsArticleWriteOnlyRepositoryTests()
     {
         _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbNewsArticleWriteOnlyRepository>();
     }
