@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+﻿namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 public record NewsArticleDto
 {

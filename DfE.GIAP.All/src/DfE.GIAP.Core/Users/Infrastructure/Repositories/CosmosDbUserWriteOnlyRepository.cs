@@ -1,4 +1,5 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
@@ -15,15 +16,19 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
     private const string ContainerName = "users";
     private readonly ICosmosDbCommandHandler _commandHandler;
     private readonly ILogger<CosmosDbUserWriteOnlyRepository> _logger;
+    private readonly IMapper<User, UserDto> _mapper;
 
     public CosmosDbUserWriteOnlyRepository(
         ICosmosDbCommandHandler commandHandler,
-        ILogger<CosmosDbUserWriteOnlyRepository> logger)
+        ILogger<CosmosDbUserWriteOnlyRepository> logger,
+        IMapper<User, UserDto> mapper)
     {
         ArgumentNullException.ThrowIfNull(commandHandler);
         ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(mapper);
         _commandHandler = commandHandler;
         _logger = logger;
+        _mapper = mapper;
     }
 
     /// <summary>
@@ -39,12 +44,7 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
         try
         {
             ArgumentNullException.ThrowIfNull(user);
-
-            UserDto userDto = new()
-            {
-                id = user.UserId.Value,
-                LastLoggedIn = user.LastLoggedIn,
-            };
+            UserDto userDto = _mapper.Map(user);
 
             await _commandHandler.UpsertItemAsync(
                 item: userDto,

@@ -1,5 +1,5 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 internal static class CosmosDbCommandHandlerTestDoubles

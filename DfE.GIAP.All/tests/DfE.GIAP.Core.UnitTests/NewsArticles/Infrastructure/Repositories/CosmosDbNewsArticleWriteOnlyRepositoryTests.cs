@@ -1,6 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;

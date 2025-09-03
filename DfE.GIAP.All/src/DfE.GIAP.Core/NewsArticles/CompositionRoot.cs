@@ -9,6 +9,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 

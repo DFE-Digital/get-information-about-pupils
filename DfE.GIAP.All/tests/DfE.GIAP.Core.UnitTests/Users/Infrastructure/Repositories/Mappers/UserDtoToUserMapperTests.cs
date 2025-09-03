@@ -1,11 +1,10 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories;
+﻿using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
 using DfE.GIAP.SharedTests.TestDoubles;
 using User = DfE.GIAP.Core.Users.Application.User;
 
-namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
+namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories.Mappers;
 public sealed class UserDtoToUserMapperTests
 {
     [Fact]
