@@ -7,11 +7,11 @@ using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
@@ -88,7 +88,6 @@ public class FELearnerTextSearchController :  Controller
     private readonly ILogger<FELearnerTextSearchController> _logger;
     private readonly IPaginatedSearchService _paginatedSearch;
     protected readonly ITextSearchSelectionManager _selectionManager;
-    private readonly IMyPupilListService _mplService;
     private readonly AzureAppSettings _appSettings;
     private readonly IUseCase<
         SearchByKeyWordsRequest,
@@ -102,6 +101,9 @@ public class FELearnerTextSearchController :  Controller
         Dictionary<string, string[]>,
         IList<FilterRequest>> _filtersRequestMapper;
 
+    private readonly IMapper<
+        (string Field, string Direction), SortOrder> _sortOrderViewModelToRequestMapper;
+
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
 
     public FELearnerTextSearchController(
@@ -114,6 +116,8 @@ public class FELearnerTextSearchController :  Controller
         IMapper<
             Dictionary<string, string[]>,
             IList<FilterRequest>> filtersRequestMapper,
+        IMapper<
+            (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
         IFiltersRequestFactory filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
            IPaginatedSearchService paginatedSearch,
@@ -134,13 +138,13 @@ public class FELearnerTextSearchController :  Controller
             throw new ArgumentNullException(nameof(learnerSearchResponseToViewModelMapper));
         _filtersRequestMapper = filtersRequestMapper ??
             throw new ArgumentNullException(nameof(filtersRequestMapper));
+        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper ??
+            throw new ArgumentNullException(nameof(sortOrderViewModelToRequestMapper));
 
         _paginatedSearch = paginatedSearch ??
             throw new ArgumentNullException(nameof(paginatedSearch));
         _selectionManager = selectionManager ??
             throw new ArgumentNullException(nameof(selectionManager));
-        _mplService = mplService ??
-            throw new ArgumentNullException(nameof(mplService));
         _appSettings = azureAppSettings.Value;
         _filtersRequestBuilder = filtersRequestBuilder ??
             throw new ArgumentNullException(nameof(filtersRequestBuilder));
@@ -307,9 +311,7 @@ public class FELearnerTextSearchController :  Controller
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedFEDataULN(LearnerTextSearchViewModel model)
     {
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         var selectedPupil = GetSelected();
 
@@ -686,123 +688,6 @@ public class FELearnerTextSearchController :  Controller
         TempData.Remove(PersistedSelectedSexFiltersKey);
     }
 
-
-    [NonAction]
-    public async Task<IActionResult> InvalidUPNs(InvalidLearnerNumberSearchViewModel model)
-    {
-        _logger.LogInformation("National pupil database Upn Invalid UPNs POST method called");
-
-        model.SearchAction = SearchAction;
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
-
-        model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
-
-        model = await GetInvalidPupil(model, IndexType).ConfigureAwait(false);
-
-        _logger.LogInformation("National pupil database Upn Invalid UPNs POST search method invoked");
-
-        return View(Global.InvalidUPNsView, model);
-    }
-
-    [NonAction]
-    public async Task<IActionResult> InvalidUPNsConfirmation(InvalidLearnerNumberSearchViewModel model)
-    {
-        model.SearchAction = SearchAction;
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
-
-        if (!string.IsNullOrEmpty(model.SelectedInvalidUPNOption))
-        {
-            switch (model.SelectedInvalidUPNOption)
-            {
-                case Global.InvalidUPNConfirmation_ReturnToSearch:
-
-                    return RedirectToAction(model.SearchAction, new { returnToSearch = true });
-
-                case Global.InvalidUPNConfirmation_MyPupilList: return RedirectToAction(Global.MyPupilListAction, Global.MyPupilListControllerName);
-            }
-        }
-        else
-        {
-            ModelState.AddModelError("NoContinueSelection", Messages.Common.Errors.NoContinueSelection);
-        }
-
-        return await InvalidUPNs(model);
-    }
-
-
-    [NonAction]
-    public async Task<IActionResult> AddToMyPupilList(LearnerTextSearchViewModel model)
-    {
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetSortOptions(model);
-
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
-
-        var selected = GetSelected();
-
-        if (string.IsNullOrEmpty(selected))
-        {
-            model.NoPupil = true;
-            model.NoPupilSelected = true;
-            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
-            return await ReturnToSearch(model);
-        }
-
-        var learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
-
-        if (learnerList.Count() + 1 > MyPupilListLimit)
-        {
-            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-        }
-        else
-        {
-            if (PupilHelper.CheckIfStarredPupil(selected))
-            {
-                selected = RbacHelper.DecodeUpn(selected);
-            }
-
-            if (!ValidationHelper.IsValidUpn(selected))
-            {
-                var invalidViewModel = new InvalidLearnerNumberSearchViewModel()
-                {
-                    LearnerNumber = selected
-                };
-
-                return await InvalidUPNs(invalidViewModel);
-            }
-
-            var learnerListUpdate = learnerList.ToList();
-            learnerListUpdate.Add(new MyPupilListItem(selected, true));
-            learnerList = learnerListUpdate;
-
-            await _mplService.UpdateMyPupilList(learnerList, User.GetUserId(), AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
-            model.ItemAddedToMyPupilList = true;
-        }
-
-        return await ReturnToSearch(model);
-    }
-
-    [NonAction]
-    public IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
-    {
-        var searchViewModel = new LearnerTextSearchViewModel()
-        {
-            SearchText = this.HttpContext.Session.Keys.Contains(SearchSessionKey) ? this.HttpContext.Session.GetString(SearchSessionKey) : string.Empty,
-            LearnerTextSearchController = SearchController,
-            LearnerTextSearchAction = SearchAction,
-            ShowStarredPupilConfirmation = true,
-            StarredPupilConfirmationViewModel = model,
-            LearnerNumberLabel = LearnerNumberLabel
-        };
-        PopulateNavigation(searchViewModel);
-        SetSortOptions(searchViewModel);
-        PopulatePageText(searchViewModel);
-        return View(SearchView, searchViewModel);
-    }
-
     private async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
         LearnerTextSearchViewModel model,
         string surnameFilter,
@@ -840,35 +725,34 @@ public class FELearnerTextSearchController :  Controller
             }
         }
 
-        var hasCustomFilters = (model.SearchFilters.CustomFilterText.Surname != null ||
-            model.SearchFilters.CustomFilterText.Forename != null ||
-            model.SearchFilters.CustomFilterText.Middlename != null ||
-            model.SearchFilters.CustomFilterText.DobDay != 0 ||
-            model.SearchFilters.CustomFilterText.DobMonth != 0 ||
-            model.SearchFilters.CustomFilterText.DobYear != 0) ? true : false;
-
-        var first = hasCustomFilters || model.PageNumber != 0 ? false : true;
-
         #endregion
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Dictionary<string, string[]> filtersRequest =
-            _filtersRequestBuilder.GenerateFilterRequest(model, currentFilters);
-
         IList<FilterRequest> filterRequests =
-            _filtersRequestMapper.Map(filtersRequest);
+            _filtersRequestMapper.Map(
+                _filtersRequestBuilder
+                    .GenerateFilterRequest(model, currentFilters));
+
+        SortOrder sortOrder =
+            _sortOrderViewModelToRequestMapper.Map((sortField, sortDirection));
 
         SearchByKeyWordsResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new SearchByKeyWordsRequest(
                     searchKeyword: model.SearchText,
                     filterRequests: filterRequests,
+                    sortOrder: sortOrder,
                     offset: model.Offset))
             .ConfigureAwait(false);
 
-        return _learnerSearchResponseToViewModelMapper.Map(
+        LearnerTextSearchViewModel newModel = _learnerSearchResponseToViewModelMapper.Map(
             LearnerSearchMappingContext.Create(model, searchResponse));
+
+        var newerModel = await GetInvalidPupil(newModel, IndexType).ConfigureAwait(false);
+
+
+        return newModel;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -901,8 +785,8 @@ public class FELearnerTextSearchController :  Controller
 
         model.Learners = model.Learners.Union(nonUPNResult.Learners);
         model.Learners.ToList().ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        var lowAge = User.GetOrganisationLowAge();
-        var highAge = User.GetOrganisationHighAge();
+        var lowAge = 1;// User.GetOrganisationLowAge();
+        var highAge = 2;// User.GetOrganisationHighAge();
 
         var isAdmin = User.IsAdmin();
         if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
@@ -982,7 +866,7 @@ public class FELearnerTextSearchController :  Controller
                 new CurrentFilterDetail
                 {
                     FilterType = filterType,
-                    FilterName = filterValue
+                    FilterName = filterValue.ToLowerInvariant().Trim()
                 }
             );
         }
@@ -1222,7 +1106,7 @@ public class FELearnerTextSearchController :  Controller
         return model;
     }
 
-    protected virtual void SetSelections(IEnumerable<string> available, string selected)
+    protected virtual void SetSelections(string selected)
     {
         if (!string.IsNullOrEmpty(selected))
         {

@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
@@ -17,6 +18,7 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
+using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Helpers.Banner;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -54,6 +56,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
         private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
             Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
         private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
+        private readonly IMapper<(string, string), SortOrder> _mockSortOrderMapper =
+            Substitute.For<IMapper<(string, string), SortOrder>>();
 
 
         private AzureAppSettings _mockAppSettings = new AzureAppSettings();
@@ -1174,6 +1178,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 _mockUseCase,
                 _mockLearnerSearchResponseToViewModelMapper,
                 _mockFiltersRequestMapper,
+                _mockSortOrderMapper,
                 _mockFiltersRequestBuilder,
                 _mockLogger,
                 _mockPaginatedService,

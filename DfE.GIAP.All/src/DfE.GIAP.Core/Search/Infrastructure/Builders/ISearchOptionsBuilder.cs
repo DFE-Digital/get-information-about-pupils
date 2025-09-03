@@ -1,5 +1,6 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.Builders;
@@ -58,6 +59,18 @@ public interface ISearchOptionsBuilder
     /// <param name="filters">A list of filters to apply.</param>
     /// <returns>An updated builder instance.</returns>
     ISearchOptionsBuilder WithFilters(IList<FilterRequest>? filters);
+
+    /// <summary>
+    /// Assigns a pre-validated <see cref="SortOrder"/> instance to the builder.
+    /// This allows external composition of sort logic prior to injection.
+    /// </summary>
+    /// <param name="sortOrder">
+    /// A fully constructed <see cref="SortOrder"/> object representing the desired field and direction.
+    /// </param>
+    /// <returns>
+    /// The updated builder instance for fluent chaining.
+    /// </returns>
+    ISearchOptionsBuilder WithSortOrder(SortOrder sortOrder);
 
     /// <summary>
     /// Builds the configured <see cref="SearchOptions"/> instance.

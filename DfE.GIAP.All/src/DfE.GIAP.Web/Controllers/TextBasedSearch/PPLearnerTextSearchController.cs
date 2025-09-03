@@ -205,9 +205,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     [Route(Routes.PupilPremium.LearnerTextDownloadRequest)]
     public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(LearnerTextSearchViewModel model)
     {
-        SetSelections(
-        model.PageLearnerNumbers.Split(','),
-        model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         var selectedPupil = GetSelected();
 

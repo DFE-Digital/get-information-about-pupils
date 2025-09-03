@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.Search.Application.Adapters;
 
@@ -34,6 +35,13 @@ public sealed class SearchServiceAdapterRequest
     public IList<FilterRequest> SearchFilterRequests { get; }
 
     /// <summary>
+    /// Gets the configured <see cref="SortOrder"/> instance representing the field and direction
+    /// used to order search results. This is typically composed during query setup and injected
+    /// into the Azure Search <see cref="SearchOptions.OrderBy"/> clause.
+    /// </summary>
+    public SortOrder SortOrdering { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SearchServiceAdapterRequest"/> class,
     /// ensuring all required fields are populated and immutable for consistent query execution.
     /// </summary>
@@ -48,6 +56,7 @@ public sealed class SearchServiceAdapterRequest
         string searchKeyword,
         IList<string> searchFields,
         IList<string> facets,
+        SortOrder sortOrdering,
         IList<FilterRequest>? searchFilterRequests = null,
         int offset = 0)
     {
@@ -66,6 +75,7 @@ public sealed class SearchServiceAdapterRequest
             : throw new ArgumentException(
                 $"A valid {nameof(facets)} argument must be provided.", nameof(facets));
 
+        SortOrdering = sortOrdering;
         SearchFilterRequests = searchFilterRequests ?? [];
         Offset = offset;
     }
@@ -78,7 +88,8 @@ public sealed class SearchServiceAdapterRequest
         string searchKeyword,
         IList<string> searchFields,
         IList<string> facets,
+        SortOrder sortOrdering,
         IList<FilterRequest>? searchFilterRequests = null,
         int offset = 0)
-            => new(searchKeyword, searchFields, facets, searchFilterRequests, offset);
+            => new(searchKeyword, searchFields, facets, sortOrdering, searchFilterRequests, offset);
 }

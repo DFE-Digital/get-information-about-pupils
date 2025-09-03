@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,7 @@ public sealed class SearchByKeyWordsRequest
     /// <param name="searchKeyword">The keyword used to query pupil names.</param>
     /// <param name="offset">Offset for pagination (defaults to 0).</param>
     /// <exception cref="ArgumentException">Thrown if searchKeyword is null or empty.</exception>
-    public SearchByKeyWordsRequest(string searchKeyword, int offset = 0)
+    public SearchByKeyWordsRequest(string searchKeyword, SortOrder sortOrder, int offset = 0)
     {
         if (string.IsNullOrWhiteSpace(searchKeyword))
         {
@@ -27,6 +28,7 @@ public sealed class SearchByKeyWordsRequest
         }
 
         SearchKeyword = searchKeyword;
+        SortOrder = sortOrder ?? throw new ArgumentNullException(nameof(sortOrder));
         Offset = offset;
     }
 
@@ -39,9 +41,11 @@ public sealed class SearchByKeyWordsRequest
     public SearchByKeyWordsRequest(
         string searchKeyword,
         IList<FilterRequest> filterRequests,
-        int offset = 0) : this(searchKeyword, offset)
+        SortOrder sortOrder,
+        int offset = 0) : this(searchKeyword, sortOrder, offset)
     {
-        FilterRequests = filterRequests ?? throw new ArgumentNullException(nameof(filterRequests));
+        FilterRequests = filterRequests ??
+            throw new ArgumentNullException(nameof(filterRequests));
     }
 
     /// <summary>
@@ -59,4 +63,9 @@ public sealed class SearchByKeyWordsRequest
     /// Optional filters used to narrow down the search results.
     /// </summary>
     public IList<FilterRequest>? FilterRequests { get; }
+
+    /// <summary>
+    /// Specifies the order in which search results should be sorted.
+    /// </summary>
+    public SortOrder SortOrder { get; }
 }

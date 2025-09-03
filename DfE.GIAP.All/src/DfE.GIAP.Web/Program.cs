@@ -4,6 +4,7 @@ using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.Search;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
@@ -60,6 +61,9 @@ builder.Services.AddSingleton<IMapper<
     SearchFacet, FilterData>, FilterResponseMapper>();
 builder.Services.AddSingleton<IMapper<
     SearchFacets, List<FilterData>>, FiltersResponseMapper>();
+builder.Services.AddSingleton<IMapper<
+    (string, string), SortOrder>, SortOrderMapper>();
+
 builder.Services.AddSingleton<
     IFilterHandlerRegistry, FilterHandlerRegistry>();
 builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("SurnameLC"));

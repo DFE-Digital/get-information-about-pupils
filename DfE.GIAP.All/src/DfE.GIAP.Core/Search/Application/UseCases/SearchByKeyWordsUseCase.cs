@@ -27,8 +27,10 @@ public sealed class SearchByKeyWordsUseCase :
         SearchCriteria searchCriteria,
         ISearchServiceAdapter<Learners, SearchFacets> searchServiceAdapter)
     {
-        _searchCriteria = searchCriteria ?? throw new ArgumentNullException(nameof(searchCriteria));
-        _searchServiceAdapter = searchServiceAdapter ?? throw new ArgumentNullException(nameof(searchServiceAdapter));
+        _searchCriteria = searchCriteria ??
+            throw new ArgumentNullException(nameof(searchCriteria));
+        _searchServiceAdapter = searchServiceAdapter ??
+            throw new ArgumentNullException(nameof(searchServiceAdapter));
     }
 
     /// <summary>
@@ -56,6 +58,7 @@ public sealed class SearchByKeyWordsUseCase :
                         request.SearchKeyword,
                         _searchCriteria.SearchFields,
                         _searchCriteria.Facets,
+                        request.SortOrder,
                         request.FilterRequests,
                         request.Offset));
 

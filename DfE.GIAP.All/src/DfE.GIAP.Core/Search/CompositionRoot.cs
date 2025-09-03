@@ -41,14 +41,14 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        // Bind Azure Search configuration options
+        // Bind Azure Search configuration options.
         services.AddOptions<AzureSearchOptions>()
             .Configure<IConfiguration>((settings, configuration) =>
                 configuration
                     .GetSection(nameof(AzureSearchOptions))
                     .Bind(settings));
 
-        // Register core search services and mappers
+        // Register core search services and mappers.
         services
             .AddScoped<ISearchServiceAdapter<Learners, SearchFacets>, SearchServiceAdapter>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>()
@@ -83,18 +83,23 @@ public static class CompositionRoot
             return new SearchFilterExpressionFactory(searchFilterExpressions);
         });
 
-        // Register shared cognitive search and filter services
+        // Register shared cognitive search and filter services.
         services.AddDefaultCognitiveSearchServices(configuration);
         services.AddDefaultSearchFilterServices(configuration);
 
-        // Bind search criteria configuration options
+        // Bind search criteria configuration options.
         services.AddOptions<SearchCriteria>()
             .Configure<IConfiguration>((settings, configuration) =>
                 configuration
                     .GetSection(nameof(SearchCriteria))
                     .Bind(settings));
 
-        // Register strongly typed configuration instances
+        // Bind the SortField configuration options.
+        services
+            .Configure<SortFieldOptions>(
+                configuration.GetSection("SortFields"));
+
+        // Register strongly typed configuration instances.
         services.AddSingleton(serviceProvider =>
             serviceProvider.GetRequiredService<IOptions<SearchCriteria>>().Value);
 
