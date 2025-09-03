@@ -54,6 +54,7 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
     {
         return services
-            .AddScoped<IMapper<UserDto, User>, UserDtoToUserMapper>();
+            .AddScoped<IMapper<UserDto, User>, UserDtoToUserMapper>()
+            .AddScoped<IMapper<User, UserDto>, UserToUserDtoMapper>();
     }
 }
