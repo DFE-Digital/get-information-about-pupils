@@ -1,8 +1,0 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-
-namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
-public interface IAggregatePupilsForMyPupilsApplicationService
-{
-    Task<IEnumerable<Pupil>> GetPupilsAsync(UniquePupilNumbers uniquePupilNumbers);
-}

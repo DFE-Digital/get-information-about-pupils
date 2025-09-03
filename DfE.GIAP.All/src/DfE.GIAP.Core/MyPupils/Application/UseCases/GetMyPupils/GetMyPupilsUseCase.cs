@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.Users.Application;
 
@@ -12,12 +12,12 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsApplicationService;
-    private readonly IMapper<Pupil, PupilDto> _mapPupilToPupilDtoMapper;
+    private readonly IMapper<Pupil, MyPupilDto> _mapPupilToPupilDtoMapper;
 
     public GetMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
         IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsApplicationService,
-        IMapper<Pupil, PupilDto> mapPupilToPupilDtoMapper)
+        IMapper<Pupil, MyPupilDto> mapPupilToPupilDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
@@ -36,14 +36,16 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
         if (myPupils is null || myPupils.Pupils.IsEmpty)
         {
-            return new GetMyPupilsResponse([]);
+            MyPupilDtos emptyPupils = MyPupilDtos.Create(pupils: []);
+            return new GetMyPupilsResponse(emptyPupils);
         }
 
-        List<PupilDto> pupilDtos =
-            (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupils.Pupils))
-                .Select(_mapPupilToPupilDtoMapper.Map)
-                    .ToList();
+        MyPupilDtos aggregatedPupilDtos =
+            MyPupilDtos.Create(
+                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupils.Pupils))
+                            .Select(_mapPupilToPupilDtoMapper.Map)
+                                .ToList());
 
-        return new GetMyPupilsResponse(pupilDtos);
+        return new GetMyPupilsResponse(aggregatedPupilDtos);
     }
 }
