@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Users.Application;
+﻿using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
+using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -10,31 +12,37 @@ public sealed class GetUnreadUserNewsUseCaseTests
     public void Constructor_ThrowsNullException_When_NewsArticleRepositoryIsNull()
     {
         // Arrange
-        Mock<IUserReadOnlyRepository> userRepo = new();
+        Mock<IUserReadOnlyRepository> userRepo = UserReadOnlyRepositoryTestDoubles.Default();
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
-            new GetUnreadUserNewsUseCase(null!, userRepo.Object));
+            new GetUnreadUserNewsUseCase(
+                newsArticleReadRepository: null!,
+                userReadOnlyRepository: userRepo.Object));
     }
 
     [Fact]
     public void Constructor_ThrowsNullException_When_UserRepositoryIsNull()
     {
         // Arrange
-        Mock<INewsArticleReadOnlyRepository> newsRepo = new();
+        Mock<INewsArticleReadOnlyRepository> newsRepo = NewsArticleReadOnlyRepositoryTestDoubles.Default();
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
-            new GetUnreadUserNewsUseCase(newsRepo.Object, null!));
+            new GetUnreadUserNewsUseCase(
+                newsArticleReadRepository: newsRepo.Object,
+                userReadOnlyRepository: null!));
     }
 
     [Fact]
     public async Task HandleRequestAsync_BubblesException_When_UserRepositoryThrows()
     {
         // Arrange
-        Mock<INewsArticleReadOnlyRepository> newsRepo = new();
-        Mock<IUserReadOnlyRepository> userRepo = new();
-        GetUnreadUserNewsUseCase useCase = new(newsRepo.Object, userRepo.Object);
+        Mock<INewsArticleReadOnlyRepository> newsRepo = NewsArticleReadOnlyRepositoryTestDoubles.Default();
+        Mock<IUserReadOnlyRepository> userRepo = UserReadOnlyRepositoryTestDoubles.Default();
+        GetUnreadUserNewsUseCase useCase = new(
+            newsArticleReadRepository: newsRepo.Object,
+            userReadOnlyRepository: userRepo.Object);
 
         UserId userId = UserIdTestDoubles.Default();
         GetUnreadUserNewsRequest request = new(userId.Value);
@@ -51,9 +59,11 @@ public sealed class GetUnreadUserNewsUseCaseTests
     public async Task HandleRequestAsync_BubblesException_When_NewsArticleRepositoryThrows()
     {
         // Arrange
-        Mock<INewsArticleReadOnlyRepository> newsRepo = new();
-        Mock<IUserReadOnlyRepository> userRepo = new();
-        GetUnreadUserNewsUseCase useCase = new(newsRepo.Object, userRepo.Object);
+        Mock<INewsArticleReadOnlyRepository> newsRepo = NewsArticleReadOnlyRepositoryTestDoubles.Default();
+        Mock<IUserReadOnlyRepository> userRepo = UserReadOnlyRepositoryTestDoubles.Default();
+        GetUnreadUserNewsUseCase useCase = new(
+            newsArticleReadRepository: newsRepo.Object,
+            userReadOnlyRepository: userRepo.Object);
 
         UserId userId = UserIdTestDoubles.Default();
         GetUnreadUserNewsRequest request = new(userId.Value);
@@ -74,9 +84,11 @@ public sealed class GetUnreadUserNewsUseCaseTests
     public async Task HandleRequestAsync_ReturnsTrue_WhenUserHasUnreadNews()
     {
         // Arrange
-        Mock<INewsArticleReadOnlyRepository> newsRepo = new();
-        Mock<IUserReadOnlyRepository> userRepo = new();
-        GetUnreadUserNewsUseCase useCase = new(newsRepo.Object, userRepo.Object);
+        Mock<INewsArticleReadOnlyRepository> newsRepo = NewsArticleReadOnlyRepositoryTestDoubles.Default();
+        Mock<IUserReadOnlyRepository> userRepo = UserReadOnlyRepositoryTestDoubles.Default();
+        GetUnreadUserNewsUseCase useCase = new(
+            newsArticleReadRepository: newsRepo.Object,
+            userReadOnlyRepository: userRepo.Object);
 
         UserId userId = UserIdTestDoubles.Default();
         GetUnreadUserNewsRequest request = new(userId.Value);
@@ -100,9 +112,11 @@ public sealed class GetUnreadUserNewsUseCaseTests
     public async Task HandleRequestAsync_ReturnsFalse_WhenUserDoesNotHaveUnreadNews()
     {
         // Arrange
-        Mock<INewsArticleReadOnlyRepository> newsRepo = new();
-        Mock<IUserReadOnlyRepository> userRepo = new();
-        GetUnreadUserNewsUseCase useCase = new(newsRepo.Object, userRepo.Object);
+        Mock<INewsArticleReadOnlyRepository> newsRepo = NewsArticleReadOnlyRepositoryTestDoubles.Default();
+        Mock<IUserReadOnlyRepository> userRepo = UserReadOnlyRepositoryTestDoubles.Default();
+        GetUnreadUserNewsUseCase useCase = new(
+            newsArticleReadRepository: newsRepo.Object,
+            userReadOnlyRepository: userRepo.Object);
 
         UserId userId = UserIdTestDoubles.Default();
         GetUnreadUserNewsRequest request = new(userId.Value);
