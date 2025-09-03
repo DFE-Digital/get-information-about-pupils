@@ -73,6 +73,7 @@ public sealed class SearchServiceAdapter : ISearchServiceAdapter<Learners, Searc
                 .WithSearchFields(searchServiceAdapterRequest.SearchFields)
                 .WithFacets(searchServiceAdapterRequest.Facets)
                 .WithFilters(searchServiceAdapterRequest.SearchFilterRequests)
+                .WithSortOrder(searchServiceAdapterRequest.SortOrdering)
                 .Build();
 
         Response<SearchResults<LearnerDataTransferObject>> searchResults =
