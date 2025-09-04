@@ -1,23 +1,26 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel;
-using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel.Factory;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetPaginatedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils;
 
 public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
-    private readonly IPupilsViewModelFactory _pupilsViewModelFactory;
+    private readonly IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
 
     public GetMyPupilsHandler(
         IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
-        IPupilsViewModelFactory pupilsViewModelFactory)
+        IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> mapToViewModel)
     {
         ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsQueryHandler);
         _getPaginatedMyPupilsQueryHandler = getPaginatedMyPupilsQueryHandler;
 
-        ArgumentNullException.ThrowIfNull(pupilsViewModelFactory);
-        _pupilsViewModelFactory = pupilsViewModelFactory;
+        ArgumentNullException.ThrowIfNull(mapToViewModel);
+        _mapToViewModel = mapToViewModel;
     }
 
     public async Task<PupilsViewModel> HandleAsync(GetMyPupilsRequest request)
@@ -28,6 +31,8 @@ public sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 
         PaginatedMyPupilsResponse response = (await _getPaginatedMyPupilsQueryHandler.HandleAsync(paginatedPupilsRequest));
 
-        return _pupilsViewModelFactory.CreateViewModel(response.Pupils, request.State.SelectionState);
+        MyPupilsDtoSelectionStateDecorator mappable = new(response.Pupils, request.State.SelectionState);
+
+        return _mapToViewModel.Map(mappable);
     }
 }
