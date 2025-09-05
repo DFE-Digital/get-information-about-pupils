@@ -9,7 +9,6 @@ namespace DfE.GIAP.Service.Security
         Task<IList<LocalAuthority>> GetAllLocalAuthorities();
         Task<IList<AcademyTrust>> GetAcademyTrusts(List<string> docTypes, string id = null);
         Task<IList<LocalAuthority>> GetAllFurtherEducationOrganisations();
-        //Task<IList<Establishment>> GetEstablishmentsByLocalAuthorityCode(string docType, string localAuthorityCode);
         Task<IList<Establishment>> GetEstablishmentsByAcademyTrustCode(List<string> docTypes, string academyTrustCode);
         Task<IList<Establishment>> GetEstablishmentsByOrganisationCode(string docType, string academyTrustCode);
     }
