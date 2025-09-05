@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Models.Common;
+﻿using DfE.GIAP.Common.Models.Common;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 

@@ -2,9 +2,9 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
@@ -22,7 +22,8 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         // Act
-        IEnumerable<Pupil> result = await service.GetPupilsAsync([]);
+        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create([]);
+        IEnumerable<Pupil> result = await service.GetPupilsAsync(uniquePupilNumbers);
 
         // Assert
         Assert.Empty(result);
@@ -35,18 +36,20 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
         Mock<ISearchClientProvider> searchClientProviderMock = new();
         Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
-        IEnumerable<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(4001);
+        IEnumerable<UniquePupilNumber> generatedUpns = UniquePupilNumberTestDoubles.Generate(4001);
+        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(generatedUpns);
 
         // Act Assert
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => service.GetPupilsAsync(upns));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => service.GetPupilsAsync(uniquePupilNumbers));
     }
 
     [Fact]
     public async Task GetPupilsAsync_NpdIndexIsEmpty_Calls_Both_Indexes_Returns_Combined_Results()
     {
         // Arrange
-        IEnumerable<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(20);
-        List<AzureIndexEntity> pupilPremiumResults = AzureIndexEntityDtosTestDoubles.GenerateWithUpns(upns);
+        IEnumerable<UniquePupilNumber> generatedUpns = UniquePupilNumberTestDoubles.Generate(20);
+        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(generatedUpns);
+        List<AzureIndexEntity> pupilPremiumResults = AzureIndexEntityDtosTestDoubles.GenerateWithUpns(generatedUpns);
 
         Dictionary<string, List<AzureIndexEntity>> searchClientKeyToResponseData = new()
         {
@@ -59,7 +62,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         // Act
-        IEnumerable<Pupil> result = await service.GetPupilsAsync(upns);
+        IEnumerable<Pupil> result = await service.GetPupilsAsync(uniquePupilNumbers);
 
         // Assert
         Assert.Equal(20, result.Count());
@@ -72,8 +75,10 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
     public async Task GetPupilsAsync_PupilPremiumIndexIsEmpty_Calls_Both_Indexes_Returns_Combined_Results()
     {
         // Arrange
-        IEnumerable<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(20);
-        List<AzureIndexEntity> npdResults = AzureIndexEntityDtosTestDoubles.GenerateWithUpns(upns);
+        IEnumerable<UniquePupilNumber> generatedUpns = UniquePupilNumberTestDoubles.Generate(20);
+        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(generatedUpns);
+
+        List<AzureIndexEntity> npdResults = AzureIndexEntityDtosTestDoubles.GenerateWithUpns(generatedUpns);
 
         Dictionary<string, List<AzureIndexEntity>> searchClientKeyToResponseData = new()
         {
@@ -86,7 +91,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         // Act
-        IEnumerable<Pupil> result = await service.GetPupilsAsync(upns);
+        IEnumerable<Pupil> result = await service.GetPupilsAsync(uniquePupilNumbers);
 
         // Assert
         Assert.Equal(20, result.Count());
@@ -112,14 +117,17 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
         Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
-        // Act
         List<UniquePupilNumber> requestUpns =
             npdResults.Concat(ppResults)
                 .Select(t => t.UPN)
                 .ToUniquePupilNumbers()
                 .ToList();
 
-        IEnumerable<Pupil> result = await service.GetPupilsAsync(requestUpns);
+        UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(requestUpns);
+
+        // Act
+
+        IEnumerable<Pupil> result = await service.GetPupilsAsync(uniquePupilNumbers);
 
         // Assert
         Assert.Equal(299, result.Count());

@@ -76,37 +76,6 @@ namespace DfE.GIAP.Service.Tests.Security
         }
 
         [Fact]
-        public async Task GetEstablishmentsByLocalAuthorityCodeReturnsListOfEstablishments()
-        {
-            // Arrange
-            var settings = _securityServiceResultsFake.GetAppSettings();
-            var localAuthorityCode = "001";
-            //var expectedRequest = new EstablishmentRequest { Code = Int32.Parse(localAuthorityCode), Type = 2 };
-            var expectedRequest = new EstablishmentRequest { Code = localAuthorityCode, Type = "LA" };
-
-            var mockApiProcessorService = new Mock<IApiService>();
-            mockApiProcessorService.Setup(x =>
-            x.PostAsync<EstablishmentRequest, EstablishmentResponse>(It.IsAny<Uri>(), It.Is<EstablishmentRequest>(x => x.Code == expectedRequest.Code && x.Type == expectedRequest.Type), It.IsAny<AzureFunctionHeaderDetails>()))
-                .ReturnsAsync(_securityServiceResultsFake.GetEstablishmentResponse());
-
-
-            var securityService = new SecurityService(mockApiProcessorService.Object, Options.Create(settings));
-
-            var expected = _securityServiceResultsFake.GetEstablishmentResponse().Establishments.ToList();
-
-            // Act
-            var actual = await securityService.GetEstablishmentsByOrganisationCode("LA", localAuthorityCode);
-
-            // Assert
-            Assert.IsAssignableFrom<List<Establishment>>(actual);
-            Assert.Equal(expected.Count, actual.Count);
-            Assert.Equal(expected[0].Name, actual[0].Name);
-            Assert.Equal(expected[0].URN, actual[0].URN);
-            Assert.Equal(expected[0].Description, actual[0].Description);
-            mockApiProcessorService.Verify(x => x.PostAsync<EstablishmentRequest, EstablishmentResponse>(It.IsAny<Uri>(), It.IsAny<EstablishmentRequest>(), It.IsAny<AzureFunctionHeaderDetails>()), Times.Once());
-        }
-
-        [Fact]
         public async Task GetEstablishmentsByAcademyTrustCode()
         {
             // Arrange
@@ -120,7 +89,7 @@ namespace DfE.GIAP.Service.Tests.Security
                 .ReturnsAsync(_securityServiceResultsFake.GetEstablishmentsByAcademyTrustCode(docTypes, academyTrustCode));
 
             var securityService = new SecurityService(mockApiProcessorService.Object, Options.Create(settings));
-            
+
             var expected = _securityServiceResultsFake.GetEstablishmentsByAcademyTrustCode(docTypes, academyTrustCode).ToList();
             var expectedAcademyTrustEstablishment = expected[0].Establishments;
 

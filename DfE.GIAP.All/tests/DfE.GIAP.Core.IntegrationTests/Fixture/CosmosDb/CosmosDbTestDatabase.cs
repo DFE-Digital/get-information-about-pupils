@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
@@ -143,7 +145,8 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
         Dictionary<Type, string> typeToContainerNameMap = new()
         {
             {  typeof(NewsArticleDto), "news" },
-            {  typeof(UserDto), "users" }
+            {  typeof(UserDto), "users" },
+            {  typeof(MyPupilsDocumentDto), "mypupils" }
         };
 
         DatabaseResponse db = await CreateDatabase(_cosmosClient);
@@ -178,6 +181,7 @@ public sealed class CosmosDbTestDatabase : IAsyncDisposable
             {  ApplicationDataContainerName, "/DOCTYPE" },
             {  "news", "/id" },
             {  "users", "/id" },
+            {  "mypupils", "/id" },
         };
 
         foreach (KeyValuePair<string, string> container in containers)

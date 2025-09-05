@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
@@ -12,7 +12,7 @@ internal static class AggregatePupilsForMyPupilsServiceTestDoubles
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockService = Default();
 
         mockService.Setup(
-                (service) => service.GetPupilsAsync(It.IsAny<IEnumerable<UniquePupilNumber>>()))
+                (service) => service.GetPupilsAsync(It.IsAny<UniquePupilNumbers>()))
             .ReturnsAsync(pupils)
             .Verifiable();
 

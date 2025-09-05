@@ -40,8 +40,6 @@ public class AzureAppSettings
     public string DownloadSecurityReportLoginDetailsUrl { get; set; }
     public string DownloadSecurityReportDetailedSearchesUrl { get; set; }
     public string GetAcademiesURL { get; set; }
-    public string GetLatestNewsStatusUrl { get; set; }
-    public string SetLatestNewsStatusUrl { get; set; }
     public string GetUserProfileUrl { get; set; }
     public string LoggingEventUrl { get; set; }
 

@@ -2,13 +2,13 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,7 +37,6 @@ public static class CompositionRoot
         return services
             .AddScoped<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>, GetNewsArticlesUseCase>()
             .AddScoped<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>, GetNewsArticleByIdUseCase>()
-            .AddScoped<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>, CheckNewsArticleUpdatesUseCase>()
             .AddScoped<IUseCaseRequestOnly<CreateNewsArticleRequest>, CreateNewsArticleUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeleteNewsArticleRequest>, DeleteNewsArticleUseCase>()
             .AddScoped<IUseCaseRequestOnly<UpdateNewsArticleRequest>, UpdateNewsArticleUseCase>();

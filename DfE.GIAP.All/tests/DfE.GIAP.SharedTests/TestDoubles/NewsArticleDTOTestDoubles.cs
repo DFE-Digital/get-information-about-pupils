@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.SharedTests.TestDoubles;
 

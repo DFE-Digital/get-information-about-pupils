@@ -1,136 +1,123 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
+using User = DfE.GIAP.Core.Users.Application.User;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
+
 public sealed class CosmosDbUserWriteOnlyRepositoryTests
 {
-    private const string UsersContainerName = "users";
+    private readonly InMemoryLogger<CosmosDbUserWriteOnlyRepository> _mockLogger;
 
-    [Fact]
-    public void Constructor_ThrowsArgumentNullException_When_CommandHandlerIsNull()
+    public CosmosDbUserWriteOnlyRepositoryTests()
     {
-        // Arrange
-        Func<CosmosDbUserWriteOnlyRepository> construct = () => new CosmosDbUserWriteOnlyRepository(
-            commandHandler: null!,
-            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>());
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-
-    [Fact]
-    public void Constructor_ThrowsArgumentNullException_When_LoggerIsNull()
-    {
-        // Arrange
-        Func<CosmosDbUserWriteOnlyRepository> construct = () => new CosmosDbUserWriteOnlyRepository(
-            commandHandler: CosmosDbCommandHandlerTestDoubles.Default().Object,
-            logger: null!);
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
+        _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
     }
 
     [Fact]
-    public async Task SaveMyPupilsAsync_Throws_When_NonCosmosExceptionOccurs()
+    public void Constructor_ThrowsNullException_When_ReceivesNullCommandHandler()
     {
-        // Arrange
-        Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockThrowUpsertItemAsync<UserDto>(new Exception("test exception"));
+        Mock<IMapper<User, UserDto>> mockMapper = MapperTestDoubles.Default<User, UserDto>();
 
-        CosmosDbUserWriteOnlyRepository repository = new(
-            commandHandler: mockCosmosDbQueryHandler.Object,
-            logger: LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>());
-
-        // Act Assert
-        await Assert.ThrowsAsync<Exception>(() =>
-            repository.SaveMyPupilsAsync(
-                UserIdTestDoubles.Default(),
-                []));
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new CosmosDbUserWriteOnlyRepository(
+                commandHandler: null!,
+                logger: _mockLogger,
+                mapper: mockMapper.Object));
     }
 
     [Fact]
-    public async Task SaveMyPupilsAsync_LogsAndRethrows_When_CosmosExceptionIsThrown()
+    public void Constructor_ThrowsNullException_When_ReceivesNullLogger()
     {
         // Arrange
-        Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockThrowUpsertItemAsync<UserDto>(
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = new();
+        Mock<IMapper<User, UserDto>> mockMapper = MapperTestDoubles.Default<User, UserDto>();
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new CosmosDbUserWriteOnlyRepository(
+                commandHandler: mockCommandHandler.Object,
+                logger: null!,
+                mapper: mockMapper.Object));
+    }
+
+    [Fact]
+    public void Constructor_ThrowsNullException_When_ReceivesNullMapper()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = new();
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new CosmosDbUserWriteOnlyRepository(
+                commandHandler: mockCommandHandler.Object,
+                logger: _mockLogger,
+                mapper: null!));
+    }
+
+    [Fact]
+    public async Task UpsertUserAsync_ThrowsArgumentNullException_When_UserIsNull()
+    {
+
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        Mock<IMapper<User, UserDto>> mockMapper = MapperTestDoubles.Default<User, UserDto>();
+        CosmosDbUserWriteOnlyRepository sut = new(
+            commandHandler: mockCommandHandler.Object,
+            logger: _mockLogger,
+            mapper: mockMapper.Object);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => sut.UpsertUserAsync(null!));
+    }
+
+    [Fact]
+    public async Task UpsertUserAsync_Calls_CommandHandler_When_UserIsValid()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.Default();
+        Mock<IMapper<User, UserDto>> mockMapper = MapperTestDoubles.Default<User, UserDto>();
+        CosmosDbUserWriteOnlyRepository sut = new(
+            commandHandler: mockCommandHandler.Object,
+            logger: _mockLogger,
+            mapper: mockMapper.Object);
+
+        // Act
+        await sut.UpsertUserAsync(UserTestDoubles.Default());
+
+        // Assert
+        mockCommandHandler.Verify(m => m.UpsertItemAsync(It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpsertUserAsync_BubblesException_When_CosmosException()
+    {
+        // Arrange
+        Mock<ICosmosDbCommandHandler> mockCommandHandler =
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<UserDto>(
                 CosmosExceptionTestDoubles.Default());
+        Mock<IMapper<User, UserDto>> mockMapper = MapperTestDoubles.Default<User, UserDto>();
 
-        InMemoryLogger<CosmosDbUserWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
-
-        CosmosDbUserWriteOnlyRepository repository = new(
-            commandHandler: mockCosmosDbQueryHandler.Object,
-            logger: inMemoryLogger);
-
-        // Act Assert
-        UserId userId = UserIdTestDoubles.Default();
-        await Assert.ThrowsAsync<CosmosException>(() =>
-            repository.SaveMyPupilsAsync(userId, []));
-
-        string log = Assert.Single(inMemoryLogger.Logs);
-        Assert.Contains($"SaveMyPupilsAsync Error in saving MyPupilsAsync for user: {userId.Value}", log);
-    }
-
-    [Theory]
-    [MemberData(nameof(EmptyInputs))]
-    public async Task SaveMyPupilsAsync_WithEmptyOrNullUpns_UpsertsEmptyPupilList(IEnumerable<UniquePupilNumber>? upns)
-    {
-        // Arrange
-        Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
-        InMemoryLogger<CosmosDbUserWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
-        CosmosDbUserWriteOnlyRepository repository = new(commandHandlerDouble.Object, inMemoryLogger);
-
-        UserId userId = UserIdTestDoubles.Default();
+        CosmosDbUserWriteOnlyRepository sut = new(
+            commandHandler: mockCommandHandler.Object,
+            logger: _mockLogger,
+            mapper: mockMapper.Object);
 
         // Act
-        await repository.SaveMyPupilsAsync(userId, upns!);
+        Func<Task> act = () => sut.UpsertUserAsync(UserTestDoubles.Default());
 
-        // Assert
-
-        commandHandlerDouble.Verify(handler =>
-            handler.UpsertItemAsync(
-                It.Is<UserDto>(
-                    (dto) => dto.id == userId.Value && dto.MyPupils.Pupils != null && !dto.MyPupils.Pupils.Any()),
-                UsersContainerName,
-                It.Is<string>((pk) => pk == userId.Value),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+        // Act & Assert
+        await Assert.ThrowsAsync<CosmosException>(act);
+        Assert.Equal("CosmosException in UpsertUserAsync.", _mockLogger.Logs.Single());
+        mockCommandHandler.Verify(m => m.UpsertItemAsync(
+            It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }
-
-    [Fact]
-    public async Task SaveMyPupilsAsync_MapsUpnsAndCallsUpsert_WithExpectedDto()
-    {
-        // Arrange
-        Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
-        InMemoryLogger<CosmosDbUserWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
-        CosmosDbUserWriteOnlyRepository repository = new(commandHandlerDouble.Object, inMemoryLogger);
-
-        UserId userId = UserIdTestDoubles.Default();
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);
-
-        // Act
-        await repository.SaveMyPupilsAsync(userId, upns);
-
-        // Assert
-
-        IEnumerable<string> expectedUpnsToWrite = upns.Select(t => t.Value);
-
-        commandHandlerDouble.Verify(handler =>
-            handler.UpsertItemAsync(
-                It.Is<UserDto>(dto => dto.id == userId.Value && dto.MyPupils.Pupils.Select(p => p.UPN).SequenceEqual(expectedUpnsToWrite)),
-                UsersContainerName,
-                It.Is<string>((pk) => pk == userId.Value),
-                It.IsAny<CancellationToken>()),
-            Times.Once);
-    }
-
-    public static TheoryData<IEnumerable<UniquePupilNumber>?> EmptyInputs() => new(null, []);
 }

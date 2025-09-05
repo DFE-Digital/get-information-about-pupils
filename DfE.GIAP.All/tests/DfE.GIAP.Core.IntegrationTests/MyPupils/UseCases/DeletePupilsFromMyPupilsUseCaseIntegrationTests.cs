@@ -3,11 +3,12 @@ using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
@@ -17,14 +18,14 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
 #nullable disable
-    private MyPupilsTestContext _context;
+    private MyPupilsTestContext _testContext;
 #nullable enable
     public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base(cosmosDbFixture)
     {
 
     }
 
-    private sealed record MyPupilsTestContext(SearchIndexFixture fixture, List<UniquePupilNumber> myPupilUpns, UserDto user);
+    private sealed record MyPupilsTestContext(SearchIndexFixture fixture, UniquePupilNumbers myPupilUpns, UserId UserId);
     protected async override Task OnInitializeAsync(IServiceCollection services)
     {
         services.AddMyPupilsDependencies();
@@ -37,17 +38,18 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremiumSearchIndex();
 
         List<AzureIndexEntity> myPupils = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).ToList();
-        List<UniquePupilNumber> myPupilsUpns = myPupils.Select(t => t.UPN).ToUniquePupilNumbers().ToList();
+        UniquePupilNumbers myPupilsUpns =
+            UniquePupilNumbers.Create(uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
 
         UserId userId = UserIdTestDoubles.Default();
-        UserDto seededUserDto = UserDtoTestDoubles.WithPupils(userId, myPupilsUpns);
-        await Fixture.Database.WriteItemAsync(seededUserDto);
-        _context = new MyPupilsTestContext(mockSearchFixture, myPupilsUpns, seededUserDto);
+        MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
+        await Fixture.Database.WriteItemAsync(myPupilsDocument);
+        _testContext = new MyPupilsTestContext(mockSearchFixture, myPupilsUpns, userId);
     }
 
     protected override Task OnDisposeAsync()
     {
-        _context?.fixture?.Dispose();
+        _testContext?.fixture?.Dispose();
         return Task.CompletedTask;
     }
 
@@ -58,9 +60,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        string deletePupilIdentifier = _context.myPupilUpns[0].Value;
+        string deletePupilIdentifier = _testContext.myPupilUpns.GetUniquePupilNumbers()[0].Value;
         DeletePupilsFromMyPupilsRequest request = new(
-            _context.user.id,
+            _testContext.UserId.Value,
             DeletePupilUpns: [deletePupilIdentifier],
             DeleteAll: false);
 
@@ -68,15 +70,15 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<UserDto> users = await Fixture.Database.ReadManyAsync<UserDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
         List<string> remainingUpnsAfterDelete =
-            _context.myPupilUpns
+            _testContext.myPupilUpns.GetUniquePupilNumbers()
                 .Where((upn) => upn.Value != deletePupilIdentifier)
                 .Select(t => t.Value).ToList();
 
-        UserDto actualUserDTO = Assert.Single(users);
-        Assert.NotNull(actualUserDTO);
-        Assert.Equivalent(remainingUpnsAfterDelete, actualUserDTO.MyPupils.Pupils.Select(t => t.UPN));
+        MyPupilsDocumentDto myPupilsDocumentDto = Assert.Single(users);
+        Assert.NotNull(myPupilsDocumentDto);
+        Assert.Equivalent(remainingUpnsAfterDelete, myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN));
     }
 
     [Fact]
@@ -86,15 +88,17 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
+
         List<string> deleteMultiplePupilIdentifiers =
         [
-            _context.myPupilUpns[0].Value,
-            _context.myPupilUpns[4].Value,
-            _context.myPupilUpns[_context.myPupilUpns.Count - 1].Value
+            myPupilUpns[0].Value,
+            myPupilUpns[4].Value,
+            myPupilUpns[myPupilUpns.Count - 1].Value
         ];
 
         DeletePupilsFromMyPupilsRequest request = new(
-            _context.user.id,
+            _testContext.UserId.Value,
             DeletePupilUpns: deleteMultiplePupilIdentifiers,
             DeleteAll: false);
 
@@ -102,17 +106,16 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<UserDto> users = await Fixture.Database.ReadManyAsync<UserDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
-            _context.myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
+            myPupilUpns.Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
                 .Select(t => t.Value).ToList();
 
-        UserDto actualUserDto = Assert.Single(users);
-        Assert.NotNull(actualUserDto);
+        MyPupilsDocumentDto myPupilsDocument = Assert.Single(users);
+        Assert.NotNull(myPupilsDocument);
         Assert.NotEmpty(remainingUpnsAfterDelete);
-        Assert.Equivalent(remainingUpnsAfterDelete, actualUserDto.MyPupils.Pupils.Select(t => t.UPN));
+        Assert.Equivalent(remainingUpnsAfterDelete, myPupilsDocument.MyPupils.Pupils.Select(t => t.UPN));
     }
 
     [Fact]
@@ -122,15 +125,17 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
+
         List<string> deleteMultiplePupilIdentifiers =
         [
-            _context.myPupilUpns[0].Value,
+            myPupilUpns[0].Value,
             Guid.NewGuid().ToString(), // Unknown identifier not part of the list
-            _context.myPupilUpns[_context.myPupilUpns.Count - 1].Value
+            myPupilUpns[myPupilUpns.Count - 1].Value
         ];
 
         DeletePupilsFromMyPupilsRequest request = new(
-            _context.user.id,
+            _testContext.UserId.Value,
             DeletePupilUpns: deleteMultiplePupilIdentifiers,
             DeleteAll: false);
 
@@ -138,14 +143,14 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<UserDto> users = await Fixture.Database.ReadManyAsync<UserDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
-            _context.myPupilUpns
+            myPupilUpns
                 .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
                 .Select(t => t.Value).ToList();
 
-        UserDto actualUserDto = Assert.Single(users);
+        MyPupilsDocumentDto actualUserDto = Assert.Single(users);
         Assert.NotNull(actualUserDto);
         Assert.NotEmpty(remainingUpnsAfterDelete);
         Assert.Equivalent(remainingUpnsAfterDelete, actualUserDto.MyPupils.Pupils.Select(t => t.UPN));
@@ -160,7 +165,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         bool deleteAllPupils = true;
         DeletePupilsFromMyPupilsRequest request = new(
-            _context.user.id,
+            _testContext.UserId.Value,
             DeletePupilUpns: [Guid.NewGuid().ToString()], // should be ignored if DeleteAll is enabled
             DeleteAll: deleteAllPupils);
 
@@ -168,10 +173,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<UserDto> users = await Fixture.Database.ReadManyAsync<UserDto>();
-        UserDto userDto = Assert.Single(users);
-        Assert.NotNull(userDto);
-        Assert.Equal(_context.user.id, userDto.id);
-        Assert.Empty(userDto.MyPupils.Pupils);
+        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
+        Assert.NotNull(myPupilsDocument);
+        Assert.Equal(_testContext.UserId.Value, myPupilsDocument.id);
+        Assert.Empty(myPupilsDocument.MyPupils.Pupils);
     }
 }

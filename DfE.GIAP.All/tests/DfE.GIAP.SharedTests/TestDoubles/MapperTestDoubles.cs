@@ -40,7 +40,7 @@ public static class MapperTestDoublesExtensions
         return mapper;
     }
 
-    public static Mock<IMapper<TIn, TOut>> MockForMany<TIn, TOut>(
+    public static Mock<IMapper<TIn, TOut>> MockMappingForMany<TIn, TOut>(
         this Mock<IMapper<TIn, TOut>> mapper,
         List<TIn> inputs,
         List<TOut> outputs) where TIn : notnull
