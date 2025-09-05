@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
