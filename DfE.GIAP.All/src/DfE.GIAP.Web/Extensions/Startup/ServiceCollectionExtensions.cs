@@ -3,14 +3,12 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
-using DfE.GIAP.Service.BlobStorage;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Service.MPL;
-using DfE.GIAP.Service.PreparedDownloads;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Config;
@@ -24,6 +22,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
+using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -34,6 +33,9 @@ public static class ServiceCollectionExtensions
         services.Configure<AzureAppSettings>(configuration)
             .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
             .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName));
+
+        // Bind BlobStorageOptions from a dedicated section
+        services.Configure<BlobStorageOptions>(configuration.GetSection(nameof(BlobStorageOptions)));
 
         return services;
     }
@@ -58,13 +60,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
-        services.AddScoped<IBlobStorageService, BlobStorageService>();
         services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
         services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
         services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddSingleton<ISecurityService, SecurityService>();
-        services.AddScoped<IPrePreparedDownloadsService, PrePreparedDownloadsService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
         services.AddScoped<IDownloadSecurityReportByUpnUlnService, DownloadSecurityReportByUpnUlnService>();
         services.AddScoped<IDownloadSecurityReportLoginDetailsService, DownloadSecurityReportLoginDetailsService>();
