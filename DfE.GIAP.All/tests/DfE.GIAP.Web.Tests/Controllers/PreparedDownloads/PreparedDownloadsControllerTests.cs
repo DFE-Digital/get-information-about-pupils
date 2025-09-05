@@ -1,14 +1,18 @@
-﻿using DfE.GIAP.Core.Common.Application;
+﻿using System.Security.Claims;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
+using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Controllers.PreparedDownload;
 using DfE.GIAP.Web.Tests.TestDoubles;
+using DfE.GIAP.Web.Tests.TestDoubles.Http;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using static DfE.GIAP.Web.Constants.DsiKeys;
 
 namespace DfE.GIAP.Web.Tests.Controllers.PrePreparedDownloads;
 
@@ -42,10 +46,7 @@ public class PreparedDownloadsControllerTests
         );
         controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext
-            {
-                User = new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal()
-            }
+            HttpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal())
         };
 
         // Act
@@ -84,10 +85,7 @@ public class PreparedDownloadsControllerTests
         );
         controller.ControllerContext = new ControllerContext
         {
-            HttpContext = new DefaultHttpContext
-            {
-                User = new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal()
-            }
+            HttpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal())
         };
 
         // Act
