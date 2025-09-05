@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers;
+namespace DfE.GIAP.Web.Tests.Controllers.Glossary;
 
 [Trait("Category", "Glossary Controller Unit Tests")]
 public class GlossaryControllerTests : IClassFixture<GlossaryResultsFake>
