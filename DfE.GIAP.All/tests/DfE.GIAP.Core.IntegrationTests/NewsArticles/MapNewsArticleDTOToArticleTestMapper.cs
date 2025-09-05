@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
 internal sealed class MapNewsArticleDtoToArticleTestMapper : IMapper<NewsArticleDto, NewsArticle>
