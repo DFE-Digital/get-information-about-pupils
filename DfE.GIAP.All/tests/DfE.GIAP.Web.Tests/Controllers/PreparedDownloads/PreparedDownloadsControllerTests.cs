@@ -5,6 +5,7 @@ using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using DfE.GIAP.Web.Controllers.PreparedDownload;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -39,6 +40,13 @@ public class PreparedDownloadsControllerTests
             mockGetPreparedFilesUseCase.Object,
             mockDownloadPreparedFileUseCase.Object
         );
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal()
+            }
+        };
 
         // Act
         IActionResult result = await controller.Index();
@@ -62,7 +70,7 @@ public class PreparedDownloadsControllerTests
 
         string fileName = "template.csv";
         string contentType = "text/csv";
-        MemoryStream fileStream = new(new byte[] { 1, 2, 3 });
+        MemoryStream fileStream = new([1, 2, 3]);
 
         DownloadPreparedFileResponse response = new(fileStream, fileName, contentType);
 
@@ -74,6 +82,13 @@ public class PreparedDownloadsControllerTests
             mockGetPreparedFilesUseCase.Object,
             mockDownloadPreparedFileUseCase.Object
         );
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal()
+            }
+        };
 
         // Act
         FileStreamResult result = await controller.DownloadPrePreparedFile(fileName);
