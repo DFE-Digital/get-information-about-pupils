@@ -22,4 +22,9 @@
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PreparedDownloads\Application\UseCases\DownloadPreparedFile\" />
+    <Folder Include="PreparedDownloads\Application\UseCases\GetPreparedFiles\" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
-using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
+using DfE.GIAP.Core.UnitTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases.DeleteNewsArticle;
 public sealed class DeleteNewsArticleUseCaseTests
