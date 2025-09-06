@@ -35,11 +35,6 @@ public sealed class MyPupilsPupilSelectionState
     {
         _state = SelectionState.SelectAll;
 
-        if (_pupilsToSelectedMap.Keys.Count == 0)
-        {
-            return;
-        }
-
         UpsertUniquePupilNumberSelectionState(
             _pupilsToSelectedMap.Keys,
             isSelected: true);
@@ -49,11 +44,6 @@ public sealed class MyPupilsPupilSelectionState
     {
         _state = SelectionState.DeselectAll;
 
-        if (_pupilsToSelectedMap.Keys.Count == 0)
-        {
-            return;
-        }
-
         UpsertUniquePupilNumberSelectionState(
             _pupilsToSelectedMap.Keys,
             isSelected: false);
@@ -62,11 +52,6 @@ public sealed class MyPupilsPupilSelectionState
     public void UpsertUniquePupilNumberSelectionState(IEnumerable<string> upns, bool isSelected)
     {
         ArgumentNullException.ThrowIfNull(upns);
-
-        if (!upns.Any())
-        {
-            throw new ArgumentException("Upns is empty");
-        }
 
         foreach (string upn in upns)
         {

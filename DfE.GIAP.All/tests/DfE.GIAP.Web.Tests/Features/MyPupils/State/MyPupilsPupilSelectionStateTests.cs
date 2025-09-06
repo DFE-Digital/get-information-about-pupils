@@ -101,14 +101,36 @@ public sealed class MyPupilsPupilSelectionStateTests
     }
 
     [Fact]
-    public void UpsertUniquePupilNumberSelectionState_WithNullOrEmpty_Throws()
+    public void UpsertUniquePupilNumberSelectionState_WithNull_Throws()
     {
         // Arrange Act
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
 
         // Assert
         Assert.Throws<ArgumentNullException>(() => state.UpsertUniquePupilNumberSelectionState(null, It.IsAny<bool>()));
-        Assert.Throws<ArgumentException>(() => state.UpsertUniquePupilNumberSelectionState([], It.IsAny<bool>()));
+    }
+
+    [Fact]
+    public void UpsertUniquePupilNumberSelectionState_WithEmpty_DoesNotAlter()
+    {
+        // Arrange Act
+        // Arrange
+        List<string> upns = UniquePupilNumberTestDoubles.GenerateAsValues(count: 3);
+
+        Dictionary<IEnumerable<string>, bool> selectionStateMapping = new()
+        {
+            { [upns[0]] , false },
+            { [upns[1]] , true }
+        };
+
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+        IReadOnlyDictionary<string, bool> selectionState = state.GetPupilsWithSelectionState();
+
+        // Act
+        state.UpsertUniquePupilNumberSelectionState([], It.IsAny<bool>());
+
+        // Assert
+        Assert.Equivalent(selectionState, state.GetPupilsWithSelectionState());
     }
 
     [Fact]
