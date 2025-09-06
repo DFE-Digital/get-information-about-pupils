@@ -9,9 +9,9 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
@@ -54,7 +54,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
-                upns: UniquePupilNumbers.Create(uniquePupilNumbers: upns)));
+                upns: UniquePupilNumbers.Create(upns)));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -70,11 +70,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos).Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
 
         foreach (MyPupilDto expectedPupil in expectedPupils)
         {
-            MyPupilDto? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
+            MyPupilDto? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
 
             Assert.NotNull(actual);
             Assert.Equal(expectedPupil.Forename, actual.Forename);
@@ -82,9 +82,8 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.DateOfBirth, actual.DateOfBirth);
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
-            Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expectedPupil.UniquePupilNumber);
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => new UniquePupilNumber(t.UPN).Equals(expectedPupil.UniquePupilNumber));
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
@@ -122,7 +121,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         {
             return new()
             {
-                UniquePupilNumber = input.UPN,
+                UniquePupilNumber = new(input.UPN),
                 DateOfBirth = input.DOB?.ToString("yyyy-MM-dd") ?? string.Empty,
                 Forename = input.Forename,
                 Surname = input.Surname,

@@ -1,10 +1,10 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 public static class MyPupilsPresentationStateTestDoubles
 {
-    public static MyPupilsPresentationState CreateWithValidPage() => Create(page: 1);
+    public static MyPupilsPresentationState Default() => Create(page: 1);
 
     public static MyPupilsPresentationState Create(string sortKey)
         => Create(
