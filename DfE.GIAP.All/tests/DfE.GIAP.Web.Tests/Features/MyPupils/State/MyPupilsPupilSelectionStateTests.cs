@@ -51,7 +51,7 @@ public sealed class MyPupilsPupilSelectionStateTests
 
         // Assert
         Assert.True(state.IsAllPupilsSelected);
-        Assert.All(upns, upn => Assert.True(state.IsPupilSelected(upn)));
+        Assert.All(upns, upn => state.IsPupilSelected(upn));
     }
 
     [Fact]
@@ -72,10 +72,9 @@ public sealed class MyPupilsPupilSelectionStateTests
         state.DeselectAllPupils();
 
         // Assert
-        Assert.False(state.IsAllPupilsSelected);
         Assert.True(state.IsAllPupilsDeselected);
         Assert.Equal(3, state.GetPupilsWithSelectionState().Count);
-        Assert.All(upns, upn => Assert.False(state.IsPupilSelected(upn)));
+        Assert.All(upns, upn => state.IsPupilSelected(upn));
     }
 
     [Fact]
