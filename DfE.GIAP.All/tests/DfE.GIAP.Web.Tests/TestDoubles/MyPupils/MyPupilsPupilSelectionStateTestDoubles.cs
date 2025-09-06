@@ -11,7 +11,7 @@ public static class MyPupilsPupilSelectionStateTestDoubles
         MyPupilsPupilSelectionState state = Default();
         selectionStateMapping.ToList().ForEach(mapping =>
         {
-            state.UpsertUniquePupilNumberSelectionState(mapping.Key, mapping.Value);
+            state.UpsertPupilSelectionState(mapping.Key, mapping.Value);
         });
         return state;
     }

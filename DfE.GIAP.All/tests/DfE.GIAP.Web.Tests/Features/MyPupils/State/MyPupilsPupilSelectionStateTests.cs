@@ -107,7 +107,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
 
         // Assert
-        Assert.Throws<ArgumentNullException>(() => state.UpsertUniquePupilNumberSelectionState(null, It.IsAny<bool>()));
+        Assert.Throws<ArgumentNullException>(() => state.UpsertPupilSelectionState(null, It.IsAny<bool>()));
     }
 
     [Fact]
@@ -127,7 +127,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         IReadOnlyDictionary<UniquePupilNumber, bool> selectionState = state.GetPupilsWithSelectionState();
 
         // Act
-        state.UpsertUniquePupilNumberSelectionState([], It.IsAny<bool>());
+        state.UpsertPupilSelectionState([], It.IsAny<bool>());
 
         // Assert
         Assert.Equivalent(selectionState, state.GetPupilsWithSelectionState());
@@ -141,7 +141,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
         
         // Act
-        state.UpsertUniquePupilNumberSelectionState([upn, upn], true);
+        state.UpsertPupilSelectionState([upn, upn], true);
 
         // Assert
         Assert.Single(state.GetPupilsWithSelectionState());
@@ -159,7 +159,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
 
         // Act
-        state.UpsertUniquePupilNumberSelectionState([upn], selected);
+        state.UpsertPupilSelectionState([upn], selected);
 
 
         // Assert
@@ -182,8 +182,8 @@ public sealed class MyPupilsPupilSelectionStateTests
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
 
         // Act
-        state.UpsertUniquePupilNumberSelectionState([upns[1]], true);
-        state.UpsertUniquePupilNumberSelectionState([upns[0]], false);
+        state.UpsertPupilSelectionState([upns[1]], true);
+        state.UpsertPupilSelectionState([upns[0]], false);
 
         // Assert
         Assert.True(state.IsPupilSelected(upns[1]));
