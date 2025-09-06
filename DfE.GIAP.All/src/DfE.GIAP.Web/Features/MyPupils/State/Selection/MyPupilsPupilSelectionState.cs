@@ -1,12 +1,10 @@
-﻿
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
 public sealed class MyPupilsPupilSelectionState
 {
-    // TODO consider requiring UniquePupilNumber on contract
-    private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
+    private readonly Dictionary<UniquePupilNumber, bool> _pupilsToSelectedMap = [];
 
     private SelectionState _state = SelectionState.Manual;
 
@@ -18,9 +16,9 @@ public sealed class MyPupilsPupilSelectionState
 
     public IEnumerable<string> CurrentPageOfPupils { get; set; }
 
-    public IReadOnlyDictionary<string, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
+    public IReadOnlyDictionary<UniquePupilNumber, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
 
-    public bool IsPupilSelected(string upn)
+    public bool IsPupilSelected(UniquePupilNumber upn)
     {
         return _state switch
         {
@@ -28,7 +26,6 @@ public sealed class MyPupilsPupilSelectionState
             SelectionState.DeselectAll => false,
             _ => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected
         };
-
     }
 
     public void SelectAllPupils()
@@ -49,17 +46,12 @@ public sealed class MyPupilsPupilSelectionState
             isSelected: false);
     }
 
-    public void UpsertUniquePupilNumberSelectionState(IEnumerable<string> upns, bool isSelected)
+    public void UpsertUniquePupilNumberSelectionState(IEnumerable<UniquePupilNumber> upns, bool isSelected)
     {
         ArgumentNullException.ThrowIfNull(upns);
 
-        foreach (string upn in upns)
+        foreach (UniquePupilNumber upn in upns)
         {
-            if (!UniquePupilNumberValidator.Validate(upn))
-            {
-                throw new ArgumentException("Invalid UPN requested");
-            }
-
             if (IsAllPupilsSelected)
             {
                 _pupilsToSelectedMap[upn] = true;

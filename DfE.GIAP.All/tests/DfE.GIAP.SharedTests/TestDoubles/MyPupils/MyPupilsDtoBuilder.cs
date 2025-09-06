@@ -8,7 +8,7 @@ public sealed class MyPupilDtoBuilder
     private const string DATE_OF_BIRTH_FORMAT = "yyyy-MM-dd";
     private static readonly Faker<MyPupilDto> s_faker = MyPupilDtosTestDoubles.CreateGenerator();
 
-    private string? _uniquePupilNumber;
+    private UniquePupilNumber? _uniquePupilNumber;
     private string? _forename;
     private string? _surname;
     private DateTime? _dateOfBirth;
@@ -36,7 +36,7 @@ public sealed class MyPupilDtoBuilder
     public MyPupilDtoBuilder WithUniquePupilNumber(UniquePupilNumber upn)
     {
         ArgumentNullException.ThrowIfNull(upn);
-        _uniquePupilNumber = upn.Value;
+        _uniquePupilNumber = upn;
         return this;
     }
 

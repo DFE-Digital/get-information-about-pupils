@@ -32,7 +32,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MyPupilDto result = mapper.Map(pupil);
 
         // Assert
-        Assert.Equal(uniquePupilNumber.Value, result.UniquePupilNumber);
+        Assert.Equal(uniquePupilNumber, result.UniquePupilNumber);
         Assert.Equal("John", result.Forename);
         Assert.Equal("Doe", result.Surname);
         Assert.Equal(dob.ToString("yyyy-MM-dd"), result.DateOfBirth);

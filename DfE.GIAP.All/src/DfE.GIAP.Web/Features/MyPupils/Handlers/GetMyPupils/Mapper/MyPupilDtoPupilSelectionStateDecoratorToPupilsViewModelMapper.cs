@@ -13,7 +13,7 @@ internal sealed class MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMap
         {
             PupilViewModel viewModel = new()
             {
-                UniquePupilNumber = dto.UniquePupilNumber,
+                UniquePupilNumber = dto.UniquePupilNumber.Value,
                 Forename = dto.Forename,
                 Surname = dto.Surname,
                 DateOfBirth = dto.DateOfBirth,

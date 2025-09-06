@@ -84,7 +84,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => t.UPN == expectedPupil.UniquePupilNumber);
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => new UniquePupilNumber(t.UPN).Equals(expectedPupil.UniquePupilNumber));
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
@@ -122,7 +122,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         {
             return new()
             {
-                UniquePupilNumber = input.UPN,
+                UniquePupilNumber = new(input.UPN),
                 DateOfBirth = input.DOB?.ToString("yyyy-MM-dd") ?? string.Empty,
                 Forename = input.Forename,
                 Surname = input.Surname,

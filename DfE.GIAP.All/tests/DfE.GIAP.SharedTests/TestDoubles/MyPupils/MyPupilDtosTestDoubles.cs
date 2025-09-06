@@ -32,7 +32,7 @@ public static class MyPupilDtosTestDoubles
     {
         Faker<MyPupilDto> faker = new();
         faker.StrictMode(true);
-        faker.RuleFor(t => t.UniquePupilNumber, (f) => UniquePupilNumberTestDoubles.Generate().Value);
+        faker.RuleFor(t => t.UniquePupilNumber, (f) => UniquePupilNumberTestDoubles.Generate());
         faker.RuleFor(t => t.DateOfBirth, (f)
             => new DateOfBirth(
                 DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(f.Random.Number(5, 18))).ToString());
