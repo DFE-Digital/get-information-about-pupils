@@ -27,7 +27,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
         // Arrange
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.CreateWithValidPage();
+        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Default();
 
         MyPupilDtos pupils = MyPupilDtos.Empty();
 

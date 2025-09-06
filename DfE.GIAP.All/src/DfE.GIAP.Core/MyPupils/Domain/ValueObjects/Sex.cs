@@ -26,7 +26,8 @@ public readonly struct Sex
         _value = normalisedSexCode;
     }
 
+    public override string ToString() => _value.ToString() ?? string.Empty;
+
     public static Sex Male => new(MaleCharacterCode.ToString());
     public static Sex Female => new(FemaleCharacterCode.ToString());
-    public override string ToString() => _value.ToString() ?? string.Empty;
 }

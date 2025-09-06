@@ -5,35 +5,35 @@ namespace DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
 public sealed class MyPupilsPupilSelectionState
 {
+    // TODO consider requiring UniquePupilNumber on contract
     private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
-    private SelectAllPupilsState _state = SelectAllPupilsState.NotSpecified;
-    public bool IsAllPupilsSelected => _state == SelectAllPupilsState.SelectAll;
-    public bool IsAllPupilsDeselected => _state == SelectAllPupilsState.DeselectAll;
+
+    private SelectionState _state = SelectionState.Manual;
+
+    public bool IsAllPupilsSelected => _state == SelectionState.SelectAll;
+
+    public bool IsAllPupilsDeselected => _state == SelectionState.DeselectAll;
+
     public bool IsAnyPupilSelected => IsAllPupilsSelected || _pupilsToSelectedMap.Values.Any(t => t);
+
     public IEnumerable<string> CurrentPageOfPupils { get; set; }
-
-    public static MyPupilsPupilSelectionState CreateDefault() => new();
-
-    public bool IsPupilSelected(string upn)
-    {
-        if (IsAllPupilsSelected)
-        {
-            return true;
-        }
-
-        if (_pupilsToSelectedMap.TryGetValue(upn, out bool selected))
-        {
-            return selected;
-        }
-
-        return false;
-    }
 
     public IReadOnlyDictionary<string, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
 
+    public bool IsPupilSelected(string upn)
+    {
+        return _state switch
+        {
+            SelectionState.SelectAll => true,
+            SelectionState.DeselectAll => false,
+            _ => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected
+        };
+
+    }
+
     public void SelectAllPupils()
     {
-        _state = SelectAllPupilsState.SelectAll;
+        _state = SelectionState.SelectAll;
 
         if (_pupilsToSelectedMap.Keys.Count == 0)
         {
@@ -47,7 +47,7 @@ public sealed class MyPupilsPupilSelectionState
 
     public void DeselectAllPupils()
     {
-        _state = SelectAllPupilsState.DeselectAll;
+        _state = SelectionState.DeselectAll;
 
         if (_pupilsToSelectedMap.Keys.Count == 0)
         {
@@ -75,6 +75,18 @@ public sealed class MyPupilsPupilSelectionState
                 throw new ArgumentException("Invalid UPN requested");
             }
 
+            if (IsAllPupilsSelected)
+            {
+                _pupilsToSelectedMap[upn] = true;
+                continue;
+            }
+
+            if (IsAllPupilsDeselected)
+            {
+                _pupilsToSelectedMap[upn] = false;
+                continue;
+            }
+
             _pupilsToSelectedMap[upn] = isSelected;
         }
     }
@@ -82,14 +94,13 @@ public sealed class MyPupilsPupilSelectionState
     public void ResetState()
     {
         _pupilsToSelectedMap.Clear();
-        _state = SelectAllPupilsState.NotSpecified;
+        _state = SelectionState.Manual;
     }
 
-    private enum SelectAllPupilsState
+    private enum SelectionState
     {
         SelectAll,
         DeselectAll,
-        NotSpecified
+        Manual
     }
-
 }

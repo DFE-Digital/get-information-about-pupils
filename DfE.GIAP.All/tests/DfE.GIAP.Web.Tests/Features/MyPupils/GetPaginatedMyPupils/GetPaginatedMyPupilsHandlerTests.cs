@@ -46,7 +46,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
         Mock<IMyPupilDtosPresentationHandler> mockHandler = new();
 
         MyPupilDtos stubPupilDtos = MyPupilDtosTestDoubles.Generate(count: 20);
-        MyPupilsPresentationState stubPupilsPresentationState = MyPupilsPresentationStateTestDoubles.CreateWithValidPage();
+        MyPupilsPresentationState stubPupilsPresentationState = MyPupilsPresentationStateTestDoubles.Default();
 
         useCaseMock
             .Setup(useCase => useCase.HandleRequestAsync(

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 public static class MyPupilsPupilSelectionStateTestDoubles
 {
     public static MyPupilsPupilSelectionState Default() => new();
