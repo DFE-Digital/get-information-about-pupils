@@ -5,12 +5,12 @@ public static class MyPupilsPupilSelectionStateTestDoubles
 {
     public static MyPupilsPupilSelectionState Default() => new();
 
-    public static MyPupilsPupilSelectionState WithSelectionState(Dictionary<IEnumerable<string>, bool> upnsToSelectionState)
+    public static MyPupilsPupilSelectionState WithSelectionState(Dictionary<IEnumerable<string>, bool> selectionStateMapping)
     {
         MyPupilsPupilSelectionState state = Default();
-        upnsToSelectionState.ToList().ForEach(mapping =>
+        selectionStateMapping.ToList().ForEach(mapping =>
         {
-            state.UpsertPupilWithSelectedState(mapping.Key, mapping.Value);
+            state.UpsertUniquePupilNumberSelectionState(mapping.Key, mapping.Value);
         });
         return state;
     }

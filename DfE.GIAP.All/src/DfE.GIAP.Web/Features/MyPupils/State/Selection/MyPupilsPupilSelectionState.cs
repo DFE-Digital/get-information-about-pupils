@@ -40,7 +40,7 @@ public sealed class MyPupilsPupilSelectionState
             return;
         }
 
-        UpsertPupilWithSelectedState(
+        UpsertUniquePupilNumberSelectionState(
             _pupilsToSelectedMap.Keys,
             isSelected: true);
     }
@@ -54,12 +54,12 @@ public sealed class MyPupilsPupilSelectionState
             return;
         }
 
-        UpsertPupilWithSelectedState(
+        UpsertUniquePupilNumberSelectionState(
             _pupilsToSelectedMap.Keys,
             isSelected: false);
     }
 
-    public void UpsertPupilWithSelectedState(IEnumerable<string> upns, bool isSelected)
+    public void UpsertUniquePupilNumberSelectionState(IEnumerable<string> upns, bool isSelected)
     {
         ArgumentNullException.ThrowIfNull(upns);
 
