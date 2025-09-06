@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read.Mapper;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
 public sealed class MyPupilsDocumentDtoToMyPupilsMapperTests

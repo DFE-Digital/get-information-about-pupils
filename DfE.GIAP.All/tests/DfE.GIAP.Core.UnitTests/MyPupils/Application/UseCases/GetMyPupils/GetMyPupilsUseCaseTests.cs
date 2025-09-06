@@ -11,6 +11,7 @@ using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class GetMyPupilsUseCaseTests

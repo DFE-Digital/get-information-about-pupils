@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilsTestDoubles
 {
     public static Core.MyPupils.Application.Repositories.MyPupils Default()

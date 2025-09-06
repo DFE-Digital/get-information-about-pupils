@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilDtosTestDoubles
 {
     public static MyPupilDto Generate() => Generate(count: 1).Values.Single();
@@ -37,7 +37,7 @@ public static class MyPupilDtosTestDoubles
         return MyPupilDtos.Create(pupils: output);
     }
 
-    private static Faker<MyPupilDto> CreateGenerator()
+    public static Faker<MyPupilDto> CreateGenerator()
     {
         Faker<MyPupilDto> faker = new();
         faker.StrictMode(true);

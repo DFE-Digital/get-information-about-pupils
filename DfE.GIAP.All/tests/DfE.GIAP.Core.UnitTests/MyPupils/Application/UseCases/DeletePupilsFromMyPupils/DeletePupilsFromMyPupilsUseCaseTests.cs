@@ -5,6 +5,7 @@ using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Moq;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
