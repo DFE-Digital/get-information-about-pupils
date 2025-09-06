@@ -5,8 +5,6 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilDtosTestDoubles
 {
-    public static MyPupilDto Generate() => Generate(count: 1).Values.Single();
-
     public static MyPupilDtos Generate(int count)
     {
         return MyPupilDtos.Create(
@@ -20,18 +18,11 @@ public static class MyPupilDtosTestDoubles
 
         uniquePupilNumbers.ToList().ForEach(upn =>
         {
-            MyPupilDto generatedDefault = generator.Generate();
-            MyPupilDto outputPupil = new()
-            {
-                UniquePupilNumber = upn.Value,
-                Sex = generatedDefault.Sex,
-                Surname = generatedDefault.Surname,
-                Forename = generatedDefault.Forename,
-                DateOfBirth = generatedDefault.DateOfBirth,
-                IsPupilPremium = generatedDefault.IsPupilPremium,
-                LocalAuthorityCode = generatedDefault.LocalAuthorityCode,
-            };
-            output.Add(outputPupil);
+            MyPupilDto dto = MyPupilDtoBuilder.Create()
+                .WithUniquePupilNumber(upn)
+                .Build();
+
+            output.Add(dto);
         });
 
         return MyPupilDtos.Create(pupils: output);

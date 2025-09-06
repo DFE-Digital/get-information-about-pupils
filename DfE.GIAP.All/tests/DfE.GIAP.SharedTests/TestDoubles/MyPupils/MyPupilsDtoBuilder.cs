@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public sealed class MyPupilDtoBuilder
@@ -32,7 +33,17 @@ public sealed class MyPupilDtoBuilder
         return this;
     }
 
+    public MyPupilDtoBuilder WithUniquePupilNumber(UniquePupilNumber upn)
+    {
+        ArgumentNullException.ThrowIfNull(upn);
+        _uniquePupilNumber = upn.Value;
+        return this;
+    }
+
     public static MyPupilDtoBuilder Create() => new();
+
+    public static MyPupilDto BuildDefault() => new MyPupilDtoBuilder().Build();
+
     public MyPupilDto Build()
     {
         MyPupilDto defaulter = s_faker.Generate();

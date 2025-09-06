@@ -3,8 +3,11 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+using Moq;
 using Xunit;
+using static DfE.GIAP.Web.Constants.Routes;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
 public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
@@ -38,17 +41,19 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         Assert.Equal(0, response.Count);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void Map_Maps_With_MappingApplied_For_PupilPremium(bool isPupilPremium)
+    [Fact]
+    public void Map_Maps_With_MappingApplied_For_PupilPremium()
     {
         // Arrange
-        MyPupilDto createdPupil = MyPupilDtoBuilder.Create()
-            .WithPupilPremium(isPupilPremium)
+        MyPupilDto createdPupilWithPupilPremium = MyPupilDtoBuilder.Create()
+            .WithPupilPremium(true)
             .Build();
 
-        MyPupilDtos inputPupils = MyPupilDtos.Create([createdPupil]);
+        MyPupilDto createdPupil = MyPupilDtoBuilder.Create()
+            .WithPupilPremium(false)
+            .Build();
+
+        MyPupilDtos inputPupils = MyPupilDtos.Create([createdPupilWithPupilPremium, createdPupil]);
 
         MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
 
@@ -62,15 +67,49 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         Assert.NotNull(response);
         Assert.NotNull(response.Pupils);
         Assert.NotEmpty(response.Pupils);
-        Assert.Equal(1, response.Count);
-        PupilViewModel pupilViewModel = Assert.Single(response.Pupils);
-        AssertMappedPupil(createdPupil, pupilViewModel, expectedPupilIsSelected: false);
+        Assert.Equal(2, response.Count);
+
+        List<PupilViewModel> responsePupils = response.Pupils.ToList();
+        AssertMappedPupil(createdPupilWithPupilPremium, responsePupils[0], expectPupilIsSelected: false);
+        AssertMappedPupil(createdPupil, responsePupils[1], expectPupilIsSelected: false);
+    }
+
+    [Fact]
+    public void Map_Maps_With_MappingApplied_For_IsPupilSelected()
+    {
+        // Arrange
+        MyPupilDtos createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
+
+        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+
+        Dictionary<IEnumerable<string>, bool> selectionStateMapping = new()
+        {
+            {[createdPupils.Values[0].UniquePupilNumber], true},
+            {[createdPupils.Values[1].UniquePupilNumber], false}
+        };
+
+        MyPupilsPupilSelectionState selectionState =
+            MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+
+        // Act
+        PupilsViewModel response = sut.Map(
+            new MyPupilsDtoSelectionStateDecorator(createdPupils, selectionState));
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.NotNull(response.Pupils);
+        Assert.NotEmpty(response.Pupils);
+        Assert.Equal(2, response.Count);
+
+        List<PupilViewModel> responsePupils = response.Pupils.ToList();
+        AssertMappedPupil(createdPupils.Values[0], responsePupils[0], expectPupilIsSelected: true);
+        AssertMappedPupil(createdPupils.Values[1], responsePupils[1], expectPupilIsSelected: false);
     }
 
     private static void AssertMappedPupil(
         MyPupilDto input,
         PupilViewModel output,
-        bool expectedPupilIsSelected)
+        bool expectPupilIsSelected)
     {
         Assert.Equal(input.UniquePupilNumber, output.UniquePupilNumber);
         Assert.Equal(input.Forename, output.Forename);
@@ -79,7 +118,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         Assert.Equal(input.Sex, output.Sex);
         Assert.Equal(input.LocalAuthorityCode.ToString(), output.LocalAuthorityCode);
         Assert.Equal(input.IsPupilPremium ? "Yes" : "No", output.PupilPremiumLabel);
-        Assert.Equal(expectedPupilIsSelected, output.IsSelected);
+        Assert.Equal(expectPupilIsSelected, output.IsSelected);
     }
 
 }
