@@ -8,9 +8,6 @@ using DfE.GIAP.Service.Tests.FakeHttpHandlers;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DfE.GIAP.Service.Tests.Common
@@ -28,65 +25,6 @@ namespace DfE.GIAP.Service.Tests.Common
             _mockHttpRequestSender = new Mock<IFakeHttpRequestSender>();
             _mockHttpMessageHandler = new FakeHttpMessageHandler(_mockHttpRequestSender.Object);
             _mockHttpClient = new HttpClient(_mockHttpMessageHandler);
-        }
-
-        [Fact]
-        public async Task CommonService_GetLatestNewsStatus_Returns_True_When_LatestNewsFound()
-        {
-            //Arrange
-            var expectedResponse = "true";
-            var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expectedResponse)) };
-            _mockHttpRequestSender.Setup(x => x.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
-
-            _mockApiProcessorService = new ApiService(_mockHttpClient, null);
-            var url = "https://www.mockwebsite.com";
-            _mockAzureAppSettings.SetupGet(x => x.Value).Returns(new AzureAppSettings() { GetLatestNewsStatusUrl = url });
-            var service = new CommonService(_mockApiProcessorService, _mockAzureAppSettings.Object);
-
-            //Act
-            var actual = await service.GetLatestNewsStatus(It.IsAny<string>());
-
-            //Assert
-            Assert.True(actual);
-        }
-
-        [Fact]
-        public async Task CommonService_GetLatestNewsStatus_Returns_False_When_LatestNews_NotFound()
-        {
-            //Arrange
-            var expectedResponse = "false";
-            var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expectedResponse)) };
-            _mockHttpRequestSender.Setup(x => x.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
-
-            _mockApiProcessorService = new ApiService(_mockHttpClient, null);
-            var url = "https://www.mockwebsite.com";
-            _mockAzureAppSettings.SetupGet(x => x.Value).Returns(new AzureAppSettings() { GetLatestNewsStatusUrl = url });
-            var service = new CommonService(_mockApiProcessorService, _mockAzureAppSettings.Object);
-
-            //Act
-            var actual = await service.GetLatestNewsStatus(It.IsAny<string>());
-
-            //Assert
-            Assert.False(actual);
-        }
-
-        [Fact]
-        public async Task CommonService_GetLatestNewsStatus_Returns_False_When_LatestNews_Throws_Exception()
-        {
-            //Arrange
-
-            _mockHttpRequestSender.Setup(x => x.Send(It.IsAny<HttpRequestMessage>())).Throws(It.IsAny<Exception>());
-            _mockApiProcessorService = new ApiService(_mockHttpClient, null);
-
-            var url = "https://www.mockwebsite.com";
-            _mockAzureAppSettings.SetupGet(x => x.Value).Returns(new AzureAppSettings() { GetLatestNewsStatusUrl = url });
-            var service = new CommonService(_mockApiProcessorService, _mockAzureAppSettings.Object);
-
-            //Act
-            var actual = await service.GetLatestNewsStatus(It.IsAny<string>());
-
-            //Assert
-            Assert.False(actual);
         }
 
         [Fact]

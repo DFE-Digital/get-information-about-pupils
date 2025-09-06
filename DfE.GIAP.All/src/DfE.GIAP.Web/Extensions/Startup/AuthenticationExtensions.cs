@@ -3,8 +3,9 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.NewsArticles.Application.UseCases.CheckNewsArticleUpdates;
-using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
+using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
+using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
 using DfE.GIAP.Domain.Models.LoggingEvent;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
@@ -175,16 +176,25 @@ public static class AuthenticationExtensions
 
         ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
 
-        await UpdateUserProfile(userApiClient, authenticatedUserInfo, sessionId);
+        // CREATE USER IF DOESN'T EXIST
+        IUseCaseRequestOnly<CreateUserIfNotExistsRequest> createUserIfNotExistsUseCase = ctx.HttpContext.RequestServices
+            .GetService<IUseCaseRequestOnly<CreateUserIfNotExistsRequest>>();
+        await createUserIfNotExistsUseCase.HandleRequestAsync(new CreateUserIfNotExistsRequest(authenticatedUserInfo.UserId));
 
-        IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse> useCase = ctx.HttpContext.RequestServices.GetService<IUseCase<CheckNewsArticleUpdatesRequest, CheckNewsArticleUpdateResponse>>();
-        CheckNewsArticleUpdateResponse checkNewsArticleUpdatesResponse = await useCase
-                .HandleRequestAsync(new CheckNewsArticleUpdatesRequest(authenticatedUserInfo.UserId));
+        // CHECK FOR UNREAD NEWS
+        IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse> getUnreadUserNewsUseCase = ctx.HttpContext.RequestServices
+            .GetService<IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse>>();
+        GetUnreadUserNewsResponse getUnreadUserNewsResponse = await getUnreadUserNewsUseCase
+                .HandleRequestAsync(new GetUnreadUserNewsRequest(authenticatedUserInfo.UserId));
 
         ISessionProvider sessionProvider = ctx.HttpContext.RequestServices.GetService<ISessionProvider>();
-        if (checkNewsArticleUpdatesResponse.HasUpdates)
-            sessionProvider.SetSessionValue<bool>(SessionKeys.ShowNewsBannerKey, true);
+        if (getUnreadUserNewsResponse.HasUpdates)
+            sessionProvider.SetSessionValue(SessionKeys.ShowNewsBannerKey, true);
 
+        // UPDATE LAST LOGGED IN
+        IUseCaseRequestOnly<UpdateLastLoggedInRequest> upsertUserUseCase = ctx.HttpContext.RequestServices
+            .GetService<IUseCaseRequestOnly<UpdateLastLoggedInRequest>>();
+        await upsertUserUseCase.HandleRequestAsync(new UpdateLastLoggedInRequest(authenticatedUserInfo.UserId, DateTime.UtcNow));
 
         LoggingEvent loggingEvent = CreateLoggingEvent(userId, userEmail, userGivenName, userSurname, ctx.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, userOrganisation, organisationId, authenticatedUserInfo, sessionId);
         await userApiClient.CreateLoggingEvent(loggingEvent);
@@ -221,16 +231,6 @@ public static class AuthenticationExtensions
         claims.Add(new Claim(CustomClaimTypes.UKProviderReferenceNumber, org?.UKProviderReferenceNumber ?? string.Empty));
     }
 
-    private static async Task UpdateUserProfile(ICommonService userApiClient, AuthenticatedUserInfo userInfo, string sessionId)
-    {
-        await userApiClient.CreateOrUpdateUserProfile(
-            new UserProfile { UserId = userInfo.UserId },
-            new AzureFunctionHeaderDetails
-            {
-                ClientId = userInfo.UserId,
-                SessionId = sessionId
-            });
-    }
 
     private static LoggingEvent CreateLoggingEvent(
         string userId,

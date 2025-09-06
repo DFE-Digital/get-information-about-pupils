@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
+﻿using DfE.GIAP.Core.Users.Application;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
 public static class UserTestDoubles
@@ -10,4 +9,6 @@ public static class UserTestDoubles
         User user = new(userId, DateTime.UtcNow);
         return user;
     }
+
+    public static User WithId(UserId id) => new(id, DateTime.UtcNow);
 }

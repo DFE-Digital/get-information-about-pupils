@@ -63,7 +63,6 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
         services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
-        services.AddScoped<IUlnDownloadService, UlnDownloadService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IPrePreparedDownloadsService, PrePreparedDownloadsService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
