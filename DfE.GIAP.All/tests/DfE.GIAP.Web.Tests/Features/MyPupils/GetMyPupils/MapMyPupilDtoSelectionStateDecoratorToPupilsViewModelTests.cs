@@ -1,13 +1,10 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
-using Moq;
 using Xunit;
-using static DfE.GIAP.Web.Constants.Routes;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
 public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
