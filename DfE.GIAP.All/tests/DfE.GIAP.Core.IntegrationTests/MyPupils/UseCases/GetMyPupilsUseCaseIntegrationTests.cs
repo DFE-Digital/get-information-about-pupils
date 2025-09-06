@@ -54,7 +54,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
-                upns: UniquePupilNumbers.Create(uniquePupilNumbers: upns)));
+                upns: UniquePupilNumbers.Create(upns)));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -70,18 +70,17 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos).Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
 
         foreach (MyPupilDto expectedPupil in expectedPupils)
         {
-            MyPupilDto? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber == expectedPupil.UniquePupilNumber);
+            MyPupilDto? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
 
             Assert.NotNull(actual);
             Assert.Equal(expectedPupil.Forename, actual.Forename);
             Assert.Equal(expectedPupil.Surname, actual.Surname);
             Assert.Equal(expectedPupil.DateOfBirth, actual.DateOfBirth);
             Assert.Equal(expectedPupil.Sex, actual.Sex);
-            Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
             bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => new UniquePupilNumber(t.UPN).Equals(expectedPupil.UniquePupilNumber));
