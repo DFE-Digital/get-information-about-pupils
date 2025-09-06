@@ -1,7 +1,5 @@
-﻿using Bogus;
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -14,7 +12,6 @@ using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
-using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
