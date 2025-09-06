@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
@@ -73,6 +73,7 @@ public sealed class MyPupilsPupilSelectionStateTests
 
         // Assert
         Assert.False(state.IsAllPupilsSelected);
+        Assert.True(state.IsAllPupilsDeselected);
         Assert.Equal(3, state.GetPupilsWithSelectionState().Count);
         Assert.All(upns, upn => Assert.False(state.IsPupilSelected(upn)));
     }
