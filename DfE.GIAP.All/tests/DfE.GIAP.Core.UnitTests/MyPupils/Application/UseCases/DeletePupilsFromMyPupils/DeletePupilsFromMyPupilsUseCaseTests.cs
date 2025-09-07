@@ -24,7 +24,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         DeletePupilsFromMyPupilsRequest request = new(
             UserId: user.UserId.Value,
             DeleteAll: true,
-            DeletePupilUpns: ["UPN1", "UPN2"]); // these should be ignored when deleteAll toggled
+            DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 2)); // these should be ignored when deleteAll toggled
 
         // Act
         await useCase.HandleRequestAsync(request);
@@ -54,7 +54,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockFor(myPupils);
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
-        IEnumerable<string> deletePupilUpnIdentifiers = upns.AsValues().Take(1);
+        IEnumerable<UniquePupilNumber> deletePupilUpnIdentifiers = upns.GetUniquePupilNumbers().Take(1);
 
         DeletePupilsFromMyPupilsRequest request = new(
             UserId: userId.Value,
@@ -72,7 +72,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
-        IEnumerable<UniquePupilNumber> expectedListAfterDelete = upns.GetUniquePupilNumbers().Where(t => !deletePupilUpnIdentifiers.Contains(t.Value));
+        IEnumerable<UniquePupilNumber> expectedListAfterDelete = upns.GetUniquePupilNumbers().Where(t => !deletePupilUpnIdentifiers.Contains(t));
 
         mockWriteRepository.Verify(repo =>
             repo.SaveMyPupilsAsync(
@@ -106,7 +106,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         DeletePupilsFromMyPupilsRequest request = new(
             UserId: userId.Value,
             DeleteAll: false,
-            DeletePupilUpns: ["UNKNOWN_UPN"]);
+            DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 1));
 
         // Act 
         await Assert.ThrowsAsync<ArgumentException>(() => useCase.HandleRequestAsync(request));

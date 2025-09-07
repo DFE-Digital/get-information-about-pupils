@@ -12,5 +12,4 @@ public sealed class UniquePupilNumbers
     public int Count => _uniquePupilNumbers.Count;
     public bool IsEmpty => Count == 0;
     public IReadOnlyList<UniquePupilNumber> GetUniquePupilNumbers() => _uniquePupilNumbers.AsReadOnly();
-    public IEnumerable<string> AsValues() => _uniquePupilNumbers.Select(t => t.Value);
 }

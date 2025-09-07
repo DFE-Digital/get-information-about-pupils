@@ -14,8 +14,6 @@ public sealed class MyPupilsPupilSelectionState
 
     public bool IsAnyPupilSelected => IsAllPupilsSelected || _pupilsToSelectedMap.Values.Any(t => t);
 
-    public IEnumerable<string> CurrentPageOfPupils { get; set; }
-
     public IReadOnlyDictionary<UniquePupilNumber, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
 
     public bool IsPupilSelected(UniquePupilNumber upn)

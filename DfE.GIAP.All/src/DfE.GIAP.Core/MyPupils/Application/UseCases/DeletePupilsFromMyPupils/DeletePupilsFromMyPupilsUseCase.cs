@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
@@ -34,7 +33,7 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
         Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(userId);
 
-        IEnumerable<string> userMyPupilUpnsBeforeDelete = myPupils!.Pupils.AsValues();
+        IEnumerable<UniquePupilNumber> userMyPupilUpnsBeforeDelete = myPupils!.Pupils.GetUniquePupilNumbers();
 
         if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilUpnsBeforeDelete.Contains(deleteUpn)))
         {
@@ -44,7 +43,6 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
         List<UniquePupilNumber> updatedMyPupilsAfterDelete =
             userMyPupilUpnsBeforeDelete
                 .Where(upn => !request.DeletePupilUpns.Contains(upn))
-                .ToUniquePupilNumbers()
                 .ToList();
 
         await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(

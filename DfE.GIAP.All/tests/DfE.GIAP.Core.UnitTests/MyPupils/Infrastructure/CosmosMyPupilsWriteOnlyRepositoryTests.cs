@@ -162,14 +162,11 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);
 
         // Assert
-
-        IEnumerable<string> expectedUpnsToWrite = uniquePupilNumbers.AsValues();
-
         commandHandlerDouble.Verify(handler =>
             handler.UpsertItemAsync(
                 It.Is<MyPupilsDocumentDto>(
                     (dto) => dto.id == userId.Value &&
-                        dto.MyPupils.Pupils.Select(pupil => pupil.UPN).SequenceEqual(expectedUpnsToWrite)),
+                        dto.MyPupils.Pupils.Select(pupil => pupil.UPN).SequenceEqual(uniquePupilNumbers.GetUniquePupilNumbers().Select(t => t.Value))),
                 MyPupilsContainerName,
                 It.Is<string>((pk) => pk == userId.Value),
                 It.IsAny<CancellationToken>()),

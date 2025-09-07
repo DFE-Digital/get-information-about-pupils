@@ -62,7 +62,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId.Value));
+                new GetMyPupilsRequest(userId));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
@@ -107,7 +107,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId.Value));
+                new GetMyPupilsRequest(userId));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
