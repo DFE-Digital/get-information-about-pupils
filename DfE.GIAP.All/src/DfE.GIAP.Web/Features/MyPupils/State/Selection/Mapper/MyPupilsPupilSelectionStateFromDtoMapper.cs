@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
 
@@ -8,6 +9,8 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
 {
     public MyPupilsPupilSelectionState Map(MyPupilsPupilSelectionStateDto input)
     {
+        ArgumentNullException.ThrowIfNull(input);
+
         // Construct with initial selection map
         MyPupilsPupilSelectionState state = new();
 
@@ -15,17 +18,18 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
         switch (input.State)
         {
             case PupilSelectionModeDto.SelectAll:
+                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys.ToUniquePupilNumbers(), false);
                 state.SelectAllPupils();
                 break;
             case PupilSelectionModeDto.DeselectAll:
+                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys.ToUniquePupilNumbers(), true);
                 state.DeselectAllPupils();
                 break;
-            case PupilSelectionModeDto.ManualSelection:
             default:
-                IEnumerable<UniquePupilNumber> selectedPupils = state.GetPupilsWithSelectionState().Where(t => t.Value).Select(t => t.Key);
+                IEnumerable<UniquePupilNumber> selectedPupils = input.PupilUpnToSelectedMap.Where(t => t.Value).Select(t => t.Key).ToUniquePupilNumbers();
                 state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
 
-                IEnumerable<UniquePupilNumber> notSelectedPupils = state.GetPupilsWithSelectionState().Where(t => !t.Value).Select(t => t.Key);
+                IEnumerable<UniquePupilNumber> notSelectedPupils = input.PupilUpnToSelectedMap.Where(t => !t.Value).Select(t => t.Key).ToUniquePupilNumbers();
                 state.UpsertPupilSelectionState(notSelectedPupils, isSelected: false);
                 break;
         }
