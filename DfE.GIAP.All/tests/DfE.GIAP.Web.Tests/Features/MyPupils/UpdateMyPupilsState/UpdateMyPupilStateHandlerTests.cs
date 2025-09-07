@@ -44,7 +44,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public void Constructor_Throws_When_Mapper_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
         Mock<IGetPaginatedMyPupilsHandler> getPaginatedMyPupilsHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
@@ -63,7 +63,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public void Constructor_Throws_When_PresentationStateSessionCommandHandler_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
         Mock<IGetPaginatedMyPupilsHandler> getPaginatedMyPupilsHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
@@ -82,7 +82,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public void Constructor_Throws_When_SelectionStateSessionCommandHandler_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
         Mock<IGetPaginatedMyPupilsHandler> getPaginatedMyPupilsHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
@@ -101,7 +101,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public void Constructor_Throws_When_GetPaginatedPupilsHandler_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
@@ -121,7 +121,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public async Task HandleAsync_Throws_When_Request_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
@@ -144,7 +144,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public async Task HandleAsync_Throws_When_Request_State_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
@@ -158,7 +158,7 @@ public sealed class UpdateMyPupilStateHandlerTests
             getPaginatedMyPupilsHandlerMock.Object);
 
         UpdateMyPupilsStateRequest request = new( // TODO builder / factory around request creation?
-            UserIdTestDoubles.Default().Value,
+            UserIdTestDoubles.Default(),
             null,
             new MyPupilsFormStateRequestDto());
 
@@ -172,7 +172,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public async Task HandleAsync_Throws_When_Request_FormUpdateState_Is_Null()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
@@ -190,7 +190,7 @@ public sealed class UpdateMyPupilStateHandlerTests
         MyPupilsState state = new(presentationState, selectionState);
 
         UpdateMyPupilsStateRequest request = new(
-            UserIdTestDoubles.Default().Value,
+            UserIdTestDoubles.Default(),
             state,
             null);
 
@@ -204,7 +204,7 @@ public sealed class UpdateMyPupilStateHandlerTests
     public async Task HandleAsync_UpdateSelectionState_And_PresentationState()
     {
         // Arrange
-        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = new();
+        Mock<IPupilSelectionStateUpdateHandler> selectionStateUpdateHandlerMock = IPupilSelectionStateUpdateHandlerTestDoubles.Default();
 
         Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock =
             MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
@@ -230,7 +230,6 @@ public sealed class UpdateMyPupilStateHandlerTests
 
         MyPupilsPupilSelectionState selectionState = MyPupilsPupilSelectionStateTestDoubles.Default();
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Default();
-        MyPupilsState state = new(presentationState, selectionState);
 
         MyPupilsFormStateRequestDto updateStateInput = new()
         {
@@ -241,8 +240,8 @@ public sealed class UpdateMyPupilStateHandlerTests
         UserId userId = UserIdTestDoubles.Default();
 
         UpdateMyPupilsStateRequest request = new(
-            userId.Value,
-            state,
+            userId,
+            MyPupilsStateTestDoubles.Create(presentationState, selectionState),
             updateStateInput);
 
         MyPupilsPresentationState mappedPresentationState = MyPupilsPresentationStateTestDoubles.Default();
@@ -254,8 +253,7 @@ public sealed class UpdateMyPupilStateHandlerTests
         // Assert
         getPaginatedMyPupilsHandlerMock.Verify(getPaginatedMyPupilsHANDLER
             => getPaginatedMyPupilsHANDLER.HandleAsync(
-                It.Is<GetPaginatedMyPupilsRequest>((request)
-                    => request.UserId.Equals(userId.Value))), Times.Once);
+                It.Is<GetPaginatedMyPupilsRequest>((request) => request.UserId.Equals(userId))), Times.Once);
 
         selectionStateUpdateHandlerMock.Verify((selectionStateUpdater)
             => selectionStateUpdater.Handle(selectionState, myPupilDtos.Identifiers, updateStateInput), Times.Once);
@@ -269,5 +267,4 @@ public sealed class UpdateMyPupilStateHandlerTests
         presentationStateSessionCommandHandlerMock.Verify(presentationStateSessionCommandHandler
             => presentationStateSessionCommandHandler.StoreInSession(mappedPresentationState), Times.Once);
     }
-
 }

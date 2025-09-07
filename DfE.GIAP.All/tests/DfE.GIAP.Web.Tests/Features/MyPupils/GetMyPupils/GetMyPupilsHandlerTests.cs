@@ -64,7 +64,7 @@ public sealed class GetMyPupilsHandlerTests
         GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         GetMyPupilsForUserRequest request = new(
-            UserId: It.IsAny<string>(),
+            UserId: It.IsAny<UserId>(),
             State: null);
 
         Func<Task> act = async () => await sut.HandleAsync(request);
@@ -92,7 +92,7 @@ public sealed class GetMyPupilsHandlerTests
         MyPupilsPupilSelectionState selectionState = new();
         MyPupilsState state = new(MyPupilsPresentationStateTestDoubles.Default(), selectionState);
 
-        GetMyPupilsForUserRequest request = new(UserId: userId.Value, state);
+        GetMyPupilsForUserRequest request = new(UserId: userId, state);
 
         // Act
         PupilsViewModel response = await sut.HandleAsync(request);
@@ -104,12 +104,10 @@ public sealed class GetMyPupilsHandlerTests
 
         paginatedHandlerMock.Verify((handler)
             => handler.HandleAsync(
-                It.Is<GetPaginatedMyPupilsRequest>((request)
-                    => request.UserId == userId.Value)), Times.Once);
+                It.Is<GetPaginatedMyPupilsRequest>((request) => request.UserId.Equals(userId))), Times.Once);
 
         mapperMock.Verify((mapper)
             => mapper.Map(
-                It.Is<MyPupilsDtoSelectionStateDecorator>((request)
-                    => request.PupilDtos.Values.SequenceEqual(stubPaginatedMyPupilDtos.Values))), Times.Once);
+                It.Is<MyPupilsDtoSelectionStateDecorator>((request) => request.PupilDtos.Values.SequenceEqual(stubPaginatedMyPupilDtos.Values))), Times.Once);
     }
 }

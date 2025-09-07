@@ -69,14 +69,14 @@ public sealed class GetPaginatedMyPupilsHandlerTests
         PaginatedMyPupilsResponse response =
             await sut.HandleAsync(
                 new GetPaginatedMyPupilsRequest(
-                    UserId: userId.Value,
+                    UserId: userId,
                     PresentationState: stubPupilsPresentationState));
 
         // Assert
         Assert.NotNull(response);
         Assert.Equal(response.Pupils, stubPupilDtos);
 
-        useCaseMock.Verify(useCase => useCase.HandleRequestAsync(new GetMyPupilsRequest(userId.Value)), Times.Once);
+        useCaseMock.Verify(useCase => useCase.HandleRequestAsync(new GetMyPupilsRequest(userId)), Times.Once);
         mockHandler.Verify(t => t.Handle(stubPupilDtos, stubPupilsPresentationState), Times.Once);
     }
 }

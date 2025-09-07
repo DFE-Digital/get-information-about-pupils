@@ -1,5 +1,6 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+﻿using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
 
-public record GetPaginatedMyPupilsRequest(string UserId, MyPupilsPresentationState PresentationState);
+public record GetPaginatedMyPupilsRequest(UserId UserId, MyPupilsPresentationState PresentationState);

@@ -38,7 +38,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(userId);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -75,7 +75,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(userId);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -116,7 +116,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(userId);
 
         // Act
         GetMyPupilsUseCase sut = new(
