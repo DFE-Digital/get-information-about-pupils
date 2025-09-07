@@ -60,7 +60,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        string deletePupilIdentifier = _testContext.myPupilUpns.GetUniquePupilNumbers()[0].Value;
+        UniquePupilNumber deletePupilIdentifier = _testContext.myPupilUpns.GetUniquePupilNumbers()[0];
+
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.UserId.Value,
             DeletePupilUpns: [deletePupilIdentifier],
@@ -73,7 +74,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
         List<string> remainingUpnsAfterDelete =
             _testContext.myPupilUpns.GetUniquePupilNumbers()
-                .Where((upn) => upn.Value != deletePupilIdentifier)
+                .Where((upn) => !upn.Equals(deletePupilIdentifier))
                 .Select(t => t.Value).ToList();
 
         MyPupilsDocumentDto myPupilsDocumentDto = Assert.Single(users);
@@ -90,11 +91,11 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
 
-        List<string> deleteMultiplePupilIdentifiers =
+        List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
         [
-            myPupilUpns[0].Value,
-            myPupilUpns[4].Value,
-            myPupilUpns[myPupilUpns.Count - 1].Value
+            myPupilUpns[0],
+            myPupilUpns[4],
+            myPupilUpns[myPupilUpns.Count - 1]
         ];
 
         DeletePupilsFromMyPupilsRequest request = new(
@@ -109,7 +110,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
-            myPupilUpns.Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
+            myPupilUpns.Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
                 .Select(t => t.Value).ToList();
 
         MyPupilsDocumentDto myPupilsDocument = Assert.Single(users);
@@ -127,11 +128,11 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
 
-        List<string> deleteMultiplePupilIdentifiers =
+        List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
         [
-            myPupilUpns[0].Value,
-            Guid.NewGuid().ToString(), // Unknown identifier not part of the list
-            myPupilUpns[myPupilUpns.Count - 1].Value
+            myPupilUpns[0],
+            null, // Unknown identifier not part of the list
+            myPupilUpns[myPupilUpns.Count - 1]
         ];
 
         DeletePupilsFromMyPupilsRequest request = new(
@@ -147,8 +148,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
-                .Select(t => t.Value).ToList();
+                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
+                .Select(t => t.Value)
+                .ToList();
 
         MyPupilsDocumentDto actualUserDto = Assert.Single(users);
         Assert.NotNull(actualUserDto);
@@ -166,7 +168,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         bool deleteAllPupils = true;
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.UserId.Value,
-            DeletePupilUpns: [Guid.NewGuid().ToString()], // should be ignored if DeleteAll is enabled
+            DeletePupilUpns: [null!], // should be ignored if DeleteAll is enabled
             DeleteAll: deleteAllPupils);
 
         // Act

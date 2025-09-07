@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.Handlers.GetMyPupils.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;

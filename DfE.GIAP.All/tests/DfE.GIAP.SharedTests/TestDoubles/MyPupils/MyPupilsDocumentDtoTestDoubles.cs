@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilsDocumentDtoTestDoubles
@@ -9,8 +8,8 @@ public static class MyPupilsDocumentDtoTestDoubles
     public static MyPupilsDocumentDto Create(UserId userId, UniquePupilNumbers upns)
     {
         List<MyPupilsPupilItemDto> pupilUpns =
-            upns.AsValues()
-                .Select((upn) => new MyPupilsPupilItemDto() { UPN = upn })
+            upns.GetUniquePupilNumbers()
+                .Select((upn) => new MyPupilsPupilItemDto() { UPN = upn.Value })
                 .ToList();
         return new()
         {
