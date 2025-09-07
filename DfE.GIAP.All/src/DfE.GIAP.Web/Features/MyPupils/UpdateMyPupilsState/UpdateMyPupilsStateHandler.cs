@@ -30,11 +30,11 @@ internal sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
 
-        ArgumentNullException.ThrowIfNull(_getPaginatedMyPupilsHandler);
+        ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsHandler);
         _getPaginatedMyPupilsHandler = getPaginatedMyPupilsHandler;
     }
 
-    public async Task Handle(UpdateMyPupilsStateRequest request)
+    public async Task HandleAsync(UpdateMyPupilsStateRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.State);

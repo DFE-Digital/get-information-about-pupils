@@ -83,4 +83,25 @@ public sealed class UpdateMyPupilStateHandlerTests
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
+
+    [Fact]
+    public async Task HandleAsync_Throws_When_Request_Is_Null()
+    {
+        // Arrange
+        Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
+        Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
+        Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
+        Mock<IGetPaginatedMyPupilsHandler> getPaginatedMyPupilsHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
+
+        UpdateMyPupilsStateHandler sut = new(
+            mapperMock.Object,
+            presentationStateSessionCommandHandlerMock.Object,
+            selectionStateSessionCommandHandlerMock.Object,
+            getPaginatedMyPupilsHandlerMock.Object);
+
+        Func<Task> act = async () => await sut.HandleAsync(null!);
+
+        // Act Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(act);
+    }
 }
