@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -19,8 +19,5 @@
     <ProjectReference Include="..\DfE.GIAP.Service.Tests\DfE.GIAP.Service.Tests.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
     <ProjectReference Include="..\..\src\DfE.GIAP.Web\DfE.GIAP.Web.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Features\MyPupils\UpdateMyPupilsState\" />
   </ItemGroup>
 </Project>
