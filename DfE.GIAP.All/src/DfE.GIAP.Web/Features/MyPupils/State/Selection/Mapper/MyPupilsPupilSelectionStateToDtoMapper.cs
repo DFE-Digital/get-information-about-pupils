@@ -7,6 +7,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
 {
     public MyPupilsPupilSelectionStateDto Map(MyPupilsPupilSelectionState source)
     {
+        ArgumentNullException.ThrowIfNull(source);
 #pragma warning disable S3358 // Ternary operators should not be nested
         return new MyPupilsPupilSelectionStateDto
         {
@@ -16,7 +17,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
                 source.IsAllPupilsSelected ?
                     PupilSelectionModeDto.SelectAll :
                     source.IsAllPupilsDeselected ?
-                        PupilSelectionModeDto.DeselectAll : PupilSelectionModeDto.NotSpecified
+                        PupilSelectionModeDto.DeselectAll : PupilSelectionModeDto.ManualSelection
         };
 #pragma warning restore S3358 // Ternary operators should not be nested
     }

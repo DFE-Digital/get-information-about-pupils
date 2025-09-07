@@ -20,7 +20,7 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
             case PupilSelectionModeDto.DeselectAll:
                 state.DeselectAllPupils();
                 break;
-            case PupilSelectionModeDto.NotSpecified:
+            case PupilSelectionModeDto.ManualSelection:
             default:
                 IEnumerable<UniquePupilNumber> selectedPupils = state.GetPupilsWithSelectionState().Where(t => t.Value).Select(t => t.Key);
                 state.UpsertPupilSelectionState(selectedPupils, isSelected: true);

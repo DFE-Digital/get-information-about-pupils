@@ -3,5 +3,5 @@
 public sealed class MyPupilsPupilSelectionStateDto
 {
     public Dictionary<string, bool> PupilUpnToSelectedMap { get; set; } = [];
-    public PupilSelectionModeDto State { get; set; } = PupilSelectionModeDto.NotSpecified;
+    public PupilSelectionModeDto State { get; set; } = PupilSelectionModeDto.ManualSelection;
 }

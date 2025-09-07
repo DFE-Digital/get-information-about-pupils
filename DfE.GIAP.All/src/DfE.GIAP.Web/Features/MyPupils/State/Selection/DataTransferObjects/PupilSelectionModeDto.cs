@@ -4,5 +4,5 @@ public enum PupilSelectionModeDto
 {
     SelectAll,
     DeselectAll,
-    NotSpecified
+    ManualSelection
 }
