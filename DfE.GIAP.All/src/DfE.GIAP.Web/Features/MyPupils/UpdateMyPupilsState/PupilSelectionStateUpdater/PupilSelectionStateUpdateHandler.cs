@@ -4,28 +4,31 @@ using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
 namespace DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.PupilSelectionStateUpdater;
 
-public sealed class PupilSelectionStateUpdateHandler : IPupilSelectionStateUpdateHandler
+internal sealed class PupilSelectionStateUpdateHandler : IPupilSelectionStateUpdateHandler
 {
-    public void Handle(MyPupilsPupilSelectionState state, IEnumerable<UniquePupilNumber> currentPageOfPupils, MyPupilsFormStateRequestDto input)
+    public void Handle(MyPupilsPupilSelectionState state, IEnumerable<UniquePupilNumber> currentPageOfPupils, MyPupilsFormStateRequestDto updateState)
     {
-        if (input.SelectAllState == MyPupilsFormSelectionStateRequestDto.SelectAll)
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(currentPageOfPupils);
+        ArgumentNullException.ThrowIfNull(updateState);
+
+        if (updateState.SelectAllState == MyPupilsFormSelectionStateRequestDto.SelectAll)
         {
             state.UpsertPupilSelectionState(currentPageOfPupils, isSelected: true);
             state.SelectAllPupils();
+            return;
         }
-        else if (input.SelectAllState == MyPupilsFormSelectionStateRequestDto.DeselectAll)
+        if (updateState.SelectAllState == MyPupilsFormSelectionStateRequestDto.DeselectAll)
         {
             state.UpsertPupilSelectionState(currentPageOfPupils, isSelected: false);
             state.DeselectAllPupils();
+            return;
         }
-        else
-        {
-            // Manually track selections/deselections
-            IEnumerable<UniquePupilNumber> selectedPupils = input.SelectedPupils.ToUniquePupilNumbers() ?? [];
-            IEnumerable<UniquePupilNumber> deselectedPupils = currentPageOfPupils.Except(selectedPupils);
+        // Manually track selections/deselections
+        IEnumerable<UniquePupilNumber> selectedPupils = updateState.SelectedPupils.ToUniquePupilNumbers() ?? [];
+        IEnumerable<UniquePupilNumber> deselectedPupils = currentPageOfPupils.Except(selectedPupils);
 
-            state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
-            state.UpsertPupilSelectionState(deselectedPupils, isSelected: false);
-        }
+        state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
+        state.UpsertPupilSelectionState(deselectedPupils, isSelected: false);
     }
 }
