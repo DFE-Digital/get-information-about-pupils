@@ -2,5 +2,5 @@
 
 public interface IUpdateMyPupilsStateHandler
 {
-    void Handle(UpdateMyPupilsStateRequest request);
+    Task Handle(UpdateMyPupilsStateRequest request);
 }

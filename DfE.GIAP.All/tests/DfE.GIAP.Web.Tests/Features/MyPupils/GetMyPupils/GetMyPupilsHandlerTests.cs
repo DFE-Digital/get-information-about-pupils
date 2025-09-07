@@ -1,15 +1,13 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.UpdateCurrentPageOfPupilsHandler;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
@@ -24,8 +22,7 @@ public sealed class GetMyPupilsHandlerTests
     {
         // Arrange
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
-        Mock<IUpdateCurrentPageOfPupilsStateHandler> updateCurrentPageOfPupilsHandler = new();
-        Func<GetMyPupilsForUserHandler> construct = () => new(null, mapperMock.Object, updateCurrentPageOfPupilsHandler.Object);
+        Func<GetMyPupilsForUserHandler> construct = () => new(null, mapperMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -36,20 +33,7 @@ public sealed class GetMyPupilsHandlerTests
     {
         // Arrange
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
-        Mock<IUpdateCurrentPageOfPupilsStateHandler> updateCurrentPageOfPupilsHandler = new();
-        Func<GetMyPupilsForUserHandler> construct = () => new(paginatedHandlerMock.Object, null, updateCurrentPageOfPupilsHandler.Object);
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_UpdateHandler_Is_Null()
-    {
-        // Arrange
-        Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
-        Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
-        Func<GetMyPupilsForUserHandler> construct = () => new(paginatedHandlerMock.Object, mapperMock.Object, null);
+        Func<GetMyPupilsForUserHandler> construct = () => new(paginatedHandlerMock.Object, null);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -61,9 +45,8 @@ public sealed class GetMyPupilsHandlerTests
         // Arrange
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
-        Mock<IUpdateCurrentPageOfPupilsStateHandler> updateCurrentPageOfPupilsHandler = new();
-
-        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object, updateCurrentPageOfPupilsHandler.Object);
+        
+        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         Func<Task> act = async () => await sut.HandleAsync(null);
 
@@ -77,9 +60,8 @@ public sealed class GetMyPupilsHandlerTests
         // Arrange
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
-        Mock<IUpdateCurrentPageOfPupilsStateHandler> updateCurrentPageOfPupilsHandler = new();
 
-        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object, updateCurrentPageOfPupilsHandler.Object);
+        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         GetMyPupilsForUserRequest request = new(
             UserId: It.IsAny<string>(),
@@ -105,9 +87,7 @@ public sealed class GetMyPupilsHandlerTests
 
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.MockFor<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>(pupils);
 
-        Mock<IUpdateCurrentPageOfPupilsStateHandler> updateCurrentPageOfPupilsHandler = new();
-
-        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object, updateCurrentPageOfPupilsHandler.Object);
+        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         MyPupilsPupilSelectionState selectionState = new();
         MyPupilsState state = new(MyPupilsPresentationStateTestDoubles.Default(), selectionState);
@@ -131,10 +111,5 @@ public sealed class GetMyPupilsHandlerTests
             => mapper.Map(
                 It.Is<MyPupilsDtoSelectionStateDecorator>((request)
                     => request.PupilDtos.Values.SequenceEqual(stubPaginatedMyPupilDtos.Values))), Times.Once);
-
-        updateCurrentPageOfPupilsHandler.Verify((handler)
-            => handler.Handle(
-                It.Is<UniquePupilNumbers>(updatedUniquePupilNumbers
-                    => updatedUniquePupilNumbers.GetUniquePupilNumbers().SequenceEqual(stubPaginatedMyPupilDtos.Identifiers))), Times.Once);
     }
 }
