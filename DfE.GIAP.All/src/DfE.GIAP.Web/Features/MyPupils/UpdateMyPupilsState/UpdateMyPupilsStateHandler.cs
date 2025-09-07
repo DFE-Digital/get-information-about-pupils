@@ -29,6 +29,8 @@ internal sealed class UpdateMyPupilsStateHandler : IUpdateMyPupilsStateHandler
 
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
+
+        ArgumentNullException.ThrowIfNull(_getPaginatedMyPupilsHandler);
         _getPaginatedMyPupilsHandler = getPaginatedMyPupilsHandler;
     }
 
