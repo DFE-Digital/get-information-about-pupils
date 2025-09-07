@@ -28,9 +28,9 @@ public class ChainedEvaluationMyPupilDtosPresentationHandler : IMyPupilDtosPrese
         return this;
     }
 
-    public MyPupilDtos Handle(MyPupilDtos pupils, MyPupilsPresentationState state)
+    public MyPupilDtos Handle(MyPupilDtos myPupils, MyPupilsPresentationState state)
     {
-        MyPupilDtos result = _current.Handle(pupils, state);
+        MyPupilDtos result = _current.Handle(myPupils, state);
         return _next?.Handle(result, state) ?? result;
     }
 }
