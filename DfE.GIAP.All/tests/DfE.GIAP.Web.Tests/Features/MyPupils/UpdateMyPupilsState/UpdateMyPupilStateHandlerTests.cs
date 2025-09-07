@@ -1,7 +1,10 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using System.Composition.Convention;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState;
@@ -104,4 +107,63 @@ public sealed class UpdateMyPupilStateHandlerTests
         // Act Assert
         await Assert.ThrowsAsync<ArgumentNullException>(act);
     }
+
+    [Fact]
+    public async Task HandleAsync_Throws_When_Request_State_Is_Null()
+    {
+        // Arrange
+        Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
+        Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
+        Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
+        Mock<IGetPaginatedMyPupilsHandler> getPaginatedMyPupilsHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
+
+        UpdateMyPupilsStateHandler sut = new(
+            mapperMock.Object,
+            presentationStateSessionCommandHandlerMock.Object,
+            selectionStateSessionCommandHandlerMock.Object,
+            getPaginatedMyPupilsHandlerMock.Object);
+
+        UpdateMyPupilsStateRequest request = new( // TODO builder / factory around request creation?
+            UserIdTestDoubles.Default().Value,
+            null,
+            new MyPupilsFormStateRequestDto()); 
+
+        Func<Task> act = async () => await sut.HandleAsync(null!);
+
+        // Act Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(act);
+    }
+
+    [Fact]
+    public async Task HandleAsync_Throws_When_Request_FormUpdateState_Is_Null()
+    {
+        // Arrange
+        Mock<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>> mapperMock = MapperTestDoubles.Default<MyPupilsFormStateRequestDto, MyPupilsPresentationState>();
+        Mock<ISessionCommandHandler<MyPupilsPresentationState>> presentationStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPresentationState>();
+        Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateSessionCommandHandlerMock = ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
+        Mock<IGetPaginatedMyPupilsHandler> getPaginatedMyPupilsHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
+
+        UpdateMyPupilsStateHandler sut = new(
+            mapperMock.Object,
+            presentationStateSessionCommandHandlerMock.Object,
+            selectionStateSessionCommandHandlerMock.Object,
+            getPaginatedMyPupilsHandlerMock.Object);
+
+        UpdateMyPupilsStateRequest request = new( // TODO builder / factory around request creation?
+            UserIdTestDoubles.Default().Value,
+            MyPupilsStateTestDoubles.Default(),
+            null);
+
+        Func<Task> act = async () => await sut.HandleAsync(null!);
+
+        // Act Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(act);
+    }
+}
+
+public static class MyPupilsStateTestDoubles
+{
+    public static MyPupilsState Default() => new(
+        MyPupilsPresentationStateTestDoubles.Default(),
+        MyPupilsPupilSelectionStateTestDoubles.Default());
 }
