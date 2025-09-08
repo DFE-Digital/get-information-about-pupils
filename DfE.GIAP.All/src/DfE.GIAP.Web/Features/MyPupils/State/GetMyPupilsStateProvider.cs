@@ -5,12 +5,12 @@ using DfE.GIAP.Web.Session.Abstraction.Query.Extensions;
 
 namespace DfE.GIAP.Web.Features.MyPupils.State;
 
-internal sealed class GetMyPupilsStateHandler : IGetMyPupilsStateHandler
+internal sealed class GetMyPupilsStateProvider : IGetMyPupilsStateProvider
 {
     private readonly ISessionQueryHandler<MyPupilsPupilSelectionState> _selectionStateSessionQueryHandler;
     private readonly ISessionQueryHandler<MyPupilsPresentationState> _presentationStateQueryHandler;
 
-    public GetMyPupilsStateHandler(
+    public GetMyPupilsStateProvider(
         ISessionQueryHandler<MyPupilsPresentationState> presentationStateQueryHandler,
         ISessionQueryHandler<MyPupilsPupilSelectionState> selectionStateSessionQueryHandler)
     {

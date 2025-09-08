@@ -11,7 +11,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.State;
 
-public sealed class GetMyPupilsStateHandlerTests
+public sealed class GetMyPupilsStateProviderTests
 {
     [Fact]
     public void Constructor_Throws_When_PresentationStateHandler_Is_Null()
@@ -20,7 +20,7 @@ public sealed class GetMyPupilsStateHandlerTests
             ISessionQueryHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new GetMyPupilsStateHandler(null, selectionStateHandler.Object));
+            new GetMyPupilsStateProvider(null, selectionStateHandler.Object));
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public sealed class GetMyPupilsStateHandlerTests
             ISessionQueryHandlerTestDoubles.Default<MyPupilsPresentationState>();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new GetMyPupilsStateHandler(presentationHandler.Object, null!));
+            new GetMyPupilsStateProvider(presentationHandler.Object, null!));
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public sealed class GetMyPupilsStateHandlerTests
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandlerMock =
             ISessionQueryHandlerTestDoubles.MockFor(selectionState);
 
-        GetMyPupilsStateHandler handler = new(
+        GetMyPupilsStateProvider handler = new(
             presentationHandlerMock.Object,
             selectionStateHandlerMock.Object);
 
@@ -84,7 +84,7 @@ public sealed class GetMyPupilsStateHandlerTests
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandler =
             ISessionQueryHandlerTestDoubles.MockFor<MyPupilsPupilSelectionState>(expectedSelectionState);
 
-        GetMyPupilsStateHandler handler = new(
+        GetMyPupilsStateProvider handler = new(
             presentationHandler.Object,
             selectionStateHandler.Object);
 
