@@ -24,5 +24,5 @@ public static class MyPupilsPresentationStateTestDoubles
                 It.IsAny<SortDirection>());
 
 
-    private static MyPupilsPresentationState Create(int page, string sortKey, SortDirection sortDirection) => new(page, sortKey, sortDirection);
+    public static MyPupilsPresentationState Create(int page, string sortKey, SortDirection sortDirection) => new(page, sortKey, sortDirection);
 }

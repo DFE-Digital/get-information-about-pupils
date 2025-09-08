@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using NuGet.Packaging;
 
 namespace DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
@@ -13,6 +14,8 @@ public sealed class MyPupilsPupilSelectionState
     public bool IsAllPupilsDeselected => _state == SelectionState.DeselectAll;
 
     public bool IsAnyPupilSelected => IsAllPupilsSelected || _pupilsToSelectedMap.Values.Any(t => t);
+
+    public static MyPupilsPupilSelectionState CreateDefault() => new();
 
     public IReadOnlyDictionary<UniquePupilNumber, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
 
@@ -48,21 +51,11 @@ public sealed class MyPupilsPupilSelectionState
     {
         ArgumentNullException.ThrowIfNull(upns);
 
+        bool selectionValue = IsAllPupilsSelected || (!IsAllPupilsDeselected && isSelected);
+
         foreach (UniquePupilNumber upn in upns)
         {
-            if (IsAllPupilsSelected)
-            {
-                _pupilsToSelectedMap[upn] = true;
-                continue;
-            }
-
-            if (IsAllPupilsDeselected)
-            {
-                _pupilsToSelectedMap[upn] = false;
-                continue;
-            }
-
-            _pupilsToSelectedMap[upn] = isSelected;
+            _pupilsToSelectedMap[upn] = selectionValue;
         }
     }
 
