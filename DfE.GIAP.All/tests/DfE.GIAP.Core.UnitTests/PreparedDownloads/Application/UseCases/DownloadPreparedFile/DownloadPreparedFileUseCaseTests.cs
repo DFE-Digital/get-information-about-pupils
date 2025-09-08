@@ -66,13 +66,13 @@ public sealed class DownloadPreparedFileUseCaseTests
     public async Task HandleRequestAsync_BubblesException_WhenBlobStorageThrows()
     {
         // Arrange
-        IBlobStorageProvider mockBlobStorageProvider = BlobStorageProviderTestDoubles
+        Mock<IBlobStorageProvider> mockBlobStorageProvider = BlobStorageProviderTestDoubles
             .MockForDownloadBlobAsStream(() => throw new Exception("Blob error"));
         string fileName = "missing.csv";
         BlobStoragePathContext pathContext = BlobStoragePathContext.Create(OrganisationScope.AllUsers);
 
         DownloadPreparedFileUseCase useCase = new(
-            blobStorageProvider: mockBlobStorageProvider);
+            blobStorageProvider: mockBlobStorageProvider.Object);
         DownloadPreparedFileRequest request = new(fileName, pathContext);
 
         // Act & Assert
