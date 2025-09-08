@@ -10,6 +10,7 @@ public class AzureBlobStorageProvider : IBlobStorageProvider
 
     public AzureBlobStorageProvider(BlobServiceClient blobServiceClient)
     {
+        ArgumentNullException.ThrowIfNull(blobServiceClient);
         _blobServiceClient = blobServiceClient;
     }
 
