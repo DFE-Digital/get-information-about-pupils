@@ -1,6 +1,7 @@
-﻿using DfE.GIAP.Domain.Models.User;
+﻿using System.Security.Claims;
+using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
+using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
-using System.Security.Claims;
 using static DfE.GIAP.Web.Constants.DsiKeys;
 
 namespace DfE.GIAP.Web.Extensions;
@@ -234,5 +235,22 @@ public static class ClaimsPrincipalExtension
         }
 
         return academyList;
+    }
+
+    public static OrganisationScope GetOrganisationScope(this ClaimsPrincipal principal)
+    {
+        if (principal.IsOrganisationLocalAuthority())
+            return OrganisationScope.LocalAuthority;
+
+        if (principal.IsOrganisationMultiAcademyTrust())
+            return OrganisationScope.MultiAcademyTrust;
+
+        if (principal.IsOrganisationSingleAcademyTrust())
+            return OrganisationScope.SingleAcademyTrust;
+
+        if (principal.IsOrganisationEstablishment())
+            return OrganisationScope.Establishment;
+
+        throw new NotImplementedException();
     }
 }

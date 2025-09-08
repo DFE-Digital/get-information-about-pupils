@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.Infrastructure;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
@@ -54,7 +53,6 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         return services
-            .AddTemporaryCosmosClient()
             .AddScoped<INewsArticleReadOnlyRepository, CosmosDbNewsArticleReadOnlyRepository>()
             .AddScoped<INewsArticleWriteOnlyRepository, CosmosDbNewsArticleWriteOnlyRepository>();
     }
