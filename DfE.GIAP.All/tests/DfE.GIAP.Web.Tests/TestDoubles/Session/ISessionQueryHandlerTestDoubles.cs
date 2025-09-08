@@ -16,4 +16,14 @@ internal static class ISessionQueryHandlerTestDoubles
 
         return mock;
     }
+
+    internal static Mock<ISessionQueryHandler<TSessionObject>> MockFor<TSessionObject>(SessionQueryResponse<TSessionObject> response) where TSessionObject : class
+    {
+        Mock<ISessionQueryHandler<TSessionObject>> mock = Default<TSessionObject>();
+        mock.Setup(t => t.GetSessionObject())
+            .Returns(response)
+            .Verifiable();
+
+        return mock;
+    }
 }
