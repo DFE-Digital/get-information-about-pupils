@@ -16,7 +16,7 @@ using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure;
 
-public sealed class SearchServiceAdapterTests
+public sealed class AzureSearchServiceAdapterTests
 {
     private readonly ISearchByKeywordService _mockSearchByKeywordService;
     private readonly IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> _mockSearchResultMapper =
@@ -27,7 +27,7 @@ public sealed class SearchServiceAdapterTests
     private readonly ISearchOptionsBuilder _mockSearchOptionsBuilder =
         new SearchOptionsBuilder(new FilterExpressionBuilderTestDouble().Create());
 
-    private static SearchServiceAdapter CreateSearchServiceAdapterWith(
+    private static AzureSearchServiceAdapter CreateSearchServiceAdapterWith(
         ISearchByKeywordService searchByKeywordService,
         IOptions<AzureSearchOptions> searchOptions,
         IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> searchResultMapper,
@@ -36,7 +36,7 @@ public sealed class SearchServiceAdapterTests
        ) =>
            new(searchByKeywordService, searchOptions, searchResultMapper, facetsMapper, searchOptionsBuilder);
 
-    public SearchServiceAdapterTests() =>
+    public AzureSearchServiceAdapterTests() =>
         _mockSearchByKeywordService =
             new SearchServiceMockBuilder()
                 .WithSearchKeywordAndCollection("SearchKeyword", _mockAzureSearchOptions!.SearchIndex)
@@ -94,7 +94,7 @@ public sealed class SearchServiceAdapterTests
         // act, assert
         try
         {
-            _ = new SearchServiceAdapter(
+            _ = new AzureSearchServiceAdapter(
                 _mockSearchByKeywordService,
                 IOptionsTestDouble.IOptionsMockFor<AzureSearchOptions>(null!),
                 _mockSearchResultMapper,

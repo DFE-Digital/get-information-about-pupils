@@ -13,19 +13,19 @@ namespace DfE.GIAP.Core.Search.Infrastructure.Mappers;
 public sealed class PageableSearchResultsToLearnerResultsMapper :
     IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners>
 {
-    private readonly IMapper<LearnerDataTransferObject, Learner> _searchResultToFurtherEducationPupilMapper;
+    private readonly IMapper<LearnerDataTransferObject, Learner> _searchResultToLearnerMapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PageableSearchResultsToLearnerResultsMapper"/> class.
     /// </summary>
-    /// <param name="searchResultToFurtherEducationPupilMapper">
+    /// <param name="searchResultToLearnerMapper">
     /// Mapper used to convert individual <see cref="LearnerDataTransferObject"/> documents
     /// into <see cref="Learner"/> domain objects.
     /// </param>
     public PageableSearchResultsToLearnerResultsMapper(
-        IMapper<LearnerDataTransferObject, Learner> searchResultToFurtherEducationPupilMapper)
+        IMapper<LearnerDataTransferObject, Learner> searchResultToLearnerMapper)
     {
-        _searchResultToFurtherEducationPupilMapper = searchResultToFurtherEducationPupilMapper;
+        _searchResultToLearnerMapper = searchResultToLearnerMapper;
     }
 
     /// <summary>
@@ -40,20 +40,20 @@ public sealed class PageableSearchResultsToLearnerResultsMapper :
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        Learners furtherEducationPupils = new();
+        Learners learners = new();
 
         if (input.Any())
         {
             IEnumerable<Learner> mappedResults =
                 input.Select(result =>
                     result.Document != null
-                        ? _searchResultToFurtherEducationPupilMapper.Map(result.Document)
+                        ? _searchResultToLearnerMapper.Map(result.Document)
                         : throw new InvalidOperationException(
                             "Search result document object cannot be null."));
 
-            furtherEducationPupils = new Learners(mappedResults);
+            learners = new Learners(mappedResults);
         }
 
-        return furtherEducationPupils;
+        return learners;
     }
 }

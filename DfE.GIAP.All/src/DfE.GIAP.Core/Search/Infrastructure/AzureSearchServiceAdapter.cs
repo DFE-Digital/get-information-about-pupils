@@ -18,7 +18,7 @@ namespace DfE.GIAP.Core.Search.Infrastructure;
 /// Adapter implementation for further education pupil search.
 /// It delegates search execution to Azure Cognitive Search using domain-specific mappings and configuration.
 /// </summary>
-public sealed class SearchServiceAdapter : ISearchServiceAdapter<Learners, SearchFacets>
+public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, SearchFacets>
 {
     private readonly ISearchByKeywordService _searchByKeywordService;
     private readonly IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> _searchResultMapper;
@@ -34,7 +34,7 @@ public sealed class SearchServiceAdapter : ISearchServiceAdapter<Learners, Searc
     /// <param name="searchResultMapper">Mapper to convert raw search results into domain-specific pupil search results.</param>
     /// <param name="facetsMapper">Mapper to convert facet results into structured domain-specific facet data.</param>
     /// <param name="searchOptionsBuilder">Builder for constructing query parameters passed into Azure Search.</param>
-    public SearchServiceAdapter(
+    public AzureSearchServiceAdapter(
         ISearchByKeywordService searchByKeywordService,
         IOptions<AzureSearchOptions> azureSearchOptions,
         IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> searchResultMapper,

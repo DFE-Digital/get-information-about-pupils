@@ -50,7 +50,7 @@ public static class CompositionRoot
 
         // Register core search services and mappers.
         services
-            .AddScoped<ISearchServiceAdapter<Learners, SearchFacets>, SearchServiceAdapter>()
+            .AddScoped<ISearchServiceAdapter<Learners, SearchFacets>, AzureSearchServiceAdapter>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>()
             .AddSingleton<IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners>, PageableSearchResultsToLearnerResultsMapper>()
             .AddSingleton<IMapper<LearnerDataTransferObject, Learner>, SearchResultToLearnerMapper>()
