@@ -212,7 +212,8 @@ public sealed class SearchOptionsBuilder : ISearchOptionsBuilder
                     new SearchFilterRequest(filterRequest.FilterName, filterRequest.FilterValues));
 
             _searchOptions.Filter =
-                _searchFilterExpressionsBuilder.BuildSearchFilterExpressions(filterRequests);
+                _searchFilterExpressionsBuilder
+                    .BuildSearchFilterExpressions(filterRequests);
         }
     }
 }

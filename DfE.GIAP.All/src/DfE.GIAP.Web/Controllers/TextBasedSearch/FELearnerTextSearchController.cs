@@ -3,7 +3,6 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Models.Search;
@@ -12,9 +11,7 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
@@ -86,7 +83,6 @@ public class FELearnerTextSearchController :  Controller
 
     private readonly IDownloadService _downloadService;
     private readonly ILogger<FELearnerTextSearchController> _logger;
-    private readonly IPaginatedSearchService _paginatedSearch;
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly AzureAppSettings _appSettings;
     private readonly IUseCase<
@@ -121,7 +117,6 @@ public class FELearnerTextSearchController :  Controller
         IFiltersRequestFactory filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
            IPaginatedSearchService paginatedSearch,
-           IMyPupilListService mplService,
            ITextSearchSelectionManager selectionManager,
            IDownloadService downloadService,
            IOptions<AzureAppSettings> azureAppSettings)
@@ -141,8 +136,6 @@ public class FELearnerTextSearchController :  Controller
         _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper ??
             throw new ArgumentNullException(nameof(sortOrderViewModelToRequestMapper));
 
-        _paginatedSearch = paginatedSearch ??
-            throw new ArgumentNullException(nameof(paginatedSearch));
         _selectionManager = selectionManager ??
             throw new ArgumentNullException(nameof(selectionManager));
         _appSettings = azureAppSettings.Value;
@@ -335,20 +328,20 @@ public class FELearnerTextSearchController :  Controller
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
-        var model = new LearnerTextSearchViewModel();
+        LearnerTextSearchViewModel model = new();
 
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
         if (returnToSearch ?? false)
         {
-            if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-                model.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
+            if (HttpContext.Session.Keys.Contains(SearchSessionKey))
+                model.SearchText = HttpContext.Session.GetString(SearchSessionKey);
 
-            if (this.HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
+            if (HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
                 model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
 
             SetSortOptions(model);
@@ -405,10 +398,10 @@ public class FELearnerTextSearchController :  Controller
         model.PageNumber = pageNumber;
         model.PageSize = PAGESIZE;
 
-        if (!String.IsNullOrEmpty(sortField) || !String.IsNullOrEmpty(sortDirection))
+        if (!string.IsNullOrEmpty(sortField) || !string.IsNullOrEmpty(sortDirection))
         {
-            this.HttpContext.Session.SetString(SortFieldKey, sortField);
-            this.HttpContext.Session.SetString(SortDirectionKey, sortDirection);
+            HttpContext.Session.SetString(SortFieldKey, sortField);
+            HttpContext.Session.SetString(SortDirectionKey, sortDirection);
         }
 
         SetSortOptions(model);
@@ -432,10 +425,10 @@ public class FELearnerTextSearchController :  Controller
 
         model.ShowMiddleNames = this.ShowMiddleNames;
 
-        this.HttpContext.Session.SetString(SearchSessionKey, model.SearchText);
+        HttpContext.Session.SetString(SearchSessionKey, model.SearchText);
 
         if (model.SearchFilters != null)
-            this.HttpContext.Session.SetObject(SearchFiltersSessionKey, model.SearchFilters);
+            HttpContext.Session.SetObject(SearchFiltersSessionKey, model.SearchFilters);
 
         return View(SearchView, model);
     }
@@ -697,7 +690,6 @@ public class FELearnerTextSearchController :  Controller
         string sortField = "",
         string sortDirection = "")
     {
-
         #region
         List<CurrentFilterDetail> currentFilters =
             SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
@@ -719,10 +711,8 @@ public class FELearnerTextSearchController :  Controller
                 model.SearchFilters.CurrentFiltersApplied = currentFilters;
             }
 
-            if (currentFilters != null)
-            {
-                model.SearchFilters.CurrentFiltersAppliedString = JsonSerializer.Serialize(currentFilters);
-            }
+            model.SearchFilters.CurrentFiltersAppliedString = JsonSerializer.Serialize(currentFilters);
+
         }
 
         #endregion
@@ -746,55 +736,10 @@ public class FELearnerTextSearchController :  Controller
                     offset: model.Offset))
             .ConfigureAwait(false);
 
-        LearnerTextSearchViewModel newModel = _learnerSearchResponseToViewModelMapper.Map(
+        return _learnerSearchResponseToViewModelMapper.Map(
             LearnerSearchMappingContext.Create(model, searchResponse));
 
-        var newerModel = await GetInvalidPupil(newModel, IndexType).ConfigureAwait(false);
-
-
-        return newModel;
-
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
-
-    private async Task<InvalidLearnerNumberSearchViewModel> GetInvalidPupil(InvalidLearnerNumberSearchViewModel model, AzureSearchIndexType indexType)
-    {
-        var searchInput = model.LearnerNumber.ToDecryptedSearchText();
-
-        var result = await _paginatedSearch.GetPage(
-          searchInput,
-            null,
-            1,
-            0,
-            indexType,
-            AzureSearchQueryType.Numbers,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())
-            );
-
-        model.Learners = result.Learners ?? new List<Learner>();
-
-        var nonUPNResult = await _paginatedSearch.GetPage(
-        searchInput,
-        null,
-        1,
-        0,
-        indexType,
-        AzureSearchQueryType.Id,
-        AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())
-        );
-
-        model.Learners = model.Learners.Union(nonUPNResult.Learners);
-        model.Learners.ToList().ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        var lowAge = 1;// User.GetOrganisationLowAge();
-        var highAge = 2;// User.GetOrganisationHighAge();
-
-        var isAdmin = User.IsAdmin();
-        if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-        {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-        }
-
-        return model;
     }
 
     private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
