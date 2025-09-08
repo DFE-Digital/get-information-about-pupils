@@ -15,12 +15,7 @@ public static class CompositionRoot
     public static IServiceCollection AddAspNetCoreSessionServices(this IServiceCollection services)
     {
         services.TryAddScoped<IAspNetCoreSessionProvider, AspNetCoreSessionProvider>();
-
-        services.TryAddScoped(typeof(ISessionQueryHandler<>), typeof(AspNetCoreSessionQueryHandler<>));
-        services.TryAddScoped(typeof(ISessionCommandHandler<>), typeof(AspNetCoreSessionCommandHandler<>));
-
         services.TryAddSingleton<ISessionObjectKeyResolver, SessionObjectKeyResolver>();
-        services.TryAddSingleton(typeof(ISessionObjectSerializer<>), typeof(DefaultSessionObjectSerializer<>));
         return services;
     }
 }

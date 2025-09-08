@@ -9,14 +9,14 @@ using Moq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetSelectedMyPupils;
-public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
+public sealed class GetSelectedMyPupilsProviderTest
 {
     [Fact]
     public void Constructor_Throws_When_SessionQueryHandler_Is_Null()
     {
         // Arrange
-        Func<GetSelectedMyPupilUniquePupilNumbersProvider> construct =
-            () => new GetSelectedMyPupilUniquePupilNumbersProvider(null!);
+        Func<GetSelectedMyPupilsProvider> construct =
+            () => new GetSelectedMyPupilsProvider(null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -30,7 +30,7 @@ public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
             ISessionQueryHandlerTestDoubles.MockFor(
                 SessionQueryResponse<MyPupilsPupilSelectionState>.NoValue());
 
-        GetSelectedMyPupilUniquePupilNumbersProvider provider = new(sessionQueryHandlerMock.Object);
+        GetSelectedMyPupilsProvider provider = new(sessionQueryHandlerMock.Object);
 
         // Act
         UniquePupilNumbers result = provider.GetSelectedMyPupils();
@@ -62,7 +62,7 @@ public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
                 SessionQueryResponse<MyPupilsPupilSelectionState>.Create(
                     value: state));
 
-        GetSelectedMyPupilUniquePupilNumbersProvider provider = new(sessionQueryHandlerMock.Object);
+        GetSelectedMyPupilsProvider provider = new(sessionQueryHandlerMock.Object);
 
         // Act
         UniquePupilNumbers result = provider.GetSelectedMyPupils();

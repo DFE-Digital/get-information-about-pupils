@@ -4,11 +4,11 @@ using DfE.GIAP.Web.Session.Abstraction.Query;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetSelectedMyPupils;
 
-internal sealed class GetSelectedMyPupilUniquePupilNumbersProvider : IGetSelectedMyPupilsUniquePupilNumbersProvider
+internal sealed class GetSelectedMyPupilsProvider : IGetSelectedMyPupilsProvider
 {
     private readonly ISessionQueryHandler<MyPupilsPupilSelectionState> _selectionStateSessionQueryHandler;
 
-    public GetSelectedMyPupilUniquePupilNumbersProvider(ISessionQueryHandler<MyPupilsPupilSelectionState> selectionStateSessionQueryHandler)
+    public GetSelectedMyPupilsProvider(ISessionQueryHandler<MyPupilsPupilSelectionState> selectionStateSessionQueryHandler)
     {
         ArgumentNullException.ThrowIfNull(selectionStateSessionQueryHandler);
         _selectionStateSessionQueryHandler = selectionStateSessionQueryHandler;

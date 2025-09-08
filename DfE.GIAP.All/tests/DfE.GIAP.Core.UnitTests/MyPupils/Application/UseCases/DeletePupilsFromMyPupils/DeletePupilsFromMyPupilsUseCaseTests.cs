@@ -22,7 +22,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         DeletePupilsFromMyPupilsUseCase useCase = new(readRepositoryMock.Object, writeRepoMock.Object);
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: user.UserId.Value,
+            UserId: user.UserId,
             DeleteAll: true,
             DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 2)); // these should be ignored when deleteAll toggled
 
@@ -57,7 +57,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         IEnumerable<UniquePupilNumber> deletePupilUpnIdentifiers = upns.GetUniquePupilNumbers().Take(1);
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: userId.Value,
+            UserId: userId,
             DeleteAll: false,
             DeletePupilUpns: deletePupilUpnIdentifiers);
 
@@ -104,7 +104,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         DeletePupilsFromMyPupilsUseCase useCase = new(readRepositoryMock.Object, mockWriteRepository.Object);
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: userId.Value,
+            UserId: userId,
             DeleteAll: false,
             DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 1));
 

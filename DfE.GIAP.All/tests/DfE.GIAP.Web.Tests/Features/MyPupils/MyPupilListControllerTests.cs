@@ -13,6 +13,7 @@ using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Controllers.MyPupilList;
 using DfE.GIAP.Web.Features.MyPupils;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
