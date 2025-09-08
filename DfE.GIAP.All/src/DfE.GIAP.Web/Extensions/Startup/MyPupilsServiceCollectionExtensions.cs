@@ -1,31 +1,28 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Order;
-using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Paginate;
 using DfE.GIAP.Web.Features.MyPupils;
-using DfE.GIAP.Web.Session.Abstraction;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Session.Infrastructure.Serialization;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
-using Microsoft.Extensions.DependencyInjection;
-using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
-using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
-using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Order;
+using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Paginate;
 using DfE.GIAP.Web.Features.MyPupils.GetSelectedMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState;
-using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.PupilSelectionStateUpdater;
-using DfE.GIAP.Web.Session.Abstraction.Query;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
-using DfE.GIAP.Web.Session.Abstraction.Command;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Command;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState;
+using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.PupilSelectionStateUpdater;
+using DfE.GIAP.Web.Session.Abstraction;
+using DfE.GIAP.Web.Session.Abstraction.Command;
+using DfE.GIAP.Web.Session.Abstraction.Query;
+using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Command;
+using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
+using DfE.GIAP.Web.Session.Infrastructure.Serialization;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -38,15 +35,10 @@ public static class MyPupilsServiceCollectionExtensions
             .AddSessionStateHandlers()
             .AddGetPaginatedMyPupils()
             .AddGetMyPupils()
-            .AddUpdateMyPupilsState()
-            .AddGetSelectedMyPupils();
+            .AddGetSelectedMyPupils()
+            .AddUpdateMyPupilsState();
+            
 
-        return services;
-    }
-
-    private static IServiceCollection AddGetSelectedMyPupils(this IServiceCollection services)
-    {
-        services.AddScoped<IGetSelectedMyPupilsProvider, GetSelectedMyPupilsProvider>();
         return services;
     }
 
@@ -56,6 +48,12 @@ public static class MyPupilsServiceCollectionExtensions
             .AddSingleton<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>, MapFormStateRequestDtoToMyPupilsPresentationStateMapper>() // TODO needs tests
             .AddSingleton<IPupilSelectionStateUpdateHandler, PupilSelectionStateUpdateHandler>()
             .AddScoped<IUpdateMyPupilsStateHandler, UpdateMyPupilsStateHandler>();
+        return services;
+    }
+
+    private static IServiceCollection AddGetSelectedMyPupils(this IServiceCollection services)
+    {
+        services.AddScoped<IGetSelectedMyPupilsProvider, GetSelectedMyPupilsProvider>();
         return services;
     }
 
