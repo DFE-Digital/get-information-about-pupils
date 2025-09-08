@@ -3,6 +3,7 @@ name: giap-web-cicd
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
 
@@ -368,6 +369,24 @@ jobs:
         uses: ./.github/actions/smoke-test
         with:
           url: ${{ needs.deploy_test.outputs.app_url }}
+
+  publish_github_release:
+    needs: [verify_test]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ##  PLACEHOLDERS FOR ADDITIONAL TESTS
   #  integration_test_env_test:

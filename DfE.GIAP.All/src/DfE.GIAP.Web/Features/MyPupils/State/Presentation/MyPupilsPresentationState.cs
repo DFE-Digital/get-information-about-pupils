@@ -1,6 +1,4 @@
-﻿using Microsoft.Azure.Cosmos.Serialization.HybridRow.Schemas;
-
-namespace DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 public record MyPupilsPresentationState(
     int Page,
