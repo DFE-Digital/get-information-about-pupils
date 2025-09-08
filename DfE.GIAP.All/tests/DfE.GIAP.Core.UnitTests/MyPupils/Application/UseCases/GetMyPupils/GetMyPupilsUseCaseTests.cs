@@ -11,6 +11,7 @@ using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class GetMyPupilsUseCaseTests
@@ -37,7 +38,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(userId);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -74,7 +75,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(userId);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -115,7 +116,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
 
-        GetMyPupilsRequest request = new(userId.Value);
+        GetMyPupilsRequest request = new(userId);
 
         // Act
         GetMyPupilsUseCase sut = new(

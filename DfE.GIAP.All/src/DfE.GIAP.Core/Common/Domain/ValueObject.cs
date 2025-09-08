@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.Domain;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+
+namespace DfE.GIAP.Core.Common.Domain;
 /// <summary>
 /// Abstract Value Object base class which is used as the basis of any domain concept when the
 /// model's identity is not a key design consideration, rather equality is determined by assessing
@@ -58,4 +60,18 @@ public abstract class ValueObject<TValueObject> where TValueObject : ValueObject
     /// </summary>
     /// <returns>A collection of objects representing available attributes to compare.</returns>
     protected abstract IEnumerable<object> GetEqualityComponents();
+
+
+#pragma warning disable S3875 // "operator==" should not be overloaded on reference types Note: ValueObject semantics for equivalence between .Equals() and ==
+    public static bool operator ==(ValueObject<TValueObject> left, ValueObject<TValueObject> right)
+#pragma warning restore S3875 // "operator==" should not be overloaded on reference types
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(ValueObject<TValueObject> left, ValueObject<TValueObject> right)
+    {
+        return !Equals(left, right);
+    }
+
 }

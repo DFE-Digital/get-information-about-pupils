@@ -4,10 +4,10 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
@@ -162,14 +162,11 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);
 
         // Assert
-
-        IEnumerable<string> expectedUpnsToWrite = uniquePupilNumbers.AsValues();
-
         commandHandlerDouble.Verify(handler =>
             handler.UpsertItemAsync(
                 It.Is<MyPupilsDocumentDto>(
                     (dto) => dto.id == userId.Value &&
-                        dto.MyPupils.Pupils.Select(pupil => pupil.UPN).SequenceEqual(expectedUpnsToWrite)),
+                        dto.MyPupils.Pupils.Select(pupil => pupil.UPN).SequenceEqual(uniquePupilNumbers.GetUniquePupilNumbers().Select(t => t.Value))),
                 MyPupilsContainerName,
                 It.Is<string>((pk) => pk == userId.Value),
                 It.IsAny<CancellationToken>()),
