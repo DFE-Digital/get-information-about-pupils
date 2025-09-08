@@ -10,7 +10,7 @@ public sealed class BlobStoragePathContextTests
     [InlineData(OrganisationScope.MultiAcademyTrust, "MAT001", null, null, "MAT/MAT001/")]
     [InlineData(OrganisationScope.SingleAcademyTrust, "SAT001", null, null, "SAT/SAT001/")]
     [InlineData(OrganisationScope.AllUsers, null, null, null, "AllUsers/Metadata/")]
-    public void ResolvePath_Returns_ExpectedPath(
+    public void Path_Returns_ExpectedValue(
         OrganisationScope scope,
         string? uniqueIdentifier,
         string? localAuthorityNumber,
@@ -25,7 +25,7 @@ public sealed class BlobStoragePathContextTests
             uniqueReferenceNumber: uniqueReferenceNumber);
 
         // Act
-        string actualPath = context.ResolvePath();
+        string actualPath = context.Path;
 
         // Assert
         Assert.Equal(expectedPath, actualPath);
@@ -39,10 +39,12 @@ public sealed class BlobStoragePathContextTests
     public void Create_Throws_ArgumentNullException_WhenRequiredFieldIsMissing(OrganisationScope scope)
     {
         // Act & Assert
-        ArgumentException ex = Assert.Throws<ArgumentNullException>(() =>
+        ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() =>
         {
             BlobStoragePathContext.Create(scope);
         });
+
+        Assert.Contains("Value cannot be null", ex.Message);
     }
 
     [Fact]
@@ -58,5 +60,32 @@ public sealed class BlobStoragePathContextTests
         });
 
         Assert.Contains("Unhandled OrganisationScope", ex.Message);
+    }
+
+    [Theory]
+    [InlineData(OrganisationScope.Establishment, null, null, "123456", "School/123456/")]
+    [InlineData(OrganisationScope.LocalAuthority, null, "654321", null, "LA/654321/")]
+    [InlineData(OrganisationScope.MultiAcademyTrust, "MAT001", null, null, "MAT/MAT001/")]
+    [InlineData(OrganisationScope.SingleAcademyTrust, "SAT001", null, null, "SAT/SAT001/")]
+    [InlineData(OrganisationScope.AllUsers, null, null, null, "AllUsers/Metadata/")]
+    public void ResolvePath_ReturnsCorrectPath(
+        OrganisationScope scope,
+        string? uniqueIdentifier,
+        string? localAuthorityNumber,
+        string? uniqueReferenceNumber,
+        string expectedPath)
+    {
+        // Arrange
+        BlobStoragePathContext context = BlobStoragePathContext.Create(
+            organisationScope: scope,
+            uniqueIdentifier: uniqueIdentifier,
+            localAuthorityNumber: localAuthorityNumber,
+            uniqueReferenceNumber: uniqueReferenceNumber);
+
+        // Act
+        string resolvedPath = context.ResolvePath();
+
+        // Assert
+        Assert.Equal(expectedPath, resolvedPath);
     }
 }

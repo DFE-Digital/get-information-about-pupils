@@ -4,20 +4,12 @@ namespace DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 public class BlobStoragePathContext
 {
     public OrganisationScope OrganisationScope { get; }
-    public string? UniqueIdentifier { get; }
-    public string? LocalAuthorityNumber { get; }
-    public string? UniqueReferenceNumber { get; }
+    public string Path { get; }
 
-    private BlobStoragePathContext(
-        OrganisationScope organisationScope,
-        string? uniqueIdentifier,
-        string? localAuthorityNumber,
-        string? uniqueReferenceNumber)
+    private BlobStoragePathContext(OrganisationScope scope, string path)
     {
-        OrganisationScope = organisationScope;
-        UniqueIdentifier = uniqueIdentifier;
-        LocalAuthorityNumber = localAuthorityNumber;
-        UniqueReferenceNumber = uniqueReferenceNumber;
+        OrganisationScope = scope;
+        Path = path;
     }
 
     public static BlobStoragePathContext Create(
@@ -26,43 +18,25 @@ public class BlobStoragePathContext
         string? localAuthorityNumber = null,
         string? uniqueReferenceNumber = null)
     {
-        return organisationScope switch
+        string path = organisationScope switch
         {
-            OrganisationScope.AllUsers =>
-                new BlobStoragePathContext(organisationScope, null, null, null),
-            OrganisationScope.Establishment =>
-                new BlobStoragePathContext(organisationScope, null, null, Validate(uniqueReferenceNumber, nameof(uniqueReferenceNumber))),
-            OrganisationScope.LocalAuthority =>
-                new BlobStoragePathContext(organisationScope, null, Validate(localAuthorityNumber, nameof(localAuthorityNumber)), null),
-            OrganisationScope.MultiAcademyTrust or OrganisationScope.SingleAcademyTrust =>
-                new BlobStoragePathContext(organisationScope, Validate(uniqueIdentifier, nameof(uniqueIdentifier)), null, null),
+            OrganisationScope.AllUsers => "AllUsers/Metadata/",
+            OrganisationScope.Establishment => $"School/{Validate(uniqueReferenceNumber, nameof(uniqueReferenceNumber))}/",
+            OrganisationScope.LocalAuthority => $"LA/{Validate(localAuthorityNumber, nameof(localAuthorityNumber))}/",
+            OrganisationScope.MultiAcademyTrust => $"MAT/{Validate(uniqueIdentifier, nameof(uniqueIdentifier))}/",
+            OrganisationScope.SingleAcademyTrust => $"SAT/{Validate(uniqueIdentifier, nameof(uniqueIdentifier))}/",
             _ => throw new NotImplementedException($"Unhandled OrganisationScope: {organisationScope}")
         };
+
+        return new BlobStoragePathContext(organisationScope, path);
     }
 
-    public string ResolvePath()
-    {
-        return OrganisationScope switch
-        {
-            OrganisationScope.Establishment =>
-                $"School/{UniqueReferenceNumber}/",
-            OrganisationScope.LocalAuthority =>
-                $"LA/{LocalAuthorityNumber}/",
-            OrganisationScope.MultiAcademyTrust =>
-                $"MAT/{UniqueIdentifier}/",
-            OrganisationScope.SingleAcademyTrust =>
-                $"SAT/{UniqueIdentifier}/",
-            OrganisationScope.AllUsers =>
-                "AllUsers/Metadata/",
-            _ => throw new NotImplementedException($"Unhandled OrganisationScope: {OrganisationScope}")
-        };
-    }
+    public string ResolvePath() => Path;
 
     private static string Validate(string? value, string name)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, name);
-        return value!;
+        return value;
     }
 }
-
 
