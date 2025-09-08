@@ -1,7 +1,9 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.GetSelectedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
+using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Tests.TestDoubles.Session;
 using Moq;
 using Xunit;
@@ -38,39 +40,37 @@ public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
         Assert.Empty(result.GetUniquePupilNumbers());
     }
 
-    //[Fact]
-    //public void GetSelectedMyPupils_ReturnsOnlySelectedPupils()
-    //{
-    //    // Arrange
-    //    UniquePupilNumber upn1 = new("1234567890");
-    //    UniquePupilNumber upn2 = new("0987654321");
+    [Fact]
+    public void GetSelectedMyPupils_ReturnsOnlySelectedPupils()
+    {
+        // Arrange
+        List<UniquePupilNumber> uniquePupilsNumbers = UniquePupilNumberTestDoubles.Generate(2);
+        UniquePupilNumber selected = uniquePupilsNumbers[0];
+        UniquePupilNumber notSelected = uniquePupilsNumbers[1];
 
-    //    Dictionary<UniquePupilNumber, bool> selection = new()
-    //    {
-    //        [upn1] = true,
-    //        [upn2] = false
-    //    };
+        Dictionary<List<UniquePupilNumber>, bool> selection = new()
+        {
+            { [selected], true },
+            { [notSelected], false }
+        };
 
-    //    MyPupilsPupilSelectionState state = new(selection);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selection);
 
-    //    SessionQueryResponse<MyPupilsPupilSelectionState> response =
-    //        new SessionQueryResponse<MyPupilsPupilSelectionState>(hasValue: true, value: state);
+        // Arrange
+        Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> sessionQueryHandlerMock =
+            ISessionQueryHandlerTestDoubles.MockFor(
+                SessionQueryResponse<MyPupilsPupilSelectionState>.Create(
+                    value: state));
 
-    //    Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> mockHandler =
-    //        new Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>>();
+        GetSelectedMyPupilUniquePupilNumbersProvider provider = new(sessionQueryHandlerMock.Object);
 
-    //    mockHandler.Setup(h => h.GetSessionObject()).Returns(response);
+        // Act
+        UniquePupilNumbers result = provider.GetSelectedMyPupils();
 
-    //    GetSelectedMyPupilUniquePupilNumbersProvider provider =
-    //        new(mockHandler.Object);
-
-    //    // Act
-    //    UniquePupilNumbers result = provider.GetSelectedMyPupils();
-
-    //    // Assert
-    //    Assert.Single(result.Values);
-    //    Assert.Contains(upn1, result.Values);
-    //    Assert.DoesNotContain(upn2, result.Values);
-    //}
+        // Assert
+        UniquePupilNumber responseUniquePupilNumber = Assert.Single(result.GetUniquePupilNumbers());
+        Assert.Equal(selected, responseUniquePupilNumber);
+        Assert.DoesNotContain(notSelected, result.GetUniquePupilNumbers());
+    }
 }
 
