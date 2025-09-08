@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines a generic interface for interacting with blob storage systems.
 /// </summary>
-public interface IBlobStorageService
+public interface IBlobStorageProvider
 {
     /// <summary>
     /// Asynchronously retrieves the names of blobs within the specified directory of a container.

@@ -4,7 +4,7 @@ using Azure.Storage.Blobs.Models;
 
 namespace DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
-public class AzureBlobStorageProvider : IBlobStorageService
+public class AzureBlobStorageProvider : IBlobStorageProvider
 {
     private readonly BlobServiceClient _blobServiceClient;
 

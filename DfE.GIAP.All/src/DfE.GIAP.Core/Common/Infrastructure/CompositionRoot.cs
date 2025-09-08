@@ -11,7 +11,7 @@ internal static class CompositionRoot
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton<IBlobStorageService>(sp =>
+        services.TryAddSingleton<IBlobStorageProvider>(sp =>
         {
             BlobStorageOptions options = sp.GetRequiredService<IOptions<BlobStorageOptions>>().Value;
 

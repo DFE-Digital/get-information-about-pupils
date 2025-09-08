@@ -4,9 +4,9 @@ using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 namespace DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>
 {
-    private readonly IBlobStorageService _blobStorageProvider;
+    private readonly IBlobStorageProvider _blobStorageProvider;
 
-    public DownloadPreparedFileUseCase(IBlobStorageService blobStorageProvider)
+    public DownloadPreparedFileUseCase(IBlobStorageProvider blobStorageProvider)
     {
         ArgumentNullException.ThrowIfNull(blobStorageProvider);
         _blobStorageProvider = blobStorageProvider;
@@ -14,6 +14,8 @@ internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileReques
 
     public async Task<DownloadPreparedFileResponse> HandleRequestAsync(DownloadPreparedFileRequest request)
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         string directory = request.PathContext.ResolvePath();
         Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("giapdownloads", $"{directory}{request.FileName}");
 
