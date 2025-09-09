@@ -94,13 +94,13 @@ public static class MyPupilsServiceCollectionExtensions
             // Serailizers into State
             .AddSingleton<MyPupilsPupilSelectionStateFromDtoMapper>()
             .AddSingleton<MyPupilsPupilSelectionStateToDtoMapper>()
-            .AddScoped<ISessionObjectSerializer<MyPupilsPupilSelectionState>>(sp =>
+            .AddSingleton<ISessionObjectSerializer<MyPupilsPupilSelectionState>>(sp =>
             {
                 return new MappedToDataTransferObjectSessionObjectSerializer<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto>(
                     sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
                     sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
             })
-            .AddScoped<ISessionObjectSerializer<MyPupilsPresentationState>, DefaultSessionObjectSerializer<MyPupilsPresentationState>>();
+            .AddSingleton<ISessionObjectSerializer<MyPupilsPresentationState>, DefaultSessionObjectSerializer<MyPupilsPresentationState>>();
         return services;
     }
 }
