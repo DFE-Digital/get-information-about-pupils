@@ -11,7 +11,7 @@ public sealed class SearchResultFacetsToLearnerSearchFacetsMapperTests
     AzureFacetResultToEstablishmentFacetsMapper _facetResultToFacetMapper = new();
 
     [Fact]
-    public void MapFrom_WithStringFacetResults_ReturnsFacets()
+    public void Map_WithStringFacetResults_ReturnsFacets()
     {
         // arrange
         Dictionary<string, IList<AzureFacetResult>> azureFacetsResults =
@@ -52,7 +52,7 @@ public sealed class SearchResultFacetsToLearnerSearchFacetsMapperTests
     }
 
     [Fact]
-    public void MapFrom_WithNonStringFacetResults_ThrowsInvalidCastException()
+    public void Map_WithNonStringFacetResults_ThrowsInvalidCastException()
     {
         // arrange
         Dictionary<string, IList<AzureFacetResult>> azureFacetsResults =

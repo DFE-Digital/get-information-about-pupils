@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -20,7 +19,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 /// The <see cref="Create"/> method produces a <see cref="Response{T}"/> that
 /// can be returned from mocked search client calls.
 /// </remarks>
-internal class AzureSearchResponseTestDoubleBuilder
+internal class AzureSearchResponseBuilder
 {
     /// <summary>
     /// The collection of search results to include in the simulated response.
@@ -40,9 +39,9 @@ internal class AzureSearchResponseTestDoubleBuilder
     /// The search results to include in the simulated response.
     /// </param>
     /// <returns>
-    /// The current <see cref="AzureSearchResponseTestDoubleBuilder"/> instance for fluent chaining.
+    /// The current <see cref="AzureSearchResponseBuilder"/> instance for fluent chaining.
     /// </returns>
-    public AzureSearchResponseTestDoubleBuilder WithSearchResults(
+    public AzureSearchResponseBuilder WithSearchResults(
         IEnumerable<SearchResult<LearnerDataTransferObject>>? searchResults)
     {
         _searchResults = searchResults;
@@ -56,9 +55,9 @@ internal class AzureSearchResponseTestDoubleBuilder
     /// The facet results to include in the simulated response.
     /// </param>
     /// <returns>
-    /// The current <see cref="AzureSearchResponseTestDoubleBuilder"/> instance for fluent chaining.
+    /// The current <see cref="AzureSearchResponseBuilder"/> instance for fluent chaining.
     /// </returns>
-    public AzureSearchResponseTestDoubleBuilder WithFacets(
+    public AzureSearchResponseBuilder WithFacets(
         Dictionary<string, IList<FacetResult>>? facetResults)
     {
         _facetResults = facetResults;

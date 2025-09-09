@@ -25,7 +25,7 @@ public sealed class AzureSearchServiceAdapterTests
         FacetResultToLearnerFacetsMapperTestDouble.DefaultMock();
     private readonly AzureSearchOptions _mockAzureSearchOptions = AzureSearchOptionsTestDouble.Stub();
     private readonly ISearchOptionsBuilder _mockSearchOptionsBuilder =
-        new SearchOptionsBuilder(new FilterExpressionBuilderTestDouble().Create());
+        new SearchOptionsBuilder(searchFilterExpressionsBuilder: FilterExpressionTestDouble.Mock());
 
     private static AzureSearchServiceAdapter CreateSearchServiceAdapterWith(
         ISearchByKeywordService searchByKeywordService,
@@ -38,7 +38,7 @@ public sealed class AzureSearchServiceAdapterTests
 
     public AzureSearchServiceAdapterTests() =>
         _mockSearchByKeywordService =
-            new SearchServiceMockBuilder()
+            new SearchServiceTestDouble()
                 .WithSearchKeywordAndCollection("SearchKeyword", _mockAzureSearchOptions!.SearchIndex)
                 .WithSearchResults(new SearchResultFakeBuilder().WithSearchResults().Create())
                 .Create();

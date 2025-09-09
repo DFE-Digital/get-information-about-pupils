@@ -20,7 +20,7 @@ public sealed class SearchByEqualityFilterExpression : ISearchFilterExpression
     /// Default logical operator used to join multiple filter values.
     /// For collection-valued fields, this is typically <c>or</c>.
     /// </summary>
-    private const string DefaultFilterValuesDelimiter = "or";
+    private const string DefaultFilterValuesDelimiter = " or ";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SearchByEqualityFilterExpression"/> class.

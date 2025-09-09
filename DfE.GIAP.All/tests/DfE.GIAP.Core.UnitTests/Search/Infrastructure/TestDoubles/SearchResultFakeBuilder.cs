@@ -50,7 +50,7 @@ internal class SearchResultFakeBuilder
         {
             searchResults
                 .Add(SearchResultWithDocument(
-                    LearnerDataTransferObjectTestDouble.Create()));
+                    LearnerDataTransferObjectTestDouble.Fake()));
         }
 
         _searchResults = searchResults;

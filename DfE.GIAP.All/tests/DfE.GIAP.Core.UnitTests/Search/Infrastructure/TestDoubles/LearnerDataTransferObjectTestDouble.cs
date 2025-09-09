@@ -31,7 +31,7 @@ internal static class LearnerDataTransferObjectTestDouble
     /// <returns>
     /// A <see cref="Learner"/> instance with randomly generated data.
     /// </returns>
-    public static LearnerDataTransferObject Create()
+    public static LearnerDataTransferObject Fake()
     {
         // Instantiate a Bogus faker for generating realistic fake data
         Faker faker = new();
@@ -40,7 +40,7 @@ internal static class LearnerDataTransferObjectTestDouble
         return new LearnerDataTransferObject() {
             ULN = faker.Random.Int(1000000000, 2146999999).ToString(),
             Surname = faker.Name.LastName(),
-            Forename = faker.Name.LastName(),
+            Forename = faker.Name.FirstName(),
             DOB = faker.Date.PastOffset(yearsToGoBack: 18).Date,
             Gender = faker.PickRandom(Gender.Male, Gender.Female, Gender.Other).ToString(),
             Sex = faker.PickRandom(Gender.Male, Gender.Female, Gender.Other).ToString()

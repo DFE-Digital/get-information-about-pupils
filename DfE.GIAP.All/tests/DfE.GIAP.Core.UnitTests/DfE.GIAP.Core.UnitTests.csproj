@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Search\Application\UseCases\" />
-    <Folder Include="Search\Infrastructure\SearchFilterExpressions\" />
   </ItemGroup>
 
 </Project>

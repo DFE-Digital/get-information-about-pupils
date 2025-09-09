@@ -26,6 +26,7 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -1182,7 +1183,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 _mockFiltersRequestBuilder,
                 _mockLogger,
                 _mockPaginatedService,
-                _mockMplService,
                 _mockSelectionManager,
                 _mockDownloadService,
                 _mockAppOptions)

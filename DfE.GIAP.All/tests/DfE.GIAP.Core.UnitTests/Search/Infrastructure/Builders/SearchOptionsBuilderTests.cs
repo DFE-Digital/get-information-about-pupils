@@ -14,7 +14,7 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         ISearchFilterExpressionsBuilder mockSearchFilterExpressionsBuilder =
-            new FilterExpressionBuilderTestDouble().Create();
+            FilterExpressionTestDouble.Mock();
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(mockSearchFilterExpressionsBuilder);
@@ -33,7 +33,7 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         ISearchFilterExpressionsBuilder mockSearchFilterExpressionsBuilder =
-            new FilterExpressionBuilderTestDouble().Create();
+            FilterExpressionTestDouble.Mock();
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(mockSearchFilterExpressionsBuilder);
@@ -52,7 +52,7 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         ISearchFilterExpressionsBuilder mockSearchFilterExpressionsBuilder =
-            new FilterExpressionBuilderTestDouble().Create();
+            FilterExpressionTestDouble.Mock();
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(mockSearchFilterExpressionsBuilder);
@@ -71,7 +71,7 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         ISearchFilterExpressionsBuilder mockSearchFilterExpressionsBuilder =
-            new FilterExpressionBuilderTestDouble().Create();
+            FilterExpressionTestDouble.Mock();
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(mockSearchFilterExpressionsBuilder);
@@ -90,7 +90,7 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         ISearchFilterExpressionsBuilder mockSearchFilterExpressionsBuilder =
-            new FilterExpressionBuilderTestDouble().Create();
+            FilterExpressionTestDouble.Mock();
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(mockSearchFilterExpressionsBuilder);
@@ -110,7 +110,7 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         ISearchFilterExpressionsBuilder mockSearchFilterExpressionsBuilder =
-            new FilterExpressionBuilderTestDouble().Create();
+            FilterExpressionTestDouble.Mock();
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(mockSearchFilterExpressionsBuilder);
@@ -131,8 +131,8 @@ public sealed class SearchOptionsBuilderTests
         // arrange
         List<FilterRequest> serviceAdapterInputFilterRequest =
             [
-                FilterRequestFake.Create(),
-                FilterRequestFake.Create()
+                FilterRequestTestDouble.Fake(),
+                FilterRequestTestDouble.Fake()
             ];
 
         Mock<ISearchFilterExpressionsBuilder> mockSearchFilterExpressionsBuilder = new();
@@ -168,7 +168,10 @@ public sealed class SearchOptionsBuilderTests
     {
         // arrange
         List<FilterRequest> serviceAdapterInputFilterRequest =
-            [FilterRequestFake.Create(), FilterRequestFake.Create()];
+        [
+            FilterRequestTestDouble.Fake(),
+            FilterRequestTestDouble.Fake()
+        ];
 
         SearchOptionsBuilder searchOptionsBuilder =
             new(searchFilterExpressionsBuilder: null);

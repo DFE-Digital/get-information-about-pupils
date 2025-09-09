@@ -22,7 +22,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 /// The <see cref="Create"/> method produces a mock service that returns a
 /// pre-configured <see cref="Response{SearchResults}"/> when invoked.
 /// </remarks>
-internal class SearchServiceMockBuilder
+internal class SearchServiceTestDouble
 {
     /// <summary>
     /// Creates a default mock <see cref="ISearchByKeywordService"/> with no configured behavior.
@@ -78,7 +78,7 @@ internal class SearchServiceMockBuilder
     /// <summary>
     /// Configures the builder with the search keyword and collection name to expect.
     /// </summary>
-    public SearchServiceMockBuilder WithSearchKeywordAndCollection(string keyword, string collection)
+    public SearchServiceTestDouble WithSearchKeywordAndCollection(string keyword, string collection)
     {
         _keyword = keyword;
         _collection = collection;
@@ -88,7 +88,7 @@ internal class SearchServiceMockBuilder
     /// <summary>
     /// Configures the builder with the search results to return.
     /// </summary>
-    public SearchServiceMockBuilder WithSearchResults(IEnumerable<SearchResult<LearnerDataTransferObject>> results)
+    public SearchServiceTestDouble WithSearchResults(IEnumerable<SearchResult<LearnerDataTransferObject>> results)
     {
         _searchResults = results;
         return this;
@@ -97,7 +97,7 @@ internal class SearchServiceMockBuilder
     /// <summary>
     /// Configures the builder with the facet results to return.
     /// </summary>
-    public SearchServiceMockBuilder WithFacets(Dictionary<string, IList<FacetResult>> facets)
+    public SearchServiceTestDouble WithFacets(Dictionary<string, IList<FacetResult>> facets)
     {
         _facets = facets;
         return this;
@@ -107,14 +107,14 @@ internal class SearchServiceMockBuilder
     /// Creates the configured mock <see cref="ISearchByKeywordService"/> instance.
     /// </summary>
     /// <remarks>
-    /// Internally uses <see cref="AzureSearchResponseTestDoubleBuilder"/> to construct
+    /// Internally uses <see cref="AzureSearchResponseBuilder"/> to construct
     /// a <see cref="Response{SearchResults}"/> containing the configured search and facet results.
     /// </remarks>
     public ISearchByKeywordService Create()
     {
         // Build a fake Azure Search response with the configured results and facets
         Response<SearchResults<LearnerDataTransferObject>> response =
-            new AzureSearchResponseTestDoubleBuilder()
+            new AzureSearchResponseBuilder()
                 .WithSearchResults(_searchResults)
                 .WithFacets(_facets)
                 .Create();

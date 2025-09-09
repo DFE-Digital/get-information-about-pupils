@@ -22,7 +22,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     }
 
     [Fact]
-    public void MapFrom_WithValidSearchResults_ReturnsConfiguredEstablishments()
+    public void Map_WithValidSearchResults_ReturnsConfiguredLearner()
     {
         // arrange
         List<SearchResult<LearnerDataTransferObject>> searchResultDocuments =
@@ -54,7 +54,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     }
 
     [Fact]
-    public void MapFrom_WithEmptySearchResults_ReturnsEmptyList()
+    public void Map_WithEmptySearchResults_ReturnsEmptyList()
     {
         // arrange
         List<SearchResult<LearnerDataTransferObject>> emptySearchResultDocuments =
@@ -71,7 +71,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     }
 
     [Fact]
-    public void MapFrom_WithNullSearchResults_ThrowsArgumentNullException()
+    public void Map_WithNullSearchResults_ThrowsArgumentNullException()
     {
         // act.
         _searchResultsMapper
@@ -83,7 +83,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     }
 
     [Fact]
-    public void MapFrom_WithANullSearchResult_ThrowsInvalidOperationException()
+    public void Map_WithANullSearchResult_ThrowsInvalidOperationException()
     {
         // arrange
         List<SearchResult<LearnerDataTransferObject>> searchResultDocuments =
