@@ -171,27 +171,26 @@ public class MyPupilListController : Controller
 
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
-    public Task<IActionResult> ToDownloadCommonTransferFileData(MyPupilsFormStateRequestDto formDto) => HandleDownloadRequest(DownloadType.CTF, formDto); // TODO reduce what's posted to necessary
+    public Task<IActionResult> ToDownloadCommonTransferFileData([FromForm] List<string>? SelectedPupils) => HandleDownloadRequest(DownloadType.CTF, SelectedPupils); // TODO reduce what's posted to necessary
 
     [HttpPost]
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
-    public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(MyPupilsFormStateRequestDto formDto) => HandleDownloadRequest(DownloadType.PupilPremium, formDto);
+    public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN([FromForm] List<string>? SelectedPupils) => HandleDownloadRequest(DownloadType.PupilPremium, SelectedPupils);
 
     [HttpPost]
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
-    public Task<IActionResult> ToDownloadSelectedNPDDataUPN(MyPupilsFormStateRequestDto formDto) => HandleDownloadRequest(DownloadType.NPD, formDto);
+    public Task<IActionResult> ToDownloadSelectedNPDDataUPN([FromForm] List<string>? SelectedPupils) => HandleDownloadRequest(DownloadType.NPD, SelectedPupils);
 
     [HttpPost]
     [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(
-        string selectedPupilsJoined,
-        int selectedPupilsCount)
+        string selectedPupilsJoined)
     {
         LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupilsJoined,
             ErrorDetails = (string)TempData["ErrorDetails"],
-            SelectedPupilsCount = selectedPupilsCount,
+            SelectedPupilsCount = selectedPupilsJoined.Length,
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true
         };
@@ -268,7 +267,7 @@ public class MyPupilListController : Controller
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;
-            return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.SelectedPupilsCount);
+            return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils);
         }
 
         return RedirectToAction(Global.MyPupilListAction, Global.MyPupilListControllerName);
@@ -277,15 +276,15 @@ public class MyPupilListController : Controller
 
     private async Task<IActionResult> HandleDownloadRequest(
         DownloadType downloadType,
-        MyPupilsFormStateRequestDto formDto)
+        List<string> selectedPupils)
     {
-        List<UniquePupilNumber> selectedPupilsOnForm = formDto.SelectedPupils.ToUniquePupilNumbers().ToList();
+        List<UniquePupilNumber> selectedPupilsFromForm = selectedPupils?.ToUniquePupilNumbers().ToList() ?? [];
         UniquePupilNumbers selectedPupilsFromState = _getSelectedMyPupilsProvider.GetSelectedMyPupils();
 
         UniquePupilNumbers joinedSelectedPupils =
             UniquePupilNumbers.Create(
                 uniquePupilNumbers:
-                    selectedPupilsOnForm.Concat(selectedPupilsFromState.GetUniquePupilNumbers()).Distinct());
+                    selectedPupilsFromForm.Concat(selectedPupilsFromState.GetUniquePupilNumbers()).Distinct());
 
         if (joinedSelectedPupils.IsEmpty)
         {
@@ -293,16 +292,18 @@ public class MyPupilListController : Controller
             return await Index(error);
         }
 
+        // TODO do I need to UpdateSelectedPupilsHere in state, as the user may have selected pupils on page, and then want to download other data?
+
         return downloadType switch
         {
-            DownloadType.CTF => await DownloadCommonTransferFileData(formDto, joinedSelectedPupils),
-            DownloadType.PupilPremium => await DownloadPupilPremiumData(formDto, joinedSelectedPupils),
-            DownloadType.NPD => await DownloadSelectedNationalPupilDatabaseData(string.Join(',', selectedPupilsFromState), selectedPupilsFromState.Count),
+            DownloadType.CTF => await DownloadCommonTransferFileData(joinedSelectedPupils),
+            DownloadType.PupilPremium => await DownloadPupilPremiumData(joinedSelectedPupils),
+            DownloadType.NPD => await DownloadSelectedNationalPupilDatabaseData(string.Join(",", joinedSelectedPupils.GetUniquePupilNumbers().Select(t => t.Value))),
             _ => await Index(new MyPupilsErrorViewModel(Messages.Downloads.Errors.UnknownDownloadType))
         };
     }
 
-    private async Task<IActionResult> DownloadCommonTransferFileData(MyPupilsFormStateRequestDto formRequestDto, UniquePupilNumbers selectedPupils)
+    private async Task<IActionResult> DownloadCommonTransferFileData(UniquePupilNumbers selectedPupils)
     {
         string[] selectedPupilsInput = selectedPupils.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
 
@@ -328,20 +329,10 @@ public class MyPupilListController : Controller
             return SearchDownloadHelper.DownloadFile(downloadFile);
         }
 
-        MyPupilsFormStateRequestDto errorFormState = new()
-        {
-            SelectAll = formRequestDto.SelectAll,
-            SelectedPupils = formRequestDto.SelectedPupils,
-            PageNumber = formRequestDto.PageNumber,
-            SortDirection = formRequestDto.SortDirection,
-            SortField = formRequestDto.SortField,
-            Error = new MyPupilsErrorViewModel(Messages.Downloads.Errors.NoDataForSelectedPupils)
-        };
-
-        return await MyPupilList(errorFormState);
+        return await Index(new MyPupilsErrorViewModel(Messages.Downloads.Errors.NoDataForSelectedPupils));
     }
 
-    private async Task<IActionResult> DownloadPupilPremiumData(MyPupilsFormStateRequestDto formRequestDto, UniquePupilNumbers selectedPupils)
+    private async Task<IActionResult> DownloadPupilPremiumData(UniquePupilNumbers selectedPupils)
     {
         UserOrganisation userOrganisation = new()
         {
@@ -371,16 +362,6 @@ public class MyPupilListController : Controller
             return SearchDownloadHelper.DownloadFile(downloadFile);
         }
 
-        MyPupilsFormStateRequestDto errorFormState = new()
-        {
-            SelectAll = formRequestDto.SelectAll,
-            SelectedPupils = formRequestDto.SelectedPupils,
-            PageNumber = formRequestDto.PageNumber,
-            SortDirection = formRequestDto.SortDirection,
-            SortField = formRequestDto.SortField,
-            Error = new MyPupilsErrorViewModel(Messages.Downloads.Errors.NoDataForSelectedPupils)
-        };
-
-        return await MyPupilList(errorFormState);
+        return await Index(new MyPupilsErrorViewModel(Messages.Downloads.Errors.NoDataForSelectedPupils));
     }
 }

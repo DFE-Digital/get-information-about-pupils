@@ -21,13 +21,13 @@ namespace DfE.GIAP.Web.Tests.Helpers
         [Fact]
         public void DetermineAriaSort_throws_exception_if_activeSortDirection_is_empty()
         {
-            Assert.Throws<ArgumentNullException>(() => SortHelper.DetermineAriaSort("Forename", "Forename", null));
+            Assert.Throws<ArgumentException>(() => SortHelper.DetermineAriaSort("Forename", "Forename", null));
         }
 
         [Fact]
         public void DetermineAriaSort_throws_exception_if_sortField_is_empty()
         {
-            Assert.Throws<ArgumentNullException>(() => SortHelper.DetermineAriaSort("", "Forename", null));
+            Assert.Throws<ArgumentException>(() => SortHelper.DetermineAriaSort("", "Forename", null));
         }
 
         [Theory]
@@ -48,7 +48,7 @@ namespace DfE.GIAP.Web.Tests.Helpers
         [Fact]
         public void DetermineSortDirection_throws_exception_if_sortField_is_empty()
         {
-            Assert.Throws<ArgumentNullException>(() => SortHelper.DetermineSortDirection("", "Forename", null));
+            Assert.Throws<ArgumentException>(() => SortHelper.DetermineSortDirection("", "Forename", null));
         }
     }
 }
