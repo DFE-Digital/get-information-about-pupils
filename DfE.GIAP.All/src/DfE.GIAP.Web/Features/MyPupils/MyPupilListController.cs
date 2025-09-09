@@ -293,12 +293,6 @@ public class MyPupilListController : Controller
             return await Index(error);
         }
 
-        if (downloadType == DownloadType.CTF && joinedSelectedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
-        {
-            MyPupilsErrorViewModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
-            return View(Routes.MyPupilList.MyPupilListView, error);
-        }
-
         return downloadType switch
         {
             DownloadType.CTF => await DownloadCommonTransferFileData(formDto, joinedSelectedPupils),
@@ -311,6 +305,13 @@ public class MyPupilListController : Controller
     private async Task<IActionResult> DownloadCommonTransferFileData(MyPupilsFormStateRequestDto formRequestDto, UniquePupilNumbers selectedPupils)
     {
         string[] selectedPupilsInput = selectedPupils.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
+
+        if (selectedPupils.Count > _appSettings.CommonTransferFileUPNLimit) // TODO check this works pulled from HandleDownloadReq
+        {
+            MyPupilsErrorViewModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
+            return View(Routes.MyPupilList.MyPupilListView, error);
+        }
+
         ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
             selectedPupilsInput,
             selectedPupilsInput,
