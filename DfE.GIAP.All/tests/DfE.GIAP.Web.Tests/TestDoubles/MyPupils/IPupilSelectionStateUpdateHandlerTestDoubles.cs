@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.PupilSelectionStateUpdater;
+﻿using DfE.GIAP.Web.Features.MyPupils.Services.UpdateMyPupilsState.PupilSelectionStateUpdater;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;

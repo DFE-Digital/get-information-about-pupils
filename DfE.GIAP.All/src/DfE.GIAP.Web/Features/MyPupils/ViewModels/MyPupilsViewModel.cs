@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
+﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 
-namespace DfE.GIAP.Web.Features.MyPupils.ViewModels;
+namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 
 public sealed class MyPupilsViewModel
 {
@@ -8,7 +8,7 @@ public sealed class MyPupilsViewModel
 
     public MyPupilsViewModel(
         PupilsViewModel pupils,
-        MyPupilsErrorViewModel? error = null)
+        MyPupilsErrorViewModel error = null)
     {
         ArgumentNullException.ThrowIfNull(pupils);
         Pupils = pupils;
@@ -26,7 +26,10 @@ public sealed class MyPupilsViewModel
     public bool HasPupils => Pupils.Count > 0;
     public bool IsError => !string.IsNullOrEmpty(Error.Message);
     public string PageHeading => "My pupil list";
-    public string FormAction => "MyPupilList";
+    public string DownloadController => "MyPupilsDownload";
+    public string DeleteMyPupilsController => "MyPupilsDeletePupils";
+    public string DeleteMyPupilsAction => "DeletePupils";
+    public string UpdateFormController => "MyPupilsUpdateForm";
     public string UniquePupilNumberLabel => "UPN";
     public bool DisplayPreviousPageNumber => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
     public bool IsMorePageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;

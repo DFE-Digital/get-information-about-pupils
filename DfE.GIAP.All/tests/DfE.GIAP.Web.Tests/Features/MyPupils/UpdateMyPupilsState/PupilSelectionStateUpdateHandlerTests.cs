@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.Services.UpdateMyPupilsState.PupilSelectionStateUpdater;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.UpdateMyPupilsState.PupilSelectionStateUpdater;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 

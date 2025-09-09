@@ -6,6 +6,7 @@ using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.Session;
+using DfE.GIAP.Web.Features.MyPupils;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
