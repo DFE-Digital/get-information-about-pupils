@@ -162,20 +162,24 @@
                             <div>
                                 <ul class="pagination-list">
                                     @if (Model.PageNumber != 1)
-
                                     {
+                                        <li class="page-list-previous">
+                                            <button id="page-previous"
+                                                asp-action="@Model.FormAction"
+                                                asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                                asp-route-sortField="@Model.SortField"
+                                                asp-route-sortDirection="@Model.SortDirection">&#60;&#60; Previous</button>
+                                        </li>
                                         <li class="page-list-first">
                                             <button id="page-first"
                                                     type="submit"
                                                     asp-action="@Model.FormAction"
                                                     asp-route-pageNumber="1"
                                                     asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection">
-                                                1
-                                            </button>
+                                                    asp-route-sortDirection="@Model.SortDirection">1</button>
                                         </li>
                                     }
-                                    @if (Model.DisplayPreviousPage)
+                                    @if (Model.DisplayPreviousPageNumber)
 
                                     {
                                         <li class="page-list-previous">
@@ -185,9 +189,7 @@
                                                     asp-action="@Model.FormAction"
                                                     asp-route-pageNumber="@(Model.PageNumber - 1)"
                                                     asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection">
-                                                @(Model.PageNumber - 1)
-                                            </button>
+                                                    asp-route-sortDirection="@Model.SortDirection">@(Model.PageNumber - 1)</button>
                                         </li>
                                     }
                                     <li>@Model.PageNumber</li>
@@ -195,14 +197,20 @@
 
                                     {
                                         <li class="page-list-next">
-                                            <button id="page-next"
+                                            <button id="page-next-number"
                                                     type="submit"
                                                     asp-action="@Model.FormAction"
                                                     asp-route-pageNumber="@(Model.PageNumber + 1)"
                                                     asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection">
-                                                @(Model.PageNumber + 1)
-                                            </button>
+                                                    asp-route-sortDirection="@Model.SortDirection">@(Model.PageNumber + 1)</button>
+                                        </li>
+                                        <li class="page-list-next">
+                                            <button id="page-next"
+                                                type="submit"
+                                                asp-action="@Model.FormAction"
+                                                asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                                asp-route-sortField="@Model.SortField"
+                                                asp-route-sortDirection="@Model.SortDirection">Next &#62;&#62;</button>
                                         </li>
                                     }
                                 </ul>

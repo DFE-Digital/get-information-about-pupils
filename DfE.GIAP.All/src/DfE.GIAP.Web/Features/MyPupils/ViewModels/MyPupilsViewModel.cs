@@ -16,19 +16,19 @@ public sealed class MyPupilsViewModel
     }
 
     public bool isRemovePupilsSuccessful { get; set; } = false;
+    public bool IsAnyPupilsSelected { get; set; }
+    public bool SelectAll { get; set; } = false;
+    public int PageNumber { get; set; } = 1;
+    public string SortField { get; set; } = string.Empty;
+    public string SortDirection { get; set; } = string.Empty;
     public PupilsViewModel Pupils { get; }
     public MyPupilsErrorViewModel Error { get; }
     public bool HasPupils => Pupils.Count > 0;
     public bool IsError => !string.IsNullOrEmpty(Error.Message);
-    public bool SelectAll { get; set; } = false;
-    public int PageNumber { get; set; } = 1;
-    public bool IsAnyPupilsSelected { get; set; }
-    public string SortField { get; set; } = string.Empty;
-    public string SortDirection { get; set; } = string.Empty;
     public string PageHeading => "My pupil list";
     public string FormAction => "MyPupilList";
     public string UniquePupilNumberLabel => "UPN";
-    public bool DisplayPreviousPage => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
+    public bool DisplayPreviousPageNumber => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
     public bool IsMorePageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
     public bool IsNoPupilsRemaining => Pupils.Count == 0;
 }
