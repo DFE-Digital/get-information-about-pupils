@@ -1,11 +1,6 @@
-﻿// Import filtering and keyword search interfaces from shared infrastructure
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
+﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
-
-// Import core search extension method for dependency registration
 using DfE.GIAP.Core.Search;
-
-// Import test doubles for mocking search services
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
