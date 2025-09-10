@@ -9,11 +9,11 @@ public sealed class LearnerCharacteristicsTests
     [Fact]
     public void Constructor_WithValidArguments_ShouldInitializeProperties()
     {
-        // Arrange
+        // arrange
         DateTime birthDate = new(2005, 6, 1);
         LearnerCharacteristics.Gender gender = LearnerCharacteristics.Gender.Female;
 
-        // Act
+        // act
         LearnerCharacteristics characteristics = new(birthDate, gender);
 
         // Assert
@@ -24,11 +24,11 @@ public sealed class LearnerCharacteristicsTests
     [Fact]
     public void Constructor_WithInvalidGender_ShouldThrowArgumentException()
     {
-        // Arrange
+        // arrange
         DateTime birthDate = new(2005, 6, 1);
         LearnerCharacteristics.Gender invalidGender = (LearnerCharacteristics.Gender)999;
 
-        // Act
+        // act
         Action act = () => new LearnerCharacteristics(birthDate, invalidGender);
 
         // Assert
@@ -39,14 +39,14 @@ public sealed class LearnerCharacteristicsTests
     [Fact]
     public void Equality_WithSameValues_ShouldBeEqual()
     {
-        // Arrange
+        // arrange
         DateTime birthDate = new(2005, 6, 1);
         LearnerCharacteristics.Gender gender = LearnerCharacteristics.Gender.Male;
 
         LearnerCharacteristics equalityCheckInstanceA = new(birthDate, gender);
         LearnerCharacteristics equalityCheckInstanceB = new(birthDate, gender);
 
-        // Act & Assert
+        // act & Assert
         equalityCheckInstanceA.Should().Be(equalityCheckInstanceB);
         equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeTrue();
     }
@@ -54,13 +54,13 @@ public sealed class LearnerCharacteristicsTests
     [Fact]
     public void Equality_WithDifferentValues_ShouldNotBeEqual()
     {
-        // Arrange
+        // arrange
         DateTime birthDate = new(2005, 6, 1);
 
         LearnerCharacteristics equalityCheckInstanceA = new(birthDate, LearnerCharacteristics.Gender.Male);
         LearnerCharacteristics equalityCheckInstanceB = new(birthDate, LearnerCharacteristics.Gender.Other);
 
-        // Act & Assert
+        // act & Assert
         equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);
         equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeFalse();
     }

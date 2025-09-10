@@ -9,7 +9,7 @@ public sealed class LearnerTests
     [Fact]
     public void Constructor_WithValidArguments_ShouldInitializeProperties()
     {
-        // Arrange
+        // arrange
         LearnerIdentifier identifier = new("1234567890");
         LearnerName name = new(firstName: "Alice", surname: "Smith");
         LearnerCharacteristics characteristics =
@@ -18,7 +18,7 @@ public sealed class LearnerTests
                 LearnerCharacteristics.Gender.Female
             );
 
-        // Act
+        // act
         Model.Learner learner = new(identifier, name, characteristics);
 
         // Assert
@@ -30,7 +30,7 @@ public sealed class LearnerTests
     [Fact]
     public void Constructor_WithNullName_ShouldThrowArgumentNullException()
     {
-        // Arrange
+        // arrange
         LearnerIdentifier identifier = new("1234567890");
         LearnerName? name = null;
         LearnerCharacteristics characteristics =
@@ -39,7 +39,7 @@ public sealed class LearnerTests
                 LearnerCharacteristics.Gender.Female
             );
 
-        // Act
+        // act
         Action act = () =>
             new Model.Learner(identifier, name!, characteristics);
 
@@ -51,12 +51,12 @@ public sealed class LearnerTests
     [Fact]
     public void Constructor_WithNullCharacteristics_ShouldThrowArgumentNullException()
     {
-        // Arrange
+        // arrange
         LearnerIdentifier identifier = new("1234567890");
         LearnerName name = new("Bob", "Jones");
         LearnerCharacteristics? characteristics = null;
 
-        // Act
+        // act
         Action act = () =>
             new Model.Learner(identifier, name, characteristics!);
 

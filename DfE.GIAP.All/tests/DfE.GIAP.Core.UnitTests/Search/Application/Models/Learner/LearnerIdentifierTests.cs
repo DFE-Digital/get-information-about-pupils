@@ -8,10 +8,10 @@ public sealed class LearnerIdentifierTests
     [Fact]
     public void Constructor_WithValidULN_ShouldInitializeProperty()
     {
-        // Arrange
+        // arrange
         string validUln = "1234567890";
 
-        // Act
+        // act
         LearnerIdentifier identifier = new(validUln);
 
         // Assert
@@ -24,7 +24,7 @@ public sealed class LearnerIdentifierTests
     [InlineData("   ")]
     public void Constructor_WithNullOrWhitespaceULN_ShouldThrowArgumentException(string? input)
     {
-        // Act
+        // act
         Action act = () => new LearnerIdentifier(input!);
 
         // Assert
@@ -37,7 +37,7 @@ public sealed class LearnerIdentifierTests
     [InlineData("12345678901")]   // Too long
     public void Constructor_WithInvalidLength_ShouldThrowArgumentException(string input)
     {
-        // Act
+        // act
         Action act = () => new LearnerIdentifier(input);
 
         // Assert
@@ -50,7 +50,7 @@ public sealed class LearnerIdentifierTests
     [InlineData("12345abcde")]
     public void Constructor_WithNonNumericULN_ShouldThrowArgumentException(string input)
     {
-        // Act
+        // act
         Action act = () => new LearnerIdentifier(input);
 
         // Assert
@@ -61,11 +61,11 @@ public sealed class LearnerIdentifierTests
     [Fact]
     public void Equality_WithSameULN_ShouldBeEqual()
     {
-        // Arrange
+        // arrange
         LearnerIdentifier equalityCheckInstanceA = new("1234567890");
         LearnerIdentifier equalityCheckInstanceB = new("1234567890");
 
-        // Act & Assert
+        // act & Assert
         equalityCheckInstanceA.Should().Be(equalityCheckInstanceB);
         equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeTrue();
     }
@@ -73,11 +73,11 @@ public sealed class LearnerIdentifierTests
     [Fact]
     public void Equality_WithDifferentULN_ShouldNotBeEqual()
     {
-        // Arrange
+        // arrange
         LearnerIdentifier equalityCheckInstanceA = new("1234567890");
         LearnerIdentifier equalityCheckInstanceB = new("0987654321");
 
-        // Act & Assert
+        // act & Assert
         equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);
         equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeFalse();
     }

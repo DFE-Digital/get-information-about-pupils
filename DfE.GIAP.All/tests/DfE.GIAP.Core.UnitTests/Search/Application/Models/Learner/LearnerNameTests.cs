@@ -8,11 +8,11 @@ public sealed class LearnerNameTests
     [Fact]
     public void Constructor_WithValidNames_ShouldInitializeProperties()
     {
-        // Arrange
+        // arrange
         string firstName = "Alice";
         string surname = "Smith";
 
-        // Act
+        // act
         LearnerName learnerName = new(firstName, surname);
 
         // Assert
@@ -26,7 +26,7 @@ public sealed class LearnerNameTests
     [InlineData("   ")]
     public void Constructor_WithInvalidFirstName_ShouldThrowArgumentException(string? invalidFirstName)
     {
-        // Act
+        // act
         Action act = () =>
             new LearnerName(invalidFirstName!, "ValidSurname");
 
@@ -41,7 +41,7 @@ public sealed class LearnerNameTests
     [InlineData("   ")]
     public void Constructor_WithInvalidSurname_ShouldThrowArgumentException(string? invalidSurname)
     {
-        // Act
+        // act
         Action act = () =>
             new LearnerName("ValidFirstName", invalidSurname!);
 
@@ -53,11 +53,11 @@ public sealed class LearnerNameTests
     [Fact]
     public void Equality_WithSameNames_ShouldBeEqual()
     {
-        // Arrange
+        // arrange
         LearnerName equalityCheckInstanceA = new("John", "Doe");
         LearnerName equalityCheckInstanceB = new("John", "Doe");
 
-        // Act & Assert
+        // act & Assert
         equalityCheckInstanceA.Should().Be(equalityCheckInstanceB);
         equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeTrue();
     }
@@ -65,11 +65,11 @@ public sealed class LearnerNameTests
     [Fact]
     public void Equality_WithDifferentNames_ShouldNotBeEqual()
     {
-        // Arrange
+        // arrange
         LearnerName equalityCheckInstanceA = new("John", "Doe");
         LearnerName equalityCheckInstanceB = new("Jane", "Doe");
 
-        // Act & Assert
+        // act & Assert
         equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);
         equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeFalse();
     }

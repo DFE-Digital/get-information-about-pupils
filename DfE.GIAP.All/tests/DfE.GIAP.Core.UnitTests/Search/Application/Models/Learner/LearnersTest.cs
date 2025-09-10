@@ -9,7 +9,7 @@ public sealed class LearnersTests
     [Fact]
     public void Constructor_WithValidLearnerList_ShouldInitializeCollection()
     {
-        // Arrange
+        // arrange
         Model.Learner learner =
             new(
                 new LearnerIdentifier("1234567890"),
@@ -21,7 +21,7 @@ public sealed class LearnersTests
 
         List<Model.Learner> learners = [learner];
 
-        // Act
+        // act
         Learners result = new(learners);
 
         // Assert
@@ -33,7 +33,7 @@ public sealed class LearnersTests
     [Fact]
     public void Constructor_WithNullInput_ShouldInitializeEmptyCollection()
     {
-        // Act
+        // act
         Learners result = new(null!);
 
         // Assert
@@ -44,7 +44,7 @@ public sealed class LearnersTests
     [Fact]
     public void DefaultConstructor_ShouldInitializeEmptyCollection()
     {
-        // Act
+        // act
         Learners result = new();
 
         // Assert
@@ -55,7 +55,7 @@ public sealed class LearnersTests
     [Fact]
     public void CreateEmpty_ShouldReturnEmptyLearnersInstance()
     {
-        // Act
+        // act
         Learners result = Learners.CreateEmpty();
 
         // Assert
@@ -66,7 +66,7 @@ public sealed class LearnersTests
     [Fact]
     public void LearnerCollection_ShouldBeReadOnly()
     {
-        // Arrange
+        // arrange
         Model.Learner learner = new(
             new LearnerIdentifier("1234567890"),
             new LearnerName("Bob", "Jones"),
@@ -77,7 +77,7 @@ public sealed class LearnersTests
 
         Learners result = new([learner]);
 
-        // Act
+        // act
         Action mutate = () =>
             ((List<Model.Learner>)result.LearnerCollection).Add(learner);
 

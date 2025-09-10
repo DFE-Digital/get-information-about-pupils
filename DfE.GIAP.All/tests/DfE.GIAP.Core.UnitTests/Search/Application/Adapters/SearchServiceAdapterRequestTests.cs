@@ -42,12 +42,12 @@ public sealed class SearchServiceAdapterRequestTests
     [InlineData("   ")]
     public void Constructor_WithInvalidKeyword_ShouldThrowArgumentException(string? invalidKeyword)
     {
-        // Arrange
+        // arrange
         List<string> fields = ["Field"];
         List<string> facets = ["Facet"];
         SortOrder sortOrder = new("Field", "asc", ["Field" ]);
 
-        // Act
+        // act
         Action act = () =>
             new SearchServiceAdapterRequest(invalidKeyword!, fields, facets, sortOrder);
 
@@ -59,11 +59,11 @@ public sealed class SearchServiceAdapterRequestTests
     [Fact]
     public void Constructor_WithEmptySearchFields_ShouldThrowArgumentException()
     {
-        // Arrange
+        // arrange
         string keyword = "test";
         SortOrder sortOrder = new("Field", "asc", ["Field"]);
 
-        // Act
+        // act
         Action act = () =>
             new SearchServiceAdapterRequest(keyword, [], ["Facet"], sortOrder);
 
@@ -75,11 +75,11 @@ public sealed class SearchServiceAdapterRequestTests
     [Fact]
     public void Constructor_WithEmptyFacets_ShouldThrowArgumentException()
     {
-        // Arrange
+        // arrange
         string keyword = "test";
         SortOrder sortOrder = new SortOrder("Field", "asc", ["Field"]);
 
-        // Act
+        // act
         Action act = () =>
             new SearchServiceAdapterRequest(keyword, ["Field"], [], sortOrder);
 
@@ -91,13 +91,13 @@ public sealed class SearchServiceAdapterRequestTests
     [Fact]
     public void Constructor_WithNullFilters_ShouldInitializeEmptyList()
     {
-        // Arrange
+        // arrange
         string keyword = "test";
         List<string> fields = ["Field"];
         List<string> facets = ["Facet"];
         SortOrder sortOrder = new("Field", "asc", ["Field"]);
 
-        // Act
+        // act
         SearchServiceAdapterRequest request =
             new(keyword, fields, facets, sortOrder, null);
 

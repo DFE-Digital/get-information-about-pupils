@@ -10,10 +10,10 @@ public sealed class LearnerSearchResultTests
     [Fact]
     public void Constructor_WithStatus_ShouldSetStatusProperty()
     {
-        // Arrange
+        // arrange
         SearchResponseStatus status = SearchResponseStatus.Success;
 
-        // Act
+        // act
         LearnerSearchResult result = new(status);
 
         // Assert
@@ -23,7 +23,7 @@ public sealed class LearnerSearchResultTests
     [Fact]
     public void Properties_CanBeInitializedViaObjectInitializer()
     {
-        // Arrange
+        // arrange
         Learners learners = new([
             new Model.Learner(
                 new LearnerIdentifier("1234567890"),
@@ -56,7 +56,7 @@ public sealed class LearnerSearchResultTests
     [Fact]
     public void Properties_WhenUninitialized_ShouldBeNullOrZero()
     {
-        // Act
+        // act
         LearnerSearchResult result = new(SearchResponseStatus.NoResultsFound);
 
         // Assert

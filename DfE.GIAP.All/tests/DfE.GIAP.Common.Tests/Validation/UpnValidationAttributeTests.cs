@@ -13,7 +13,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object upn = "A111111111111";
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
             
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(upn);
             // Assert
             Assert.True(isSuccess);
@@ -26,7 +26,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object upn = null;
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(upn);
             // Assert
             Assert.False(isSuccess);
@@ -39,7 +39,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object upn = "A1111111111";
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(upn);
             // Assert
             Assert.False(isSuccess);
@@ -52,7 +52,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object upn = "a1x1111111a";
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(upn);
             // Assert
             Assert.False(isSuccess);
