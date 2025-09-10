@@ -45,36 +45,35 @@ public sealed class SearchByKeyWordsUseCase :
     public async Task<SearchByKeyWordsResponse> HandleRequestAsync(
         SearchByKeyWordsRequest request)
     {
-        if (request == null || string.IsNullOrWhiteSpace(request.SearchKeyword))
+        if (request == null || string.IsNullOrWhiteSpace(request.SearchKeywords))
         {
             return new(SearchResponseStatus.InvalidRequest);
         }
 
         try
         {
-            SearchResults<Learners, SearchFacets>? results =
+            SearchResults<Learners, SearchFacets>? searchResults =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
-                        request.SearchKeyword,
+                        request.SearchKeywords,
                         _searchCriteria.SearchFields,
                         _searchCriteria.Facets,
                         request.SortOrder,
                         request.FilterRequests,
                         request.Offset));
 
-            return results is null
-                ? new(SearchResponseStatus.SearchServiceError)
-                : new(SearchResponseStatus.Success)
+            return searchResults?.Results?.Count > 0
+                ? new(SearchResponseStatus.Success)
                 {
-                    LearnerSearchResults = results.Results,
-                    FacetedResults = results.FacetResults,
-                    TotalNumberOfResults = (int)(results.TotalNumberOfRecords ?? 0)
-                };
+                    LearnerSearchResults = searchResults.Results,
+                    FacetedResults = searchResults.FacetResults,
+                    TotalNumberOfResults = searchResults.Results.Count
+                }
+                : new(SearchResponseStatus.NoResultsFound);
+
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // TODO: Log the exception details for diagnostics.
-            Console.WriteLine($"Search operation failed: {ex.Message}");
             // Handles unexpected failures such as adapter exceptions or infrastructure issues.
             return new(SearchResponseStatus.SearchServiceError);
         }

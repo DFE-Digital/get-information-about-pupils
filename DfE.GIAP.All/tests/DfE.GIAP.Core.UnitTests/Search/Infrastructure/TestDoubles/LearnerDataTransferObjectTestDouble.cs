@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
@@ -26,10 +25,10 @@ internal static class LearnerDataTransferObjectTestDouble
     /// </list>
     /// </para>
     /// This is intended for test scenarios where the specific learner details
-    /// are not important, but a valid <see cref="Learner"/> object is required.
+    /// are not important, but a valid <see cref="LearnerDataTransferObject"/> object is required.
     /// </remarks>
     /// <returns>
-    /// A <see cref="Learner"/> instance with randomly generated data.
+    /// A <see cref="LearnerDataTransferObject"/> instance with randomly generated data.
     /// </returns>
     public static LearnerDataTransferObject Fake()
     {

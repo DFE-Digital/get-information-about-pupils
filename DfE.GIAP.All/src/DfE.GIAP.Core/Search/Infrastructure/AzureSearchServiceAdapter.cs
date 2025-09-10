@@ -89,9 +89,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
         {
             Results = _searchResultMapper.Map(searchResults.Value.GetResults()),
             FacetResults = searchResults.Value.Facets != null
-                ? _facetsMapper.Map(searchResults.Value.Facets.ToDictionary())
-                : null,
-            TotalNumberOfRecords = searchResults.Value.TotalCount
+                ? _facetsMapper.Map(searchResults.Value.Facets.ToDictionary()) : null
         };
     }
 }

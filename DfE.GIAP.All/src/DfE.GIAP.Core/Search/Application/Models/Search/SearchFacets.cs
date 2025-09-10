@@ -30,6 +30,6 @@ public sealed class SearchFacets
     /// </param>
     public SearchFacets(IEnumerable<SearchFacet> searchFacets)
     {
-        _searchFacets = searchFacets.ToList();
+        _searchFacets = [.. searchFacets];
     }
 }

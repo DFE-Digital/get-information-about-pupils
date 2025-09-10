@@ -16,10 +16,12 @@ public sealed class Learners
     public IReadOnlyCollection<Learner> LearnerCollection => _learners.AsReadOnly();
 
     /// <summary>
-    /// Gets the total number of learners in the results.
-    /// Useful for quick metrics or UI display.
+    /// Returns the number of learners in the collection.
+    /// Safely handles null by returning 0 if <c>_learners</c> is not initialized.
+    /// Supports diagnostic clarity and avoids null reference exceptions during result evaluation.
     /// </summary>
-    public int Count => _learners.Count;
+    public int Count => _learners?.Count ?? 0;
+
 
     /// <summary>
     /// Default constructor.
@@ -34,10 +36,10 @@ public sealed class Learners
     /// Constructs the result set from an incoming sequence of learners.
     /// Uses defensive programming to handle potential null inputs.
     /// </summary>
-    /// <param name="furtherEducationPupils">Sequence of learners to populate the result set.</param>
-    public Learners(IEnumerable<Learner> furtherEducationPupils)
+    /// <param name="learners">Sequence of learners to populate the result set.</param>
+    public Learners(IEnumerable<Learner> learners)
     {
-        _learners = furtherEducationPupils?.ToList() ?? [];
+        _learners = learners?.ToList() ?? [];
     }
 
     /// <summary>

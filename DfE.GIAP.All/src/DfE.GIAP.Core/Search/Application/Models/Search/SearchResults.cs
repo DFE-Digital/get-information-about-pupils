@@ -19,10 +19,4 @@ public class SearchResults<TResults, TFacetResults>
     /// that is built from the underlying search response.
     /// </summary>
     public TFacetResults? FacetResults { get; init; }
-
-    /// <summary>
-    /// The Total Count returned from search gives us a total
-    /// of all available records which correlates with the given search criteria.
-    /// </summary>
-    public long? TotalNumberOfRecords { get; init; }
 }
