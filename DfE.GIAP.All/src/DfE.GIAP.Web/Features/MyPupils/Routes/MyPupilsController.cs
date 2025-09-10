@@ -31,6 +31,6 @@ public class MyPupilsController : Controller
 
         MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId);
 
-        return base.View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
+        return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
     }
 }

@@ -111,6 +111,7 @@ public class MyPupilsDownloadController : Controller
         }
 
         searchDownloadViewModel.SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading;
+
         return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
     }
 
@@ -182,6 +183,8 @@ public class MyPupilsDownloadController : Controller
         }
 
         // TODO do I need to UpdateSelectedPupilsHere in state, as the user may have selected pupils on page, and then want to download other data?
+        // Maybe a service called MergedSelectionStateService which calls PaginatedMyPupilsHandler, creates this object, that can then be passed down instead of MyPupilsFormStateDto
+        // Dictionary<UniquePupilNumber, bool> --- then do the CurrentPage
 
         return downloadType switch
         {
@@ -198,10 +201,14 @@ public class MyPupilsDownloadController : Controller
     {
         string[] selectedPupilsInput = selectedPupils.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
 
+        UserId userId = new(User.GetUserId());
+
         if (selectedPupils.Count > _appSettings.CommonTransferFileUPNLimit) // TODO check this works pulled from HandleDownloadReq
         {
             MyPupilsErrorViewModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
-            return base.View(Constants.Routes.MyPupilList.MyPupilListView, error);
+            await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
+
+            return View(Constants.Routes.MyPupilList.MyPupilListView, error);
         }
 
         ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
@@ -211,7 +218,7 @@ public class MyPupilsDownloadController : Controller
             User.GetEstablishmentNumber(),
             User.IsOrganisationEstablishment(),
             AzureFunctionHeaderDetails.Create(
-                User.GetUserId(),
+                userId.Value,
                 User.GetSessionId()),
             ReturnRoute.MyPupilList);
 
@@ -220,9 +227,9 @@ public class MyPupilsDownloadController : Controller
             return SearchDownloadHelper.DownloadFile(downloadFile);
         }
 
-        UserId user = new(User.GetUserId());
         MyPupilsErrorViewModel noDataAvailableError = new(Messages.Downloads.Errors.NoDataForSelectedPupils);
-        MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(user, error: noDataAvailableError);
+        MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error: noDataAvailableError);
+
         return base.View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
     }
 
@@ -237,28 +244,29 @@ public class MyPupilsDownloadController : Controller
             IsSAT = User.IsOrganisationSingleAcademyTrust()
         };
 
+        UserId userId = new(User.GetUserId());
+
         string[] selectedPupilInput = selectedPupils.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
 
         ReturnFile downloadFile = await _downloadService.GetPupilPremiumCSVFile(
             selectedPupilInput,
             selectedPupilInput,
             true,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
+            AzureFunctionHeaderDetails.Create(userId.Value, User.GetSessionId()),
             ReturnRoute.MyPupilList, userOrganisation);
 
         if (downloadFile == null)
         {
-            return base.RedirectToAction(actionName: Constants.Routes.Application.Error, controllerName: Constants.Routes.Application.Home);
+            return RedirectToAction(actionName: Constants.Routes.Application.Error, controllerName: Constants.Routes.Application.Home);
         }
 
         if (downloadFile.Bytes != null)
         {
             return SearchDownloadHelper.DownloadFile(downloadFile);
         }
-
-        UserId user = new(User.GetUserId());
+        
         MyPupilsErrorViewModel noDataAvailableError = new(Messages.Downloads.Errors.NoDataForSelectedPupils);
-        MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(user, error: noDataAvailableError);
+        MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, noDataAvailableError);
         return base.View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
     }
 }

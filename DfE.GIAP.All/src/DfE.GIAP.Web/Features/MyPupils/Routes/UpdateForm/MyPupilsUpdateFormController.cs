@@ -45,7 +45,9 @@ public class MyPupilsUpdateFormController : Controller
         if (!ModelState.IsValid)
         {
             MyPupilsErrorViewModel error = new(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
+
             MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
+
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
