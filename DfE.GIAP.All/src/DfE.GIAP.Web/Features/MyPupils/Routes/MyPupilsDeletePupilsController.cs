@@ -77,7 +77,9 @@ public class MyPupilsDeletePupilsController : Controller
 
         await _deleteMyPupilsUseCase.HandleRequestAsync(deleteRequest);
 
-        UpdateSelectionState(request: deleteRequest, state: _getMyPupilsStateProvider.GetState().SelectionState);
+        UpdateSelectionState(
+            deleteRequest,
+            _getMyPupilsStateProvider.GetState().SelectionState);
 
         return RedirectToAction(actionName: "Index", controllerName: "MyPupils");
     }

@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
@@ -9,8 +8,6 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationH
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Order;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Paginate;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Services.UpdateMyPupilsState;
-using DfE.GIAP.Web.Features.MyPupils.Services.UpdateMyPupilsState.PupilSelectionStateUpdater;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
@@ -36,19 +33,8 @@ public static class CompositionRoot
             .AddSessionStateHandlers()
             .AddGetPaginatedMyPupils()
             .AddGetMyPupils()
-            .AddGetSelectedMyPupils()
-            .AddUpdateMyPupilsState();
+            .AddGetSelectedMyPupils();
 
-
-        return services;
-    }
-
-    private static IServiceCollection AddUpdateMyPupilsState(this IServiceCollection services)
-    {
-        services
-            .AddSingleton<IMapper<MyPupilsFormStateRequestDto, MyPupilsPresentationState>, MapFormStateRequestDtoToMyPupilsPresentationStateMapper>() // TODO needs tests
-            .AddSingleton<IPupilSelectionStateUpdateHandler, PupilSelectionStateUpdateHandler>()
-            .AddScoped<IUpdateMyPupilsStateHandler, UpdateMyPupilsStateHandler>();
         return services;
     }
 

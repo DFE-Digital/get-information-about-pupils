@@ -23,20 +23,4 @@ public sealed class MyPupilsFormStateRequestDto
     [FromQuery]
     // TODO Validator for ModelState, Validate XSS
     public string SortDirection { get; set; } = string.Empty;
-
-    public MyPupilsFormSelectionStateRequestDto SelectAllState
-    {
-        get
-        {
-            if (SelectAll.HasValue && SelectAll.Value)
-            {
-                return MyPupilsFormSelectionStateRequestDto.SelectAll;
-            }
-            if (SelectAll.HasValue && !SelectAll.Value)
-            {
-                return MyPupilsFormSelectionStateRequestDto.DeselectAll;
-            }
-            return MyPupilsFormSelectionStateRequestDto.ManualSelection; ;
-        }
-    }
 }
