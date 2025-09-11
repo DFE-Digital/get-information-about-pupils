@@ -13,6 +13,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     private readonly ILogger<NPDLearnerTextSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
-    private readonly AzureAppSettings _appSettings;
 
     public override string PageHeading => ApplicationLabels.SearchNPDWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.NPDNonUpnSearchSessionKey;
@@ -73,25 +73,28 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
 
     public NPDLearnerTextSearchController(ILogger<NPDLearnerTextSearchController> logger,
+       IOptions<AzureAppSettings> azureAppSettings,
        IPaginatedSearchService paginatedSearch,
        IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
        IDownloadCommonTransferFileService ctfService,
-       IDownloadService downloadService,
-       IOptions<AzureAppSettings> azureAppSettings)
+       ISessionProvider sessionProvider,
+       IDownloadService downloadService)
        : base(logger,
              paginatedSearch,
              mplService,
              selectionManager,
-             azureAppSettings)
+             azureAppSettings,
+             sessionProvider)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _ctfService = ctfService ??
-            throw new ArgumentNullException(nameof(ctfService));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
-        _appSettings = azureAppSettings.Value;
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(ctfService);
+        _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
     }
 
 

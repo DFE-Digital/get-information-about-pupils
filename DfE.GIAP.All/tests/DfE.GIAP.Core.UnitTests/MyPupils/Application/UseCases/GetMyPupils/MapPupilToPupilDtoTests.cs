@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -14,9 +14,10 @@ public sealed class MapPupilToPupilDtoMapperTests
     {
         // Arrange
         UniquePupilNumber uniquePupilNumber = UniquePupilNumberTestDoubles.Generate();
+
         DateTime dob = DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10);
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(uniquePupilNumber)
+
+        Pupil pupil = PupilBuilder.CreateBuilder(uniquePupilNumber)
             .WithFirstName("John")
             .WithSurname("Doe")
             .WithDateOfBirth(dob)
@@ -28,10 +29,10 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
-        Assert.Equal(uniquePupilNumber.Value, result.UniquePupilNumber);
+        Assert.Equal(uniquePupilNumber, result.UniquePupilNumber);
         Assert.Equal("John", result.Forename);
         Assert.Equal("Doe", result.Surname);
         Assert.Equal(dob.ToString("yyyy-MM-dd"), result.DateOfBirth);
@@ -47,7 +48,7 @@ public sealed class MapPupilToPupilDtoMapperTests
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        Func<PupilDto> act = () => mapper.Map(pupil!);
+        Func<MyPupilDto> act = () => mapper.Map(pupil!);
 
         // Assert
         Assert.Throws<ArgumentNullException>(act);
@@ -57,15 +58,14 @@ public sealed class MapPupilToPupilDtoMapperTests
     public void Map_PupilWithNullDateOfBirth_ReturnsEmptyDateOfBirth()
     {
         // Arrange
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
-                .WithDateOfBirth(null!)
-                .Build();
+        Pupil pupil = PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
+            .WithDateOfBirth(null!)
+            .Build();
 
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.DateOfBirth);
@@ -75,15 +75,14 @@ public sealed class MapPupilToPupilDtoMapperTests
     public void Map_PupilWithNullSex_ReturnsEmptySex()
     {
         // Arrange
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
-                .WithSex(null!)
-                .Build();
+        Pupil pupil = PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
+            .WithSex(null!)
+            .Build();
 
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.Sex);
@@ -93,15 +92,14 @@ public sealed class MapPupilToPupilDtoMapperTests
     public void Map_PupilNotPupilPremium_ReturnsFalseForIsPupilPremium()
     {
         // Arrange
-        Pupil pupil =
-            PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
-                .WithPupilType(PupilType.NationalPupilDatabase)
-                .Build();
+        Pupil pupil = PupilBuilder.CreateBuilder(UniquePupilNumberTestDoubles.Generate())
+            .WithPupilType(PupilType.NationalPupilDatabase)
+            .Build();
 
         MapPupilToPupilDtoMapper mapper = new();
 
         // Act
-        PupilDto result = mapper.Map(pupil);
+        MyPupilDto result = mapper.Map(pupil);
 
         // Assert
         Assert.False(result.IsPupilPremium);

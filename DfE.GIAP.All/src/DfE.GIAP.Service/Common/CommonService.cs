@@ -22,39 +22,6 @@ public class CommonService : ICommonService
     }
 
 
-    public async Task<bool> GetLatestNewsStatus(string userId)
-    {
-        try
-        {
-            var query = _azureAppSettings.GetLatestNewsStatusUrl;
-            var model = new UserProfile { UserId = userId };
-            var response = await _apiProcessorService.PostAsync<UserProfile, string>(query.ConvertToUri(), model, null).ConfigureAwait(false);
-
-            return Convert.ToBoolean(response);
-        }
-        catch
-        {
-            return false;
-        }
-
-    }
-    public async Task<bool> SetLatestNewsStatus(string userId)
-    {
-        try
-        {
-            var query = _azureAppSettings.SetLatestNewsStatusUrl;
-            var model = new UserProfile { UserId = userId };
-            var response = await _apiProcessorService.PostAsync<UserProfile, string>(query.ConvertToUri(), model, null).ConfigureAwait(false);
-
-            return Convert.ToBoolean(response);
-        }
-        catch
-        {
-            return false;
-        }
-
-    }
-
     public async Task<bool> CreateLoggingEvent(LoggingEvent loggingEvent)
     {
         try

@@ -1,8 +1,10 @@
+using DfE.GIAP.Web.Helpers.HostEnvironment;
 using System.Security.Cryptography;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
+using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -14,6 +16,7 @@ using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
 using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
@@ -29,18 +32,21 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Services configuration
 builder.Services
+    .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
+    .AddUserDependencies()
     .AddNewsArticleDependencies()
+    .AddPrePreparedDownloadsDependencies();
+
+
+builder.Services
     .AddSearchDependencies(configuration)
     .AddRoutingConfiguration()
-    .AddAppConfigurationSettings(configuration)
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
     .AddApplicationInsightsTelemetry()
     .AddAllServices()
     .AddWebProviders()
-    .AddSettings<ClaritySettings>(configuration, "Clarity")
-    .AddSettings<GoogleTagManager>(configuration, "GoogleTagManager")
     .AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
@@ -110,23 +116,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
-
-ClaritySettings claritySettings = configuration
-    .GetSection("Clarity")
-    .Get<ClaritySettings>();
-
-app.Use(async (context, next) =>
-{
-    if (claritySettings != null && !string.IsNullOrEmpty(claritySettings.ProjectId))
-    {
-        string nonce = Convert.ToBase64String(RandomNumberGenerator.GetBytes(16));
-        context.Items["CSPNonce"] = nonce;
-
-        context.Response.Headers.ContentSecurityPolicy = $"script-src 'self' https://www.clarity.ms https://www.googletagmanager.com 'nonce-{nonce}'; object-src 'none';";
-    }
-
-    await next();
-});
 
 // Endpoint configuration
 app.MapControllerRoute(

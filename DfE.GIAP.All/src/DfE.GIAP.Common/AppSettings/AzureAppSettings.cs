@@ -5,11 +5,6 @@ namespace DfE.GIAP.Common.AppSettings;
 [ExcludeFromCodeCoverage]
 public class AzureAppSettings
 {
-    //Blob Storage configuration
-    public string StorageAccountName { get; set; }
-    public string StorageAccountKey { get; set; }
-    public string StorageContainerName { get; set; }
-
     //DfE Sign-in related configuration
     public string DsiAudience { get; set; }
     public string DsiAuthorisationUrl { get; set; }
@@ -39,15 +34,12 @@ public class AzureAppSettings
     public string CreateOrUpdateUserProfileUrl { get; set; }
     public string DownloadPupilsByUPNsCSVUrl { get; set; }
     public string DownloadPupilPremiumByUPNFforCSVUrl { get; set; }
-    public string DownloadPrepreparedFilesUrl { get; set; }
     public string DownloadCommonTransferFileUrl { get; set; }
     public string DownloadSecurityReportByUpnUrl { get; set; }
     public string DownloadSecurityReportByUlnUrl { get; set; }
     public string DownloadSecurityReportLoginDetailsUrl { get; set; }
     public string DownloadSecurityReportDetailedSearchesUrl { get; set; }
     public string GetAcademiesURL { get; set; }
-    public string GetLatestNewsStatusUrl { get; set; }
-    public string SetLatestNewsStatusUrl { get; set; }
     public string GetUserProfileUrl { get; set; }
     public string LoggingEventUrl { get; set; }
 
@@ -65,7 +57,6 @@ public class AzureAppSettings
 
     //Downloads
     public int CommonTransferFileUPNLimit { get; set; }
-    public string MetaDataDownloadListDirectory { get; set; }
     public int DownloadOptionsCheckLimit { get; set; }
 
     // flag indicating that we should show the LA number

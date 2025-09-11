@@ -5,9 +5,9 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
@@ -44,8 +44,8 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<UpdateNewsArticleRequest>>());
 
         Assert.NotNull(provider.GetService<IMapper<NewsArticleDto, NewsArticle>>());
-        Assert.NotNull(provider.GetService<INewsArticleReadRepository>());
-        Assert.NotNull(provider.GetService<INewsArticleWriteRepository>());
+        Assert.NotNull(provider.GetService<INewsArticleReadOnlyRepository>());
+        Assert.NotNull(provider.GetService<INewsArticleWriteOnlyRepository>());
 
         Assert.NotNull(provider.GetService<ITextSanitiserInvoker>());
     }

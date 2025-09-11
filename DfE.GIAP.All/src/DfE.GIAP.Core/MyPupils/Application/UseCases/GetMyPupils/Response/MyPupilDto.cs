@@ -1,0 +1,19 @@
+﻿using System.Globalization;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+public record MyPupilDto
+{
+    public required UniquePupilNumber UniquePupilNumber { get; init; }
+    public required string Forename { get; init; }
+    public required string Surname { get; init; }
+    public required string DateOfBirth { get; init; }
+    public required string Sex { get; init; }
+    public required bool IsPupilPremium { get; init; }
+    public required int LocalAuthorityCode { get; init; }
+    public DateTime ParseDateOfBirth()
+    {
+        return DateTime.TryParse(
+            DateOfBirth, new CultureInfo("en-GB"), out DateTime result) ? result : DateTime.MinValue;
+    }
+}

@@ -1,5 +1,5 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 internal static class CosmosDbCommandHandlerTestDoubles
@@ -73,4 +73,19 @@ internal static class CosmosDbCommandHandlerTestDoubles
         return mockHandler;
     }
 
+    internal static Mock<ICosmosDbCommandHandler> MockForUpsertItemAsyncThrows<TInput>(Exception exception) where TInput : class
+    {
+        Mock<ICosmosDbCommandHandler> mockHandler = Default();
+
+        mockHandler
+            .Setup((handler)
+                => handler.UpsertItemAsync(
+                    It.IsAny<TInput>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception);
+
+        return mockHandler;
+    }
 }

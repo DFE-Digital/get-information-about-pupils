@@ -1,0 +1,34 @@
+﻿@model PreparedDownloadsViewModel
+
+@{
+    ViewData["Title"] = "Pre-prepared downloads";
+}
+
+<h1 class="govuk-heading-xl" id="downloads--heading--text">Pre-prepared downloads</h1>
+<p class="govuk-body" id="downloads--hint--text">
+    These are pre-prepared by the DfE for your establishment or group.
+</p>
+
+<table class="govuk-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header" id="downloads--downloads-heading-name--text">Name</th>
+            <th scope="col" class="govuk-table__header" id="downloads--downloads-heading-date--text">Date</th>
+            <th scope="col" class="govuk-table__header" id="downloads--downloads-heading-link--text">Link</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body" id="help--preprepared-files--table">
+        @for (var i = 0; i < Model.PreparedDownloadFiles.Count(); i++)
+        {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell" id="downloads--downloads-data-name--text-@i">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayName)</td>
+                <td class="govuk-table__cell" id="downloads--downloads-data-date--text-@i">@Html.Raw(DateTimeHelper.ConvertDateTimeToString(Model.PreparedDownloadFiles[i].Date))</td>
+                <td class="govuk-table__cell">
+                    <a class="govuk-link" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PreparedDownloadFiles[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PreparedDownloadFiles[i].Date)" id="downloads--downloads-data-link--link-@i" download>@Html.Raw(Model.PreparedDownloadFiles[i].FileName)</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<partial name="_MetadataFilesPartial" />

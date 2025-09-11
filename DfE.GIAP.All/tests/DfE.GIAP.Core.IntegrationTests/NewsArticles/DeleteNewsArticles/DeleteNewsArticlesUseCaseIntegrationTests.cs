@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
 [Collection(IntegrationTestCollectionMarker.Name)]
