@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
+using DfE.GIAP.Core.Common.Infrastructure.Logging;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -32,10 +33,11 @@ public static class ServiceCollectionExtensions
     {
         services.Configure<AzureAppSettings>(configuration)
             .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
-            .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName));
+            .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName))
+            .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName));
 
-        // Bind BlobStorageOptions from a dedicated section
-        services.Configure<BlobStorageOptions>(configuration.GetSection(nameof(BlobStorageOptions)));
+        // Bind BlobStorageOptions / Application logging to a dedicated section
+        services.Configure<BlobStorageOptions>(configuration.GetSection(BlobStorageOptions.SectionName));
 
         return services;
     }
