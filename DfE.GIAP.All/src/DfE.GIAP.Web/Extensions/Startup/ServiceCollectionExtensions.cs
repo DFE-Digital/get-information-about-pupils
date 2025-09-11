@@ -74,7 +74,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddScoped<IMyPupilListService, MyPupilListService>();
         services.AddTransient<IEventLogging, EventLogging>();
-        services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
         return services;
     }

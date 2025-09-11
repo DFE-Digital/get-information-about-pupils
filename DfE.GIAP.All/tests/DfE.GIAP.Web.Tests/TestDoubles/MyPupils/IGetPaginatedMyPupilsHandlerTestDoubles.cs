@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
+﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;

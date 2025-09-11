@@ -19,15 +19,8 @@ public sealed class MyPupilsPupilSelectionState
 
     public IReadOnlyDictionary<UniquePupilNumber, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
 
-    public bool IsPupilSelected(UniquePupilNumber upn)
-    {
-        return _state switch
-        {
-            SelectionState.SelectAll => true,
-            SelectionState.DeselectAll => false,
-            _ => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected
-        };
-    }
+    // Note: A pupil under SelectAll or DeselectAll, may have a manual selection/deselection applied, so is treated as "apply at the point of SelectAll/Deselect", not infer all future SelectionState from it.
+    public bool IsPupilSelected(UniquePupilNumber upn) => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected;
 
     public void SelectAllPupils()
     {
@@ -51,12 +44,17 @@ public sealed class MyPupilsPupilSelectionState
     {
         ArgumentNullException.ThrowIfNull(upns);
 
-        bool selectionValue = IsAllPupilsSelected || (!IsAllPupilsDeselected && isSelected);
-
         foreach (UniquePupilNumber upn in upns)
         {
-            _pupilsToSelectedMap[upn] = selectionValue;
+            _pupilsToSelectedMap[upn] = isSelected;
         }
+    }
+
+    public void RemovePupils(IEnumerable<UniquePupilNumber> upns)
+    {
+        ArgumentNullException.ThrowIfNull(upns);
+
+        upns.ToList().ForEach((upn) => _pupilsToSelectedMap.Remove(upn));
     }
 
     public void ResetState()
