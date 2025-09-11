@@ -73,19 +73,51 @@ internal static class CosmosDbCommandHandlerTestDoubles
         return mockHandler;
     }
 
-    internal static Mock<ICosmosDbCommandHandler> MockForUpsertItemAsyncThrows<TInput>(Exception exception) where TInput : class
+    internal static Mock<ICosmosDbCommandHandler> MockForThrows<TInput>(
+        Action<Mock<ICosmosDbCommandHandler>> setupAction) where TInput : class
     {
         Mock<ICosmosDbCommandHandler> mockHandler = Default();
+        setupAction(mockHandler);
+        return mockHandler;
+    }
 
-        mockHandler
-            .Setup((handler)
-                => handler.UpsertItemAsync(
+    internal static Mock<ICosmosDbCommandHandler> MockForUpsertItemAsyncThrows<TInput>(Exception exception) where TInput : class =>
+        MockForThrows<TInput>(mock =>
+            mock.Setup(handler =>
+                handler.UpsertItemAsync(
+                    It.IsAny<TInput>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>())).ThrowsAsync(exception));
+    
+    internal static Mock<ICosmosDbCommandHandler> MockForCreateNewsArticleAsyncThrows<TInput>(Exception exception) where TInput : class =>
+        MockForThrows<TInput>(mock =>
+            mock.Setup(handler =>
+                handler.CreateItemAsync(
                     It.IsAny<TInput>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>()))
-            .ThrowsAsync(exception);
+            .ThrowsAsync(exception));
 
-        return mockHandler;
-    }
+    internal static Mock<ICosmosDbCommandHandler> MockForDeleteItemAsyncThrows<TInput>(Exception exception) where TInput : class =>
+        MockForThrows<TInput>(mock =>
+            mock.Setup(handler =>
+                handler.DeleteItemAsync<TInput>(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception));
+
+    internal static Mock<ICosmosDbCommandHandler> MockForReplaceItemAsyncThrows<TInput>(Exception exception) where TInput : class =>
+        MockForThrows<TInput>(mock =>
+            mock.Setup(handler =>
+                handler.ReplaceItemAsync<TInput>(
+                    It.IsAny<TInput>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception));
 }

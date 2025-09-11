@@ -82,6 +82,7 @@ public class FELearnerTextSearchController :  Controller
 
     #endregion
 
+    private readonly ISessionProvider _sessionProvider;
     private readonly IDownloadService _downloadService;
     private readonly ILogger<FELearnerTextSearchController> _logger;
     protected readonly ITextSearchSelectionManager _selectionManager;
@@ -104,6 +105,7 @@ public class FELearnerTextSearchController :  Controller
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
 
     public FELearnerTextSearchController(
+        ISessionProvider sessionProvider,
         IUseCase<
             SearchByKeyWordsRequest,
             SearchByKeyWordsResponse> furtherEducationSearchUseCase,
@@ -122,6 +124,8 @@ public class FELearnerTextSearchController :  Controller
            IDownloadService downloadService,
            IOptions<AzureAppSettings> azureAppSettings)
     {
+        _sessionProvider = sessionProvider ??
+            throw new ArgumentNullException(nameof(sessionProvider));
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));
         _downloadService = downloadService ??
@@ -292,8 +296,8 @@ public class FELearnerTextSearchController :  Controller
 
             TempData["ErrorDetails"] = model.ErrorDetails;
 
-            if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-                model.TextSearchViewModel.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
+            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+                model.TextSearchViewModel.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
 
             return await DownloadSelectedFurtherEducationData(model.SelectedPupils, model.TextSearchViewModel?.SearchText);
         }
@@ -339,11 +343,12 @@ public class FELearnerTextSearchController :  Controller
 
         if (returnToSearch ?? false)
         {
-            if (HttpContext.Session.Keys.Contains(SearchSessionKey))
-                model.SearchText = HttpContext.Session.GetString(SearchSessionKey);
+            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+                model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
 
-            if (HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
-                model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
+            if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+                model.SearchFilters =
+                    _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
 
             SetSortOptions(model);
 
@@ -401,8 +406,8 @@ public class FELearnerTextSearchController :  Controller
 
         if (!string.IsNullOrEmpty(sortField) || !string.IsNullOrEmpty(sortDirection))
         {
-            HttpContext.Session.SetString(SortFieldKey, sortField);
-            HttpContext.Session.SetString(SortDirectionKey, sortDirection);
+            _sessionProvider.SetSessionValue(SortFieldKey, sortField);
+            _sessionProvider.SetSessionValue(SortDirectionKey, sortDirection);
         }
 
         SetSortOptions(model);
@@ -426,10 +431,10 @@ public class FELearnerTextSearchController :  Controller
 
         model.ShowMiddleNames = this.ShowMiddleNames;
 
-        HttpContext.Session.SetString(SearchSessionKey, model.SearchText);
+        _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
 
         if (model.SearchFilters != null)
-            HttpContext.Session.SetObject(SearchFiltersSessionKey, model.SearchFilters);
+            _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchFilters);
 
         return View(SearchView, model);
     }
@@ -437,10 +442,12 @@ public class FELearnerTextSearchController :  Controller
     [NonAction]
     public virtual async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
     {
-        if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-            model.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
-        if (this.HttpContext.Session.Keys.Contains(SearchFiltersSessionKey))
-            model.SearchFilters = SessionExtension.GetObject<SearchFilters>(this.HttpContext.Session, SearchFiltersSessionKey);
+        if(_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+
+        if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+            model.SearchFilters =
+                _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
 
         return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
     }
@@ -746,9 +753,9 @@ public class FELearnerTextSearchController :  Controller
     private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
        string surnameFilter, string middlenameFilter, string forenameFilter, string searchByRemove)
     {
-        List<CurrentFilterDetail> currentFilters = !string.IsNullOrEmpty(model.SearchFilters.CurrentFiltersAppliedString)
-                                                   ? JsonSerializer.Deserialize<List<CurrentFilterDetail>>(model.SearchFilters.CurrentFiltersAppliedString)
-                                                   : new List<CurrentFilterDetail>();
+        List<CurrentFilterDetail> currentFilters =
+            !string.IsNullOrEmpty(model.SearchFilters.CurrentFiltersAppliedString)
+                ? JsonSerializer.Deserialize<List<CurrentFilterDetail>>(model.SearchFilters.CurrentFiltersAppliedString) : [];
 
         currentFilters = CheckDobFilter(model, currentFilters);
         currentFilters = CheckGenderFilter(model, currentFilters);
@@ -962,7 +969,6 @@ public class FELearnerTextSearchController :  Controller
         currentFiltersGender.ToList().ForEach(gender =>
                 currentFilters = RemoveFilterValue(gender, currentFilters, model));
 
-
         IEnumerable<string> currentFiltersSex =
             ExtractSexValuesFromCurrentFilterDetail(currentFilters);
 
@@ -1013,16 +1019,17 @@ public class FELearnerTextSearchController :  Controller
 
     private void SetSortOptions(LearnerTextSearchViewModel model)
     {
-        if (this.HttpContext.Session.Keys.Contains(SortDirectionKey))
-            model.SortDirection = this.HttpContext.Session.GetString(SortDirectionKey);
-        if (this.HttpContext.Session.Keys.Contains(SortFieldKey))
-            model.SortField = this.HttpContext.Session.GetString(SortFieldKey);
+        if(_sessionProvider.ContainsSessionKey(SortDirectionKey))
+            model.SortDirection = _sessionProvider.GetSessionValue(SortDirectionKey);
+        
+        if (_sessionProvider.ContainsSessionKey(SortFieldKey))
+            model.SortField = _sessionProvider.GetSessionValue(SortFieldKey);
     }
 
     private void ClearSortOptions()
     {
-        this.HttpContext.Session.Remove(SortDirectionKey);
-        this.HttpContext.Session.Remove(SortFieldKey);
+        _sessionProvider.RemoveSessionValue(SortDirectionKey);
+        _sessionProvider.RemoveSessionValue(SortFieldKey);
     }
 
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)

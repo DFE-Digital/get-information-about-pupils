@@ -1,4 +1,5 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
+﻿using System.Net;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
@@ -176,9 +177,11 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     public async Task CreateNewsArticleAsync_BubblesException_When_CosmosException()
     {
         // Arrange
-        Func<NewsArticleDto> cosmosExceptionGenerator =
-            CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<NewsArticleDto>();
-        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.MockForCreateItemAsync(cosmosExceptionGenerator);
+        Mock<ICosmosDbCommandHandler> mockCommandHandler =
+            CosmosDbCommandHandlerTestDoubles
+            .MockForCreateNewsArticleAsyncThrows<NewsArticleDto>(
+                new CosmosException("Simulated failure", HttpStatusCode.NotFound, 1, "activityId", 1.0));
+
 
         NewsArticleDto? articleDto = NewsArticleDtoTestDoubles.Generate(1).FirstOrDefault();
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(articleDto);
@@ -189,8 +192,7 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
             entityToDtoMapper: mockMapper.Object);
 
         // Act
-        Func<Task> act = () => sut.CreateNewsArticleAsync(NewsArticleTestDoubles.Create());
-
+        Func<Task> act = async () => await sut.CreateNewsArticleAsync(NewsArticleTestDoubles.Create());
 
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);
@@ -246,8 +248,9 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForDeleteItemAsync(
-                CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles
+            .MockForDeleteItemAsyncThrows<NewsArticleDto>(
+                new CosmosException("Simulated failure", HttpStatusCode.NotFound, 1, "activityId", 1.0));
 
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
 
@@ -308,8 +311,9 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForReplaceItemAsync(
-                CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles
+            .MockForReplaceItemAsyncThrows<NewsArticleDto>(
+                new CosmosException("Simulated failure", HttpStatusCode.NotFound, 1, "activityId", 1.0));
 
         NewsArticleDto? articleDto = NewsArticleDtoTestDoubles.Generate(1).FirstOrDefault();
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(articleDto);

@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Models.Common;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -36,13 +36,14 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
 public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
+    private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
     private readonly ILogger<FELearnerTextSearchController> _mockLogger = Substitute.For<ILogger<FELearnerTextSearchController>>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
-    private readonly TestSession _mockSession = new TestSession();
+    //private readonly TestSession _mockSession = new TestSession();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse> _mockUseCase =
@@ -121,8 +122,10 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         // act
         var sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        _sessionProvider.SetSessionValue(sut.SearchSessionKey, searchText);
+        _sessionProvider.SetSessionValue(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        //_mockSession.SetString(sut.SearchSessionKey, searchText);
+        //_mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
         var result = await sut.FurtherEducationNonUlnSearch(false);
 
@@ -169,8 +172,13 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         // act
         FELearnerTextSearchController sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SearchSessionKey)).Returns(searchText);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchFiltersSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
+            .Returns(searchViewModel.SearchFilters);
 
         var result = await sut.FurtherEducationNonUlnSearch(true);
 
@@ -193,7 +201,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     {
         // arrange
         SetupContentServicePublicationSchedule();
-        var searchText = "John Smith";
+        string searchText = "John Smith";
         SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
 
         LearnerTextSearchViewModel searchViewModel =
@@ -209,18 +217,23 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             Arg.Any<LearnerSearchMappingContext>()).Returns(searchViewModel);
 
         // act
-        var sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        FELearnerTextSearchController sut = GetController();
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SearchSessionKey)).Returns(searchText);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchFiltersSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
+            .Returns(searchViewModel.SearchFilters);
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        var result = await sut.FurtherEducationNonUlnSearch(true);
+        IActionResult result = await sut.FurtherEducationNonUlnSearch(true);
 
         // assert
-        var viewResult = Assert.IsType<ViewResult>(result);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        var model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(ApplicationLabels.DownloadSelectedFurtherEducationLink, model.DownloadSelectedLink);
     }
 
@@ -1024,6 +1037,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 SearchText = searchText,
                 SearchFilters = searchFilters,
                 Learners = _paginatedResultsFake.GetValidLearners().Learners,
+                SortDirection = sortDirection,
+                SortField = sortField
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
@@ -1035,22 +1050,29 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchByRemove = null!;
 
         // act
-        var sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        FELearnerTextSearchController sut = GetController();
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SearchSessionKey)).Returns(searchText);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchFiltersSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
+            .Returns(searchViewModel.SearchFilters);
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        var result = await sut.FurtherEducationNonUlnSearch(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, sortField, sortDirection);
+        IActionResult result =
+            await sut.FurtherEducationNonUlnSearch(
+                searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, sortField, sortDirection);
 
         // assert
         Assert.IsType<ViewResult>(result);
-        var viewResult = result as ViewResult;
+        ViewResult? viewResult = result as ViewResult;
 
         Assert.True(viewResult.ViewName.Equals(Global.NonUpnSearchView));
 
         Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        var model = viewResult.Model as LearnerTextSearchViewModel;
+        LearnerTextSearchViewModel? model = viewResult.Model as LearnerTextSearchViewModel;
 
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
@@ -1087,25 +1109,35 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string sortDirection = "asc";
 
         // act
-        var sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        FELearnerTextSearchController sut = GetController();
 
-        _mockSession.SetString(sut.SortDirectionKey, sortDirection);
-        _mockSession.SetString(sut.SortFieldKey, sortField);
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SearchSessionKey)).Returns(searchText);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchFiltersSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
+            .Returns(searchViewModel.SearchFilters);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SortDirectionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SortDirectionKey)).Returns(sortDirection);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SortFieldKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SortFieldKey)).Returns(sortField);
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        var result = await sut.FurtherEducationNonUlnSearch(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
+        IActionResult result =
+            await sut.FurtherEducationNonUlnSearch(
+                searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
 
         // assert
         Assert.IsType<ViewResult>(result);
-        var viewResult = result as ViewResult;
+        ViewResult? viewResult = result as ViewResult;
 
         Assert.True(viewResult.ViewName.Equals(Global.NonUpnSearchView));
 
         Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        var model = viewResult.Model as LearnerTextSearchViewModel;
+        LearnerTextSearchViewModel? model = viewResult.Model as LearnerTextSearchViewModel;
 
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
@@ -1146,11 +1178,19 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         // act
         FELearnerTextSearchController sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
-        _mockSession.SetString(sut.SortDirectionKey, sortDirection);
-        _mockSession.SetString(sut.SortFieldKey, sortField);
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SearchSessionKey)).Returns(searchText);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SearchFiltersSessionKey)).Returns(true);
+        _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
+            .Returns(searchViewModel.SearchFilters);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SortDirectionKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SortDirectionKey)).Returns(sortDirection);
+
+        _sessionProvider.ContainsSessionKey(Arg.Is(sut.SortFieldKey)).Returns(true);
+        _sessionProvider.GetSessionValue(Arg.Is(sut.SortFieldKey)).Returns(sortField);
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -1200,11 +1240,14 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         // act
         var sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-
-        _mockSession.SetString(sut.SortDirectionKey, sortDirection);
-        _mockSession.SetString(sut.SortFieldKey, sortField);
+        //_mockSession.SetString(sut.SearchSessionKey, searchText);
+        //_mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        _sessionProvider.SetSessionValue(sut.SearchSessionKey, searchText);
+        _sessionProvider.SetSessionValue(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
+        //_mockSession.SetString(sut.SortDirectionKey, sortDirection);
+        //_mockSession.SetString(sut.SortFieldKey, sortField);
+        _sessionProvider.SetSessionValue(sut.SortDirectionKey, sortDirection);
+        _sessionProvider.SetSessionValue(sut.SortFieldKey, sortField);
 
         sut.ControllerContext.HttpContext.Request.Query = Substitute.For<IQueryCollection>();
         sut.ControllerContext.HttpContext.Request.Query.ContainsKey("reset").Returns(true);
@@ -1240,8 +1283,10 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        _mockSession.SetString(sut.SortDirectionKey, "asc");
-        _mockSession.SetString(sut.SortFieldKey, "Forename");
+        //_mockSession.SetString(sut.SortDirectionKey, "asc");
+        //_mockSession.SetString(sut.SortFieldKey, "Forename");
+        _sessionProvider.SetSessionValue(sut.SortDirectionKey, "asc");
+        _sessionProvider.SetSessionValue(sut.SortFieldKey, "Forename");
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -1277,8 +1322,11 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         sut.TempData = mockTempDataDictionary;
 
         // act
-        _mockSession.SetString(sut.SortDirectionKey, "asc");
-        _mockSession.SetString(sut.SortFieldKey, "Forename");
+        //_mockSession.SetString(sut.SortDirectionKey, "asc");
+        //_mockSession.SetString(sut.SortFieldKey, "Forename");
+        _sessionProvider.SetSessionValue(sut.SortDirectionKey, "asc");
+        _sessionProvider.SetSessionValue(sut.SortFieldKey, "Forename");
+
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -1356,10 +1404,11 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         _mockAppOptions.Value.Returns(_mockAppSettings);
 
-        var httpContextStub = new DefaultHttpContext() { User = user, Session = _mockSession };
+        var httpContextStub = new DefaultHttpContext() { User = user, Session = new Mock<ISession>().Object };
         var mockTempData = new TempDataDictionary(httpContextStub, _mockTempDataProvider);
 
         return new FELearnerTextSearchController(
+            _sessionProvider,
             _mockUseCase,
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
