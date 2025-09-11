@@ -56,14 +56,14 @@ public sealed class LearnerSearchResponseToViewModelMapper :
 
         // Map each learner from domain to view model using the injected learner mapper.
         List<Learner> learners =
-            input.Response.LearnerSearchResults.LearnerCollection
+            [.. input.Response.LearnerSearchResults.LearnerCollection
                 .Select(_furtherEducationLearnerToViewModelMapper.Map)
-                .ToList();
+            ];
 
         // Apply result limit if the total exceeds the configured maximum.
         input.Model.Learners =
             input.Response.TotalNumberOfResults > input.Model.MaximumResults
-                ? learners.Take(input.Model.MaximumResults).ToList()
+                ? [.. learners.Take(input.Model.MaximumResults)]
                 : learners;
 
         // Populate meta-data fields for pagination and UI messaging.
