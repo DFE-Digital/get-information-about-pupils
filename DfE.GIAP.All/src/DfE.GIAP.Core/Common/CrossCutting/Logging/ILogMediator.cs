@@ -6,18 +6,18 @@ public interface ILogMediator
 
 public class LogMediator : ILogMediator
 {
-    private readonly IEnumerable<ILogRouter> _routers;
+    private readonly IEnumerable<ILogEventHandler> _handlers;
 
-    public LogMediator(IEnumerable<ILogRouter> routers)
+    public LogMediator(IEnumerable<ILogEventHandler> handlers)
     {
-        _routers = routers;
+        _handlers = handlers;
     }
 
-    public void Publish(LogEntry entry)
+    public void Publish(LogEntry logEntry)
     {
-        foreach (ILogRouter router in _routers)
+        foreach (ILogEventHandler handler in _handlers)
         {
-            router.Route(entry);
+            handler.Handle(logEntry);
         }
     }
 }

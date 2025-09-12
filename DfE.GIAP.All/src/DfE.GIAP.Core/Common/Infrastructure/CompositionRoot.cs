@@ -42,30 +42,14 @@ internal static class CompositionRoot
 
         services.AddSingleton<ILoggerService, LoggerService>();
 
-        services.AddSingleton<ILogRouter, LogRouter>();
         services.AddSingleton<ILogMediator, LogMediator>();
 
-        services.AddSingleton<ILogSink, AzureApplicationInsightsSink>();
-        services.AddSingleton<ILogSink, ConsoleSink>();
+        services.AddSingleton<ILogEventHandler, TraceLogRouter>();
+        services.AddSingleton<ILogEventHandler, BusinessEventRouter>();
 
-        return services;
-    }
-
-
-    internal static IServiceCollection AddConsoleSink(this IServiceCollection services)
-    {
-        //services.Configure<ConsoleSinkOptions>(config.GetSection("Logging:Console"));
-        // example: register other console related config or logic here, file paths ect
-        services.TryAddSingleton<ILogSink, ConsoleSink>();
-
-        return services;
-    }
-
-    internal static IServiceCollection AddAzureAppInsightsSink(this IServiceCollection services)
-    {
-        // services.Configure<AzureSinkOptions>(config.GetSection("Logging:Azure"));
-        // exmaple: register app insights here
-        services.TryAddSingleton<ILogSink, AzureApplicationInsightsSink>();
+        services.AddSingleton<ITraceSink, AzureApplicationInsightTraceSink>();
+        services.AddSingleton<ITraceSink, ConsoleTraceLogSink>();
+        services.AddSingleton<IBusinessEventSink, AzureApplicationInsightEventSink>();
 
         return services;
     }

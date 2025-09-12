@@ -1,15 +1,9 @@
-﻿using DfE.GIAP.Core.Common.Domain;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
-
-// Domain/Application
-public enum LogLevel { Verbose, Debug, Information, Warning, Error, Critical }
-public record LogEntry(LogLevel Level, string Message, Exception? Exception = null, object? Context = null, DateTime? Timestamp = null);
-
-// Application
 public interface ILoggerService
 {
-    public void Log(LogLevel level, string message, Exception? ex = null);
+    void LogTrace(LogLevel level, string message, string? category = null, Exception? ex = null, object? context = null);
+    void LogBusinessEvent(string message, string? category = null, object? context = null);
 }
 
 // Application
@@ -22,9 +16,15 @@ public class LoggerService : ILoggerService
         _mediator = mediator;
     }
 
-    public void Log(LogLevel level, string message, Exception? ex = null)
+    public void LogTrace(LogLevel level, string message, string? category = null, Exception? ex = null, object? context = null)
     {
-        LogEntry entry = new LogEntry(level, message, ex, Timestamp: DateTime.UtcNow);
+        LogEntry entry = LogEntryFactory.CreateTrace(level, message, category, ex, context);
+        _mediator.Publish(entry);
+    }
+
+    public void LogBusinessEvent(string message, string? category = null, object? context = null)
+    {
+        LogEntry entry = LogEntryFactory.CreateBusinessEvent(message, category, context);
         _mediator.Publish(entry);
     }
 }

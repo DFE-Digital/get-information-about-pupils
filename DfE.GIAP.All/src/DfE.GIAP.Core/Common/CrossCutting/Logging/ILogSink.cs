@@ -1,4 +1,5 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using DfE.GIAP.Core.Common.Domain;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
@@ -6,12 +7,17 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 // Application
 public interface ILogSink
 {
+    string Name { get; }
     public void Log(LogEntry logEntry);
 }
+public interface ITraceSink : ILogSink { }
+public interface IBusinessEventSink : ILogSink { }
+
 
 // Infrastructure
-public class ConsoleSink : ILogSink
+public class ConsoleTraceLogSink : ITraceSink
 {
+    public string Name => "ConsoleTrace";
     public void Log(LogEntry logEntry)
     {
         ConsoleColor originalColor = Console.ForegroundColor;
@@ -39,11 +45,12 @@ public class ConsoleSink : ILogSink
 }
 
 // Infrastructure
-public class AzureApplicationInsightsSink : ILogSink
+public class AzureApplicationInsightTraceSink : ITraceSink
 {
+    public string Name => "AzureAppInsightTrace";
     private readonly TelemetryClient _telemetryClient;
 
-    public AzureApplicationInsightsSink(TelemetryClient telemetryClient)
+    public AzureApplicationInsightTraceSink(TelemetryClient telemetryClient)
     {
         _telemetryClient = telemetryClient;
     }
@@ -73,3 +80,23 @@ public class AzureApplicationInsightsSink : ILogSink
     };
 }
 
+public class AzureApplicationInsightEventSink : IBusinessEventSink
+{
+    public string Name => "AzureAppInsightBusiness";
+    private readonly TelemetryClient _telemetryClient;
+
+    public AzureApplicationInsightEventSink(TelemetryClient telemetryClient)
+    {
+        _telemetryClient = telemetryClient;
+    }
+
+    public void Log(LogEntry logEntry)
+    {
+        Dictionary<string, string> properties = new()
+        {
+            { "LogLevel", logEntry.Level.ToString() },
+            { "Context", logEntry.Context?.ToString() ?? "None" }
+        };
+        _telemetryClient.TrackEvent(logEntry.Message, properties);
+    }
+}

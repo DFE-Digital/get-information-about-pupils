@@ -20,12 +20,14 @@ internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileReques
     public async Task<DownloadPreparedFileResponse> HandleRequestAsync(DownloadPreparedFileRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        _logger.Log(LogLevel.Verbose, "Verbose Log");
-        _logger.Log(LogLevel.Debug, "Debug Log");
-        _logger.Log(LogLevel.Information, "Information Log");
-        _logger.Log(LogLevel.Warning, "Warning Log");
-        _logger.Log(LogLevel.Error, "Error Log");
-        _logger.Log(LogLevel.Critical, "Critical Log");
+        _logger.LogTrace(LogLevel.Verbose, "Verbose Log");
+        _logger.LogTrace(LogLevel.Debug, "Debug Log");
+        _logger.LogTrace(LogLevel.Information, "Information Log");
+        _logger.LogTrace(LogLevel.Warning, "Warning Log");
+        _logger.LogTrace(LogLevel.Error, "Error Log");
+        _logger.LogTrace(LogLevel.Critical, "Critical Log");
+
+        _logger.LogBusinessEvent("Business Event Log");
 
         string directory = request.PathContext.ResolvePath();
         Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("giapdownloads", $"{directory}{request.FileName}");
