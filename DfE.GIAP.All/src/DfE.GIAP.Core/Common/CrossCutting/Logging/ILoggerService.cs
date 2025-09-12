@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+﻿using DfE.GIAP.Core.Common.Domain;
+
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 // Domain/Application
 public enum LogLevel { Verbose, Debug, Information, Warning, Error, Critical }
@@ -13,17 +15,16 @@ public interface ILoggerService
 // Application
 public class LoggerService : ILoggerService
 {
-    // dispatch event -> subscribers -> router -> sinks
-    private readonly ILogRouter _router;
+    private readonly ILogMediator _mediator;
 
-    public LoggerService(ILogRouter router)
+    public LoggerService(ILogMediator mediator)
     {
-        _router = router;
+        _mediator = mediator;
     }
 
     public void Log(LogLevel level, string message, Exception? ex = null)
     {
-        LogEntry log = new(level, message, ex, Timestamp: DateTime.UtcNow);
-        _router.Route(log);
+        LogEntry entry = new LogEntry(level, message, ex, Timestamp: DateTime.UtcNow);
+        _mediator.Publish(entry);
     }
 }

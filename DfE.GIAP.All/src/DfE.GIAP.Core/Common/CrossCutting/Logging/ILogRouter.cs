@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+
 public interface ILogRouter
 {
     void Route(LogEntry entry);
@@ -8,24 +9,21 @@ public interface ILogRouter
 
 public class LogRouter : ILogRouter
 {
-    private readonly IDictionary<string, SinkConfig> _sinkConfigs;
-    private readonly IDictionary<string, ILogSink> _sinkInstances;
+    private readonly IDictionary<string, SinkConfig> _configs;
+    private readonly IDictionary<string, ILogSink> _sinks;
 
     public LogRouter(IOptions<LoggingOptions> options, IEnumerable<ILogSink> sinks)
     {
-        _sinkConfigs = options.Value.Sinks;
-        _sinkInstances = sinks.ToDictionary(s => s.GetType().Name.Replace("Sink", ""), StringComparer.OrdinalIgnoreCase);
+        _configs = options.Value.Sinks;
+        _sinks = sinks.ToDictionary(s => s.GetType().Name.Replace("Sink", ""), StringComparer.OrdinalIgnoreCase);
     }
 
     public void Route(LogEntry entry)
     {
-        foreach (KeyValuePair<string, SinkConfig> kvp in _sinkConfigs)
+        foreach (KeyValuePair<string, SinkConfig> kvp in _configs)
         {
-            string sinkName = kvp.Key;
-            SinkConfig config = kvp.Value;
-
-            if (_sinkInstances.TryGetValue(sinkName, out ILogSink? sink) &&
-                config.AcceptedLogLevels.Contains(entry.Level))
+            if (_sinks.TryGetValue(kvp.Key, out ILogSink? sink) &&
+                kvp.Value.AcceptedLogLevels.Contains(entry.Level))
             {
                 sink.Log(entry);
             }
