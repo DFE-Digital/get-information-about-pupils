@@ -1,5 +1,7 @@
 ﻿using Azure.Storage.Blobs;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -29,6 +31,25 @@ internal static class CompositionRoot
             BlobServiceClient blobServiceClient = new(connectionString);
             return new AzureBlobStorageProvider(blobServiceClient);
         });
+
+        return services;
+    }
+
+    // TODO: Thrown together, sort later
+    internal static IServiceCollection AddCustomLogging(this IServiceCollection services, IConfiguration configuration)
+    {
+        LoggingOptions options = configuration.GetSection(LoggingOptions.SectionName).Get<LoggingOptions>();
+
+        services.AddSingleton<ILoggerService, LoggerService>();
+
+        services.AddSingleton<ILogMediator, LogMediator>();
+
+        services.AddSingleton<ILogEventHandler, TraceLogRouter>();
+        services.AddSingleton<ILogEventHandler, BusinessEventRouter>();
+
+        services.AddSingleton<ITraceSink, AzureApplicationInsightTraceSink>();
+        services.AddSingleton<ITraceSink, ConsoleTraceLogSink>();
+        services.AddSingleton<IBusinessEventSink, AzureApplicationInsightEventSink>();
 
         return services;
     }
