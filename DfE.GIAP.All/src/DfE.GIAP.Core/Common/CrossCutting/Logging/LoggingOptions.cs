@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.Infrastructure.Logging;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 public class LoggingOptions
 {

@@ -1,6 +1,6 @@
 ﻿using Azure.Storage.Blobs;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Core.Common.Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -39,23 +39,13 @@ internal static class CompositionRoot
     internal static IServiceCollection AddCustomLogging(this IServiceCollection services, IConfiguration configuration)
     {
         LoggingOptions options = configuration.GetSection(LoggingOptions.SectionName).Get<LoggingOptions>();
-        Dictionary<string, SinkConfig> sinks = options?.Sinks ?? new();
 
-        foreach ((string sinkName, _) in sinks)
-        {
-            switch (sinkName)
-            {
-                case "Console":
-                    services.AddConsoleSink();
-                    break;
+        services.AddSingleton<ILogSink, ConsoleSink>();
+        services.AddSingleton<ILogSink, AzureApplicationInsightsSink>();
 
-                case "AzureAppInsight":
-                    services.AddAzureAppInsightsSink();
-                    break;
-            }
-        }
+        services.AddSingleton<ILogRouter, LogRouter>();
+        services.AddSingleton<ILoggerService, LoggerService>();
 
-        services.TryAddSingleton<ILoggerService, LoggerService>();
         return services;
     }
 

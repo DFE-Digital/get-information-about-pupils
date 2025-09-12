@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Core.Common.Infrastructure.Logging;
 
 namespace DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>

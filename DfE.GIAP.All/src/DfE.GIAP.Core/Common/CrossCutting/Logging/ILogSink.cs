@@ -1,33 +1,23 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.Common.Infrastructure.Logging;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
+// Application
 public interface ILogSink
 {
     public void Log(LogEntry logEntry);
 }
 
+// Infrastructure
 public class ConsoleSink : ILogSink
 {
-    private readonly IEnumerable<LogLevel> _acceptedLevels;
-    private readonly ILogFormatter _formatter;
-
-    public ConsoleSink(IOptions<LoggingOptions> options, ILogFormatter formatter)
-    {
-        _acceptedLevels = options.Value?.Sinks["Console"]?.AcceptedLogLevels ?? new();
-        _formatter = formatter;
-    }
-
     public void Log(LogEntry logEntry)
     {
-        if (!_acceptedLevels.Contains(logEntry.Level)) return;
-
         ConsoleColor originalColor = Console.ForegroundColor;
         Console.ForegroundColor = GetLogLevelColor(logEntry.Level);
 
-        Console.WriteLine($"[{logEntry.Timestamp:HH:mm:ss} {logEntry.Level.ToString().ToUpper()} {logEntry.Message}]");
+        Console.WriteLine($"[{logEntry.Timestamp:HH:mm:ss} {logEntry.Level.ToString().ToUpper()}] {logEntry.Message}");
         if (logEntry.Exception is not null)
         {
             Console.WriteLine(logEntry.Exception);
@@ -48,30 +38,26 @@ public class ConsoleSink : ILogSink
     };
 }
 
+// Infrastructure
 public class AzureApplicationInsightsSink : ILogSink
 {
-    private readonly IEnumerable<LogLevel> _acceptedLevels;
     private readonly TelemetryClient _telemetryClient;
 
-    public AzureApplicationInsightsSink(IOptions<LoggingOptions> options, TelemetryClient telemetryClient)
+    public AzureApplicationInsightsSink(TelemetryClient telemetryClient)
     {
-        _acceptedLevels = options.Value.Sinks["AzureAppInsight"]?.AcceptedLogLevels ?? new();
         _telemetryClient = telemetryClient;
     }
 
-
     public void Log(LogEntry logEntry)
     {
-        if (!_acceptedLevels.Contains(logEntry.Level)) return;
-
         if (logEntry.Exception is not null)
         {
             _telemetryClient.TrackException(logEntry.Exception);
         }
         else
         {
-            TraceTelemetry telemetryLog = new(logEntry.Message, ToSeverityLevel(logEntry.Level));
-            _telemetryClient.TrackTrace(telemetryLog);
+            TraceTelemetry telemetry = new TraceTelemetry(logEntry.Message, ToSeverityLevel(logEntry.Level));
+            _telemetryClient.TrackTrace(telemetry);
         }
     }
 
@@ -86,3 +72,4 @@ public class AzureApplicationInsightsSink : ILogSink
         _ => SeverityLevel.Information,
     };
 }
+
