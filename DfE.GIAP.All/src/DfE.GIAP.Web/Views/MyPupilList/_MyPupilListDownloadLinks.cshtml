@@ -2,50 +2,5 @@
 @model MyPupilsViewModel
 @if (Model.HasPupils)
 {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-            <button
-                id="search--download--as--CTF--link"
-                name="downloadASCTF"
-                value="selected"
-                type="submit"
-                class="govuk-list webapp-button-as-link"
-                asp-controller="@Model.DownloadController"
-                asp-action="ToDownloadCommonTransferFileData"
-                asp-route-pageNumber="@Model.PageNumber"
-                asp-route-sortField="@Model.SortField"
-                asp-route-sortDirection="@Model.SortDirection">@ApplicationLabels.DownloadSelectedAsCtfLink</button>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <button
-                id="download--selected--npd--data--link"
-                type="submit"
-                class="govuk-list webapp-button-as-link"
-                asp-controller="@Model.DownloadController"
-                asp-action="ToDownloadSelectedNPDDataUPN">@ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink</button>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <button
-                id="download--selected--pp--data--link"
-                type="submit"
-                class="govuk-list webapp-button-as-link"
-                asp-controller="@Model.DownloadController"
-                asp-action="ToDownloadSelectedPupilPremiumDataUPN"
-                asp-route-pageNumber="@Model.PageNumber"
-                asp-route-sortField="@Model.SortField"
-                asp-route-sortDirection="@Model.SortDirection">@ApplicationLabels.DownloadSelectedPupilPremiumDataLink</button>
-        </div>
-        <div class="govuk-grid-column-one-quarter">
-            <button
-                id="remove--selected--data--link"
-                type="submit"
-                class="govuk-list webapp-button-as-link"
-                asp-controller="@Model.DeleteMyPupilsController"
-                asp-action="Delete"
-                asp-route-pageNumber="@Model.PageNumber"
-                asp-route-sortField="@Model.SortField"
-                asp-route-sortDirection="@Model.SortDirection">@ApplicationLabels.RemoveSelectedToMyPupilListLink
-            </button>
-        </div>
-    </div>
+
 }

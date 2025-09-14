@@ -32,5 +32,4 @@ public sealed class MyPupilsViewModel
     public string UniquePupilNumberLabel => "UPN";
     public bool DisplayPreviousPageNumber => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
     public bool IsMorePageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
-    public bool IsNoPupilsRemaining => Pupils.Count == 0;
 }

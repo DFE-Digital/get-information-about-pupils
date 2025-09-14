@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Routes;
 
-[Route(Constants.Routes.Application.MyPupilList)]
+[Route(Constants.Routes.MyPupilList.MyPupils)]
 public class MyPupilsController : Controller
 {
     private readonly ILogger<MyPupilsController> _logger;

@@ -14,7 +14,7 @@ using NuGet.Packaging;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
 
-[Route(Constants.Routes.Application.MyPupilList)]
+[Route(Constants.Routes.MyPupilList.MyPupils)]
 public class MyPupilsUpdateFormController : Controller
 {
     private readonly ILogger<MyPupilsUpdateFormController> _logger;

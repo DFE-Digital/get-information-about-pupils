@@ -21,7 +21,7 @@ using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Routes;
 
-[Route(Constants.Routes.Application.MyPupilList)]
+[Route(Constants.Routes.MyPupilList.MyPupils)]
 public class MyPupilsDownloadController : Controller
 {
     private readonly ILogger<MyPupilsDownloadController> _logger;
@@ -85,14 +85,21 @@ public class MyPupilsDownloadController : Controller
     [Route(Constants.Routes.DownloadSelectedNationalPupilDatabaseData)]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(string selectedPupilsJoined)
     {
+        string[] selectedPupils = selectedPupilsJoined.Split(',');
+
         LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupilsJoined,
             ErrorDetails = (string)TempData["ErrorDetails"],
-            SelectedPupilsCount = selectedPupilsJoined.Length,
+            SelectedPupilsCount = selectedPupils.Length,
             DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true
+            ShowTABDownloadType = true,
+            DownloadRoute = Constants.Routes.NationalPupilDatabase.LearnerNumberDownloadFile,
+            SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
         };
+
+        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
+        searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
 
         SearchDownloadHelper.AddDownloadDataTypes(
             searchDownloadViewModel,
@@ -102,16 +109,14 @@ public class MyPupilsDownloadController : Controller
             User.IsOrganisationLocalAuthority(),
             User.IsOrganisationAllAges());
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
         ModelState.Clear();
-        searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
-        searchDownloadViewModel.SearchAction = "MyPupilList";
-        searchDownloadViewModel.DownloadRoute = Constants.Routes.NationalPupilDatabase.LearnerNumberDownloadFile;
 
-        string[] selectedPupils = selectedPupilsJoined.Split(',');
+        
+
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
             string[] downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
+
             IEnumerable<CheckDownloadDataType> disabledTypes = await _downloadService.CheckForNoDataAvailable(
                 selectedPupils,
                 selectedPupils,
@@ -122,8 +127,6 @@ public class MyPupilsDownloadController : Controller
 
             SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
         }
-
-        searchDownloadViewModel.SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading;
 
         return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
     }
@@ -203,17 +206,19 @@ public class MyPupilsDownloadController : Controller
         if (allSelectedPupils.IsEmpty)
         {
             MyPupilsErrorViewModel error = new(Messages.Common.Errors.NoPupilsSelected);
+
             MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
-            return base.View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
+
+            return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
-        if (downloadType == DownloadType.CTF &&
-            allSelectedPupilsInput.Length > _appSettings.CommonTransferFileUPNLimit)
+        if (downloadType == DownloadType.CTF && allSelectedPupilsInput.Length > _appSettings.CommonTransferFileUPNLimit)
         {
             MyPupilsErrorViewModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
-            await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
 
-            return View(Constants.Routes.MyPupilList.MyPupilListView, error);
+            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
+
+            return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
         if (downloadType == DownloadType.CTF)
@@ -235,6 +240,7 @@ public class MyPupilsDownloadController : Controller
             }
 
             MyPupilsErrorViewModel noDataAvailableError = new(Messages.Downloads.Errors.NoDataForSelectedPupils);
+
             MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error: noDataAvailableError);
 
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
@@ -282,7 +288,6 @@ public class MyPupilsDownloadController : Controller
 
         MyPupilsErrorViewModel unknownDownloadTypeError = new MyPupilsErrorViewModel(Messages.Downloads.Errors.UnknownDownloadType);
         MyPupilsViewModel errorViewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, unknownDownloadTypeError);
-
         return View(Constants.Routes.MyPupilList.MyPupilListView, errorViewModel);
     }
 }
