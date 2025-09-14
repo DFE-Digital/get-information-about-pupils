@@ -12,4 +12,9 @@ public sealed class UniquePupilNumbers
     public int Count => _uniquePupilNumbers.Count;
     public bool IsEmpty => Count == 0;
     public IReadOnlyList<UniquePupilNumber> GetUniquePupilNumbers() => _uniquePupilNumbers.AsReadOnly();
+    public void Add(IEnumerable<UniquePupilNumber> upns)
+    {
+        ArgumentNullException.ThrowIfNull(upns);
+        _uniquePupilNumbers.AddRange(upns);
+    }
 }

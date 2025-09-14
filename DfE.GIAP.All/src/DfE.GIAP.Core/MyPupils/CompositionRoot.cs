@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
@@ -40,6 +41,7 @@ public static class CompositionRoot
     {
         services
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
+            .AddScoped<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>, AddPupilsToMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, MyPupilDto>, MapPupilToPupilDtoMapper>()
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, TempAggregatePupilsForMyPupilsApplicationService>()

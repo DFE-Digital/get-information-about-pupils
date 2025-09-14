@@ -5,5 +5,5 @@ namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 
 public interface IMyPupilsWriteOnlyRepository
 {
-    Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils);
+    Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils, CancellationToken ctx = default);
 }

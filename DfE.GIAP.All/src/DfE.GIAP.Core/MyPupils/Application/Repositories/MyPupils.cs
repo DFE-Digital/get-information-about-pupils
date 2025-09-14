@@ -5,8 +5,8 @@ public record MyPupils
 {
     public MyPupils(UniquePupilNumbers pupilNumbers)
     {
-        ArgumentNullException.ThrowIfNull(pupilNumbers);
-        Pupils = pupilNumbers;
+        Pupils = pupilNumbers
+            ?? new UniquePupilNumbers([]);
     }
 
     public UniquePupilNumbers Pupils { get; init; }

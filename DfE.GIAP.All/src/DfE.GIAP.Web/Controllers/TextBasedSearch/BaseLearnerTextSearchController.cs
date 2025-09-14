@@ -3,7 +3,11 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
@@ -116,7 +120,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (returnToSearch ?? false)
         {
-            if(_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
             {
                 model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
             }
@@ -214,12 +218,12 @@ public abstract class BaseLearnerTextSearchController : Controller
         model.ShowMiddleNames = ShowMiddleNames;
 
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
-        
+
         if (model.SearchFilters != null)
         {
             _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
         }
-        
+
         return View(SearchView, model);
     }
 
@@ -234,7 +238,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
         }
-        
+
         return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
     }
 
@@ -530,7 +534,7 @@ public abstract class BaseLearnerTextSearchController : Controller
             model.PageLearnerNumbers.Split(','),
             model.SelectedPupil);
 
-        var selected = GetSelected();
+        string selected = GetSelected();
 
         if (string.IsNullOrEmpty(selected))
         {
@@ -540,7 +544,7 @@ public abstract class BaseLearnerTextSearchController : Controller
             return await ReturnToSearch(model);
         }
 
-        var learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
+        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
 
         if (learnerList.Count() + 1 > MyPupilListLimit)
         {
@@ -555,7 +559,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
             if (!ValidationHelper.IsValidUpn(selected))
             {
-                var invalidViewModel = new InvalidLearnerNumberSearchViewModel()
+                InvalidLearnerNumberSearchViewModel invalidViewModel = new()
                 {
                     LearnerNumber = selected
                 };
@@ -563,7 +567,7 @@ public abstract class BaseLearnerTextSearchController : Controller
                 return await InvalidUPNs(invalidViewModel);
             }
 
-            var learnerListUpdate = learnerList.ToList();
+            List<MyPupilListItem> learnerListUpdate = learnerList.ToList();
             learnerListUpdate.Add(new MyPupilListItem(selected, true));
             learnerList = learnerListUpdate;
 

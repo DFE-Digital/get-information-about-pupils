@@ -5,8 +5,6 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
