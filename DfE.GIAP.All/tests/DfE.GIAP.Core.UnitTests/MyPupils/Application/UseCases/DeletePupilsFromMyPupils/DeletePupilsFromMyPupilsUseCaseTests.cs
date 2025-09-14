@@ -32,8 +32,10 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         // Assert
         writeRepoMock.Verify(repo =>
             repo.SaveMyPupilsAsync(
-                user.UserId, It.Is<UniquePupilNumbers>(upns => !upns.GetUniquePupilNumbers().Any())),
-                    Times.Once);
+                user.UserId,
+                It.Is<UniquePupilNumbers>(upns => !upns.GetUniquePupilNumbers().Any()),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
 
         readRepositoryMock.VerifyNoOtherCalls();
     }
@@ -77,7 +79,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         mockWriteRepository.Verify(repo =>
             repo.SaveMyPupilsAsync(
                 userId,
-                It.Is<UniquePupilNumbers>(list => list.GetUniquePupilNumbers().SequenceEqual(expectedListAfterDelete))),
+                It.Is<UniquePupilNumbers>(list => list.GetUniquePupilNumbers().SequenceEqual(expectedListAfterDelete)),
+                It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -121,7 +124,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         mockWriteRepository.Verify(repo =>
             repo.SaveMyPupilsAsync(
                 userId,
-                It.IsAny<UniquePupilNumbers>()),
+                It.IsAny<UniquePupilNumbers>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

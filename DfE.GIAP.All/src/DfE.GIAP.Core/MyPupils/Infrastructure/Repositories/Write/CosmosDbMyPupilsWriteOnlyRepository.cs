@@ -29,19 +29,22 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
         _mapToDto = mapToDto;
     }
 
-    public async Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils)
+    public async Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils, CancellationToken ctx = default)
     {
         try
         {
             ArgumentNullException.ThrowIfNull(userId);
 
             MyPupilsDocumentDto updatedDocument = _mapToDto.Map(
-                new MyPupilsDocumentDtoMappable(userId, updatedMyPupils));
+                input: new MyPupilsDocumentDtoMappable(
+                        userId,
+                        updatedMyPupils));
 
             await _cosmosDbCommandHandler.UpsertItemAsync(
                 item: updatedDocument,
                 containerKey: "mypupils",
-                partitionKeyValue: userId.Value);
+                partitionKeyValue: userId.Value,
+                ctx);
         }
         catch (CosmosException)
         {
