@@ -6,4 +6,5 @@ namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 public record DeletePupilsFromMyPupilsRequest(
     UserId UserId,
     IEnumerable<UniquePupilNumber> DeletePupilUpns,
-    bool DeleteAll) : IUseCaseRequest;
+    bool DeleteAll,
+    CancellationToken CancellationToken) : IUseCaseRequest;

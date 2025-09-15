@@ -57,7 +57,7 @@ public class MyPupilsDeletePupilsController : Controller
     // TODO test deselection one, across pages
 
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] List<string> SelectedPupils)
+    public async Task<IActionResult> Delete([FromForm] List<string> SelectedPupils, CancellationToken ctx)
     {
         _logger.LogInformation("Remove from my pupil list POST method is called");
 
@@ -98,7 +98,8 @@ public class MyPupilsDeletePupilsController : Controller
         DeletePupilsFromMyPupilsRequest deleteRequest = new(
                 UserId: userId,
                 DeletePupilUpns: deletePupilUpns,
-                DeleteAll: isDeleteAllPupils);
+                DeleteAll: isDeleteAllPupils,
+                CancellationToken: CancellationToken.None);
 
         await _deleteMyPupilsUseCase.HandleRequestAsync(deleteRequest);
 

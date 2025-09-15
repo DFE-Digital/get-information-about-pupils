@@ -11,11 +11,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -55,9 +51,6 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilDto>>());
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
-        Assert.NotNull(provider.GetService<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>>());
-        Assert.NotNull(provider.GetService<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>>());
-
         Assert.NotNull(provider.GetService<IMyPupilsWriteOnlyRepository>());
 
         Assert.NotNull(provider.GetService<ISearchClientProvider>());

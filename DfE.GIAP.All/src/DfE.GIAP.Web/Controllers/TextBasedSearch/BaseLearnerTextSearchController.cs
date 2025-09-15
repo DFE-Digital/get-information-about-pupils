@@ -1,15 +1,20 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Text.Json;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
@@ -22,9 +27,6 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Text.Json;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
@@ -39,6 +41,7 @@ public abstract class BaseLearnerTextSearchController : Controller
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
+    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IMyPupilListService _mplService;
     protected readonly AzureAppSettings _appSettings;
 
@@ -84,7 +87,8 @@ public abstract class BaseLearnerTextSearchController : Controller
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        ISessionProvider sessionProvider)
+        ISessionProvider sessionProvider,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -104,6 +108,9 @@ public abstract class BaseLearnerTextSearchController : Controller
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
+        _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
     }
 
 
@@ -544,37 +551,36 @@ public abstract class BaseLearnerTextSearchController : Controller
             return await ReturnToSearch(model);
         }
 
-        IEnumerable<MyPupilListItem> learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
+        UserId userId = new(User.GetUserId());
 
-        if (learnerList.Count() + 1 > MyPupilListLimit)
+        if (PupilHelper.CheckIfStarredPupil(selected))
+        {
+            selected = RbacHelper.DecodeUpn(selected);
+        }
+
+        if (!ValidationHelper.IsValidUpn(selected)) // TODO can we surface invalid UPNs?
+        {
+            InvalidLearnerNumberSearchViewModel invalidViewModel = new()
+            {
+                LearnerNumber = selected
+            };
+
+            return await InvalidUPNs(invalidViewModel);
+        }
+
+        try
+        {
+            AddPupilsToMyPupilsRequest addRequest = new(userId, [new UniquePupilNumber(selected)]);
+            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
+        }
+
+        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern?
         {
             model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-        }
-        else
-        {
-            if (PupilHelper.CheckIfStarredPupil(selected))
-            {
-                selected = RbacHelper.DecodeUpn(selected);
-            }
-
-            if (!ValidationHelper.IsValidUpn(selected))
-            {
-                InvalidLearnerNumberSearchViewModel invalidViewModel = new()
-                {
-                    LearnerNumber = selected
-                };
-
-                return await InvalidUPNs(invalidViewModel);
-            }
-
-            List<MyPupilListItem> learnerListUpdate = learnerList.ToList();
-            learnerListUpdate.Add(new MyPupilListItem(selected, true));
-            learnerList = learnerListUpdate;
-
-            await _mplService.UpdateMyPupilList(learnerList, User.GetUserId(), AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
-            model.ItemAddedToMyPupilList = true;
+            return await ReturnToSearch(model);
         }
 
+        model.ItemAddedToMyPupilList = true;
         return await ReturnToSearch(model);
     }
 

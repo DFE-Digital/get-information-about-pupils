@@ -5,7 +5,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
@@ -31,19 +31,19 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
-        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
+        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
 
-        if (myPupils is null || myPupils.Pupils.IsEmpty)
+        if (myPupils is null || myPupils.GetMyPupils().Count == 0)
         {
-            MyPupilDtos emptyPupils = MyPupilDtos.Create(pupils: []);
+            MyPupilsModel emptyPupils = MyPupilsModel.Create(pupils: []);
             return new GetMyPupilsResponse(emptyPupils);
         }
 
-        MyPupilDtos aggregatedPupilDtos =
-            MyPupilDtos.Create(
-                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupils.Pupils))
-                            .Select(_mapPupilToPupilDtoMapper.Map)
-                                .ToList());
+        MyPupilsModel aggregatedPupilDtos =
+            MyPupilsModel.Create(
+                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(UniquePupilNumbers.Create(uniquePupilNumbers: myPupils.GetMyPupils())))
+                    .Select(_mapPupilToPupilDtoMapper.Map)
+                        .ToList());
 
         return new GetMyPupilsResponse(aggregatedPupilDtos);
     }

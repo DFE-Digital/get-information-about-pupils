@@ -26,7 +26,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     {
         // Arrange
         MyPupilsDtoSelectionStateDecorator mappable = new(
-            MyPupilDtos.Create(pupils: []),
+            MyPupilsModel.Create(pupils: []),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
         MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
@@ -51,7 +51,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
             .WithPupilPremium(false)
             .Build();
 
-        MyPupilDtos inputPupils = MyPupilDtos.Create([createdPupilWithPupilPremium, createdPupil]);
+        MyPupilsModel inputPupils = MyPupilsModel.Create([createdPupilWithPupilPremium, createdPupil]);
 
         MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
 
@@ -76,7 +76,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     public void Map_Maps_With_MappingApplied_For_IsPupilSelected()
     {
         // Arrange
-        MyPupilDtos createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
+        MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
 
         MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
 

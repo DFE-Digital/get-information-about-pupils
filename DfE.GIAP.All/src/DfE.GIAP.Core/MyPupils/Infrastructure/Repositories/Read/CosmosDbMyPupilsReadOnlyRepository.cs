@@ -1,11 +1,14 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 
@@ -14,12 +17,12 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
     private const string ContainerName = "mypupils";
     private readonly ILogger<CosmosDbMyPupilsReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils> _myPupilsDtoToMyPupils;
+    private readonly MyPupilsOptions _myPupilsOptions;
 
     public CosmosDbMyPupilsReadOnlyRepository(
         ILogger<CosmosDbMyPupilsReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils> mapper)
+        IOptions<MyPupilsOptions> myPupilsOptions)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -27,27 +30,35 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
 
-        ArgumentNullException.ThrowIfNull(mapper);
-        _myPupilsDtoToMyPupils = mapper;
+        ArgumentNullException.ThrowIfNull(myPupilsOptions);
+        ArgumentNullException.ThrowIfNull(myPupilsOptions.Value);
+        _myPupilsOptions = myPupilsOptions.Value;
     }
 
-    public async Task<Application.Repositories.MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default)
+    public async Task<Domain.AggregateRoot.MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default)
     {
         try
         {
-            MyPupilsDocumentDto userDto =
+            MyPupilsDocumentDto myPupilsDocumentDto =
                 await _cosmosDbQueryHandler.ReadItemByIdAsync<MyPupilsDocumentDto>(
                     id: userId.Value,
                     containerKey: ContainerName,
                     partitionKeyValue: userId.Value,
                     ctx);
 
-            if (userDto is null)
+            if (myPupilsDocumentDto is null)
             {
                 return null;
             }
 
-            return _myPupilsDtoToMyPupils.Map(userDto);
+            IEnumerable<UniquePupilNumber> myPupils =
+                myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN).ToUniquePupilNumbers();
+
+            return new
+                Domain.AggregateRoot.MyPupils(
+                    userId,
+                    UniquePupilNumbers.Create(myPupils),
+                    _myPupilsOptions.PupilsLimit);
         }
         catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
@@ -60,5 +71,16 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
             _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsOrDefaultAsync)}.");
             throw;
         }
+    }
+
+    public async Task<Domain.AggregateRoot.MyPupils> GetMyPupils(UserId userId, CancellationToken ctx = default)
+    {
+        Domain.AggregateRoot.MyPupils? myPupils = await GetMyPupilsOrDefaultAsync(userId, ctx);
+
+        return myPupils
+            ?? new Domain.AggregateRoot.MyPupils(
+                userId,
+                UniquePupilNumbers.Create([]),
+                _myPupilsOptions.PupilsLimit);
     }
 }

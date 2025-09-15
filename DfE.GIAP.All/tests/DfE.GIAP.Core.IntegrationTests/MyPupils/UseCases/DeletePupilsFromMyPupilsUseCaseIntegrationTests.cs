@@ -66,7 +66,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.UserId,
             DeletePupilUpns: [deletePupilIdentifier],
-            DeleteAll: false);
+            DeleteAll: false,
+            CancellationToken: CancellationToken.None);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -102,7 +103,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.UserId,
             DeletePupilUpns: deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+            DeleteAll: false,
+            CancellationToken: CancellationToken.None);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -139,7 +141,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.UserId,
             DeletePupilUpns: deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+            DeleteAll: false,
+            CancellationToken: CancellationToken.None);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -170,7 +173,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.UserId,
             DeletePupilUpns: [null!], // should be ignored if DeleteAll is enabled
-            DeleteAll: deleteAllPupils);
+            DeleteAll: deleteAllPupils,
+            CancellationToken: CancellationToken.None);
 
         // Act
         await sut.HandleRequestAsync(request);

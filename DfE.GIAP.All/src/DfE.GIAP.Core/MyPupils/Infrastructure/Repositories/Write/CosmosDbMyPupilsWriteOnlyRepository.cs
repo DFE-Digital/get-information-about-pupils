@@ -1,8 +1,8 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write.Mapper;
 using DfE.GIAP.Core.Users.Application;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -29,16 +29,18 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
         _mapToDto = mapToDto;
     }
 
-    public async Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils, CancellationToken ctx = default)
+    public async Task SaveMyPupilsAsync(UserId userId, Domain.AggregateRoot.MyPupils myPupils, CancellationToken ctx = default)
     {
         try
         {
             ArgumentNullException.ThrowIfNull(userId);
+            ArgumentNullException.ThrowIfNull(myPupils);
 
-            MyPupilsDocumentDto updatedDocument = _mapToDto.Map(
-                input: new MyPupilsDocumentDtoMappable(
-                        userId,
-                        updatedMyPupils));
+            MyPupilsDocumentDtoMappable mappable = new(
+                userId,
+                myPupils.GetMyPupils());
+
+            MyPupilsDocumentDto updatedDocument = _mapToDto.Map(mappable);
 
             await _cosmosDbCommandHandler.UpsertItemAsync(
                 item: updatedDocument,

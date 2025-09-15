@@ -16,12 +16,12 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey: string.Empty);
 
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: 10);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 10);
 
         OrderMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, state);
+        MyPupilsModel response = sut.Handle(pupils, state);
 
         // Assert
         Assert.NotNull(response);
@@ -37,7 +37,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         OrderMyPupilDtosPresentationHandler sut = new();
 
         // Act Assert
-        Action act = () => sut.Handle(It.IsAny<MyPupilDtos>(), state);
+        Action act = () => sut.Handle(It.IsAny<MyPupilsModel>(), state);
         Assert.Throws<ArgumentException>(act);
     }
 
@@ -51,12 +51,12 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
         OrderMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, state);
+        MyPupilsModel response = sut.Handle(pupils, state);
 
         // Assert
         IEnumerable<MyPupilDto> expected =
@@ -77,12 +77,12 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
         OrderMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, state);
+        MyPupilsModel response = sut.Handle(pupils, state);
 
         IEnumerable<MyPupilDto> expected =
             sortDirection == SortDirection.Ascending ?
@@ -103,12 +103,12 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
         OrderMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, state);
+        MyPupilsModel response = sut.Handle(pupils, state);
 
         // Assert
         IEnumerable<MyPupilDto> expected =
@@ -129,12 +129,12 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
         OrderMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, presentationState);
+        MyPupilsModel response = sut.Handle(pupils, presentationState);
 
         // Assert
         IEnumerable<MyPupilDto> expected =

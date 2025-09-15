@@ -25,12 +25,16 @@ public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsTo
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        Repositories.MyPupils? current = await _readRepository.GetMyPupilsOrDefaultAsync(request.UserId, request.CancellationToken);
+        Domain.AggregateRoot.MyPupils myPupils = await _readRepository.GetMyPupils(request.UserId, request.CancellationToken);
 
-        UniquePupilNumbers currentMyPupils = current?.Pupils ?? UniquePupilNumbers.Create(uniquePupilNumbers: []);
+        myPupils.Add(
+            UniquePupilNumbers.Create(request.Pupils));
 
-        currentMyPupils.Add(request.Pupils);
-
-        await _writeRepository.SaveMyPupilsAsync(request.UserId, currentMyPupils, request.CancellationToken);
+        await _writeRepository.SaveMyPupilsAsync(request.UserId, myPupils, request.CancellationToken);
     }
+}
+
+public sealed class MyPupilsOptions
+{
+    public int PupilsLimit { get; set; } = 4000;
 }

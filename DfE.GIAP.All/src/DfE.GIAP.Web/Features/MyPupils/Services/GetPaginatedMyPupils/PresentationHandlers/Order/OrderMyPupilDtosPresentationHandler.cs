@@ -15,8 +15,8 @@ public sealed class OrderMyPupilDtosPresentationHandler : IMyPupilDtosPresentati
             { "sex", (t) => t.Sex }
         };
 
-    public MyPupilDtos Handle(
-        MyPupilDtos myPupils,
+    public MyPupilsModel Handle(
+        MyPupilsModel myPupils,
         MyPupilsPresentationState state)
     {
         if (string.IsNullOrEmpty(state.SortBy))
@@ -35,6 +35,6 @@ public sealed class OrderMyPupilDtosPresentationHandler : IMyPupilDtosPresentati
                     myPupils.Values.AsQueryable().OrderBy(expression) :
                     myPupils.Values.AsQueryable().OrderByDescending(expression);
 
-        return MyPupilDtos.Create(pupils: outputPupils);
+        return MyPupilsModel.Create(pupils: outputPupils);
     }
 }

@@ -23,28 +23,27 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
+
+        if(myPupils is null)
+        {
+            return; // nothing to delete
+        }
+
         if (request.DeleteAll)
         {
-            await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(request.UserId, UniquePupilNumbers.Create(uniquePupilNumbers: []));
+            myPupils.DeleteAll();
+            await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(request.UserId, myPupils);
             return;
         }
 
-        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
-
-        IEnumerable<UniquePupilNumber> userMyPupilUpnsBeforeDelete = myPupils!.Pupils.GetUniquePupilNumbers();
-
-        if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilUpnsBeforeDelete.Contains(deleteUpn)))
-        {
-            throw new ArgumentException($"None of the pupil identifiers {string.Join(',', request.DeletePupilUpns)} are part of the User {request.UserId.Value} MyPupils");
-        }
-
-        List<UniquePupilNumber> updatedMyPupilsAfterDelete =
-            userMyPupilUpnsBeforeDelete
-                .Where(upn => !request.DeletePupilUpns.Contains(upn))
-                .ToList();
+        myPupils.DeletePupils(
+            UniquePupilNumbers.Create(
+                uniquePupilNumbers: request.DeletePupilUpns));
 
         await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(
             request.UserId,
-            UniquePupilNumbers.Create(updatedMyPupilsAfterDelete));
+            myPupils,
+            request.CancellationToken);
     }
 }

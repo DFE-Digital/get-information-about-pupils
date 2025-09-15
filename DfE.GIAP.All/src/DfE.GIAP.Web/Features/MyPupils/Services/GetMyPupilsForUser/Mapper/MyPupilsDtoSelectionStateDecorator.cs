@@ -5,7 +5,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 
 public record MyPupilsDtoSelectionStateDecorator
 {
-    public MyPupilsDtoSelectionStateDecorator(MyPupilDtos myPupilDtos, MyPupilsPupilSelectionState selectionState)
+    public MyPupilsDtoSelectionStateDecorator(MyPupilsModel myPupilDtos, MyPupilsPupilSelectionState selectionState)
     {
         ArgumentNullException.ThrowIfNull(myPupilDtos);
         PupilDtos = myPupilDtos;
@@ -14,6 +14,6 @@ public record MyPupilsDtoSelectionStateDecorator
         SelectionState = selectionState;
     }
 
-    public MyPupilDtos PupilDtos { get; }
+    public MyPupilsModel PupilDtos { get; }
     public MyPupilsPupilSelectionState SelectionState { get; }
 }

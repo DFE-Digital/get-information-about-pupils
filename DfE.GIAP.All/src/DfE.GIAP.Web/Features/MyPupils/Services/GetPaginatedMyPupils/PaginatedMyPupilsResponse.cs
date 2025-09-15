@@ -2,4 +2,4 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 
-public record PaginatedMyPupilsResponse(MyPupilDtos Pupils);
+public record PaginatedMyPupilsResponse(MyPupilsModel Pupils);

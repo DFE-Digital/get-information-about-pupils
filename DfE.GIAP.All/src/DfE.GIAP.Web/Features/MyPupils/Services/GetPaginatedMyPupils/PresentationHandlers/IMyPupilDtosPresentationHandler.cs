@@ -5,5 +5,5 @@ namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.Presentat
 
 public interface IMyPupilDtosPresentationHandler
 {
-    MyPupilDtos Handle(MyPupilDtos myPupils, MyPupilsPresentationState state);
+    MyPupilsModel Handle(MyPupilsModel myPupils, MyPupilsPresentationState state);
 }

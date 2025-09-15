@@ -1,8 +1,10 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Domain.AggregateRoot;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write.Mapper;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
@@ -59,6 +61,8 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     public async Task SaveMyPupilsAsync_Throws_When_NonCosmosExceptionOccurs()
     {
         // Arrange
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Default();
+
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
             CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: new Exception("test exception"));
 
@@ -71,13 +75,18 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
 
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() =>
-            repository.SaveMyPupilsAsync(userId, UniquePupilNumbers.Create([])));
+            repository.SaveMyPupilsAsync(
+                userId,
+                myPupils,
+                It.IsAny<CancellationToken>()));
     }
 
     [Fact]
     public async Task SaveMyPupilsAsync_LogsAndRethrows_When_CosmosExceptionIsThrown()
     {
         // Arrange
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Default();
+
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
             CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: CosmosExceptionTestDoubles.Default());
 
@@ -95,7 +104,9 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         UserId userId = UserIdTestDoubles.Default();
 
         await Assert.ThrowsAsync<CosmosException>(() =>
-            repository.SaveMyPupilsAsync(userId, UniquePupilNumbers.Create([])));
+            repository.SaveMyPupilsAsync(
+                userId,
+                myPupils));
 
         string log = Assert.Single(inMemoryLogger.Logs);
         Assert.Contains($"SaveMyPupilsAsync Error in saving MyPupilsAsync for user: {userId.Value}", log);
@@ -107,6 +118,9 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(uniquePupilNumbers: []);
+
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Create(uniquePupilNumbers);
+
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Create(userId, uniquePupilNumbers);
 
         Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapperMock =
@@ -122,7 +136,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             mapToDto: mapperMock.Object);
 
         // Act
-        await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);
+        await repository.SaveMyPupilsAsync(userId, myPupils);
 
         // Assert
 
@@ -146,6 +160,8 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 3));
 
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Create(uniquePupilNumbers);
+
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Create(userId, uniquePupilNumbers);
 
         Mock<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>> mapper =
@@ -159,7 +175,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
 
 
         // Act
-        await repository.SaveMyPupilsAsync(userId, uniquePupilNumbers);
+        await repository.SaveMyPupilsAsync(userId, myPupils);
 
         // Assert
         commandHandlerDouble.Verify(handler =>

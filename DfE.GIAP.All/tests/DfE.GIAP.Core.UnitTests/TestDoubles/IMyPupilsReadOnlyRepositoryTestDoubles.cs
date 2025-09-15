@@ -6,7 +6,7 @@ internal static class IMyPupilsReadOnlyRepositoryTestDoubles
 {
     internal static Mock<IMyPupilsReadOnlyRepository> Default() => new();
 
-    internal static Mock<IMyPupilsReadOnlyRepository> MockFor(Core.MyPupils.Application.Repositories.MyPupils stub)
+    internal static Mock<IMyPupilsReadOnlyRepository> MockForGetMyPupilsOrDefault(Core.MyPupils.Domain.AggregateRoot.MyPupils stub)
     {
         Mock<IMyPupilsReadOnlyRepository> mock = Default();
         mock.Setup(

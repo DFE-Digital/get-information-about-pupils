@@ -16,7 +16,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Aggregate
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read.Mapper;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write.Mapper;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
@@ -55,7 +54,6 @@ public static class CompositionRoot
         services
             .AddScoped<IMyPupilsReadOnlyRepository, CosmosDbMyPupilsReadOnlyRepository>()
             .AddScoped<IMyPupilsWriteOnlyRepository, CosmosDbMyPupilsWriteOnlyRepository>()
-            .AddSingleton<IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils>, MyPupilsDocumentDtoToMyPupilsMapper>()
             .AddSingleton<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>, MyPupilsDocumentMappableToMyPupilsDocumentDtoMapper>()
             .AddMyPupilsInfrastructureSearch();
 

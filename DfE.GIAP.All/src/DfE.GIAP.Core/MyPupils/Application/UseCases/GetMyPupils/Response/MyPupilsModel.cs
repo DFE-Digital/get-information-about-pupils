@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-public sealed class MyPupilDtos
+public sealed class MyPupilsModel
 {
-    public MyPupilDtos(IEnumerable<MyPupilDto> pupilDtos)
+    public MyPupilsModel(IEnumerable<MyPupilDto> pupilDtos)
     {
         Values =
             (pupilDtos is null ? [] : pupilDtos)
@@ -11,8 +11,8 @@ public sealed class MyPupilDtos
                 .AsReadOnly();
     }
 
-    public static MyPupilDtos Empty() => Create([]);
-    public static MyPupilDtos Create(IEnumerable<MyPupilDto> pupils) => new(pupils);
+    public static MyPupilsModel Empty() => Create([]);
+    public static MyPupilsModel Create(IEnumerable<MyPupilDto> pupils) => new(pupils);
 
     public IReadOnlyList<MyPupilDto> Values { get; }
     public IReadOnlyList<UniquePupilNumber> Identifiers => Values.Select(t => t.UniquePupilNumber).ToList().AsReadOnly();

@@ -79,7 +79,7 @@ public sealed class GetMyPupilsHandlerTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
-        MyPupilDtos stubPaginatedMyPupilDtos = MyPupilDtosTestDoubles.Generate(count: 1);
+        MyPupilsModel stubPaginatedMyPupilDtos = MyPupilDtosTestDoubles.Generate(count: 1);
         PaginatedMyPupilsResponse paginatedResponseStub = new(stubPaginatedMyPupilDtos);
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.MockFor(paginatedResponseStub);
 

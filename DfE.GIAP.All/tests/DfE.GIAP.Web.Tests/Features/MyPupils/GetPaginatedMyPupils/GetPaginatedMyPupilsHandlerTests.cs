@@ -45,7 +45,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
         Mock<IMyPupilDtosPresentationHandler> mockHandler = new();
 
-        MyPupilDtos stubPupilDtos = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel stubPupilDtos = MyPupilDtosTestDoubles.Generate(count: 20);
         MyPupilsPresentationState stubPupilsPresentationState = MyPupilsPresentationStateTestDoubles.Default();
 
         useCaseMock
@@ -56,7 +56,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
 
         mockHandler
             .Setup(t => t.Handle(
-                It.IsAny<MyPupilDtos>(),
+                It.IsAny<MyPupilsModel>(),
                 It.IsAny<MyPupilsPresentationState>()))
             .Returns(stubPupilDtos)
             .Verifiable();

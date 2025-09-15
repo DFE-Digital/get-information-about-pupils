@@ -6,7 +6,7 @@ internal sealed class MyPupilsDocumentMappableToMyPupilsDocumentDtoMapper : IMap
 {
     public MyPupilsDocumentDto Map(MyPupilsDocumentDtoMappable input)
     {
-        IEnumerable<MyPupilsPupilItemDto> updatedPupils = input.Upns.GetUniquePupilNumbers()?.Select((upn) => new MyPupilsPupilItemDto()
+        IEnumerable<MyPupilsPupilItemDto> updatedPupils = input.Upns?.Select((upn) => new MyPupilsPupilItemDto()
         {
             UPN = upn.Value
         }) ?? [];

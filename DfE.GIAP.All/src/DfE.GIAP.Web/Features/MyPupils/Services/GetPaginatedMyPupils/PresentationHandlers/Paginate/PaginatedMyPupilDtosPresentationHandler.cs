@@ -6,7 +6,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.Presentat
 
 public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilDtosPresentationHandler
 {
-    public MyPupilDtos Handle(MyPupilDtos myPupils, MyPupilsPresentationState state)
+    public MyPupilsModel Handle(MyPupilsModel myPupils, MyPupilsPresentationState state)
     {
         const int DefaultPageSize = 20;
 
@@ -16,7 +16,7 @@ public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilDtosPresent
 
         if (skip >= myPupils.Count)
         {
-            return MyPupilDtos.Create([]);
+            return MyPupilsModel.Create([]);
         }
 
         List<MyPupilDto> pagedResults = myPupils.Values
@@ -24,6 +24,6 @@ public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilDtosPresent
                 .Take(DefaultPageSize)
                 .ToList();
 
-        return MyPupilDtos.Create(pupils: pagedResults);
+        return MyPupilsModel.Create(pupils: pagedResults);
     }
 }
