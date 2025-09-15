@@ -1,82 +1,44 @@
 ﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Formatters;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
 
 /// <summary>
-/// Creates an OData filter expression for a collection-valued facet field in Azure Cognitive Search.
-/// This expression uses the <c>any(...)</c> operator to match one or more values within a multi-valued field,
-/// such as <c>Collection(Edm.String)</c>. It does not use <c>search.in</c>, which is only valid for scalar fields.
+/// Concrete implementation of <see cref="BaseEqualityFilterExpression"/> that builds
+/// a collection-valued filter expression using the OData <c>any(...)</c> operator.
 /// </summary>
-public sealed class SearchCollectionValuedFilterExpression : ISearchFilterExpression
+/// <remarks>
+/// This class targets fields of type <c>Collection(Edm.String)</c> in Azure Cognitive Search,
+/// enabling multi-value matching via <c>any</c> and <c>eq</c> syntax.
+/// </remarks>
+public sealed class SearchCollectionValuedFilterExpression : BaseEqualityFilterExpression
 {
-    private readonly IFilterExpressionFormatter _filterExpressionFormatter;
-
-    /// <summary>
-    /// Default logical operator used to join multiple filter values.
-    /// For collection-valued fields, this is typically <c>or</c>.
-    /// </summary>
-    private const string DefaultFilterValuesDelimiter = " or ";
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SearchCollectionValuedFilterExpression"/> class.
-    /// Uses a formatter to construct the final OData expression string.
     /// </summary>
-    /// <param name="filterExpressionFormatter">
-    /// Formatter used to generate placeholder strings and delimiters for filter values.
+    /// <param name="formatter">
+    /// Formatter used to construct the final OData expression and placeholder substitution.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown if <paramref name="filterExpressionFormatter"/> is null.
-    /// </exception>
-    public SearchCollectionValuedFilterExpression(IFilterExpressionFormatter filterExpressionFormatter)
-    {
-        _filterExpressionFormatter =
-            filterExpressionFormatter ??
-            throw new ArgumentNullException(nameof(filterExpressionFormatter));
-    }
+    public SearchCollectionValuedFilterExpression(IFilterExpressionFormatter formatter)
+        : base(formatter) { }
 
     /// <summary>
-    /// Builds an OData filter expression for a collection-valued facet field.
-    /// Uses the <c>any</c> operator to match values within the field.
-    /// Validates that all filter values are string-compatible (e.g., not boolean).
+    /// Constructs the final OData filter expression using collection-aware syntax.
+    /// Example output: <c>tags/any(s: s eq 'Math' or s eq 'Science')</c>
     /// </summary>
-    /// <param name="searchFilterRequest">
-    /// Contains the filter key (field name), values to match, and optional delimiter override.
+    /// <param name="request">
+    /// The validated filter request containing key and values.
     /// </param>
     /// <returns>
-    /// A formatted OData filter string using <c>any</c> and <c>eq</c> expressions.
-    /// Example: <c>tags/any(s: s eq 'Math' or s eq 'Science')</c>
+    /// A formatted filter expression string using <c>any</c> and <c>eq</c> for multi-valued fields.
     /// </returns>
-    public string GetFilterExpression(SearchFilterRequest searchFilterRequest)
+    protected override string BuildExpression(SearchFilterRequest request)
     {
-        ArgumentNullException.ThrowIfNull(searchFilterRequest);
+        ArgumentNullException.ThrowIfNull(request);
 
-        // Validate that all filter values are compatible with string-based filtering.
-        searchFilterRequest.FilterValues.ToList()
-            .ForEach(filterValue =>
-            {
-                if (filterValue is bool)
-                {
-                    throw new ArgumentException(
-                        "Invalid boolean type argument for filter key", searchFilterRequest.FilterKey);
-                }
-            });
-
-        // Apply default logical delimiter if none is provided.
-        if (string.IsNullOrWhiteSpace(searchFilterRequest.FilterValuesDelimiter))
-        {
-            searchFilterRequest.SetFilterValuesDelimiter(DefaultFilterValuesDelimiter);
-        }
-
-        // Configure the formatter with the chosen logical operator (e.g., "or").
-        _filterExpressionFormatter.SetExpressionParamsSeparator(searchFilterRequest.FilterValuesDelimiter);
-
-        // Construct the final OData expression using 'any' and 'eq' for collection-valued fields.
-        return _filterExpressionFormatter
-            .CreateFormattedExpression(
-                $"{searchFilterRequest.FilterKey}/any(s: s eq " +
-                $"'{_filterExpressionFormatter.CreateFilterCriteriaPlaceholders(searchFilterRequest.FilterValues)}')",
-                searchFilterRequest.FilterValues);
+        return FilterExpressionFormatter.CreateFormattedExpression(
+            $"{request.FilterKey}/any(s: s eq " +
+            $"'{FilterExpressionFormatter.CreateFilterCriteriaPlaceholders(request.FilterValues)}')",
+            request.FilterValues);
     }
 }
