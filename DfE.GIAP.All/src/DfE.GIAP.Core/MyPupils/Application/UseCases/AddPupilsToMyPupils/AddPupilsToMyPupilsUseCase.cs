@@ -33,8 +33,3 @@ public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsTo
         await _writeRepository.SaveMyPupilsAsync(request.UserId, myPupils, request.CancellationToken);
     }
 }
-
-public sealed class MyPupilsOptions
-{
-    public int PupilsLimit { get; set; } = 4000;
-}
