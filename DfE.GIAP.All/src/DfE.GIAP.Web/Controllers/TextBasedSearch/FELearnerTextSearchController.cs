@@ -325,11 +325,8 @@ public class FELearnerTextSearchController :  Controller
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    #region Stuff nicked from base class - someone had a fascination for inheritance, we'll use composition instead if we have the time!
-
+    #region WIP - this will be slowly refactored away from the controller as we move through more search types
+    // @SONAR_IGNORE_START
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
@@ -698,7 +695,6 @@ public class FELearnerTextSearchController :  Controller
         string sortField = "",
         string sortDirection = "")
     {
-        #region
         List<CurrentFilterDetail> currentFilters =
             SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
@@ -723,10 +719,6 @@ public class FELearnerTextSearchController :  Controller
 
         }
 
-        #endregion
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         IList<FilterRequest> filterRequests =
             _filtersRequestMapper.Map(
                 _filtersRequestBuilder
@@ -746,8 +738,6 @@ public class FELearnerTextSearchController :  Controller
 
         return _learnerSearchResponseToViewModelMapper.Map(
             LearnerSearchMappingContext.Create(model, searchResponse));
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
@@ -1073,9 +1063,6 @@ public class FELearnerTextSearchController :  Controller
         return _selectionManager.GetSelectedFromSession();
     }
 
-
+    // @SONAR_IGNORE_END
     #endregion
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
