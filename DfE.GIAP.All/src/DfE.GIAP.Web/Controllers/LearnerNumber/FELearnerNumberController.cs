@@ -3,6 +3,8 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
@@ -53,8 +55,9 @@ public class FELearnerNumberController : BaseLearnerNumberController
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ISelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase)
     {
         _logger = logger ??
             throw new ArgumentNullException(nameof(logger));

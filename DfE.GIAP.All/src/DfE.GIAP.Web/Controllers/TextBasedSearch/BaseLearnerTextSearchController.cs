@@ -41,7 +41,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
-    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IMyPupilListService _mplService;
     protected readonly AzureAppSettings _appSettings;
 

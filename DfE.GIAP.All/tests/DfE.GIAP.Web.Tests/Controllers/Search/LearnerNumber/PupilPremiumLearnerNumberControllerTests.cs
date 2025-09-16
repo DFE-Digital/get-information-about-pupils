@@ -3,6 +3,8 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
@@ -19,6 +21,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
@@ -1890,7 +1893,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 _mockPaginatedService,
                 _mockMplService,
                 _mockSelectionManager,
-                _mockAppOptions)
+                _mockAppOptions,
+                new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object)
             {
                 ControllerContext = new ControllerContext()
                 {
