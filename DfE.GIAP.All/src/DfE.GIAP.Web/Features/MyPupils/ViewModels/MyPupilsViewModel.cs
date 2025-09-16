@@ -2,27 +2,23 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 
-public sealed class MyPupilsViewModel
+public record MyPupilsViewModel
 {
     private const int DEFAULT_PAGE_SIZE = 20;
 
-    public MyPupilsViewModel(
-        PupilsViewModel pupils,
-        MyPupilsErrorViewModel error = null)
+    public MyPupilsViewModel(PupilsViewModel pupils)
     {
         ArgumentNullException.ThrowIfNull(pupils);
-        Pupils = pupils;
-        Error = error ?? new(string.Empty);
     }
 
-    public bool isRemovePupilsSuccessful { get; set; } = false;
-    public bool IsAnyPupilsSelected { get; set; }
-    public bool SelectAll { get; set; } = false;
-    public int PageNumber { get; set; } = 1;
-    public string SortField { get; set; } = string.Empty;
-    public string SortDirection { get; set; } = string.Empty;
+    public bool IsDeleteSuccessful { get; init; } = false;
+    public bool IsAnyPupilsSelected { get; init; }
+    public bool SelectAll { get; init; } = false;
+    public int PageNumber { get; init; } = 1;
+    public string SortField { get; init; } = string.Empty;
+    public string SortDirection { get; init; } = string.Empty;
     public PupilsViewModel Pupils { get; }
-    public MyPupilsErrorViewModel Error { get; }
+    public MyPupilsErrorViewModel Error { get; init; }
     public bool HasPupils => Pupils.Count > 0;
     public bool IsError => !string.IsNullOrEmpty(Error.Message);
     public string PageHeading => "My pupil list";

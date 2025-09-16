@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -6,9 +8,7 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -17,8 +17,6 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 
 namespace DfE.GIAP.Web.Controllers;
 
@@ -37,7 +35,6 @@ public abstract class BaseLearnerNumberController : Controller
     private readonly IPaginatedSearchService _paginatedSearch;
     protected readonly ISelectionManager _selectionManager;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
-    private readonly IMyPupilListService _mplService;
     private readonly AzureAppSettings _appSettings;
 
     #region Abstract Properties
@@ -66,7 +63,6 @@ public abstract class BaseLearnerNumberController : Controller
 
     public BaseLearnerNumberController(ILogger<BaseLearnerNumberController> logger,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
@@ -82,9 +78,6 @@ public abstract class BaseLearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
         _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
-
-        ArgumentNullException.ThrowIfNull(mplService);
-        _mplService = mplService;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);

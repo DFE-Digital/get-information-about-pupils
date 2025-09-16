@@ -52,7 +52,7 @@ public static class CompositionRoot
     {
         services
             .AddSingleton<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>, MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper>()
-            .AddScoped<IGetMyPupilsForUserHandler, GetMyPupilsForUserHandler>();
+            .AddScoped<IGetPupilViewModelsForUserHandler, IGetPupilViewModelsForUserHandler>();
         return services;
     }
 

@@ -5,12 +5,12 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 
-internal sealed class GetMyPupilsForUserHandler : IGetMyPupilsForUserHandler
+internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsForUserHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
     private readonly IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
 
-    public GetMyPupilsForUserHandler(
+    public GetPupilViewModelsHandler(
         IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
         IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> mapToViewModel)
     {

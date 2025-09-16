@@ -9,7 +9,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
@@ -34,7 +33,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
-    private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new AzureAppSettings();
@@ -1931,7 +1929,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockLogger,
             _mockDownloadService,
             _mockPaginatedService,
-            _mockMplService,
             _mockSelectionManager,
             _mockAppOptions,
             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object)

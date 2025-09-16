@@ -8,7 +8,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -76,12 +75,11 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ILogger<PPLearnerTextSearchController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IDownloadService downloadService,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings, sessionProvider)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;

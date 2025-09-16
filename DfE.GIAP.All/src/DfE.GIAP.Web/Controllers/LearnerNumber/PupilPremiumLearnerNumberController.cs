@@ -5,9 +5,7 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -47,11 +45,10 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public PupilPremiumLearnerNumberController(ILogger<PupilPremiumLearnerNumberController> logger,
         IDownloadService downloadService,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseVase)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings, addPupilsToMyPupilsUseVase)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseVase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;

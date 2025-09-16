@@ -7,11 +7,9 @@ using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
@@ -37,7 +35,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
-    private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new();
@@ -689,8 +686,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-        _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
-
+        
         // Act
         NPDLearnerTextSearchController sut = GetController();
 
@@ -715,8 +711,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
-
+        
         // Act
         NPDLearnerTextSearchController sut = GetController();
 
@@ -742,8 +737,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-        _mockMplService.GetMyPupilListLearnerNumbers(Arg.Any<string>()).Returns(new List<MyPupilListItem>());
-
+        
         // Act
         NPDLearnerTextSearchController sut = GetController();
 
@@ -1786,7 +1780,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
              _mockLogger,
              _mockAppOptions,
              _mockPaginatedService,
-             _mockMplService,
              _mockSelectionManager,
              _mockCtfService,
              _mockSessionProvider.Object,

@@ -6,17 +6,9 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -41,7 +33,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
-    private readonly IMyPupilListService _mplService;
     protected readonly AzureAppSettings _appSettings;
 
     public abstract string PageHeading { get; }
@@ -83,7 +74,6 @@ public abstract class BaseLearnerTextSearchController : Controller
 
     public BaseLearnerTextSearchController(ILogger<BaseLearnerTextSearchController> logger,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         ISessionProvider sessionProvider)
@@ -99,9 +89,6 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
-
-        ArgumentNullException.ThrowIfNull(mplService);
-        _mplService = mplService;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);

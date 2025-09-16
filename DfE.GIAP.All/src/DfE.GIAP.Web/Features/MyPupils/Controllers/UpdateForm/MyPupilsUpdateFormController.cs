@@ -52,15 +52,15 @@ public class MyPupilsUpdateFormController : Controller
     [HttpPost]
     public async Task<IActionResult> Index(MyPupilsFormStateRequestDto formDto)
     {
-        _logger.LogInformation("My pupil list POST method called");
+        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(MyPupilsUpdateFormController), nameof(Index));
 
         string userId = User.GetUserId();
 
         if (!ModelState.IsValid)
         {
-            MyPupilsErrorViewModel error = new(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
-
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
+            MyPupilsErrorViewModel error = MyPupilsErrorViewModel.Create(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
+            MyPupilsViewModelContext context = new(error);
+            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, context);
 
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
@@ -89,7 +89,7 @@ public class MyPupilsUpdateFormController : Controller
 
         _presentationStateCommandHandler.StoreInSession(updatedPresentationState);
 
-        return RedirectToAction(actionName: "Index", controllerName: "MyPupils"); // TODO reflect name and strip Controller in extension
+        return RedirectToAction(actionName: "Index", controllerName: "GetMyPupils");
     }
 
     private static Action<MyPupilsPupilSelectionState> GetSelectionStateUpdateStrategy(

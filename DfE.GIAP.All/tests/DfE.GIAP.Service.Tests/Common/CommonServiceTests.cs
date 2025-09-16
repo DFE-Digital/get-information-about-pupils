@@ -91,8 +91,6 @@ namespace DfE.GIAP.Service.Tests.Common
             //Arrange
             var expectedResponse = new UserProfile()
             {
-                IsPupilListUpdated = true,
-                PupilList = new string[] { "Pupil1", "Pupil2" },
                 UserId = "validId"
             };
             var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expectedResponse)) };
@@ -109,8 +107,6 @@ namespace DfE.GIAP.Service.Tests.Common
             //Assert
             Assert.IsType<UserProfile>(actual);
             Assert.Equal(expectedResponse.UserId, actual.UserId);
-            Assert.Equal(expectedResponse.IsPupilListUpdated, actual.IsPupilListUpdated);
-            Assert.Equal(expectedResponse.PupilList.Length, actual.PupilList.Length);
         }
 
         [Fact]

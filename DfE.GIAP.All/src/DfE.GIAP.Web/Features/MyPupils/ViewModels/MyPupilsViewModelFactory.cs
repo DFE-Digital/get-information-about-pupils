@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Users.Application;
+﻿using DfE.GIAP.Web.Features.MyPupils.Routes;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
@@ -9,16 +9,22 @@ namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
 {
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
-    private readonly IGetMyPupilsForUserHandler _getMyPupilsForUserHandler;
+    private readonly IGetPupilViewModelsForUserHandler _getMyPupilsForUserHandler;
+
     public MyPupilsViewModelFactory(
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
-        IGetMyPupilsForUserHandler getMyPupilsForUserHandler)
+        IGetPupilViewModelsForUserHandler getPupilViewModelsForUserHandler)
     {
-
+        ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
         _getMyPupilsStateProvider = getMyPupilsStateProvider;
-        _getMyPupilsForUserHandler = getMyPupilsForUserHandler;
+
+        ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
+        _getMyPupilsForUserHandler = getPupilViewModelsForUserHandler;
     }
-    public async Task<MyPupilsViewModel> CreateViewModelAsync(string userId, MyPupilsErrorViewModel error = null)
+
+    public async Task<MyPupilsViewModel> CreateViewModelAsync(
+        string userId,
+        MyPupilsViewModelContext context)
     {
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
@@ -26,15 +32,15 @@ internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
 
         PupilsViewModel pupilsResponse = await _getMyPupilsForUserHandler.GetPupilsAsync(request);
 
-        MyPupilsViewModel myPupilsViewModel = new(
-            pupils: pupilsResponse,
-            error: !string.IsNullOrEmpty(error?.Message) ? error : null)
+        MyPupilsViewModel myPupilsViewModel = new(pupilsResponse)
         {
             PageNumber = state.PresentationState.Page,
             SortDirection = state.PresentationState.SortDirection == SortDirection.Ascending ? "asc" : "desc",
             SortField = state.PresentationState.SortBy,
             IsAnyPupilsSelected = state.SelectionState.IsAnyPupilSelected,
             SelectAll = state.SelectionState.IsAllPupilsSelected,
+            IsDeleteSuccessful = context.IsDeleteSuccessful,
+            Error = context.Error
         };
 
         return myPupilsViewModel;

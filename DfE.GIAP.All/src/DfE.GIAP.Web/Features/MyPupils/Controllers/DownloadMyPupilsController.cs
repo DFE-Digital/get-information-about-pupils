@@ -15,13 +15,14 @@ using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Routes;
 
 [Route(Constants.Routes.MyPupilList.MyPupils)]
-public class MyPupilsDownloadController : Controller
+public class DownloadMyPupilsController : Controller
 {
-    private readonly ILogger<MyPupilsDownloadController> _logger;
+    private readonly ILogger<DownloadMyPupilsController> _logger;
     private readonly AzureAppSettings _appSettings;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
@@ -30,8 +31,8 @@ public class MyPupilsDownloadController : Controller
     private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
 
-    public MyPupilsDownloadController(
-        ILogger<MyPupilsDownloadController> logger,
+    public DownloadMyPupilsController(
+        ILogger<DownloadMyPupilsController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
@@ -107,8 +108,6 @@ public class MyPupilsDownloadController : Controller
             User.IsOrganisationAllAges());
 
         ModelState.Clear();
-
-        
 
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
@@ -195,18 +194,16 @@ public class MyPupilsDownloadController : Controller
 
         if (allSelectedPupils.Length == 0)
         {
-            MyPupilsErrorViewModel error = new(Messages.Common.Errors.NoPupilsSelected);
-
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
+            MyPupilsErrorViewModel error = MyPupilsErrorViewModel.Create(Messages.Common.Errors.NoPupilsSelected);
+            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, new MyPupilsViewModelContext(error));
 
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
         if (downloadType == DownloadType.CTF && allSelectedPupils.Length > _appSettings.CommonTransferFileUPNLimit)
         {
-            MyPupilsErrorViewModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
-
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error);
+            MyPupilsErrorViewModel error = MyPupilsErrorViewModel.Create(Messages.Downloads.Errors.UPNLimitExceeded);
+            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, new MyPupilsViewModelContext(error));
 
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
@@ -229,9 +226,8 @@ public class MyPupilsDownloadController : Controller
                 return SearchDownloadHelper.DownloadFile(downloadFile);
             }
 
-            MyPupilsErrorViewModel noDataAvailableError = new(Messages.Downloads.Errors.NoDataForSelectedPupils);
-
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, error: noDataAvailableError);
+            MyPupilsErrorViewModel noDataAvailableError = MyPupilsErrorViewModel.Create(Messages.Downloads.Errors.NoDataForSelectedPupils);
+            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, new MyPupilsViewModelContext(noDataAvailableError));
 
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
@@ -268,8 +264,8 @@ public class MyPupilsDownloadController : Controller
                 return SearchDownloadHelper.DownloadFile(downloadFile);
             }
 
-            MyPupilsErrorViewModel noDataAvailableError = new(Messages.Downloads.Errors.NoDataForSelectedPupils);
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, noDataAvailableError);
+            MyPupilsErrorViewModel noDataAvailableError = MyPupilsErrorViewModel.Create(Messages.Downloads.Errors.NoDataForSelectedPupils); 
+            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, new MyPupilsViewModelContext(noDataAvailableError));
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
@@ -278,8 +274,9 @@ public class MyPupilsDownloadController : Controller
             return await DownloadSelectedNationalPupilDatabaseData(string.Join(",", allSelectedPupils));
         }
 
-        MyPupilsErrorViewModel unknownDownloadTypeError = new MyPupilsErrorViewModel(Messages.Downloads.Errors.UnknownDownloadType);
-        MyPupilsViewModel errorViewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, unknownDownloadTypeError);
+        MyPupilsErrorViewModel unknownDownloadTypeError = MyPupilsErrorViewModel.Create(Messages.Downloads.Errors.UnknownDownloadType);
+        MyPupilsViewModelContext context = new(unknownDownloadTypeError);
+        MyPupilsViewModel errorViewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, context);
         return View(Constants.Routes.MyPupilList.MyPupilListView, errorViewModel);
     }
 }

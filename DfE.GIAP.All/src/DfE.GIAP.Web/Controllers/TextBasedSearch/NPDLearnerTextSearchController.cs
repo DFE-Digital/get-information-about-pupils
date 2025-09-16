@@ -9,7 +9,6 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -79,7 +78,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public NPDLearnerTextSearchController(ILogger<NPDLearnerTextSearchController> logger,
        IOptions<AzureAppSettings> azureAppSettings,
        IPaginatedSearchService paginatedSearch,
-       IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
        IDownloadCommonTransferFileService ctfService,
        ISessionProvider sessionProvider,
@@ -87,7 +85,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
        : base(logger,
              paginatedSearch,
-             mplService,
              selectionManager,
              azureAppSettings,
              sessionProvider)
