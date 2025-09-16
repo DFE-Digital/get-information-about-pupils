@@ -81,7 +81,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         mockWriteRepository.Verify(repo =>
             repo.SaveMyPupilsAsync(
                 It.Is<Core.MyPupils.Domain.AggregateRoot.MyPupils>(
-                    (myPupilsAggregate) => myPupilsAggregate.GetMyPupils().Any(t => deletePupilUpnIdentifiers.Contains(t.Value)))), Times.Once);
+                    (myPupilsAggregate) => myPupilsAggregate.GetMyPupils().SequenceEqual(expectedListAfterDelete))), Times.Once);
     }
 
     [Fact]
