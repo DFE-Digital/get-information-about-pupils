@@ -102,23 +102,22 @@ public class MyPupilsDeletePupilsController : Controller
                 new DeleteAllMyPupilsRequest(userId));
 
             state.SelectionState.ResetState();
-
-            _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
-
-            return RedirectToAction(actionName: "Index", controllerName: "MyPupils");
         }
-
-        List<string> deletePupilUpns =
+        else
+        {
+            List<string> deletePupilUpns =
             SelectedPupils.AsEnumerable()
                 .Concat(state.SelectionState.GetSelectedPupils())
                 .ToList();
 
-        await _deletePupilsFromMyPupilsUseCase.HandleRequestAsync(
-            new DeletePupilsFromMyPupilsRequest(
-                UserId: userId,
-                DeletePupilUpns: deletePupilUpns));
+            await _deletePupilsFromMyPupilsUseCase.HandleRequestAsync(
+                new DeletePupilsFromMyPupilsRequest(
+                    UserId: userId,
+                    DeletePupilUpns: deletePupilUpns));
 
-        state.SelectionState.RemovePupils(deletePupilUpns);
+            state.SelectionState.RemovePupils(deletePupilUpns);
+        }
+
         _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
 
         return RedirectToAction(actionName: "Index", controllerName: "MyPupils");
