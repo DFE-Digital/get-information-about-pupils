@@ -21,9 +21,9 @@ public class ConsoleTraceSink : ITraceLogSink
     public void Log(LogEntry<TracePayload> logEntry)
     {
         ConsoleColor originalColor = Console.ForegroundColor;
-        Console.ForegroundColor = GetLogLevelColor(logEntry.Level);
+        Console.ForegroundColor = GetLogLevelColor(logEntry.Payload.Level);
 
-        Console.WriteLine($"[{logEntry.Timestamp:HH:mm:ss} {logEntry.Level.ToString().ToUpper()}] {logEntry.Payload.Message}");
+        Console.WriteLine($"[{logEntry.Timestamp:HH:mm:ss} {logEntry.Payload.Level.ToString().ToUpper()}] {logEntry.Payload.Message}");
         if (logEntry.Payload.Exception is not null)
         {
             Console.WriteLine(logEntry.Payload.Exception);
