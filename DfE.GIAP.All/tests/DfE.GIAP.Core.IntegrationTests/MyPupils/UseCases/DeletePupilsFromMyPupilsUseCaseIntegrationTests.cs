@@ -40,7 +40,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         List<AzureIndexEntity> myPupils = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).ToList();
 
         UniquePupilNumbers myPupilsUpns =
-            UniquePupilNumbers.Create(uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
+            UniquePupilNumbers.Create(
+                uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(myPupilsId, myPupilsUpns);
@@ -74,9 +75,11 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         // Assert
         IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+
         List<string> remainingUpnsAfterDelete = _testContext.MyPupilUpns.GetUniquePupilNumbers()
+            .Select(t => t.Value)
             .Where((upn) => !upn.Equals(deletePupilIdentifier))
-            .Select((t) => t.Value).ToList();
+            .ToList();
 
         MyPupilsDocumentDto myPupilsDocumentDto = Assert.Single(users);
         Assert.NotNull(myPupilsDocumentDto);

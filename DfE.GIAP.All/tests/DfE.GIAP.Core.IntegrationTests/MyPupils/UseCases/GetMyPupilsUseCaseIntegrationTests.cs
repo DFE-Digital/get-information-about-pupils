@@ -70,7 +70,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos).Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+
+        List<MyPupilDto> expectedPupils =
+            npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
+                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map)
+                .ToList();
 
         foreach (MyPupilDto expectedPupil in expectedPupils)
         {
@@ -83,7 +87,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => new UniquePupilNumber(t.UPN).Equals(expectedPupil.UniquePupilNumber));
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any((pupilPremiumDto) => pupilPremiumDto.UPN.Equals(expectedPupil.UniquePupilNumber));
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }

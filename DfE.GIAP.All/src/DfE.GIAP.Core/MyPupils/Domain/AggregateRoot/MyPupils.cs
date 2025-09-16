@@ -45,13 +45,14 @@ public sealed class MyPupils : AggregateRoot<MyPupilsId>
             return;
         }
 
-        if (deletePupilsNumbers.GetUniquePupilNumbers().All(deleteUpn => !_pupils.Contains(deleteUpn)))
+        IEnumerable<UniquePupilNumber> deleteUpns = deletePupilsNumbers.GetUniquePupilNumbers();
+
+        if (deleteUpns.All(deleteUpn => !_pupils.Contains(deleteUpn)))
         {
             throw new ArgumentException($"None of the deleted pupil identifiers are part of the User: {Identifier} MyPupils");
         }
 
-        _pupils.Remove(
-            deletePupilsNumbers.GetUniquePupilNumbers());
+        _pupils.Remove(deleteUpns);
     }
 
     public void DeleteAll() => _pupils.Clear();
