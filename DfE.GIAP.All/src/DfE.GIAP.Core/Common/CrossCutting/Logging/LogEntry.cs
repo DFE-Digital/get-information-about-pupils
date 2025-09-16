@@ -72,4 +72,4 @@ public record AuditPayload(
     string? Source = null,
     Dictionary<string, object>? Context = null);
 
-public enum LogLevel { Debug, Information, Warning, Error }
+public enum LogLevel { Debug, Information, Error }
