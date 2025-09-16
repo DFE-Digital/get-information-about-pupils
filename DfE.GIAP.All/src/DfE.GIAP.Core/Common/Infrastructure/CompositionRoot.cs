@@ -42,14 +42,12 @@ internal static class CompositionRoot
 
         services.AddSingleton<ILoggerService, LoggerService>();
 
-        services.AddSingleton<ILogMediator, LogMediator>();
+        services.AddSingleton<ITraceLogHandler, TraceLogHandler>();
+        services.AddSingleton<IAuditLogHandler, AuditLogHandler>();
 
-        services.AddSingleton<ILogEventHandler, TraceLogRouter>();
-        services.AddSingleton<ILogEventHandler, BusinessEventRouter>();
-
-        services.AddSingleton<ITraceSink, AzureApplicationInsightTraceSink>();
-        services.AddSingleton<ITraceSink, ConsoleTraceLogSink>();
-        services.AddSingleton<IBusinessEventSink, AzureApplicationInsightEventSink>();
+        services.AddSingleton<ITraceLogSink, AzureAppInsightTraceSink>();
+        services.AddSingleton<ITraceLogSink, ConsoleTraceSink>();
+        services.AddSingleton<IAuditLogSink, AzureAppInsightAuditSink>();
 
         return services;
     }

@@ -2,29 +2,66 @@
 
 public interface ILoggerService
 {
-    void LogTrace(LogLevel level, string message, string? category = null, Exception? ex = null, object? context = null);
-    void LogBusinessEvent(string message, string? category = null, object? context = null);
+    void LogTrace(LogLevel level, string message, Exception? exception = null, string? category = null, string? source = null, Dictionary<string, object>? context = null, string? correlationId = null);
+    void LogAudit(string eventName, string? category = null, string? source = null, Dictionary<string, object>? data = null, string? correlationId = null);
 }
 
-// Application
 public class LoggerService : ILoggerService
 {
-    private readonly ILogMediator _mediator;
+    private readonly IEnumerable<ITraceLogHandler> _traceLogHandlers;
+    private readonly IEnumerable<IAuditLogHandler> _auditLogHandlers;
 
-    public LoggerService(ILogMediator mediator)
+    public LoggerService(
+        IEnumerable<ITraceLogHandler> traceLogHandlers,
+        IEnumerable<IAuditLogHandler> auditLogHandlers)
     {
-        _mediator = mediator;
+        ArgumentNullException.ThrowIfNull(traceLogHandlers);
+        ArgumentNullException.ThrowIfNull(auditLogHandlers);
+        _traceLogHandlers = traceLogHandlers;
+        _auditLogHandlers = auditLogHandlers;
     }
 
-    public void LogTrace(LogLevel level, string message, string? category = null, Exception? ex = null, object? context = null)
+    public void LogTrace(
+         LogLevel level,
+         string message,
+         Exception? exception = null,
+         string? category = null,
+         string? source = null,
+         Dictionary<string, object>? context = null,
+         string? correlationId = null)
     {
-        LogEntry entry = LogEntryFactory.CreateTrace(level, message, category, ex, context);
-        _mediator.Publish(entry);
+        LogEntry<TracePayload> entry = LogEntryFactory.CreateWithTracePayload(
+            level: level,
+            message: message,
+            exception: exception,
+            category: category,
+            source: source,
+            context: context,
+            correlationId: correlationId);
+
+        foreach (ITraceLogHandler handler in _traceLogHandlers)
+        {
+            handler.Handle(entry);
+        }
     }
 
-    public void LogBusinessEvent(string message, string? category = null, object? context = null)
+    public void LogAudit(
+        string eventName,
+        string? category = null,
+        string? source = null,
+        Dictionary<string, object>? data = null,
+        string? correlationId = null)
     {
-        LogEntry entry = LogEntryFactory.CreateBusinessEvent(message, category, context);
-        _mediator.Publish(entry);
+        LogEntry<AuditPayload> entry = LogEntryFactory.CreateWithAuditPayload(
+            eventName: eventName,
+            category: category,
+            source: source,
+            data: data,
+            correlationId: correlationId);
+
+        foreach (IAuditLogHandler handler in _auditLogHandlers)
+        {
+            handler.Handle(entry);
+        }
     }
 }

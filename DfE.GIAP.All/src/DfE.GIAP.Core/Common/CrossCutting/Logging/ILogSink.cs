@@ -4,29 +4,29 @@ using Microsoft.ApplicationInsights.DataContracts;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
-// Application
-public interface ILogSink
+public interface ILogSink<TPayload>
 {
     string Name { get; }
-    public void Log(LogEntry logEntry);
+    void Log(LogEntry<TPayload> entry);
 }
-public interface ITraceSink : ILogSink { }
-public interface IBusinessEventSink : ILogSink { }
+
+public interface ITraceLogSink : ILogSink<TracePayload> { }
+public interface IAuditLogSink : ILogSink<AuditPayload> { }
 
 
-// Infrastructure
-public class ConsoleTraceLogSink : ITraceSink
+
+public class ConsoleTraceSink : ITraceLogSink
 {
     public string Name => "ConsoleTrace";
-    public void Log(LogEntry logEntry)
+    public void Log(LogEntry<TracePayload> logEntry)
     {
         ConsoleColor originalColor = Console.ForegroundColor;
         Console.ForegroundColor = GetLogLevelColor(logEntry.Level);
 
-        Console.WriteLine($"[{logEntry.Timestamp:HH:mm:ss} {logEntry.Level.ToString().ToUpper()}] {logEntry.Message}");
-        if (logEntry.Exception is not null)
+        Console.WriteLine($"[{logEntry.Timestamp:HH:mm:ss} {logEntry.Level.ToString().ToUpper()}] {logEntry.Payload.Message}");
+        if (logEntry.Payload.Exception is not null)
         {
-            Console.WriteLine(logEntry.Exception);
+            Console.WriteLine(logEntry.Payload.Exception);
         }
 
         Console.ForegroundColor = originalColor;
@@ -44,26 +44,37 @@ public class ConsoleTraceLogSink : ITraceSink
     };
 }
 
-// Infrastructure
-public class AzureApplicationInsightTraceSink : ITraceSink
+public class AzureAppInsightTraceSink : ITraceLogSink
 {
     public string Name => "AzureAppInsightTrace";
     private readonly TelemetryClient _telemetryClient;
 
-    public AzureApplicationInsightTraceSink(TelemetryClient telemetryClient)
+    public AzureAppInsightTraceSink(TelemetryClient telemetryClient)
     {
         _telemetryClient = telemetryClient;
     }
 
-    public void Log(LogEntry logEntry)
+    public void Log(LogEntry<TracePayload> logEntry)
     {
-        if (logEntry.Exception is not null)
+        if (logEntry.Payload.Exception is not null)
         {
-            _telemetryClient.TrackException(logEntry.Exception);
+            _telemetryClient.TrackException(logEntry.Payload.Exception);
         }
         else
         {
-            TraceTelemetry telemetry = new TraceTelemetry(logEntry.Message, ToSeverityLevel(logEntry.Level));
+            TraceTelemetry telemetry = new(logEntry.Payload.Message, ToSeverityLevel(logEntry.Level));
+            telemetry.Properties["Category"] = logEntry.Payload.Category ?? "None";
+            telemetry.Properties["Source"] = logEntry.Payload.Source ?? "Unknown";
+            telemetry.Properties["CorrelationId"] = logEntry.CorrelationId ?? "None";
+
+            if (logEntry.Payload.Context is not null)
+            {
+                foreach (KeyValuePair<string, object> kvp in logEntry.Payload.Context)
+                {
+                    telemetry.Properties[kvp.Key] = kvp.Value?.ToString() ?? "null";
+                }
+            }
+
             _telemetryClient.TrackTrace(telemetry);
         }
     }
@@ -80,23 +91,34 @@ public class AzureApplicationInsightTraceSink : ITraceSink
     };
 }
 
-public class AzureApplicationInsightEventSink : IBusinessEventSink
+public class AzureAppInsightAuditSink : IAuditLogSink
 {
     public string Name => "AzureAppInsightBusiness";
     private readonly TelemetryClient _telemetryClient;
 
-    public AzureApplicationInsightEventSink(TelemetryClient telemetryClient)
+    public AzureAppInsightAuditSink(TelemetryClient telemetryClient)
     {
         _telemetryClient = telemetryClient;
     }
 
-    public void Log(LogEntry logEntry)
+    public void Log(LogEntry<AuditPayload> logEntry)
     {
-        Dictionary<string, string> properties = new()
+        Dictionary<string, string> props = new()
         {
-            { "LogLevel", logEntry.Level.ToString() },
-            { "Context", logEntry.Context?.ToString() ?? "None" }
+            { "EventName", logEntry.Payload.EventName },
+            { "Category", logEntry.Payload.Category ?? "None" },
+            { "Source", logEntry.Payload.Source ?? "Unknown" },
+            { "CorrelationId", logEntry.CorrelationId ?? "None" }
         };
-        _telemetryClient.TrackEvent(logEntry.Message, properties);
+
+        if (logEntry.Payload.Data is not null)
+        {
+            foreach (KeyValuePair<string, object> kvp in logEntry.Payload.Data)
+            {
+                props[kvp.Key] = kvp.Value?.ToString() ?? "null";
+            }
+        }
+
+        _telemetryClient.TrackEvent(logEntry.Payload.EventName, props);
     }
 }
