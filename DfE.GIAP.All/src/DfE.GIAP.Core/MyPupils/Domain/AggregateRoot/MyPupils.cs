@@ -22,6 +22,10 @@ public sealed class MyPupils : AggregateRoot<MyPupilsId>
         }
     }
 
+    public int PupilCount => _pupils.Count;
+
+    public bool HasNoPupils => PupilCount == 0;
+
     public void Add(UniquePupilNumbers addPupilNumbers)
     {
         int newTotal = _pupils.Count + addPupilNumbers.Count;
@@ -50,7 +54,7 @@ public sealed class MyPupils : AggregateRoot<MyPupilsId>
             deletePupilsNumbers.GetUniquePupilNumbers());
     }
 
-    public void DeleteAll() => _pupils.Remove(_pupils.GetUniquePupilNumbers());
+    public void DeleteAll() => _pupils.Clear();
 
     public IReadOnlyList<UniquePupilNumber> GetMyPupils() => _pupils.GetUniquePupilNumbers();
 }

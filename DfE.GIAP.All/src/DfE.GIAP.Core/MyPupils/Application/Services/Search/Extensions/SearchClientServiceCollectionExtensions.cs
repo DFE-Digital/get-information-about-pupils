@@ -1,11 +1,11 @@
 ﻿using Azure;
 using Azure.Search.Documents;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
+using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
+using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
+namespace DfE.GIAP.Core.MyPupils.Application.Services.Search.Extensions;
 
 public static class SearchClientServiceCollectionExtensions
 {
@@ -13,7 +13,7 @@ public static class SearchClientServiceCollectionExtensions
         this IServiceCollection services,
         IEnumerable<Action<SearchClientOptions>>? configureOptions = null)
     {
-        services.AddSingleton<SearchClient>(sp =>
+        services.AddSingleton(sp =>
         {
             SearchIndexOptions options = sp.GetRequiredService<IOptions<SearchIndexOptions>>().Value;
             SearchClientOptions clientOptions = new();
@@ -29,7 +29,7 @@ public static class SearchClientServiceCollectionExtensions
                 clientOptions);
         });
 
-        services.AddSingleton<SearchClient>(sp =>
+        services.AddSingleton(sp =>
         {
             SearchIndexOptions options = sp.GetRequiredService<IOptions<SearchIndexOptions>>().Value;
             SearchClientOptions clientOptions = new();

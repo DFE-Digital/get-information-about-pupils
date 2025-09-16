@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Search.Options;
+﻿using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;

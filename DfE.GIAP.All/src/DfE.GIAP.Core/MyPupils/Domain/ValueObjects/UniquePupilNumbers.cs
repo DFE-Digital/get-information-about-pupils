@@ -1,17 +1,17 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class UniquePupilNumbers
 {
-    private readonly List<UniquePupilNumber> _uniquePupilNumbers;
+    private readonly HashSet<UniquePupilNumber> _uniquePupilNumbers;
 
     public UniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
-        _uniquePupilNumbers = uniquePupilNumbers?.ToList() ?? [];
+        _uniquePupilNumbers = uniquePupilNumbers?.ToHashSet() ?? [];
     }
     public static UniquePupilNumbers Create(IEnumerable<UniquePupilNumber> uniquePupilNumbers) => new(uniquePupilNumbers);
 
     public int Count => _uniquePupilNumbers.Count;
     public bool IsEmpty => Count == 0;
-    public IReadOnlyList<UniquePupilNumber> GetUniquePupilNumbers() => _uniquePupilNumbers.AsReadOnly();
+    public IReadOnlyList<UniquePupilNumber> GetUniquePupilNumbers() => _uniquePupilNumbers.ToList().AsReadOnly();
 
     public bool Contains(UniquePupilNumber upn)
     {
@@ -27,13 +27,14 @@ public sealed class UniquePupilNumbers
     {
         ArgumentNullException.ThrowIfNull(upns);
         List<UniquePupilNumber> addUpns = upns.Distinct().ToList();
-        _uniquePupilNumbers.AddRange(addUpns);
+        addUpns.ToList().ForEach(t => _uniquePupilNumbers.Add(t));
     }
 
-    public void Remove(IEnumerable<UniquePupilNumber> deleteUpns)
+    public void Remove(IEnumerable<UniquePupilNumber> upns)
     {
-        ArgumentNullException.ThrowIfNull(deleteUpns);
-        _uniquePupilNumbers.RemoveAll(
-            (currentUpn) => deleteUpns.Contains(currentUpn));
+        ArgumentNullException.ThrowIfNull(upns);
+        upns.ToList().ForEach(t => _uniquePupilNumbers.Remove(t));
     }
+
+    public void Clear() => _uniquePupilNumbers.Clear();
 }
