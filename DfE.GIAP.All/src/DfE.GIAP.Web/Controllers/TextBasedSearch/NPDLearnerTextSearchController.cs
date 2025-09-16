@@ -5,6 +5,7 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -28,6 +29,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     private readonly ILogger<NPDLearnerTextSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
+    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
 
     public override string PageHeading => ApplicationLabels.SearchNPDWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.NPDNonUpnSearchSessionKey;
@@ -88,8 +90,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
              mplService,
              selectionManager,
              azureAppSettings,
-             sessionProvider,
-             addPupilsToMyPupilsUseCase)
+             sessionProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -99,6 +100,9 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
+        _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
     }
 
 
@@ -184,7 +188,56 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     [Route(Routes.NPDNonUpnAddToMyPupilList)]
     public async Task<IActionResult> NonUpnAddToMyPupilList(LearnerTextSearchViewModel model)
     {
-        return await AddToMyPupilList(model);
+        PopulatePageText(model);
+        PopulateNavigation(model);
+        SetSortOptions(model);
+
+        SetSelections(
+            model.PageLearnerNumbers.Split(','),
+            model.SelectedPupil);
+
+        string selectedUpn = GetSelected();
+
+        if (string.IsNullOrEmpty(selectedUpn))
+        {
+            model.NoPupil = true;
+            model.NoPupilSelected = true;
+            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
+            return await ReturnToSearch(model);
+        }
+
+        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
+        {
+            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
+        }
+
+        if (!ValidationHelper.IsValidUpn(selectedUpn)) // TODO can we surface invalid UPNs?
+        {
+            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
+            {
+                LearnerNumber = selectedUpn
+            });
+        }
+
+        try
+        {
+            string userId = User.GetUserId();
+
+            AddPupilsToMyPupilsRequest addRequest = new(
+                userId: userId,
+                pupils: [selectedUpn]);
+
+            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
+        }
+
+        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
+        {
+            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
+            return await ReturnToSearch(model);
+        }
+
+        model.ItemAddedToMyPupilList = true;
+        return await ReturnToSearch(model);
     }
 
 

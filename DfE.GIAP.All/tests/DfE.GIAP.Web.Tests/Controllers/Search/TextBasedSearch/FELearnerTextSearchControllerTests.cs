@@ -1192,8 +1192,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 _mockMplService,
                 _mockSelectionManager,
                 _mockSessionProvider.Object,
-                _mockDownloadService,
-                new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object)
+                _mockDownloadService)
             {
                 ControllerContext = new ControllerContext()
                 {

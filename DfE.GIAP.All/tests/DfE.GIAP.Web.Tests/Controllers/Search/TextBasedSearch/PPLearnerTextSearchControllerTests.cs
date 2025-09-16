@@ -629,7 +629,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        IActionResult result = await sut.AddToMyPupilList(searchViewModel);
+        IActionResult result = await sut.PPAddToMyPupilList(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
@@ -657,7 +657,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
 
-        IActionResult result = await sut.AddToMyPupilList(searchViewModel);
+        IActionResult result = await sut.PPAddToMyPupilList(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);

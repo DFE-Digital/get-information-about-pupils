@@ -72,15 +72,13 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
        IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
        ISessionProvider sessionProvider,
-       IDownloadService downloadService,
-       IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+       IDownloadService downloadService)
        : base(logger,
              paginatedSearch,
              mplService,
              selectionManager,
              azureAppSettings,
-             sessionProvider,
-             addPupilsToMyPupilsUseCase)
+             sessionProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;

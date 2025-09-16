@@ -87,8 +87,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        ISessionProvider sessionProvider,
-        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+        ISessionProvider sessionProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -108,9 +107,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
-
-        ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
-        _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
     }
 
 
@@ -527,64 +523,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
 
         return await InvalidUPNs(model);
-    }
-
-
-    [NonAction]
-    public async Task<IActionResult> AddToMyPupilList(LearnerTextSearchViewModel model)
-    {
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetSortOptions(model);
-
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
-
-        string selected = GetSelected();
-
-        if (string.IsNullOrEmpty(selected))
-        {
-            model.NoPupil = true;
-            model.NoPupilSelected = true;
-            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
-            return await ReturnToSearch(model);
-        }
-
-        string userId = User.GetUserId();
-
-        if (PupilHelper.CheckIfStarredPupil(selected))
-        {
-            selected = RbacHelper.DecodeUpn(selected);
-        }
-
-        if (!ValidationHelper.IsValidUpn(selected)) // TODO can we surface invalid UPNs?
-        {
-            InvalidLearnerNumberSearchViewModel invalidViewModel = new()
-            {
-                LearnerNumber = selected
-            };
-
-            return await InvalidUPNs(invalidViewModel);
-        }
-
-        try
-        {
-            AddPupilsToMyPupilsRequest addRequest = new(
-                userId: userId,
-                pupils: [selected]);
-
-            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
-        }
-
-        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
-        {
-            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-            return await ReturnToSearch(model);
-        }
-
-        model.ItemAddedToMyPupilList = true;
-        return await ReturnToSearch(model);
     }
 
     [NonAction]
@@ -1154,7 +1092,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return currentFilters;
     }
 
-    private void SetSortOptions(LearnerTextSearchViewModel model)
+    protected void SetSortOptions(LearnerTextSearchViewModel model)
     {
         if (this.HttpContext.Session.Keys.Contains(SortDirectionKey))
             model.SortDirection = this.HttpContext.Session.GetString(SortDirectionKey);
