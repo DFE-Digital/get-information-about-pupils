@@ -12,6 +12,7 @@ public static class LogEntryFactory
         string? correlationId = null)
     {
         TracePayload payload = new(
+            Level: level,
             Message: message,
             Exception: exception,
             Category: category,
@@ -20,7 +21,6 @@ public static class LogEntryFactory
 
         return new LogEntry<TracePayload>
         {
-            Level = level,
             Timestamp = DateTime.UtcNow,
             CorrelationId = correlationId,
             Payload = payload
@@ -38,11 +38,10 @@ public static class LogEntryFactory
             EventName: eventName,
             Category: category,
             Source: source,
-            Data: data);
+            Context: data);
 
         return new LogEntry<AuditPayload>
         {
-            Level = LogLevel.Information,
             Timestamp = DateTime.UtcNow,
             CorrelationId = correlationId,
             Payload = payload
@@ -53,15 +52,15 @@ public static class LogEntryFactory
 
 public record LogEntry<TPayload>
 {
-    public LogLevel Level { get; init; }
-    public DateTime Timestamp { get; init; } = DateTime.UtcNow;
     public string? CorrelationId { get; init; }
+    public DateTime Timestamp { get; init; } = DateTime.UtcNow;
 
     public required TPayload Payload { get; init; }
 }
 
 public record TracePayload(
     string Message,
+    LogLevel Level = LogLevel.Information,
     Exception? Exception = null,
     string? Category = null,
     string? Source = null,
@@ -71,6 +70,6 @@ public record AuditPayload(
     string EventName,
     string? Category = null,
     string? Source = null,
-    Dictionary<string, object>? Data = null);
+    Dictionary<string, object>? Context = null);
 
-public enum LogLevel { Verbose, Debug, Information, Warning, Error, Critical }
+public enum LogLevel { Debug, Information, Warning, Error }

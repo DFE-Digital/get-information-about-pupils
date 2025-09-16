@@ -29,7 +29,7 @@ public class TraceLogHandler : ITraceLogHandler
         foreach (KeyValuePair<string, SinkConfig> kvp in _configs)
         {
             if (_activeSinks.TryGetValue(kvp.Key, out ITraceLogSink? sink) &&
-                kvp.Value.AcceptedLogLevels.Contains(logEntry.Level))
+                kvp.Value.AcceptedLogLevels.Contains(logEntry.Payload.Level))
             {
                 sink.Log(logEntry);
             }

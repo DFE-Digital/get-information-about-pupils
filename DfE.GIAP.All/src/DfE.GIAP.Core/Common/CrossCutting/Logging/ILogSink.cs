@@ -111,9 +111,9 @@ public class AzureAppInsightAuditSink : IAuditLogSink
             { "CorrelationId", logEntry.CorrelationId ?? "None" }
         };
 
-        if (logEntry.Payload.Data is not null)
+        if (logEntry.Payload.Context is not null)
         {
-            foreach (KeyValuePair<string, object> kvp in logEntry.Payload.Data)
+            foreach (KeyValuePair<string, object> kvp in logEntry.Payload.Context)
             {
                 props[kvp.Key] = kvp.Value?.ToString() ?? "null";
             }
