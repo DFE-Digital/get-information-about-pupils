@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
@@ -41,7 +42,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
     public async Task HandleAsync_Calls_UseCaseOnce_And_PresentationHandlerOnce_And_Returns_Result()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
         Mock<IMyPupilDtosPresentationHandler> mockHandler = new();
 
@@ -69,14 +70,14 @@ public sealed class GetPaginatedMyPupilsHandlerTests
         PaginatedMyPupilsResponse response =
             await sut.HandleAsync(
                 new GetPaginatedMyPupilsRequest(
-                    UserId: userId,
+                    UserId: myPupilsId.Value,
                     PresentationState: stubPupilsPresentationState));
 
         // Assert
         Assert.NotNull(response);
         Assert.Equal(response.Pupils, stubPupilDtos);
 
-        useCaseMock.Verify(useCase => useCase.HandleRequestAsync(new GetMyPupilsRequest(userId)), Times.Once);
+        useCaseMock.Verify(useCase => useCase.HandleRequestAsync(new GetMyPupilsRequest(myPupilsId.Value)), Times.Once);
         mockHandler.Verify(t => t.Handle(stubPupilDtos, stubPupilsPresentationState), Times.Once);
     }
 }

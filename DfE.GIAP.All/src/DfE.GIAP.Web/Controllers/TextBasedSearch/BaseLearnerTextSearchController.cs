@@ -551,7 +551,7 @@ public abstract class BaseLearnerTextSearchController : Controller
             return await ReturnToSearch(model);
         }
 
-        UserId userId = new(User.GetUserId());
+        string userId = User.GetUserId();
 
         if (PupilHelper.CheckIfStarredPupil(selected))
         {
@@ -570,11 +570,14 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         try
         {
-            AddPupilsToMyPupilsRequest addRequest = new(userId, [new UniquePupilNumber(selected)]);
+            AddPupilsToMyPupilsRequest addRequest = new(
+                userId: userId,
+                pupils: [selected]);
+
             await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
         }
 
-        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern?
+        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
         {
             model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
             return await ReturnToSearch(model);

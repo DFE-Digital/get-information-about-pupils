@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
@@ -10,9 +11,7 @@ internal static class IMyPupilsReadOnlyRepositoryTestDoubles
     {
         Mock<IMyPupilsReadOnlyRepository> mock = Default();
         mock.Setup(
-                (repo) => repo.GetMyPupilsOrDefaultAsync(
-                    It.IsAny<UserId>(),
-                    It.IsAny<CancellationToken>()))
+                (repo) => repo.GetMyPupilsOrDefaultAsync(It.IsAny<MyPupilsId>()))
             .ReturnsAsync(stub);
 
         return mock;

@@ -1,16 +1,15 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.AggregateRoot;
-public sealed class MyPupils : AggregateRoot<UserId>
+public sealed class MyPupils : AggregateRoot<MyPupilsId>
 {
     private readonly UniquePupilNumbers _pupils;
     private readonly int _maxPupilsLimit;
 
     public MyPupils(
-        UserId identifier,
+        MyPupilsId identifier,
         UniquePupilNumbers pupils,
         int maxPupilLimit) : base(identifier)
     {

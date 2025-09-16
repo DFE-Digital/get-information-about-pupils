@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
@@ -25,11 +26,14 @@ public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsTo
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        Domain.AggregateRoot.MyPupils myPupils = await _readRepository.GetMyPupils(request.UserId, request.CancellationToken);
+        MyPupilsId id = new(request.UserId);
+
+        Domain.AggregateRoot.MyPupils myPupils = await _readRepository.GetMyPupils(id);
 
         myPupils.Add(
-            UniquePupilNumbers.Create(request.Pupils));
+            UniquePupilNumbers.Create(uniquePupilNumbers:
+                request.UniquePupilNumbers.ToUniquePupilNumbers()));
 
-        await _writeRepository.SaveMyPupilsAsync(request.UserId, myPupils, request.CancellationToken);
+        await _writeRepository.SaveMyPupilsAsync(myPupils);
     }
 }

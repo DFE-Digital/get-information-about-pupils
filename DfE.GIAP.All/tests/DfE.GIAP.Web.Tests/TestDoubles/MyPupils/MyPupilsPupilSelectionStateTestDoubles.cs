@@ -6,7 +6,7 @@ public static class MyPupilsPupilSelectionStateTestDoubles
 {
     public static MyPupilsPupilSelectionState Default() => new();
 
-    public static MyPupilsPupilSelectionState WithSelectionState(Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping)
+    public static MyPupilsPupilSelectionState WithPupilsSelectionState(Dictionary<List<string>, bool> selectionStateMapping)
     {
         MyPupilsPupilSelectionState state = Default();
         selectionStateMapping.ToList().ForEach(mapping =>

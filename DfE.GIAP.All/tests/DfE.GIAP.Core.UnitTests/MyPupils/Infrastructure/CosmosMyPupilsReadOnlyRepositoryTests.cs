@@ -85,10 +85,9 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             myPupilsOptions: options);
 
         // Act & Assert
+
         await Assert.ThrowsAsync<Exception>(() =>
-            repository.GetMyPupilsOrDefaultAsync(
-                UserIdTestDoubles.Default(),
-                It.IsAny<CancellationToken>()));
+            repository.GetMyPupilsOrDefaultAsync(id: MyPupilsIdTestDoubles.Default()));
     }
 
     [Fact]
@@ -110,9 +109,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         // Act Assert
         await Assert.ThrowsAsync<CosmosException>(() =>
-            repository.GetMyPupilsOrDefaultAsync(
-                UserIdTestDoubles.Default(),
-                It.IsAny<CancellationToken>()));
+            repository.GetMyPupilsOrDefaultAsync(id: MyPupilsIdTestDoubles.Default()));
 
         string log = Assert.Single(mockLogger.Logs);
         Assert.Contains("CosmosException in GetMyPupilsOrDefaultAsync", log);
@@ -135,37 +132,34 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
             myPupilsOptions: options);
 
-        // Act Assert
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        UserId userId = UserIdTestDoubles.Default();
-        Core.MyPupils.Domain.AggregateRoot.MyPupils? myPupils =
-            await repository.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>());
+        // Act
+        Core.MyPupils.Domain.AggregateRoot.MyPupils? myPupils = await repository.GetMyPupilsOrDefaultAsync(myPupilsId);
 
+        // Assert
         Assert.Null(myPupils);
 
         string log = Assert.Single(mockLogger.Logs);
-        Assert.Contains($"Could not find MyPupils for User id {userId.Value}", log);
+        Assert.Contains($"Could not find MyPupils for User id {myPupilsId.Value}", log);
     }
 
     [Fact]
     public async Task GetMyPupilsAsync_Returns_Mapped_MyPupils()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         UniquePupilNumbers upns =
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 10));
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Create(userId, upns);
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Create(myPupilsId, upns);
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
         Mock<ICosmosDbQueryHandler> cosmosDbQueryHandlerMock =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
-                () => MyPupilsDocumentDtoTestDoubles.Create(
-                        userId,
-                        upns));
+            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(() => MyPupilsDocumentDtoTestDoubles.Create(myPupilsId, upns));
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
@@ -175,7 +169,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             myPupilsOptions: options);
 
         // Act
-        Core.MyPupils.Domain.AggregateRoot.MyPupils? response = await sut.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>());
+        Core.MyPupils.Domain.AggregateRoot.MyPupils? response = await sut.GetMyPupilsOrDefaultAsync(myPupilsId);
 
         // Assert
 
@@ -183,9 +177,9 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         Assert.Equivalent(response, myPupils);
         cosmosDbQueryHandlerMock.Verify(
             (t) => t.ReadItemByIdAsync<MyPupilsDocumentDto>(
-                userId.Value,
+                myPupilsId.Value,
                 "mypupils",
-                userId.Value,
+                myPupilsId.Value,
                 It.IsAny<CancellationToken>()), Times.Once);
     }
 

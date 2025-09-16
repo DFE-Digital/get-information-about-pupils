@@ -9,8 +9,6 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
@@ -20,7 +18,7 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_ReturnsMappedPupils()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Default();
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
@@ -37,7 +35,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 
-        GetMyPupilsRequest request = new(userId);
+        GetMyPupilsRequest request = new(myPupilsId.Value);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -53,7 +51,7 @@ public sealed class GetMyPupilsUseCaseTests
         Assert.Equivalent(result.MyPupils, myPupilDtos);
 
         readRepositoryMock.Verify(repo =>
-            repo.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+            repo.GetMyPupilsOrDefaultAsync(myPupilsId), Times.Once);
 
         aggregateServiceMock.Verify(
             t => t.GetPupilsAsync(
@@ -69,7 +67,7 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_WithNullRepositoryResponse_ReturnsEmptyResponse()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(null!);
 
@@ -77,7 +75,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
 
-        GetMyPupilsRequest request = new(userId);
+        GetMyPupilsRequest request = new(myPupilsId.Value);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -92,9 +90,7 @@ public sealed class GetMyPupilsUseCaseTests
         Assert.Empty(result.MyPupils.Values);
 
         userRepoMock.Verify(repo =>
-            repo.GetMyPupilsOrDefaultAsync(
-                userId,
-                It.IsAny<CancellationToken>()), Times.Once);
+            repo.GetMyPupilsOrDefaultAsync(myPupilsId), Times.Once);
 
         mockAggregateService.Verify(
             t => t.GetPupilsAsync(It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
@@ -106,7 +102,7 @@ public sealed class GetMyPupilsUseCaseTests
     public async Task HandleRequestAsync_WithEmptyPupilList_ReturnsEmptyResponse()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils =
             MyPupilsTestDoubles.Create(
@@ -118,7 +114,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
 
-        GetMyPupilsRequest request = new(userId);
+        GetMyPupilsRequest request = new(myPupilsId.Value);
 
         // Act
         GetMyPupilsUseCase sut = new(
@@ -134,11 +130,11 @@ public sealed class GetMyPupilsUseCaseTests
 
         userRepoMock.Verify(repo =>
             repo.GetMyPupilsOrDefaultAsync(
-                userId,
-                It.IsAny<CancellationToken>()), Times.Once);
+                myPupilsId), Times.Once);
 
         mockAggregateService.Verify(
-            t => t.GetPupilsAsync(It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
+            t => t.GetPupilsAsync(
+                It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
 
         mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
     }

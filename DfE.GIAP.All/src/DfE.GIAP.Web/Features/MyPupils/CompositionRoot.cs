@@ -44,7 +44,7 @@ public static class CompositionRoot
 
     private static IServiceCollection AddGetSelectedMyPupils(this IServiceCollection services)
     {
-        services.AddScoped<IGetSelectedMyPupilsProvider, GetSelectedMyPupilsProvider>();
+        services.AddScoped<IGetSelectedMyPupilsHandler, GetSelectedMyPupilsHandler>();
         return services;
     }
 
@@ -52,7 +52,7 @@ public static class CompositionRoot
     {
         services
             .AddSingleton<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>, MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper>()
-            .AddScoped<IGetMyPupilsForUserProvider, GetMyPupilsForUserProvider>();
+            .AddScoped<IGetMyPupilsForUserHandler, GetMyPupilsForUserHandler>();
         return services;
     }
 

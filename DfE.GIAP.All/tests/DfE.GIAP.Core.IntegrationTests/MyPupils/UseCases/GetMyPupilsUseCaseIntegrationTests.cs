@@ -44,7 +44,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         IEnumerable<UniquePupilNumber> upns
             = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
@@ -53,7 +53,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
+                myPupilsId,
                 upns: UniquePupilNumbers.Create(upns)));
 
         // Act
@@ -62,7 +62,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId));
+                new GetMyPupilsRequest(myPupilsId.Value));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
@@ -95,11 +95,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
+                myPupilsId,
                 upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -107,7 +107,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId));
+                new GetMyPupilsRequest(myPupilsId.Value));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);

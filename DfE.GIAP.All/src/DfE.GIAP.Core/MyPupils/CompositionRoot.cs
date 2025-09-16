@@ -5,6 +5,7 @@ using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
@@ -17,7 +18,6 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write.Mapper;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +42,7 @@ public static class CompositionRoot
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>, AddPupilsToMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
+            .AddScoped<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>, DeleteAllMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, MyPupilDto>, MapPupilToPupilDtoMapper>()
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, TempAggregatePupilsForMyPupilsApplicationService>()
             .AddSingleton<IMapper<DecoratedSearchIndexDto, Pupil>, MapDecoratedSearchIndexDtoToPupilMapper>();
@@ -54,7 +55,7 @@ public static class CompositionRoot
         services
             .AddScoped<IMyPupilsReadOnlyRepository, CosmosDbMyPupilsReadOnlyRepository>()
             .AddScoped<IMyPupilsWriteOnlyRepository, CosmosDbMyPupilsWriteOnlyRepository>()
-            .AddSingleton<IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto>, MyPupilsDocumentMappableToMyPupilsDocumentDtoMapper>()
+            .AddSingleton<IMapper<Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>, MyPupilsToMyPupilsDocumentDtoMapper>()
             .AddMyPupilsInfrastructureSearch();
 
         return services;

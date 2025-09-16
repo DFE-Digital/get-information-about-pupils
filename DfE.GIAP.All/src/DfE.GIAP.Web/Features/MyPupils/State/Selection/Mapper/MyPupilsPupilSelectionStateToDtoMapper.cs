@@ -12,7 +12,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
         return new MyPupilsPupilSelectionStateDto
         {
             PupilUpnToSelectedMap =
-                source.GetPupilsWithSelectionState().ToDictionary((kv) => kv.Key.Value, v => v.Value),
+                source.GetPupilsWithSelectionState().ToDictionary(),
             State =
                 source.IsAllPupilsSelected ?
                     PupilSelectionModeDto.SelectAll :

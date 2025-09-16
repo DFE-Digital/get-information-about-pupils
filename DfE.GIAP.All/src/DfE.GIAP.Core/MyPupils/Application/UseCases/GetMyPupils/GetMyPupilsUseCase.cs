@@ -31,20 +31,28 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
-        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
+        MyPupilsId id = new(request.UserId);
+
+        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 
         if (myPupils is null || myPupils.GetMyPupils().Count == 0)
         {
-            MyPupilsModel emptyPupils = MyPupilsModel.Create(pupils: []);
-            return new GetMyPupilsResponse(emptyPupils);
+            return
+                new GetMyPupilsResponse(
+                    MyPupilsModel.Create(
+                        pupils: []));
         }
 
-        MyPupilsModel aggregatedPupilDtos =
-            MyPupilsModel.Create(
-                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(UniquePupilNumbers.Create(uniquePupilNumbers: myPupils.GetMyPupils())))
-                    .Select(_mapPupilToPupilDtoMapper.Map)
-                        .ToList());
+        UniquePupilNumbers myPupilUniquePupilNumbers =
+            UniquePupilNumbers.Create(
+                myPupils.GetMyPupils());
 
-        return new GetMyPupilsResponse(aggregatedPupilDtos);
+        MyPupilsModel aggregatedPupils =
+            MyPupilsModel.Create(
+                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
+                        .Select(_mapPupilToPupilDtoMapper.Map)
+                            .ToList());
+
+        return new GetMyPupilsResponse(aggregatedPupils);
     }
 }

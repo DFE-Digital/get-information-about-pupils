@@ -1,8 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
@@ -22,7 +21,7 @@ public sealed class GetMyPupilsHandlerTests
     {
         // Arrange
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
-        Func<GetMyPupilsForUserProvider> construct = () => new(null, mapperMock.Object);
+        Func<GetMyPupilsForUserHandler> construct = () => new(null, mapperMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -33,7 +32,7 @@ public sealed class GetMyPupilsHandlerTests
     {
         // Arrange
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
-        Func<GetMyPupilsForUserProvider> construct = () => new(paginatedHandlerMock.Object, null);
+        Func<GetMyPupilsForUserHandler> construct = () => new(paginatedHandlerMock.Object, null);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -46,7 +45,7 @@ public sealed class GetMyPupilsHandlerTests
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
         
-        GetMyPupilsForUserProvider sut = new(paginatedHandlerMock.Object, mapperMock.Object);
+        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         Func<Task> act = async () => await sut.GetPupilsAsync(null);
 
@@ -61,10 +60,10 @@ public sealed class GetMyPupilsHandlerTests
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
 
-        GetMyPupilsForUserProvider sut = new(paginatedHandlerMock.Object, mapperMock.Object);
+        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         GetMyPupilsForUserRequest request = new(
-            UserId: It.IsAny<UserId>(),
+            UserId: MyPupilsIdTestDoubles.Default().Value,
             State: null);
 
         Func<Task> act = async () => await sut.GetPupilsAsync(request);
@@ -77,7 +76,7 @@ public sealed class GetMyPupilsHandlerTests
     public async Task HandleAsync_Maps_Out_Pupils()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsModel stubPaginatedMyPupilDtos = MyPupilDtosTestDoubles.Generate(count: 1);
         PaginatedMyPupilsResponse paginatedResponseStub = new(stubPaginatedMyPupilDtos);
@@ -87,12 +86,12 @@ public sealed class GetMyPupilsHandlerTests
 
         Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.MockFor<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>(pupils);
 
-        GetMyPupilsForUserProvider sut = new(paginatedHandlerMock.Object, mapperMock.Object);
+        GetMyPupilsForUserHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         MyPupilsPupilSelectionState selectionState = new();
         MyPupilsState state = new(MyPupilsPresentationStateTestDoubles.Default(), selectionState);
 
-        GetMyPupilsForUserRequest request = new(UserId: userId, state);
+        GetMyPupilsForUserRequest request = new(myPupilsId.Value, state);
 
         // Act
         PupilsViewModel response = await sut.GetPupilsAsync(request);
@@ -104,7 +103,7 @@ public sealed class GetMyPupilsHandlerTests
 
         paginatedHandlerMock.Verify((handler)
             => handler.HandleAsync(
-                It.Is<GetPaginatedMyPupilsRequest>((request) => request.UserId.Equals(userId))), Times.Once);
+                It.Is<GetPaginatedMyPupilsRequest>((request) => request.UserId.Equals(myPupilsId.Value))), Times.Once);
 
         mapperMock.Verify((mapper)
             => mapper.Map(

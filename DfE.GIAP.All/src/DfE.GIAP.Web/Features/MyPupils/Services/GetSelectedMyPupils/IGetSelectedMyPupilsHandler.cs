@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
 
-public interface IGetSelectedMyPupilsProvider
+public interface IGetSelectedMyPupilsHandler
 {
-    UniquePupilNumbers GetSelectedMyPupils();
+    IEnumerable<string> GetSelectedMyPupils();
 }

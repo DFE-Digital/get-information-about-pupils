@@ -9,16 +9,16 @@ namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
 {
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
-    private readonly IGetMyPupilsForUserProvider _getMyPupilsForUserHandler;
+    private readonly IGetMyPupilsForUserHandler _getMyPupilsForUserHandler;
     public MyPupilsViewModelFactory(
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
-        IGetMyPupilsForUserProvider getMyPupilsForUserHandler)
+        IGetMyPupilsForUserHandler getMyPupilsForUserHandler)
     {
 
         _getMyPupilsStateProvider = getMyPupilsStateProvider;
         _getMyPupilsForUserHandler = getMyPupilsForUserHandler;
     }
-    public async Task<MyPupilsViewModel> CreateViewModelAsync(UserId userId, MyPupilsErrorViewModel error = null)
+    public async Task<MyPupilsViewModel> CreateViewModelAsync(string userId, MyPupilsErrorViewModel error = null)
     {
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 

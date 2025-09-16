@@ -26,10 +26,10 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
 
         // Then apply selectedState of each pupil
         List<string> selectedPupils = input.PupilUpnToSelectedMap.Where(t => t.Value).Select(t => t.Key).ToList();
-        state.UpsertPupilSelectionState(selectedPupils.ToUniquePupilNumbers(), isSelected: true);
+        state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
 
         List<string> deselectedPupils = input.PupilUpnToSelectedMap.Where(t => !t.Value).Select(t => t.Key).ToList();
-        state.UpsertPupilSelectionState(deselectedPupils.ToUniquePupilNumbers(), isSelected: false);
+        state.UpsertPupilSelectionState(deselectedPupils, isSelected: false);
 
         return state;
     }

@@ -72,9 +72,12 @@ public sealed class GetMyPupilsStateProviderTests
         Mock<ISessionQueryHandler<MyPupilsPresentationState>> presentationHandler =
             ISessionQueryHandlerTestDoubles.MockFor(expectedPresentationState);
 
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 10);
+        List<string> upns =
+            UniquePupilNumberTestDoubles.Generate(count: 10)
+                .Select(t => t.Value)
+                .ToList();
 
-        MyPupilsPupilSelectionState expectedSelectionState = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(
+        MyPupilsPupilSelectionState expectedSelectionState = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
             new()
             {
                 { upns.Take(5).ToList(), true },

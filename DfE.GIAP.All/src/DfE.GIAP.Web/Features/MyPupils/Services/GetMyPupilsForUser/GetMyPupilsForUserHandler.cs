@@ -5,12 +5,12 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 
-internal sealed class GetMyPupilsForUserProvider : IGetMyPupilsForUserProvider
+internal sealed class GetMyPupilsForUserHandler : IGetMyPupilsForUserHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
     private readonly IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
 
-    public GetMyPupilsForUserProvider(
+    public GetMyPupilsForUserHandler(
         IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
         IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> mapToViewModel)
     {
@@ -27,8 +27,8 @@ internal sealed class GetMyPupilsForUserProvider : IGetMyPupilsForUserProvider
         ArgumentNullException.ThrowIfNull(request.State);
 
         GetPaginatedMyPupilsRequest paginatedPupilsRequest = new(
-            request.UserId,
-            request.State.PresentationState);
+            UserId: request.UserId,
+            PresentationState: request.State.PresentationState);
 
         PaginatedMyPupilsResponse response = await _getPaginatedMyPupilsQueryHandler.HandleAsync(paginatedPupilsRequest);
 

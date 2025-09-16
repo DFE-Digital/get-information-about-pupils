@@ -5,7 +5,6 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -35,16 +34,17 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         _myPupilsOptions = myPupilsOptions.Value;
     }
 
-    public async Task<Domain.AggregateRoot.MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default)
+    public async Task<Domain.AggregateRoot.MyPupils?> GetMyPupilsOrDefaultAsync(MyPupilsId id)
     {
+        ArgumentNullException.ThrowIfNull(id);
+
         try
         {
             MyPupilsDocumentDto myPupilsDocumentDto =
                 await _cosmosDbQueryHandler.ReadItemByIdAsync<MyPupilsDocumentDto>(
-                    id: userId.Value,
+                    id: id.Value,
                     containerKey: ContainerName,
-                    partitionKeyValue: userId.Value,
-                    ctx);
+                    partitionKeyValue: id.Value);
 
             if (myPupilsDocumentDto is null)
             {
@@ -56,13 +56,13 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
 
             return new
                 Domain.AggregateRoot.MyPupils(
-                    userId,
+                    id,
                     UniquePupilNumbers.Create(myPupils),
                     _myPupilsOptions.PupilsLimit);
         }
         catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            _logger.LogInformation(ex, "Could not find MyPupils for User id {UserId}", userId.Value);
+            _logger.LogInformation(ex, "Could not find MyPupils for User id {UserId}", id.Value);
             return null;
         }
 
@@ -73,13 +73,13 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         }
     }
 
-    public async Task<Domain.AggregateRoot.MyPupils> GetMyPupils(UserId userId, CancellationToken ctx = default)
+    public async Task<Domain.AggregateRoot.MyPupils> GetMyPupils(MyPupilsId id)
     {
-        Domain.AggregateRoot.MyPupils? myPupils = await GetMyPupilsOrDefaultAsync(userId, ctx);
+        Domain.AggregateRoot.MyPupils? myPupils = await GetMyPupilsOrDefaultAsync(id);
 
         return myPupils
             ?? new Domain.AggregateRoot.MyPupils(
-                userId,
+                id,
                 UniquePupilNumbers.Create([]),
                 _myPupilsOptions.PupilsLimit);
     }

@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.AggregateRoot;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
@@ -8,22 +9,30 @@ public static class MyPupilsTestDoubles
 
     public static Core.MyPupils.Domain.AggregateRoot.MyPupils Default()
         => Create(
-            UserIdTestDoubles.Default(),
-            UniquePupilNumbers.Create(
-                uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 10)),
+            MyPupilsIdTestDoubles.Default(),
+            UniquePupilNumbers.Create(uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 10)),
+            DEFAULT_LIMIT);
+
+    public static Core.MyPupils.Domain.AggregateRoot.MyPupils Create(MyPupilsId id)
+        => Create(
+            id,
+            UniquePupilNumbers.Create([]),
             DEFAULT_LIMIT);
 
     public static Core.MyPupils.Domain.AggregateRoot.MyPupils Create(UniquePupilNumbers uniquePupilNumbers)
-        => Create(
-            UserIdTestDoubles.Default(),
+    => Create(
+            MyPupilsIdTestDoubles.Default(),
             uniquePupilNumbers);
 
-    public static Core.MyPupils.Domain.AggregateRoot.MyPupils Create(UserId userId, UniquePupilNumbers uniquePupilNumbers)
-        => Create(userId, uniquePupilNumbers, DEFAULT_LIMIT);
+    public static Core.MyPupils.Domain.AggregateRoot.MyPupils Create(MyPupilsId id, UniquePupilNumbers uniquePupilNumbers)
+        => Create(
+            id,
+            uniquePupilNumbers,
+            DEFAULT_LIMIT);
 
-    private static Core.MyPupils.Domain.AggregateRoot.MyPupils Create(UserId userId, UniquePupilNumbers uniquePupilNumbers, int limit)
+    private static Core.MyPupils.Domain.AggregateRoot.MyPupils Create(MyPupilsId id, UniquePupilNumbers uniquePupilNumbers, int limit)
         => new(
-            userId,
+            id,
             uniquePupilNumbers,
             limit);
 }

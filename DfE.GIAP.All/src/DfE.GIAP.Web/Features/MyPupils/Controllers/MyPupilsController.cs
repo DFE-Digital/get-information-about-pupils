@@ -27,9 +27,7 @@ public class MyPupilsController : Controller
     {
         _logger.LogInformation("My pupil list GET method is called");
 
-        UserId userId = new(id: User.GetUserId());
-
-        MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId);
+        MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId: User.GetUserId());
 
         return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
     }

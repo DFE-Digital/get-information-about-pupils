@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
@@ -80,14 +79,14 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
 
-        Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping = new()
+        Dictionary<List<string>, bool> selectionStateMapping = new()
         {
             { [createdPupils.Values[0].UniquePupilNumber], true},
             { [createdPupils.Values[1].UniquePupilNumber], false}
         };
 
         MyPupilsPupilSelectionState selectionState =
-            MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
         PupilsViewModel response = sut.Map(
@@ -109,7 +108,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         PupilViewModel output,
         bool expectPupilIsSelected)
     {
-        Assert.Equal(input.UniquePupilNumber.Value, output.UniquePupilNumber);
+        Assert.Equal(input.UniquePupilNumber, output.UniquePupilNumber);
         Assert.Equal(input.Forename, output.Forename);
         Assert.Equal(input.Surname, output.Surname);
         Assert.Equal(input.DateOfBirth, output.DateOfBirth);

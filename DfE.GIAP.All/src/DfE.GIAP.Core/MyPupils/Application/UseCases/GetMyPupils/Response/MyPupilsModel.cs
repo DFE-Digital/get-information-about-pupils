@@ -15,7 +15,7 @@ public sealed class MyPupilsModel
     public static MyPupilsModel Create(IEnumerable<MyPupilDto> pupils) => new(pupils);
 
     public IReadOnlyList<MyPupilDto> Values { get; }
-    public IReadOnlyList<UniquePupilNumber> Identifiers => Values.Select(t => t.UniquePupilNumber).ToList().AsReadOnly();
+    public IReadOnlyList<string> Identifiers => Values.Select(t => t.UniquePupilNumber).ToList().AsReadOnly();
     public int Count => Values.Count;
     public bool IsEmpty() => !Values.Any();
 }

@@ -11,7 +11,7 @@ internal sealed class MapPupilToPupilDtoMapper : IMapper<Pupil, MyPupilDto>
         ArgumentNullException.ThrowIfNull(pupil);
         return new()
         {
-            UniquePupilNumber = pupil.Identifier,
+            UniquePupilNumber = pupil.Identifier.Value,
             DateOfBirth = pupil.DateOfBirth?.ToString() ?? string.Empty,
             Forename = pupil.Forename,
             Surname = pupil.Surname,

@@ -1,9 +1,6 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -28,7 +25,7 @@ public class MyPupilsDownloadController : Controller
     private readonly AzureAppSettings _appSettings;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
-    private readonly IGetSelectedMyPupilsProvider _getSelectedMyPupilsProvider;
+    private readonly IGetSelectedMyPupilsHandler _getSelectedMyPupilsProvider;
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
     private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
@@ -38,7 +35,7 @@ public class MyPupilsDownloadController : Controller
         IOptions<AzureAppSettings> azureAppSettings,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
-        IGetSelectedMyPupilsProvider getSelectedMyPupilsProvider,
+        IGetSelectedMyPupilsHandler getSelectedMyPupilsProvider,
         IMyPupilsViewModelFactory myPupilsViewModelFactory,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
         IGetMyPupilsStateProvider getMyPupilsStateProvider)
@@ -181,29 +178,22 @@ public class MyPupilsDownloadController : Controller
         DownloadType downloadType,
         List<string> formSelectedPupils)
     {
-        List<UniquePupilNumber> selectedPupilsFromForm = formSelectedPupils?.ToUniquePupilNumbers().ToList() ?? [];
+        string userId = User.GetUserId();
 
-        UserId userId = new(User.GetUserId());
-
-        bool pupilsSelectedOnFormToAddToSelectedPupils = selectedPupilsFromForm.Count > 0;
-
-        if (pupilsSelectedOnFormToAddToSelectedPupils)
+        if (formSelectedPupils.Count > 0)
         {
             MyPupilsPupilSelectionState selectionState = _getMyPupilsStateProvider.GetState().SelectionState;
-            selectionState.UpsertPupilSelectionState(selectedPupilsFromForm, true);
+            selectionState.UpsertPupilSelectionState(formSelectedPupils, true);
             _selectionStateSessionCommandHandler.StoreInSession(selectionState);
         }
 
-        UniquePupilNumbers stateSelectedPupils = _getSelectedMyPupilsProvider.GetSelectedMyPupils();
+        string[] allSelectedPupils =
+            _getSelectedMyPupilsProvider.GetSelectedMyPupils()
+                .Concat(formSelectedPupils)
+                .Distinct()
+                .ToArray();
 
-        UniquePupilNumbers allSelectedPupils = UniquePupilNumbers.Create(
-                uniquePupilNumbers:
-                    selectedPupilsFromForm.Concat(
-                        stateSelectedPupils.GetUniquePupilNumbers()).Distinct());
-
-        string[] allSelectedPupilsInput = allSelectedPupils.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
-
-        if (allSelectedPupils.IsEmpty)
+        if (allSelectedPupils.Length == 0)
         {
             MyPupilsErrorViewModel error = new(Messages.Common.Errors.NoPupilsSelected);
 
@@ -212,7 +202,7 @@ public class MyPupilsDownloadController : Controller
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
-        if (downloadType == DownloadType.CTF && allSelectedPupilsInput.Length > _appSettings.CommonTransferFileUPNLimit)
+        if (downloadType == DownloadType.CTF && allSelectedPupils.Length > _appSettings.CommonTransferFileUPNLimit)
         {
             MyPupilsErrorViewModel error = new(Messages.Downloads.Errors.UPNLimitExceeded);
 
@@ -224,13 +214,13 @@ public class MyPupilsDownloadController : Controller
         if (downloadType == DownloadType.CTF)
         {
             ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
-                allSelectedPupilsInput,
-                allSelectedPupilsInput,
+                allSelectedPupils,
+                allSelectedPupils,
                 User.GetLocalAuthorityNumberForEstablishment(),
                 User.GetEstablishmentNumber(),
                 User.IsOrganisationEstablishment(),
                 AzureFunctionHeaderDetails.Create(
-                    userId.Value,
+                    userId,
                     User.GetSessionId()),
                 ReturnRoute.MyPupilList);
 
@@ -259,11 +249,14 @@ public class MyPupilsDownloadController : Controller
 
 
             ReturnFile downloadFile = await _downloadService.GetPupilPremiumCSVFile(
-                allSelectedPupilsInput,
-                allSelectedPupilsInput,
+                allSelectedPupils,
+                allSelectedPupils,
                 true,
-                AzureFunctionHeaderDetails.Create(userId.Value, User.GetSessionId()),
-                ReturnRoute.MyPupilList, userOrganisation);
+                AzureFunctionHeaderDetails.Create(
+                    userId,
+                    User.GetSessionId()),
+                ReturnRoute.MyPupilList,
+                userOrganisation);
 
             if (downloadFile == null)
             {
@@ -282,8 +275,7 @@ public class MyPupilsDownloadController : Controller
 
         if(downloadType == DownloadType.NPD)
         {
-            return await DownloadSelectedNationalPupilDatabaseData(
-                string.Join(",", allSelectedPupils.GetUniquePupilNumbers().Select(t => t.Value)));
+            return await DownloadSelectedNationalPupilDatabaseData(string.Join(",", allSelectedPupils));
         }
 
         MyPupilsErrorViewModel unknownDownloadTypeError = new MyPupilsErrorViewModel(Messages.Downloads.Errors.UnknownDownloadType);

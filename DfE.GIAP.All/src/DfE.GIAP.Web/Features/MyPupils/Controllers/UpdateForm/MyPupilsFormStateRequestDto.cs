@@ -23,4 +23,11 @@ public sealed class MyPupilsFormStateRequestDto
     [FromQuery]
     // TODO Validator for ModelState, Validate XSS
     public string SortDirection { get; set; } = string.Empty;
+
+    public MyPupilsFormSelectionModeRequestDto SelectAllMode =>
+#pragma warning disable S3358 // Ternary operators should not be nested
+            !SelectAll.HasValue ? MyPupilsFormSelectionModeRequestDto.ManualSelection :
+                SelectAll.Value ? MyPupilsFormSelectionModeRequestDto.SelectAll :
+                    MyPupilsFormSelectionModeRequestDto.DeselectAll;
+#pragma warning restore S3358 // Ternary operators should not be nested
 }

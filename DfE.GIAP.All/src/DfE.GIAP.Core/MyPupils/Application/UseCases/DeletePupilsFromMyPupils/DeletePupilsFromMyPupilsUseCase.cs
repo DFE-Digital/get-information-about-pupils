@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
@@ -23,27 +24,19 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
+        MyPupilsId id = new(request.UserId);
+
+        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 
         if(myPupils is null)
         {
             return; // nothing to delete
         }
 
-        if (request.DeleteAll)
-        {
-            myPupils.DeleteAll();
-            await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(request.UserId, myPupils);
-            return;
-        }
-
         myPupils.DeletePupils(
             UniquePupilNumbers.Create(
-                uniquePupilNumbers: request.DeletePupilUpns));
+                uniquePupilNumbers: request.DeletePupilUpns.ToUniquePupilNumbers()));
 
-        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(
-            request.UserId,
-            myPupils,
-            request.CancellationToken);
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupils);
     }
 }

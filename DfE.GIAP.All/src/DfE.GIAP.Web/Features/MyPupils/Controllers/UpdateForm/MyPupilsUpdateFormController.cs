@@ -1,7 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Web.Extensions;
+﻿using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
@@ -57,7 +54,7 @@ public class MyPupilsUpdateFormController : Controller
     {
         _logger.LogInformation("My pupil list POST method called");
 
-        UserId userId = new(User.GetUserId());
+        string userId = User.GetUserId();
 
         if (!ModelState.IsValid)
         {
@@ -76,17 +73,9 @@ public class MyPupilsUpdateFormController : Controller
                 userId,
                 state.PresentationState));
 
-        MyPupilsFormSelectionModeRequestDto selectAllMode =
-            !formDto.SelectAll.HasValue ? MyPupilsFormSelectionModeRequestDto.ManualSelection :
-                formDto.SelectAll.Value ? MyPupilsFormSelectionModeRequestDto.SelectAll :
-                    MyPupilsFormSelectionModeRequestDto.DeselectAll;
-
-        Action<MyPupilsPupilSelectionState> updateStrategy = GetSelectionStateUpdateStrategy(
-            selectAllMode,
-            currentPageOfPupilsResponse.Pupils.Identifiers.ToList(),
-            formDto.SelectedPupils);
-
-        updateStrategy.Invoke(state.SelectionState);
+        GetSelectionStateUpdateStrategy(
+                formDto.SelectAllMode, currentPageOfPupilsResponse.Pupils.Identifiers.ToList(), formDto.SelectedPupils)
+            .Invoke(state.SelectionState);
 
         _pupilSelectionStateCommandHandler.StoreInSession(state.SelectionState);
 
@@ -105,7 +94,7 @@ public class MyPupilsUpdateFormController : Controller
 
     private static Action<MyPupilsPupilSelectionState> GetSelectionStateUpdateStrategy(
         MyPupilsFormSelectionModeRequestDto mode,
-        List<UniquePupilNumber> currentPageOfPupils,
+        List<string> currentPageOfPupils,
         List<string> selectedPupilsOnForm)
     {
         Action<MyPupilsPupilSelectionState> selectionStateHandler = mode switch
@@ -123,8 +112,8 @@ public class MyPupilsUpdateFormController : Controller
             },
             _ => (state) =>
             {
-                List<UniquePupilNumber> selectedPupils = selectedPupilsOnForm?.ToUniquePupilNumbers().ToList() ?? [];
-                List<UniquePupilNumber> deselectedPupils = currentPageOfPupils.Except(selectedPupils).ToList();
+                List<string> selectedPupils = selectedPupilsOnForm?.ToList() ?? [];
+                List<string> deselectedPupils = currentPageOfPupils.Except(selectedPupils).ToList();
 
                 state.UpsertPupilSelectionState(selectedPupils, true);
                 state.UpsertPupilSelectionState(deselectedPupils, false);

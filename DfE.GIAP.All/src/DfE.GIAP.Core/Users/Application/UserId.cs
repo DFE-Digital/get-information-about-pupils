@@ -15,3 +15,6 @@ public sealed class UserId : ValueObject<UserId>
         yield return Value;
     }
 }
+
+// Internalise construction of identifier in Aggregate?
+// IDomainServ
