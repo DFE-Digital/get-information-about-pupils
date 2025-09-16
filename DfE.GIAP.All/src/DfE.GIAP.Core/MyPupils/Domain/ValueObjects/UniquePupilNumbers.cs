@@ -15,7 +15,7 @@ public sealed class UniquePupilNumbers
 
     public bool Contains(UniquePupilNumber upn)
     {
-        if(upn is null)
+        if (upn is null)
         {
             return false;
         }

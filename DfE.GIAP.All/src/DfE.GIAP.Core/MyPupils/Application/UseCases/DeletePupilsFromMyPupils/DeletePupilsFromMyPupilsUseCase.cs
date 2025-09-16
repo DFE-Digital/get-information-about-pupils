@@ -28,7 +28,7 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
         Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 
-        if(myPupils is null)
+        if (myPupils is null)
         {
             return; // nothing to delete
         }
