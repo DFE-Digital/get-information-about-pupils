@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
@@ -6,6 +7,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Provides a stubbed <see cref="SortOrder"/> instance for use in unit tests.
 /// Simulates a typical sort configuration to validate sorting logic and adapter behavior.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal static class SortOrderTestDouble
 {
     /// <summary>

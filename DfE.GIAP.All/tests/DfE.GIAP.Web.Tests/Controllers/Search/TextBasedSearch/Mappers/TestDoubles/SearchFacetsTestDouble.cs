@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 
@@ -6,6 +7,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides scaffolds for creating <see cref="SearchFacet"/> and <see cref="SearchFacets"/> objects.
 /// Supports deterministic construction of facet overlays for filtering and UI diagnostics.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SearchFacetsTestDouble
 {
     /// <summary>

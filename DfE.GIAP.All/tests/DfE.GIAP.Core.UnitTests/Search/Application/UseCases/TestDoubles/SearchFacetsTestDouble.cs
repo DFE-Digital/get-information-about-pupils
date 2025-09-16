@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
@@ -7,6 +8,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Simulates a typical facet result payload with predefined values,
 /// enabling deterministic testing of facet mapping and result shaping logic.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SearchFacetsTestDouble
 {
     /// <summary>

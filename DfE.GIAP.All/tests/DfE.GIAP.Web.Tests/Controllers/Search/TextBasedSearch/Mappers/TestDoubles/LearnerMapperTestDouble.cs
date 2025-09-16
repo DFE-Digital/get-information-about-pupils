@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Domain.Search.Learner;
 using Moq;
 
@@ -8,6 +9,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides a reusable test double for mapping between application and domain Learner models.
 /// Centralizes mock setup for unit tests involving IMapper usage.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal static class LearnerMapperTestDouble
 {
     // Static mock instance to be reused across test invocations.

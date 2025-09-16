@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
 
@@ -7,6 +8,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
 /// using in-memory key-value pairs. Useful for simulating configuration settings
 /// in unit tests without relying on external files or environment variables.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class ConfigBuilder
 {
     /// <summary>

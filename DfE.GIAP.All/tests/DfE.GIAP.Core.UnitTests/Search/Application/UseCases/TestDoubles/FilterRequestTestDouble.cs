@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
@@ -7,6 +8,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Simulates realistic filter input using randomized job-related values,
 /// enabling deterministic testing of filter construction and adapter behavior.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal class FilterRequestTestDouble
 {
     /// <summary>

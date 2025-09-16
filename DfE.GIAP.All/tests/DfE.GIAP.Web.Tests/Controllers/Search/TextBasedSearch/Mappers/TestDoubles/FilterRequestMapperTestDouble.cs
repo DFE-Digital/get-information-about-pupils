@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Domain.Search.Learner;
@@ -10,6 +11,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides a reusable test double for <see cref="IMapper{FilterData, FilterRequest}"/> used in unit tests.
 /// Supports both single and multi-expression setups for flexible mocking of filter mapping behavior.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal static class FilterRequestMapperTestDouble
 {
     /// <summary>

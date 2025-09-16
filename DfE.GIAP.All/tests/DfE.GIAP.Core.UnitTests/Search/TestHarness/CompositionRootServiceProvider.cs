@@ -1,4 +1,5 @@
-﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
+﻿using System.Diagnostics.CodeAnalysis;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -13,6 +14,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
 /// with mock infrastructure services. Enables isolated testing of search orchestration
 /// without relying on live Azure Search dependencies.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class CompositionRootServiceProvider
 {
     /// <summary>

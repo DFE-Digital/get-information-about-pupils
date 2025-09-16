@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
 using Moq;
@@ -9,6 +10,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides a reusable test double for mapping SearchFacets to FilterData.
 /// Centralizes mock setup for unit tests involving IMapper usage in filter mapping.
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal class FiltersMapperTestDouble
 {
     // Static mock instance of the IMapper interface used to simulate mapping behavior.

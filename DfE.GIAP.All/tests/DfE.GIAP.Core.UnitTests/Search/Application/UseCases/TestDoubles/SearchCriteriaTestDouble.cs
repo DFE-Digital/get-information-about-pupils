@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
@@ -7,6 +8,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Simulates a typical search payload with predefined facets and search fields,
 /// enabling deterministic test scenarios without relying on real user input.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SearchCriteriaTestDouble
 {
     /// <summary>

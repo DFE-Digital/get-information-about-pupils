@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 
 // Import model representing search result payload including facets
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -9,6 +10,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Provides test doubles for <see cref="SearchResults{TResults, TFacets}"/> used in unit tests.
 /// Enables deterministic testing of search adapter logic, result mapping, and facet handling.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SearchResultsTestDouble
 {
     /// <summary>

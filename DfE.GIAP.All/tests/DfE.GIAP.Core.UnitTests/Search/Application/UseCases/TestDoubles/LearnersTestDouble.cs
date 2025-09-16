@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
@@ -6,6 +7,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Provides test doubles for <see cref="Learners"/> used in unit tests.
 /// Enables deterministic testing of search result handling and downstream mapping logic.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class LearnersTestDouble
 {
     /// <summary>

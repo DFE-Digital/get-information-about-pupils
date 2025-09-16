@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 
@@ -6,6 +7,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides a reusable test double for constructing <see cref="Learner"/> domain objects.
 /// Centralizes learner scaffolding for unit tests to improve readability and reduce duplication.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class ApplicationModelLearnerTestDouble
 {
     /// <summary>

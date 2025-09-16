@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Domain.Search.Learner;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Domain.Search.Learner;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
@@ -7,6 +8,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides deterministic scaffolds for creating domain-layer <see cref="Learner"/> objects.
 /// Designed for unit tests that require explicit control over learner attributes.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class DomainLearnersTestDouble
 {
     /// <summary>

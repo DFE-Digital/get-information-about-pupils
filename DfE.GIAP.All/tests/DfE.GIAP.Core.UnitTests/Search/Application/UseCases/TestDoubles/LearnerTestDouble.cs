@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using System.Diagnostics.CodeAnalysis;
+using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
@@ -9,6 +10,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Generates realistic synthetic learner data using Bogus to support deterministic testing
 /// of search result mapping, filtering, and adapter behavior.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class LearnerTestDouble
 {
     /// <summary>

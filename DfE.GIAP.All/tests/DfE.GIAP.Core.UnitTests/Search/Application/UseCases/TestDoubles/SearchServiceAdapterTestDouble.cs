@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Adapters;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
@@ -9,6 +10,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// used to simulate search adapter behavior in unit tests.
 /// Enables deterministic testing of search orchestration logic without invoking real infrastructure.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class SearchServiceAdapterTestDouble
 {
     // Shared mock instance for reuse across test scenarios

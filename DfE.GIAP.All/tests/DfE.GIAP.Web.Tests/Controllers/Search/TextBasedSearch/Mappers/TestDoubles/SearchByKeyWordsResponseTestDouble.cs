@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 
@@ -8,6 +9,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Provides scaffolds for creating <see cref="SearchByKeyWordsResponse"/> objects for unit testing.
 /// Supports deterministic construction of learners and facet overlays.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class SearchByKeyWordsResponseTestDouble
 {
     /// <summary>
