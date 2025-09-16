@@ -16,9 +16,9 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.TestDoubles;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +43,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
-    //private readonly TestSession _mockSession = new TestSession();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse> _mockUseCase =

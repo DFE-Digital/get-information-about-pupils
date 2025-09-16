@@ -7,13 +7,14 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 
 /// <summary>
 /// Provides scaffolds for creating <see cref="SearchByKeyWordsResponse"/> objects for unit testing.
-/// Supports deterministic construction of learners and facet overlays.
+/// Enables deterministic construction of learner results and facet overlays for search scenarios.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public static class SearchByKeyWordsResponseTestDouble
 {
     /// <summary>
-    /// Creates a response with specified learners and facets.
+    /// Creates a fully populated response with learners and facets.
+    /// Useful for simulating successful search results in unit tests.
     /// </summary>
     /// <param name="learners">Learner collection to include in the response.</param>
     /// <param name="facets">Facet overlays for filtering and UI diagnostics.</param>
@@ -30,4 +31,41 @@ public static class SearchByKeyWordsResponseTestDouble
                 LearnerSearchResults = learners,
                 FacetedResults = facets
             };
+
+    /// <summary>
+    /// Creates a predefined success response with one learner and one facet.
+    /// Useful for quick positive-path testing without custom setup.
+    /// </summary>
+    /// <returns>A success <see cref="SearchByKeyWordsResponse"/> with sample data.</returns>
+    public static SearchByKeyWordsResponse CreateSuccessResponse()
+    {
+        // Construct a sample learner with basic identity and characteristics
+        Learners learners = new(
+            [new(
+                new LearnerIdentifier("1234567890"),
+                new LearnerName("Alice", "Smith"),
+                new LearnerCharacteristics(
+                    new DateTime(2005, 6, 1),
+                    LearnerCharacteristics.Gender.Female)
+                )
+            ]
+        );
+
+        // Construct a sample facet group with one region facet
+        SearchFacets facets = new(
+            [
+                new("Region",
+                [
+                    new FacetResult("North", 10)
+                ])
+            ]
+        );
+
+        // Return a success response with the sample learner and facet
+        return new SearchByKeyWordsResponse(SearchResponseStatus.Success, learners.Count)
+        {
+            LearnerSearchResults = learners,
+            FacetedResults = facets
+        };
+    }
 }
