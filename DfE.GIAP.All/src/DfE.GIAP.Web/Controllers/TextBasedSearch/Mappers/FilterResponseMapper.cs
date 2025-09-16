@@ -20,11 +20,10 @@ public sealed class FilterResponseMapper : IMapper<SearchFacet, FilterData>
         new()
         {
             Name = input.Name,
-            Items = input.Results.Select(item => new FilterDataItem()
+            Items = [.. input.Results.Select(item => new FilterDataItem()
             {
                 Value = item.Value,
                 Count = item.Count
-            })
-            .ToList()
+            })]
         };
 }

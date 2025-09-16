@@ -61,7 +61,7 @@ public sealed class SearchCollectionValuedFilterExpressionTests
     {
         // arrange/act.
         Action failedCtorAction = static () =>
-            new SearchCollectionValuedFilterExpression(filterExpressionFormatter: null!);
+            new SearchCollectionValuedFilterExpression(formatter: null!);
 
         //assert
         ArgumentException exception =

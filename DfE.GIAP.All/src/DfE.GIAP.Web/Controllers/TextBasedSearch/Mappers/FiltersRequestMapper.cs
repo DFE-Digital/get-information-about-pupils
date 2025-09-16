@@ -50,7 +50,7 @@ public sealed class FiltersRequestMapper : IMapper<Dictionary<string, string[]>,
 
         // Transform each dictionary entry into a FilterData object,
         // then delegate mapping to the injected FilterRequestMapper.
-        return input.Select(kvp =>
+        return [.. input.Select(kvp =>
         {
             // Construct domain-layer FilterData from raw key/value pair.
             FilterData filterData = new()
@@ -62,7 +62,6 @@ public sealed class FiltersRequestMapper : IMapper<Dictionary<string, string[]>,
 
             // Delegate conversion to the injected mapper.
             return _filterRequestMapper.Map(filterData);
-        })
-        .ToList();
+        })];
     }
 }

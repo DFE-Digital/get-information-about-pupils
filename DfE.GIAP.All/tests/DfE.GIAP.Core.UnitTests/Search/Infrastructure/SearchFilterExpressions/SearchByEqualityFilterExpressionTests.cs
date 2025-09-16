@@ -43,7 +43,7 @@ public sealed class SearchByEqualityFilterExpressionTests
     {
         // arrange/act.
         Action failedCtorAction = static () =>
-            new SearchByEqualityFilterExpression(filterExpressionFormatter: null!);
+            new SearchByEqualityFilterExpression(formatter: null!);
 
         //assert
         ArgumentException exception =
