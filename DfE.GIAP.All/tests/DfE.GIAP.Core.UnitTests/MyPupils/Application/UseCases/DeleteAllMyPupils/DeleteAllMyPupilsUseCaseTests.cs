@@ -1,5 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.DeleteAllMyPupils;
@@ -38,4 +40,21 @@ public sealed class DeleteAllMyPupilsUseCaseTests
 
         await Assert.ThrowsAsync<ArgumentNullException>(act);
     }
+
+    [Fact]
+    public async Task HandleAsync_Returns_With_NoWrites_When_MyPupilsAggregate_Is_Null()
+    {
+        Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
+        Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(stub: null!);
+
+        DeleteAllMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object);
+
+        // Act
+        await sut.HandleRequestAsync(
+            new DeleteAllMyPupilsRequest(UserId: "id"));
+
+        readRepoMock.Verify(t => t.GetMyPupilsOrDefaultAsync(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
+        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Never);
+    }
+
 }
