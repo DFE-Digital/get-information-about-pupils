@@ -8,6 +8,20 @@ public interface IMyPupilsViewModelFactory
     MyPupilsViewModel CreateViewModel(
         MyPupilsState state,
         PupilsViewModel pupils,
-        string? error = "",
-        bool isDeleteSuccessful = false);
+        MyPupilsViewModelContext context);
+}
+
+public record MyPupilsViewModelContext
+{
+    public MyPupilsViewModelContext(string error = "", bool isDeletePupilsSucessful = false)
+    {
+        Error = string.IsNullOrEmpty(error) ? string.Empty : error;
+        isDeletePupilsSucessful = IsDeletePupilsSuccessful;
+    }
+
+    public string Error { get; init; }
+    public bool IsDeletePupilsSuccessful { get; init; }
+
+    public static MyPupilsViewModelContext Default() => new();
+    public static MyPupilsViewModelContext CreateWithErrorMessage(string error) => new(error);
 }

@@ -1,27 +1,19 @@
 ﻿using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Routes;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
+using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
 public sealed class GetMyPupilsControllerTests
 {
-    [Fact]
-    public void T1()
-    {
-        // Arrange
-
-        // Act
-
-        GetMyPupilsController sut = new(null, null, null, null);
-        sut.StubHttpContext();
-
-        // Assert
-        Assert.True(true);
-    }
+    private const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
 
     [Fact]
     public void Constructor_Throws_When_Logger_Is_Null()
@@ -94,4 +86,58 @@ public sealed class GetMyPupilsControllerTests
         Assert.Throws<ArgumentNullException>(construct);
     }
 
+    [Fact]
+    public async Task Index_Returns_PupilViewModels()
+    {
+        // Arrange
+        InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
+        
+        MyPupilsState state = MyPupilsStateTestDoubles.Create(
+            MyPupilsPresentationStateTestDoubles.Default(),
+            MyPupilsPupilSelectionStateTestDoubles.Default());
+
+        Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
+        stateProviderMock
+            .Setup(stateProvider => stateProvider.GetState())
+            .Returns(state)
+            .Verifiable();
+
+        PupilsViewModel pupilsViewModel = PupilsViewModelTestDoubles.Generate(count: 10);
+
+        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        handlerMock
+            .Setup(handler => handler.GetPupilsAsync(It.IsAny<GetPupilViewModelsRequest>()))
+            .ReturnsAsync(pupilsViewModel);
+
+        Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
+        viewModelFactoryMock.Setup(
+            (factory)
+                => factory.CreateViewModel(
+                        It.IsAny<MyPupilsState>(),
+                        It.IsAny<PupilsViewModel>(),
+                        It.IsAny<MyPupilsViewModelContext>()))
+                .Returns(new MyPupilsViewModel(pupilsViewModel))
+                .Verifiable();
+
+        // Act
+        GetMyPupilsController sut = new(
+            inMemoryLogger,
+            viewModelFactoryMock.Object,
+            stateProviderMock.Object,
+            handlerMock.Object);
+
+        HttpContext context = sut.StubHttpContext();
+        sut.StubTempData([] ,context);
+
+        // Assert
+        IActionResult actionResult = await sut.Index();
+        ViewResult viewResult = Assert.IsType<ViewResult>(actionResult);
+        Assert.NotNull(viewResult);
+        Assert.Equal(MyPupilsView, viewResult.ViewName);
+
+        MyPupilsViewModel viewModel = Assert.IsType<MyPupilsViewModel>(viewResult.Model);
+        Assert.NotNull(viewModel);
+        Assert.NotNull(viewModel.Error);
+        Assert.False(viewModel.Error.HasErrorMessage);
+    }
 }

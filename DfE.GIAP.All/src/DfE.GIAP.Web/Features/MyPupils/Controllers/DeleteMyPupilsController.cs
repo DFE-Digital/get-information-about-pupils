@@ -5,7 +5,6 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
@@ -78,7 +77,7 @@ public class DeleteMyPupilsController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                             state,
                             currentPagePupilViewModels,
-                            error: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
+                            context: MyPupilsViewModelContext.CreateWithErrorMessage(PupilHelper.GenerateValidationMessageUpnSearch(ModelState))));
         }
 
         bool noSelectedPupils = SelectedPupils.Count == 0 && !state.SelectionState.IsAnyPupilSelected;
@@ -90,7 +89,7 @@ public class DeleteMyPupilsController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                             state,
                             currentPagePupilViewModels,
-                            error: Messages.Common.Errors.NoPupilsSelected));
+                            context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Common.Errors.NoPupilsSelected)));
         }
 
         // If the client deselects one or more pupils when SelectAll is active, we should not also delete the DeselectedPupils.
@@ -120,10 +119,9 @@ public class DeleteMyPupilsController : Controller
 
             state.SelectionState.RemovePupils(deletePupilUpns);
         }
-
-        TempData["IsDeleteSuccessful"] = true;
         _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
 
+        TempData["IsDeleteSuccessful"] = true;
         return RedirectToAction(actionName: "Index", controllerName: "GetMyPupils");
     }
 }

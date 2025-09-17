@@ -13,7 +13,6 @@ public static class ClaimsPrincipalExtension
         return principal.Claims.FirstOrDefault(c => c.Type == claimType)?.Value;
     }
 
-
     public static bool IsOrganisationEstablishment(this ClaimsPrincipal principal)
     {
         string organisationCategoryId = principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);

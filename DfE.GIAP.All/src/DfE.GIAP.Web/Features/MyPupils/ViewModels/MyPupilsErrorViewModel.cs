@@ -12,5 +12,4 @@ public record MyPupilsErrorViewModel
 
     public static MyPupilsErrorViewModel NOOP() => new(string.Empty);
     public static MyPupilsErrorViewModel Create(string message) => new(message);
-    
 }

@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 
@@ -9,10 +10,11 @@ internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
     public MyPupilsViewModel CreateViewModel(
         MyPupilsState state,
         PupilsViewModel pupils,
-        string? error = "",
-        bool isDeleteSuccessful = false)
+        MyPupilsViewModelContext context)
     {
         ArgumentNullException.ThrowIfNull(state);
+
+        MyPupilsViewModelContext guardedContext = context ?? MyPupilsViewModelContext.Default();
 
         MyPupilsViewModel myPupilsViewModel = new(pupils ?? PupilsViewModel.Create([]))
         {
@@ -21,8 +23,8 @@ internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
             SortField = state.PresentationState.SortBy,
             IsAnyPupilsSelected = state.SelectionState.IsAnyPupilSelected,
             SelectAll = state.SelectionState.IsAllPupilsSelected,
-            IsDeleteSuccessful = isDeleteSuccessful,
-            Error = string.IsNullOrEmpty(error) ? MyPupilsErrorViewModel.NOOP() : MyPupilsErrorViewModel.Create(error)
+            IsDeleteSuccessful = guardedContext.IsDeletePupilsSuccessful,
+            Error = string.IsNullOrEmpty(guardedContext.Error) ? MyPupilsErrorViewModel.NOOP() : MyPupilsErrorViewModel.Create(guardedContext.Error)
         };
 
         return myPupilsViewModel;

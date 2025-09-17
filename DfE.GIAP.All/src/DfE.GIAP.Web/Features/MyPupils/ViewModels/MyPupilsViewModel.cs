@@ -13,13 +13,13 @@ public record MyPupilsViewModel
     }
 
     public bool IsDeleteSuccessful { get; init; } = false;
-    public bool IsAnyPupilsSelected { get; init; }
+    public bool IsAnyPupilsSelected { get; init; } = false;
     public bool SelectAll { get; init; } = false;
     public int PageNumber { get; init; } = 1;
     public string SortField { get; init; } = string.Empty;
     public string SortDirection { get; init; } = string.Empty;
+    public MyPupilsErrorViewModel Error { get; init; } = MyPupilsErrorViewModel.NOOP();
     public PupilsViewModel Pupils { get; init; }
-    public MyPupilsErrorViewModel Error { get; init; }
     public bool HasPupils => Pupils.Count > 0;
     public string PageHeading => "My pupil list";
     public string DownloadController => "DownloadMyPupils";

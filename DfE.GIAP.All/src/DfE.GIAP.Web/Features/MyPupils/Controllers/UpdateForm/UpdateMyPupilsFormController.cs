@@ -69,11 +69,10 @@ public class UpdateMyPupilsFormController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                             state,
                             currentPupilViewModels,
-                            error: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
+                            context: MyPupilsViewModelContext.CreateWithErrorMessage(PupilHelper.GenerateValidationMessageUpnSearch(ModelState))));
         }
 
         // Update SelectionState
-        
         GetSelectionStateUpdateStrategy(
             mode: formDto.SelectAllMode,
             currentPageOfPupils: currentPupilViewModels.Pupils.Select(t => t.UniquePupilNumber).ToList(),

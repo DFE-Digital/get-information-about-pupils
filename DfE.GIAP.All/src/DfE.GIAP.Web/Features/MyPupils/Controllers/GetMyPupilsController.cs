@@ -47,11 +47,11 @@ public class GetMyPupilsController : Controller
             await _getPupilViewModelsForUserHandler.GetPupilsAsync(
                 new GetPupilViewModelsRequest(userId, state));
 
-        MyPupilsViewModel viewModel = _myPupilsViewModelFactory.CreateViewModel(
-            state,
-            pupilViewModels,
-            error: null,
-            isDeleteSuccessful: TempData.TryGetValue("IsDeleteSuccessful", out _));
+        MyPupilsViewModel viewModel =
+            _myPupilsViewModelFactory.CreateViewModel(
+                state,
+                pupilViewModels,
+                context: new MyPupilsViewModelContext(isDeletePupilsSucessful: TempData.TryGetValue("IsDeleteSuccessful", out _)));
 
         return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
     }

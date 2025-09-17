@@ -212,7 +212,7 @@ public class DownloadMyPupilsController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                     state,
                     pupilViewModels,
-                    error: Messages.Common.Errors.NoPupilsSelected));
+                    MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Common.Errors.NoPupilsSelected)));
         }
 
         if (downloadType == DownloadType.CTF && allSelectedPupils.Length > _appSettings.CommonTransferFileUPNLimit)
@@ -223,7 +223,7 @@ public class DownloadMyPupilsController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                        state,
                        pupilViewModels,
-                       error: Messages.Downloads.Errors.UPNLimitExceeded));
+                       MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.UPNLimitExceeded)));
         }
 
         if (downloadType == DownloadType.CTF)
@@ -249,7 +249,7 @@ public class DownloadMyPupilsController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                    state,
                    pupilViewModels,
-                   error: Messages.Downloads.Errors.NoDataForSelectedPupils));
+                   context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.NoDataForSelectedPupils)));
         }
 
         if(downloadType == DownloadType.PupilPremium)
@@ -289,7 +289,7 @@ public class DownloadMyPupilsController : Controller
                 model: _myPupilsViewModelFactory.CreateViewModel(
                         state,
                         pupilViewModels,
-                        error: Messages.Downloads.Errors.NoDataForSelectedPupils));
+                        context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.NoDataForSelectedPupils)));
         }
 
         if(downloadType == DownloadType.NPD)
@@ -303,6 +303,6 @@ public class DownloadMyPupilsController : Controller
             model: _myPupilsViewModelFactory.CreateViewModel(
                 state,
                 pupilViewModels,
-                error: Messages.Downloads.Errors.UnknownDownloadType));
+                context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.UnknownDownloadType)));
     }
 }
