@@ -45,7 +45,7 @@ public class AuditLogHandler : IAuditLogHandler
         IOptions<LoggingOptions> options,
         IEnumerable<IAuditLogSink> sinks)
     {
-        List<string> configSinks = options.Value.BusinessEvents.Sinks;
+        List<string> configSinks = options.Value.Audit.Sinks;
         _activeSinks = sinks.Where(s => configSinks.Contains(s.Name, StringComparer.OrdinalIgnoreCase)).ToList();
     }
 

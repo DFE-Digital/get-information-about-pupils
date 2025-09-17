@@ -4,16 +4,16 @@ public class LoggingOptions
 {
     public const string SectionName = "LoggingOptions";
 
-    public TraceLoggingConfig Trace { get; set; } = new();
-    public BusinessEventLoggingConfig BusinessEvents { get; set; } = new();
+    public TraceLogConfig Trace { get; set; } = new();
+    public AuditLogConfig Audit { get; set; } = new();
 }
 
-public class TraceLoggingConfig
+public class TraceLogConfig
 {
     public Dictionary<string, SinkConfig> Sinks { get; set; } = new();
 }
 
-public class BusinessEventLoggingConfig
+public class AuditLogConfig
 {
     public List<string> Sinks { get; set; } = new();
 }

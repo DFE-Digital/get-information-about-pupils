@@ -46,8 +46,6 @@ internal static class CompositionRoot
         services.AddSingleton<IAuditLogHandler, AuditLogHandler>();
 
         services.AddSingleton<ITraceLogSink, AzureAppInsightTraceSink>();
-        services.AddSingleton<ITraceLogSink, ConsoleTraceSink>();
-        services.AddSingleton<IAuditLogSink, AzureAppInsightAuditSink>();
 
         return services;
     }
