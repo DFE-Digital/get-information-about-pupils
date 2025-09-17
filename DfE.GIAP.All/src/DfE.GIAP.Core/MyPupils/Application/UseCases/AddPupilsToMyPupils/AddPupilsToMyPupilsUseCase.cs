@@ -30,8 +30,7 @@ public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsTo
         Domain.AggregateRoot.MyPupils myPupils = await _readRepository.GetMyPupils(id);
 
         myPupils.Add(
-            UniquePupilNumbers.Create(uniquePupilNumbers:
-                request.UniquePupilNumbers.ToUniquePupilNumbers()));
+            UniquePupilNumbers.Create(uniquePupilNumbers: request.UniquePupilNumbers.ToUniquePupilNumbers()));
 
         await _writeRepository.SaveMyPupilsAsync(myPupils);
     }
