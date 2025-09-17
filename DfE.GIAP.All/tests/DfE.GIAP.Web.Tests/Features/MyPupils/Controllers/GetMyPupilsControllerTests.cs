@@ -139,5 +139,17 @@ public sealed class GetMyPupilsControllerTests
         Assert.NotNull(viewModel);
         Assert.NotNull(viewModel.Error);
         Assert.False(viewModel.Error.HasErrorMessage);
+
+        Assert.Equal(viewModel.Pupils, pupilsViewModel);
+        Assert.True(viewModel.HasPupils);
+
+        Assert.Equal(1, viewModel.PageNumber);
+        Assert.Equal(string.Empty, viewModel.SortDirection);
+        Assert.Equal(string.Empty, viewModel.SortField);
+        Assert.False(viewModel.SelectAll);;
+
+        Assert.False(viewModel.IsAnyPupilsSelected);
+        Assert.False(viewModel.IsAnyPupilsSelected);
+        Assert.False(viewModel.IsDeleteSuccessful);
     }
 }
