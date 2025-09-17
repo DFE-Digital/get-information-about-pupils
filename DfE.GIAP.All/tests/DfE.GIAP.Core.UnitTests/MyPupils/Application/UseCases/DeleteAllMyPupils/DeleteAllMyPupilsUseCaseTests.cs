@@ -24,4 +24,18 @@ public sealed class DeleteAllMyPupilsUseCaseTests
 
         Assert.Throws<ArgumentNullException>(construct);
     }
+
+    [Fact]
+    public async Task HandleAsync_Throws_When_Request_Is_Null()
+    {
+        Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
+        Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
+
+        DeleteAllMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object);
+
+        //Act
+        Func<Task> act = async () => await sut.HandleRequestAsync(request: null!);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(act);
+    }
 }

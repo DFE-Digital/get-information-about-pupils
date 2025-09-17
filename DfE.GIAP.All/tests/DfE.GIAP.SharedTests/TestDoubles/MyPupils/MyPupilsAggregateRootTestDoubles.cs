@@ -1,9 +1,7 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.AggregateRoot;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-public static class MyPupilsTestDoubles
+public static class MyPupilsAggregateRootTestDoubles
 {
     private const int DEFAULT_LIMIT = 4000;
 

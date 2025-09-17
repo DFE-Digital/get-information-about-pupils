@@ -20,7 +20,7 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Default();
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Default();
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
         List<Pupil> pupils =
@@ -105,7 +105,7 @@ public sealed class GetMyPupilsUseCaseTests
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils =
-            MyPupilsTestDoubles.Create(
+            MyPupilsAggregateRootTestDoubles.Create(
                 UniquePupilNumbers.Create(uniquePupilNumbers: []));
 
         Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);

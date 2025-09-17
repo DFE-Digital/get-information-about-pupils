@@ -71,7 +71,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             mapToDto: mapperMock.Object);
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Default();
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Default();
 
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() => repository.SaveMyPupilsAsync(myPupils));
@@ -98,7 +98,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             mapToDto: mapperMock.Object);
 
         // Act Assert
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Default();
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Default();
 
         await Assert.ThrowsAsync<CosmosException>(() => repository.SaveMyPupilsAsync(myPupils));
 
@@ -112,7 +112,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         // Arrange
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(uniquePupilNumbers: []);
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Create(uniquePupilNumbers);
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Create(myPupils.AggregateId, uniquePupilNumbers);
 
@@ -152,7 +152,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 3));
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsTestDoubles.Create(uniquePupilNumbers);
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Create(myPupils.AggregateId, uniquePupilNumbers);
 
