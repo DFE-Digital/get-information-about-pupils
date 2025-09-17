@@ -3,6 +3,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.DeleteAllMyPupils;
 public sealed class DeleteAllMyPupilsUseCaseTests
@@ -42,7 +44,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
     }
 
     [Fact]
-    public async Task HandleAsync_Returns_With_NoWrites_When_MyPupilsAggregate_Is_Null()
+    public async Task HandleAsync_NoWrites_When_MyPupilsAggregate_Is_Null()
     {
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
         Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(stub: null!);
@@ -57,4 +59,31 @@ public sealed class DeleteAllMyPupilsUseCaseTests
         writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Never);
     }
 
+    [Fact]
+    public async Task HandleAsync_DeletesAllPupils()
+    {
+        MyPupilsId id = new("id");
+
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupilsAggregate =
+            MyPupilsAggregateRootTestDoubles.Create(
+                id,
+                uniquePupilNumbers: UniquePupilNumbers.Create(UniquePupilNumberTestDoubles.Generate(count: 15)));
+
+
+        Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
+        Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(stub: myPupilsAggregate);
+
+        DeleteAllMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object);
+
+        // Act
+        await sut.HandleRequestAsync(
+            new DeleteAllMyPupilsRequest(id.Value));
+
+        readRepoMock.Verify(t => t.GetMyPupilsOrDefaultAsync(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
+        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Once);
+
+        Assert.Equal(0, myPupilsAggregate.PupilCount);
+        Assert.True(myPupilsAggregate.HasNoPupils);
+        Assert.Empty(myPupilsAggregate.GetMyPupils());
+    }
 }
