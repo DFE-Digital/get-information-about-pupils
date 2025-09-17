@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
 public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 {
     [Fact]

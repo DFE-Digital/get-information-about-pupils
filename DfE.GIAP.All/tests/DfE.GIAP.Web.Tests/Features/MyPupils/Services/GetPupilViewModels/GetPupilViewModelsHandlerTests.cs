@@ -13,8 +13,8 @@ using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
-public sealed class GetMyPupilsHandlerTests
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
+public sealed class GetPupilViewModelsHandlerTests
 {
     [Fact]
     public void Constructor_Throws_When_PaginatedHandler_Is_Null()
