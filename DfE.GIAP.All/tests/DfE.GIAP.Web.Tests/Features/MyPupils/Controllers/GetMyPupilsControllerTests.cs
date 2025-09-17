@@ -13,8 +13,6 @@ using Xunit;
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
 public sealed class GetMyPupilsControllerTests
 {
-    private const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
-
     [Fact]
     public void Constructor_Throws_When_Logger_Is_Null()
     {
@@ -90,6 +88,8 @@ public sealed class GetMyPupilsControllerTests
     public async Task Index_Returns_PupilViewModels()
     {
         // Arrange
+        const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
+
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
         
         MyPupilsState state = MyPupilsStateTestDoubles.Create(

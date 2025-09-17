@@ -30,10 +30,10 @@ public class DeleteMyPupilsController : Controller
         ILogger<DeleteMyPupilsController> logger,
         IMyPupilsViewModelFactory myPupilsViewModelFactory,
         IUseCaseRequestOnly<DeleteAllMyPupilsRequest> deleteAllPupilsUseCase,
-        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deleteMyPupilsUseCase,
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deleteSomePupilsUseCase,
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
-        IGetPupilViewModelsHandler getPupilViewModelsForUserHandler)
+        IGetPupilViewModelsHandler getPupilViewModelsHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -44,8 +44,8 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(deleteAllPupilsUseCase);
         _deleteAllPupilsUseCase = deleteAllPupilsUseCase;
 
-        ArgumentNullException.ThrowIfNull(deleteMyPupilsUseCase);
-        _deletePupilsFromMyPupilsUseCase = deleteMyPupilsUseCase;
+        ArgumentNullException.ThrowIfNull(deleteSomePupilsUseCase);
+        _deletePupilsFromMyPupilsUseCase = deleteSomePupilsUseCase;
 
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
         _getMyPupilsStateProvider = getMyPupilsStateProvider;
@@ -53,8 +53,8 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
 
-        ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
-        _getPupilViewModelsForUserHandler = getPupilViewModelsForUserHandler;
+        ArgumentNullException.ThrowIfNull(getPupilViewModelsHandler);
+        _getPupilViewModelsForUserHandler = getPupilViewModelsHandler;
     }
 
     [HttpPost]
