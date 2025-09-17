@@ -5,7 +5,6 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 
-// TODO consume in both Text and Number for NPD and PP
 public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>
 {
     private readonly IMyPupilsReadOnlyRepository _readRepository;
