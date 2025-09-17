@@ -2,7 +2,9 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Models.Common;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -33,11 +35,12 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
-    private readonly TestSession _mockSession = new TestSession();
+    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addToMyPupilsUseCase = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
+    private readonly TestSession _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
-    private AzureAppSettings _mockAppSettings = new AzureAppSettings();
+    private AzureAppSettings _mockAppSettings = new();
 
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -1187,7 +1190,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             _mockPaginatedService,
             _mockSelectionManager,
             _mockSessionProvider.Object,
-            _mockDownloadService)
+            _mockDownloadService,
+            _addToMyPupilsUseCase)
         {
             ControllerContext = new ControllerContext()
             {

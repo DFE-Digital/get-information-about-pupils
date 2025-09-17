@@ -1,6 +1,8 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
@@ -43,7 +45,6 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
     public override string SearchView => Global.NonUpnSearchView;
 
     public override string SearchLearnerNumberController => Routes.Application.Search;
-    public override int MyPupilListLimit => _appSettings.NonUpnNPDMyPupilListLimit; //Not valid for FE so arbitrarily set to default non UPN limit
     public override string SearchAction => Global.FELearnerTextSearchAction;
     public override string SearchController => Global.FELearnerTextSearchController;
     public override ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
@@ -68,12 +69,14 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
        IPaginatedSearchService paginatedSearch,
        ITextSearchSelectionManager selectionManager,
        ISessionProvider sessionProvider,
-       IDownloadService downloadService)
+       IDownloadService downloadService,
+       IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addToMyPupilsUseCase)
        : base(logger,
              paginatedSearch,
              selectionManager,
              azureAppSettings,
-             sessionProvider)
+             sessionProvider,
+             addToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;

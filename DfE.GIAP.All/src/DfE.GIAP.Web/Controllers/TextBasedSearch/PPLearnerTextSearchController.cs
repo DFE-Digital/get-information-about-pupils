@@ -26,8 +26,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
-    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
-
+    
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.PPNonUpnSearchFiltersSessionKey;
@@ -57,7 +56,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string SearchLearnerNumberController => Routes.Application.Search;
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
-    public override int MyPupilListLimit => _appSettings.NonUpnPPMyPupilListLimit;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
     public override string LearnerTextSearchController => Global.PPNonUpnController;
     public override string LearnerTextSearchAction => SearchAction;
@@ -79,16 +77,13 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ISessionProvider sessionProvider,
         IDownloadService downloadService,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
-        : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
 
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
-
-        ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
-        _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
     }
 
 
@@ -171,56 +166,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     [Route("add-pp-nonupn-to-my-pupil-list")]
     public async Task<IActionResult> PPAddToMyPupilList(LearnerTextSearchViewModel model)
     {
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetSortOptions(model);
-
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
-
-        string selectedUpn = GetSelected();
-
-        if (string.IsNullOrEmpty(selectedUpn))
-        {
-            model.NoPupil = true;
-            model.NoPupilSelected = true;
-            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
-            return await ReturnToSearch(model);
-        }
-
-        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
-        {
-            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
-        }
-
-        if (!ValidationHelper.IsValidUpn(selectedUpn)) // TODO can we surface invalid UPNs?
-        {
-            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
-            {
-                LearnerNumber = selectedUpn
-            });
-        }
-
-        try
-        {
-            string userId = User.GetUserId();
-
-            AddPupilsToMyPupilsRequest addRequest = new(
-                userId: userId,
-                pupils: [selectedUpn]);
-
-            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
-        }
-
-        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
-        {
-            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-            return await ReturnToSearch(model);
-        }
-
-        model.ItemAddedToMyPupilList = true;
-        return await ReturnToSearch(model);
+        return await AddToMyPupilList(model);
     }
 
     [Route(Routes.PupilPremium.DownloadPupilPremiumFile)]

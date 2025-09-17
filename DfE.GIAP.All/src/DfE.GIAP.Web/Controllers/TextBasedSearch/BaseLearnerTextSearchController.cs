@@ -6,7 +6,10 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Search;
@@ -33,6 +36,7 @@ public abstract class BaseLearnerTextSearchController : Controller
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
+    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     protected readonly AzureAppSettings _appSettings;
 
     public abstract string PageHeading { get; }
@@ -59,7 +63,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string SexFilterUrl { get; }
     public abstract string DownloadLinksPartial { get; }
     public abstract AzureSearchIndexType IndexType { get; }
-    public abstract int MyPupilListLimit { get; }
     public abstract ReturnRoute ReturnRoute { get; }
     public abstract string LearnerTextSearchController { get; }
     public abstract string LearnerTextSearchAction { get; }
@@ -76,7 +79,8 @@ public abstract class BaseLearnerTextSearchController : Controller
         IPaginatedSearchService paginatedSearch,
         ITextSearchSelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        ISessionProvider sessionProvider)
+        ISessionProvider sessionProvider,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -89,10 +93,13 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
-
+        
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
+        _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
     }
 
 
@@ -509,6 +516,60 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
 
         return await InvalidUPNs(model);
+    }
+
+    [NonAction]
+    public async Task<IActionResult> AddToMyPupilList(LearnerTextSearchViewModel model)
+    {
+        PopulatePageText(model);
+        PopulateNavigation(model);
+        SetSortOptions(model);
+
+        SetSelections(
+            model.PageLearnerNumbers.Split(','),
+            model.SelectedPupil);
+
+        string selectedUpn = GetSelected();
+
+        if (string.IsNullOrEmpty(selectedUpn))
+        {
+            model.NoPupil = true;
+            model.NoPupilSelected = true;
+            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
+            return await ReturnToSearch(model);
+        }
+
+        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
+        {
+            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
+        }
+
+        if (!ValidationHelper.IsValidUpn(selectedUpn)) // TODO can we surface invalid UPNs?
+        {
+            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
+            {
+                LearnerNumber = selectedUpn
+            });
+        }
+
+        try
+        {
+            string userId = User.GetUserId();
+            AddPupilsToMyPupilsRequest addRequest = new(
+                userId: userId,
+                pupils: [selectedUpn]);
+
+            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
+        }
+
+        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
+        {
+            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
+            return await ReturnToSearch(model);
+        }
+
+        model.ItemAddedToMyPupilList = true;
+        return await ReturnToSearch(model);
     }
 
     [NonAction]

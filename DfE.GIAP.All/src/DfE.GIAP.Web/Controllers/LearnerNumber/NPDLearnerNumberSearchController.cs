@@ -25,7 +25,6 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     private readonly ILogger<NPDLearnerNumberSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
-    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly AzureAppSettings _appSettings;
 
     public override string PageHeading => ApplicationLabels.SearchNPDWithUpnPageHeading;
