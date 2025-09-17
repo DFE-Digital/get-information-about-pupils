@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
