@@ -5,7 +5,7 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 
-internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsForUserHandler
+internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
     private readonly IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
@@ -21,7 +21,7 @@ internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsForUserHand
         _mapToViewModel = mapToViewModel;
     }
 
-    public async Task<PupilsViewModel> GetPupilsAsync(GetMyPupilsForUserRequest request)
+    public async Task<PupilsViewModel> GetPupilsAsync(GetPupilViewModelsRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.State);

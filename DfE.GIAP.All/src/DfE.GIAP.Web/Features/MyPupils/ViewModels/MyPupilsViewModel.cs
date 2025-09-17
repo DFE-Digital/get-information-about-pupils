@@ -22,9 +22,9 @@ public record MyPupilsViewModel
     public bool HasPupils => Pupils.Count > 0;
     public bool IsError => !string.IsNullOrEmpty(Error.Message);
     public string PageHeading => "My pupil list";
-    public string DownloadController => "MyPupilsDownload";
-    public string DeleteMyPupilsController => "MyPupilsDeletePupils";
-    public string UpdateFormController => "MyPupilsUpdateForm";
+    public string DownloadController => "DownloadMyPupils";
+    public string DeleteMyPupilsController => "DeleteMyPupils";
+    public string UpdateFormController => "UpdateMyPupilsForm";
     public string UniquePupilNumberLabel => "UPN";
     public bool DisplayPreviousPageNumber => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
     public bool IsMorePageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;

@@ -62,7 +62,7 @@ public sealed class GetMyPupilsHandlerTests
 
         GetPupilViewModelsHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
-        GetMyPupilsForUserRequest request = new(
+        GetPupilViewModelsRequest request = new(
             UserId: MyPupilsIdTestDoubles.Default().Value,
             State: null);
 
@@ -91,7 +91,7 @@ public sealed class GetMyPupilsHandlerTests
         MyPupilsPupilSelectionState selectionState = new();
         MyPupilsState state = new(MyPupilsPresentationStateTestDoubles.Default(), selectionState);
 
-        GetMyPupilsForUserRequest request = new(myPupilsId.Value, state);
+        GetPupilViewModelsRequest request = new(myPupilsId.Value, state);
 
         // Act
         PupilsViewModel response = await sut.GetPupilsAsync(request);

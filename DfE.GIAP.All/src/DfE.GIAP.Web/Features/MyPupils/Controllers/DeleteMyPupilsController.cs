@@ -3,6 +3,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
@@ -22,8 +24,8 @@ public class DeleteMyPupilsController : Controller
     private readonly IUseCaseRequestOnly<DeleteAllMyPupilsRequest> _deleteAllPupilsUseCase;
     private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsUseCase;
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
-    private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsHandler;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
+    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
@@ -32,7 +34,7 @@ public class DeleteMyPupilsController : Controller
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deleteMyPupilsUseCase,
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
-        IGetPaginatedMyPupilsHandler getPaginatedMyPupilsHandler)
+        IGetPupilViewModelsHandler getPupilViewModelsForUserHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -52,8 +54,8 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
 
-        ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsHandler);
-        _getPaginatedMyPupilsHandler = getPaginatedMyPupilsHandler;
+        ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
+        _getPupilViewModelsForUserHandler = getPupilViewModelsForUserHandler;
     }
 
     [HttpPost]
@@ -63,35 +65,39 @@ public class DeleteMyPupilsController : Controller
 
         string userId = User.GetUserId();
 
+        MyPupilsState state = _getMyPupilsStateProvider.GetState();
+
+        PupilsViewModel currentPagePupilViewModels =
+            await _getPupilViewModelsForUserHandler.GetPupilsAsync(
+                new GetPupilViewModelsRequest(userId, state));
+
         if (!ModelState.IsValid)
         {
-            MyPupilsErrorViewModel error = MyPupilsErrorViewModel.Create(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
-            MyPupilsViewModelContext context = new(error);
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, context);
-
-            return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
+            return View(
+                Constants.Routes.MyPupilList.MyPupilListView,
+                model: _myPupilsViewModelFactory.CreateViewModel(
+                            state,
+                            currentPagePupilViewModels,
+                            error: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
         }
-
-        MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
         bool noSelectedPupils = SelectedPupils.Count == 0 && !state.SelectionState.IsAnyPupilSelected;
 
         if (noSelectedPupils)
         {
-            MyPupilsErrorViewModel noPupilSelected = MyPupilsErrorViewModel.Create(Messages.Common.Errors.NoPupilsSelected);
-            MyPupilsViewModelContext context = new(noPupilSelected);
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, context);
-
-            return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
+            return View(
+                Constants.Routes.MyPupilList.MyPupilListView,
+                model: _myPupilsViewModelFactory.CreateViewModel(
+                            state,
+                            currentPagePupilViewModels,
+                            error: Messages.Common.Errors.NoPupilsSelected));
         }
 
         // If the client deselects one or more pupils when SelectAll is active, we should not also delete the DeselectedPupils.
         // We infer if ALL pupils on the page are selected, by matching counts
         bool isDeleteAllPupils =
             state.SelectionState.IsAllPupilsSelected &&
-                (await _getPaginatedMyPupilsHandler.HandleAsync(
-                    new GetPaginatedMyPupilsRequest(userId, state.PresentationState)))
-                        .Pupils.Count.Equals(SelectedPupils.Count);
+                currentPagePupilViewModels.Count.Equals(SelectedPupils.Count);
 
         if (isDeleteAllPupils)
         {
@@ -117,6 +123,7 @@ public class DeleteMyPupilsController : Controller
 
         TempData["IsDeleteSuccessful"] = true;
         _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
+
         return RedirectToAction(actionName: "Index", controllerName: "GetMyPupils");
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
@@ -12,22 +13,22 @@ using NuGet.Packaging;
 namespace DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
 
 [Route(Constants.Routes.MyPupilList.MyPupils)]
-public class MyPupilsUpdateFormController : Controller
+public class UpdateMyPupilsFormController : Controller
 {
-    private readonly ILogger<MyPupilsUpdateFormController> _logger;
+    private readonly ILogger<UpdateMyPupilsFormController> _logger;
     private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
     private readonly ISessionCommandHandler<MyPupilsPresentationState> _presentationStateCommandHandler;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _pupilSelectionStateCommandHandler;
-    private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsHandler;
+    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
 
-    public MyPupilsUpdateFormController(
-        ILogger<MyPupilsUpdateFormController> logger,
+    public UpdateMyPupilsFormController(
+        ILogger<UpdateMyPupilsFormController> logger,
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
         IMyPupilsViewModelFactory myPupilsViewModelFactory,
         ISessionCommandHandler<MyPupilsPresentationState> presentationStateCommandHandler,
         ISessionCommandHandler<MyPupilsPupilSelectionState> pupilSelectionStateCommandHandler,
-        IGetPaginatedMyPupilsHandler getPaginatedMyPupilsHandler)
+        IGetPupilViewModelsHandler getPupilViewModelsForUserHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -44,38 +45,44 @@ public class MyPupilsUpdateFormController : Controller
         ArgumentNullException.ThrowIfNull(presentationStateCommandHandler);
         _pupilSelectionStateCommandHandler = pupilSelectionStateCommandHandler;
 
-        ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsHandler);
-        _getPaginatedMyPupilsHandler = getPaginatedMyPupilsHandler;
-        
+        ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
+        _getPupilViewModelsForUserHandler = getPupilViewModelsForUserHandler;
     }
 
     [HttpPost]
     public async Task<IActionResult> Index(MyPupilsFormStateRequestDto formDto)
     {
-        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(MyPupilsUpdateFormController), nameof(Index));
+        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsFormController), nameof(Index));
 
         string userId = User.GetUserId();
 
+        MyPupilsState state = _getMyPupilsStateProvider.GetState();
+
+
+        PupilsViewModel currentPupilViewModels =
+                await _getPupilViewModelsForUserHandler.GetPupilsAsync(
+                    new GetPupilViewModelsRequest(userId, state));
+
         if (!ModelState.IsValid)
         {
-            MyPupilsErrorViewModel error = MyPupilsErrorViewModel.Create(PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
-            MyPupilsViewModelContext context = new(error);
-            MyPupilsViewModel viewModel = await _myPupilsViewModelFactory.CreateViewModelAsync(userId, context);
+            
+
+            MyPupilsViewModel viewModel =
+                _myPupilsViewModelFactory.CreateViewModel(
+                    state,
+                    currentPupilViewModels,
+                    error: PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
 
             return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
         }
 
-        MyPupilsState state = _getMyPupilsStateProvider.GetState();
-
         // Update SelectionState
-        PaginatedMyPupilsResponse currentPageOfPupilsResponse = await _getPaginatedMyPupilsHandler.HandleAsync(
-            new GetPaginatedMyPupilsRequest(
-                userId,
-                state.PresentationState));
-
+        
         GetSelectionStateUpdateStrategy(
-                formDto.SelectAllMode, currentPageOfPupilsResponse.Pupils.Identifiers.ToList(), formDto.SelectedPupils)
-            .Invoke(state.SelectionState);
+            mode: formDto.SelectAllMode,
+            currentPageOfPupils: currentPupilViewModels.Pupils.Select(t => t.UniquePupilNumber).ToList(),
+            selectedPupilsOnForm: formDto.SelectedPupils)
+                .Invoke(state.SelectionState);
 
         _pupilSelectionStateCommandHandler.StoreInSession(state.SelectionState);
 

@@ -36,7 +36,7 @@ public static class CompositionRoot
         services
             .AddSessionStateHandlers()
             .AddGetPaginatedMyPupils()
-            .AddGetMyPupils()
+            .AddGetPupilViewModels()
             .AddGetSelectedMyPupils();
 
         return services;
@@ -48,11 +48,11 @@ public static class CompositionRoot
         return services;
     }
 
-    private static IServiceCollection AddGetMyPupils(this IServiceCollection services)
+    private static IServiceCollection AddGetPupilViewModels(this IServiceCollection services)
     {
         services
             .AddSingleton<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>, MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper>()
-            .AddScoped<IGetPupilViewModelsForUserHandler, IGetPupilViewModelsForUserHandler>();
+            .AddScoped<IGetPupilViewModelsHandler, GetPupilViewModelsHandler>();
         return services;
     }
 

@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 
-public interface IGetPupilViewModelsForUserHandler
+public interface IGetPupilViewModelsHandler
 {
-    Task<PupilsViewModel> GetPupilsAsync(GetMyPupilsForUserRequest request);
+    Task<PupilsViewModel> GetPupilsAsync(GetPupilViewModelsRequest request);
 }
