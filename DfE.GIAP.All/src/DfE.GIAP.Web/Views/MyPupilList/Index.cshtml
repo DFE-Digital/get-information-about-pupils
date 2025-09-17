@@ -19,7 +19,7 @@
         @Model.PageHeading
     </h1>
 
-    @if (Model.IsError)
+    @if (Model.Error.HasErrorMessage)
     {
         <div class="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>

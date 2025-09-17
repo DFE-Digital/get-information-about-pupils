@@ -14,9 +14,7 @@ internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
     {
         ArgumentNullException.ThrowIfNull(state);
 
-        PupilsViewModel pupilViewModels = pupils ?? PupilsViewModel.Create([]);
-
-        MyPupilsViewModel myPupilsViewModel = new(pupilViewModels)
+        MyPupilsViewModel myPupilsViewModel = new(pupils ?? PupilsViewModel.Create([]))
         {
             PageNumber = state.PresentationState.Page,
             SortDirection = state.PresentationState.SortDirection == SortDirection.Ascending ? "asc" : "desc",

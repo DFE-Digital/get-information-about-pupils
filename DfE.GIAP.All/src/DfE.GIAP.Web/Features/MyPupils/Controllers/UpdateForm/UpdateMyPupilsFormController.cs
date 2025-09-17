@@ -58,22 +58,18 @@ public class UpdateMyPupilsFormController : Controller
 
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
-
         PupilsViewModel currentPupilViewModels =
                 await _getPupilViewModelsForUserHandler.GetPupilsAsync(
                     new GetPupilViewModelsRequest(userId, state));
 
         if (!ModelState.IsValid)
         {
-            
-
-            MyPupilsViewModel viewModel =
-                _myPupilsViewModelFactory.CreateViewModel(
-                    state,
-                    currentPupilViewModels,
-                    error: PupilHelper.GenerateValidationMessageUpnSearch(ModelState));
-
-            return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
+            return View(
+                Constants.Routes.MyPupilList.MyPupilListView,
+                model: _myPupilsViewModelFactory.CreateViewModel(
+                            state,
+                            currentPupilViewModels,
+                            error: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
         }
 
         // Update SelectionState

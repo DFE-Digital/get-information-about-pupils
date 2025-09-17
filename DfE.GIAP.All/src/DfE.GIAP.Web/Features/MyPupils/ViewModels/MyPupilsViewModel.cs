@@ -9,6 +9,7 @@ public record MyPupilsViewModel
     public MyPupilsViewModel(PupilsViewModel pupils)
     {
         ArgumentNullException.ThrowIfNull(pupils);
+        Pupils = pupils;
     }
 
     public bool IsDeleteSuccessful { get; init; } = false;
@@ -17,10 +18,9 @@ public record MyPupilsViewModel
     public int PageNumber { get; init; } = 1;
     public string SortField { get; init; } = string.Empty;
     public string SortDirection { get; init; } = string.Empty;
-    public PupilsViewModel Pupils { get; }
+    public PupilsViewModel Pupils { get; init; }
     public MyPupilsErrorViewModel Error { get; init; }
     public bool HasPupils => Pupils.Count > 0;
-    public bool IsError => !string.IsNullOrEmpty(Error.Message);
     public string PageHeading => "My pupil list";
     public string DownloadController => "DownloadMyPupils";
     public string DeleteMyPupilsController => "DeleteMyPupils";

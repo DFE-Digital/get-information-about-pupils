@@ -6,6 +6,7 @@ public record MyPupilsErrorViewModel
     {
         Message = message?.Trim() ?? string.Empty;
     }
+    public bool HasErrorMessage => !string.IsNullOrEmpty(Message);
 
     public string Message { get; }
 
