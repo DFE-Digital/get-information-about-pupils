@@ -19,7 +19,7 @@ public class GetMyPupilsController : Controller
         ILogger<GetMyPupilsController> logger,
         IMyPupilsViewModelFactory viewModelFactory,
         IGetMyPupilsStateProvider stateProvider,
-        IGetPupilViewModelsHandler getPupilViewModelsForUserHandler)
+        IGetPupilViewModelsHandler getPupilViewModelsHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -30,8 +30,8 @@ public class GetMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(stateProvider);
         _stateProvider = stateProvider;
 
-        ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
-        _getPupilViewModelsForUserHandler = getPupilViewModelsForUserHandler;
+        ArgumentNullException.ThrowIfNull(getPupilViewModelsHandler);
+        _getPupilViewModelsForUserHandler = getPupilViewModelsHandler;
     }
 
     [HttpGet]
