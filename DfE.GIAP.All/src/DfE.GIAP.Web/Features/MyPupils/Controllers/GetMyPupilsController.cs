@@ -11,29 +11,33 @@ namespace DfE.GIAP.Web.Features.MyPupils.Routes;
 public class GetMyPupilsController : Controller
 {
     private readonly ILogger<GetMyPupilsController> _logger;
-    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
     private readonly IGetMyPupilsStateProvider _stateProvider;
     private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
+    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
 
     public GetMyPupilsController(
         ILogger<GetMyPupilsController> logger,
-        IMyPupilsViewModelFactory myPupilsPresentationService,
+        IMyPupilsViewModelFactory viewModelFactory,
         IGetMyPupilsStateProvider stateProvider,
         IGetPupilViewModelsHandler getPupilViewModelsForUserHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
 
-        ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
-        _myPupilsViewModelFactory = myPupilsPresentationService;
+        ArgumentNullException.ThrowIfNull(viewModelFactory);
+        _myPupilsViewModelFactory = viewModelFactory;
+
+        ArgumentNullException.ThrowIfNull(stateProvider);
         _stateProvider = stateProvider;
+
+        ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
         _getPupilViewModelsForUserHandler = getPupilViewModelsForUserHandler;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        _logger.LogInformation("My pupil list GET method is called");
+        _logger.LogInformation("{Controller}.{Action} GET method is called", nameof(GetMyPupilsController), nameof(Index));
 
         string userId = User.GetUserId();
 
