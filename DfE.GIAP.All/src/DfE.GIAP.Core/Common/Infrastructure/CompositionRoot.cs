@@ -1,5 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,7 +46,6 @@ internal static class CompositionRoot
         services.AddScoped<ICorrelationContextAccessor, CorrelationContextAccessor>();
 
         services.AddSingleton<ITraceLogHandler, TraceLogHandler>();
-
         services.AddSingleton<ITraceLogSink, AzureAppInsightTraceSink>();
 
         return services;

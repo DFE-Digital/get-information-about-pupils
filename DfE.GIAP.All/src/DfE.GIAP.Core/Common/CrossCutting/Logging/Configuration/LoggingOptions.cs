@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
 
 public class LoggingOptions
 {
@@ -14,6 +16,7 @@ public class TraceLogConfig
 
 public class SinkConfig
 {
+    public bool Enabled { get; set; } = true;
     public List<LogLevel> AcceptedLogLevels { get; set; } = new();
 }
 

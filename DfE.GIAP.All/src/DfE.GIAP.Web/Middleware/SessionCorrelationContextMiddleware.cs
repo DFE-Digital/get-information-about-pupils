@@ -12,7 +12,10 @@ public class SessionCorrelationContextMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, ISessionProvider sessionProvider, ICorrelationContextAccessor accessor)
+    public async Task InvokeAsync(
+        HttpContext context,
+        ISessionProvider sessionProvider,
+        ICorrelationContextAccessor accessor)
     {
         string correlationId = sessionProvider
             .GetSessionValueOrDefault<string>("CorrelationId");
