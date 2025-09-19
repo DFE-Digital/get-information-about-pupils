@@ -10,8 +10,6 @@ public interface ILogSink<TPayload>
 }
 
 public interface ITraceLogSink : ILogSink<TracePayload> { }
-public interface IAuditLogSink : ILogSink<AuditPayload> { }
-
 
 
 public class AzureAppInsightTraceSink : ITraceLogSink
@@ -36,6 +34,8 @@ public class AzureAppInsightTraceSink : ITraceLogSink
             telemetry.Properties["Category"] = logEntry.Payload.Category ?? "None";
             telemetry.Properties["Source"] = logEntry.Payload.Source ?? "Unknown";
             telemetry.Properties["CorrelationId"] = logEntry.CorrelationId ?? "None";
+            telemetry.Properties["UserId"] = logEntry.UserID ?? "None";
+            telemetry.Properties["SessionId"] = logEntry.SessionId ?? "None";
 
             if (logEntry.Payload.Context is not null)
             {

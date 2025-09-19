@@ -9,7 +9,9 @@ public static class LogEntryFactory
         string? category = null,
         string? source = null,
         Dictionary<string, object>? context = null,
-        string? correlationId = null)
+        string? correlationId = null,
+        string? userId = null,
+        string? sessionId = null)
     {
         TracePayload payload = new(
             Level: level,
@@ -23,36 +25,21 @@ public static class LogEntryFactory
         {
             Timestamp = DateTime.UtcNow,
             CorrelationId = correlationId,
+            UserID = userId,
+            SessionId = sessionId,
             Payload = payload
         };
     }
 
-    public static LogEntry<AuditPayload> CreateWithAuditPayload(
-        string eventName,
-        string? category = null,
-        string? source = null,
-        Dictionary<string, object>? data = null,
-        string? correlationId = null)
-    {
-        AuditPayload payload = new(
-            EventName: eventName,
-            Category: category,
-            Source: source,
-            Context: data);
-
-        return new LogEntry<AuditPayload>
-        {
-            Timestamp = DateTime.UtcNow,
-            CorrelationId = correlationId,
-            Payload = payload
-        };
-    }
 }
 
+public enum LogLevel { Debug, Information, Error }
 
 public record LogEntry<TPayload>
 {
     public string? CorrelationId { get; init; }
+    public string? UserID { get; init; }
+    public string? SessionId { get; init; }
     public DateTime Timestamp { get; init; } = DateTime.UtcNow;
 
     public required TPayload Payload { get; init; }
@@ -66,10 +53,3 @@ public record TracePayload(
     string? Source = null,
     Dictionary<string, object>? Context = null);
 
-public record AuditPayload(
-    string EventName,
-    string? Category = null,
-    string? Source = null,
-    Dictionary<string, object>? Context = null);
-
-public enum LogLevel { Debug, Information, Error }

@@ -40,10 +40,10 @@ internal static class CompositionRoot
     {
         LoggingOptions options = configuration.GetSection(LoggingOptions.SectionName).Get<LoggingOptions>();
 
-        services.AddSingleton<ILoggerService, LoggerService>();
+        services.AddScoped<ILoggerService, LoggerService>();
+        services.AddScoped<ICorrelationContextAccessor, CorrelationContextAccessor>();
 
         services.AddSingleton<ITraceLogHandler, TraceLogHandler>();
-        services.AddSingleton<IAuditLogHandler, AuditLogHandler>();
 
         services.AddSingleton<ITraceLogSink, AzureAppInsightTraceSink>();
 

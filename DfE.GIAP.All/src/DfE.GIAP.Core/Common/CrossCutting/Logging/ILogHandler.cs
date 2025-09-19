@@ -8,7 +8,6 @@ public interface ILogHandler<TPayload>
 }
 
 public interface ITraceLogHandler : ILogHandler<TracePayload> { }
-public interface IAuditLogHandler : ILogHandler<AuditPayload> { }
 
 
 public class TraceLogHandler : ITraceLogHandler
@@ -33,27 +32,6 @@ public class TraceLogHandler : ITraceLogHandler
             {
                 sink.Log(logEntry);
             }
-        }
-    }
-}
-
-public class AuditLogHandler : IAuditLogHandler
-{
-    private readonly List<IAuditLogSink> _activeSinks;
-
-    public AuditLogHandler(
-        IOptions<LoggingOptions> options,
-        IEnumerable<IAuditLogSink> sinks)
-    {
-        List<string> configSinks = options.Value.Audit.Sinks;
-        _activeSinks = sinks.Where(s => configSinks.Contains(s.Name, StringComparer.OrdinalIgnoreCase)).ToList();
-    }
-
-    public void Handle(LogEntry<AuditPayload> logEntry)
-    {
-        foreach (IAuditLogSink sink in _activeSinks)
-        {
-            sink.Log(logEntry);
         }
     }
 }

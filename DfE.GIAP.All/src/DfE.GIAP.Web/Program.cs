@@ -62,6 +62,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
+app.UseMiddleware<SessionCorrelationContextMiddleware>();
 
 // Endpoint configuration
 app.MapControllerRoute(

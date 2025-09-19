@@ -26,11 +26,6 @@ internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileReques
             source: "DownloadPreparedFileUseCase",
             category: "Prepared_Files");
 
-        _logger.LogAudit(
-            eventName: "Some audit event",
-            source: "DownloadPreparedFileUseCase",
-            category: "Prepared_Files");
-
         string directory = request.PathContext.ResolvePath();
         Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("giapdownloads", $"{directory}{request.FileName}");
 
