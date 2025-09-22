@@ -1,6 +1,9 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Logging.Application.Handlers;
+using DfE.GIAP.Core.Logging.Application.Models;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+namespace DfE.GIAP.Core.Logging.Application;
 
 public class LoggerService : ILoggerService
 {
@@ -25,13 +28,17 @@ public class LoggerService : ILoggerService
          string? source = null,
          Dictionary<string, object>? context = null)
     {
-        LogEntry<TracePayload> logEntry = _logFactory.CreateTraceLogEntry(
-            level: level,
-            message: message,
-            exception: exception,
-            category: category,
-            source: source,
-            context: context);
+        TracePayloadOptions options = new()
+        {
+            Level = level,
+            Message = message,
+            Exception = exception,
+            Category = category,
+            Source = source,
+            Context = context
+        };
+
+        LogEntry<TracePayload> logEntry = _logFactory.CreateLogEntry<TracePayload>(options);
 
         foreach (ITraceLogHandler handler in _traceLogHandlers)
         {

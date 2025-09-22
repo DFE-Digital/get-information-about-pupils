@@ -7,5 +7,3 @@ public interface ILogSink<TPayload>
     string Name { get; }
     void Log(LogEntry<TPayload> entry);
 }
-
-public interface ITraceLogSink : ILogSink<TracePayload> { }

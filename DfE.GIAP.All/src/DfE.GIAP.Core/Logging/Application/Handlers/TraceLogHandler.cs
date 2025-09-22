@@ -1,8 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Logging.Application.Models;
+using DfE.GIAP.Core.Logging.Application.Sinks;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
+namespace DfE.GIAP.Core.Logging.Application.Handlers;
 
 public class TraceLogHandler : ITraceLogHandler
 {

@@ -1,8 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Logging.Application.Models;
+using DfE.GIAP.Core.Logging.Application.Sinks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
+namespace DfE.GIAP.Core.Logging.Infrastructure.Sinks;
 
 public class AzureAppInsightTraceSink : ITraceLogSink
 {

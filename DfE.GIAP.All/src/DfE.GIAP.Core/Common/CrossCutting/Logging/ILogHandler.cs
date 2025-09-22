@@ -6,5 +6,3 @@ public interface ILogHandler<TPayload>
 {
     void Handle(LogEntry<TPayload> entry);
 }
-
-public interface ITraceLogHandler : ILogHandler<TracePayload> { }
