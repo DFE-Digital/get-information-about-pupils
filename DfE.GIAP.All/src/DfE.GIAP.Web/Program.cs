@@ -3,6 +3,7 @@ using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Features.Logging.Middleware;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 

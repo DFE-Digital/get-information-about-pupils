@@ -5,16 +5,16 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 public class LoggerService : ILoggerService
 {
     private readonly IEnumerable<ITraceLogHandler> _traceLogHandlers;
-    private readonly ICorrelationContextAccessor _correlationContextAccessor;
+    private readonly ILogEntryFactory _logFactory;
 
     public LoggerService(
         IEnumerable<ITraceLogHandler> traceLogHandlers,
-        ICorrelationContextAccessor correlationContextAccessor)
+        ILogEntryFactory logFactory)
     {
         ArgumentNullException.ThrowIfNull(traceLogHandlers);
-        ArgumentNullException.ThrowIfNull(correlationContextAccessor);
+        ArgumentNullException.ThrowIfNull(logFactory);
         _traceLogHandlers = traceLogHandlers;
-        _correlationContextAccessor = correlationContextAccessor;
+        _logFactory = logFactory;
     }
 
     public void LogTrace(
@@ -25,20 +25,17 @@ public class LoggerService : ILoggerService
          string? source = null,
          Dictionary<string, object>? context = null)
     {
-        LogEntry<TracePayload> entry = LogEntryFactory.CreateWithTracePayload(
+        LogEntry<TracePayload> logEntry = _logFactory.CreateTraceLogEntry(
             level: level,
             message: message,
             exception: exception,
             category: category,
             source: source,
-            context: context,
-            correlationId: _correlationContextAccessor.CorrelationId,
-            userId: _correlationContextAccessor.UserId,
-            sessionId: _correlationContextAccessor.SessionId);
+            context: context);
 
         foreach (ITraceLogHandler handler in _traceLogHandlers)
         {
-            handler.Handle(entry);
+            handler.Handle(logEntry);
         }
     }
 }

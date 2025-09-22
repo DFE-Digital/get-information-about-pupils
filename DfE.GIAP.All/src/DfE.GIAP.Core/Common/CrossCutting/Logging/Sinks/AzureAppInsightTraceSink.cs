@@ -23,9 +23,9 @@ public class AzureAppInsightTraceSink : ITraceLogSink
         else
         {
             TraceTelemetry telemetry = new(logEntry.Payload.Message, ToSeverityLevel(logEntry.Payload.Level));
-            telemetry.Properties["CorrelationId"] = logEntry.CorrelationId ?? "None";
-            telemetry.Properties["UserId"] = logEntry.UserID ?? "None";
-            telemetry.Properties["SessionId"] = logEntry.SessionId ?? "None";
+            telemetry.Properties["CorrelationId"] = logEntry.Payload.CorrelationId ?? "None";
+            telemetry.Properties["UserId"] = logEntry.Payload.UserID ?? "None";
+            telemetry.Properties["SessionId"] = logEntry.Payload.SessionId ?? "None";
             telemetry.Properties["Category"] = logEntry.Payload.Category ?? "None";
             telemetry.Properties["Source"] = logEntry.Payload.Source ?? "Unknown";
 

@@ -22,7 +22,7 @@ internal class DownloadPreparedFileUseCase : IUseCase<DownloadPreparedFileReques
     {
         ArgumentNullException.ThrowIfNull(request);
         _logger.LogTrace(
-            level: LogLevel.Debug,
+            level: LogLevel.Information,
             message: "Debug Log",
             source: "DownloadPreparedFileUseCase",
             category: "Prepared_Files");
