@@ -16,6 +16,7 @@ namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<ConfigurationFixture>
 {
     private ConfigurationFixture ConfigFixture { get; }
+    private SearchIndexFixture _mockSearchFixture = null!;
 
     public SearchByKeyWordsUseCaseIntegrationTests(ConfigurationFixture configurationFixture) : base()
     {
@@ -63,5 +64,17 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(SearchResponseStatus.Success, response.Status);
         Assert.Equal(30, response.TotalNumberOfResults);
+
+        _mockSearchFixture = mockSearchFixture;
+    }
+
+    protected override Task OnDisposeAsync()
+    {
+        if (_mockSearchFixture != null)
+        {
+            _mockSearchFixture?.Dispose();
+        }
+        
+        return Task.CompletedTask;
     }
 }

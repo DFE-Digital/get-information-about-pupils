@@ -22,8 +22,6 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
         services
             .AddCosmosDbDependencies()
             .AddNewsArticleDependencies();
-
-        //return Task.CompletedTask;
     }
 
     [Fact]

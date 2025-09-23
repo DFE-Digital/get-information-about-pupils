@@ -21,8 +21,6 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         services
             .AddNewsArticleDependencies();
-
-        //return Task.CompletedTask;
     }
 
     [Theory]
