@@ -324,7 +324,6 @@ public class FELearnerTextSearchController :  Controller
         return await DownloadSelectedFurtherEducationData(selectedPupil, model.SearchText);
     }
 
-
     #region WIP - this will be slowly refactored away from the controller as we move through more search types
     // @SONAR_IGNORE_START
     [NonAction]

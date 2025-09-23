@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
@@ -15,16 +16,21 @@ using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
+
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
+public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<CosmosDbFixture>
 {
-    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
+    private CosmosDbFixture Fixture { get; }
+
+    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
     {
+        Fixture = cosmosDbFixture;
     }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
         services
+            .AddCosmosDbDependencies()
             .AddMyPupilsDependencies()
             .ConfigureAzureSearchClients();
 

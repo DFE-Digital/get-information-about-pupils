@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+
 internal static class CompositionRoot
 {
     internal static IServiceCollection ConfigureAzureSearchClients(this IServiceCollection services)
@@ -17,9 +18,7 @@ internal static class CompositionRoot
             IEnumerable<SearchClient> originalClients = sp.GetServices<SearchClient>();
 
             List<SearchClient> insecureClients =
-                originalClients
-                    .Select(client => client.WithDisabledTlsValidation()) // Required as .NET cert store doesn't trust untrustedRoot.
-                    .ToList();
+                [.. originalClients.Select(client => client.WithDisabledTlsValidation())];
 
             return new SearchClientProvider(
                 insecureClients,

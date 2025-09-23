@@ -1,17 +1,29 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
+
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public DeleteNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private CosmosDbFixture Fixture { get; }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    public DeleteNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
     {
-        services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
+        Fixture = cosmosDbFixture;
+    }
+
+    protected async override Task OnInitializeAsync(IServiceCollection services)
+    {
+        await Fixture.Database.ClearDatabaseAsync();
+
+        services
+            .AddCosmosDbDependencies()
+            .AddNewsArticleDependencies();
+
+        //return Task.CompletedTask;
     }
 
     [Fact]

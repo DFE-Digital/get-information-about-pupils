@@ -4,15 +4,25 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
+
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private CosmosDbFixture Fixture { get; }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
     {
-        services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
+        Fixture = cosmosDbFixture;
+    }
+
+    protected async override Task OnInitializeAsync(IServiceCollection services)
+    {
+        await Fixture.Database.ClearDatabaseAsync();
+
+        services
+            .AddNewsArticleDependencies();
+
+        //return Task.CompletedTask;
     }
 
     [Theory]
@@ -51,6 +61,5 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         Assert.InRange(newsArticleDto.CreatedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
         Assert.InRange(newsArticleDto.ModifiedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
-
     }
 }

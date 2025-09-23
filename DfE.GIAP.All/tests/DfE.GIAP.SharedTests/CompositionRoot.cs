@@ -1,9 +1,12 @@
-﻿using DfE.GIAP.Core.Common;
+﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.SharedTests;
 public static class CompositionRoot
@@ -14,6 +17,7 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
 
         services
+            .AddCosmosDbDependencies()
             .AddFeaturesSharedDependencies()
             .AddLocalConfiguration()
             .AddInMemoryLogger();
@@ -42,6 +46,25 @@ public static class CompositionRoot
             ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
             ["SearchIndexOptions:Indexes:npd:Name"] = "npd",
             ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
+            ["SearchIndexOptions:Indexes:further-education:Name"] = "further-education",
+
+            // SearchCriteria
+            ["SearchCriteria:SearchFields:0"] = "Forename",
+            ["SearchCriteria:SearchFields:1"] = "Surname",
+            ["SearchCriteria:Facets:0"] = "ForenameLC",
+            ["SearchCriteria:Facets:1"] = "SurnameLC",
+            ["SearchCriteria:Facets:2"] = "Gender",
+            ["SearchCriteria:Facets:3"] = "Sex",
+
+            // AzureSearchOptions
+            ["AzureSearchOptions:SearchIndex"] = "further-education",
+            ["AzureSearchOptions:SearchMode"] = "0",
+            ["AzureSearchOptions:Size"] = "40000",
+            ["AzureSearchOptions:IncludeTotalCount"] = "true",
+
+            // AzureSearchConnectionOptions
+            ["AzureSearchConnectionOptions:EndpointUri"] = "https://localhost:44444",
+            ["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()
@@ -50,6 +73,8 @@ public static class CompositionRoot
                 .Build();
 
         services.AddSingleton(configuration);
+
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<SearchCriteria>>().Value);
 
         return services;
     }

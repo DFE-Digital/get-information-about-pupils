@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.Fixture.Configuration;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
@@ -20,15 +22,20 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 #nullable disable
     private MyPupilsTestContext _testContext;
 #nullable enable
-    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base(cosmosDbFixture)
-    {
+    private CosmosDbFixture Fixture { get; }
 
+    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
+    {
+        Fixture = cosmosDbFixture;
     }
 
     private sealed record MyPupilsTestContext(SearchIndexFixture fixture, UniquePupilNumbers myPupilUpns, UserId UserId);
     protected async override Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddMyPupilsDependencies();
+        await Fixture.Database.ClearDatabaseAsync();
+
+        services
+            .AddMyPupilsDependencies();
 
         // Initialise fixture and pupils, store in context
         SearchIndexFixture mockSearchFixture = new(

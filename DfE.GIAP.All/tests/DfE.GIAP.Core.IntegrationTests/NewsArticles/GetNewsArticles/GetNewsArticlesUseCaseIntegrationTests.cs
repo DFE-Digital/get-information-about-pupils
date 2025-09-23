@@ -8,14 +8,21 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
+    public CosmosDbFixture Fixture { get; set; }
+
+    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
     {
+        Fixture = cosmosDbFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected async override Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
+        await Fixture.Database.ClearDatabaseAsync();
+
+        services
+            .AddNewsArticleDependencies();
+
+        //return Task.CompletedTask;
     }
 
     [Theory]
