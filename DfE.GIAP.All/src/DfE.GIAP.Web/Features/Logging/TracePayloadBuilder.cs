@@ -7,21 +7,20 @@ using DfE.GIAP.Web.Providers.Session;
 
 namespace DfE.GIAP.Web.Features.Logging;
 
-public class TraceLogPayloadBuilder : ILogPayloadBuilder<TracePayload>
+public class TracePayloadBuilder : ILogPayloadBuilder<TracePayload, TracePayloadOptions>
 {
     private readonly ISessionProvider _sessionProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public TraceLogPayloadBuilder(ISessionProvider sessionProvider, IHttpContextAccessor httpContextAccessor)
+    public TracePayloadBuilder(ISessionProvider sessionProvider, IHttpContextAccessor httpContextAccessor)
     {
         _sessionProvider = sessionProvider;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public TracePayload BuildPayload(ILogPayloadOptions options)
+    public TracePayload Build(TracePayloadOptions options)
     {
-        TracePayloadOptions traceOptions = options as TracePayloadOptions
-            ?? throw new ArgumentException("Invalid options type for TracePayload");
+        ArgumentNullException.ThrowIfNull(options);
 
         string correlationId = _sessionProvider.GetSessionValueOrDefault<string>(SessionKeys.CorrelationId);
         ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
@@ -29,14 +28,14 @@ public class TraceLogPayloadBuilder : ILogPayloadBuilder<TracePayload>
         string sessionId = user?.GetSessionId();
 
         return new TracePayload(
-            Message: traceOptions.Message,
+            Message: options.Message,
             CorrelationId: correlationId,
             UserID: userId,
             SessionId: sessionId,
-            Level: traceOptions.Level,
-            Exception: traceOptions.Exception,
-            Category: traceOptions.Category,
-            Source: traceOptions.Source,
-            Context: traceOptions.Context);
+            Level: options.Level,
+            Exception: options.Exception,
+            Category: options.Category,
+            Source: options.Source,
+            Context: options.Context);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Logging.Application;
 
-public interface ILogPayloadBuilder<TPayload>
+public interface ILogPayloadBuilder<TPayload, TPayloadOptions>
 {
-    TPayload BuildPayload(ILogPayloadOptions options);
+    TPayload Build(TPayloadOptions options);
 }

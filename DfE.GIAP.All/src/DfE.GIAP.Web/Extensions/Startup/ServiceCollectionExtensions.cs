@@ -81,7 +81,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
         services.AddScoped<ILogEntryFactory, LogEntryFactory>();
-        services.AddScoped<ILogPayloadBuilder<TracePayload>, TraceLogPayloadBuilder>();
+        services.AddScoped<ILogPayloadBuilder<TracePayload, TracePayloadOptions>, TracePayloadBuilder>();
 
         return services;
     }

@@ -4,5 +4,5 @@ namespace DfE.GIAP.Core.Logging.Application;
 
 public interface ILogEntryFactory
 {
-    LogEntry<TPayload> CreateLogEntry<TPayload>(ILogPayloadOptions payloadOptions);
+    LogEntry<TPayload> CreateLogEntry<TPayload, TPayloadOptions>(TPayloadOptions options);
 }

@@ -11,10 +11,12 @@ public class LogEntryFactory : ILogEntryFactory
         _serviceProvider = serviceProvider;
     }
 
-    public LogEntry<TPayload> CreateLogEntry<TPayload>(ILogPayloadOptions options)
+    public LogEntry<TPayload> CreateLogEntry<TPayload, TPayloadOptions>(TPayloadOptions options)
     {
-        ILogPayloadBuilder<TPayload> builder = _serviceProvider.GetRequiredService<ILogPayloadBuilder<TPayload>>();
-        TPayload payload = builder.BuildPayload(options);
+        ILogPayloadBuilder<TPayload, TPayloadOptions> builder = _serviceProvider
+            .GetRequiredService<ILogPayloadBuilder<TPayload, TPayloadOptions>>();
+
+        TPayload payload = builder.Build(options);
 
         return new LogEntry<TPayload>
         {

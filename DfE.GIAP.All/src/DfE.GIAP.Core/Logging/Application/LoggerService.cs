@@ -38,11 +38,8 @@ public class LoggerService : ILoggerService
             Context = context
         };
 
-        LogEntry<TracePayload> logEntry = _logFactory.CreateLogEntry<TracePayload>(options);
-
+        LogEntry<TracePayload> logEntry = _logFactory.CreateLogEntry<TracePayload, TracePayloadOptions>(options);
         foreach (ITraceLogHandler handler in _traceLogHandlers)
-        {
             handler.Handle(logEntry);
-        }
     }
 }
