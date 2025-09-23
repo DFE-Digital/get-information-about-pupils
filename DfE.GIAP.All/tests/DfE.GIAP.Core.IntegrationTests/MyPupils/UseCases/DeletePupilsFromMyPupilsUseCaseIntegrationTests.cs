@@ -38,7 +38,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             .AddMyPupilsDependencies();
 
         // Initialise fixture and pupils, store in context
-        SearchIndexFixture mockSearchFixture = new(
+        using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
         IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
