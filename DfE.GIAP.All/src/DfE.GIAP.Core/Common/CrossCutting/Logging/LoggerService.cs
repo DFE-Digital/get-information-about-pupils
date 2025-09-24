@@ -1,14 +1,12 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Enums;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 public class LoggerService : ILoggerService
 {
     private readonly IEnumerable<ITraceLogHandler> _traceLogHandlers;
     private readonly ILogEntryFactory<TracePayloadOptions, TracePayload> _traceLogFactory;
-
 
     public LoggerService(
         IEnumerable<ITraceLogHandler> traceLogHandlers,

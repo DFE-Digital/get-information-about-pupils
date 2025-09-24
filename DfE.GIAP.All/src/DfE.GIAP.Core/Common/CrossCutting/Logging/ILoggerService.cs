@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Enums;
-
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 public interface ILoggerService
 {

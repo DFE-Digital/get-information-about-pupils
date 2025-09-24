@@ -1,7 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Infrastructure;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging;

@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Providers.Session;
 
 namespace DfE.GIAP.Web.Features.Logging.Middleware;
@@ -22,12 +21,6 @@ public class SessionCorrelationContextMiddleware
             correlationId = Guid.NewGuid().ToString();
             sessionProvider.SetSessionValue<string>(SessionKeys.CorrelationId, correlationId);
         }
-
-        // TODO: Remove once tested
-        Console.WriteLine(
-            $"[CORRELATIONID]: {correlationId} | " +
-            $"[USERID]: {context.User.GetUserId()} | " +
-            $"[SESSIONID]: {context.User.GetSessionId()}");
 
         await _next(context);
     }

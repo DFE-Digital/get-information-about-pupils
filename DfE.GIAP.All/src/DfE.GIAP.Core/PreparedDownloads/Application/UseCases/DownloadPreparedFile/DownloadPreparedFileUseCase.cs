@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Enums;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
