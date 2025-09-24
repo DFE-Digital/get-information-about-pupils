@@ -1,24 +1,24 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.Logging.Application;
-using DfE.GIAP.Core.Logging.Application.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Providers.Session;
 
 namespace DfE.GIAP.Web.Features.Logging;
 
-public class TracePayloadBuilder : ILogPayloadBuilder<TracePayload, TracePayloadOptions>
+public class TracePayloadEnricher : ILogPayloadEnricher<TracePayload, TracePayloadOptions>
 {
     private readonly ISessionProvider _sessionProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public TracePayloadBuilder(ISessionProvider sessionProvider, IHttpContextAccessor httpContextAccessor)
+    public TracePayloadEnricher(ISessionProvider sessionProvider, IHttpContextAccessor httpContextAccessor)
     {
         _sessionProvider = sessionProvider;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public TracePayload Build(TracePayloadOptions options)
+    public TracePayload Enrich(TracePayloadOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
 

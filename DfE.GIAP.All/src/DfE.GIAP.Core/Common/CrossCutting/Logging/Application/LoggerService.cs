@@ -1,9 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
-using DfE.GIAP.Core.Logging.Application.Handlers;
-using DfE.GIAP.Core.Logging.Application.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Enums;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
-namespace DfE.GIAP.Core.Logging.Application;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 
 public class LoggerService : ILoggerService
 {

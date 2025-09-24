@@ -1,14 +1,13 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Logging.Application;
-using DfE.GIAP.Core.Logging.Application.Handlers;
-using DfE.GIAP.Core.Logging.Application.Sinks;
-using DfE.GIAP.Core.Logging.Infrastructure.Sinks;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.GIAP.Core.Logging;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddLoggingDependencies(this IServiceCollection services)
+    public static IServiceCollection AddCrossCuttingLoggingDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
         return services

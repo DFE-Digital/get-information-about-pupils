@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Enums;
 
-namespace DfE.GIAP.Core.Logging.Application.Models;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
 public record TracePayload(
     string Message,

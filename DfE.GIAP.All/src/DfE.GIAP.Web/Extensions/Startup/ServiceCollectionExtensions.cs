@@ -23,11 +23,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Core.Logging.Application;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
-using DfE.GIAP.Core.Logging.Application.Models;
 using DfE.GIAP.Web.Features.Logging;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -81,7 +81,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
         services.AddScoped<ILogEntryFactory, LogEntryFactory>();
-        services.AddScoped<ILogPayloadBuilder<TracePayload, TracePayloadOptions>, TracePayloadBuilder>();
+        services.AddScoped<ILogPayloadEnricher<TracePayload, TracePayloadOptions>, TracePayloadEnricher>();
 
         return services;
     }

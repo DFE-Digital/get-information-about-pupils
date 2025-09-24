@@ -1,5 +1,5 @@
 using DfE.GIAP.Core.Common;
-using DfE.GIAP.Core.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Core.Users;
@@ -23,7 +23,7 @@ builder.Services
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
-    .AddLoggingDependencies();
+    .AddCrossCuttingLoggingDependencies();
 
 
 builder.Services

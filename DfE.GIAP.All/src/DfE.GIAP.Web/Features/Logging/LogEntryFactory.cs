@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Logging.Application;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 
@@ -13,10 +14,10 @@ public class LogEntryFactory : ILogEntryFactory
 
     public LogEntry<TPayload> CreateLogEntry<TPayload, TPayloadOptions>(TPayloadOptions options)
     {
-        ILogPayloadBuilder<TPayload, TPayloadOptions> builder = _serviceProvider
-            .GetRequiredService<ILogPayloadBuilder<TPayload, TPayloadOptions>>();
+        ILogPayloadEnricher<TPayload, TPayloadOptions> payloadEnricher = _serviceProvider
+            .GetRequiredService<ILogPayloadEnricher<TPayload, TPayloadOptions>>();
 
-        TPayload payload = builder.Build(options);
+        TPayload payload = payloadEnricher.Enrich(options);
 
         return new LogEntry<TPayload>
         {

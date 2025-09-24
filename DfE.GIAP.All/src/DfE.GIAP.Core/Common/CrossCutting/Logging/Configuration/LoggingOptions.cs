@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Enums;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
 
