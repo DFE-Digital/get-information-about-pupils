@@ -1,5 +1,4 @@
-﻿using System;
-using Azure.Search.Documents;
+﻿using Azure.Search.Documents;
 using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
@@ -17,9 +16,6 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

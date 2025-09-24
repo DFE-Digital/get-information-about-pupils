@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
-using Microsoft.Extensions.Options;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -16,7 +14,7 @@ namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 /// </summary>
 internal sealed class AzureSearchIndexHostedTestServer : IDisposable
 {
-    private WireMockServer _server = null!;
+    private readonly WireMockServer _server;
 
     /// <summary>
     /// Exposes the log entries captured by WireMock (all requests/responses).
@@ -29,15 +27,6 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
     /// </summary>
     public AzureSearchIndexHostedTestServer()
     {
-        //ArgumentNullException.ThrowIfNull(options);
-        //ArgumentNullException.ThrowIfNull(options.Value);
-
-        //// Validate that the configured URL is a valid absolute URI
-        //if (!Uri.TryCreate(options.Value.Url, uriKind: UriKind.Absolute, out Uri? result)){
-        //    throw new ArgumentException(
-        //        $"Unable to create Search Mock fixture with Url {options.Value.Url}");
-        //}
-
         // Start WireMock server with SSL enabled (required by Azure.Search SDK clients)
         _server = WireMockServer.Start(new WireMockServerSettings
         {
@@ -45,16 +34,6 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
             Port = 0 // 0 means "pick any available port"
         });
     }
-
-    //public void ServerStart()
-    //{
-    //    // Start WireMock server with SSL enabled (required by Azure.Search SDK clients)
-    //    _server = WireMockServer.Start(new WireMockServerSettings
-    //    {
-    //        UseSSL = true,
-    //        Port = 0 // 0 means "pick any available port"
-    //    });
-    //}
 
     /// <summary>
     /// Returns the base URL of the WireMock server (e.g. https://localhost:5001).

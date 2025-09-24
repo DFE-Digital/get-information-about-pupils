@@ -1,9 +1,7 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.SharedTests;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 

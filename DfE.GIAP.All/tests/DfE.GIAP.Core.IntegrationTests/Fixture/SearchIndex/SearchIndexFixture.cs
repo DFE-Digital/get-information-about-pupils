@@ -2,8 +2,6 @@
 using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.SharedTests.TestDoubles;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 
@@ -37,10 +35,6 @@ public sealed class SearchIndexFixture : IDisposable
             { "pupil-premium", new IndexOptions(){ Name = "pupil-premium-index" } },
             { "further-education", new IndexOptions(){ Name = "further-education" } }
         };
-
-        //["SearchIndexOptions:Indexes:npd:Name"] = "npd",
-        //    ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
-        //    ["SearchIndexOptions:Indexes:further-education:Name"] = "further-education",
     }
 
     /// <summary>
