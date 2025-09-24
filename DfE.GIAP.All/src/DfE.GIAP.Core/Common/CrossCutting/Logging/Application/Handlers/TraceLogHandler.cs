@@ -20,7 +20,7 @@ public class TraceLogHandler : ITraceLogHandler
                 .ToDictionary(s => s.Name, StringComparer.OrdinalIgnoreCase);
     }
 
-    public void Handle(LogEntry<TracePayload> logEntry)
+    public void Handle(Log<TracePayload> logEntry)
     {
         foreach (KeyValuePair<string, SinkConfig> kvp in _configs)
         {

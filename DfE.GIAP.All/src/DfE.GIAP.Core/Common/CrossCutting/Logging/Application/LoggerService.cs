@@ -7,16 +7,17 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 public class LoggerService : ILoggerService
 {
     private readonly IEnumerable<ITraceLogHandler> _traceLogHandlers;
-    private readonly ILogEntryFactory _logFactory;
+    private readonly ILogEntryFactory<TracePayloadOptions, TracePayload> _traceLogFactory;
+
 
     public LoggerService(
         IEnumerable<ITraceLogHandler> traceLogHandlers,
-        ILogEntryFactory logFactory)
+        ILogEntryFactory<TracePayloadOptions, TracePayload> traceLogFactory)
     {
         ArgumentNullException.ThrowIfNull(traceLogHandlers);
-        ArgumentNullException.ThrowIfNull(logFactory);
+        ArgumentNullException.ThrowIfNull(traceLogFactory);
         _traceLogHandlers = traceLogHandlers;
-        _logFactory = logFactory;
+        _traceLogFactory = traceLogFactory;
     }
 
     public void LogTrace(
@@ -37,7 +38,7 @@ public class LoggerService : ILoggerService
             Context = context
         };
 
-        LogEntry<TracePayload> logEntry = _logFactory.CreateLogEntry<TracePayload, TracePayloadOptions>(options);
+        Log<TracePayload> logEntry = _traceLogFactory.Create(options);
         foreach (ITraceLogHandler handler in _traceLogHandlers)
             handler.Handle(logEntry);
     }

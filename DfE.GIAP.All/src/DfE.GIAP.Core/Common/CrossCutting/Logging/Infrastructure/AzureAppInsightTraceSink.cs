@@ -16,7 +16,7 @@ public class AzureAppInsightTraceSink : ITraceLogSink
         _telemetryClient = telemetryClient;
     }
 
-    public void Log(LogEntry<TracePayload> logEntry)
+    public void Log(Log<TracePayload> logEntry)
     {
         if (logEntry.Payload.Exception is not null)
         {

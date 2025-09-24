@@ -5,5 +5,5 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
 public interface ILogSink<TPayload>
 {
     string Name { get; }
-    void Log(LogEntry<TPayload> entry);
+    void Log(Log<TPayload> entry);
 }

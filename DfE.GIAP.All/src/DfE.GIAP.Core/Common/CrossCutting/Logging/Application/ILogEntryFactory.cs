@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 
-public interface ILogEntryFactory
+public interface ILogEntryFactory<TPayloadOptions, TPayload>
 {
-    LogEntry<TPayload> CreateLogEntry<TPayload, TPayloadOptions>(TPayloadOptions options);
+    Log<TPayload> Create(TPayloadOptions options);
 }

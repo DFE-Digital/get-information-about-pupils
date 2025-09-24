@@ -7,35 +7,40 @@ using DfE.GIAP.Web.Providers.Session;
 
 namespace DfE.GIAP.Web.Features.Logging;
 
-public class TracePayloadEnricher : ILogPayloadEnricher<TracePayload, TracePayloadOptions>
+public class TraceLogFactory : ILogEntryFactory<TracePayloadOptions, TracePayload>
 {
     private readonly ISessionProvider _sessionProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public TracePayloadEnricher(ISessionProvider sessionProvider, IHttpContextAccessor httpContextAccessor)
+    public TraceLogFactory(
+        ISessionProvider sessionProvider,
+        IHttpContextAccessor httpContextAccessor)
     {
         _sessionProvider = sessionProvider;
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public TracePayload Enrich(TracePayloadOptions options)
+    public Log<TracePayload> Create(TracePayloadOptions options)
     {
-        ArgumentNullException.ThrowIfNull(options);
-
         string correlationId = _sessionProvider.GetSessionValueOrDefault<string>(SessionKeys.CorrelationId);
-        ClaimsPrincipal? user = _httpContextAccessor.HttpContext?.User;
-        string userId = user?.GetUserId();
-        string sessionId = user?.GetSessionId();
+        ClaimsPrincipal user = _httpContextAccessor.HttpContext?.User;
 
-        return new TracePayload(
-            Message: options.Message,
+        TracePayload payload = new(
+            Message: options.Message ?? string.Empty,
             CorrelationId: correlationId,
-            UserID: userId,
-            SessionId: sessionId,
+            UserID: user?.GetUserId(),
+            SessionId: user?.GetSessionId(),
             Level: options.Level,
             Exception: options.Exception,
             Category: options.Category,
             Source: options.Source,
             Context: options.Context);
+
+        return new Log<TracePayload>
+        {
+            Timestamp = DateTime.UtcNow,
+            Payload = payload
+        };
     }
 }
+
