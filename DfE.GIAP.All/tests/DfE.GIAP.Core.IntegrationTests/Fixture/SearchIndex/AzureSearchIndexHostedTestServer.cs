@@ -16,7 +16,7 @@ namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 /// </summary>
 internal sealed class AzureSearchIndexHostedTestServer : IDisposable
 {
-    private readonly WireMockServer _server;
+    private WireMockServer _server = null!;
 
     /// <summary>
     /// Exposes the log entries captured by WireMock (all requests/responses).
@@ -27,24 +27,34 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
     /// <summary>
     /// Creates and starts a WireMock server bound to the port specified in SearchIndexOptions.
     /// </summary>
-    public AzureSearchIndexHostedTestServer(IOptions<SearchIndexOptions> options)
+    public AzureSearchIndexHostedTestServer()
     {
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Value);
+        //ArgumentNullException.ThrowIfNull(options);
+        //ArgumentNullException.ThrowIfNull(options.Value);
 
-        // Validate that the configured URL is a valid absolute URI
-        if (!Uri.TryCreate(options.Value.Url, uriKind: UriKind.Absolute, out Uri? result)){
-            throw new ArgumentException(
-                $"Unable to create Search Mock fixture with Url {options.Value.Url}");
-        }
+        //// Validate that the configured URL is a valid absolute URI
+        //if (!Uri.TryCreate(options.Value.Url, uriKind: UriKind.Absolute, out Uri? result)){
+        //    throw new ArgumentException(
+        //        $"Unable to create Search Mock fixture with Url {options.Value.Url}");
+        //}
 
         // Start WireMock server with SSL enabled (required by Azure.Search SDK clients)
         _server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = true,
-            Port = result.Port,
+            Port = 0 // 0 means "pick any available port"
         });
     }
+
+    //public void ServerStart()
+    //{
+    //    // Start WireMock server with SSL enabled (required by Azure.Search SDK clients)
+    //    _server = WireMockServer.Start(new WireMockServerSettings
+    //    {
+    //        UseSSL = true,
+    //        Port = 0 // 0 means "pick any available port"
+    //    });
+    //}
 
     /// <summary>
     /// Returns the base URL of the WireMock server (e.g. https://localhost:5001).

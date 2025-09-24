@@ -1,7 +1,6 @@
 ﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.SharedTests;
-using ProtoBuf.Meta;
 
 namespace DfE.GIAP.Core.IntegrationTests;
 

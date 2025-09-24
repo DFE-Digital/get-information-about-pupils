@@ -9,17 +9,18 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.SharedTests;
+
 public static class CompositionRoot
 {
     // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
-    public static IServiceCollection AddSharedTestDependencies(this IServiceCollection services)
+    public static IServiceCollection AddSharedTestDependencies(this IServiceCollection services, Dictionary<string, string> extendedConfiguration = default!)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services
             .AddCosmosDbDependencies()
             .AddFeaturesSharedDependencies()
-            .AddLocalConfiguration()
+            .AddLocalConfiguration(extendedConfiguration)
             .AddInMemoryLogger();
 
         return services;
@@ -31,7 +32,7 @@ public static class CompositionRoot
         return services;
     }
 
-    private static IServiceCollection AddLocalConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddLocalConfiguration(this IServiceCollection services, Dictionary<string, string> extendedConfiguration)
     {
         Dictionary<string, string> contentConfiguration = new()
         {
@@ -41,31 +42,39 @@ public static class CompositionRoot
             // ContentRepositoryOptions
             ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
 
-            // SearchIndexOptions
-            ["SearchIndexOptions:Url"] = "https://localhost:44444",
-            ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
-            ["SearchIndexOptions:Indexes:npd:Name"] = "npd",
-            ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
-            ["SearchIndexOptions:Indexes:further-education:Name"] = "further-education",
+            //// SearchIndexOptions
+            //["SearchIndexOptions:Url"] = searchServiceUrl,
+            //["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
+            //["SearchIndexOptions:Indexes:npd:Name"] = "npd",
+            //["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
+            //["SearchIndexOptions:Indexes:further-education:Name"] = "further-education",
 
-            // SearchCriteria
-            ["SearchCriteria:SearchFields:0"] = "Forename",
-            ["SearchCriteria:SearchFields:1"] = "Surname",
-            ["SearchCriteria:Facets:0"] = "ForenameLC",
-            ["SearchCriteria:Facets:1"] = "SurnameLC",
-            ["SearchCriteria:Facets:2"] = "Gender",
-            ["SearchCriteria:Facets:3"] = "Sex",
+            //// SearchCriteria
+            //["SearchCriteria:SearchFields:0"] = "Forename",
+            //["SearchCriteria:SearchFields:1"] = "Surname",
+            //["SearchCriteria:Facets:0"] = "ForenameLC",
+            //["SearchCriteria:Facets:1"] = "SurnameLC",
+            //["SearchCriteria:Facets:2"] = "Gender",
+            //["SearchCriteria:Facets:3"] = "Sex",
 
-            // AzureSearchOptions
-            ["AzureSearchOptions:SearchIndex"] = "further-education",
-            ["AzureSearchOptions:SearchMode"] = "0",
-            ["AzureSearchOptions:Size"] = "40000",
-            ["AzureSearchOptions:IncludeTotalCount"] = "true",
+            //// AzureSearchOptions
+            //["AzureSearchOptions:SearchIndex"] = "further-education",
+            //["AzureSearchOptions:SearchMode"] = "0",
+            //["AzureSearchOptions:Size"] = "40000",
+            //["AzureSearchOptions:IncludeTotalCount"] = "true",
 
-            // AzureSearchConnectionOptions
-            ["AzureSearchConnectionOptions:EndpointUri"] = "https://localhost:44444",
-            ["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
+            //// AzureSearchConnectionOptions
+            //["AzureSearchConnectionOptions:EndpointUri"] = searchServiceUrl,
+            //["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
+
+        if (extendedConfiguration != default)
+        {
+            contentConfiguration =
+                contentConfiguration.Concat(extendedConfiguration)
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+        
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()
                 .WithLocalCosmosDb()

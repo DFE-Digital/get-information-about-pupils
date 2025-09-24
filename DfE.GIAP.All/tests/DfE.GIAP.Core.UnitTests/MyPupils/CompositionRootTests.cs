@@ -1,4 +1,6 @@
-﻿using Azure.Search.Documents;
+﻿using System;
+using Azure.Search.Documents;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
@@ -12,18 +14,39 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Aggregate
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
-public sealed class CompositionRootTests
+public sealed class CompositionRootTests : IClassFixture<ConfigBuilder>
 {
+    private readonly IConfiguration _configuration;
+
+    private static Dictionary<string, string?> InMemoryConfig =>
+        new()
+        {
+            { "AzureSearchOptions:SearchIndex", "idx-further-education-v3" },
+            { "SearchIndexOptions:Url", "https://localhost:4444/" },
+            { "SearchIndexOptions:Key", "SEFSOFOIWSJFSO" },
+            { "SearchIndexOptions:Indexes:npd:Name", "npd" },
+            { "SearchIndexOptions:Indexes:pupil-premium:Name", "pupil-premium-index" },
+            { "SearchIndexOptions:Indexes:further-education:Name", "further-education" }
+        };
+
+    public CompositionRootTests(ConfigBuilder configBuilder)
+    {
+        _configuration = configBuilder.SetupConfiguration(InMemoryConfig);
+    }
+
     [Fact]
     public void ThrowsArgumentNullException_When_ServicesIsNull()
     {
@@ -38,7 +61,9 @@ public sealed class CompositionRootTests
         // Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddSharedTestDependencies()
+                .AddSearchDependencies(_configuration)
+                .AddCosmosDbDependencies()
+                .AddSharedTestDependencies(InMemoryConfig!)
                 .AddMyPupilsDependencies();
 
         // Act

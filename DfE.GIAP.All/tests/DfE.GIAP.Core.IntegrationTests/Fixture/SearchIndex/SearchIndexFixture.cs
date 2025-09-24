@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.Search.Options.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.SharedTests.TestDoubles;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
@@ -13,8 +14,8 @@ namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 /// </summary>
 public sealed class SearchIndexFixture : IDisposable
 {
-    private readonly AzureSearchIndexHostedTestServer _server; // Underlying WireMock server wrapper
-    private readonly SearchIndexOptions _options;              // Configured search index options
+    private readonly AzureSearchIndexHostedTestServer _server;          // Underlying WireMock server wrapper
+    private readonly SearchIndexOptions _options = new();               // Configured search index options
 
     /// <summary>
     /// Exposes all requests/responses captured by WireMock for debugging.
@@ -25,10 +26,21 @@ public sealed class SearchIndexFixture : IDisposable
     /// <summary>
     /// Creates the fixture and starts the WireMock server on the configured port.
     /// </summary>
-    public SearchIndexFixture(IOptions<SearchIndexOptions> options)
+    public SearchIndexFixture()
     {
-        _server = new AzureSearchIndexHostedTestServer(options);
-        _options = options.Value;
+        _server = new AzureSearchIndexHostedTestServer();
+        _options.Url = _server.Url;
+        _options.Key = "SEFSOFOIWSJFSO";
+        _options.Indexes = new Dictionary<string, IndexOptions>()
+        {
+            { "npd", new IndexOptions(){ Name = "npd" } },
+            { "pupil-premium", new IndexOptions(){ Name = "pupil-premium-index" } },
+            { "further-education", new IndexOptions(){ Name = "further-education" } }
+        };
+
+        //["SearchIndexOptions:Indexes:npd:Name"] = "npd",
+        //    ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
+        //    ["SearchIndexOptions:Indexes:further-education:Name"] = "further-education",
     }
 
     /// <summary>
