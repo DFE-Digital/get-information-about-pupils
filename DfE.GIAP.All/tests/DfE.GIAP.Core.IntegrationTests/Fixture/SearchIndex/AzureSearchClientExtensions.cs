@@ -14,7 +14,9 @@ internal static class AzureSearchClientExtensions
                     new HttpClient(
                         new HttpClientHandler
                         {
-                            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                            // Override SSL certificate validation — this bypasses all certificate checks
+                            // WARNING: This disables security checks and should only be used in test environments
+                            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                         }))
         };
 
