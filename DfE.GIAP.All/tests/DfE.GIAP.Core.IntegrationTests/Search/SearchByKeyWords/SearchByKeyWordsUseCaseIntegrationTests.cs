@@ -41,7 +41,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
     }
 
     [Fact]
-    public async Task SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
+    public void SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
     {
         IEnumerable<AzureIndexEntity> furtherEducationSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 30);
         _mockSearchFixture.StubFurtherEducationSearchIndex(furtherEducationSearchIndexDtos);
