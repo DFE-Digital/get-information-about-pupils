@@ -38,34 +38,8 @@ public static class CompositionRoot
         {
             // PageContentOptions
             ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
-
             // ContentRepositoryOptions
             ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
-
-            //// SearchIndexOptions
-            //["SearchIndexOptions:Url"] = searchServiceUrl,
-            //["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
-            //["SearchIndexOptions:Indexes:npd:Name"] = "npd",
-            //["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
-            //["SearchIndexOptions:Indexes:further-education:Name"] = "further-education",
-
-            //// SearchCriteria
-            //["SearchCriteria:SearchFields:0"] = "Forename",
-            //["SearchCriteria:SearchFields:1"] = "Surname",
-            //["SearchCriteria:Facets:0"] = "ForenameLC",
-            //["SearchCriteria:Facets:1"] = "SurnameLC",
-            //["SearchCriteria:Facets:2"] = "Gender",
-            //["SearchCriteria:Facets:3"] = "Sex",
-
-            //// AzureSearchOptions
-            //["AzureSearchOptions:SearchIndex"] = "further-education",
-            //["AzureSearchOptions:SearchMode"] = "0",
-            //["AzureSearchOptions:Size"] = "40000",
-            //["AzureSearchOptions:IncludeTotalCount"] = "true",
-
-            //// AzureSearchConnectionOptions
-            //["AzureSearchConnectionOptions:EndpointUri"] = searchServiceUrl,
-            //["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
 
         if (extendedConfiguration != default)
