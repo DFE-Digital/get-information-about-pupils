@@ -30,9 +30,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
         services
             .AddSharedTestDependencies(
                 SearchIndexOptionsStub.StubFor(searchIndexFixture.BaseUrl))
-            .ConfigureAzureSearchClients()
             .AddSearchDependencies(ConfigFixture.Configuration)
-
             .AddOptions<SearchIndexOptions>()
                 .Configure<IConfiguration>((settings, configuration) =>
                     configuration
