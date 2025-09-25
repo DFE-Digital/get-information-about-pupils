@@ -36,7 +36,8 @@ internal static class LearnerDataTransferObjectTestDouble
         Faker faker = new();
 
         // Return the fully constructed LearnerDataTransferObject
-        return new LearnerDataTransferObject() {
+        return new LearnerDataTransferObject()
+        {
             ULN = faker.Random.Int(1000000000, 2146999999).ToString(),
             Surname = faker.Name.LastName(),
             Forename = faker.Name.FirstName(),

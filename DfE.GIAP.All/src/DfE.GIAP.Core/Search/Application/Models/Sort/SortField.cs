@@ -34,12 +34,14 @@ public sealed class SortField
     {
         ArgumentNullException.ThrowIfNullOrEmpty(sortField);
 
-        if (validSortFields == null || validSortFields.Count == 0){
+        if (validSortFields == null || validSortFields.Count == 0)
+        {
             throw new ArgumentException(
                 "Valid sort fields list cannot be null or empty.", nameof(validSortFields));
         }
 
-        if (HasDuplicates(validSortFields)){
+        if (HasDuplicates(validSortFields))
+        {
             throw new ArgumentException(
                 "Valid sort fields list contains duplicate entries (case-insensitive).", nameof(validSortFields));
         }
@@ -48,7 +50,8 @@ public sealed class SortField
             new HashSet<string>(
                 validSortFields, StringComparer.OrdinalIgnoreCase);
 
-        if (!IsValid(sortField)){
+        if (!IsValid(sortField))
+        {
             throw new ArgumentException($"Unknown sort field '{sortField}'", nameof(sortField));
         }
 

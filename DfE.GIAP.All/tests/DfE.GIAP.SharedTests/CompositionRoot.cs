@@ -48,7 +48,7 @@ public static class CompositionRoot
                 contentConfiguration.Concat(extendedConfiguration)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
-        
+
 
         IConfiguration configuration = ConfigurationTestDoubles.Default()
                 .WithLocalCosmosDb()

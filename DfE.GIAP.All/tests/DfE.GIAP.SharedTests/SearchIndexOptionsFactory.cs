@@ -10,6 +10,6 @@ public static class SearchIndexOptionsFactory
         Url = "idx-further-education-v3",
         Key = "",
         Indexes = []
-};
+    };
 #pragma warning restore S1075 // URIs should not be hardcoded
 }

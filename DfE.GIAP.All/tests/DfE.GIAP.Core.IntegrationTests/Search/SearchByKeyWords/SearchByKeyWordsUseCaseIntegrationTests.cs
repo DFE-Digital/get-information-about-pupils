@@ -32,7 +32,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
                 SearchIndexOptionsStub.StubFor(searchIndexFixture.BaseUrl))
             .ConfigureAzureSearchClients()
             .AddSearchDependencies(ConfigFixture.Configuration)
-            
+
             .AddOptions<SearchIndexOptions>()
                 .Configure<IConfiguration>((settings, configuration) =>
                     configuration
@@ -49,10 +49,10 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
         _mockSearchFixture.StubFurtherEducationSearchIndex(furtherEducationSearchIndexDtos);
         _mockSearchFixture.StubAvailableIndexes(["further-education"]);
 
-        IUseCase <SearchByKeyWordsRequest, SearchByKeyWordsResponse> sut =
+        IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse> sut =
             ResolveTypeFromScopedContext<IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>>()!;
 
-        SortOrder sortOrder = new(sortField: "Forename", sortDirection: "desc", ["Forename","Surname"]);
+        SortOrder sortOrder = new(sortField: "Forename", sortDirection: "desc", ["Forename", "Surname"]);
         SearchByKeyWordsRequest request = new(searchKeywords: "test", sortOrder);
 
         // act
@@ -72,7 +72,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
         {
             _mockSearchFixture?.Dispose();
         }
-        
+
         return Task.CompletedTask;
     }
 }

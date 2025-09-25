@@ -1,6 +1,6 @@
-﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Formatters;
+﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Formatters;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
 

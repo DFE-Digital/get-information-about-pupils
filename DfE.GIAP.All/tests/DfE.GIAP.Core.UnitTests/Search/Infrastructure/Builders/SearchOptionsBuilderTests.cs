@@ -21,7 +21,7 @@ public sealed class SearchOptionsBuilderTests
 
         // act
         SearchOptions searchOptions =
-            searchOptionsBuilder.WithSize(size:100).Build();
+            searchOptionsBuilder.WithSize(size: 100).Build();
 
         // assert
         Assert.NotNull(searchOptions);

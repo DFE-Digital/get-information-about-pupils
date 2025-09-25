@@ -45,7 +45,7 @@ public sealed class SearchServiceAdapterRequestTests
         // arrange
         List<string> fields = ["Field"];
         List<string> facets = ["Facet"];
-        SortOrder sortOrder = new("Field", "asc", ["Field" ]);
+        SortOrder sortOrder = new("Field", "asc", ["Field"]);
 
         // act
         Action act = () =>
