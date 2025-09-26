@@ -1,11 +1,11 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
@@ -31,20 +31,28 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
-        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
+        MyPupilsId id = new(request.UserId);
 
-        if (myPupils is null || myPupils.Pupils.IsEmpty)
+        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+
+        if (myPupils is null || myPupils.HasNoPupils)
         {
-            MyPupilDtos emptyPupils = MyPupilDtos.Create(pupils: []);
-            return new GetMyPupilsResponse(emptyPupils);
+            return
+                new GetMyPupilsResponse(
+                    MyPupilsModel.Create(
+                        pupils: []));
         }
 
-        MyPupilDtos aggregatedPupilDtos =
-            MyPupilDtos.Create(
-                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupils.Pupils))
-                            .Select(_mapPupilToPupilDtoMapper.Map)
-                                .ToList());
+        UniquePupilNumbers myPupilUniquePupilNumbers =
+            UniquePupilNumbers.Create(
+                myPupils.GetMyPupils());
 
-        return new GetMyPupilsResponse(aggregatedPupilDtos);
+        MyPupilsModel aggregatedPupils =
+            MyPupilsModel.Create(
+                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
+                        .Select(_mapPupilToPupilDtoMapper.Map)
+                            .ToList());
+
+        return new GetMyPupilsResponse(aggregatedPupils);
     }
 }

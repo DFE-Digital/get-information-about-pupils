@@ -4,7 +4,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 public record MyPupilDto
 {
-    public required UniquePupilNumber UniquePupilNumber { get; init; }
+    public required string UniquePupilNumber { get; init; }
     public required string Forename { get; init; }
     public required string Surname { get; init; }
     public required string DateOfBirth { get; init; }

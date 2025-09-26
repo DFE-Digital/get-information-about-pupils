@@ -50,7 +50,7 @@ public sealed class MyPupilDtoBuilder
 
         return new()
         {
-            UniquePupilNumber = _uniquePupilNumber ?? defaulter.UniquePupilNumber,
+            UniquePupilNumber = _uniquePupilNumber?.Value ?? defaulter.UniquePupilNumber,
             Forename = _forename ?? defaulter.Forename,
             Surname = _surname ?? defaulter.Surname,
             DateOfBirth = (_dateOfBirth ?? DateTime.UnixEpoch).ToString(DATE_OF_BIRTH_FORMAT),
