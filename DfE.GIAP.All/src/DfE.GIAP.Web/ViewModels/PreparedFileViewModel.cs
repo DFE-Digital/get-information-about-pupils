@@ -12,6 +12,4 @@ public class PreparedFileViewModel
     public string DisplayName =>
         string.IsNullOrEmpty(FileName) ? null :
         FileName.Contains('.') ? FileName.Substring(0, FileName.LastIndexOf('.')) : FileName;
-
-    public string Link { get; set; }
 }
