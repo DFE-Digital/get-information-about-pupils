@@ -18,7 +18,7 @@ ConfigurationManager configuration = builder.Configuration;
 // Services configuration
 builder.Services
     .AddAppSettings(configuration)
-    .AddFeaturesSharedDependencies(configuration)
+    .AddFeaturesSharedDependencies()
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies();
