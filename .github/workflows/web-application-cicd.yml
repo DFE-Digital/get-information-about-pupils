@@ -159,7 +159,7 @@ jobs:
 
           cat localhost.crt
 
-          sudo cp localhost.crt /usr/local/share/ca-certificates/
+          sudo cp localhost.crt /usr/local/share/ca-certificates/localhost.crt
           
           dotnet dev-certs https --clean
 
@@ -167,6 +167,8 @@ jobs:
 
           sudo update-ca-certificates
           
+          ls -l /usr/local/share/ca-certificates/
+
           grep -A 5 "CN=localhost" /etc/ssl/certs/ca-certificates.crt
 
 
