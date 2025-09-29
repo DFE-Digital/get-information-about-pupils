@@ -156,12 +156,10 @@ jobs:
           openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt -config localhost.conf -subj /CN=localhost
 
           openssl x509 -in localhost.crt -text -noout
-          
+
           sudo cp localhost.crt /usr/local/share/ca-certificates/localhost.crt
 
           sudo update-ca-certificates -f
-          
-          grep "CN=localhost" /etc/ssl/certs/ca-certificates.crt
 
       - name: Run Integration Tests with Coverage
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
