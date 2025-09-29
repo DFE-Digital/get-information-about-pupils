@@ -161,7 +161,7 @@ jobs:
 
           echo "extra/localhost.crt" | sudo tee -a /etc/ca-certificates.conf
           sudo mkdir -p /usr/share/ca-certificates/extra/
-          sudo cp /usr/local/share/ca-certificates/localhost.crt /usr/share/ca-certificates/extra/localhost.crt
+          sudo cp localhost.crt /usr/share/ca-certificates/extra/localhost.crt
           
           dotnet dev-certs https --clean
 
