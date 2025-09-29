@@ -161,7 +161,7 @@ jobs:
 
           sudo cp localhost.crt /usr/share/ca-certificates/localhost.crt
 
-          sudo update-ca-certificates -v
+          sudo update-ca-certificates -f
           
           grep "CN=localhost" /etc/ssl/certs/ca-certificates.crt
 
