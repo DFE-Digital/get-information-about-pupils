@@ -163,15 +163,17 @@ jobs:
           sudo mkdir -p /usr/share/ca-certificates/extra/
           sudo cp localhost.crt /usr/share/ca-certificates/extra/localhost.crt
           
+          ls -l /usr/local/share/ca-certificates/
+          ls -l /usr/local/share/ca-certificates/extra/
+
           dotnet dev-certs https --clean
 
           sudo dpkg-reconfigure ca-certificates
 
           sudo update-ca-certificates
-          
-          ls -l /usr/local/share/ca-certificates/
 
-          grep -A 5 "CN=localhost" /etc/ssl/certs/ca-certificates.crt
+          grep "CN=localhost" /etc/ssl/certs/ca-certificates.crt
+
 
 
       - name: Run Integration Tests with Coverage
