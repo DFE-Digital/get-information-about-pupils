@@ -153,22 +153,12 @@ jobs:
 
       - name: Install WireMock TLS certificate
         run: |
-          openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt -config localhost.conf -subj /CN=localhost
 
-          openssl x509 -in localhost.crt -text -noout
+          sudo mkdir -p /usr/share/ca-certificates/extra/
 
-          cat localhost.crt
+          sudo cp localhost.crt /usr/share/ca-certificates/extra/localhost.crt
 
           echo "extra/localhost.crt" | sudo tee -a /etc/ca-certificates.conf
-          sudo mkdir -p /usr/local/share/ca-certificates/extra/
-          sudo cp localhost.crt /usr/local/share/ca-certificates/extra/localhost.crt
-          
-          ls -l /usr/local/share/ca-certificates/
-          ls -l /usr/local/share/ca-certificates/extra/
-
-          dotnet dev-certs https --clean
-
-          sudo dpkg-reconfigure ca-certificates
 
           sudo update-ca-certificates
 
