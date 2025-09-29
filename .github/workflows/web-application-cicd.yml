@@ -157,6 +157,8 @@ jobs:
 
           openssl x509 -in localhost.crt -text -noout
 
+          cat localhost.crt
+
           sudo cp localhost.crt /usr/local/share/ca-certificates/
           
           dotnet dev-certs https --clean
