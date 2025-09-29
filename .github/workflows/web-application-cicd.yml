@@ -166,6 +166,8 @@ jobs:
           echo "extra/localhost.crt" | sudo tee -a /etc/ca-certificates.conf
 
           sudo update-ca-certificates
+          
+          grep "CN=localhost" /etc/ssl/certs/ca-certificates.crt
 
       - name: Run Integration Tests with Coverage
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
