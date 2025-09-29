@@ -154,12 +154,20 @@ jobs:
       - name: Install WireMock TLS certificate
         run: |
           openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt -config localhost.conf -subj /CN=localhost
+
           openssl pkcs12 -export -out localhost.pfx -inkey localhost.key -in localhost.crt -passout pass:
+          
           sudo cp localhost.crt /usr/local/share/ca-certificates/
-          dotnet dev-certs https
+          
+          dotnet dev-certs https --clean
+
+          sudo dpkg-reconfigure ca-certificates
+
           sudo update-ca-certificates
+          
           sudo cp localhost.pfx /root/.dotnet/corefx/cryptography/x509stores/my/
-          openssl x509 -in /etc/ssl/certs/ca-certificates.crt -text -noout | grep "CN=localhost"
+          
+          grep -A 5 "CN=localhost" /etc/ssl/certs/ca-certificates.crt
 
 
       - name: Run Integration Tests with Coverage
