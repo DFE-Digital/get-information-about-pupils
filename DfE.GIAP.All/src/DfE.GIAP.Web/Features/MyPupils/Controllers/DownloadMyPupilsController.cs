@@ -11,13 +11,12 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Routes;
 

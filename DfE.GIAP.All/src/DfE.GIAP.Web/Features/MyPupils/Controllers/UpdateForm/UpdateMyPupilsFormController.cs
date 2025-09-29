@@ -4,7 +4,7 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;

@@ -7,8 +7,7 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
-using DfE.GIAP.Web.Helpers.Search;
+using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
@@ -28,7 +27,7 @@ public class DeleteMyPupilsController : Controller
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
-        IMyPupilsViewModelFactory myPupilsViewModelFactory,
+        IMyPupilsViewModelFactory viewModelFactory,
         IUseCaseRequestOnly<DeleteAllMyPupilsRequest> deleteAllPupilsUseCase,
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deleteSomePupilsUseCase,
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
@@ -38,8 +37,8 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
 
-        ArgumentNullException.ThrowIfNull(myPupilsViewModelFactory);
-        _myPupilsViewModelFactory = myPupilsViewModelFactory;
+        ArgumentNullException.ThrowIfNull(viewModelFactory);
+        _myPupilsViewModelFactory = viewModelFactory;
 
         ArgumentNullException.ThrowIfNull(deleteAllPupilsUseCase);
         _deleteAllPupilsUseCase = deleteAllPupilsUseCase;
@@ -70,35 +69,25 @@ public class DeleteMyPupilsController : Controller
             await _getPupilViewModelsForUserHandler.GetPupilsAsync(
                 new GetPupilViewModelsRequest(userId, state));
 
-        if (!ModelState.IsValid)
+        if (TryEvaluateErrorViewResult(conditionsToErrorMessages: new()
+            {
+                { () => !ModelState.IsValid ,
+                    "There has been a problem with selections. Please try again." },
+                { () => SelectedPupils.Count == 0 && !state.SelectionState.IsAnyPupilSelected,
+                    Messages.Common.Errors.NoPupilsSelected }
+            }, state, currentPagePupilViewModels, out ViewResult? errorViewResult))
         {
-            return View(
-                Constants.Routes.MyPupilList.MyPupilListView,
-                model: _myPupilsViewModelFactory.CreateViewModel(
-                            state,
-                            currentPagePupilViewModels,
-                            context: MyPupilsViewModelContext.CreateWithErrorMessage(PupilHelper.GenerateValidationMessageUpnSearch(ModelState))));
+            return errorViewResult;
         }
 
-        bool noSelectedPupils = SelectedPupils.Count == 0 && !state.SelectionState.IsAnyPupilSelected;
-
-        if (noSelectedPupils)
-        {
-            return View(
-                Constants.Routes.MyPupilList.MyPupilListView,
-                model: _myPupilsViewModelFactory.CreateViewModel(
-                            state,
-                            currentPagePupilViewModels,
-                            context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Common.Errors.NoPupilsSelected)));
-        }
 
         // If the client deselects one or more pupils when SelectAll is active, we should not also delete the DeselectedPupils.
         // We infer if ALL pupils on the page are selected, by matching counts
-        bool isDeleteAllPupils =
+        bool isAllPupilsBeingDeleted =
             state.SelectionState.IsAllPupilsSelected &&
                 currentPagePupilViewModels.Count.Equals(SelectedPupils.Count);
 
-        if (isDeleteAllPupils)
+        if (isAllPupilsBeingDeleted)
         {
             await _deleteAllPupilsUseCase.HandleRequestAsync(
                 new DeleteAllMyPupilsRequest(userId));
@@ -119,9 +108,34 @@ public class DeleteMyPupilsController : Controller
 
             state.SelectionState.RemovePupils(deletePupilUpns);
         }
-        _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
 
+
+        _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
         TempData["IsDeleteSuccessful"] = true;
         return RedirectToAction(actionName: "Index", controllerName: "GetMyPupils");
+    }
+
+    private bool TryEvaluateErrorViewResult(
+        Dictionary<Func<bool>, string> conditionsToErrorMessages,
+        MyPupilsState state,
+        PupilsViewModel pupilViewModels,
+        out ViewResult result)
+    {
+
+        KeyValuePair<Func<bool>, string>? errorCondition = conditionsToErrorMessages.FirstOrDefault((kv) => kv.Key.Invoke());
+
+        if (errorCondition.HasValue)
+        {
+            result = View(
+                    viewName: Constants.Routes.MyPupilList.MyPupilListView,
+                    model: _myPupilsViewModelFactory.CreateViewModel(
+                            state,
+                            pupilViewModels,
+                            MyPupilsViewModelContext.CreateWithErrorMessage(errorCondition.Value.Value)));
+            return true;
+        }
+
+        result = null;
+        return false;
     }
 }

@@ -1,22 +1,11 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
-using DfE.GIAP.Web.Features.MyPupils.State;
-
-namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
-
-public interface IMyPupilsViewModelFactory
-{
-    MyPupilsViewModel CreateViewModel(
-        MyPupilsState state,
-        PupilsViewModel pupils,
-        MyPupilsViewModelContext context);
-}
+﻿namespace DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 
 public record MyPupilsViewModelContext
 {
     public MyPupilsViewModelContext(string error = "", bool isDeletePupilsSucessful = false)
     {
         Error = string.IsNullOrEmpty(error) ? string.Empty : error;
-        isDeletePupilsSucessful = IsDeletePupilsSuccessful;
+        IsDeletePupilsSuccessful = isDeletePupilsSucessful;
     }
 
     public string Error { get; init; }

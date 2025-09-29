@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
-using Microsoft.IdentityModel.Tokens;
+using DfE.GIAP.Web.Features.MyPupils.ViewModel;
 
-namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
+namespace DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 
 internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
 {

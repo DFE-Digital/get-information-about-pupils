@@ -4,6 +4,7 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

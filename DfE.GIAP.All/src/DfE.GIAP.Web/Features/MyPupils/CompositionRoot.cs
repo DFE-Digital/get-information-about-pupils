@@ -14,7 +14,7 @@ using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using DfE.GIAP.Web.Session.Abstraction;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.Session.Abstraction.Query;
