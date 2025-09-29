@@ -15,4 +15,12 @@ public static class MyPupilsPupilSelectionStateTestDoubles
         });
         return state;
     }
+
+    public static MyPupilsPupilSelectionState WithAllPupilsSelected(IEnumerable<string> pupils)
+    {
+        MyPupilsPupilSelectionState state = Default();
+        state.UpsertPupilSelectionState(pupils, true);
+        state.SelectAllPupils();
+        return state;
+    }
 }

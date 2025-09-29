@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Routes;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
@@ -11,9 +12,11 @@ using DfE.GIAP.Web.Features.MyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NSubstitute;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
@@ -310,5 +313,88 @@ public sealed class DeleteMyPupilsControllerTests
                 It.IsAny<MyPupilsState>(),
                 It.IsAny<PupilsViewModel>(),
                 It.Is<MyPupilsViewModelContext>(t => t.Error.Equals("You have not selected any pupils"))), Times.Once);
+    }
+
+    [Fact]
+    public async Task Delete_AllPupils_DeletesAllPupils()
+    {
+        // Arrange
+        InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
+        Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
+        Mock<IGetPupilViewModelsHandler> getPupilsHandlerMock = new();
+        Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
+        Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
+        Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
+        Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
+
+        MyPupilsPupilSelectionState allPupilsSelectedStub = MyPupilsPupilSelectionStateTestDoubles.WithAllPupilsSelected([]);
+
+        stateProviderMock
+            .Setup(t => t.GetState())
+            .Returns(
+                MyPupilsStateTestDoubles.Create(
+                    MyPupilsPresentationStateTestDoubles.Default(),
+                    allPupilsSelectedStub))
+            .Verifiable();
+
+        PupilsViewModel pupilsOnPage = PupilsViewModelTestDoubles.Generate(10);
+
+        getPupilsHandlerMock
+            .Setup(t => t.GetPupilsAsync(It.IsAny<GetPupilViewModelsRequest>()))
+            .ReturnsAsync(pupilsOnPage)
+            .Verifiable();
+
+        DeleteMyPupilsController sut = new(
+            loggerMock,
+            viewModelFactoryMock.Object,
+            deleteAllPupilsUseCaseMock.Object,
+            deletePupilsUseCaseMock.Object,
+            stateProviderMock.Object,
+            sessionCommandHandlerMock.Object,
+            getPupilsHandlerMock.Object);
+
+        Dictionary<string, object?> tempDataDictionaryStub = [];
+        HttpContext stubbedHttpContext = sut.StubHttpContext();
+        sut.StubTempData(tempDataDictionaryStub, stubbedHttpContext);
+
+        const string stubbedClaimsPrincipalCustomUserIdClaim = "00000000-0000-0000-0000-000000000000";
+
+        // Act
+        IActionResult result = await sut.Delete(
+            SelectedPupils: pupilsOnPage.Pupils.Select(
+                (pupil) => pupil.UniquePupilNumber).ToList());
+
+        // Assert
+        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
+        Assert.NotNull(redirectResult);
+        Assert.Equal(nameof(GetMyPupilsController).Replace("Controller", string.Empty), redirectResult.ControllerName);
+        Assert.Equal(nameof(GetMyPupilsController.Index), redirectResult.ActionName);
+
+        // Assert logs
+        string log = Assert.Single(loggerMock.Logs);
+        Assert.Equal("DeleteMyPupilsController.Delete POST method called", log);
+
+        // Assert state is reset, delete all is dispatched
+        Assert.False(allPupilsSelectedStub.IsAnyPupilSelected);
+        Assert.False(allPupilsSelectedStub.IsAllPupilsSelected);
+        Assert.Empty(allPupilsSelectedStub.GetSelectedPupils());
+        deleteAllPupilsUseCaseMock.Verify(
+            (useCase) => useCase.HandleRequestAsync(It.Is<DeleteAllMyPupilsRequest>(request => request.UserId == stubbedClaimsPrincipalCustomUserIdClaim)), Times.Once);
+
+        sessionCommandHandlerMock.Verify(
+            (handler) => handler.StoreInSession(allPupilsSelectedStub), Times.Once);
+
+#pragma warning disable CS8605 // Unboxing a possibly null value.
+        Assert.True((bool)sut.TempData["IsDeleteSuccessful"]);
+#pragma warning restore CS8605 // Unboxing a possibly null value.
+
+        deletePupilsUseCaseMock.Verify(
+            (useCase) => useCase.HandleRequestAsync(It.IsAny<DeletePupilsFromMyPupilsRequest>()), Times.Never);
+
+        viewModelFactoryMock.Verify(
+            (viewModelFactory) => viewModelFactory.CreateViewModel(
+                It.IsAny<MyPupilsState>(),
+                It.IsAny<PupilsViewModel>(),
+                It.IsAny<MyPupilsViewModelContext>()), Times.Never);
     }
 }

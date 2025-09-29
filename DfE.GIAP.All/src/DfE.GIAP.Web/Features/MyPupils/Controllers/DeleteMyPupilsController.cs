@@ -12,7 +12,9 @@ using DfE.GIAP.Web.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Routes;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers;
+
+#nullable enable
 
 [Route(Constants.Routes.MyPupilList.DeleteMyPupils)]
 public class DeleteMyPupilsController : Controller
@@ -94,6 +96,7 @@ public class DeleteMyPupilsController : Controller
 
             state.SelectionState.ResetState();
         }
+
         else
         {
             List<string> deletePupilUpns =
@@ -109,7 +112,6 @@ public class DeleteMyPupilsController : Controller
             state.SelectionState.RemovePupils(deletePupilUpns);
         }
 
-
         _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
         TempData["IsDeleteSuccessful"] = true;
         return RedirectToAction(actionName: "Index", controllerName: "GetMyPupils");
@@ -119,20 +121,21 @@ public class DeleteMyPupilsController : Controller
         Dictionary<Func<bool>, string> conditionsToErrorMessages,
         MyPupilsState state,
         PupilsViewModel pupilViewModels,
-        out ViewResult result)
+        out ViewResult? result)
     {
 
-        KeyValuePair<Func<bool>, string>? errorCondition = conditionsToErrorMessages.FirstOrDefault((kv) => kv.Key.Invoke());
-
-        if (errorCondition.HasValue)
+        foreach (KeyValuePair<Func<bool>, string> condition in conditionsToErrorMessages)
         {
-            result = View(
-                    viewName: Constants.Routes.MyPupilList.MyPupilListView,
-                    model: _myPupilsViewModelFactory.CreateViewModel(
-                            state,
-                            pupilViewModels,
-                            MyPupilsViewModelContext.CreateWithErrorMessage(errorCondition.Value.Value)));
-            return true;
+            if (condition.Key.Invoke())
+            {
+                result = View(
+                        viewName: Constants.Routes.MyPupilList.MyPupilListView,
+                        model: _myPupilsViewModelFactory.CreateViewModel(
+                                state,
+                                pupilViewModels,
+                                MyPupilsViewModelContext.CreateWithErrorMessage(condition.Value)));
+                return true;
+            }
         }
 
         result = null;

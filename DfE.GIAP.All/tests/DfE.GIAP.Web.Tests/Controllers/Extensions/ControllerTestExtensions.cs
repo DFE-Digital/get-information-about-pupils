@@ -31,16 +31,18 @@ internal static class ControllerTestExtensions
 
     internal static TempDataDictionary StubTempData<T>(
         this T controller,
-        IEnumerable<KeyValuePair<string, object?>> tempDataDictionaryStub = null,
-        HttpContext httpContext = null) where T : Controller
+        Dictionary<string, object?>? tempDataDictionaryStub = null,
+        HttpContext? httpContext = null) where T : Controller
     {
         Mock<ITempDataProvider> providerMock = new();
 
         providerMock
-            .Setup(provider => provider.LoadTempData(It.IsAny<HttpContext>()))
-            .Returns(tempDataDictionaryStub.ToDictionary());
+            .Setup((provider) => provider.LoadTempData(It.IsAny<HttpContext>()))
+            .Returns(tempDataDictionaryStub ?? []);
 
-        TempDataDictionary tempData = new(httpContext ?? new DefaultHttpContext(), providerMock.Object);
+        TempDataDictionary tempData = new(
+            httpContext ?? new DefaultHttpContext(),
+            providerMock.Object);
 
         controller.TempData = tempData;
         return tempData;
