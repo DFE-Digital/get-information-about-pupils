@@ -3,10 +3,10 @@ using DfE.GIAP.Web.Providers.Session;
 
 namespace DfE.GIAP.Web.Features.Logging.Middleware;
 
-public class SessionCorrelationContextMiddleware
+public class SessionCorrelationIdMiddleware
 {
     private readonly RequestDelegate _next;
-    public SessionCorrelationContextMiddleware(RequestDelegate next)
+    public SessionCorrelationIdMiddleware(RequestDelegate next)
     {
         _next = next;
     }
