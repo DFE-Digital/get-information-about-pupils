@@ -159,6 +159,8 @@ jobs:
           dotnet dev-certs https
           sudo update-ca-certificates
           sudo cp localhost.pfx /root/.dotnet/corefx/cryptography/x509stores/my/
+          openssl x509 -in /etc/ssl/certs/ca-certificates.crt -text -noout | grep "CN=localhost"
+
 
       - name: Run Integration Tests with Coverage
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
