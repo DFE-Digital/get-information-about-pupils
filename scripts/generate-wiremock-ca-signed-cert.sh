@@ -35,16 +35,13 @@ DNS.2 = 127.0.0.1" > localhost.ext
 
 openssl x509 -req -in localhost.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out localhost.crt -days 365 -sha256 -extfile localhost.ext
 
-openssl pkcs12 -export \
--out localhost.pfx \
--inkey localhost.key \
--in localhost.crt \
--certfile ca.crt \
--passout pass:yourpassword
+openssl pkcs12 -export -out localhost.pfx -inkey localhost.key -in localhost.crt -certfile ca.crt -passout pass:yourpassword
 
 # Move certificate into directory where integration tests use
 
-echo 'Moving localhost.pfx into Integration tests directory'
+echo "Moving localhost.pfx into Integration tests directory $INTEGRATION_TEST_OUTPUT_DIRECTORY"
+
+ls -la .
 
 mv localhost.pfx $INTEGRATION_TEST_OUTPUT_DIRECTORY
 
