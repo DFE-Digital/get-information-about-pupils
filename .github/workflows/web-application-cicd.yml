@@ -193,9 +193,9 @@ jobs:
             -certfile ca.crt \
             -passout pass:yourpassword
 
-          mv localhost.pfx DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/
+          mv localhost.pfx DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/net8.0/
 
-          ls -l DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/
+          ls -l DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/net8.0/
           
           sudo cp ca.crt /usr/local/share/ca-certificates/my-local-ca.crt
           sudo update-ca-certificates
