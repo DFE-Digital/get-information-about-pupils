@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
+﻿using System.Security.Cryptography.X509Certificates;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -31,6 +32,10 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
         _server = WireMockServer.Start(new WireMockServerSettings
         {
             UseSSL = true,
+            CertificateSettings = new WireMockCertificateSettings
+            {
+                X509Certificate = new X509Certificate2("localhost.pfx", "yourpassword")
+            },
             Port = 0 // 0 means "pick any available port"
         });
     }

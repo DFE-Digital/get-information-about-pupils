@@ -153,14 +153,42 @@ jobs:
 
       - name: Install WireMock TLS certificate
         run: |
-          openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt -config localhost.conf -subj /CN=localhost
+          openssl genrsa -out ca.key 2048
 
-          openssl x509 -in localhost.crt -text -noout
+          openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 \
+            -out ca.crt -subj "/CN=MyLocalCA" \
+            -extensions v3_ca \
+            -config <(cat <<-EOF
+          [req]
+          distinguished_name = req_distinguished_name
+          x509_extensions = v3_ca
+          [req_distinguished_name]
+          [v3_ca]
+          basicConstraints = critical, CA:true
+          keyUsage = keyCertSign, cRLSign
+          EOF
+          )
+          
+          openssl genrsa -out localhost.key 2048
 
-          sudo cp localhost.crt /usr/local/share/ca-certificates/localhost.crt
+          openssl req -new -key localhost.key -out localhost.csr \
+            -subj "/CN=localhost"
 
-          sudo update-ca-certificates -f
+          openssl x509 -req -in localhost.csr -CA ca.crt -CAkey ca.key \ 
+          -CAcreateserial -out localhost.crt -days 365 -sha256 \
+          -extfile localhost.ext
 
+          openssl pkcs12 -export \
+          -out localhost.pfx \
+          -inkey localhost.key \
+          -in localhost.crt \
+          -certfile ca.crt \
+          -passout pass:yourpassword
+
+          sudo cp ca.crt /usr/local/share/ca-certificates/my-local-ca.crt
+          sudo update-ca-certificates
+
+          
       - name: Run Integration Tests with Coverage
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
         shell: bash
