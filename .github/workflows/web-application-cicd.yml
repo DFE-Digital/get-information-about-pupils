@@ -153,7 +153,9 @@ jobs:
           sudo update-ca-certificates
 
       - name: Install WireMock TLS certificate
-        run: ./scripts/generate-wiremock-ca-signed-cert.sh
+        run: | 
+          chmod +x ./scripts/generate-wiremock-ca-signed-cert.sh
+          ./scripts/generate-wiremock-ca-signed-cert.sh
         shell: bash
         env:
           INTEGRATION_TEST_OUTPUT_DIRECTORY: DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/$DOTNET_TFM
