@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.IntegrationTests.Fixture.Configuration;
 using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
-//using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
