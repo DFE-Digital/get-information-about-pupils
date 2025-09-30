@@ -19,7 +19,6 @@
     </PackageReference>
   </ItemGroup>
 
-
   <ItemGroup>
     <None Update="localhost.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -30,6 +29,5 @@
     <ProjectReference Include="..\..\src\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
-
 
 </Project>
