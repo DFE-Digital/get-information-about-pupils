@@ -147,11 +147,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IC
 
     protected override Task OnDisposeAsync()
     {
-        if (_mockSearchFixture != null)
-        {
-            _mockSearchFixture?.Dispose();
-        }
-
+        _mockSearchFixture?.Dispose();
         return Task.CompletedTask;
     }
 }
