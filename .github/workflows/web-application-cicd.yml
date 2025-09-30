@@ -193,7 +193,11 @@ jobs:
             -certfile ca.crt \
             -passout pass:yourpassword
 
-          mv localhost.pfx ./DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/localhost.pfx
+          openssl pkcs12 -in localhost.pfx -info
+
+          mv localhost.pfx DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/
+
+          ls -l DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/
           
           sudo cp ca.crt /usr/local/share/ca-certificates/my-local-ca.crt
           sudo update-ca-certificates
