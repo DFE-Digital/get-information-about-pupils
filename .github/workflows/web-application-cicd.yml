@@ -193,8 +193,6 @@ jobs:
             -certfile ca.crt \
             -passout pass:yourpassword
 
-          openssl pkcs12 -in localhost.pfx -info
-
           mv localhost.pfx DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/
 
           ls -l DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/
