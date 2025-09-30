@@ -158,7 +158,7 @@ jobs:
           ./scripts/generate-wiremock-ca-signed-cert.sh
         shell: bash
         env:
-          INTEGRATION_TEST_OUTPUT_DIRECTORY: DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/$DOTNET_TFM
+          INTEGRATION_TEST_OUTPUT_DIRECTORY: DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/${{ env.DOTNET_TFM }}
 
       - name: Run Integration Tests with Coverage
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
