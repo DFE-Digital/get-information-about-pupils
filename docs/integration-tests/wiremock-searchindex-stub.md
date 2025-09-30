@@ -12,7 +12,7 @@ Azure Search does not provide local options to emulate (such [as a Docker like t
 
 ## Options
 
-1. Stub the expected contract from the Search Indexes
+1. Stub the expected contract from the SearchIndex on a locally hosted `stub-server`
 
 ## Advantages
 
