@@ -23,6 +23,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IC
 {
     private CosmosDbFixture Fixture { get; }
     private ConfigurationFixture ConfigFixture { get; }
+
     private SearchIndexFixture _mockSearchFixture = null!;
 
     public GetMyPupilsUseCaseIntegrationTests(

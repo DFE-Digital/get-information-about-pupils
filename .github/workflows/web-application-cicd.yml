@@ -193,9 +193,10 @@ jobs:
             -certfile ca.crt \
             -passout pass:yourpassword
 
+          mv localhost.pfx ./DfE.GIAP.All/tests/DfE.GIAP.Web.IntegrationTests
+          
           sudo cp ca.crt /usr/local/share/ca-certificates/my-local-ca.crt
           sudo update-ca-certificates
-
 
       - name: Run Integration Tests with Coverage
         working-directory: ${{ env.SOLUTION_DIRECTORY }}
