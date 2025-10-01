@@ -34,11 +34,7 @@ public class FiltersResponseMapper : IMapper<SearchFacets, List<FilterData>>
     /// A list of <see cref="FilterData"/> objects derived from the input facets.
     /// Returns an empty list if <c>input.Facets</c> is null.
     /// </returns>
-    public List<FilterData> Map(SearchFacets input)
-    {
-        ArgumentNullException.ThrowIfNull(input);
-
-        return input.Facets == null
-            ? [] : input.Facets.ToList().ConvertAll(facet => _filterResponseMapper.Map(facet));
-    }
+    public List<FilterData> Map(SearchFacets input) =>
+        input?.Facets == null
+            ? [] : input.Facets.ToList().ConvertAll(facet =>_filterResponseMapper.Map(facet));
 }

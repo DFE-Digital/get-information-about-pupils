@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.Application;
+﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
@@ -21,7 +22,8 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
         return services
             .RegisterApplicationDependencies()
-            .RegisterInfrastructureDependencies();
+            .RegisterInfrastructureDependencies()
+            .AddCosmosDbDependencies();
     }
 
     // Application
