@@ -37,7 +37,7 @@ public class TraceLogHandlerTests
         TraceLogHandler handler = new(options, new[] { sinkMock.Object });
 
         Log<TracePayload> logEntry = LogFactoryTestDoubles
-            .CreatedTraceLog(level: LogLevel.Warning);
+            .CreateDefaultTraceLog(level: LogLevel.Warning);
 
         // Act
         handler.Handle(logEntry);
@@ -65,7 +65,7 @@ public class TraceLogHandlerTests
         IOptions<LoggingOptions> options = CreateOptions(configs);
         TraceLogHandler handler = new(options, new[] { sinkMock.Object });
 
-        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreatedTraceLog(level: LogLevel.Information);
+        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreateDefaultTraceLog(level: LogLevel.Information);
 
         // Act
         handler.Handle(logEntry);
@@ -93,7 +93,7 @@ public class TraceLogHandlerTests
         IOptions<LoggingOptions> options = CreateOptions(configs);
         TraceLogHandler handler = new TraceLogHandler(options, new[] { sinkMock.Object });
 
-        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreatedTraceLog(level: LogLevel.Warning);
+        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreateDefaultTraceLog(level: LogLevel.Warning);
 
         // Act
         handler.Handle(logEntry);
@@ -113,7 +113,7 @@ public class TraceLogHandlerTests
         IOptions<LoggingOptions> options = CreateOptions(configs);
 
         TraceLogHandler handler = new(options, new[] { sinkMock.Object });
-        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreatedTraceLog(level: LogLevel.Warning);
+        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreateDefaultTraceLog(level: LogLevel.Warning);
 
         // Act
         handler.Handle(logEntry);
@@ -148,7 +148,7 @@ public class TraceLogHandlerTests
         IOptions<LoggingOptions> options = CreateOptions(configs);
         TraceLogHandler handler = new(options, new[] { sink1.Object, sink2.Object });
 
-        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreatedTraceLog(level: LogLevel.Information);
+        Log<TracePayload> logEntry = LogFactoryTestDoubles.CreateDefaultTraceLog(level: LogLevel.Information);
 
         // Act
         handler.Handle(logEntry);

@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 public static class LogFactoryTestDoubles
 {
-    public static Log<TracePayload> CreatedTraceLog(
+    public static Log<TracePayload> CreateDefaultTraceLog(
         string message = "message",
         LogLevel level = LogLevel.Information,
         string correlationId = "correlationId",
