@@ -23,7 +23,6 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterInfrastructureDependencies(this IServiceCollection services)
     {
-        services.AddApplicationInsightsTelemetry();
         services.AddSingleton<ITraceLogSink, AzureAppInsightTraceSink>();
 
         return services;

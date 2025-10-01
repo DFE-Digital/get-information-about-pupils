@@ -27,7 +27,7 @@ builder.Services
     .AddRoutingConfiguration()
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
-    .AddApplicationInsightsTelemetry() // TODO: This would move to infrastructure
+    .AddApplicationInsightsTelemetry() // TODO: This would move to infrastructure, handle IHostingEnvironment within tests
     .AddAllServices()
     .AddWebProviders()
     .AddDsiAuthentication(configuration)
