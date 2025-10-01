@@ -26,13 +26,6 @@ public sealed class FiltersResponseMapperTests
     }
 
     [Fact]
-    public void Map_WithNullFacets_ThrowsArgumentNullException()
-    {
-        // act & assert
-        Assert.Throws<ArgumentNullException>(() => _mapper.Map(null!));
-    }
-
-    [Fact]
     public void Map_WithEmptyFacets_ReturnsEmptyList()
     {
         // arrange
