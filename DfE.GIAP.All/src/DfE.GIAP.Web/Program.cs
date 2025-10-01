@@ -14,7 +14,6 @@ using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Extensions.Startup;
-using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.ViewModels;

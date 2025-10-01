@@ -30,9 +30,7 @@ public sealed class LearnerCharacteristics : ValueObject<LearnerCharacteristics>
     /// <exception cref="ArgumentException">Thrown if <paramref name="gender"/> is not a valid enum value.</exception>
     public LearnerCharacteristics(DateTime birthDate, Gender gender)
     {
-        BirthDate = new DateOfBirth(birthDate) ??
-            throw new ArgumentNullException(
-                nameof(birthDate), "The learner's date of birth must not be null.");
+        BirthDate = new DateOfBirth(birthDate);
 
         if (!Enum.IsDefined(typeof(Gender), gender))
         {

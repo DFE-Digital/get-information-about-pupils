@@ -86,7 +86,7 @@ public abstract class BaseEqualityFilterExpression : ISearchFilterExpression
     /// <exception cref="ArgumentException">
     /// Thrown if any value is a boolean.
     /// </exception>
-    private void ValidateFilterValues(SearchFilterRequest request)
+    private static void ValidateFilterValues(SearchFilterRequest request)
     {
         request.FilterValues.ToList().ForEach(value =>
         {

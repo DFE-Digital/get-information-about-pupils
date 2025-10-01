@@ -28,11 +28,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
             .AddSharedTestDependencies(
                 SearchIndexOptionsStub.StubFor(_mockSearchFixture.BaseUrl))
             .AddSearchDependencies(_configFixture.Configuration);
-            //.AddOptions<SearchIndexOptions>()
-            //    .Configure<IConfiguration>((settings, configuration) =>
-            //        configuration
-            //            .GetSection(nameof(SearchIndexOptions))
-            //            .Bind(settings));
 
         return Task.CompletedTask;
     }

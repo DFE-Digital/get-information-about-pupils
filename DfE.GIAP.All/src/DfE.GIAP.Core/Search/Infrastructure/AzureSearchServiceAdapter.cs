@@ -82,7 +82,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
                 _azureSearchOptions.SearchIndex,
                 searchOptions
             ).ConfigureAwait(false)
-            ?? throw new ApplicationException(
+            ?? throw new InvalidOperationException(
                 $"Unable to derive search results based on input {searchServiceAdapterRequest.SearchKeyword}.");
 
         return new SearchResults<Learners, SearchFacets>
