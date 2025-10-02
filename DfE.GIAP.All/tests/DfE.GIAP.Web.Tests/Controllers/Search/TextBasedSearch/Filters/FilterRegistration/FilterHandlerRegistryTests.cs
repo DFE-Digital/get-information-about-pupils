@@ -55,6 +55,9 @@ public class FilterHandlerRegistryTests
 
         // act/assert
         registry.ApplyFilters(filters, model, requestFilters); // Should silently skip
+
+        // assert
+        Assert.Null(model.SearchText); // assumes nothing changes
     }
 
     [Theory]
