@@ -325,7 +325,7 @@ public class FELearnerTextSearchController :  Controller
     }
 
     #region WIP - this will be slowly refactored away from the controller as we move through more search types
-    // @SONAR_IGNORE_START
+
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
@@ -1062,6 +1062,5 @@ public class FELearnerTextSearchController :  Controller
         return _selectionManager.GetSelectedFromSession();
     }
 
-    // @SONAR_IGNORE_END
     #endregion
 }
