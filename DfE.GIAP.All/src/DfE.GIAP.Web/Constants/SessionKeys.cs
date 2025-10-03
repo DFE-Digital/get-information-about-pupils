@@ -12,4 +12,6 @@ public static class SessionKeys
 
     public const string ConsentKey = "cg";
     public const string ConsentValue = "yes";
+
+    public const string CorrelationId = "CorrelationId";
 }
