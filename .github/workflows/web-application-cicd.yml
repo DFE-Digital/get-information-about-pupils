@@ -334,6 +334,7 @@ jobs:
     needs: verify_development
     concurrency:
       group: deploy-and-test-test
+      cancel-in-progress: true
     permissions:
       contents: read  # Required to check out the code.
       id-token: write # Required for OIDC authentication with Azure
@@ -443,6 +444,7 @@ jobs:
     needs: verify_test
     concurrency:
       group: deploy-and-test-preproduction
+      cancel-in-progress: true
     permissions:
       contents: read  # Required to check out the code.
       id-token: write # Required for OIDC authentication with Azure
