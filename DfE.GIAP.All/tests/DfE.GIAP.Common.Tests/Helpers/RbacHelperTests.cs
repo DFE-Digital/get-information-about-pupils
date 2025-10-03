@@ -45,7 +45,7 @@ public class RbacHelperTests
         // Arrange
         List<TestRbac> testData = GetTestList();
 
-        // Act
+        // act
         List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 0, 0);
 
         // Assert
@@ -61,7 +61,7 @@ public class RbacHelperTests
         // Arrange
         List<TestRbac> testData = GetTestList();
 
-        // Act
+        // act
         List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 3, 11, DateTime.Parse("01/10/2022", new CultureInfo("en-gb")));
 
         // Assert

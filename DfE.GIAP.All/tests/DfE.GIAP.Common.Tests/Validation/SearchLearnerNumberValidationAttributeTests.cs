@@ -20,7 +20,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             var vm = new LearnerNumberSearchViewModel() { LearnerNumber = ulnString };
             var customValidationAttribute = new SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch");
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.GetValidationResult(ulnString, new ValidationContext(vm));
 
             // Assert
@@ -36,7 +36,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             var vm = new LearnerNumberSearchViewModel() { LearnerNumberLabel = "UPN" };
             var customValidationAttribute = new SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch");
 
-            // Act
+            // act
             var validationResult = customValidationAttribute.GetValidationResult(null, new ValidationContext(vm));
 
             // Assert
@@ -54,7 +54,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             var vm = new LearnerNumberSearchViewModel() { LearnerNumber = ulnString, LearnerNumberLabel = "ULN" };
             var customValidationAttribute = new SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch");
 
-            // Act
+            // act
             var validationResult = customValidationAttribute.GetValidationResult(ulnString, new ValidationContext(vm));
 
             // Assert
