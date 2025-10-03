@@ -2,6 +2,8 @@
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Extensions;
 internal static class ControllerTestExtensions
@@ -25,5 +27,22 @@ internal static class ControllerTestExtensions
         controller.ControllerContext = controllerContext;
 
         return httpContext;
+    }
+
+    internal static TempDataDictionary StubTempData<T>(
+        this T controller,
+        IEnumerable<KeyValuePair<string, object?>> tempDataDictionaryStub = null,
+        HttpContext httpContext = null) where T : Controller
+    {
+        Mock<ITempDataProvider> providerMock = new();
+
+        providerMock
+            .Setup(provider => provider.LoadTempData(It.IsAny<HttpContext>()))
+            .Returns(tempDataDictionaryStub.ToDictionary());
+
+        TempDataDictionary tempData = new(httpContext ?? new DefaultHttpContext(), providerMock.Object);
+
+        controller.TempData = tempData;
+        return tempData;
     }
 }

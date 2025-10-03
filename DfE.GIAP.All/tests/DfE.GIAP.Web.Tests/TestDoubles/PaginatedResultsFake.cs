@@ -1,8 +1,5 @@
 ﻿using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles
@@ -210,16 +207,6 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
             return "A203102209083";
         }
 
-        public IEnumerable<MyPupilListItem> GetUpnInMPL()
-        {
-            var formattedMPLItems = new List<MyPupilListItem>();
-            foreach (var item in GetUpn().FormatLearnerNumbers())
-            {
-                formattedMPLItems.Add(new MyPupilListItem(item, false));
-            }
-            return formattedMPLItems;
-        }
-
         public string GetInvalidUpn()
         {
             return "this-is-invalid";
@@ -230,29 +217,9 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
             return "A203102209083\r\nA203202811068\r\n";
         }
 
-        public IEnumerable<MyPupilListItem> GetUpnsInMPL()
-        {
-            var formattedMPLItems = new List<MyPupilListItem>();
-            foreach (var item in GetUpns().FormatLearnerNumbers())
-            {
-                formattedMPLItems.Add(new MyPupilListItem(item, false));
-            }
-            return formattedMPLItems;
-        }
-
         public string GetUpnsWithInvalid()
         {
             return "A203102209083\r\nA203202811068\r\nthis-is-invalid\r\n";
-        }
-
-        public IEnumerable<MyPupilListItem> GetUpnsWithInvalidInMPL()
-        {
-            var formattedMPLItems = new List<MyPupilListItem>();
-            foreach (var item in GetUpnsWithInvalid().FormatLearnerNumbers())
-            {
-                formattedMPLItems.Add(new MyPupilListItem(item, false));
-            }
-            return formattedMPLItems;
         }
 
         public string GetUpnsWithDuplicates()
@@ -260,29 +227,9 @@ namespace DfE.GIAP.Web.Tests.TestDoubles
             return "A203102209083\r\nA203202811068\r\nA203202811068\r\n";
         }
 
-        public IEnumerable<MyPupilListItem> GetUpnsWithDuplicatesInMPL()
-        {
-            var formattedMPLItems = new List<MyPupilListItem>();
-            foreach (var item in GetUpnsWithDuplicates().FormatLearnerNumbers())
-            {
-                formattedMPLItems.Add(new MyPupilListItem(item, false));
-            }
-            return formattedMPLItems;
-        }
-
         public string GetUpnsWithNotFound()
         {
             return "A203102209083\r\nA203202811068\r\nE938218618008\r\n";
-        }
-
-        public IEnumerable<MyPupilListItem> GetUpnsWithNotFoundInMPL()
-        {
-            var formattedMPLItems = new List<MyPupilListItem>();
-            foreach (var item in GetUpnsWithNotFound().FormatLearnerNumbers())
-            {
-                formattedMPLItems.Add(new MyPupilListItem(item, false));
-            }
-            return formattedMPLItems;
         }
 
         public string GetUlns()
