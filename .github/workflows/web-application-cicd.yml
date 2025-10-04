@@ -136,14 +136,6 @@ jobs:
 
           docker compose up --build --abort-on-container-exit --exit-code-from integration-tests
 
-          # dotnet test "./tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj" \
-          #   --no-build \
-          #   --nologo \
-          #   --logger "console;verbosity=detailed" \
-          #   -p:CollectCoverage=true \
-          #   -p:CoverletOutputFormat=cobertura \
-          #   -p:CoverletOutput="$OUTPUT_REPORT_PATH"
-
       - name: Upload integration test coverage report
         uses: actions/upload-artifact@v4
         with:
