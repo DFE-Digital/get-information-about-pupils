@@ -24,6 +24,12 @@ runs:
       run: dotnet tool restore
       shell: bash
 
+    - name: Set up Docker Compose
+      uses: docker/setup-compose-action@v1
+      with:
+        version: latest
+        cache-binary: true
+
     - name: npm ci
       run: npm ci
       shell: bash
