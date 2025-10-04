@@ -28,7 +28,7 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
             UseSSL = true, // required for connections through Azure.Search.SearchClient
             CertificateSettings = new()
             {
-                X509Certificate = new X509Certificate2("localhost.pfx", "yourpassword")
+                X509Certificate = new X509Certificate2("wiremock-cert.pfx", "yourpassword")
             },
             Port = result.Port,
         });
