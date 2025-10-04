@@ -22,7 +22,7 @@ openssl genrsa -out localhost.key 2048
 
 openssl req -new -key localhost.key -out localhost.csr -subj "/CN=localhost"
 
-echo "authorityKeyIdentifier=keyid,issuer
+echo 'authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
 keyUsage = digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
@@ -31,7 +31,7 @@ subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = localhost
-DNS.2 = 127.0.0.1" > localhost.ext
+DNS.2 = 127.0.0.1' > localhost.ext
 
 openssl x509 -req -in localhost.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out localhost.crt -days 365 -sha256 -extfile localhost.ext
 
@@ -39,12 +39,11 @@ openssl pkcs12 -export -out localhost.pfx -inkey localhost.key -in localhost.crt
 
 # Move certificate into directory where integration tests use
 
-echo "Printing current directory..."
+echo 'Printing current directory...'
 ls -la .
 
-echo "Moving localhost.pfx into Integration tests directory"
+echo 'Moving signed certificated localhost.pfx into Integration tests output directory'
 mv localhost.pfx DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/net8.0
 
 echo 'Copying local CA into the host trusted CA store'
-
 mv ca.crt /usr/local/share/ca-certificates/my-local-ca.crt
