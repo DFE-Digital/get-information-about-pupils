@@ -129,10 +129,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Integration Tests with Coverage
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
         shell: bash
         run: |
-          OUTPUT_REPORT_PATH="$(pwd)/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml"
+          OUTPUT_REPORT_PATH="${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml"
           echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
 
           docker compose up \ 
