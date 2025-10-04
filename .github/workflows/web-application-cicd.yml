@@ -135,7 +135,7 @@ jobs:
           OUTPUT_REPORT_PATH="$(pwd)/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml"
           echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
 
-          docker-compose up \ 
+          docker compose up \ 
           --build \
           --abort-on-container-exit \
           --exit-code-from integration-tests
