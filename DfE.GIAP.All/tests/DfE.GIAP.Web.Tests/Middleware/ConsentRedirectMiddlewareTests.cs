@@ -16,10 +16,10 @@ public class ConsentRedirectMiddlewareTests
     public async Task InvokeAsync_redirects_when_consent_not_given()
     {
         // Arrange
-        var context = CreateContext(true);
-        var sessionProvider = Substitute.For<ISessionProvider>();
-        sessionProvider.GetSessionValue(SessionKeys.ConsentKey).Returns((string)null);
-        var middleware = CreateMiddleware(sessionProvider);
+        HttpContext context = CreateContext(true);
+        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
+        sessionProvider.GetSessionValue(SessionKeys.ConsentGivenKey).Returns((string)null);
+        ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
         await middleware.InvokeAsync(context, sessionProvider);
@@ -33,10 +33,10 @@ public class ConsentRedirectMiddlewareTests
     public async Task InvokeAsync_does_not_redirect_when_consent_given()
     {
         // Arrange
-        var context = CreateContext(true);
-        var sessionProvider = Substitute.For<ISessionProvider>();
-        sessionProvider.GetSessionValueOrDefault<string>(SessionKeys.ConsentKey).Returns(SessionKeys.ConsentValue);
-        var middleware = CreateMiddleware(sessionProvider);
+        HttpContext context = CreateContext(true);
+        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
+        sessionProvider.GetSessionValueOrDefault<bool>(SessionKeys.ConsentGivenKey).Returns(true);
+        ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
         await middleware.InvokeAsync(context, sessionProvider);
@@ -50,18 +50,17 @@ public class ConsentRedirectMiddlewareTests
     public async Task InvokeAsync_does_not_redirect_when_attribute_present()
     {
         // Arrange
-        var context = CreateContext(true);
+        HttpContext context = CreateContext(true);
 
-        var endpointMetadataCollection = new EndpointMetadataCollection(
-                new AllowWithoutConsentAttribute()
-            );
-        var endpoint = new Endpoint(null, endpointMetadataCollection, "test");
-        var endpointFeature = Substitute.For<IEndpointFeature>();
+        EndpointMetadataCollection endpointMetadataCollection = new(
+                new AllowWithoutConsentAttribute());
+        Endpoint endpoint = new Endpoint(null, endpointMetadataCollection, "test");
+        IEndpointFeature endpointFeature = Substitute.For<IEndpointFeature>();
         endpointFeature.Endpoint.Returns(endpoint);
-        context.Features.Set<IEndpointFeature>(endpointFeature);
+        context.Features.Set(endpointFeature);
 
-        var sessionProvider = Substitute.For<ISessionProvider>();
-        var middleware = CreateMiddleware(sessionProvider);
+        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
+        ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
         await middleware.InvokeAsync(context, sessionProvider);
@@ -75,9 +74,9 @@ public class ConsentRedirectMiddlewareTests
     public async Task InvokeAsync_does_not_redirect_when_user_not_logged_in()
     {
         // Arrange
-        var context = CreateContext(false);
-        var sessionProvider = Substitute.For<ISessionProvider>();
-        var middleware = CreateMiddleware(sessionProvider);
+        HttpContext context = CreateContext(false);
+        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
+        ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
         await middleware.InvokeAsync(context, sessionProvider);
@@ -89,16 +88,16 @@ public class ConsentRedirectMiddlewareTests
 
     private HttpContext CreateContext(bool isAuthenticated)
     {
-        var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[0], isAuthenticated ? "fake" : null));
+        ClaimsPrincipal userPrincipal = new(new ClaimsIdentity(new Claim[0], isAuthenticated ? "fake" : null));
         HttpContext context = new DefaultHttpContext();
         context.Session = new TestSession();
         context.User = userPrincipal;
         return context;
     }
 
-    private ConsentRedirectMiddleware CreateMiddleware(ISessionProvider sessionProvider)
+    private static ConsentRedirectMiddleware CreateMiddleware()
     {
-        var requestDelegate = new RequestDelegate(
+        RequestDelegate requestDelegate = new(
             (innerContext) => Task.CompletedTask);
         return new ConsentRedirectMiddleware(requestDelegate);
     }
