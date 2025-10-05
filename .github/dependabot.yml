@@ -11,6 +11,8 @@ updates:
     directory: "DfE.GIAP.All/src/DfE.GIAP.Web"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore"
 
   - package-ecosystem: "nuget"
     directory: "/DfE.GIAP.All"
@@ -18,8 +20,12 @@ updates:
       - github-nuget
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "chore"
