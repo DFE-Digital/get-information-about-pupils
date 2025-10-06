@@ -1,5 +1,4 @@
 # TODO copy csproj so it caches package restore, credentials
-# TODO .docker-ignore to reduce size
 # TODO multi-stage build, sdk to build, runtime to run
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS test-runner
