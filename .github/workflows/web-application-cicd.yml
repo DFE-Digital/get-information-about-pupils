@@ -63,7 +63,7 @@ jobs:
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
           do
             TEST_PROJECT=$(basename "$proj" .csproj)
-            OUTPUT_REPORT_PATH="./coverage-unit/$TEST_PROJECT-cobertura.xml"
+            OUTPUT_REPORT_PATH="coverage-unit/$TEST_PROJECT-cobertura.xml"
 
             echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
             echo "Running tests for $TEST_PROJECT..."
@@ -152,7 +152,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: unit-test-coverage
-          path: merged-coverage-unit/
+          path: coverage-unit/
 
       - name: Download integration test coverage report
         uses: actions/download-artifact@v5
@@ -164,7 +164,7 @@ jobs:
         run: |
           dotnet tool run reportgenerator \
             -sourcedirs:"." \
-            -reports:./coverlet/reports/**/*.xml \
+            -reports:coverage-unit/**/*.xml;coverage-integration/**/*.xml \
             -reporttypes:SonarQube \
             -targetdir:./coverlet/merged/ \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
