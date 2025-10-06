@@ -169,6 +169,13 @@ jobs:
           name: integration-test-coverage
           path: coverage-integration/
           
+      - name: Normalize coverage paths
+        run: |
+          sed -i 's|/app/DfE.GIAP.All/src/|DfE.GIAP.All/src/|' coverage-integration/cobertura.xml
+          
+          # multiple files need to be normalised
+          find coverage-unit/ -name "*.xml" -exec sed -i "s|${{ github.workspace }}/DfE.GIAP.All/src/|DfE.GIAP.All/src/|" {} +
+
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
@@ -176,7 +183,6 @@ jobs:
             -reports:"coverage-unit/**/*.xml;coverage-integration/**/*.xml" \
             -reporttypes:SonarQube \
             -targetdir:"merged-coverage-reports/" \
-            -sourcepath:"DfE.GIAP.All/src" \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
       - name: Upload merged coverage report to SonarQube
