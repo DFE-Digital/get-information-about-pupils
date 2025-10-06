@@ -27,8 +27,8 @@ jobs:
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
 
-      - name: Add DfE-Digital GitHub NuGet Feed
-        run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+      - name: Add DfE-Digital GitHub NuGet Feed Credentials
+        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
       - name: Verify formatting
         run: dotnet format --include src/DfE.GIAP.Core/ tests/DfE.GIAP.Core.UnitTests/ tests/DfE.GIAP.Core.IntegrationTests/ tests/DfE.GIAP.SharedTests/ --verify-no-changes --verbosity detailed
