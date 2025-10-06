@@ -8,4 +8,8 @@ WORKDIR /app
 
 COPY . .
 
+RUN dotnet restore ./DfE.GIAP.All/*.sln --configfile ./DfE.GIAP.All/nuget.config
+
+RUN dotnet build ./DfE.GIAP.All/*.sln --no-restore --no-incremental
+
 CMD ["/app/scripts/run_integration_tests.sh"]

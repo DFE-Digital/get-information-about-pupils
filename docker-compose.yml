@@ -16,4 +16,7 @@ services:
     depends_on:
       - cosmosdb
     network_mode: host
-
+    volumes:
+      - type: bind
+        source: coverage-integration/
+        target: /app/coverage-integration

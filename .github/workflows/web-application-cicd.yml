@@ -53,18 +53,17 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run unit tests
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
         shell: bash
         run: |
 
           for proj in \
-            tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
-            tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
-            tests/DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
-            tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
           do
             TEST_PROJECT=$(basename "$proj" .csproj)
-            OUTPUT_REPORT_PATH="$(pwd)/coverlet/reports/$TEST_PROJECT/cobertura.xml"
+            OUTPUT_REPORT_PATH="./coverage-unit/$TEST_PROJECT-cobertura.xml"
 
             echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
             echo "Running tests for $TEST_PROJECT..."
@@ -78,20 +77,11 @@ jobs:
               -p:CoverletOutput="$OUTPUT_REPORT_PATH"
           done
 
-      - name: Merge coverage reports
-        shell: bash
-        run: | 
-          dotnet tool run reportgenerator \
-          -sourcedirs:"." \
-          -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml \
-          -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ \
-          -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
-
       - name: Upload unit test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-coverage
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
+          path: coverage-unit/*
 
       - name: Run gulp
         run: |
@@ -131,8 +121,7 @@ jobs:
       - name: Run Integration Tests with Coverage
         shell: bash
         run: |
-          OUTPUT_REPORT_PATH="${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml"
-          echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
+          sed DfE.GIAP.All/nuget.config "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/"
 
           docker compose up --build --abort-on-container-exit --exit-code-from integration-tests
 
@@ -140,7 +129,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: integration-test-coverage
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml
+          path: coverage-integration/cobertura.xml
 
   merge_coverage_reports:
     runs-on: ubuntu-latest
@@ -163,13 +152,13 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: unit-test-coverage
-          path: ./coverlet/reports
+          path: merged-coverage-unit/
 
       - name: Download integration test coverage report
         uses: actions/download-artifact@v5
         with:
           name: integration-test-coverage
-          path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
+          path: coverage-integration/cobertura.xml
           
       - name: Merge coverage reports
         run: |

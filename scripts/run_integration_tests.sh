@@ -42,7 +42,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 update-ca-certificates
 
-# Run integration tests using absolute path
- dotnet test "$SCRIPT_DIR/../DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj" --no-build --no-restore --nologo --logger "console;verbosity=detailed" -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput="$SCRIPT_DIR/../DfE.GIAP.All/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml"
+mkdir -p '/app/coverage-integration'
+chmod -R 777 '/app/coverage-integration'
 
-#tail -f /dev/null
+dotnet test ./DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj \
+  --nologo \
+  --logger "console;verbosity=diagnostic" \
+  -p:CollectCoverage=true \
+  -p:CoverletOutputFormat=cobertura \
+  -p:CoverletOutput="/app/coverage-integration/cobertura.xml"
