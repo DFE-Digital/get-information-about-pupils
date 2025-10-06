@@ -121,7 +121,7 @@ jobs:
       - name: Run Integration Tests with Coverage
         shell: bash
         run: |
-          sed DfE.GIAP.All/nuget.config "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/"
+          sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
           docker compose up --build --abort-on-container-exit --exit-code-from integration-tests
 
