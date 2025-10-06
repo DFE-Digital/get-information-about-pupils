@@ -175,7 +175,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: merged-coverage-report
-          path: ./merged-coverage-reports/SonarQube.xml
+          path: merged-coverage-reports/SonarQube.xml
 
   sonarcloud_scan:
     runs-on: ubuntu-latest
@@ -195,7 +195,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: merged-coverage-report
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
+          path: merged-coverage-reports
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
@@ -220,7 +220,7 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/SonarQube.xml \
+            /d:sonar.coverageReportPaths=${{ env.SOLUTION_DIRECTORY }}/merged-coverage-reports/SonarQube.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
