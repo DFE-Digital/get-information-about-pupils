@@ -32,7 +32,7 @@ jobs:
 
       - name: Verify formatting
         run: |
-          dotnet format ${{ env.SOLUTION_DIRECTORY }} \ 
+          dotnet format ${{ env.SOLUTION_DIRECTORY }} \
           --include \
             ${{ env.SOLUTION_DIRECTORY }}/src/DfE.GIAP.Core/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/ \
