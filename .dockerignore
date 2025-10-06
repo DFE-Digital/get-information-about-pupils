@@ -1,0 +1,42 @@
+# Ignore build output directories
+**/bin/
+**/obj/
+**/out/
+
+# Ignore temporary files
+*.log
+*.tmp
+*.swp
+
+# Ignore Docker-related files
+Dockerfile*
+*.dockerignore
+
+# Ignore test result files
+**/*.trx
+
+# Ignore markdown and script files
+**/*.md
+**/*.ps1
+**/*.cmd
+**/*.sh 
+# required for integration tests
+!scripts/*.sh
+
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore IDE-specific files
+vscode/
+idea/
+
+# Ignore package manager files
+node_modules/
+*.npmrc
+package-lock.json
+
+# Ignore configuration and secrets
+appsettings.Development.json
+appsettings.local.json
+env
