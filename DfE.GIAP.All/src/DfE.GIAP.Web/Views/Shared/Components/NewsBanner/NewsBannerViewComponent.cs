@@ -22,14 +22,8 @@ public class NewsBannerViewComponent : ViewComponent
 
     public IViewComponentResult Invoke()
     {
-        bool consentGiven = _sessionProvider.ContainsSessionKey(SessionKeys.ConsentKey) &&
-                           string.Equals(
-                               _sessionProvider.GetSessionValueOrDefault<string>(SessionKeys.ConsentKey),
-                               SessionKeys.ConsentValue,
-                               StringComparison.OrdinalIgnoreCase);
-
-        bool showBanner = _sessionProvider.ContainsSessionKey(SessionKeys.ShowNewsBannerKey) &&
-                          _sessionProvider.GetSessionValueOrDefault<bool>(SessionKeys.ShowNewsBannerKey);
+        bool consentGiven = _sessionProvider.GetSessionValueOrDefault<bool>(SessionKeys.ConsentGivenKey);
+        bool showBanner = _sessionProvider.GetSessionValueOrDefault<bool>(SessionKeys.ShowNewsBannerKey);
 
         NewsBannerViewModel model = new()
         {
