@@ -56,8 +56,6 @@ jobs:
         shell: bash
         run: |
 
-          mkdir /coverage-unit
-
           for proj in \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
@@ -67,7 +65,7 @@ jobs:
             TEST_PROJECT=$(basename "$proj" .csproj)
 
             #absolute so coverlet doesn't output in build-dir for each test project
-            OUTPUT_REPORT_PATH="/coverage-unit/$TEST_PROJECT-cobertura.xml"
+            OUTPUT_REPORT_PATH="$(pwd)/coverage-unit/$TEST_PROJECT-cobertura.xml"
 
             echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
             echo "Running tests for $TEST_PROJECT..."
