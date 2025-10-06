@@ -176,6 +176,7 @@ jobs:
             -reports:"coverage-unit/**/*.xml;coverage-integration/**/*.xml" \
             -reporttypes:SonarQube \
             -targetdir:"merged-coverage-reports/" \
+            -sourcepath:"DfE.GIAP.All/src" \
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
       - name: Upload merged coverage report to SonarQube
