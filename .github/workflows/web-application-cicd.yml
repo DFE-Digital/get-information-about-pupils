@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-coverage
-          path: coverage-unit/*
+          path: coverage-unit
 
       - name: Run gulp
         run: |
