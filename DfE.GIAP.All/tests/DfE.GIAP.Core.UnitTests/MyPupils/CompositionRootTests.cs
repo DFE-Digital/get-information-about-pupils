@@ -13,9 +13,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Aggregate
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
