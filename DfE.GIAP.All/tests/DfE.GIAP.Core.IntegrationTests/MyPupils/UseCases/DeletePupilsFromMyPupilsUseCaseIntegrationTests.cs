@@ -24,7 +24,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
     private readonly ConfigurationFixture _configFixture;
     private readonly CosmosDbFixture _cosmosDbFixture;
     private SearchIndexFixture _mockSearchFixture = null!;
-    
+
 
     public DeletePupilsFromMyPupilsUseCaseIntegrationTests(
         CosmosDbFixture cosmosDbFixture, ConfigurationFixture configurationFixture)
