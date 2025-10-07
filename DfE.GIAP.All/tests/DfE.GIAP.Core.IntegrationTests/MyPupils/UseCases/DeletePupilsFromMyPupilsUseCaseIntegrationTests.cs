@@ -21,21 +21,22 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 #nullable disable
     private MyPupilsTestContext _testContext;
 #nullable enable
-    private CosmosDbFixture Fixture { get; }
-    private ConfigurationFixture ConfigFixture { get; }
+    private readonly ConfigurationFixture _configFixture;
+    private readonly CosmosDbFixture _cosmosDbFixture;
     private SearchIndexFixture _mockSearchFixture = null!;
+    
 
     public DeletePupilsFromMyPupilsUseCaseIntegrationTests(
-        CosmosDbFixture cosmosDbFixture, ConfigurationFixture configurationFixture) : base()
+        CosmosDbFixture cosmosDbFixture, ConfigurationFixture configurationFixture)
     {
-        Fixture = cosmosDbFixture;
-        ConfigFixture = configurationFixture;
+        _cosmosDbFixture = cosmosDbFixture;
+        _configFixture = configurationFixture;
     }
 
     private sealed record MyPupilsTestContext(UniquePupilNumbers myPupilUpns, UserId UserId);
     protected async override Task OnInitializeAsync(IServiceCollection services)
     {
-        await Fixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
 
         SearchIndexFixture searchIndexFixture = new();
         _mockSearchFixture = searchIndexFixture;
@@ -44,7 +45,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             .AddSharedTestDependencies(
                 SearchIndexOptionsStub.StubFor(searchIndexFixture.BaseUrl))
             .AddMyPupilsDependencies()
-            .AddSearchDependencies(ConfigFixture.Configuration);
+            .AddSearchDependencies(_configFixture.Configuration);
 
         IEnumerable<AzureIndexEntity> npdSearchindexDtos = _mockSearchFixture.StubNpdSearchIndex();
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = _mockSearchFixture.StubPupilPremiumSearchIndex();
@@ -55,11 +56,11 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         UserId userId = UserIdTestDoubles.Default();
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
-        await Fixture.Database.WriteItemAsync(myPupilsDocument);
+        await _cosmosDbFixture.Database.WriteItemAsync(myPupilsDocument);
         _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
     }
 
-    [Fact(Skip = "Temporarily disabled for investigation")]
+    [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_Item_When_PupilIdentifier_Is_Part_Of_The_List()
     {
         // Arrange
@@ -77,7 +78,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
         List<string> remainingUpnsAfterDelete =
             _testContext.myPupilUpns.GetUniquePupilNumbers()
                 .Where((upn) => !upn.Equals(deletePupilIdentifier))
@@ -88,7 +89,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         Assert.Equivalent(remainingUpnsAfterDelete, myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN));
     }
 
-    [Fact(Skip = "Temporarily disabled for investigation")]
+    [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_Multiples_When_PupilIdentifier_Is_Part_Of_The_List()
     {
         // Arrange
@@ -113,7 +114,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
             [.. myPupilUpns
@@ -126,7 +127,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         Assert.Equivalent(remainingUpnsAfterDelete, myPupilsDocument.MyPupils.Pupils.Select(t => t.UPN));
     }
 
-    [Fact(Skip = "Temporarily disabled for investigation")]
+    [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_Multiples_When_Some_PupilIdentifiers_Are_Part_Of_The_List()
     {
         // Arrange
@@ -151,7 +152,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
             [.. myPupilUpns
@@ -164,7 +165,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         Assert.Equivalent(remainingUpnsAfterDelete, actualUserDto.MyPupils.Pupils.Select(t => t.UPN));
     }
 
-    [Fact(Skip = "Temporarily disabled for investigation")]
+    [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_All_Items_When_DeleteAll_Is_True()
     {
         // Arrange
@@ -181,7 +182,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
+        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
         Assert.NotNull(myPupilsDocument);
         Assert.Equal(_testContext.UserId.Value, myPupilsDocument.id);
         Assert.Empty(myPupilsDocument.MyPupils.Pupils);
@@ -189,11 +190,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
     protected override Task OnDisposeAsync()
     {
-        if (_mockSearchFixture != null)
-        {
-            _mockSearchFixture?.Dispose();
-        }
-
+        _mockSearchFixture?.Dispose();
         return Task.CompletedTask;
     }
 }

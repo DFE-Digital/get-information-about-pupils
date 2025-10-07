@@ -20,7 +20,7 @@ public static class CompositionRoot
         services
             .AddCosmosDbDependencies()
             .AddFeaturesSharedDependencies()
-            .AddLocalConfiguration(extendedConfiguration)
+            .AddLocalConfiguration(extendedConfiguration ?? [])
             .AddInMemoryLogger();
 
         return services;

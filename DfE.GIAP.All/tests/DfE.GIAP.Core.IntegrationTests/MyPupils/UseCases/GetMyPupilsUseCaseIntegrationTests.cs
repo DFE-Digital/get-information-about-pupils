@@ -21,16 +21,16 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<ConfigurationFixture>
 {
-    private CosmosDbFixture Fixture { get; }
-    private ConfigurationFixture ConfigFixture { get; }
-
+    private readonly ConfigurationFixture _configFixture;
+    private readonly CosmosDbFixture _cosmosDbFixture;
     private SearchIndexFixture _mockSearchFixture = null!;
 
     public GetMyPupilsUseCaseIntegrationTests(
-        CosmosDbFixture cosmosDbFixture, ConfigurationFixture configurationFixture) : base()
+        CosmosDbFixture cosmosDbFixture,
+        ConfigurationFixture configurationFixture)
     {
-        Fixture = cosmosDbFixture;
-        ConfigFixture = configurationFixture;
+        _configFixture = configurationFixture;
+        _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
@@ -43,7 +43,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IC
                 SearchIndexOptionsStub.StubFor(searchIndexFixture.BaseUrl))
             .AddCosmosDbDependencies()
             .AddMyPupilsDependencies()
-            .AddSearchDependencies(ConfigFixture.Configuration)
+            .AddSearchDependencies(_configFixture.Configuration)
             .ConfigureAzureSearchClients();
 
         return Task.CompletedTask;
@@ -65,7 +65,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IC
                 .Select((t) => t.UPN)
                     .ToUniquePupilNumbers();
 
-        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+        await _cosmosDbFixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
                 upns: UniquePupilNumbers.Create(upns)));
@@ -110,7 +110,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IC
     {
         UserId userId = UserIdTestDoubles.Default();
 
-        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+        await _cosmosDbFixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
                 upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));
