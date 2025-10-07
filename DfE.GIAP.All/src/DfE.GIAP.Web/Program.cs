@@ -1,12 +1,13 @@
-using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
-using DfE.GIAP.Web.Extensions.Startup;
-using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.Session;
 using DfE.GIAP.Web.Features.MyPupils;
+using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Features.Logging.Middleware;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
+using DfE.GIAP.Web.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,7 @@ builder.Services
     .AddRoutingConfiguration()
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
-    .AddApplicationInsightsTelemetry()
+    .AddApplicationInsightsTelemetry() // TODO: This would move to infrastructure, handle IHostingEnvironment within tests
     .AddAllServices()
     .AddWebProviders()
     .AddDsiAuthentication(configuration)
@@ -65,6 +66,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
+app.UseMiddleware<SessionCorrelationIdMiddleware>();
 
 // Endpoint configuration
 app.MapControllerRoute(

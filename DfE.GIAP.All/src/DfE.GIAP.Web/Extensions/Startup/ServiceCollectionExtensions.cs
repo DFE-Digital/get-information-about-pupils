@@ -20,6 +20,11 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
+using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
+using DfE.GIAP.Web.Features.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -29,10 +34,9 @@ public static class ServiceCollectionExtensions
     {
         services.Configure<AzureAppSettings>(configuration)
             .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
-            .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName));
-
-        // Bind BlobStorageOptions from a dedicated section
-        services.Configure<BlobStorageOptions>(configuration.GetSection(nameof(BlobStorageOptions)));
+            .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName))
+            .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName)) // TODO: Move
+            .Configure<BlobStorageOptions>(configuration.GetSection(BlobStorageOptions.SectionName)); // TODO: Move
 
         return services;
     }
@@ -70,6 +74,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddTransient<IEventLogging, EventLogging>();
+
+        services.AddScoped<ILogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
 
         return services;
     }

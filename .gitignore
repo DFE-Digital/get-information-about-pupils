@@ -36,6 +36,10 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+# Integration tests - Cobertura test results
+coverage-integration/
+*.cobertura.xml
+
 # NUNIT
 *.VisualState.xml
 TestResult.xml
