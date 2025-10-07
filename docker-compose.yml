@@ -1,0 +1,28 @@
+services:
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    ports:
+      - 8081:8081
+      - 10250-10255:10250-10255
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
+      AZURE_COSMOS_EMULATOR_ENABLE_CERT_AUTH: true
+    network_mode: host
+
+  integration-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.IntegrationTests
+    depends_on:
+      - cosmosdb
+    network_mode: host    
+    volumes:
+      - type: bind
+        source: coverage-integration/
+        target: /coverage-integration
+        # nuget cache in CI
+      - nuget-cache:/root/.nuget
+
+volumes:
+  nuget-cache:
+
