@@ -4,7 +4,8 @@ registries:
   github-nuget:
     type: nuget-feed
     url: https://nuget.pkg.github.com/DFE-Digital/index.json
-    token: "x-access-token:${{ secrets.DEPENDABOT_DFEDIGITAL_NUGETFEED_TOKEN }}"
+    username: USERNAME
+    password: ${{ secrets.DEPENDABOT_DFEDIGITAL_NUGETFEED_TOKEN }}
 
 updates:
   - package-ecosystem: "npm"
