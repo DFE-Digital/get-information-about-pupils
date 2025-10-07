@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
@@ -31,12 +32,12 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
         // Start WireMock server with SSL enabled (required by Azure.Search SDK clients)
         _server = WireMockServer.Start(new WireMockServerSettings
         {
-            UseSSL = true,
-            CertificateSettings = new WireMockCertificateSettings
+            UseSSL = true, // required for connections through Azure.Search.SearchClient
+            CertificateSettings = new()
             {
-                X509Certificate = new X509Certificate2("localhost.pfx", "yourpassword")
+                X509Certificate = new X509Certificate2("wiremock-cert.pfx", "yourpassword")
             },
-            Port = 0 // 0 means "pick any available port"
+            Port = 0
         });
     }
 

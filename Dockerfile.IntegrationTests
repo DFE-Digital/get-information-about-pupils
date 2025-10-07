@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1.4
+# Note: can't use alpine - integration tests require host certificate store
+FROM mcr.microsoft.com/dotnet/sdk:8.0.414-bookworm-slim@sha256:ff8311847c54c04d1a14c488362807997d59b61372da5095a95f89cbcda7f9b7 AS build
+
+WORKDIR /src
+ARG PROJECT_PATH="DfE.GIAP.All"
+
+# Copy only what's needed for restore
+COPY ${PROJECT_PATH}/Directory.Build.props ${PROJECT_PATH}/
+COPY ${PROJECT_PATH}/src/DfE.GIAP.Core/DfE.GIAP.Core.csproj ${PROJECT_PATH}/src/DfE.GIAP.Core/
+
+COPY ${PROJECT_PATH}/tests/Directory.Packages.props ${PROJECT_PATH}/tests/
+COPY ${PROJECT_PATH}/tests/DfE.GIAP.SharedTests/DfE.GIAP.SharedTests.csproj ${PROJECT_PATH}/tests/DfE.GIAP.SharedTests/
+COPY ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/
+
+# Use BuildKit secret for nuget.config
+RUN --mount=type=secret,id=nuget_config \
+    dotnet restore ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj \
+    --configfile /run/secrets/nuget_config
+
+# Copy full source
+COPY ${PROJECT_PATH}/src/ ${PROJECT_PATH}/src/
+COPY ${PROJECT_PATH}/tests/ ${PROJECT_PATH}/tests/
+
+# Build
+RUN dotnet build ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --no-restore --no-incremental
+
+COPY scripts/ .
+
+CMD ["./run_integration_tests.sh"]

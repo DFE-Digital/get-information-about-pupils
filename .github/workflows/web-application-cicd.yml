@@ -28,12 +28,19 @@ jobs:
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
 
-      - name: Add DfE-Digital GitHub NuGet Feed
-        run: dotnet nuget add source --username USERNAME --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name dfedigital "https://nuget.pkg.github.com/DFE-Digital/index.json"
+      - name: Add DfE-Digital GitHub NuGet Feed Credentials
+        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
       - name: Verify formatting
-        run: dotnet format --include src/DfE.GIAP.Core/ tests/DfE.GIAP.Core.UnitTests/ tests/DfE.GIAP.Core.IntegrationTests/ tests/DfE.GIAP.SharedTests/ --verify-no-changes --verbosity detailed
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
+        run: |
+          dotnet format ${{ env.SOLUTION_DIRECTORY }} \
+          --include \
+            ${{ env.SOLUTION_DIRECTORY }}/src/DfE.GIAP.Core/ \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/ \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.IntegrationTests/ \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests/ \
+            --verify-no-changes \
+            --verbosity detailed
 
   build_unittest_package:
     runs-on: ubuntu-latest
@@ -54,18 +61,19 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run unit tests
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
         shell: bash
         run: |
 
           for proj in \
-            tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
-            tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
-            tests/DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
-            tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
           do
             TEST_PROJECT=$(basename "$proj" .csproj)
-            OUTPUT_REPORT_PATH="$(pwd)/coverlet/reports/$TEST_PROJECT/cobertura.xml"
+
+            #absolute so coverlet doesn't output in build-dir for each test project
+            OUTPUT_REPORT_PATH="$(pwd)/coverage-unit/$TEST_PROJECT-cobertura.xml"
 
             echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
             echo "Running tests for $TEST_PROJECT..."
@@ -79,20 +87,11 @@ jobs:
               -p:CoverletOutput="$OUTPUT_REPORT_PATH"
           done
 
-      - name: Merge coverage reports
-        shell: bash
-        run: | 
-          dotnet tool run reportgenerator \
-          -sourcedirs:"." \
-          -reports:./DfE.GIAP.All/coverlet/reports/**/*cobertura.xml \
-          -reporttypes:SonarQube -targetdir:./DfE.GIAP.All/coverlet/merged/ \
-          -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
-
       - name: Upload unit test projects coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-coverage
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/*
+          path: coverage-unit/
 
       - name: Run gulp
         run: |
@@ -119,16 +118,6 @@ jobs:
     permissions:
       contents: read  # Required to check out the code.
       packages: read  # Required to access the DfEDigital NuGet feed.
-      
-    services:
-      cosmosdb:
-        image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
-        ports:
-          - 8081:8081
-          - 10250-10255:10250-10255
-        env:
-          AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
-          AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: true
 
     steps:
       - name: Checkout repository
@@ -139,47 +128,27 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install CosmosDb Emulator TLS certificate
-        run: |
-          retry_count=0
-          max_retry_count=10
-          until sudo curl --insecure --silent --fail --show-error "https://localhost:8081/_explorer/emulator.pem" --output "/usr/local/share/ca-certificates/cosmos-db-emulator.crt"; do
-            if [ $retry_count -eq $max_retry_count ]; then
-              exit 1
-            fi
-            sleep 5
-            retry_count=$((retry_count+1))
-          done
-          sudo update-ca-certificates
-
-      - name: Install WireMock TLS certificate
-        run: | 
-          chmod +x ./scripts/generate-wiremock-ca-signed-cert.sh
-          ./scripts/generate-wiremock-ca-signed-cert.sh
-        shell: bash
-        env:
-          INTEGRATION_TEST_OUTPUT_DIRECTORY: DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/bin/Debug/${{ env.DOTNET_TFM }}
-
       - name: Run Integration Tests with Coverage
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
         shell: bash
         run: |
-          OUTPUT_REPORT_PATH="$(pwd)/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml"
-          echo "Output path for coverage report is $OUTPUT_REPORT_PATH"
+          sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
-          dotnet test "./tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj" \
-            --no-build \
-            --nologo \
-            --logger "console;verbosity=detailed" \
-            -p:CollectCoverage=true \
-            -p:CoverletOutputFormat=cobertura \
-            -p:CoverletOutput="$OUTPUT_REPORT_PATH"
+          export DOCKER_BUILDKIT=1
+
+          # Build test image
+          docker build \
+          --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
+          -t giap-integration-tests \
+          -f Dockerfile.IntegrationTests .
+
+          # Run tests
+          docker compose up --abort-on-container-exit --exit-code-from integration-tests
 
       - name: Upload integration test coverage report
         uses: actions/upload-artifact@v4
         with:
           name: integration-test-coverage
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/reports/DfE.GIAP.Core.IntegrationTests/cobertura.xml
+          path: coverage-integration/cobertura.xml
 
   merge_coverage_reports:
     runs-on: ubuntu-latest
@@ -202,28 +171,35 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: unit-test-coverage
-          path: ./coverlet/reports
+          path: coverage-unit/
 
       - name: Download integration test coverage report
         uses: actions/download-artifact@v5
         with:
           name: integration-test-coverage
-          path: ./coverlet/reports/DfE.GIAP.Core.IntegrationTests
+          path: coverage-integration/
           
+      - name: Normalize coverage paths
+        run: |
+          sed -i 's|/app/DfE.GIAP.All/src/|DfE.GIAP.All/src/|' coverage-integration/cobertura.xml
+          
+          # multiple files need to be normalised
+          find coverage-unit/ -name "*.xml" -exec sed -i "s|${{ github.workspace }}/DfE.GIAP.All/src/|DfE.GIAP.All/src/|" {} +
+
       - name: Merge coverage reports
         run: |
           dotnet tool run reportgenerator \
             -sourcedirs:"." \
-            -reports:./coverlet/reports/**/*.xml \
+            -reports:"coverage-unit/**/*.xml;coverage-integration/**/*.xml" \
             -reporttypes:SonarQube \
-            -targetdir:./coverlet/merged/ \
-            -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests" \
+            -targetdir:"merged-coverage-reports/" \
+            -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
-      - name: Upload merged coverage report
+      - name: Upload merged coverage report to SonarQube
         uses: actions/upload-artifact@v4
         with:
           name: merged-coverage-report
-          path: ./coverlet/merged/SonarQube.xml
+          path: merged-coverage-reports/SonarQube.xml
 
   sonarcloud_scan:
     runs-on: ubuntu-latest
@@ -243,7 +219,7 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: merged-coverage-report
-          path: ${{ env.SOLUTION_DIRECTORY }}/coverlet/merged
+          path: merged-coverage-reports
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
@@ -268,11 +244,11 @@ jobs:
             /o:"dfe-digital" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=${{ env.SOLUTION_DIRECTORY }}/coverlet/merged/SonarQube.xml \
+            /d:sonar.coverageReportPaths=merged-coverage-reports/SonarQube.xml \
             /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
             /d:sonar.exclusions=**/*.html,**/*.json,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
             /d:sonar.scanner.skipJreProvisioning=true \
-            /d:sonar.scanner.scanAll=false \
+            /d:sonar.scanner.scanAll=false
 
       - name: Build
         uses: ./.github/actions/build
