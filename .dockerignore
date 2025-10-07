@@ -37,6 +37,7 @@ node_modules/
 package-lock.json
 
 # Ignore configuration and secrets
-appsettings.Development.json
-appsettings.local.json
+**/*appsettings.Development.json
+**/*appsettings.local.json
+**/*nuget.config
 env

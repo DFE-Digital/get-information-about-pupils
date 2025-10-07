@@ -15,8 +15,14 @@ services:
       dockerfile: Dockerfile.IntegrationTests
     depends_on:
       - cosmosdb
-    network_mode: host
+    network_mode: host    
     volumes:
       - type: bind
         source: coverage-integration/
-        target: /app/coverage-integration
+        target: /coverage-integration
+        # nuget cache in CI
+      - nuget-cache:/root/.nuget
+
+volumes:
+  nuget-cache:
+
