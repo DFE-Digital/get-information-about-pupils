@@ -18,32 +18,30 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<ConfigurationFixture>
 {
-#nullable disable
-    private MyPupilsTestContext _testContext;
-#nullable enable
     private readonly ConfigurationFixture _configFixture;
     private readonly CosmosDbFixture _cosmosDbFixture;
-    private SearchIndexFixture _mockSearchFixture = null!;
-
+    private SearchIndexFixture? _mockSearchFixture;
+    private MyPupilsTestContext? _testContext;
 
     public DeletePupilsFromMyPupilsUseCaseIntegrationTests(
         CosmosDbFixture cosmosDbFixture, ConfigurationFixture configurationFixture)
     {
         _cosmosDbFixture = cosmosDbFixture;
         _configFixture = configurationFixture;
+        _mockSearchFixture = null;
+        _testContext = null;
     }
 
-    private sealed record MyPupilsTestContext(UniquePupilNumbers myPupilUpns, UserId UserId);
-    protected async override Task OnInitializeAsync(IServiceCollection services)
+    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId UserId);
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
         await _cosmosDbFixture.Database.ClearDatabaseAsync();
 
-        SearchIndexFixture searchIndexFixture = new();
-        _mockSearchFixture = searchIndexFixture;
+        _mockSearchFixture = new SearchIndexFixture();
 
         services
             .AddSharedTestDependencies(
-                SearchIndexOptionsStub.StubFor(searchIndexFixture.BaseUrl))
+                SearchIndexOptionsStub.StubFor(_mockSearchFixture.BaseUrl))
             .AddMyPupilsDependencies()
             .AddSearchDependencies(_configFixture.Configuration);
 
@@ -51,8 +49,10 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = _mockSearchFixture.StubPupilPremiumSearchIndex();
 
         List<AzureIndexEntity> myPupils = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).ToList();
+
         UniquePupilNumbers myPupilsUpns =
-            UniquePupilNumbers.Create(uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
+            UniquePupilNumbers.Create(
+                uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
 
         UserId userId = UserIdTestDoubles.Default();
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
@@ -67,12 +67,10 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        UniquePupilNumber deletePupilIdentifier = _testContext.myPupilUpns.GetUniquePupilNumbers()[0];
+        UniquePupilNumber deletePupilIdentifier = _testContext!.MyPupilUpns.GetUniquePupilNumbers()[0];
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
-            DeletePupilUpns: [deletePupilIdentifier],
-            DeleteAll: false);
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(_testContext.UserId.Value,
+            DeletePupilUpns: [deletePupilIdentifier], DeleteAll: false);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -80,7 +78,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         // Assert
         IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
         List<string> remainingUpnsAfterDelete =
-            _testContext.myPupilUpns.GetUniquePupilNumbers()
+            _testContext.MyPupilUpns.GetUniquePupilNumbers()
                 .Where((upn) => !upn.Equals(deletePupilIdentifier))
                 .Select(t => t.Value).ToList();
 
@@ -96,7 +94,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
         List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
         [
@@ -105,10 +103,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             myPupilUpns[myPupilUpns.Count - 1]
         ];
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
-            DeletePupilUpns: deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(_testContext.UserId.Value,
+            DeletePupilUpns: deleteMultiplePupilIdentifiers, DeleteAll: false);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -134,19 +130,15 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
-        List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
-        [
-            myPupilUpns[0],
-            null, // Unknown identifier not part of the list
-            myPupilUpns[myPupilUpns.Count - 1]
-        ];
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
-            DeletePupilUpns: deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(UserId: _testContext.UserId.Value,
+            DeletePupilUpns:
+            [
+                myPupilUpns[0], null!, // Unknown identifier not part of the list
+                myPupilUpns[myPupilUpns.Count - 1]
+            ], DeleteAll: false);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -156,7 +148,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         List<string> remainingUpnsAfterDelete =
             [.. myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
+                .Where((upn) => !request.DeletePupilUpns.Contains(upn))
                 .Select(t => t.Value)];
 
         MyPupilsDocumentDto actualUserDto = Assert.Single(users);
@@ -172,9 +164,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        bool deleteAllPupils = true;
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
+        const bool deleteAllPupils = true;
+
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(_testContext!.UserId.Value,
             DeletePupilUpns: [null!], // should be ignored if DeleteAll is enabled
             DeleteAll: deleteAllPupils);
 
