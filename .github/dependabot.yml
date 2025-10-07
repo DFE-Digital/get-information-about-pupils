@@ -5,6 +5,7 @@ registries:
     type: nuget-feed
     url: https://nuget.pkg.github.com/DFE-Digital/index.json
     token: ${{ secrets.DEPENDABOT_DFEDIGITAL_NUGETFEED_TOKEN }}
+    key: github-nuget
 
 updates:
   - package-ecosystem: "npm"
