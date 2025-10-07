@@ -18,8 +18,10 @@ using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Search;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
 using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
+using DfE.GIAP.Web.Features.Logging.Middleware;
+using DfE.GIAP.Web.Helpers.HostEnvironment;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -37,13 +39,12 @@ builder.Services
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies();
 
-
 builder.Services
     .AddSearchDependencies(configuration)
     .AddRoutingConfiguration()
     .AddHstsConfiguration()
     .AddFormOptionsConfiguration()
-    .AddApplicationInsightsTelemetry()
+    .AddApplicationInsightsTelemetry() // TODO: This would move to infrastructure, handle IHostingEnvironment within tests
     .AddAllServices()
     .AddWebProviders()
     .AddDsiAuthentication(configuration)
@@ -115,6 +116,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
+app.UseMiddleware<SessionCorrelationIdMiddleware>();
 
 // Endpoint configuration
 app.MapControllerRoute(
