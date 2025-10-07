@@ -135,7 +135,7 @@ jobs:
           export DOCKER_BUILDKIT=1
 
           # Build test image
-          docker buildx build \
+          docker build \
           --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
           -t giap-integration-tests \
           -f Dockerfile.IntegrationTests .
