@@ -136,7 +136,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(UserId: _testContext.UserId.Value,
             DeletePupilUpns:
             [
-                myPupilUpns[0], null!, // Unknown identifier not part of the list
+                myPupilUpns[0],
+                null!, // Unknown identifier not part of the list
                 myPupilUpns[myPupilUpns.Count - 1]
             ], DeleteAll: false);
 
