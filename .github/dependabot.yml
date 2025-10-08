@@ -23,6 +23,15 @@ updates:
     commit-message:
       prefix: "chore"
 
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major" # updates to the major .NET version should be planned
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
