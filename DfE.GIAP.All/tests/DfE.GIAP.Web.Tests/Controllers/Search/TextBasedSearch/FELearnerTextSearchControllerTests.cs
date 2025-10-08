@@ -30,7 +30,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
@@ -45,8 +45,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
-    private readonly IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse> _mockUseCase =
-        Substitute.For<IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>>();
+    private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
+        Substitute.For<IUseCase<SearchRequest, SearchResponse>>();
     private readonly IMapper<LearnerSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<LearnerSearchMappingContext, LearnerTextSearchViewModel>>();
     private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
@@ -71,11 +71,11 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockSortOrderMapper.Map(
             Arg.Any<(string, string)>()).Returns(stubSortOrder);
 
-        SearchByKeyWordsResponse response =
+        SearchResponse response =
             SearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<SearchByKeyWordsRequest>()).Returns(response);
+            Arg.Any<SearchRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<LearnerSearchMappingContext>()).Returns(

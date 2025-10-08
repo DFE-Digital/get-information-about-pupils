@@ -21,8 +21,8 @@ internal static class SearchServiceAdapterRequestTestDouble
         new(
             "searchKeyword",                                    // Simulated keyword for search input
             ["searchField1", "searchField2"],                   // Fields to search against
-            ["facet1", "facet2"],                               // Facets to include in the response
             new SortOrder("DOB", "asc", ["DOB", "Surname"]),    // Sort by DOB ascending, fallback to Surname
+            ["facet1", "facet2"],                               // Facets to include in the response
             filters                                             // Optional filters injected for test specificity
         );
 }

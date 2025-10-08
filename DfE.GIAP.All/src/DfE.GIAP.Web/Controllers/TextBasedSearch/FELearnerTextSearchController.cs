@@ -24,21 +24,18 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
 
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
 [Route(Routes.Application.Search)]
-public class FELearnerTextSearchController :  Controller
+public class FELearnerTextSearchController : Controller
 {
     public const int PAGESIZE = 20;
     private const string PersistedSelectedGenderFiltersKey = "PersistedSelectedGenderFilters";
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
 
-    #region This lot needs sorting - massive bleed of responsibilities and no encapsulation of concerns, this is a controller not a service!
-
-    // TODO: this needs sorting cos some amateur wrote this nonsense!
     public string PageHeading => ApplicationLabels.SearchFEWithoutUlnPageHeading;
     public  string SearchSessionKey => Global.FENonUlnSearchSessionKey;
     public  string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
@@ -80,7 +77,6 @@ public class FELearnerTextSearchController :  Controller
 
     public  string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
-    #endregion
 
     private readonly ISessionProvider _sessionProvider;
     private readonly IDownloadService _downloadService;
@@ -88,11 +84,11 @@ public class FELearnerTextSearchController :  Controller
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly AzureAppSettings _appSettings;
     private readonly IUseCase<
-        SearchByKeyWordsRequest,
-        SearchByKeyWordsResponse> _furtherEducationSearchUseCase;
+        SearchRequest,
+        SearchResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
-        LearnerSearchMappingContext,
+        LearnerTextSearchMappingContext,
         LearnerTextSearchViewModel> _learnerSearchResponseToViewModelMapper;
 
     private readonly IMapper<
@@ -107,10 +103,10 @@ public class FELearnerTextSearchController :  Controller
     public FELearnerTextSearchController(
         ISessionProvider sessionProvider,
         IUseCase<
-            SearchByKeyWordsRequest,
-            SearchByKeyWordsResponse> furtherEducationSearchUseCase,
+            SearchRequest,
+            SearchResponse> furtherEducationSearchUseCase,
         IMapper<
-            LearnerSearchMappingContext,
+            LearnerTextSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<
             Dictionary<string, string[]>,
@@ -130,7 +126,6 @@ public class FELearnerTextSearchController :  Controller
             throw new ArgumentNullException(nameof(logger));
         _downloadService = downloadService ??
             throw new ArgumentNullException(nameof(downloadService));
-        _appSettings = azureAppSettings.Value;
 
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase ??
             throw new ArgumentNullException(nameof(furtherEducationSearchUseCase));
@@ -726,9 +721,9 @@ public class FELearnerTextSearchController :  Controller
         SortOrder sortOrder =
             _sortOrderViewModelToRequestMapper.Map((sortField, sortDirection));
 
-        SearchByKeyWordsResponse searchResponse =
+        SearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
-                new SearchByKeyWordsRequest(
+                new SearchRequest(
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,
@@ -736,7 +731,7 @@ public class FELearnerTextSearchController :  Controller
             .ConfigureAwait(false);
 
         return _learnerSearchResponseToViewModelMapper.Map(
-            LearnerSearchMappingContext.Create(model, searchResponse));
+            LearnerTextSearchMappingContext.Create(model, searchResponse));
     }
 
     private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,

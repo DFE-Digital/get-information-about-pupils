@@ -20,7 +20,7 @@ public class LearnerSearchResponseToViewModelMapperTests
     {
         // act/assert
         Assert.Throws<ArgumentNullException>(() =>
-            new LearnerSearchResponseToViewModelMapper(
+            new LearnerTextSearchResponseToViewModelMapper(
                 null, FiltersMapperTestDouble.Mock().Object));
     }
 
@@ -29,7 +29,7 @@ public class LearnerSearchResponseToViewModelMapperTests
     {
         // act/assert
         Assert.Throws<ArgumentNullException>(() =>
-            new LearnerSearchResponseToViewModelMapper(
+            new LearnerTextSearchResponseToViewModelMapper(
                 LearnerMapperTestDouble.Mock().Object, null));
     }
 
@@ -48,7 +48,7 @@ public class LearnerSearchResponseToViewModelMapperTests
         List<Core.Search.Application.Models.Learner.Learner> applicationModelLearners =
             ApplicationModelLearnersTestDouble.CreateLearnersStub(learnerFakes);
 
-        SearchByKeyWordsResponse response =
+        SearchResponse response =
             SearchByKeyWordsResponseTestDouble.Create(
                 learners: new Learners([applicationModelLearners[0]]),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
@@ -68,10 +68,10 @@ public class LearnerSearchResponseToViewModelMapperTests
             });
 
         LearnerTextSearchViewModel model = new() { MaximumResults = 10 };
-        LearnerSearchResponseToViewModelMapper.LearnerSearchMappingContext context =
-            LearnerSearchResponseToViewModelMapper.LearnerSearchMappingContext.Create(model, response);
+        LearnerTextSearchResponseToViewModelMapper.LearnerSearchMappingContext context =
+            LearnerTextSearchResponseToViewModelMapper.LearnerSearchMappingContext.Create(model, response);
 
-        LearnerSearchResponseToViewModelMapper mapper = new(learnerMapper.Object, filtersMapper.Object);
+        LearnerTextSearchResponseToViewModelMapper mapper = new(learnerMapper.Object, filtersMapper.Object);
 
         // act
         LearnerTextSearchViewModel result = mapper.Map(context);

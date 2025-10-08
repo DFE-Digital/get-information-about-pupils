@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.Search.Application.UseCases.Response;
 /// Represents the result of a search by pupil name in further education.
 /// Includes matched pupils, faceted data, result meta-data, and status.
 /// </summary>
-public sealed class SearchByKeyWordsResponse
+public sealed class SearchResponse
 {
     /// <summary>
     /// Initializes a new response with the specified search status and total result count.
@@ -16,7 +16,7 @@ public sealed class SearchByKeyWordsResponse
     /// <param name="totalNumberOfResults">
     /// The total number of matching learner records found. Defaults to zero if null or negative.
     /// </param>
-    public SearchByKeyWordsResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
+    public SearchResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
     {
         Status = status;
         TotalNumberOfResults = totalNumberOfResults is null || totalNumberOfResults < 0

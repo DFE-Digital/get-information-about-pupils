@@ -6,7 +6,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.Response;
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 
 /// <summary>
-/// Provides scaffolds for creating <see cref="SearchByKeyWordsResponse"/> objects for unit testing.
+/// Provides scaffolds for creating <see cref="SearchResponse"/> objects for unit testing.
 /// Enables deterministic construction of learner results and facet overlays for search scenarios.
 /// </summary>
 [ExcludeFromCodeCoverage]
@@ -20,8 +20,8 @@ public static class SearchByKeyWordsResponseTestDouble
     /// <param name="facets">Facet overlays for filtering and UI diagnostics.</param>
     /// <param name="status">Search status (default: Success).</param>
     /// <param name="totalResults">Total number of matched learners (default: learners.Count).</param>
-    /// <returns>A scaffolded <see cref="SearchByKeyWordsResponse"/> object.</returns>
-    public static SearchByKeyWordsResponse Create(
+    /// <returns>A scaffolded <see cref="SearchResponse"/> object.</returns>
+    public static SearchResponse Create(
         Learners learners,
         SearchFacets facets,
         SearchResponseStatus status = SearchResponseStatus.Success,
@@ -36,8 +36,8 @@ public static class SearchByKeyWordsResponseTestDouble
     /// Creates a predefined success response with one learner and one facet.
     /// Useful for quick positive-path testing without custom setup.
     /// </summary>
-    /// <returns>A success <see cref="SearchByKeyWordsResponse"/> with sample data.</returns>
-    public static SearchByKeyWordsResponse CreateSuccessResponse()
+    /// <returns>A success <see cref="SearchResponse"/> with sample data.</returns>
+    public static SearchResponse CreateSuccessResponse()
     {
         // Construct a sample learner with basic identity and characteristics
         Learners learners = new(
@@ -62,7 +62,7 @@ public static class SearchByKeyWordsResponseTestDouble
         );
 
         // Return a success response with the sample learner and facet
-        return new SearchByKeyWordsResponse(SearchResponseStatus.Success, learners.Count)
+        return new SearchResponse(SearchResponseStatus.Success, learners.Count)
         {
             LearnerSearchResults = learners,
             FacetedResults = facets

@@ -132,19 +132,9 @@
                             <td class="govuk-table__cell search--dob--cell search--search-pupils-data-dob--text">
                                 @learner.DOB?.ToString("dd/MM/yyyy")
                             </td>
-
-                            @if (Model.ShowGender)
-                            {
-                                <td class="govuk-table__cell search--search-pupils-data-gender--text">
-                                    @learner.Gender
-                                </td>
-                            }
-                            else
-                            {
-                                <td class="govuk-table__cell search--search-pupils-data-sex--text">
-                                    @learner.Sex
-                                </td>
-                            }
+                            <td class="govuk-table__cell search--search-pupils-data-gender--text">
+                                @learner.Gender
+                            </td>
                             @if (Model.ShowPP)
                             {
                                 <td class="govuk-table__cell search--search-pupils-pupilpremium--text">

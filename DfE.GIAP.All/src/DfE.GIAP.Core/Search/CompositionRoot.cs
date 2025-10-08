@@ -56,7 +56,7 @@ public static class CompositionRoot
             .AddSingleton<IMapper<LearnerDataTransferObject, Learner>, SearchResultToLearnerMapper>()
             .AddSingleton<IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners>, PageableSearchResultsToLearnerResultsMapper>()
             .AddSingleton<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>, AzureFacetResultToEstablishmentFacetsMapper>()
-            .AddScoped<IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>, SearchByKeyWordsUseCase>()
+            .AddScoped<IUseCase<SearchRequest, SearchResponse>, SearchUseCase>()
             .AddScoped<SearchCollectionValuedFilterExpression>()
             .AddScoped<SearchByEqualityFilterExpression>();
 
