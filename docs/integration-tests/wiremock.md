@@ -1,8 +1,8 @@
 # 🧪 Search Index Stub for Integration Testing
 
-As part of conducting integration testing with our `UseCase` that interacts with Azure Search Index, we aim to integrate **as closely as possible** with our target service — Azure Search, a PaaS offering that provides server-side searching, paging, and filtering.
+As part of conducting [our integration tests](README.md) our `UseCase` that interacts with Azure Search Index. For tests over HTTP we need to interact **as closely as possible** with our target service — Azure Search, a PaaS offering that provides server-side searching, paging, and filtering.
 
-Unlike services such as CosmosDB, Azure Search does **not offer a local emulator** (e.g. Docker-based), nor does it expose its full ingestion and indexing API surface for local use.
+Unlike services such as [CosmosDB](./cosmosdb-docker-emulator.md), Azure Search does **not offer a local emulator** (e.g. Docker-based). So to achieve HTTP integration at CI-build we need to stub.
 
 ---
 

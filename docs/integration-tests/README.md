@@ -14,7 +14,7 @@ The tests
 ## Related documentation
 
 - [CosmosDb emulator](./cosmosdb-docker-emulator.md)
-- [Wiremock used to stub Azure Search Index](./wiremock.md)
+- [Wiremock](./wiremock.md)
 
 ## Running the tests
 
