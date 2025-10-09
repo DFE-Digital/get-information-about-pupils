@@ -59,7 +59,7 @@ This forces us to
   - [host networking docs](https://docs.docker.com/engine/network/drivers/host/)
   - [host networking demo](https://docs.docker.com/engine/network/tutorials/host/)
 
-as any container trying to connect with the cosmosdb-container under another hostname e.g. via docker-networking will fail TLS validation
+as any container trying to connect with the cosmosdb-container through a different hostname e.g. via docker-networking-aliases will fail TLS validation
 
 - **TODO** try `cosmosdbemulatormtls.localhost` as a domain to connect to when using docker-networking as it appears in SAN
 - **TODO** can we use either of `/alternativenames=$EMULATOR_IP_ADDRESS,$EMULATOR_OTHER_IP_ADDRESSES` as indicated by start.sh to yield a certificate that includes other SAN?
