@@ -10,19 +10,6 @@ See the [flow here that installs the emulator certificate](https://github.com/DF
 - [GitHub repository for cosmosdb-emulator](https://github.com/Azure/azure-cosmos-db-emulator-docker?tab=readme-ov-file#linux-based-emulator-preview) **note** source code not available
 - [Microsoft docs for cosmosdb-emulator](https://learn.microsoft.com/en-gb/azure/cosmos-db/emulator-linux)
 
-## Improvements
-
-Resiliency against emulator image changes on the mcr registry  
-Different tags appear available from the mcr repository (`latest` and `vnext-preview`), the emulator is still in its preview.
-Can we mirror and cache images in GitHub container registry if a new push to MCR:latest breaks + the old MCR image on the :latest tag is removed? This'll break our builds.
-
-1. get latest digest of mcr, latest digest of our cached image in (ghcr)
-2. if newer, tag with date, push to our scoped repository
-3. our compose points at our ghcr
-4. wrap into a daily actions workflow
-
-**TODO** does mcr keep older images on `:latest` e.g can we use older `sha256` digests
-
 ---
 
 ## Issue: CosmosDb Certificate is regenerated everytime
@@ -101,3 +88,16 @@ Certificate:
                 Digital Signature, Key Encipherment, Certificate Sign
     Signature Algorithm: sha1WithRSAEncryption
 ```
+
+## Future improvements
+
+Resiliency against emulator image changes on the mcr registry  
+Different tags appear available from the mcr repository (`latest` and `vnext-preview`), the emulator is still in its preview.
+Can we mirror and cache images in GitHub container registry if a new push to MCR:latest breaks + the old MCR image on the :latest tag is removed? This'll break our builds.
+
+1. get latest digest of mcr, latest digest of our cached image in (ghcr)
+2. if newer, tag with date, push to our scoped repository
+3. our compose points at our ghcr
+4. wrap into a daily actions workflow
+
+**TODO** does mcr keep older images on `:latest` e.g can we use older `sha256` digests
