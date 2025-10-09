@@ -38,3 +38,13 @@ This is shown in the building of the docker-image when restoring packages by
 
 - Mounting a secret in using docker buildkit with `docker build`
 - Passing `--config-file` to the nuget.config when needing to `dotnet restore`
+
+## Issue: Using git bash for Windows and `docker exec -it /bin/bash`
+
+When using [`git for windows`](https://github.com/git-for-windows/git) it rewrites linux paths to Windows. So commands passing linux paths `/bin/sh` as below fail;
+
+```sh
+ docker exec -it /bin/sh 8444
+```
+
+Use Powershell instead for these specfic commands
