@@ -24,8 +24,40 @@ Can we mirror and cache images in GitHub container registry if a new push to MCR
 
 ## Issue: CosmosDb Certificate is regenerated everytime
 
-Link related issue in GitHub
-Proof with openssl
+This means we are required to GET the certificate at runtime (which can take up to 3 minutes) instead of mounting the certificate in as a secret to our test-runner container
+
+- [Issue requesting](https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/230)
+- **TODO** can we override the default cert via `AZURE_COSMOS_EMULATOR_CERTIFICATE`. Emulator `start.sh` implies we can if we pass ENV
+
+```sh
+# Proof 
+
+# Start the emulator
+docker run -d --publish 8080:8080 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+# returns the container id back e.g. 308c510ff2...
+
+# Exec into a shell
+docker exec -it 308 /bin/sh
+
+# Copy the certificate - emulators entrypoint for start.sh points to as a default-cert
+cp /tmp/cosmos/appdata/default.sslcert.pfx /tmp/first_run.pfx
+
+# Stop the container 
+docker stop 308
+
+# Start it again
+docker start 308
+
+# Copy the second certificate
+cp /tmp/cosmos/appdata/default.sslcert.pfx /tmp/second_run.pfx
+
+# Proof - Hash both files to verify they are different
+sha256sum /tmp/first_run.pfx /tmp/second_run.pfx
+
+# Proof - Stat both files and the Modified Date will also show to have changed
+stat /tmp/first_run.pfx
+stat /tmp/second_run.pfx
+```
 
 ## Issue: CosmosDb certificate hostname limited to `localhost` as a valid hostname
 
