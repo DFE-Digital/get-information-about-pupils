@@ -6,8 +6,9 @@ See the [flow here that installs the emulator certificate](https://github.com/DF
 
 ## Documentation
 
-- [GitHub repository](https://github.com/Azure/azure-cosmos-db-emulator-docker?tab=readme-ov-file#linux-based-emulator-preview) **note** source code not available
-- [Microsoft docs](https://learn.microsoft.com/en-gb/azure/cosmos-db/emulator-linux)
+- [Integration tests](./README.md)
+- [GitHub repository for cosmosdb-emulator](https://github.com/Azure/azure-cosmos-db-emulator-docker?tab=readme-ov-file#linux-based-emulator-preview) **note** source code not available
+- [Microsoft docs for cosmosdb-emulator](https://learn.microsoft.com/en-gb/azure/cosmos-db/emulator-linux)
 
 ## Improvements
 
@@ -19,6 +20,8 @@ Can we mirror and cache images in GitHub container registry if a new push to MCR
 2. if newer, tag with date, push to our scoped repository
 3. our compose points at our ghcr
 4. wrap into a daily actions workflow
+
+**TODO** does mcr keep older images on `:latest` e.g can we use older `sha256` digests
 
 ---
 
