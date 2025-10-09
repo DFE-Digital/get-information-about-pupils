@@ -30,7 +30,7 @@ Follow the steps in [CI](../../.github/workflows/web-application-cicd.yml)
 
 As we have some NuGet packages referenced in the GitHub DFE-DIGITAL feed. We must produce a PAT token when restoring enabling access to the feed, and the package.
 
-We also must provide a `package-source` mapping else restoring in CI fails. // **TODO understand this failure better**
+We also must provide a `package-source mapping` else restoring in CI fails. // **TODO understand this failure better**
 
 This means we have to provide a `nuget.config` than using `dotnet nuget source` part of the `dotnet cli` to achieve a restore
 
