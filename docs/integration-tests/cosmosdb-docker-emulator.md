@@ -50,12 +50,14 @@ stat /tmp/first_run.pfx
 stat /tmp/second_run.pfx
 ```
 
-## Issue: CosmosDb certificate hostname limited to `localhost` as a valid hostname
+## Issue: CosmosDb certificate valid hostname limited to `localhost`
 
 This forces us to
 
 - connect to the emulator through `localhost`
-- use `networkmode:host` for container-networking
+- use `networkmode:host` for the container's networking
+  - [host networking docs](https://docs.docker.com/engine/network/drivers/host/)
+  - [host networking demo](https://docs.docker.com/engine/network/tutorials/host/)
 
 as any container trying to connect with the cosmosdb-container under another hostname e.g. via docker-networking will fail TLS validation
 
