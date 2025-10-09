@@ -133,7 +133,7 @@ public static class AuthenticationExtensions
         string userEmail = principal.FindFirst("email")?.Value ?? string.Empty;
         string userGivenName = principal.FindFirst("given_name")?.Value ?? string.Empty;
         string userSurname = principal.FindFirst("family_name")?.Value ?? string.Empty;
-        string organisationJson = principal.FindFirst("Organisation")?.Value ?? "{}";
+        string organisationJson = principal.FindFirst("organisation")?.Value ?? "{}";
         JObject organisation = JObject.Parse(organisationJson);
         string organisationId = organisation["id"]?.ToString() ?? string.Empty;
 
