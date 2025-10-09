@@ -29,8 +29,9 @@ This means we are required to GET the certificate at runtime (which can take up 
 - [Issue requesting](https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/230)
 - **TODO** can we override the default cert via `AZURE_COSMOS_EMULATOR_CERTIFICATE`. Emulator `start.sh` implies we can if we pass ENV
 
+Proof
+
 ```sh
-# Proof 
 
 # Start the emulator
 docker run -d --publish 8080:8080 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
@@ -68,9 +69,32 @@ This forces us to
 
 as any container trying to connect with the cosmosdb-container under another hostname e.g. via docker-networking will fail TLS validation
 
+- **TODO** try `cosmosdbemulatormtls.localhost` as a domain to connect to when using docker-networking as it appears in SAN
 - **TODO** can we use either of `/alternativenames=$EMULATOR_IP_ADDRESS,$EMULATOR_OTHER_IP_ADDRESSES` as indicated by start.sh to yield a certificate that includes other SAN?
 - **TODO** try alternative provide our own self-signed certificate for the emulator to use - see regenerate everytime issue ^^
 - **TODO** (unlikely) try alternative to run the tests in the cosmosdb container so it can resolve localhost
 - **TODO** (unlikely) try alternative to extend the existing certificate with SAN
 
 Proof
+
+```sh
+
+# Start the emulator
+docker run -d --publish 8080:8080 --publish 1234:1234 mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+# returns the container id back e.g. 308c510ff2...
+
+# wait until the certificate is returned ~ 2 mins
+curl -k https://localhost:8081/_explorer/emulator.pem > cosmosdb-cert.pem
+
+# Use openssl to inspect the certificate
+ openssl x509 -in cosmos_cert.pem -text -nooout
+# Example below
+Certificate:
+...
+        Subject: CN = localhost 
+            X509v3 Subject Alternative Name: critical
+                DNS:308c510ff272.DOMAIN, DNS:localhost, IP Address:172.17.0.2, IP Address:127.0.0.1, IP Address:172.17.0.2, IP Address:172.17.0.2, IP Address:172.17.0.2, DNS:172.17.0.2, DNS:127.0.0.1, DNS:172.17.0.2, DNS:172.17.0.2, DNS:cosmosdbemulatormtls.localhost
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment, Certificate Sign
+    Signature Algorithm: sha1WithRSAEncryption
+```
