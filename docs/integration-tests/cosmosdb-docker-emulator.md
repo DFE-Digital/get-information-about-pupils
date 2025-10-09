@@ -4,13 +4,19 @@ We use the CosmosDb docker emulator as part of our integration-tests at build to
 
 See the [flow here that installs the emulator certificate](https://github.com/DFE-Digital/get-information-about-pupils/blob/93739715c6386aa8049868ecdcf6811291b3cc93/scripts/run_integration_tests.sh#L11) at runtime on the test-runner container
 
+## Documentation
+
+- [GitHub repository](https://github.com/Azure/azure-cosmos-db-emulator-docker?tab=readme-ov-file#linux-based-emulator-preview) **note** source code not available
+- [Microsoft docs](https://learn.microsoft.com/en-gb/azure/cosmos-db/emulator-linux)
+
 ## Improvements
 
-Resiliency against emulator image changes;  Different tags appear available from the mcr repository (latest and vnext), the emulator is still in preview. e.g
-`docker pull mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:vnext-preview` see [docs](https://learn.microsoft.com/en-us/azure/cosmos-db/emulator-linux#installation). Can we mirror and cache images in GitHub container registry if a new push to MCR breaks + the old MCR image on the :latest tag is removed?
+Resiliency against emulator image changes on the mcr registry  
+Different tags appear available from the mcr repository (`latest` and `vnext-preview`), the emulator is still in its preview.
+Can we mirror and cache images in GitHub container registry if a new push to MCR:latest breaks + the old MCR image on the :latest tag is removed? This'll break our builds.
 
 1. get latest digest of mcr, latest digest of our cached image in (ghcr)
-2. if newer, tag with date, push
+2. if newer, tag with date, push to our scoped repository
 3. our compose points at our ghcr
 4. wrap into a daily actions workflow
 
