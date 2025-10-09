@@ -61,11 +61,16 @@ stat /tmp/second_run.pfx
 
 ## Issue: CosmosDb certificate hostname limited to `localhost` as a valid hostname
 
-This forces us to use `networkmode:host` because any container trying to connect with the cosmosdb-container will fail SAN.
+This forces us to
 
-- TODO can we use either of `/alternativenames=$EMULATOR_IP_ADDRESS,$EMULATOR_OTHER_IP_ADDRESSES` as indicated by start.sh
-- TODO alternative to run the tests in the cosmosdb container so it can resolve localhost
-- TODO alternative provide our own self-signed certificate for the emulator to use - see regenerate everytime issue ^^
-- TODO Alternative to extend the existing certificate with SAN
+- connect to the emulator through `localhost`
+- use `networkmode:host` for container-networking
+
+as any container trying to connect with the cosmosdb-container under another hostname e.g. via docker-networking will fail TLS validation
+
+- **TODO** can we use either of `/alternativenames=$EMULATOR_IP_ADDRESS,$EMULATOR_OTHER_IP_ADDRESSES` as indicated by start.sh to yield a certificate that includes other SAN?
+- **TODO** try alternative provide our own self-signed certificate for the emulator to use - see regenerate everytime issue ^^
+- **TODO** (unlikely) try alternative to run the tests in the cosmosdb container so it can resolve localhost
+- **TODO** (unlikely) try alternative to extend the existing certificate with SAN
 
 Proof
