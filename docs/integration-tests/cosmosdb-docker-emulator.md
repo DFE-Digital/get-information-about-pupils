@@ -12,7 +12,7 @@ See the [flow here that installs the emulator certificate](https://github.com/DF
 
 ---
 
-## Issue: CosmosDb Certificate is regenerated everytime
+## Issue: CosmosDb Certificate is regenerated everytime it starts
 
 This means we are required to GET the certificate at runtime (which can take up to 3 minutes) instead of mounting the certificate in as a secret to our test-runner container
 
