@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using DfE.GIAP.Common.AppSettings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 
 namespace DfE.GIAP.Service.DsiApiClient;
 
@@ -42,15 +42,15 @@ public class DsiHttpClientProvider : IDsiHttpClientProvider
     }
 
     private string CreateEncodedDsiAccessToken() =>
-        new JwtSecurityTokenHandler()
-            .CreateEncodedJwt(
-                new SecurityTokenDescriptor
-                {
-                    Issuer = _appSettings.DsiClientId,
-                    Audience = _appSettings.DsiAudience,
-                    SigningCredentials =
-                        new SigningCredentials(
-                            _securityKeyProvider.SecurityKeyInstance,
-                            _securityKeyProvider.SecurityAlgorithm)
-                });
+       new JwtSecurityTokenHandler()
+           .CreateEncodedJwt(
+               new SecurityTokenDescriptor
+               {
+                   Issuer = _appSettings.DsiClientId,
+                   Audience = _appSettings.DsiAudience,
+                   SigningCredentials =
+                       new SigningCredentials(
+                           _securityKeyProvider.SecurityKeyInstance,
+                           _securityKeyProvider.SecurityAlgorithm)
+               });
 }
