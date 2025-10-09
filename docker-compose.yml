@@ -10,9 +10,6 @@ services:
     network_mode: host
 
   integration-tests:
-    build:
-      context: .
-      dockerfile: Dockerfile.IntegrationTests
     depends_on:
       - cosmosdb
     network_mode: host    
