@@ -14,7 +14,7 @@ See the [flow here that installs the emulator certificate](https://github.com/DF
 
 ## Issue: CosmosDb Certificate is regenerated everytime it starts
 
-This means we are required to GET the certificate at runtime (which can take up to 3 minutes) instead of mounting the certificate in as a secret to our test-runner container
+Requires us to GET the certificate at runtime (which can take up to 3 minutes) instead of mounting the certificate in as a secret to the test-runner container
 
 - [Issue requesting](https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/230)
 - **TODO** can we override the default cert via `AZURE_COSMOS_EMULATOR_CERTIFICATE`. Emulator `start.sh` implies we can if we pass ENV
