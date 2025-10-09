@@ -10,6 +10,7 @@ services:
     network_mode: host
 
   integration-tests:
+    image: giap-web-integration-tests
     depends_on:
       - cosmosdb
     network_mode: host    

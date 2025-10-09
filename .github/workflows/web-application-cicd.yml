@@ -141,7 +141,7 @@ jobs:
           # Build test image
           docker build \
           --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-          -t giap-integration-tests \
+          -t giap-web-integration-tests \
           -f Dockerfile.IntegrationTests .
 
           # Run tests
