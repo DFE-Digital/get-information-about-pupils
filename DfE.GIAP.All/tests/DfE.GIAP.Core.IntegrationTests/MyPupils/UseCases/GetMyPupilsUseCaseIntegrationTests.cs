@@ -3,10 +3,10 @@ using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
@@ -44,7 +44,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
         mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         IEnumerable<UniquePupilNumber> upns
             = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
@@ -53,7 +53,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
+                myPupilsId,
                 upns: UniquePupilNumbers.Create(upns)));
 
         // Act
@@ -62,7 +62,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId));
+                new GetMyPupilsRequest(myPupilsId.Value));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
@@ -70,7 +70,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos).Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+
+        List<MyPupilDto> expectedPupils =
+            npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
+                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map)
+                .ToList();
 
         foreach (MyPupilDto expectedPupil in expectedPupils)
         {
@@ -83,7 +87,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any(t => new UniquePupilNumber(t.UPN).Equals(expectedPupil.UniquePupilNumber));
+            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any((pupilPremiumDto) => pupilPremiumDto.UPN.Equals(expectedPupil.UniquePupilNumber));
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
@@ -95,11 +99,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
+                myPupilsId,
                 upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -107,7 +111,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId));
+                new GetMyPupilsRequest(myPupilsId.Value));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
