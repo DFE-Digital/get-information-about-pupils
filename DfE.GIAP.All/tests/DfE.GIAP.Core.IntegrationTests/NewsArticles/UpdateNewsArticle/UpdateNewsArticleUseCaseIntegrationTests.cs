@@ -7,14 +7,22 @@ using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
+
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public UpdateNewsArticleUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private CosmosDbFixture Fixture { get; }
+
+    public UpdateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
+    {
+        Fixture = cosmosDbFixture;
+    }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddNewsArticleDependencies();
+        services
+            .AddNewsArticleDependencies();
+
         return Task.CompletedTask;
     }
 
@@ -26,7 +34,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         UpdateNewsArticlesRequestProperties requestProperties = new(id: unknownArticleId);
         UpdateNewsArticleRequest request = new(requestProperties);
 
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
 
         // Act Assert
         Func<Task> act = () => sut.HandleRequestAsync(request);
@@ -54,7 +63,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         UpdateNewsArticleRequest request = new(requestProperties);
 
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -83,5 +93,4 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
          new object[] { NewsArticleDtoTestDoubles.Generate(count: 1)[0], true, true },
          new object[] { NewsArticleDtoTestDoubles.GenerateEmpty(), false, true },
      };
-
 }

@@ -1,56 +1,63 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+﻿using DfE.GIAP.Core.IntegrationTests.Fixture.Configuration;
+using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
 using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
+public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<ConfigurationFixture>
 {
-#nullable disable
-    private MyPupilsTestContext _testContext;
-#nullable enable
-    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base(cosmosDbFixture)
-    {
+    private readonly ConfigurationFixture _configFixture;
+    private readonly CosmosDbFixture _cosmosDbFixture;
+    private SearchIndexFixture? _mockSearchFixture;
+    private MyPupilsTestContext? _testContext;
 
+    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(
+        CosmosDbFixture cosmosDbFixture, ConfigurationFixture configurationFixture)
+    {
+        _cosmosDbFixture = cosmosDbFixture;
+        _configFixture = configurationFixture;
+        _mockSearchFixture = null;
+        _testContext = null;
     }
 
-    private sealed record MyPupilsTestContext(SearchIndexFixture fixture, UniquePupilNumbers myPupilUpns, UserId UserId);
-    protected async override Task OnInitializeAsync(IServiceCollection services)
+    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId UserId);
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddMyPupilsDependencies();
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
 
-        // Initialise fixture and pupils, store in context
-        SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+        _mockSearchFixture = new SearchIndexFixture();
 
-        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremiumSearchIndex();
+        services
+            .AddSharedTestDependencies(
+                SearchIndexOptionsStub.StubFor(_mockSearchFixture.BaseUrl))
+            .AddMyPupilsDependencies()
+            .AddSearchDependencies(_configFixture.Configuration);
+
+        IEnumerable<AzureIndexEntity> npdSearchindexDtos = _mockSearchFixture.StubNpdSearchIndex();
+        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = _mockSearchFixture.StubPupilPremiumSearchIndex();
 
         List<AzureIndexEntity> myPupils = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).ToList();
+
         UniquePupilNumbers myPupilsUpns =
-            UniquePupilNumbers.Create(uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
+            UniquePupilNumbers.Create(
+                uniquePupilNumbers: myPupils.Select(t => t.UPN).ToUniquePupilNumbers());
 
         UserId userId = UserIdTestDoubles.Default();
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
-        await Fixture.Database.WriteItemAsync(myPupilsDocument);
-        _testContext = new MyPupilsTestContext(mockSearchFixture, myPupilsUpns, userId);
-    }
-
-    protected override Task OnDisposeAsync()
-    {
-        _testContext?.fixture?.Dispose();
-        return Task.CompletedTask;
+        await _cosmosDbFixture.Database.WriteItemAsync(myPupilsDocument);
+        _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
     }
 
     [Fact]
@@ -60,20 +67,18 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        UniquePupilNumber deletePupilIdentifier = _testContext.myPupilUpns.GetUniquePupilNumbers()[0];
+        UniquePupilNumber deletePupilIdentifier = _testContext!.MyPupilUpns.GetUniquePupilNumbers()[0];
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
-            DeletePupilUpns: [deletePupilIdentifier],
-            DeleteAll: false);
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(_testContext.UserId.Value,
+            DeletePupilUpns: [deletePupilIdentifier], DeleteAll: false);
 
         // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
         List<string> remainingUpnsAfterDelete =
-            _testContext.myPupilUpns.GetUniquePupilNumbers()
+            _testContext.MyPupilUpns.GetUniquePupilNumbers()
                 .Where((upn) => !upn.Equals(deletePupilIdentifier))
                 .Select(t => t.Value).ToList();
 
@@ -89,7 +94,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
         List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
         [
@@ -98,20 +103,19 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             myPupilUpns[myPupilUpns.Count - 1]
         ];
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
-            DeletePupilUpns: deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(_testContext.UserId.Value,
+            DeletePupilUpns: deleteMultiplePupilIdentifiers, DeleteAll: false);
 
         // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
-            myPupilUpns.Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
-                .Select(t => t.Value).ToList();
+            [.. myPupilUpns
+                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
+                .Select(t => t.Value)];
 
         MyPupilsDocumentDto myPupilsDocument = Assert.Single(users);
         Assert.NotNull(myPupilsDocument);
@@ -126,31 +130,27 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.myPupilUpns.GetUniquePupilNumbers();
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
-        List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
-        [
-            myPupilUpns[0],
-            null, // Unknown identifier not part of the list
-            myPupilUpns[myPupilUpns.Count - 1]
-        ];
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
-            DeletePupilUpns: deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(UserId: _testContext.UserId.Value,
+            DeletePupilUpns:
+            [
+                myPupilUpns[0],
+                null!, // Unknown identifier not part of the list
+                myPupilUpns[myPupilUpns.Count - 1]
+            ], DeleteAll: false);
 
         // Act
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
-            myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
-                .Select(t => t.Value)
-                .ToList();
+            [.. myPupilUpns
+                .Where((upn) => !request.DeletePupilUpns.Contains(upn))
+                .Select(t => t.Value)];
 
         MyPupilsDocumentDto actualUserDto = Assert.Single(users);
         Assert.NotNull(actualUserDto);
@@ -165,9 +165,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        bool deleteAllPupils = true;
-        DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.UserId.Value,
+        const bool deleteAllPupils = true;
+
+        DeletePupilsFromMyPupilsRequest request = new DeletePupilsFromMyPupilsRequest(_testContext!.UserId.Value,
             DeletePupilUpns: [null!], // should be ignored if DeleteAll is enabled
             DeleteAll: deleteAllPupils);
 
@@ -175,9 +175,15 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
+        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
         Assert.NotNull(myPupilsDocument);
         Assert.Equal(_testContext.UserId.Value, myPupilsDocument.id);
         Assert.Empty(myPupilsDocument.MyPupils.Pupils);
+    }
+
+    protected override Task OnDisposeAsync()
+    {
+        _mockSearchFixture?.Dispose();
+        return Task.CompletedTask;
     }
 }
