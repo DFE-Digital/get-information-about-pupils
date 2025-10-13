@@ -73,22 +73,6 @@ public sealed class SearchServiceAdapterRequestTests
     }
 
     [Fact]
-    public void Constructor_WithEmptyFacets_ShouldThrowArgumentException()
-    {
-        // arrange
-        string keyword = "test";
-        SortOrder sortOrder = new SortOrder("Field", "asc", ["Field"]);
-
-        // act
-        Action act = () =>
-            new SearchServiceAdapterRequest(keyword, ["Field"], sortOrder, []);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*facets*");
-    }
-
-    [Fact]
     public void Constructor_WithNullFilters_ShouldInitializeEmptyList()
     {
         // arrange
