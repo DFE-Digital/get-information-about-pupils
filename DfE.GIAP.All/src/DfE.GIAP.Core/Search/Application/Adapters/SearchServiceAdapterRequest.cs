@@ -55,8 +55,8 @@ public sealed class SearchServiceAdapterRequest
     public SearchServiceAdapterRequest(
         string searchKeyword,
         IList<string> searchFields,
-        IList<string> facets,
         SortOrder sortOrdering,
+        IList<string>? facets = null,
         IList<FilterRequest>? searchFilterRequests = null,
         int offset = 0)
     {
@@ -70,12 +70,8 @@ public sealed class SearchServiceAdapterRequest
             : throw new ArgumentException(
                 $"A valid {nameof(searchFields)} argument must be provided.", nameof(searchFields));
 
-        Facets = facets?.Count > 0
-            ? facets
-            : throw new ArgumentException(
-                $"A valid {nameof(facets)} argument must be provided.", nameof(facets));
-
         SortOrdering = sortOrdering;
+        Facets = facets ?? [];
         SearchFilterRequests = searchFilterRequests ?? [];
         Offset = offset;
     }
@@ -91,5 +87,5 @@ public sealed class SearchServiceAdapterRequest
         SortOrder sortOrdering,
         IList<FilterRequest>? searchFilterRequests = null,
         int offset = 0)
-            => new(searchKeyword, searchFields, facets, sortOrdering, searchFilterRequests, offset);
+            => new(searchKeyword, searchFields, sortOrdering, facets, searchFilterRequests, offset);
 }

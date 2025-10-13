@@ -11,8 +11,8 @@ namespace DfE.GIAP.Core.Search.Application.UseCases;
 /// Use case responsible for executing a further education pupil search based on first name and/or surname.
 /// It delegates the search operation to a domain-specific adapter and returns structured results.
 /// </summary>
-public sealed class SearchByKeyWordsUseCase :
-    IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>
+public sealed class SearchUseCase :
+    IUseCase<SearchRequest, SearchResponse>
 {
     private readonly SearchCriteria _searchCriteria;
     private readonly ISearchServiceAdapter<Learners, SearchFacets> _searchServiceAdapter;
@@ -23,7 +23,7 @@ public sealed class SearchByKeyWordsUseCase :
     /// <param name="searchCriteria">Provides configuration for search fields and facets.</param>
     /// <param name="searchServiceAdapter">Adapter to interact with Azure Cognitive Search using domain models.</param>
     /// <exception cref="ArgumentNullException">Thrown if either dependency is null.</exception>
-    public SearchByKeyWordsUseCase(
+    public SearchUseCase(
         SearchCriteria searchCriteria,
         ISearchServiceAdapter<Learners, SearchFacets> searchServiceAdapter)
     {
@@ -42,8 +42,8 @@ public sealed class SearchByKeyWordsUseCase :
     /// A structured response containing matched pupil records, faceted data, total results count,
     /// or an appropriate error status.
     /// </returns>
-    public async Task<SearchByKeyWordsResponse> HandleRequestAsync(
-        SearchByKeyWordsRequest request)
+    public async Task<SearchResponse> HandleRequestAsync(
+        SearchRequest request)
     {
         if (request == null || string.IsNullOrWhiteSpace(request.SearchKeywords))
         {
@@ -57,8 +57,8 @@ public sealed class SearchByKeyWordsUseCase :
                     new SearchServiceAdapterRequest(
                         request.SearchKeywords,
                         _searchCriteria.SearchFields,
-                        _searchCriteria.Facets,
                         request.SortOrder,
+                        _searchCriteria.Facets,
                         request.FilterRequests,
                         request.Offset));
 

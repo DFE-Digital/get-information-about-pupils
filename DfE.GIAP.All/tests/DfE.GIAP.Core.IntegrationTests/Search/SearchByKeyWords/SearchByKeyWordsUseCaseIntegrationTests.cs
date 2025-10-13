@@ -39,14 +39,14 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
         _mockSearchFixture.StubFurtherEducationSearchIndex(furtherEducationSearchIndexDtos);
         _mockSearchFixture.StubAvailableIndexes(["further-education"]);
 
-        IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse> sut =
-            ResolveTypeFromScopedContext<IUseCase<SearchByKeyWordsRequest, SearchByKeyWordsResponse>>()!;
+        IUseCase<SearchRequest, SearchResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<SearchRequest, SearchResponse>>()!;
 
         SortOrder sortOrder = new(sortField: "Forename", sortDirection: "desc", ["Forename", "Surname"]);
-        SearchByKeyWordsRequest request = new(searchKeywords: "test", sortOrder);
+        SearchRequest request = new(searchKeywords: "test", sortOrder);
 
         // act
-        SearchByKeyWordsResponse response = await sut.HandleRequestAsync(request);
+        SearchResponse response = await sut.HandleRequestAsync(request);
 
         // assert
         Assert.NotNull(response);

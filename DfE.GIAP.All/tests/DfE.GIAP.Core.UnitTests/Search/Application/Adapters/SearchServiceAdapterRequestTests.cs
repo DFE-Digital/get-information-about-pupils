@@ -25,7 +25,7 @@ public sealed class SearchServiceAdapterRequestTests
 
         // act
         SearchServiceAdapterRequest request =
-            new(keyword, fields, facets, sortOrder, filters, offset);
+            new(keyword, fields, sortOrder, facets, filters, offset);
 
         // assert
         request.SearchKeyword.Should().Be(keyword);
@@ -49,7 +49,7 @@ public sealed class SearchServiceAdapterRequestTests
 
         // act
         Action act = () =>
-            new SearchServiceAdapterRequest(invalidKeyword!, fields, facets, sortOrder);
+            new SearchServiceAdapterRequest(invalidKeyword!, fields, sortOrder, facets);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -65,27 +65,11 @@ public sealed class SearchServiceAdapterRequestTests
 
         // act
         Action act = () =>
-            new SearchServiceAdapterRequest(keyword, [], ["Facet"], sortOrder);
+            new SearchServiceAdapterRequest(keyword, [], sortOrder, ["Facet"]);
 
         // Assert
         act.Should().Throw<ArgumentException>()
             .WithMessage("*searchFields*");
-    }
-
-    [Fact]
-    public void Constructor_WithEmptyFacets_ShouldThrowArgumentException()
-    {
-        // arrange
-        string keyword = "test";
-        SortOrder sortOrder = new SortOrder("Field", "asc", ["Field"]);
-
-        // act
-        Action act = () =>
-            new SearchServiceAdapterRequest(keyword, ["Field"], [], sortOrder);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*facets*");
     }
 
     [Fact]
@@ -99,7 +83,7 @@ public sealed class SearchServiceAdapterRequestTests
 
         // act
         SearchServiceAdapterRequest request =
-            new(keyword, fields, facets, sortOrder, null);
+            new(keyword, fields, sortOrder, facets, null);
 
         // Assert
         request.SearchFilterRequests.Should().NotBeNull();
