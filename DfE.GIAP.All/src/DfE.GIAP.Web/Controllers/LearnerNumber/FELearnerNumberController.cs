@@ -437,11 +437,19 @@ public class FELearnerNumberController : Controller
 
         model.MaximumResults = _appSettings.MaximumUPNsPerSearch;
         
-        SortOrder sortOrder = new(sortField: "Forename", sortDirection: "desc", ["Forename", "Surname"]);
+        SortOrder sortOrder =
+            new(
+                sortField: "Forename",
+                sortDirection: "desc",
+                validSortFields: ["Forename", "Surname"]
+            );
 
         IList<FilterRequest> filterRequests =
         [
-            new FilterRequest(filterName: "ULN", learnerNumberArray)
+            new FilterRequest(
+                filterName: "ULN",
+                filterValues: learnerNumberArray
+            )
         ];
 
         SearchResponse searchResponse =
@@ -529,7 +537,7 @@ public class FELearnerNumberController : Controller
     private async Task<InvalidLearnerNumberSearchViewModel> GetInvalidPupils(
         InvalidLearnerNumberSearchViewModel model, AzureSearchIndexType indexType)
     {
-        if (string.IsNullOrEmpty(model.LearnerNumber)) return model;
+        //if (string.IsNullOrEmpty(model.LearnerNumber)) return model;
 
         //string searchInput = model.LearnerNumber.ToDecryptedSearchText();
 
