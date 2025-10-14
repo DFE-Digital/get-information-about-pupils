@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
@@ -15,14 +13,12 @@ using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Extensions.Startup;
-using DfE.GIAP.Web.Helpers.HostEnvironment;
-using DfE.GIAP.Web.Middleware;
-using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Web.ViewModels.Search;
-using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
 using DfE.GIAP.Web.Features.Logging.Middleware;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerSearchResponseToViewModelMapper;
+using DfE.GIAP.Web.Middleware;
+using DfE.GIAP.Web.ViewModels.Search;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
+using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

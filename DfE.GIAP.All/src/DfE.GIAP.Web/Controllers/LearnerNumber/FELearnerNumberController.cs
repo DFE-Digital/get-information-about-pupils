@@ -353,6 +353,7 @@ public class FELearnerNumberController : Controller
                 IndexType,
                 pageNumber,
                 notPaged).ConfigureAwait(false);
+
             model.PageNumber = pageNumber;
             model.PageSize = PAGESIZE;
             model.MaximumResults = _appSettings.MaximumULNsPerSearch;
