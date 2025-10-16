@@ -1,12 +1,12 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.Extensions;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
 
 namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
@@ -17,19 +17,19 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosDbNewsArticleReadOnlyRepository> _logger;
+    private readonly ILoggerService _loggerService;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
     public CosmosDbNewsArticleReadOnlyRepository(
-        ILogger<CosmosDbNewsArticleReadOnlyRepository> logger,
+        ILoggerService loggerService,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {
-        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(loggerService);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         ArgumentNullException.ThrowIfNull(dtoToEntityMapper);
-        _logger = logger;
+        _loggerService = loggerService;
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
         _dtoToEntityMapper = dtoToEntityMapper;
     }
@@ -56,8 +56,14 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
     {
         if (string.IsNullOrWhiteSpace(id))
         {
-            _logger.LogCritical("GetNewsArticleByIdAsync called with null or empty id.");
-            throw new ArgumentException("Id must not be null or empty.", nameof(id));
+            ArgumentException ex = new("Id must not be null or empty.", nameof(id));
+            _loggerService.LogTrace(
+               level: LogLevel.Critical,
+               message: "GetNewsArticleByIdAsync called with null or empty id.",
+               exception: ex,
+               category: "News",
+               source: nameof(GetNewsArticleByIdAsync));
+            throw ex;
         }
 
         try
@@ -69,7 +75,12 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(GetNewsArticleByIdAsync)} for id: {id}");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(GetNewsArticleByIdAsync)} for id: {id}.",
+                exception: ex,
+                category: "News",
+                source: nameof(GetNewsArticleByIdAsync));
             return null;
         }
     }
@@ -101,7 +112,12 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(GetNewsArticlesAsync)}.");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(GetNewsArticlesAsync)}.",
+                exception: ex,
+                category: "News",
+                source: nameof(GetNewsArticlesAsync));
             return [];
         }
     }
@@ -127,7 +143,12 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(HasAnyNewsArticleBeenModifiedSinceAsync)}.");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(HasAnyNewsArticleBeenModifiedSinceAsync)}.",
+                exception: ex,
+                category: "News",
+                source: nameof(HasAnyNewsArticleBeenModifiedSinceAsync));
             return false;
         }
     }

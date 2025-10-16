@@ -1,10 +1,10 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
 
 namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 
@@ -17,19 +17,19 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILogger<CosmosDbNewsArticleWriteOnlyRepository> _logger;
+    private readonly ILoggerService _loggerService;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
     private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
     public CosmosDbNewsArticleWriteOnlyRepository(
-        ILogger<CosmosDbNewsArticleWriteOnlyRepository> logger,
+        ILoggerService loggerService,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
         IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {
-        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(loggerService);
         ArgumentNullException.ThrowIfNull(cosmosDbCommandHandler);
         ArgumentNullException.ThrowIfNull(entityToDtoMapper);
-        _logger = logger;
+        _loggerService = loggerService;
         _cosmosDbCommandHandler = cosmosDbCommandHandler;
         _entityToDtoMapper = entityToDtoMapper;
     }
@@ -56,7 +56,12 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(CreateNewsArticleAsync)}.");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(CreateNewsArticleAsync)}.",
+                exception: ex,
+                category: "News",
+                source: nameof(CreateNewsArticleAsync));
             throw;
         }
     }
@@ -75,7 +80,12 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(DeleteNewsArticleAsync)}.");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(DeleteNewsArticleAsync)}.",
+                exception: ex,
+                category: "News",
+                source: nameof(DeleteNewsArticleAsync));
             throw;
         }
     }
@@ -99,7 +109,12 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(UpdateNewsArticleAsync)}.");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(UpdateNewsArticleAsync)}.",
+                exception: ex,
+                category: "News",
+                source: nameof(UpdateNewsArticleAsync));
             throw;
         }
     }
