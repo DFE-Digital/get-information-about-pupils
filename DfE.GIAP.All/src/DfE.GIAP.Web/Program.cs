@@ -1,3 +1,5 @@
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
@@ -71,6 +73,8 @@ builder.Services.AddSingleton<IMapper<
     SearchFacets, List<FilterData>>, FiltersResponseMapper>();
 builder.Services.AddSingleton<IMapper<
     (string, string), SortOrder>, SortOrderMapper>();
+
+builder.Services.AddSingleton<ISearchRule, PartialWordMatchRule>();
 
 builder.Services.AddSingleton<
     IFilterHandlerRegistry, FilterHandlerRegistry>();
