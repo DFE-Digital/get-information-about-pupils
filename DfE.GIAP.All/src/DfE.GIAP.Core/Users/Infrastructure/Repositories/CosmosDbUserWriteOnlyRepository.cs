@@ -20,14 +20,14 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
 
     public CosmosDbUserWriteOnlyRepository(
         ICosmosDbCommandHandler commandHandler,
-        ILoggerService loggerService,
+        ILoggerService logger,
         IMapper<User, UserDto> mapper)
     {
         ArgumentNullException.ThrowIfNull(commandHandler);
-        ArgumentNullException.ThrowIfNull(loggerService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(mapper);
         _commandHandler = commandHandler;
-        _loggerService = loggerService;
+        _loggerService = logger;
         _mapper = mapper;
     }
 
@@ -55,7 +55,7 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"CosmosException in {nameof(UpsertUserAsync)}.",
+                message: $"CosmosException in {nameof(UpsertUserAsync)}",
                 exception: ex,
                 category: "Users",
                 source: nameof(UpsertUserAsync));

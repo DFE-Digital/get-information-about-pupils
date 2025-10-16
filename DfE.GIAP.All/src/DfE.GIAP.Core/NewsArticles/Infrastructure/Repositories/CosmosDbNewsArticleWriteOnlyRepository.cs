@@ -22,14 +22,14 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
     private readonly IMapper<NewsArticle, NewsArticleDto> _entityToDtoMapper;
 
     public CosmosDbNewsArticleWriteOnlyRepository(
-        ILoggerService loggerService,
+        ILoggerService logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
         IMapper<NewsArticle, NewsArticleDto> entityToDtoMapper)
     {
-        ArgumentNullException.ThrowIfNull(loggerService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbCommandHandler);
         ArgumentNullException.ThrowIfNull(entityToDtoMapper);
-        _loggerService = loggerService;
+        _loggerService = logger;
         _cosmosDbCommandHandler = cosmosDbCommandHandler;
         _entityToDtoMapper = entityToDtoMapper;
     }
@@ -58,7 +58,7 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"CosmosException in {nameof(CreateNewsArticleAsync)}.",
+                message: $"CosmosException in {nameof(CreateNewsArticleAsync)}",
                 exception: ex,
                 category: "News",
                 source: nameof(CreateNewsArticleAsync));
@@ -82,7 +82,7 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"CosmosException in {nameof(DeleteNewsArticleAsync)}.",
+                message: $"CosmosException in {nameof(DeleteNewsArticleAsync)}",
                 exception: ex,
                 category: "News",
                 source: nameof(DeleteNewsArticleAsync));
@@ -111,7 +111,7 @@ internal class CosmosDbNewsArticleWriteOnlyRepository : INewsArticleWriteOnlyRep
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"CosmosException in {nameof(UpdateNewsArticleAsync)}.",
+                message: $"CosmosException in {nameof(UpdateNewsArticleAsync)}",
                 exception: ex,
                 category: "News",
                 source: nameof(UpdateNewsArticleAsync));

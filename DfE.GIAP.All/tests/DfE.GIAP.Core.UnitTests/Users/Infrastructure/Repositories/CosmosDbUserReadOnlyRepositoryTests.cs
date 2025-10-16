@@ -12,11 +12,11 @@ using User = DfE.GIAP.Core.Users.Application.User;
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
 public sealed class CosmosDbUserReadOnlyRepositoryTests
 {
-    private readonly InMemoryLogger<CosmosDbUserReadOnlyRepository> _mockLogger;
+    private readonly InMemoryLoggerService _mockLogger;
 
     public CosmosDbUserReadOnlyRepositoryTests()
     {
-        _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserReadOnlyRepository>();
+        _mockLogger = LoggerServiceTestDoubles.MockLoggerService();
     }
 
     [Fact]

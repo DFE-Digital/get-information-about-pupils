@@ -22,14 +22,14 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
     public CosmosDbNewsArticleReadOnlyRepository(
-        ILoggerService loggerService,
+        ILoggerService logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {
-        ArgumentNullException.ThrowIfNull(loggerService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         ArgumentNullException.ThrowIfNull(dtoToEntityMapper);
-        _loggerService = loggerService;
+        _loggerService = logger;
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
         _dtoToEntityMapper = dtoToEntityMapper;
     }
@@ -59,7 +59,7 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
             ArgumentException ex = new("Id must not be null or empty.", nameof(id));
             _loggerService.LogTrace(
                level: LogLevel.Critical,
-               message: "GetNewsArticleByIdAsync called with null or empty id.",
+               message: "GetNewsArticleByIdAsync called with null or empty id",
                exception: ex,
                category: "News",
                source: nameof(GetNewsArticleByIdAsync));
@@ -77,7 +77,7 @@ internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepos
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"CosmosException in {nameof(GetNewsArticleByIdAsync)} for id: {id}.",
+                message: $"CosmosException in {nameof(GetNewsArticleByIdAsync)} for id: {id}",
                 exception: ex,
                 category: "News",
                 source: nameof(GetNewsArticleByIdAsync));

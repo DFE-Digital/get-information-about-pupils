@@ -21,15 +21,15 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
     private readonly IMapper<UserDto, User> _userMapper;
 
     public CosmosDbUserReadOnlyRepository(
-        ILoggerService loggerService,
+        ILoggerService logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<UserDto, User> userMapper)
     {
-        ArgumentNullException.ThrowIfNull(loggerService);
+        ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         ArgumentNullException.ThrowIfNull(userMapper);
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
-        _loggerService = loggerService;
+        _loggerService = logger;
         _userMapper = userMapper;
     }
 
@@ -65,7 +65,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"CosmosException in {nameof(GetUserByIdAsync)}.",
+                message: $"CosmosException in {nameof(GetUserByIdAsync)}",
                 exception: ex,
                 category: "Users",
                 source: nameof(GetUserByIdAsync));
@@ -102,7 +102,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         {
             _loggerService.LogTrace(
                 level: LogLevel.Information,
-                message: $"User with ID '{id.Value}' not found (404) in {nameof(GetUserByIdIfExistsAsync)}.",
+                message: $"User with ID '{id.Value}' not found (404) in {nameof(GetUserByIdIfExistsAsync)}",
                 exception: ex,
                 category: "Users",
                 source: nameof(GetUserByIdIfExistsAsync));
@@ -112,7 +112,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         {
             _loggerService.LogTrace(
                 level: LogLevel.Critical,
-                message: $"Exception in {nameof(GetUserByIdIfExistsAsync)}.",
+                message: $"Exception in {nameof(GetUserByIdIfExistsAsync)}",
                 exception: ex,
                 category: "Users",
                 source: nameof(GetUserByIdIfExistsAsync));
