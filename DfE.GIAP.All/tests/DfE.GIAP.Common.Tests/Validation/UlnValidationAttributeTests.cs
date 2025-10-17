@@ -12,7 +12,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object uln = "9999375358";
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(uln);
             // Assert
             Assert.True(isSuccess);
@@ -25,7 +25,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object uln = null;
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(uln);
             // Assert
             Assert.False(isSuccess);
@@ -38,7 +38,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object uln = "01234";
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(uln);
             // Assert
             Assert.False(isSuccess);
@@ -51,7 +51,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             object uln = "qwertyuiop";
             var customValidationAttribute = new SecurityReportsUpnUlnValidation();
 
-            // Act
+            // act
             var isSuccess = customValidationAttribute.IsValid(uln);
             // Assert
             Assert.False(isSuccess);

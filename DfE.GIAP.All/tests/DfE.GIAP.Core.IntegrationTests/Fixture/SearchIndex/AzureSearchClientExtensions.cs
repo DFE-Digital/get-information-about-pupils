@@ -3,6 +3,7 @@ using Azure.Core.Pipeline;
 using Azure.Search.Documents;
 
 namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+
 internal static class AzureSearchClientExtensions
 {
     internal static SearchClient WithDisabledTlsValidation(this SearchClient original)
@@ -14,7 +15,8 @@ internal static class AzureSearchClientExtensions
                     new HttpClient(
                         new HttpClientHandler
                         {
-                            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                            ServerCertificateCustomValidationCallback =
+                                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
                         }))
         };
 
