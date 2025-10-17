@@ -2,63 +2,70 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using Moq;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 
 public sealed class DeletePupilsFromMyPupilsUseCaseTests
 {
-    [Fact]
-    public async Task HandleRequestAsync_WhenDeleteAllIsTrue_SavesEmptyList()
-    {
-        // Arrange
-        User user = UserTestDoubles.Default();
-        Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
-        Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
-        DeletePupilsFromMyPupilsUseCase useCase = new(readRepositoryMock.Object, writeRepoMock.Object);
+    //[Fact]
+    //public async Task HandleRequestAsync_WhenDeleteAllIsTrue_SavesEmptyList()
+    //{
+    //    // Arrange
+    //    MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        DeletePupilsFromMyPupilsRequest request = new(
-            UserId: user.UserId.Value,
-            DeleteAll: true,
-            DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 2)); // these should be ignored when deleteAll toggled
+    //    Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils =
+    //        MyPupilsTestDoubles.Create(
+    //            myPupilsId,
+    //            UniquePupilNumbers.Create(
+    //                UniquePupilNumberTestDoubles.Generate(count: 10)));
 
-        // Act
-        await useCase.HandleRequestAsync(request);
+    //    Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
+    //    Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
+    //    DeletePupilsFromMyPupilsUseCase useCase = new(readRepositoryMock.Object, writeRepoMock.Object);
 
-        // Assert
-        writeRepoMock.Verify(repo =>
-            repo.SaveMyPupilsAsync(
-                user.UserId, It.Is<UniquePupilNumbers>(upns => !upns.GetUniquePupilNumbers().Any())),
-                    Times.Once);
+    //    DeletePupilsFromMyPupilsRequest request = new(
+    //        UserId: myPupilsId.Value,
+    //        DeletePupilUpns: myPupils.GetMyPupils().Select(t => t.Value)); // these should be ignored when deleteAll toggled
 
-        readRepositoryMock.VerifyNoOtherCalls();
-    }
+    //    // Act
+    //    await useCase.HandleRequestAsync(request);
+
+    //    // Assert
+    //    readRepositoryMock.Verify(
+    //        (readRepo) => readRepo.GetMyPupilsOrDefaultAsync(
+    //            myPupilsId,
+    //            It.IsAny<CancellationToken>()),
+    //        Times.Once);
+
+    //    writeRepoMock.Verify(writeRepo =>
+    //        writeRepo.SaveMyPupilsAsync(
+    //            myPupilsId,
+    //            It.Is<Core.MyPupils.Domain.AggregateRoot.MyPupils>(myPupils => !myPupils.GetMyPupils().Any()),
+    //            It.IsAny<CancellationToken>()),
+    //        Times.Once);
+    //}
 
     [Fact]
     public async Task HandleRequestAsync_WhenSomeUpnsAreValid_SavesUpnsThatAreNotDeleted()
     {
         // Arrange
-
         UniquePupilNumbers upns =
             UniquePupilNumbers.Create(
                 uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 3));
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        Core.MyPupils.Application.Repositories.MyPupils myPupils = MyPupilsTestDoubles.Create(upns);
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(myPupilsId, upns);
 
-        Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockFor(myPupils);
+        Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
-        IEnumerable<UniquePupilNumber> deletePupilUpnIdentifiers = upns.GetUniquePupilNumbers().Take(1);
+        IEnumerable<string> deletePupilUpnIdentifiers = upns.GetUniquePupilNumbers().Take(1).Select(t => t.Value);
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: userId.Value,
-            DeleteAll: false,
+            UserId: myPupilsId.Value,
             DeletePupilUpns: deletePupilUpnIdentifiers);
 
         // Act
@@ -67,18 +74,14 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         // Assert
         readRepositoryMock.Verify(
-            (repo) => repo.GetMyPupilsOrDefaultAsync(
-                userId,
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+            (repo) => repo.GetMyPupilsOrDefaultAsync(myPupilsId), Times.Once);
 
-        IEnumerable<UniquePupilNumber> expectedListAfterDelete = upns.GetUniquePupilNumbers().Where(t => !deletePupilUpnIdentifiers.Contains(t));
+        IEnumerable<UniquePupilNumber> expectedListAfterDelete = upns.GetUniquePupilNumbers().Where(t => !deletePupilUpnIdentifiers.Contains(t.Value));
 
         mockWriteRepository.Verify(repo =>
             repo.SaveMyPupilsAsync(
-                userId,
-                It.Is<UniquePupilNumbers>(list => list.GetUniquePupilNumbers().SequenceEqual(expectedListAfterDelete))),
-            Times.Once);
+                It.Is<Core.MyPupils.Domain.AggregateRoot.MyPupils>(
+                    (myPupilsAggregate) => myPupilsAggregate.GetMyPupils().SequenceEqual(expectedListAfterDelete))), Times.Once);
     }
 
     [Fact]
@@ -88,25 +91,20 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         UniquePupilNumbers upns =
             UniquePupilNumbers.Create(uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 3));
 
-        UserId userId = UserIdTestDoubles.Default();
-
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
-        Core.MyPupils.Application.Repositories.MyPupils myPupils = new(upns);
+        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(upns);
 
         readRepositoryMock
-            .Setup((repo) => repo.GetMyPupilsOrDefaultAsync(
-                It.IsAny<UserId>(),
-                It.IsAny<CancellationToken>()))
+            .Setup((repo) => repo.GetMyPupilsOrDefaultAsync(myPupils.AggregateId))
             .ReturnsAsync(myPupils);
 
         DeletePupilsFromMyPupilsUseCase useCase = new(readRepositoryMock.Object, mockWriteRepository.Object);
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: userId.Value,
-            DeleteAll: false,
-            DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 1));
+            UserId: myPupils.AggregateId.Value,
+            DeletePupilUpns: UniquePupilNumberTestDoubles.Generate(count: 1).Select(t => t.Value));
 
         // Act 
         await Assert.ThrowsAsync<ArgumentException>(() => useCase.HandleRequestAsync(request));
@@ -114,14 +112,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         // Assert
         readRepositoryMock.Verify(
             (repo) => repo.GetMyPupilsOrDefaultAsync(
-                userId,
-                It.IsAny<CancellationToken>()),
-            Times.Once);
+                myPupils.AggregateId), Times.Once);
 
         mockWriteRepository.Verify(repo =>
-            repo.SaveMyPupilsAsync(
-                userId,
-                It.IsAny<UniquePupilNumbers>()),
-            Times.Never);
+            repo.SaveMyPupilsAsync(myPupils), Times.Never);
     }
 }

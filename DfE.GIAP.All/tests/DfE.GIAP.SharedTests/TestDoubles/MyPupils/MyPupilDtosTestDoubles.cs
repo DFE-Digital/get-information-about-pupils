@@ -5,13 +5,13 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilDtosTestDoubles
 {
-    public static MyPupilDtos Generate(int count)
+    public static MyPupilsModel Generate(int count)
     {
-        return MyPupilDtos.Create(
+        return MyPupilsModel.Create(
             pupils: CreateGenerator().Generate(count));
     }
 
-    public static MyPupilDtos GenerateWithUniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
+    public static MyPupilsModel GenerateWithUniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
         Faker<MyPupilDto> generator = CreateGenerator();
         List<MyPupilDto> output = [];
@@ -25,14 +25,14 @@ public static class MyPupilDtosTestDoubles
             output.Add(dto);
         });
 
-        return MyPupilDtos.Create(pupils: output);
+        return MyPupilsModel.Create(pupils: output);
     }
 
     public static Faker<MyPupilDto> CreateGenerator()
     {
         Faker<MyPupilDto> faker = new();
         faker.StrictMode(true);
-        faker.RuleFor(t => t.UniquePupilNumber, (f) => UniquePupilNumberTestDoubles.Generate());
+        faker.RuleFor(t => t.UniquePupilNumber, (f) => UniquePupilNumberTestDoubles.Generate().Value);
         faker.RuleFor(t => t.DateOfBirth, (f)
             => new DateOfBirth(
                 DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(f.Random.Number(5, 18))).ToString());

@@ -2,6 +2,8 @@ using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Core.Users;
+using DfE.GIAP.Web.Session;
+using DfE.GIAP.Web.Features.MyPupils;
 using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Features.Logging.Middleware;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
@@ -19,9 +21,11 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
+    .AddAspNetCoreSessionServices()
     .AddUserDependencies()
     .AddNewsArticleDependencies()
-    .AddPrePreparedDownloadsDependencies();
+    .AddPrePreparedDownloadsDependencies()
+    .AddMyPupils();
 
 builder.Services
     .AddRoutingConfiguration()
