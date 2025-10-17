@@ -8,13 +8,14 @@ using DfE.GIAP.Core.UnitTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
+
 public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
 {
-    private readonly InMemoryLogger<CosmosDbNewsArticleWriteOnlyRepository> _mockLogger;
+    private readonly InMemoryLoggerService _mockLogger;
 
     public CosmosDbNewsArticleWriteOnlyRepositoryTests()
     {
-        _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbNewsArticleWriteOnlyRepository>();
+        _mockLogger = LoggerServiceTestDoubles.MockLoggerService();
     }
 
     [Fact]
@@ -194,7 +195,7 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
 
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);
-        Assert.Equal("CosmosException in CreateNewsArticleAsync.", _mockLogger.Logs.Single());
+        Assert.Equal("CosmosException in CreateNewsArticleAsync", _mockLogger.Logs.Single());
         mockMapper.Verify(m => m.Map(It.IsAny<NewsArticle>()), Times.Once());
     }
 
@@ -261,7 +262,7 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
 
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);
-        Assert.Equal("CosmosException in DeleteNewsArticleAsync.", _mockLogger.Logs.Single());
+        Assert.Equal("CosmosException in DeleteNewsArticleAsync", _mockLogger.Logs.Single());
         mockCommandHandler.Verify(m => m.DeleteItemAsync<NewsArticleDto>(
            It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }
@@ -324,7 +325,7 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
 
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);
-        Assert.Equal("CosmosException in UpdateNewsArticleAsync.", _mockLogger.Logs.Single());
+        Assert.Equal("CosmosException in UpdateNewsArticleAsync", _mockLogger.Logs.Single());
         mockCommandHandler.Verify(m => m.ReplaceItemAsync(
             It.IsAny<NewsArticleDto>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }
