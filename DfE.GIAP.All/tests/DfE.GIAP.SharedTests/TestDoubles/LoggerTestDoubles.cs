@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Core.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles;
 
 // TODO: Remove once phased out ILogger in favor of ILoggerService
 public static class LoggerTestDoubles
@@ -54,7 +54,7 @@ public sealed class InMemoryLoggerService : ILoggerService
     public List<string> Logs { get; } = [];
 
     public void LogTrace(
-        Common.CrossCutting.Logging.LogLevel level,
+        Core.Common.CrossCutting.Logging.LogLevel level,
         string message,
         Exception? exception = null,
         string? category = null,
