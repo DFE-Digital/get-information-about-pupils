@@ -2,13 +2,14 @@
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
-internal static class CompositionRoot
+namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
+public static class CompositionRoot
 {
-    internal static IServiceCollection ConfigureAzureSearchClients(this IServiceCollection services)
+    public static IServiceCollection ConfigureAzureSearchClients(this IServiceCollection services)
     {
         services.RemoveAll<ISearchClientProvider>();
 

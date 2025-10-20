@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,25 +32,11 @@ public static class CompositionRoot
 
     private static IServiceCollection AddLocalConfiguration(this IServiceCollection services)
     {
-        Dictionary<string, string> contentConfiguration = new()
-        {
-            // PageContentOptions
-            ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
-
-            // ContentRepositoryOptions
-            ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
-
-            // SearchIndexOptions
-            ["SearchIndexOptions:Url"] = "https://localhost:44444",
-            ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
-            ["SearchIndexOptions:Indexes:npd:Name"] = "npd",
-            ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
-        };
-
-        IConfiguration configuration = ConfigurationTestDoubles.Default()
-                .WithLocalCosmosDb()
-                .WithConfiguration(contentConfiguration)
-                .Build();
+        IConfiguration configuration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+            .WithLocalCosmosDbOptions()
+            .WithSearchIndexOptions()
+            .Build();
 
         services.AddSingleton(configuration);
 

@@ -9,7 +9,12 @@
   <ItemGroup>
     <PackageReference Include="Bogus" />
     <PackageReference Include="Fare" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Moq" />
+    <PackageReference Include="xunit" />
   </ItemGroup>
 
   <ItemGroup>

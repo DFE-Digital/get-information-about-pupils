@@ -41,43 +41,27 @@ Unlike services such as [CosmosDB](./cosmosdb-docker-emulator.md), Azure Search 
     ```text
     System.Security.Authentication.AuthenticationException: The remote certificate is invalid because of errors in the certificate chain: UntrustedRoot
     ```
-
     From [Microsoft Docs](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-dev-certs):
-
     > "By default, the newly created certificate is not trusted. To trust the certificate, use the `--trust` option." However, on **Linux**, `--trust` does not integrate with the host trust store.
-
     Manually generating a cert with `openssl` also fails (so not using `dotnet-dev-certs`) when a request is made to a self-signed certificate through the Azure SDKs.
-
     ```bash
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout localhost.key -out localhost.crt \
     -config localhost.conf -subj /CN=localhost
-
     sudo cp localhost.crt /usr/local/share/ca-certificates/localhost.crt
     sudo update-ca-certificates
     ```
-
 - We must maintain fixture code to configure and run the stub server.
-
 ##### Option 2: Disabling TLS on SearchClient
-
 - Some approaches suggest replacing `SearchClient` with a replaced SearchClient that disables certificate validation.
 - We DO NOT WANT to modifying application services to preserve test fidelity.
-
 ---
-
 ### Option 3: In-Memory Stubbing
-
 // TODO: Describe pros and cons of using in-memory stubs instead of a full HTTP stub server.
-
 ---
-
 ## ✅ Recommendation
-
 We chose **Option 1** — a locally hosted stub server — because it allows us to test our application's integration with Azure Search as realistically as possible, without modifying core services.
-
 To support this:
-
 - We generate a **CA-signed certificate** in CI.
 - We trust the CA on the Linux runner.
 - We configure WireMock.Net to use the signed certificate.
