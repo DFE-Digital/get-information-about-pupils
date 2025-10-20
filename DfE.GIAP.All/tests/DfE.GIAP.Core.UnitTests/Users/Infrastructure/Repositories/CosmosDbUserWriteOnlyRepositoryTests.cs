@@ -5,7 +5,7 @@ using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 using User = DfE.GIAP.Core.Users.Application.User;

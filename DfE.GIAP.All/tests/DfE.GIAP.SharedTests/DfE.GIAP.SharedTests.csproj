@@ -10,9 +10,15 @@
     <PackageReference Include="Bogus" />
     <PackageReference Include="Fare" />
     <PackageReference Include="Moq" />
+    <PackageReference Include="xunit.assert" />
+    <PackageReference Include="xunit.core" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Fixtures\" />
   </ItemGroup>
 </Project>

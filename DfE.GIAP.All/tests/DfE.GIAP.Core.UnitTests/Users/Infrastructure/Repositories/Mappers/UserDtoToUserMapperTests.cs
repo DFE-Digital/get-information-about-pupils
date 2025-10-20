@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
 using DfE.GIAP.SharedTests.TestDoubles;
 using User = DfE.GIAP.Core.Users.Application.User;
@@ -13,7 +13,7 @@ public sealed class UserDtoToUserMapperTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
-        UserDto userDto = UserDtoTestDoubles.WithId(userId);
+        UserDto userDto = UserDtoTestDoubles.Create(userId);
 
         // Act
         UserDtoToUserMapper mapper = new();

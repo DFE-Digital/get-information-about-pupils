@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
+    <InternalsVisibleTo Include="DfE.GIAP.Web.IntegrationTests" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="logevents.json">

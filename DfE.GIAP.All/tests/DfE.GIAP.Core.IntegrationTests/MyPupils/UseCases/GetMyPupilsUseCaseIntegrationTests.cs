@@ -1,6 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
-using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
@@ -10,6 +8,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.SharedTests.Fixtures.CosmosDb;
+using DfE.GIAP.SharedTests.Fixtures.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Extensions.Options;
@@ -38,15 +38,19 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         using SearchIndexFixture mockSearchFixture = new(
             ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
 
-        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
-        mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+        List<AzureIndexEntity> npdSearchIndexDtos =
+            AzureIndexEntityDtosTestDoubles.Generate(count: 10);
 
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
-        mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
+        await mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+
+        List<AzureIndexEntity> pupilPremiumSearchIndexDtos =
+            AzureIndexEntityDtosTestDoubles.Generate(count: 25);
+
+        await mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        IEnumerable<UniquePupilNumber> upns
+        List<UniquePupilNumber> upns
             = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
                 .Select((t) => t.UPN)
                     .ToUniquePupilNumbers();
@@ -67,7 +71,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Assert
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.MyPupils);
-        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
+        Assert.Equal(npdSearchIndexDtos.Count + pupilPremiumSearchIndexDtos.Count, getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 

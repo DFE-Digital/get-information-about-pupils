@@ -74,3 +74,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+internal partial class Program { } // For integration tests

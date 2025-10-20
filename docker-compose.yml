@@ -1,4 +1,14 @@
 services:
+  certgenerator:
+      image: wiremock-certgenerator
+      build:
+        context: .
+        dockerfile: Dockerfile.CertGenerator
+      volumes:
+        - ${SHARED_CERTIFICATES}:/certs
+      environment:
+      - WIREMOCK_KEYSTORE_STOREPASSWORD=${WIREMOCK_KEYSTORE_STOREPASSWORD}
+      - WIREMOCK_KEYSTORE_KEYPASSWORD=${WIREMOCK_KEYSTORE_KEYPASSWORD}
   cosmosdb:
     image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
     ports:
@@ -8,21 +18,46 @@ services:
       AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
       AZURE_COSMOS_EMULATOR_ENABLE_CERT_AUTH: true
     network_mode: host
-
+  wiremock:
+    image: wiremock/wiremock:3.3.1
+    ports:
+      - "8443:8443"
+    volumes:
+      - ${SHARED_CERTIFICATES}:/certs:ro
+    entrypoint:
+      - /docker-entrypoint.sh
+      - --https-port
+      - "8443"
+      - --https-keystore
+      - /certs/wiremock-keystore.jks
+      - --keystore-password
+      - ${WIREMOCK_KEYSTORE_STOREPASSWORD}
+      - --keystore-type
+      - JKS  
+      - --key-manager-password
+      - ${WIREMOCK_KEYSTORE_KEYPASSWORD}
+      # - --verbose
+    restart: unless-stopped
   integration-tests:
+    image: giapweb-core-integration-tests:latest
     build:
       context: .
       dockerfile: Dockerfile.IntegrationTests
+      secrets:
+        - nuget_config
     depends_on:
       - cosmosdb
-    network_mode: host    
+      - wiremock
+    network_mode: host
     volumes:
+      # Mount CA enabling WireMock
+      - ${SHARED_CERTIFICATES}:/usr/local/share/ca-certificates/shared-certs:ro
+      # Test coverage reports
       - type: bind
         source: coverage-integration/
         target: /coverage-integration
-        # nuget cache in CI
-      - nuget-cache:/root/.nuget
 
-volumes:
-  nuget-cache:
-
+# uses Docker BuildKit - not available at runtime or part of image layers
+secrets:
+  nuget_config:
+    file: DfE.GIAP.All/nuget.config

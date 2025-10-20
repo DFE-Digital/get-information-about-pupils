@@ -4,7 +4,7 @@ using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 using User = DfE.GIAP.Core.Users.Application.User;
@@ -137,7 +137,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         const string usersContainerName = "users";
         UserId userId = UserIdTestDoubles.Default();
 
-        UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
+        UserDto userProfileDto = UserDtoTestDoubles.Create(userId);
 
         User expectedUser = new(userId, DateTime.UtcNow);
 
@@ -180,7 +180,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         const string usersContainerName = "users";
         UserId userId = UserIdTestDoubles.Default();
 
-        UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
+        UserDto userProfileDto = UserDtoTestDoubles.Create(userId);
         User expectedUser = new(userId, DateTime.UtcNow);
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
