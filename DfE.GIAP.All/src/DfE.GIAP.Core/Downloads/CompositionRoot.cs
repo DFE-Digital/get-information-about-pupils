@@ -1,8 +1,12 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Downloads.Application.DatasetCheckers;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
+using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Downloads;
@@ -45,12 +49,20 @@ public static class CompositionRoot
     private static IServiceCollection RegisteInfrastructureDependencies(this IServiceCollection services)
     {
         return services
-            .RegisterInfrastructureRepositories();
+            .RegisterInfrastructureRepositories()
+            .RegisterInfrastructureMappers();
     }
 
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IFurtherEducationRepository, CosmosFurtherEducationRepository>();
+        services.AddScoped<IFurtherEducationRepository, CosmosDbFurtherEducationReadOnlyRepository>();
+
+        return services;
+    }
+
+    private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
+    {
+        services.AddScoped<IMapper<FurtherEducationPupilDto, FurtherEducationPupil>, FurtherEducationPupilDtoToEntityMapper>();
 
         return services;
     }
