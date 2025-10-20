@@ -21,4 +21,8 @@
 		<InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
 		<InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Downloads\Application\UseCases\DownloadDatasetsForPupils\" />
+	</ItemGroup>
 </Project>

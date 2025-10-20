@@ -6,6 +6,8 @@ using Microsoft.Extensions.Options;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Microsoft.Extensions.Hosting;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Common.Application;
 
 namespace DfE.GIAP.Service.Download;
 
@@ -15,17 +17,20 @@ public class DownloadService : IDownloadService
     private readonly IApiService _apiProcessorService;
     private readonly IEventLogging _eventLogging;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 
     public DownloadService(
         IOptions<AzureAppSettings> azureFunctionUrls,
         IApiService apiProcessorService,
         IEventLogging eventLogging,
-        IHostEnvironment hostEnvironment)
+        IHostEnvironment hostEnvironment,
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
         _azureAppSettings = azureFunctionUrls.Value;
         _apiProcessorService = apiProcessorService;
         _eventLogging = eventLogging;
         _hostEnvironment = hostEnvironment;
+        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
 
@@ -157,7 +162,13 @@ public class DownloadService : IDownloadService
     {
         var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
 
+        // TODO: Do the initial use-case datatype check here
+        GetAvailableDatasetsForPupilsRequest request = new(Core.Downloads.Application.Enums.DownloadType.FurtherEducation, selectedPupils);
+        GetAvailableDatasetsForPupilsResponse responseTest = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
+
         var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, CheckOnly = true };
+
+        // The response actually gets back a list of UNAVAILABLE datasets... not available! according to the FA!! 
         var response = await _apiProcessorService.PostAsync<DownloadUlnRequest, IEnumerable<DownloadUlnDataType>>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         return response;

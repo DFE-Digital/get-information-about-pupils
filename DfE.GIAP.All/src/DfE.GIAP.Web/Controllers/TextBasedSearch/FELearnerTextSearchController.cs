@@ -186,6 +186,8 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
         var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
+
+        // TODO: This would now be available datasets instead
         var disabledTypes = await _downloadService.CheckForFENoDataAvailable(new string[] { selectedPupil }, downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
         SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
 

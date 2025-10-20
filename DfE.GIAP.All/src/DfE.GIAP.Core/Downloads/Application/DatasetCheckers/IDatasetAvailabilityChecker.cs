@@ -1,0 +1,50 @@
+﻿using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Repositories;
+
+namespace DfE.GIAP.Core.Downloads.Application.DatasetCheckers;
+
+public interface IDatasetAvailabilityChecker
+{
+    DownloadType SupportedDownloadType { get; }
+    Task<IEnumerable<Datasets>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds);
+}
+
+public class FurtherEducationDatasetChecker : IDatasetAvailabilityChecker
+{
+    public DownloadType SupportedDownloadType => DownloadType.FurtherEducation;
+    private readonly IFurtherEducationRepository _repository;
+
+    public FurtherEducationDatasetChecker(IFurtherEducationRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task<IEnumerable<Datasets>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
+    {
+        // Define which datasets are relevant for FurtherEducation
+        HashSet<Datasets> relevantDatasets = new()
+        {
+            Datasets.PupilPremium,
+            Datasets.SEN
+        };
+
+        HashSet<Datasets> datasets = new();
+        IEnumerable<FurtherEducationPupil> pupils = await _repository.GetPupilsByIdsAsync(pupilIds);
+
+        foreach (FurtherEducationPupil pupil in pupils)
+        {
+            if (pupil.PupilPremium.Any())
+                datasets.Add(Datasets.PupilPremium);
+
+            if (pupil.specialEducationalNeeds.Any())
+                datasets.Add(Datasets.SEN);
+
+            // Early exit: if all relevant datasets are found, break
+            if (relevantDatasets.All(datasets.Contains))
+                break;
+        }
+
+        return datasets;
+    }
+}
