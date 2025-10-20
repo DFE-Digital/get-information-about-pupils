@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
 using DfE.GIAP.SharedTests.TestDoubles;
 

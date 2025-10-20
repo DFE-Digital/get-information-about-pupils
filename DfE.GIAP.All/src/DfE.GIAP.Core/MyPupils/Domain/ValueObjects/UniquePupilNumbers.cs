@@ -3,10 +3,11 @@ public sealed class UniquePupilNumbers
 {
     private readonly HashSet<UniquePupilNumber> _uniquePupilNumbers;
 
-    public UniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
+    private UniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
         _uniquePupilNumbers = uniquePupilNumbers?.ToHashSet() ?? [];
     }
+
     public static UniquePupilNumbers Create(IEnumerable<UniquePupilNumber> uniquePupilNumbers) => new(uniquePupilNumbers);
 
     public int Count => _uniquePupilNumbers.Count;

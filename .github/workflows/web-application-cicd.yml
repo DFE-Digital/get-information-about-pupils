@@ -131,21 +131,27 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create .env file
+        shell: bash
+        run: |
+          echo "WIREMOCK_KEYSTORE_STOREPASSWORD=${{ secrets.WIREMOCK_KEYSTORE_STOREPASSWORD }}" >> .env
+          echo "WIREMOCK_KEYSTORE_KEYPASSWORD=${{ secrets.WIREMOCK_KEYSTORE_KEYPASSWORD }}" >> .env
+          echo "SHARED_CERTIFICATES=./certs" >> .env
+
       - name: Run Integration Tests with Coverage
         shell: bash
         run: |
           sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
           export DOCKER_BUILDKIT=1
-
-          # Build test image
-          docker build \
-          --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-          -t giap-web-integration-tests \
-          -f Dockerfile.IntegrationTests .
+          
+          # Initcontainer to generate certificates enabling WireMock
+          docker compose up --build certgenerator
 
           # Run tests
-          docker compose up --abort-on-container-exit --exit-code-from integration-tests
+          docker-compose up --build cosmosdb wiremock integration-tests \
+            --abort-on-container-exit \
+            --exit-code-from integration-tests
 
       - name: Upload integration test coverage report
         uses: actions/upload-artifact@v4

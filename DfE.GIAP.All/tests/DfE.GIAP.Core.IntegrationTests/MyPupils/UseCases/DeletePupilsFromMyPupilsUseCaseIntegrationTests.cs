@@ -1,12 +1,13 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
-using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
-using DfE.GIAP.Core.MyPupils;
+﻿using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests.Fixtures.CosmosDb;
+using DfE.GIAP.SharedTests.Fixtures.SearchIndex;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Extensions.Options;
 
@@ -23,19 +24,16 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
     }
 
-    private sealed record MyPupilsTestContext(SearchIndexFixture Fixture, UniquePupilNumbers MyPupilUpns, MyPupilsId MyPupilsId);
-    protected async override Task OnInitializeAsync(IServiceCollection services)
+    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, MyPupilsId MyPupilsId);
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
         services.AddMyPupilsDependencies();
 
         // Initialise fixture and pupils, store in context
-        SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+        List<AzureIndexEntity> npdSearchindexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
+        List<AzureIndexEntity> pupilPremiumIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
 
-        IEnumerable<AzureIndexEntity> npdSearchindexDtos = mockSearchFixture.StubNpdSearchIndex();
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = mockSearchFixture.StubPupilPremiumSearchIndex();
-
-        List<AzureIndexEntity> myPupils = npdSearchindexDtos.Concat(pupilPremiumSearchIndexDtos).ToList();
+        List<AzureIndexEntity> myPupils = npdSearchindexDtos.Concat(pupilPremiumIndexDtos).ToList();
 
         UniquePupilNumbers myPupilsUpns =
             UniquePupilNumbers.Create(
@@ -46,13 +44,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         await Fixture.Database.WriteItemAsync(myPupilsDocument);
 
-        _testContext = new MyPupilsTestContext(mockSearchFixture, myPupilsUpns, myPupilsId);
-    }
-
-    protected override Task OnDisposeAsync()
-    {
-        _testContext?.Fixture?.Dispose();
-        return Task.CompletedTask;
+        _testContext = new MyPupilsTestContext(myPupilsUpns, myPupilsId);
     }
 
     [Fact]
@@ -132,7 +124,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         List<string> deleteMultiplePupilIdentifiers =
         [
             myPupilUpns[0].Value,
-            null, // Unknown identifier not part of the list
+            null!, // Unknown identifier not part of the list
             myPupilUpns[myPupilUpns.Count - 1].Value
         ];
 
@@ -159,7 +151,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
     }
 
     /* TODO for DeleteAll
-     * 
+     *
      *     [Fact]
     public async Task DeletePupilsFromMyPupils_Deletes_All_Items_When_DeleteAll_Is_True()
     {

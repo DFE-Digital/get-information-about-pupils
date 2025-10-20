@@ -3,11 +3,12 @@
 namespace DfE.GIAP.Core.MyPupils.Application.Extensions;
 public static class UniquePupilNumberExtensions
 {
-    public static IEnumerable<UniquePupilNumber> ToUniquePupilNumbers(this IEnumerable<string> inputs)
+    public static List<UniquePupilNumber> ToUniquePupilNumbers(this IEnumerable<string> inputs)
     {
-        IEnumerable<UniquePupilNumber> upns =
+        List<UniquePupilNumber> upns =
             inputs.Where((upn) => TryCreateUpn(upn) is not null)
-                .Select((validatedUpn) => new UniquePupilNumber(validatedUpn));
+                .Select((validatedUpn) => new UniquePupilNumber(validatedUpn))
+                .ToList();
 
         return upns;
     }

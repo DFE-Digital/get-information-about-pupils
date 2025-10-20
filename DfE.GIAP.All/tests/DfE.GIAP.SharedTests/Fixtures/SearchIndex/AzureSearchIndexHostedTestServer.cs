@@ -1,16 +1,14 @@
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Text;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using WireMock.RequestBuilders;
-using WireMock.Server;
-using WireMock.Settings;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+namespace DfE.GIAP.SharedTests.Fixtures.SearchIndex;
+
 internal sealed class AzureSearchIndexHostedTestServer : IDisposable
 {
-    private readonly WireMockServer _server;
+    private static readonly HttpClient _httpClient = new() { BaseAddress = new Uri("https://localhost:8443") };
 
     public AzureSearchIndexHostedTestServer(IOptions<SearchIndexOptions> options)
     {
@@ -21,21 +19,9 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
         {
             throw new ArgumentException($"Unable to create Search Mock fixture with Url {options.Value.Url}");
         }
-
-
-        _server = WireMockServer.Start(new WireMockServerSettings
-        {
-            UseSSL = true, // required for connections through Azure.Search.SearchClient
-            CertificateSettings = new()
-            {
-                X509Certificate = new X509Certificate2("wiremock-cert.pfx", "yourpassword")
-            },
-            Port = result.Port,
-        });
     }
-    public string Url => _server.Urls[0];
 
-    public void StubSearchResponseForIndex(
+    public async Task StubSearchResponseForIndex(
         string indexName,
         IEnumerable<AzureIndexEntity> indexDocuments)
     {
@@ -55,19 +41,27 @@ internal sealed class AzureSearchIndexHostedTestServer : IDisposable
             }) ?? [],
         };
 
-        _server
-            .Given(Request.Create()
-                .WithPath($"/indexes('{indexName}')/docs/search.post.search")
-                .UsingPost())
-            .RespondWith(WireMock.ResponseBuilders.Response.Create()
-                .WithHeader("Content-Type", "application/json")
-                .WithBody(JsonConvert.SerializeObject(indexResponse))
-                .WithStatusCode(200));
+        var stub = new
+        {
+            request = new
+            {
+                method = "POST",
+                url = $"/indexes('{indexName}')/docs/search.post.search?api-version=2024-07-01",
+            },
+            response = new
+            {
+                status = 200,
+                headers = new Dictionary<string, string> { ["Content-Type"] = "application/json" },
+                jsonBody = indexResponse
+            }
+        };
+
+        StringContent content = new(JsonConvert.SerializeObject(stub), Encoding.UTF8, "application/json");
+        await _httpClient.PostAsync("/__admin/mappings", content);
     }
 
     public void Dispose()
     {
-        _server.Stop();
-        _server.Dispose();
+        // TODO Dispose
     }
 }

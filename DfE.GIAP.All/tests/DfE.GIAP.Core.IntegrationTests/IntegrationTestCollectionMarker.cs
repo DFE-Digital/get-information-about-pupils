@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+﻿using DfE.GIAP.SharedTests.Fixtures.CosmosDb;
 
 namespace DfE.GIAP.Core.IntegrationTests;
 [CollectionDefinition(Name)]

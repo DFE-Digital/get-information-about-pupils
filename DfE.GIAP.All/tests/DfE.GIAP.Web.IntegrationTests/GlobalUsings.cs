@@ -1,0 +1,12 @@
+﻿global using System.Net;
+global using AngleSharp.Html.Dom;
+global using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
+global using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
+global using DfE.GIAP.SharedTests.Fixtures.CosmosDb;
+global using DfE.GIAP.SharedTests.Fixtures.SearchIndex;
+global using DfE.GIAP.SharedTests.TestDoubles;
+global using DfE.GIAP.Web.IntegrationTests.Helpers;
+global using DfE.GIAP.Web.IntegrationTests.WebApplicationFactory;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Options;
+global using Xunit;

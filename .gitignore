@@ -9,6 +9,16 @@
 *.userosscache
 *.sln.docstates
 
+# Integration tests - certificates generated 
+certs/
+
+# Integration tests - Cobertura test results
+coverage-integration/
+*.cobertura.xml
+
+# Integration tests - Config
+.env
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -35,10 +45,6 @@ Generated\ Files/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
-# Integration tests - Cobertura test results
-coverage-integration/
-*.cobertura.xml
 
 # NUNIT
 *.VisualState.xml

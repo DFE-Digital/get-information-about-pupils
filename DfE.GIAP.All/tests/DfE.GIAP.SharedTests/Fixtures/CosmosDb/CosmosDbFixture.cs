@@ -1,15 +1,24 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Options;
+﻿using DfE.GIAP.SharedTests.Fixtures.CosmosDb.Databases;
+using DfE.GIAP.SharedTests.Fixtures.CosmosDb.Options;
+using Xunit;
 
-namespace DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+
+namespace DfE.GIAP.SharedTests.Fixtures.CosmosDb;
 public sealed class CosmosDbFixture : IAsyncLifetime
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public CosmosDbTestDatabase Database { get; private set; }
+    public DefaultCosmosDbTestDatabase Database { get; private set; }
+
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public async Task InitializeAsync()
     {
-        RepositoryOptions options = RepositoryOptionsFactory.LocalCosmosDbEmulator();
-        Database = new(options);
+        CosmosDbOptions options = CosmosDbOptionsProvider.DefaultLocalOptions();
+
+        Database = new DefaultCosmosDbTestDatabase(
+            options.Uri,
+            options.Key,
+            options.GetDatabaseOptionsByName(databaseName: "giapsearch"));
+
         await Database.StartAsync();
         await Database.ClearDatabaseAsync();
     }

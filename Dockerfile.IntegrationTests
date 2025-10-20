@@ -12,6 +12,7 @@ COPY ${PROJECT_PATH}/src/DfE.GIAP.Core/DfE.GIAP.Core.csproj ${PROJECT_PATH}/src/
 COPY ${PROJECT_PATH}/tests/Directory.Packages.props ${PROJECT_PATH}/tests/
 COPY ${PROJECT_PATH}/tests/DfE.GIAP.SharedTests/DfE.GIAP.SharedTests.csproj ${PROJECT_PATH}/tests/DfE.GIAP.SharedTests/
 COPY ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/
+COPY ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj ${PROJECT_PATH}/tests/DfE.GIAP.Core.IntegrationTests/
 
 # Use BuildKit secret for nuget.config
 RUN --mount=type=secret,id=nuget_config \
