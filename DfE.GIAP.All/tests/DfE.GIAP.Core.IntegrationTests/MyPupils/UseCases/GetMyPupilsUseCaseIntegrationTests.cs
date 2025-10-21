@@ -1,8 +1,5 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.IntegrationTests.Fixture.Configuration;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
-using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -13,37 +10,32 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
+using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 [Collection(IntegrationTestCollectionMarker.Name)]
-public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<ConfigurationFixture>
+public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly ConfigurationFixture _configFixture;
     private readonly CosmosDbFixture _cosmosDbFixture;
     private SearchIndexFixture _mockSearchFixture = null!;
 
-    public GetMyPupilsUseCaseIntegrationTests(
-        CosmosDbFixture cosmosDbFixture,
-        ConfigurationFixture configurationFixture)
+    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
-        _configFixture = configurationFixture;
         _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        SearchIndexFixture searchIndexFixture = new();
-        _mockSearchFixture = searchIndexFixture;
+        _mockSearchFixture = new();
 
         services
-            .AddSharedTestDependencies(
-                SearchIndexOptionsStub.StubFor(searchIndexFixture.BaseUrl))
+            .AddSharedTestDependencies()
             .AddCosmosDbDependencies()
             .AddMyPupilsDependencies()
-            .AddSearchDependencies(_configFixture.Configuration)
             .ConfigureAzureSearchClients();
 
         return Task.CompletedTask;
@@ -53,10 +45,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest, IC
     public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
         IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
-        _mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+        await _mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
 
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
-        _mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
+        await _mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         UserId userId = UserIdTestDoubles.Default();
 

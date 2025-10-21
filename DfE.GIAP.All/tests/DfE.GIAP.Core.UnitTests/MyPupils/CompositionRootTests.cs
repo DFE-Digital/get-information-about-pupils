@@ -14,35 +14,16 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Aggregate
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
 using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
-public sealed class CompositionRootTests : IClassFixture<ConfigBuilder>
+public sealed class CompositionRootTests
 {
-    private readonly IConfiguration _configuration;
-
-    private static Dictionary<string, string?> InMemoryConfig =>
-        new()
-        {
-            { "AzureSearchOptions:SearchIndex", "idx-further-education-v3" },
-            { "SearchIndexOptions:Url", "https://localhost:4444/" },
-            { "SearchIndexOptions:Key", "SEFSOFOIWSJFSO" },
-            { "SearchIndexOptions:Indexes:npd:Name", "npd" },
-            { "SearchIndexOptions:Indexes:pupil-premium:Name", "pupil-premium-index" },
-            { "SearchIndexOptions:Indexes:further-education:Name", "further-education" }
-        };
-
-    public CompositionRootTests(ConfigBuilder configBuilder)
-    {
-        _configuration = configBuilder.SetupConfiguration(InMemoryConfig);
-    }
-
     [Fact]
     public void ThrowsArgumentNullException_When_ServicesIsNull()
     {
@@ -55,11 +36,16 @@ public sealed class CompositionRootTests : IClassFixture<ConfigBuilder>
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
+        IConfiguration configuration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+            .WithSearchIndexOptions()
+            .Build();
+
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddSearchDependencies(_configuration)
+                .AddSearchDependencies(configuration)
                 .AddCosmosDbDependencies()
-                .AddSharedTestDependencies(InMemoryConfig!)
+                .AddSharedTestDependencies()
                 .AddMyPupilsDependencies();
 
         // Act

@@ -1,33 +1,34 @@
-﻿using DfE.GIAP.Core.IntegrationTests.Fixture.Configuration;
-using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+﻿
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
+using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
-public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, IClassFixture<ConfigurationFixture>
+public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly ConfigurationFixture _configFixture;
     private SearchIndexFixture _mockSearchFixture = null!;
 
-    public SearchByKeyWordsUseCaseIntegrationTests(ConfigurationFixture configurationFixture) : base()
-    {
-        _configFixture = configurationFixture;
-    }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
         _mockSearchFixture = new();
 
+        IConfiguration searchConfiguration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+                .WithSearchIndexOptions()
+                .WithAzureSearchOptions()
+                .WithAzureSearchConnectionOptions()
+                .WithSearchCriteriaOptions()
+                .Build();
+
         services
-            .AddSharedTestDependencies(
-                SearchIndexOptionsStub.StubFor(_mockSearchFixture.BaseUrl))
-            .AddSearchDependencies(_configFixture.Configuration);
+            .AddSearchDependencies(searchConfiguration);
 
         return Task.CompletedTask;
     }
@@ -35,9 +36,10 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
     [Fact]
     public async Task SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
     {
+        await _mockSearchFixture.StubAvailableIndexes(["FE_INDEX_NAME"]);
+
         IEnumerable<AzureIndexEntity> furtherEducationSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 30);
-        _mockSearchFixture.StubFurtherEducationSearchIndex(furtherEducationSearchIndexDtos);
-        _mockSearchFixture.StubAvailableIndexes(["further-education"]);
+        await _mockSearchFixture.StubFurtherEducationIndex(furtherEducationSearchIndexDtos);
 
         IUseCase<SearchRequest, SearchResponse> sut =
             ResolveTypeFromScopedContext<IUseCase<SearchRequest, SearchResponse>>()!;
@@ -49,7 +51,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest, ICla
         SearchResponse response = await sut.HandleRequestAsync(request);
 
         // assert
-        Assert.NotNull(response);
         Assert.NotNull(response);
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(SearchResponseStatus.Success, response.Status);

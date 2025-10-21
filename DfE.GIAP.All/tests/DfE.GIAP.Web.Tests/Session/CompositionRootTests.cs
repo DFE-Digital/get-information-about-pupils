@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests;
+﻿using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Session;
 using DfE.GIAP.Web.Session.Abstraction;
 using DfE.GIAP.Web.Session.Abstraction.Command;

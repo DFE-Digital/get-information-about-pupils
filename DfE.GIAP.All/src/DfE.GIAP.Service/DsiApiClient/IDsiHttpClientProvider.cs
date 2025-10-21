@@ -1,9 +1,6 @@
-﻿using System.Net.Http;
+﻿namespace DfE.GIAP.Service.DsiApiClient;
 
-namespace DfE.GIAP.Service.DsiApiClient
+public interface IDsiHttpClientProvider
 {
-    public interface IDsiHttpClientProvider
-    {
-        HttpClient CreateHttpClient();
-    }
+    HttpClient CreateHttpClient();
 }
