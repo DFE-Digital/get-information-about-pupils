@@ -5,4 +5,14 @@ namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPu
 
 public record GetAvailableDatasetsForPupilsRequest(
     DownloadType DownloadType,
-    IEnumerable<string> SelectedPupils) : IUseCaseRequest<GetAvailableDatasetsForPupilsResponse>;
+    IEnumerable<string> SelectedPupils,
+    IAuthorisationContext AuthorisationContext) : IUseCaseRequest<GetAvailableDatasetsForPupilsResponse>;
+
+public interface IAuthorisationContext
+{
+    string Role { get; }
+    public bool IsDfeUser { get; }
+    int StatutoryAgeLow { get; }
+    int StatutoryAgeHigh { get; }
+    IReadOnlyCollection<string> Claims { get; }
+}

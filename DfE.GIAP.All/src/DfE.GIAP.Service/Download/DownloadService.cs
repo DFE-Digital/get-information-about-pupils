@@ -17,20 +17,17 @@ public class DownloadService : IDownloadService
     private readonly IApiService _apiProcessorService;
     private readonly IEventLogging _eventLogging;
     private readonly IHostEnvironment _hostEnvironment;
-    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
-
+    
     public DownloadService(
         IOptions<AzureAppSettings> azureFunctionUrls,
         IApiService apiProcessorService,
         IEventLogging eventLogging,
-        IHostEnvironment hostEnvironment,
-        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
+        IHostEnvironment hostEnvironment)
     {
         _azureAppSettings = azureFunctionUrls.Value;
         _apiProcessorService = apiProcessorService;
         _eventLogging = eventLogging;
         _hostEnvironment = hostEnvironment;
-        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
 
@@ -161,10 +158,6 @@ public class DownloadService : IDownloadService
     public async Task<IEnumerable<DownloadUlnDataType>> CheckForFENoDataAvailable(string[] selectedPupils, string[] selectedDownloadOptions, AzureFunctionHeaderDetails azureFunctionHeaderDetails)
     {
         var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
-
-        // TODO: Do the initial use-case datatype check here
-        GetAvailableDatasetsForPupilsRequest request = new(Core.Downloads.Application.Enums.DownloadType.FurtherEducation, selectedPupils);
-        GetAvailableDatasetsForPupilsResponse responseTest = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
 
         var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, CheckOnly = true };
 

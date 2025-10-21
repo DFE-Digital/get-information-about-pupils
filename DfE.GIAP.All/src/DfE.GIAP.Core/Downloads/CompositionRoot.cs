@@ -41,6 +41,7 @@ public static class CompositionRoot
     {
         services.AddScoped<IDatasetAvailabilityChecker, FurtherEducationDatasetChecker>();
         services.AddScoped<IDatasetAvailabilityCheckerFactory, DatasetAvailabilityCheckerFactory>();
+        services.AddScoped<IDatasetAccessEvaluator, DatasetAccessEvaluator>();
 
         return services;
     }

@@ -23,11 +23,8 @@ public class FurtherEducationDatasetChecker : IDatasetAvailabilityChecker
     public async Task<IEnumerable<Datasets>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
     {
         // Define which datasets are relevant for FurtherEducation
-        HashSet<Datasets> relevantDatasets = new()
-        {
-            Datasets.PupilPremium,
-            Datasets.SEN
-        };
+        IReadOnlyCollection<Datasets> relevantDatasets = DownloadDatasetMap
+            .GetSupportedDatasets(SupportedDownloadType);
 
         HashSet<Datasets> datasets = new();
         IEnumerable<FurtherEducationPupil> pupils = await _repository.GetPupilsByIdsAsync(pupilIds);
