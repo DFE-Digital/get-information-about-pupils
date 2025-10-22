@@ -14,7 +14,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private SearchIndexFixture _mockSearchFixture = null!;
 
-
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
         _mockSearchFixture = new();
@@ -38,13 +37,17 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
     {
         await _mockSearchFixture.StubAvailableIndexes(["FE_INDEX_NAME"]);
 
-        IEnumerable<AzureIndexEntity> furtherEducationSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 30);
-        await _mockSearchFixture.StubFurtherEducationIndex(furtherEducationSearchIndexDtos);
+        List<AzureIndexEntity> furtherEducationSearchIndexDtos =
+            await _mockSearchFixture.StubFurtherEducationIndex(values: AzureIndexEntityDtosTestDoubles.Generate(count: 30));
 
         IUseCase<SearchRequest, SearchResponse> sut =
             ResolveTypeFromScopedContext<IUseCase<SearchRequest, SearchResponse>>()!;
 
-        SortOrder sortOrder = new(sortField: "Forename", sortDirection: "desc", ["Forename", "Surname"]);
+        SortOrder sortOrder = new(
+            sortField: "Forename",
+            sortDirection: "desc",
+            validSortFields: ["Forename", "Surname"]);
+
         SearchRequest request = new(searchKeywords: "test", sortOrder);
 
         // act

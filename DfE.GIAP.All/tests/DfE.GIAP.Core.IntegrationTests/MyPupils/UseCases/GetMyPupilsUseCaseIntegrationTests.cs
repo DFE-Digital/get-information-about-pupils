@@ -7,7 +7,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
@@ -35,8 +34,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         services
             .AddSharedTestDependencies()
             .AddCosmosDbDependencies()
-            .AddMyPupilsDependencies()
-            .ConfigureAzureSearchClients();
+            .AddMyPupilsDependencies();
 
         return Task.CompletedTask;
     }

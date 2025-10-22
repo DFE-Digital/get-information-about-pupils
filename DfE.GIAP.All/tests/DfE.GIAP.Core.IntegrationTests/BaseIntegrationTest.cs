@@ -43,6 +43,16 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     }
 
     /// <summary>
+    /// Called by xUnit after all tests have run.
+    /// Disposes the service scope and calls the derived class cleanup hook.
+    /// </summary>
+    public async Task DisposeAsync()
+    {
+        _testServicesScope?.Dispose();
+        await OnDisposeAsync();
+    }
+
+    /// <summary>
     /// Hook for derived classes to add additional service registrations asynchronously.
     /// Default implementation does nothing.
     /// </summary>
@@ -91,15 +101,5 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
             .AddCosmosDbDependencies()
             .AddSharedTestDependencies()
             .ConfigureAzureSearchClients();
-    }
-
-    /// <summary>
-    /// Called by xUnit after all tests have run.
-    /// Disposes the service scope and calls the derived class cleanup hook.
-    /// </summary>
-    public async Task DisposeAsync()
-    {
-        _testServicesScope?.Dispose();
-        await OnDisposeAsync();
     }
 }

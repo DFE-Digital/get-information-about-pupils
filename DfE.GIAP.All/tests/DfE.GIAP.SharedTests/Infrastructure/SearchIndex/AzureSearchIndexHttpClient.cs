@@ -4,8 +4,7 @@ using Newtonsoft.Json;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
-// TODO options dictate uri, serialiser
-internal sealed class AzureSearchIndexClient : IDisposable
+internal sealed class AzureSearchIndexHttpClient : IDisposable
 {
     private static readonly HttpClient _httpClient = new()
     {
@@ -16,7 +15,10 @@ internal sealed class AzureSearchIndexClient : IDisposable
     {
         var responseBody = new
         {
-            value = indexNames.Select(name => new { name })
+            value = indexNames.Select((name) => new
+            {
+                name
+            })
         };
 
         var stub = new
@@ -57,6 +59,7 @@ internal sealed class AzureSearchIndexClient : IDisposable
                 @searchScore = t.Score,
                 t.id,
                 t.UPN,
+                t.ULN,
                 t.Surname,
                 t.Forename,
                 t.Sex,
@@ -86,6 +89,7 @@ internal sealed class AzureSearchIndexClient : IDisposable
 
     public void Dispose()
     {
-        // TODO Dispose
+        // TODO dispose?
+        //_httpClient.Dispose();
     }
 }
