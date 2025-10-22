@@ -24,9 +24,8 @@ public static class CompositionRoot
 
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
-            .WithLocalCosmosDbOptions()
-            // TODO these aren't shared test dependencies? so really we need to pass IConfiguration into this method and have the caller merge in their own config
-            .WithSearchIndexOptions()
+            .WithLocalCosmosDbOptions() // TODO below this are not shared dependencies, should allow client to pass their own configuration and merge in
+            .WithSearchIndexOptions() 
             .WithAzureSearchConnectionOptions()
             .WithAzureSearchOptions()
             .WithSearchCriteriaOptions()
