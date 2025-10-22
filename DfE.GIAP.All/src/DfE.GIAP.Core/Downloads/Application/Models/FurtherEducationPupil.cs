@@ -10,4 +10,7 @@ public class FurtherEducationPupil
     public string? ConcatenatedName { get; set; }
     public List<PupilPremiumEntry> PupilPremium { get; set; } = new();
     public List<SpecialEducationalNeedsEntry> specialEducationalNeeds { get; set; } = new();
+
+    public bool HasPupilPremiumData => PupilPremium.Any();
+    public bool HasSpecialEducationalNeedsData => specialEducationalNeeds.Any();
 }

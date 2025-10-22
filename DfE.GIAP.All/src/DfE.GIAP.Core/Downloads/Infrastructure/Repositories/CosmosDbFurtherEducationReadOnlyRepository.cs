@@ -32,8 +32,8 @@ public class CosmosDbFurtherEducationReadOnlyRepository : IFurtherEducationRepos
     {
         try
         {
-
-            string query = $"SELECT * FROM c WHERE c.ULN IN ({string.Join(",", pupilIds.Select(id => $"'{id}'"))})";
+            IEnumerable<string> formattedIds = pupilIds.Select(id => $"'{id}'");
+            string query = $"SELECT * FROM c WHERE c.ULN IN ({string.Join(",", formattedIds)})";
             IEnumerable<FurtherEducationPupilDto> queryResult = await _cosmosDbQueryHandler.ReadItemsAsync<FurtherEducationPupilDto>(ContainerKey, query);
 
             IEnumerable<FurtherEducationPupil> mappedResponse = queryResult.Select(_dtoToEntityMapper.Map);

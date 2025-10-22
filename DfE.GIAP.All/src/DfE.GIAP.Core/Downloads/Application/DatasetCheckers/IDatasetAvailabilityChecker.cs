@@ -31,10 +31,10 @@ public class FurtherEducationDatasetChecker : IDatasetAvailabilityChecker
 
         foreach (FurtherEducationPupil pupil in pupils)
         {
-            if (pupil.PupilPremium.Any())
+            if (pupil.HasPupilPremiumData)
                 datasets.Add(Datasets.PP);
 
-            if (pupil.specialEducationalNeeds.Any())
+            if (pupil.HasSpecialEducationalNeedsData)
                 datasets.Add(Datasets.SEN);
 
             // Early exit: if all relevant datasets are found, break

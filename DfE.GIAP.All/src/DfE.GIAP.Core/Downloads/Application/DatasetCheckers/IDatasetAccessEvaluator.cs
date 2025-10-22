@@ -19,12 +19,12 @@ public class DatasetAccessEvaluator : IDatasetAccessEvaluator
         // Age-based access rules
         return dataset switch
         {
-            Datasets.EYFSP => IsAgeRangeValid(authorisationContext, 2, 10, 3, 25),
-            Datasets.KS1 => IsAgeRangeValid(authorisationContext, 2, 13, 6, 25),
-            Datasets.KS2 => IsAgeRangeValid(authorisationContext, 2, 15, 6, 25),
-            Datasets.KS4 => IsAgeRangeValid(authorisationContext, 2, 17, 12, 25),
-            Datasets.Phonics => IsAgeRangeValid(authorisationContext, 2, 10, 3, 25),
-            Datasets.MTC => IsAgeRangeValid(authorisationContext, 2, 14, 4, 25),
+            Datasets.EYFSP => IsAgeRangeValid(authorisationContext: authorisationContext, minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25),
+            Datasets.KS1 => IsAgeRangeValid(authorisationContext: authorisationContext, minLow: 2, maxLow: 13, minHigh: 6, maxHigh: 25),
+            Datasets.KS2 => IsAgeRangeValid(authorisationContext: authorisationContext, minLow: 2, maxLow: 15, minHigh: 6, maxHigh: 25),
+            Datasets.KS4 => IsAgeRangeValid(authorisationContext: authorisationContext, minLow: 2, maxLow: 17, minHigh: 12, maxHigh: 25),
+            Datasets.Phonics => IsAgeRangeValid(authorisationContext: authorisationContext, minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25),
+            Datasets.MTC => IsAgeRangeValid(authorisationContext: authorisationContext, minLow: 2, maxLow: 14, minHigh: 4, maxHigh: 25),
 
             // ULN-based access rules
             Datasets.PP => authorisationContext.StatutoryAgeHigh >= 14,
