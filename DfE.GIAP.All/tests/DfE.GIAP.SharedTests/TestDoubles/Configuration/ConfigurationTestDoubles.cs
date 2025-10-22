@@ -1,44 +1,34 @@
-﻿using Azure.Search.Documents.Indexes.Models;
-using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
+﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Memory;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
 public static class ConfigurationTestDoubles
 {
     public static IConfigurationBuilder DefaultConfigurationBuilder() => new ConfigurationBuilder();
 
-    private static void WithConfiguration(this IConfigurationBuilder builder, Dictionary<string, string> config)
-    {
-        builder.Add(
-            new MemoryConfigurationSource() { InitialData = config! });
-    }
-
     public static IConfigurationBuilder WithFeatureFlagsOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> featureFlagStubConfig = new()
+        Dictionary<string, string?> featureFlagStubConfig = new()
         {
             ["FeatureFlagAppConfigUrl"] = "Endpoint=https://featureflags.azconfig.io;Id=ID;Secret=SECRET",
         };
 
-        builder.WithConfiguration(featureFlagStubConfig);
+        builder.AddConfiguration(featureFlagStubConfig);
 
         return builder;
     }
 
-    // NOTE these are not secrets just stubbed data
     public static IConfigurationBuilder WithStorageAccountOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> storageAccountStubConfig = new()
+        Dictionary<string, string?> storageAccountStubConfig = new()
         {
             ["StorageAccountName"] = "AZURE_STORAGE_ACCOUNTNAME",
-            ["StorageAccountKey"] =
-                "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;",
+            ["StorageAccountKey"] = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;",
             ["StorageContainerName"] = "AZURE_STORAGE_CONTAINERNAME",
         };
 
-        builder.WithConfiguration(storageAccountStubConfig);
+        builder.AddConfiguration(storageAccountStubConfig);
 
         return builder;
     }
@@ -46,7 +36,7 @@ public static class ConfigurationTestDoubles
     // TODO migrate to using AzureSearchIndexOptions
     public static IConfigurationBuilder WithSearchIndexOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> searchIndexStubConfig = new()
+        Dictionary<string, string?> searchIndexStubConfig = new()
         {
             ["SearchIndexOptions:Url"] = "https://localhost:8443",
             ["SearchIndexOptions:Key"] = "ANY_KEY",
@@ -55,28 +45,28 @@ public static class ConfigurationTestDoubles
             ["SearchIndexOptions:Indexes:further-education:Name"] = "FE_INDEX_NAME",
         };
 
-        builder.WithConfiguration(searchIndexStubConfig);
+        builder.AddConfiguration(searchIndexStubConfig);
 
         return builder;
     }
 
     public static IConfigurationBuilder WithAzureSearchConnectionOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> searchConnectionStubConfig = new()
+        Dictionary<string, string?> searchConnectionStubConfig = new()
         {
             // AzureSearchConnectionOptions: Connection details for Azure Search
             ["AzureSearchConnectionOptions:EndpointUri"] = "https://localhost:8443",
             ["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
 
-        builder.WithConfiguration(searchConnectionStubConfig);
+        builder.AddConfiguration(searchConnectionStubConfig);
 
         return builder;
     }
 
     public static IConfigurationBuilder WithAzureSearchOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> azureSearchConnectionStubConfig = new()
+        Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {
             // AzureSearchOptions: Parameters controlling search behavior
             ["AzureSearchOptions:SearchIndex"] = "FE_INDEX_NAME",
@@ -85,14 +75,14 @@ public static class ConfigurationTestDoubles
             ["AzureSearchOptions:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
-        builder.WithConfiguration(azureSearchConnectionStubConfig);
+        builder.AddConfiguration(azureSearchConnectionStubConfig);
 
         return builder;
     }
 
     public static IConfigurationBuilder WithSearchCriteriaOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> searchCriteriaStub = new()
+        Dictionary<string, string?> searchCriteriaStub = new()
         {
             // SearchCriteria: Fields and facets used in search queries
             ["SearchCriteria:SearchFields:0"] = "Forename",
@@ -103,7 +93,7 @@ public static class ConfigurationTestDoubles
             ["SearchCriteria:Facets:3"] = "Sex",
         };
 
-        builder.WithConfiguration(searchCriteriaStub);
+        builder.AddConfiguration(searchCriteriaStub);
 
         return builder;
     }
@@ -112,7 +102,7 @@ public static class ConfigurationTestDoubles
     {
         CosmosDbOptions options = CosmosDbOptionsProvider.DefaultLocalOptions();
 
-        Dictionary<string, string> configurationOptions = new()
+        Dictionary<string, string?> configurationOptions = new()
         {
             ["RepositoryOptions:ConnectionMode"] = "1",
             ["RepositoryOptions:EndpointUri"] = options.Uri.ToString(),
@@ -131,13 +121,13 @@ public static class ConfigurationTestDoubles
         }
 
 
-        builder.WithConfiguration(configurationOptions);
+        builder.AddConfiguration(configurationOptions);
         return builder;
     }
 
     public static IConfigurationBuilder WithDsiOptions(this IConfigurationBuilder builder)
     {
-        Dictionary<string, string> dsiStubConfig = new()
+        Dictionary<string, string?> dsiStubConfig = new()
         {
             ["DsiClientId"] = "test-client-id",
             ["DsiClientSecret"] = "client_secret",
@@ -146,7 +136,7 @@ public static class ConfigurationTestDoubles
             ["DsiServiceId"] = "SERVICE_ID",
         };
 
-        builder.WithConfiguration(dsiStubConfig);
+        builder.AddConfiguration(dsiStubConfig);
         return builder;
     }
 }

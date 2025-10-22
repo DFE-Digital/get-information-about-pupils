@@ -6,6 +6,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Configuration;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
