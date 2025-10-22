@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration.Memory;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Memory;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
 internal static class IConfigurationBuilderExtensions

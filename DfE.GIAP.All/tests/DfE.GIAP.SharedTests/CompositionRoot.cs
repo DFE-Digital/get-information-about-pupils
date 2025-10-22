@@ -26,14 +26,14 @@ public static class CompositionRoot
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithLocalCosmosDbOptions() // TODO below this are not shared dependencies, should allow client to pass their own configuration and merge in
-                .WithSearchIndexOptions() 
+                .WithSearchIndexOptions()
                 .WithAzureSearchConnectionOptions()
                 .WithAzureSearchOptions()
                 .WithSearchCriteriaOptions()
                 .Build();
 
         services.AddSingleton(configuration);
-        services.AddSingleton(sp => sp.GetRequiredService<IOptions<SearchCriteria>>().Value); // TODO What uses this?
+        services.AddSingleton((sp) => sp.GetRequiredService<IOptions<SearchCriteria>>().Value); // TODO What uses this?
 
         return services;
     }
