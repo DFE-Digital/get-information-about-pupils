@@ -27,7 +27,7 @@ public class DatasetAccessEvaluator : IDatasetAccessEvaluator
             Datasets.MTC => IsAgeRangeValid(authorisationContext, 2, 14, 4, 25),
 
             // ULN-based access rules
-            Datasets.PupilPremium => authorisationContext.StatutoryAgeHigh >= 14,
+            Datasets.PP => authorisationContext.StatutoryAgeHigh >= 14,
             Datasets.SEN => authorisationContext.StatutoryAgeHigh >= 14,
 
             // Datasets with no restrictions until further notice

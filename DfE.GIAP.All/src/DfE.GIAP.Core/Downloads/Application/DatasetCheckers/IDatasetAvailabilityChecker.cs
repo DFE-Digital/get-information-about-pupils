@@ -32,7 +32,7 @@ public class FurtherEducationDatasetChecker : IDatasetAvailabilityChecker
         foreach (FurtherEducationPupil pupil in pupils)
         {
             if (pupil.PupilPremium.Any())
-                datasets.Add(Datasets.PupilPremium);
+                datasets.Add(Datasets.PP);
 
             if (pupil.specialEducationalNeeds.Any())
                 datasets.Add(Datasets.SEN);

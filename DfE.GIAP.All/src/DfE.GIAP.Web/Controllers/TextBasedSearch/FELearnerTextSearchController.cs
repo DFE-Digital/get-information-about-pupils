@@ -171,7 +171,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
         string selectedPupil,
         string searchText)
     {
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupil,
             LearnerNumber = selectedPupil,
@@ -184,7 +184,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
 
         GetAvailableDatasetsForPupilsRequest request = new(
             DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
-            SelectedPupils: new string[] { selectedPupil },
+            SelectedPupils: new List<string> { selectedPupil },
             AuthorisationContext: new HttpClaimsAuthorisationContext(User));
         GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
 
@@ -193,7 +193,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
             searchDownloadViewModel.SearchDownloadDatatypes.Add(new SearchDownloadDataType
             {
                 Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
-                Value = datasetResult.ToString(),
+                Value = datasetResult.Dataset.ToString(),
                 Disabled = !datasetResult.HasData,
                 CanDownload = datasetResult.CanDownload
             });

@@ -20,8 +20,8 @@ public enum Datasets
     KS4,
     [Description("Phonics")]
     Phonics,
-    [Description("Pupil  Premium")]
-    PupilPremium,
+    [Description("Pupil Premium")]
+    PP,
     [Description("MTC")]
     MTC,
     [Description("Special Educational Needs")]

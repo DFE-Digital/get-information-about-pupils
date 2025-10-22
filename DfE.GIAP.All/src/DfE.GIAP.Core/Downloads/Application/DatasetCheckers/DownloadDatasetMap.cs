@@ -11,12 +11,12 @@ public static class DownloadDatasetMap
     {
         [DownloadType.FurtherEducation] = new()
         {
-            Datasets.PupilPremium,
+            Datasets.PP,
             Datasets.SEN
         },
         [DownloadType.PupilPremium] = new()
         {
-            Datasets.PupilPremium
+            Datasets.PP
         },
         [DownloadType.NPD] = new()
         {
