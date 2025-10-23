@@ -1,36 +1,44 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Downloads.Application.DatasetCheckers;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 
 public class GetAvailableDatasetsForPupilsUseCase : IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>
 {
-    private readonly IDatasetAvailabilityCheckerFactory _factory;
-    private readonly IDatasetAccessEvaluator _accessEvaluator;
+    private readonly IDatasetAvailabilityProviderFactory _datasetAvailabilityHandlerFactory;
+    private readonly IDatasetAuthorisationService _datasetAccessService;
 
     public GetAvailableDatasetsForPupilsUseCase(
-        IDatasetAvailabilityCheckerFactory factory,
-        IDatasetAccessEvaluator accessEvaluator)
+        IDatasetAvailabilityProviderFactory datasetAvailabilityFactory,
+        IDatasetAuthorisationService datasetAccessService)
     {
-        _factory = factory;
-        _accessEvaluator = accessEvaluator;
+        _datasetAvailabilityHandlerFactory = datasetAvailabilityFactory;
+        _datasetAccessService = datasetAccessService;
     }
-
 
     public async Task<GetAvailableDatasetsForPupilsResponse> HandleRequestAsync(GetAvailableDatasetsForPupilsRequest request)
     {
-        IDatasetAvailabilityChecker datasetChecker = _factory.GetDatasetChecker(request.DownloadType);
-        IEnumerable<Datasets> availableDatasets = await datasetChecker.GetAvailableDatasetsAsync(request.SelectedPupils);
+        IDatasetAvailabilityHandler datasetAvailabilityHandler = _datasetAvailabilityHandlerFactory.GetDatasetAvailabilityHandler(request.DownloadType);
+        IEnumerable<Dataset> datasetsWithData = await datasetAvailabilityHandler.GetAvailableDatasetsAsync(request.SelectedPupils);
 
-        IReadOnlyCollection<Datasets> supportedDatasets = DownloadDatasetMap.GetSupportedDatasets(request.DownloadType);
-
-        IEnumerable<AvailableDatasetResult> results = supportedDatasets.Select(dataset => new AvailableDatasetResult(
-            Dataset: dataset,
-            HasData: availableDatasets.Contains(dataset),
-            CanDownload: availableDatasets.Contains(dataset) && _accessEvaluator.CanDownload(request.AuthorisationContext, dataset)
-        ));
+        IReadOnlyCollection<Dataset> supportedDatasets = AvailableDatasetsByDownloadType.GetSupportedDatasets(request.DownloadType);
+        IEnumerable<AvailableDatasetResult> results = BuildDatasetResults(datasetsWithData, supportedDatasets, request.AuthorisationContext);
 
         return new GetAvailableDatasetsForPupilsResponse(results);
+    }
+
+    private IEnumerable<AvailableDatasetResult> BuildDatasetResults(
+    IEnumerable<Dataset> datasetsWithData,
+    IReadOnlyCollection<Dataset> supportedDatasets,
+    IAuthorisationContext context)
+    {
+        return supportedDatasets.Select(dataset => new AvailableDatasetResult(
+            Dataset: dataset,
+            HasData: datasetsWithData.Contains(dataset),
+            CanDownload: datasetsWithData.Contains(dataset) && _datasetAccessService.CanDownload(context, dataset)
+        ));
     }
 }

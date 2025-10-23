@@ -1,6 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Downloads.Application.DatasetCheckers;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
@@ -39,9 +41,9 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterApplicationDatasetCheckers(this IServiceCollection services)
     {
-        services.AddScoped<IDatasetAvailabilityChecker, FurtherEducationDatasetChecker>();
-        services.AddScoped<IDatasetAvailabilityCheckerFactory, DatasetAvailabilityCheckerFactory>();
-        services.AddScoped<IDatasetAccessEvaluator, DatasetAccessEvaluator>();
+        services.AddScoped<IDatasetAvailabilityHandler, FurtherEducationDatasetHandler>();
+        services.AddScoped<IDatasetAvailabilityProviderFactory, DatasetAvailabilityHandlerFactory>();
+        services.AddScoped<IDatasetAuthorisationService, DatasetAccessService>();
 
         return services;
     }

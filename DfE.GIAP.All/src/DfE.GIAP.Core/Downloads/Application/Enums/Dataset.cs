@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Downloads.Application.Enums;
 
-public enum Datasets
+public enum Dataset
 {
     [Description("Autumn Census")]
     CensusAutumn,

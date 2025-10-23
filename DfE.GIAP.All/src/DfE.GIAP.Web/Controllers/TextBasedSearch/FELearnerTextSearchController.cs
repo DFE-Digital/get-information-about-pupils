@@ -194,7 +194,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
             {
                 Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
                 Value = datasetResult.Dataset.ToString(),
-                Disabled = datasetResult.CanDownload,
+                Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
             });
         }
 

@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
 using DfE.GIAP.Web.Extensions;
 
 namespace DfE.GIAP.Web.Helpers;

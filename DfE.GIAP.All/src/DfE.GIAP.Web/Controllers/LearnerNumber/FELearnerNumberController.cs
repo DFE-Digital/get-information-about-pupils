@@ -215,8 +215,7 @@ public class FELearnerNumberController : BaseLearnerNumberController
                 {
                     Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
                     Value = datasetResult.Dataset.ToString(),
-                    Disabled = !datasetResult.HasData,
-                    CanDownload = datasetResult.CanDownload
+                    Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
                 });
             }
         }

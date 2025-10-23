@@ -4,4 +4,4 @@ namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPu
 
 public record GetAvailableDatasetsForPupilsResponse(IEnumerable<AvailableDatasetResult> AvailableDatasets);
 
-public record AvailableDatasetResult(Datasets Dataset, bool HasData, bool CanDownload);
+public record AvailableDatasetResult(Dataset Dataset, bool HasData, bool CanDownload);
