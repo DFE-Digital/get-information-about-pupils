@@ -1,24 +1,50 @@
 ﻿using System.Text;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
-internal sealed class AzureSearchIndexServer : IDisposable
+internal sealed class AzureSearchIndexHttpClient : IDisposable
 {
-    private static readonly HttpClient _httpClient = new() { BaseAddress = new Uri("https://localhost:8443") };
-
-    public AzureSearchIndexServer(IOptions<SearchIndexOptions> options)
+    private static readonly HttpClient _httpClient = new()
     {
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Value);
+        BaseAddress = new Uri("https://localhost:8443")
+    };
 
-        if (!Uri.TryCreate(options.Value.Url, uriKind: UriKind.Absolute, out Uri? result))
+    public async Task StubIndexListResponse(params string[] indexNames)
+    {
+        var responseBody = new
         {
-            throw new ArgumentException($"Unable to create Search Mock fixture with Url {options.Value.Url}");
-        }
+            value = indexNames.Select((name) => new
+            {
+                name
+            })
+        };
+
+        var stub = new
+        {
+            request = new
+            {
+                method = "GET",
+                url = "/indexes?$select=name&api-version=2025-09-01"
+            },
+            response = new
+            {
+                status = 200,
+                headers = new Dictionary<string, string>
+                {
+                    ["Content-Type"] = "application/json"
+                },
+                jsonBody = responseBody
+            }
+        };
+
+        StringContent content = new(
+            content: JsonConvert.SerializeObject(stub),
+            encoding: Encoding.UTF8,
+            mediaType: "application/json");
+
+        await _httpClient.PostAsync("/__admin/mappings", content);
     }
 
     public async Task StubSearchResponseForIndex(
@@ -62,6 +88,7 @@ internal sealed class AzureSearchIndexServer : IDisposable
 
     public void Dispose()
     {
-        // TODO Dispose
+        // TODO dispose?
+        //_httpClient.Dispose();
     }
 }

@@ -35,8 +35,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
         // Arrange
-        using SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+        using SearchIndexFixture mockSearchFixture = new();
 
         IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
         await mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
@@ -92,8 +91,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
-        using SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+        using SearchIndexFixture mockSearchFixture = new();
 
         UserId userId = UserIdTestDoubles.Default();
 
