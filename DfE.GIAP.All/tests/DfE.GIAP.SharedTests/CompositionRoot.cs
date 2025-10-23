@@ -1,4 +1,4 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Search.Application.Models.Search;
