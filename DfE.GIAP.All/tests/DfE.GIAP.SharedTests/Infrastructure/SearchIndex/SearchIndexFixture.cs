@@ -7,22 +7,13 @@ public sealed class SearchIndexFixture : IDisposable
 {
     private readonly AzureSearchIndexHttpClient _client;
 
-    /// <summary>
-    /// Creates the fixture and starts the WireMock server on the configured port.
-    /// </summary>
     public SearchIndexFixture()
     {
         _client = new();
     }
 
-    /// <summary>
-    /// Dispose of the underlying WireMock server when the fixture is torn down.
-    /// </summary>
     public void Dispose() => _client.Dispose();
 
-    /// <summary>
-    /// Stub the "list indexes" endpoint so the SDK sees the given indexes as available.
-    /// </summary>
     public async Task<string[]> StubAvailableIndexes(params string[] indexNames)
     {
         await _client.StubIndexListResponse(indexNames);
