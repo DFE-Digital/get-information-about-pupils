@@ -18,9 +18,8 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
 
         services
-                  .AddCosmosDbDependencies()
-                  .AddFeaturesSharedDependencies()
-                  .AddInMemoryLogger();
+            .AddFeaturesSharedDependencies()
+            .AddInMemoryLogger();
 
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
