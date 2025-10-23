@@ -1,0 +1,40 @@
+﻿using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Repositories;
+
+namespace DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
+
+public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
+{
+    public DownloadType SupportedDownloadType => DownloadType.FurtherEducation;
+    private readonly IFurtherEducationRepository _repository;
+
+    public FurtherEducationDatasetHandler(IFurtherEducationRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
+    {
+        IReadOnlyCollection<Dataset> relevantDatasets = AvailableDatasetsByDownloadType
+            .GetSupportedDatasets(SupportedDownloadType);
+
+        HashSet<Dataset> datasets = new();
+        IEnumerable<FurtherEducationPupil> pupils = await _repository.GetPupilsByIdsAsync(pupilIds);
+
+        foreach (FurtherEducationPupil pupil in pupils)
+        {
+            if (pupil.HasPupilPremiumData)
+                datasets.Add(Dataset.PP);
+
+            if (pupil.HasSpecialEducationalNeedsData)
+                datasets.Add(Dataset.SEN);
+
+            // Early exit: if all relevant datasets are found, break
+            if (relevantDatasets.All(datasets.Contains))
+                break;
+        }
+
+        return datasets;
+    }
+}

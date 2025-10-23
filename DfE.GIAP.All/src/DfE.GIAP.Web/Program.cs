@@ -1,4 +1,5 @@
 using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Downloads;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Core.Users;
@@ -21,7 +22,8 @@ builder.Services
     .AddFeaturesSharedDependencies()
     .AddUserDependencies()
     .AddNewsArticleDependencies()
-    .AddPrePreparedDownloadsDependencies();
+    .AddPrePreparedDownloadsDependencies()
+    .AddDownloadDependencies();
 
 builder.Services
     .AddRoutingConfiguration()

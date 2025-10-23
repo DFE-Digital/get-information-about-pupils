@@ -1,0 +1,44 @@
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+
+namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+
+public class GetAvailableDatasetsForPupilsUseCase : IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>
+{
+    private readonly IDatasetAvailabilityProviderFactory _datasetAvailabilityHandlerFactory;
+    private readonly IDatasetAuthorisationService _datasetAccessService;
+
+    public GetAvailableDatasetsForPupilsUseCase(
+        IDatasetAvailabilityProviderFactory datasetAvailabilityFactory,
+        IDatasetAuthorisationService datasetAccessService)
+    {
+        _datasetAvailabilityHandlerFactory = datasetAvailabilityFactory;
+        _datasetAccessService = datasetAccessService;
+    }
+
+    public async Task<GetAvailableDatasetsForPupilsResponse> HandleRequestAsync(GetAvailableDatasetsForPupilsRequest request)
+    {
+        IDatasetAvailabilityHandler datasetAvailabilityHandler = _datasetAvailabilityHandlerFactory.GetDatasetAvailabilityHandler(request.DownloadType);
+        IEnumerable<Dataset> datasetsWithData = await datasetAvailabilityHandler.GetAvailableDatasetsAsync(request.SelectedPupils);
+
+        IReadOnlyCollection<Dataset> supportedDatasets = AvailableDatasetsByDownloadType.GetSupportedDatasets(request.DownloadType);
+        IEnumerable<AvailableDatasetResult> results = BuildDatasetResults(datasetsWithData, supportedDatasets, request.AuthorisationContext);
+
+        return new GetAvailableDatasetsForPupilsResponse(results);
+    }
+
+    private IEnumerable<AvailableDatasetResult> BuildDatasetResults(
+    IEnumerable<Dataset> datasetsWithData,
+    IReadOnlyCollection<Dataset> supportedDatasets,
+    IAuthorisationContext context)
+    {
+        return supportedDatasets.Select(dataset => new AvailableDatasetResult(
+            Dataset: dataset,
+            HasData: datasetsWithData.Contains(dataset),
+            CanDownload: datasetsWithData.Contains(dataset) && _datasetAccessService.CanDownload(context, dataset)
+        ));
+    }
+}

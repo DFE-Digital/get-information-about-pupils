@@ -253,4 +253,18 @@ public static class ClaimsPrincipalExtension
 
         throw new NotImplementedException();
     }
+
+    public static string GetUserRole(this ClaimsPrincipal principal)
+    {
+        if (principal.IsAdmin())
+            return Roles.Admin;
+
+        if (principal.IsApprover())
+            return Roles.Approver;
+
+        if (principal.IsNormal())
+            return Roles.User;
+
+        return string.Empty;
+    }
 }
