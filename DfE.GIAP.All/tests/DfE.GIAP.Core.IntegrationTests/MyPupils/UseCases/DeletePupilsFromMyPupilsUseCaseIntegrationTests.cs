@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils;
+using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
@@ -14,18 +14,19 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-#nullable disable
-    private MyPupilsTestContext _testContext;
-#nullable enable
-    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base(cosmosDbFixture)
-    {
+    private readonly CosmosDbFixture _cosmosDbFixture;
+    private MyPupilsTestContext? _testContext;
 
+    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    {
+        _cosmosDbFixture = cosmosDbFixture;
+        _testContext = null;
     }
 
     private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId userId);
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddMyPupilsDependencies();
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
 
         // Initialise fixture and pupils, store in context
         List<AzureIndexEntity> npdSearchindexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
@@ -39,9 +40,10 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
 
-        await Fixture.Database.WriteItemAsync(myPupilsDocument);
+        await _cosmosDbFixture.Database.WriteItemAsync(myPupilsDocument);
 
         _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
+        services.AddMyPupilsDependencies();
     }
 
     // TODO fixed as part of MyPupils work
@@ -101,7 +103,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns.Where((upn) => !deleteMultiplePupilIdentifiers.Select(t => t.Value).Contains(upn.Value))
@@ -120,7 +122,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
             ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
-        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext.MyPupilUpns.GetUniquePupilNumbers();
+        IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
         List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
         [
@@ -138,13 +140,12 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
-            myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
-                .Select(t => t.Value)
-                .ToList();
+            [.. myPupilUpns
+                .Where((upn) => !request.DeletePupilUpns.Contains(upn))
+                .Select(t => t.Value)];
 
         MyPupilsDocumentDto actualUserDto = Assert.Single(users);
         Assert.NotNull(actualUserDto);
@@ -170,7 +171,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
+        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
         Assert.NotNull(myPupilsDocument);
         Assert.Equal(_testContext.UserId.Value, myPupilsDocument.id);
         Assert.Empty(myPupilsDocument.MyPupils.Pupils);

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles
 {
-    public class DobSearchFilterTestData : IEnumerable<object[]>
+    public class  DobSearchFilterTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {

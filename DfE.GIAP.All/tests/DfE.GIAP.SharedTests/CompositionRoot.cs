@@ -1,12 +1,9 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.SharedTests;
 
@@ -18,6 +15,7 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
 
         services
+            .AddCosmosDbDependencies()
             .AddFeaturesSharedDependencies()
             .AddInMemoryLogger();
 
@@ -31,6 +29,7 @@ public static class CompositionRoot
                 .Build();
 
         services.AddSingleton(configuration);
+        services.AddSingleton((sp) => sp.GetRequiredService<IOptions<SearchCriteria>>().Value); // TODO What uses this?
 
         return services;
     }

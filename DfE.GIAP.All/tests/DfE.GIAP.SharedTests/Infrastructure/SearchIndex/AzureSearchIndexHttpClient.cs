@@ -59,6 +59,7 @@ internal sealed class AzureSearchIndexHttpClient : IDisposable
                 @searchScore = t.Score,
                 t.id,
                 t.UPN,
+                t.ULN,
                 t.Surname,
                 t.Forename,
                 t.Sex,

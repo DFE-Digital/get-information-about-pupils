@@ -5,15 +5,22 @@ using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
+
 [Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private CosmosDbFixture Fixture { get; }
 
+    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
+    {
+        Fixture = cosmosDbFixture;
+    }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        services.AddNewsArticleDependencies();
+        services
+            .AddNewsArticleDependencies();
+
         return Task.CompletedTask;
     }
 
@@ -21,7 +28,8 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
     public async Task GetNewsArticleByIdUseCase_Returns_Article_When_HandleRequest()
     {
         // Arrange
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
@@ -45,7 +53,8 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
     public async Task GetNewsArticleByIdUseCase_Returns_Null_When_HandleRequest_Finds_NoArticleMatchingId()
     {
         // Arrange
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
@@ -59,6 +68,5 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
         //Assert
         Assert.NotNull(response);
         Assert.Null(response.NewsArticle);
-
     }
 }
