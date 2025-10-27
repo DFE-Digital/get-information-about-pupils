@@ -8,11 +8,11 @@ namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPu
 
 public class GetAvailableDatasetsForPupilsUseCase : IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>
 {
-    private readonly IDatasetAvailabilityProviderFactory _datasetAvailabilityHandlerFactory;
+    private readonly IDatasetAvailabilityHandlerFactory _datasetAvailabilityHandlerFactory;
     private readonly IDatasetAuthorisationService _datasetAccessService;
 
     public GetAvailableDatasetsForPupilsUseCase(
-        IDatasetAvailabilityProviderFactory datasetAvailabilityFactory,
+        IDatasetAvailabilityHandlerFactory datasetAvailabilityFactory,
         IDatasetAuthorisationService datasetAccessService)
     {
         _datasetAvailabilityHandlerFactory = datasetAvailabilityFactory;

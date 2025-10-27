@@ -32,6 +32,9 @@ public class CosmosDbFurtherEducationReadOnlyRepository : IFurtherEducationRepos
     {
         try
         {
+            if (!pupilIds.Any())
+                return [];
+
             IEnumerable<string> formattedIds = pupilIds.Select(id => $"'{id}'");
             string query = $"SELECT * FROM c WHERE c.ULN IN ({string.Join(",", formattedIds)})";
             IEnumerable<FurtherEducationPupilDto> queryResult = await _cosmosDbQueryHandler.ReadItemsAsync<FurtherEducationPupilDto>(ContainerKey, query);

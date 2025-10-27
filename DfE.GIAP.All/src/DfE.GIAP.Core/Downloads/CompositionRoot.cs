@@ -42,7 +42,7 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationDatasetCheckers(this IServiceCollection services)
     {
         services.AddScoped<IDatasetAvailabilityHandler, FurtherEducationDatasetHandler>();
-        services.AddScoped<IDatasetAvailabilityProviderFactory, DatasetAvailabilityHandlerFactory>();
+        services.AddScoped<IDatasetAvailabilityHandlerFactory, DatasetAvailabilityHandlerFactory>();
         services.AddScoped<IDatasetAuthorisationService, DatasetAccessService>();
 
         return services;

@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 
 namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access;
 
-public class DatasetAccessPolicy
+public static class DatasetAccessPolicy
 {
     private static readonly Dictionary<Dataset, IDatasetAccessRule> _rules = new()
     {

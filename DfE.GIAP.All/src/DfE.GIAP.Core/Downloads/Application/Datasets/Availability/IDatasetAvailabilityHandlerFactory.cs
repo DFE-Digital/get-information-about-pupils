@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 
 namespace DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
 
-public interface IDatasetAvailabilityProviderFactory
+public interface IDatasetAvailabilityHandlerFactory
 {
     IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(DownloadType type);
 }
