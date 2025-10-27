@@ -2,7 +2,10 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Models.Common;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -131,7 +134,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
 
             // act
             FELearnerTextSearchController sut = GetController();
-            
+
             SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
             var result = await sut.FurtherEducationNonUlnSearch(true);
@@ -1183,6 +1186,18 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
             var httpContextStub = new DefaultHttpContext() { User = user, Session = _mockSession };
             var mockTempData = new TempDataDictionary(httpContextStub, _mockTempDataProvider);
 
+
+            List<AvailableDatasetResult> availableDatasetResults = new()
+            {
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
+            };
+            GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
+
+            Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
+            mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
+                .ReturnsAsync(response);
+
             return new FELearnerTextSearchController(
                 _mockLogger,
                 _mockAppOptions,
@@ -1190,7 +1205,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch
                 _mockMplService,
                 _mockSelectionManager,
                 _mockSessionProvider.Object,
-                _mockDownloadService)
+                _mockDownloadService,
+                mockGetAvailableDatasetsForPupilsUseCase.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

@@ -4,6 +4,8 @@ using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -20,6 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
@@ -1623,10 +1626,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         var joinedSelectedPupils = String.Join(',', ulns.FormatLearnerNumbers());
 
-        _mockDownloadService.CheckForFENoDataAvailable(
-            Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<AzureFunctionHeaderDetails>())
-            .Returns(new List<DownloadUlnDataType>() { DownloadUlnDataType.SEN });
-
         // act
         var sut = GetController();
         sut.TempData = Substitute.For<ITempDataDictionary>();
@@ -1643,11 +1642,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
         Assert.True(model.SelectedPupilsCount == ulns.FormatLearnerNumbers().Length);
         Assert.True(model.LearnerNumber.Equals(ulns));
-        Assert.True(
-           model.SearchDownloadDatatypes.Single(
-               d => d.Value.Equals(DownloadUlnDataType.SEN.ToString())
-               ).Disabled
-           );
     }
 
     [Fact]
@@ -1924,13 +1918,25 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         };
         context.HttpContext.Request.Query = Substitute.For<IQueryCollection>();
 
+        List<AvailableDatasetResult> availableDatasetResults = new()
+            {
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
+            };
+        GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
+
+        Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
+        mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
+            .ReturnsAsync(response);
+
         return new FELearnerNumberController(
             _mockLogger,
             _mockDownloadService,
             _mockPaginatedService,
             _mockMplService,
             _mockSelectionManager,
-            _mockAppOptions)
+            _mockAppOptions,
+            mockGetAvailableDatasetsForPupilsUseCase.Object)
         {
             ControllerContext = context
         };
