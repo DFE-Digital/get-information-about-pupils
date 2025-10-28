@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
+﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.Options;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
@@ -14,7 +15,7 @@ public static class ConfigurationTestDoubles
             ["FeatureFlagAppConfigUrl"] = "Endpoint=https://featureflags.azconfig.io;Id=ID;Secret=SECRET",
         };
 
-        builder.AddConfiguration(featureFlagStubConfig);
+        builder.AddInMemoryCollection(featureFlagStubConfig);
 
         return builder;
     }
@@ -28,7 +29,7 @@ public static class ConfigurationTestDoubles
             ["StorageContainerName"] = "AZURE_STORAGE_CONTAINERNAME",
         };
 
-        builder.AddConfiguration(storageAccountStubConfig);
+        builder.AddInMemoryCollection(storageAccountStubConfig);
 
         return builder;
     }
@@ -45,7 +46,7 @@ public static class ConfigurationTestDoubles
             ["SearchIndexOptions:Indexes:further-education:Name"] = "FE_INDEX_NAME",
         };
 
-        builder.AddConfiguration(searchIndexStubConfig);
+        builder.AddInMemoryCollection(searchIndexStubConfig);
 
         return builder;
     }
@@ -59,7 +60,7 @@ public static class ConfigurationTestDoubles
             ["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
 
-        builder.AddConfiguration(searchConnectionStubConfig);
+        builder.AddInMemoryCollection(searchConnectionStubConfig);
 
         return builder;
     }
@@ -75,7 +76,7 @@ public static class ConfigurationTestDoubles
             ["AzureSearchOptions:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
-        builder.AddConfiguration(azureSearchConnectionStubConfig);
+        builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
 
         return builder;
     }
@@ -93,7 +94,7 @@ public static class ConfigurationTestDoubles
             ["SearchCriteria:Facets:3"] = "Sex",
         };
 
-        builder.AddConfiguration(searchCriteriaStub);
+        builder.AddInMemoryCollection(searchCriteriaStub);
 
         return builder;
     }
@@ -121,7 +122,8 @@ public static class ConfigurationTestDoubles
         }
 
 
-        builder.AddConfiguration(configurationOptions);
+        builder.AddInMemoryCollection(configurationOptions);
+
         return builder;
     }
 
@@ -136,7 +138,44 @@ public static class ConfigurationTestDoubles
             ["DsiServiceId"] = "SERVICE_ID",
         };
 
-        builder.AddConfiguration(dsiStubConfig);
+        builder.AddInMemoryCollection(dsiStubConfig);
+
+        return builder;
+    }
+
+    public static IConfigurationBuilder WithFilterKeyToFilterExpressionMapOptions(this IConfigurationBuilder builder)
+    {
+        Dictionary<string, string?> configDict = new()
+        {
+            ["FilterKeyToFilterExpressionMapOptions:FilterChainingLogicalOperator"] = "AndLogicalOperator",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:SurnameLC:FilterExpressionKey"] = "SearchCollectionValuedFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:SurnameLC:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ForenameLC:FilterExpressionKey"] = "SearchCollectionValuedFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ForenameLC:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOB:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOB:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYearMonth:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYearMonth:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYear:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYear:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Gender:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Gender:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Sex:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Sex:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ULN:FilterExpressionKey"] = "SearchInFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ULN:FilterExpressionValuesDelimiter"] = ",",
+        };
+
+        // Add the section as a configuration source
+        builder.AddInMemoryCollection(configDict);
         return builder;
     }
 }

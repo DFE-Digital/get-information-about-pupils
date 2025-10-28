@@ -25,6 +25,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
                 .WithAzureSearchOptions()
                 .WithAzureSearchConnectionOptions()
                 .WithSearchCriteriaOptions()
+                .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
 
         services

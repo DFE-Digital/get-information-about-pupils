@@ -83,8 +83,8 @@ public static class CompositionRoot
         });
 
         // Register shared cognitive search and filter services.
-        services.AddDefaultCognitiveSearchServices(configuration);
-        services.AddDefaultSearchFilterServices(configuration);
+        services.AddAzureSearchServices(configuration);
+        services.AddAzureSearchFilterServices(configuration);
 
         // Bind search criteria configuration options.
         services.AddOptions<SearchCriteria>()
