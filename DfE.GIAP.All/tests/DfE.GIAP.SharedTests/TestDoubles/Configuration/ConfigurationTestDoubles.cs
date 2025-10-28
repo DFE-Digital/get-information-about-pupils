@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
-using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
@@ -14,7 +13,7 @@ public static class ConfigurationTestDoubles
             ["FeatureFlagAppConfigUrl"] = "Endpoint=https://featureflags.azconfig.io;Id=ID;Secret=SECRET",
         };
 
-        builder.AddConfiguration(featureFlagStubConfig);
+        builder.AddInMemoryCollection(featureFlagStubConfig);
 
         return builder;
     }
@@ -28,7 +27,7 @@ public static class ConfigurationTestDoubles
             ["StorageContainerName"] = "AZURE_STORAGE_CONTAINERNAME",
         };
 
-        builder.AddConfiguration(storageAccountStubConfig);
+        builder.AddInMemoryCollection(storageAccountStubConfig);
 
         return builder;
     }
@@ -45,7 +44,7 @@ public static class ConfigurationTestDoubles
             ["SearchIndexOptions:Indexes:further-education:Name"] = "FE_INDEX_NAME",
         };
 
-        builder.AddConfiguration(searchIndexStubConfig);
+        builder.AddInMemoryCollection(searchIndexStubConfig);
 
         return builder;
     }
@@ -59,7 +58,7 @@ public static class ConfigurationTestDoubles
             ["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
 
-        builder.AddConfiguration(searchConnectionStubConfig);
+        builder.AddInMemoryCollection(searchConnectionStubConfig);
 
         return builder;
     }
@@ -75,7 +74,7 @@ public static class ConfigurationTestDoubles
             ["AzureSearchOptions:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
-        builder.AddConfiguration(azureSearchConnectionStubConfig);
+        builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
 
         return builder;
     }
@@ -93,7 +92,7 @@ public static class ConfigurationTestDoubles
             ["SearchCriteria:Facets:3"] = "Sex",
         };
 
-        builder.AddConfiguration(searchCriteriaStub);
+        builder.AddInMemoryCollection(searchCriteriaStub);
 
         return builder;
     }
@@ -121,7 +120,7 @@ public static class ConfigurationTestDoubles
         }
 
 
-        builder.AddConfiguration(configurationOptions);
+        builder.AddInMemoryCollection(configurationOptions);
         return builder;
     }
 
@@ -136,7 +135,7 @@ public static class ConfigurationTestDoubles
             ["DsiServiceId"] = "SERVICE_ID",
         };
 
-        builder.AddConfiguration(dsiStubConfig);
+        builder.AddInMemoryCollection(dsiStubConfig);
         return builder;
     }
 }
