@@ -69,7 +69,7 @@ public static class FurtherEducationPupilDtoTestDoubles
             .RuleFor(p => p.Gender, f => f.PickRandom("Male", "Female", "Other"))
             .RuleFor(p => p.DOB, f => f.Date.Past(18, DateTime.Today.AddYears(-16)))
             .RuleFor(p => p.ConcatenatedName, (f, p) => $"{p.Surname}, {p.Forename}")
-            .RuleFor(p => p.PupilPremium, f => pupilPremiumFaker.Generate(f.Random.Int(0, 3)))
-            .RuleFor(p => p.specialEducationalNeeds, f => senFaker.Generate(f.Random.Int(0, 2)));
+            .RuleFor(p => p.PupilPremium, f => pupilPremiumFaker.Generate(f.Random.Int(1, 3)))
+            .RuleFor(p => p.specialEducationalNeeds, f => senFaker.Generate(f.Random.Int(1, 3)));
     }
 }
