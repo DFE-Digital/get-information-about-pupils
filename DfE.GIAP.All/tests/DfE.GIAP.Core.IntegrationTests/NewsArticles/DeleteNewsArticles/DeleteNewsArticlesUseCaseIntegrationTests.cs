@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;

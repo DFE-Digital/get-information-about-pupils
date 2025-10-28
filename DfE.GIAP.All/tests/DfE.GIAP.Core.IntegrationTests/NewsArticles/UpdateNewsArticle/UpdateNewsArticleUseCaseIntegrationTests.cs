@@ -32,7 +32,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         UpdateNewsArticlesRequestProperties requestProperties = new(id: unknownArticleId);
         UpdateNewsArticleRequest request = new(requestProperties);
 
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
 
         // Act Assert
         Func<Task> act = () => sut.HandleRequestAsync(request);
@@ -60,7 +61,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         UpdateNewsArticleRequest request = new(requestProperties);
 
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut =
+            ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
 
         // Act
         await sut.HandleRequestAsync(request);

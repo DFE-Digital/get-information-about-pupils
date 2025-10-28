@@ -14,7 +14,8 @@ internal static class AzureSearchClientExtensions
                     new HttpClient(
                         new HttpClientHandler
                         {
-                            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                            ServerCertificateCustomValidationCallback =
+                                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
                         }))
         };
 

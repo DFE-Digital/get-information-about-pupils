@@ -26,7 +26,8 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
     public async Task GetNewsArticleByIdUseCase_Returns_Article_When_HandleRequest()
     {
         // Arrange
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
@@ -50,7 +51,8 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
     public async Task GetNewsArticleByIdUseCase_Returns_Null_When_HandleRequest_Finds_NoArticleMatchingId()
     {
         // Arrange
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut =
+            ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();

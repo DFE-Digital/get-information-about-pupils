@@ -56,6 +56,5 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         Assert.InRange(newsArticleDto.CreatedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
         Assert.InRange(newsArticleDto.ModifiedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
-
     }
 }

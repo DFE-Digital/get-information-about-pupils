@@ -1,4 +1,4 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
