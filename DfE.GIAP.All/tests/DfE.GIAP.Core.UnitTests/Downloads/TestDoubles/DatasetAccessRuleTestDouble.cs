@@ -1,16 +1,17 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
-public sealed class DatasetAccessRuleTestDouble : IDatasetAccessRule
+public static class DatasetAccessRuleTestDouble
 {
-    private readonly bool _canDownload;
+    public static IDatasetAccessRule ReturnsTrue() => new StubAccessRule(true);
+    public static IDatasetAccessRule ReturnsFalse() => new StubAccessRule(false);
 
-    public DatasetAccessRuleTestDouble(bool canDownload)
+    private sealed class StubAccessRule : IDatasetAccessRule
     {
-        _canDownload = canDownload;
+        private readonly bool _result;
+        public StubAccessRule(bool result) => _result = result;
+        public bool HasAccess(IAuthorisationContext context) => _result;
     }
-
-    public bool CanDownload(IAuthorisationContext context) => _canDownload;
 }

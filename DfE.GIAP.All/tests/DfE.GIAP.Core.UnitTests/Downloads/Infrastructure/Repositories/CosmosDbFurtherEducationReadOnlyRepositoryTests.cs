@@ -3,7 +3,6 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;

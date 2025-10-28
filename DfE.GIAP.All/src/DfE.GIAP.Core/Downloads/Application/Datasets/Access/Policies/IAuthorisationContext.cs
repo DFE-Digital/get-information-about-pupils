@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+﻿namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 
 public interface IAuthorisationContext
 {

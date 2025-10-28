@@ -1,12 +1,32 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
-public sealed class AuthorisationContextTestDouble : IAuthorisationContext
+public static class AuthorisationContextTestDouble
 {
-    public string Role { get; init; } = "User";
-    public bool IsDfeUser { get; init; } = false;
-    public int StatutoryAgeLow { get; init; } = 0;
-    public int StatutoryAgeHigh { get; init; } = 0;
-    public IReadOnlyCollection<string> Claims { get; init; } = Array.Empty<string>();
+    public static IAuthorisationContext Create(
+        string role = "User",
+        bool isDfeUser = false,
+        int statutoryAgeLow = 0,
+        int statutoryAgeHigh = 0,
+        IReadOnlyCollection<string>? claims = null)
+    {
+        return new StubAuthorisationContext
+        {
+            Role = role,
+            IsDfeUser = isDfeUser,
+            StatutoryAgeLow = statutoryAgeLow,
+            StatutoryAgeHigh = statutoryAgeHigh,
+            Claims = claims ?? Array.Empty<string>()
+        };
+    }
+
+    private sealed class StubAuthorisationContext : IAuthorisationContext
+    {
+        public required string Role { get; init; }
+        public required bool IsDfeUser { get; init; }
+        public required int StatutoryAgeLow { get; init; }
+        public required int StatutoryAgeHigh { get; init; }
+        public required IReadOnlyCollection<string> Claims { get; init; }
+    }
 }

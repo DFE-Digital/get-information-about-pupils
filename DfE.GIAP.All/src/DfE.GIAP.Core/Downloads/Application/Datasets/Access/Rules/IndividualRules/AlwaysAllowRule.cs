@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+
+namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 
 /// <summary>
 /// Represents a dataset access rule that always allows access, regardless of the authorization context.
@@ -8,5 +10,5 @@
 /// evaluated.</remarks>
 internal sealed class AlwaysAllowRule : IDatasetAccessRule
 {
-    public bool CanDownload(IAuthorisationContext context) => true;
+    public bool HasAccess(IAuthorisationContext context) => true;
 }

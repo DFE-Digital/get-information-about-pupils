@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+
+namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 
 /// <summary>
 /// Represents an access rule that grants dataset download permissions to users identified as Admin users.
@@ -7,5 +9,5 @@
 /// certain dataset actions to administrative users within the authorization context.</remarks>
 internal sealed class IsAdminUserAccessRule : IDatasetAccessRule
 {
-    public bool CanDownload(IAuthorisationContext context) => context.Role == "GAIPAdmin";
+    public bool HasAccess(IAuthorisationContext context) => context.Role == "GIAPAdmin";
 }

@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
@@ -15,13 +16,11 @@ public sealed class MinimumHighAgeRuleTests
     {
         // Arrange
         MinimumHighAgeRule rule = new(threshold);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeHigh = highAge
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+           statutoryAgeHigh: highAge);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.Equal(expected, result);

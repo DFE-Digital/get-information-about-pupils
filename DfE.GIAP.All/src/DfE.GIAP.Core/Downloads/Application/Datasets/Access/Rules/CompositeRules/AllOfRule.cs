@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.CompositeRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+
+namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.CompositeRules;
 
 /// <summary>
 /// Represents a dataset access rule that requires all contained rules to be satisfied for access to be granted.
@@ -15,8 +17,8 @@ internal sealed class AllOfRule : IDatasetAccessRule
         _rules = rules;
     }
 
-    public bool CanDownload(IAuthorisationContext context)
+    public bool HasAccess(IAuthorisationContext context)
     {
-        return _rules.All(rule => rule.CanDownload(context));
+        return _rules.All(rule => rule.HasAccess(context));
     }
 }

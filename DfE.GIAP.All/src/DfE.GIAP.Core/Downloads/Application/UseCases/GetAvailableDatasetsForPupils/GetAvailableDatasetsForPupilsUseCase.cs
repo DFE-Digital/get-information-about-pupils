@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Access;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Enums;
@@ -9,14 +9,14 @@ namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPu
 public class GetAvailableDatasetsForPupilsUseCase : IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>
 {
     private readonly IDatasetAvailabilityHandlerFactory _datasetAvailabilityHandlerFactory;
-    private readonly IDatasetAuthorisationService _datasetAccessService;
+    private readonly IDatasetAccessEvaluator _datasetAccessEvaluator;
 
     public GetAvailableDatasetsForPupilsUseCase(
         IDatasetAvailabilityHandlerFactory datasetAvailabilityFactory,
-        IDatasetAuthorisationService datasetAccessService)
+        IDatasetAccessEvaluator datasetAccessEvaluator)
     {
         _datasetAvailabilityHandlerFactory = datasetAvailabilityFactory;
-        _datasetAccessService = datasetAccessService;
+        _datasetAccessEvaluator = datasetAccessEvaluator;
     }
 
     public async Task<GetAvailableDatasetsForPupilsResponse> HandleRequestAsync(GetAvailableDatasetsForPupilsRequest request)
@@ -38,7 +38,7 @@ public class GetAvailableDatasetsForPupilsUseCase : IUseCase<GetAvailableDataset
         return supportedDatasets.Select(dataset => new AvailableDatasetResult(
             Dataset: dataset,
             HasData: datasetsWithData.Contains(dataset),
-            CanDownload: datasetsWithData.Contains(dataset) && _datasetAccessService.CanDownload(context, dataset)
+            CanDownload: datasetsWithData.Contains(dataset) && _datasetAccessEvaluator.HasAccess(context, dataset)
         ));
     }
 }

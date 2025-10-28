@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
@@ -10,14 +11,12 @@ public sealed class AgeRangeAccessRuleTests
     {
         // Arrange
         AgeRangeAccessRule rule = new(minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeLow = 5,
-            StatutoryAgeHigh = 15
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+            statutoryAgeLow: 5,
+            statutoryAgeHigh: 15);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.True(result);
@@ -28,14 +27,12 @@ public sealed class AgeRangeAccessRuleTests
     {
         // Arrange
         AgeRangeAccessRule rule = new(minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeLow = 1, // too low
-            StatutoryAgeHigh = 15
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+            statutoryAgeLow: 1,
+            statutoryAgeHigh: 15);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.False(result);
@@ -46,14 +43,12 @@ public sealed class AgeRangeAccessRuleTests
     {
         // Arrange
         AgeRangeAccessRule rule = new(minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeLow = 11, // too high
-            StatutoryAgeHigh = 15
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+            statutoryAgeLow: 11,
+            statutoryAgeHigh: 15);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.False(result);
@@ -64,14 +59,12 @@ public sealed class AgeRangeAccessRuleTests
     {
         // Arrange
         AgeRangeAccessRule rule = new(minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeLow = 5,
-            StatutoryAgeHigh = 2 // too low
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+           statutoryAgeLow: 5,
+           statutoryAgeHigh: 2);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.False(result);
@@ -82,14 +75,12 @@ public sealed class AgeRangeAccessRuleTests
     {
         // Arrange
         AgeRangeAccessRule rule = new(minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeLow = 5,
-            StatutoryAgeHigh = 30 // too high
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+           statutoryAgeLow: 5,
+           statutoryAgeHigh: 30);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.False(result);
@@ -100,14 +91,13 @@ public sealed class AgeRangeAccessRuleTests
     {
         // Arrange
         AgeRangeAccessRule rule = new(minLow: 2, maxLow: 10, minHigh: 3, maxHigh: 25);
-        AuthorisationContextTestDouble context = new()
-        {
-            StatutoryAgeLow = 10,
-            StatutoryAgeHigh = 10 // not strictly less
-        };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+            statutoryAgeLow: 10,
+            statutoryAgeHigh: 10 // not strictly less
+        );
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.False(result);

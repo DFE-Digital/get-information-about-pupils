@@ -1,9 +1,18 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.CompositeRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.CompositeRules;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 
-namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
+namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 
-internal static class DatasetAccessRules
+/// <summary>
+/// Provides predefined access policies based on rules for various educational datasets.
+/// </summary>
+/// <remarks>This static class exposes factory methods for obtaining access policies tailored to specific datasets,
+/// such as EYFSP, KS1, KS2, KS4, Phonics, Mtc, Pupil Premium, Special Education Needs, and school census datasets. Each
+/// method returns an access rule that encapsulates the logic for determining user access based on roles or age ranges,
+/// as appropriate for the dataset. These rules are intended to be used by authorization components to enforce
+/// dataset-specific access policies.</remarks>
+internal static class DatasetAccessPolicies
 {
     public static IDatasetAccessRule EYFSP() => new AnyOfRule(
         new IsAdminUserAccessRule(),

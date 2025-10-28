@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
@@ -10,10 +11,11 @@ public sealed class IsAdminUserAccessRuleTests
     {
         // Arrange
         IsAdminUserAccessRule rule = new();
-        AuthorisationContextTestDouble context = new() { Role = "GAIPAdmin" };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+            role: "GIAPAdmin");
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.True(result);
@@ -23,18 +25,19 @@ public sealed class IsAdminUserAccessRuleTests
     [Theory]
     [InlineData("User")]
     [InlineData("Admin")]
-    [InlineData("GIAPAdmin")] // typo variant
-    [InlineData("gaipadmin")] // case-sensitive mismatch
+    [InlineData("GAIPAdmin")] // typo variant
+    [InlineData("giapadmin")] // case-sensitive mismatch
     [InlineData("")]
     [InlineData(null)]
     public void CanDownload_ReturnsFalse_WhenRoleIsNotGAIPAdmin(string? role)
     {
         // Arrange
         IsAdminUserAccessRule rule = new();
-        AuthorisationContextTestDouble context = new() { Role = role ?? string.Empty };
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
+            role: role ?? string.Empty);
 
         // Act
-        bool result = rule.CanDownload(context);
+        bool result = rule.HasAccess(context);
 
         // Assert
         Assert.False(result);

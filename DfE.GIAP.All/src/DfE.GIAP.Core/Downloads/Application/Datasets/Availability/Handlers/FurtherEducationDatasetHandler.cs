@@ -22,18 +22,10 @@ public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
         HashSet<Dataset> datasets = new();
         IEnumerable<FurtherEducationPupil> pupils = await _repository.GetPupilsByIdsAsync(pupilIds);
 
-        foreach (FurtherEducationPupil pupil in pupils)
-        {
-            if (pupil.HasPupilPremiumData)
-                datasets.Add(Dataset.PP);
-
-            if (pupil.HasSpecialEducationalNeedsData)
-                datasets.Add(Dataset.SEN);
-
-            // Early exit: if all relevant datasets are found, break
-            if (relevantDatasets.All(datasets.Contains))
-                break;
-        }
+        if (pupils.Any(p => p.HasPupilPremiumData))
+            datasets.Add(Dataset.PP);
+        if (pupils.Any(p => p.HasSpecialEducationalNeedsData))
+            datasets.Add(Dataset.SEN);
 
         return datasets;
     }

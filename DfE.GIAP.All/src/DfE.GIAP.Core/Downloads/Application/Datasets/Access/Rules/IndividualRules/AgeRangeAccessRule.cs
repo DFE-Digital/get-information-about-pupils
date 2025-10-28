@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+
+namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRules;
 
 /// <summary>
 /// Represents an access rule that determines download permissions based on a specified statutory age range.
@@ -18,7 +20,7 @@ internal sealed class AgeRangeAccessRule : IDatasetAccessRule
         _maxHigh = maxHigh;
     }
 
-    public bool CanDownload(IAuthorisationContext context)
+    public bool HasAccess(IAuthorisationContext context)
     {
         return context.StatutoryAgeLow >= _minLow &&
                context.StatutoryAgeLow <= _maxLow &&

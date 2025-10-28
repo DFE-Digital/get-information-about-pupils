@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.CompositeRules;
+﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.CompositeRules;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
@@ -9,15 +11,15 @@ public sealed class AnyOfRuleTests
     public void CanDownload_ReturnsTrue_When_AtLeastOneRuleReturnsTrue()
     {
         // Arrange
-        AuthorisationContextTestDouble context = new();
-        DatasetAccessRuleTestDouble rule1 = new(false);
-        DatasetAccessRuleTestDouble rule2 = new(true);
-        DatasetAccessRuleTestDouble rule3 = new(false);
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create();
+        IDatasetAccessRule rule1 = DatasetAccessRuleTestDouble.ReturnsFalse();
+        IDatasetAccessRule rule2 = DatasetAccessRuleTestDouble.ReturnsTrue();
+        IDatasetAccessRule rule3 = DatasetAccessRuleTestDouble.ReturnsFalse();
 
         AnyOfRule anyOfRule = new(rule1, rule2, rule3);
 
         // Act
-        bool result = anyOfRule.CanDownload(context);
+        bool result = anyOfRule.HasAccess(context);
 
         // Assert
         Assert.True(result);
@@ -27,14 +29,14 @@ public sealed class AnyOfRuleTests
     public void CanDownload_ReturnsFalse_When_AllRulesReturnFalse()
     {
         // Arrange
-        AuthorisationContextTestDouble context = new();
-        DatasetAccessRuleTestDouble rule1 = new(false);
-        DatasetAccessRuleTestDouble rule2 = new(false);
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create();
+        IDatasetAccessRule rule1 = DatasetAccessRuleTestDouble.ReturnsFalse();
+        IDatasetAccessRule rule2 = DatasetAccessRuleTestDouble.ReturnsFalse();
 
         AnyOfRule anyOfRule = new(rule1, rule2);
 
         // Act
-        bool result = anyOfRule.CanDownload(context);
+        bool result = anyOfRule.HasAccess(context);
 
         // Assert
         Assert.False(result);
@@ -44,11 +46,11 @@ public sealed class AnyOfRuleTests
     public void CanDownload_ReturnsFalse_When_NoRulesProvided()
     {
         // Arrange
-        AuthorisationContextTestDouble context = new();
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create();
         AnyOfRule anyOfRule = new();
 
         // Act
-        bool result = anyOfRule.CanDownload(context);
+        bool result = anyOfRule.HasAccess(context);
 
         // Assert
         Assert.False(result);
