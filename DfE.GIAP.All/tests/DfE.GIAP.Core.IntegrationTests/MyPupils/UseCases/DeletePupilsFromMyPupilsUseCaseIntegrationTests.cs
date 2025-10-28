@@ -22,7 +22,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
     {
         _cosmosDbFixture = cosmosDbFixture;
     }
-    
+
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
         await _cosmosDbFixture.Database.ClearDatabaseAsync();
