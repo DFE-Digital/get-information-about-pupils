@@ -10,6 +10,7 @@ public sealed class HttpClaimsAuthorisationContext : IAuthorisationContext
 
     public HttpClaimsAuthorisationContext(ClaimsPrincipal user)
     {
+        ArgumentNullException.ThrowIfNull(user);
         _user = user;
     }
 
