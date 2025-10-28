@@ -5,16 +5,21 @@ using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private readonly CosmosDbFixture _cosmosDbFixture;
 
-
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
+    }
+
+
+    protected override async Task OnInitializeAsync(IServiceCollection services)
+    {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
         services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
     }
 
     [Fact]
@@ -25,7 +30,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await Fixture.Database.WriteManyAsync(seededArticles);
+        await _cosmosDbFixture.Database.WriteManyAsync(seededArticles);
 
         NewsArticleDto targetArticle = seededArticles[0];
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.From(targetArticle.id));
@@ -49,7 +54,7 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await Fixture.Database.WriteManyAsync(seededArticles);
+        await _cosmosDbFixture.Database.WriteManyAsync(seededArticles);
 
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.New());
 
@@ -59,6 +64,5 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
         //Assert
         Assert.NotNull(response);
         Assert.Null(response.NewsArticle);
-
     }
 }

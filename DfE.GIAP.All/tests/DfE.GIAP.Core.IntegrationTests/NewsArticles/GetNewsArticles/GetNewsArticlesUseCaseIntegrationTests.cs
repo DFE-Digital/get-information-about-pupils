@@ -6,17 +6,20 @@ using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
+    private readonly CosmosDbFixture _cosmosDbFixture;
+
+    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
         services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
     }
 
     [Theory]
@@ -30,7 +33,7 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
             _ => throw new NotImplementedException()
         });
 
-        await Fixture.Database.WriteManyAsync(seededDTOs);
+        await _cosmosDbFixture.Database.WriteManyAsync(seededDTOs);
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 

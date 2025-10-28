@@ -1,57 +1,100 @@
-﻿using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
+﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests;
+
+/// <summary>
+/// Abstract base class for integration tests.
+/// Implements <see cref="IAsyncLifetime"/> so that xUnit will call
+/// <see cref="InitializeAsync"/> before tests run and <see cref="DisposeAsync"/> after.
+/// Provides a shared DI container setup and scoped resolution of services.
+/// </summary>
+[Collection(IntegrationTestCollectionMarker.Name)]
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
-    private readonly IServiceCollection _services;
-    private IServiceScope? _testServicesScope;
-    protected CosmosDbFixture Fixture { get; }
+    private readonly IServiceCollection _serviceDescriptors;
+    private IServiceScope? _servicesScope; // Holds the lifetime scope for test services (created once per test class).
 
-    protected BaseIntegrationTest(CosmosDbFixture fixture)
+    /// <summary>
+    /// Constructor initializes the service collection with default test doubles.
+    /// </summary>
+    protected BaseIntegrationTest()
     {
-        _services = ServiceCollectionTestDoubles.Default();
-        Fixture = fixture;
+        _serviceDescriptors = ServiceCollectionTestDoubles.Default();
     }
 
+    /// <summary>
+    /// Called by xUnit before any tests run.
+    /// Sets up default services, allows derived classes to add their own,
+    /// and ensures a scoped service provider is created.
+    /// </summary>
     public async Task InitializeAsync()
     {
-        await SetupAsync();
-        await OnInitializeAsync(_services);
-        EnsureServicesScope();
+        SetupSharedTestDependencies();                // Register shared test dependencies
+        await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
+        EnsureServiceScope();  // Build provider and create scope
     }
 
+    /// <summary>
+    /// Called by xUnit after all tests have run.
+    /// Disposes the service scope and calls the derived class cleanup hook.
+    /// </summary>
+    public async Task DisposeAsync()
+    {
+        _servicesScope?.Dispose();
+        await OnDisposeAsync();
+    }
+
+    /// <summary>
+    /// Hook for derived classes to add additional service registrations asynchronously.
+    /// Default implementation does nothing.
+    /// </summary>
     protected virtual Task OnInitializeAsync(IServiceCollection services) => Task.CompletedTask;
+
+    /// <summary>
+    /// Hook for derived classes to perform async cleanup after tests complete.
+    /// Default implementation does nothing.
+    /// </summary>
     protected virtual Task OnDisposeAsync() => Task.CompletedTask;
-    protected T ResolveTypeFromScopedContext<T>() where T : notnull
+
+    /// <summary>
+    /// Resolve a service of type <typeparamref name="TInstanceType"/> from the scoped service provider.
+    /// Ensures the scope is created before resolving.
+    /// </summary>
+    protected TInstanceType ResolveTypeFromScopedContext<TInstanceType>()
+        where TInstanceType : notnull
     {
-        EnsureServicesScope();
-        return _testServicesScope!.ServiceProvider.GetRequiredService<T>();
+        EnsureServiceScope();
+        return _servicesScope!.ServiceProvider.GetRequiredService<TInstanceType>();
     }
 
-    private void EnsureServicesScope()
+    /// <summary>
+    /// Ensures that the service provider and scope are created.
+    /// If not already created, builds the provider from the service collection
+    /// and creates a new scope.
+    /// </summary>
+    private void EnsureServiceScope()
     {
-        ArgumentNullException.ThrowIfNull(_services);
-        if (_testServicesScope == null)
+        ArgumentNullException.ThrowIfNull(_serviceDescriptors);
+
+        if (_servicesScope == null)
         {
-            ServiceProvider provider = _services.BuildServiceProvider();
-            _testServicesScope = provider.CreateScope();
+            ServiceProvider provider = _serviceDescriptors.BuildServiceProvider();
+            _servicesScope = provider.CreateScope();
         }
     }
 
-    private async Task SetupAsync()
+    /// <summary>
+    /// Registers shared test dependencies common to all integration tests.
+    /// Derived classes can add more via <see cref="OnInitializeAsync"/>.
+    /// </summary>
+    private void SetupSharedTestDependencies()
     {
-        await Fixture.Database.ClearDatabaseAsync();
-        _services
+        _serviceDescriptors
+            .AddCosmosDbDependencies()
             .AddSharedTestDependencies()
             .ConfigureAzureSearchClients();
-    }
-
-    public async Task DisposeAsync()
-    {
-        _testServicesScope?.Dispose();
-        await OnDisposeAsync();
     }
 }

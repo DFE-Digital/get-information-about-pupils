@@ -4,15 +4,21 @@ using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
-[Collection(IntegrationTestCollectionMarker.Name)]
+
 public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public DeleteNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private readonly CosmosDbFixture _cosmosDbFixture;
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    public DeleteNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
+    }
+
+    protected override async Task OnInitializeAsync(IServiceCollection services)
+    {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
         services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
     }
 
     [Fact]
@@ -24,7 +30,7 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
         // Seed articles
         const int countGenerated = 10;
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate(countGenerated);
-        await Fixture.Database.WriteManyAsync(seededArticles);
+        await _cosmosDbFixture.Database.WriteManyAsync(seededArticles);
 
         NewsArticleDto targetDeleteArticle = seededArticles[0];
         DeleteNewsArticleRequest request = new(Id: NewsArticleIdentifier.From(targetDeleteArticle.id));
@@ -34,7 +40,7 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
 
         //Assert
         IEnumerable<NewsArticleDto> newsArticleDtosShouldReturn = seededArticles.Where(t => t.id != targetDeleteArticle.id);
-        IEnumerable<NewsArticleDto?> queriedArticles = await Fixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto?> queriedArticles = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();
 
         Assert.Equivalent(newsArticleDtosShouldReturn, queriedArticles);
         Assert.Equal(countGenerated - 1, queriedArticles.Count(t => t != null));
