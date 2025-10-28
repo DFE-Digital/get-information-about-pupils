@@ -93,7 +93,6 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     private void SetupSharedTestDependencies()
     {
         _serviceDescriptors
-            .AddCosmosDbDependencies()
             .AddSharedTestDependencies()
             .ConfigureAzureSearchClients();
     }
