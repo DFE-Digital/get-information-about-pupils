@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
@@ -12,23 +11,26 @@ using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
-[Collection(IntegrationTestCollectionMarker.Name)]
+
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
+    private readonly CosmosDbFixture _cosmosDbFixture;
+
+    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+
         services
             .AddMyPupilsDependencies()
             .ConfigureAzureSearchClients();
-
-        return Task.CompletedTask;
     }
 
     [Fact]
@@ -50,7 +52,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
                 .Select((t) => t.UPN)
                     .ToUniquePupilNumbers();
 
-        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+        await _cosmosDbFixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
                 upns: UniquePupilNumbers.Create(upns)));
@@ -95,7 +97,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         UserId userId = UserIdTestDoubles.Default();
 
-        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+        await _cosmosDbFixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
             MyPupilsDocumentDtoTestDoubles.Create(
                 userId,
                 upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));

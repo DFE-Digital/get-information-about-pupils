@@ -18,7 +18,7 @@ public sealed class CosmosDbFixture : IAsyncLifetime
             options.Key,
             options.GetDatabaseOptionsByName(databaseName: "giapsearch"));
 
-        await Database.StartAsync();
+        await Database.InitialiseAsync();
         await Database.ClearDatabaseAsync();
     }
 
