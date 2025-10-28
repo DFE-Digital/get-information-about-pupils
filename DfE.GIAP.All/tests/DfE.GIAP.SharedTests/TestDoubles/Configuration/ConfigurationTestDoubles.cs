@@ -1,4 +1,4 @@
-﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.Options;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.Options;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 using Microsoft.Extensions.Configuration;
 
@@ -123,7 +123,6 @@ public static class ConfigurationTestDoubles
 
 
         builder.AddInMemoryCollection(configurationOptions);
-
         return builder;
     }
 
@@ -174,7 +173,7 @@ public static class ConfigurationTestDoubles
             ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ULN:FilterExpressionValuesDelimiter"] = ",",
         };
 
-        // Add the section as a configuration source
+        
         builder.AddInMemoryCollection(configDict);
         return builder;
     }
