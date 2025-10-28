@@ -44,12 +44,11 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
         _containerOptions = options.Containers;
     }
 
-    public async Task StartAsync()
+    public async Task InitialiseAsync()
     {
-        DatabaseResponse db = await _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
+        DatabaseResponse db = await CreateDatabase();
         await CreateAllContainersIfNotExistAsync(db);
     }
-
 
     public async ValueTask DisposeAsync()
     {
@@ -61,7 +60,7 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
 
     public async Task ClearDatabaseAsync()
     {
-        DatabaseResponse response = await _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
+        DatabaseResponse response = await CreateDatabase();
         List<ContainerResponse> containers = await CreateAllContainersIfNotExistAsync(response);
 
         foreach (ContainerResponse container in containers)
@@ -161,6 +160,8 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
         }
 
     }
+
+    private Task<DatabaseResponse> CreateDatabase() => _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
 
     private async Task<ContainerResponse> GetTargetContainerForDto<TDto>() where TDto : class
     {

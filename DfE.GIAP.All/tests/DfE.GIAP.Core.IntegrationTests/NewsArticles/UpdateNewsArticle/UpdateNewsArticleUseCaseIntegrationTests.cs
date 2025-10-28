@@ -8,23 +8,20 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
-
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private CosmosDbFixture Fixture { get; }
+    private readonly CosmosDbFixture _cosmosDbFixture;
 
-    public UpdateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base()
+    public UpdateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
-        Fixture = cosmosDbFixture;
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        services
-            .AddNewsArticleDependencies();
-
-        return Task.CompletedTask;
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        services.AddNewsArticleDependencies();
     }
 
     [Fact]
@@ -50,7 +47,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
     public async Task UpdateNullableRecordSuccessfully(NewsArticleDto seededArticle, bool requestPinned, bool requestPublished)
     {
         // Arrange
-        await Fixture.Database.WriteItemAsync(seededArticle);
+        await _cosmosDbFixture.Database.WriteItemAsync(seededArticle);
         DateTime beforeRequestCreationDateTimeUtc = DateTime.UtcNow;
         Stopwatch stopWatch = Stopwatch.StartNew();
 
@@ -74,7 +71,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         stopWatch.Stop();
 
         IEnumerable<string> updatedArticleIdentifier = [seededArticle.id];
-        IEnumerable<NewsArticleDto?> articles = await Fixture.Database.ReadManyAsync<NewsArticleDto>(updatedArticleIdentifier);
+        IEnumerable<NewsArticleDto?> articles = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(updatedArticleIdentifier);
         NewsArticleDto? updatedArticle = Assert.Single(articles);
 
         Assert.NotNull(updatedArticle);

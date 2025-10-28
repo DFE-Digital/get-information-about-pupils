@@ -1,4 +1,3 @@
-using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -14,11 +13,6 @@ public static class CompositionRoot
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services
-            .AddCosmosDbDependencies()
-            .AddFeaturesSharedDependencies()
-            .AddInMemoryLogger();
-
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithLocalCosmosDbOptions() // TODO below this are not shared dependencies, should allow client to pass their own configuration and merge in
@@ -27,6 +21,10 @@ public static class CompositionRoot
                 .WithAzureSearchOptions()
                 .WithSearchCriteriaOptions()
                 .Build();
+
+        services
+            .AddFeaturesSharedDependencies()
+            .AddInMemoryLogger();
 
         services.AddSingleton(configuration);
         services.AddSingleton((sp) => sp.GetRequiredService<IOptions<SearchCriteria>>().Value); // TODO What uses this?

@@ -16,7 +16,6 @@ using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly CosmosDbFixture _cosmosDbFixture;
@@ -24,19 +23,19 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
     public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+
         _mockSearchFixture = new();
 
         services
-            .AddSharedTestDependencies()
-            .AddCosmosDbDependencies()
-            .AddMyPupilsDependencies();
-
-        return Task.CompletedTask;
+            .AddMyPupilsDependencies()
+            .ConfigureAzureSearchClients();
     }
 
     [Fact]

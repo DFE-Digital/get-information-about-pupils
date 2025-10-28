@@ -11,23 +11,18 @@ namespace DfE.GIAP.Core.IntegrationTests;
 /// <see cref="InitializeAsync"/> before tests run and <see cref="DisposeAsync"/> after.
 /// Provides a shared DI container setup and scoped resolution of services.
 /// </summary>
+[Collection(IntegrationTestCollectionMarker.Name)]
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
-    // Holds the lifetime scope for test services (created once per test class).
-    private IServiceScope? _testServicesScope;
-
-    /// <summary>
-    /// The service collection used to register dependencies for the test.
-    /// Derived classes can add or override registrations before the scope is built.
-    /// </summary>
-    public IServiceCollection serviceDescriptors { get; }
+    private readonly IServiceCollection _serviceDescriptors;
+    private IServiceScope? _servicesScope; // Holds the lifetime scope for test services (created once per test class).
 
     /// <summary>
     /// Constructor initializes the service collection with default test doubles.
     /// </summary>
     protected BaseIntegrationTest()
     {
-        serviceDescriptors = ServiceCollectionTestDoubles.Default();
+        _serviceDescriptors = ServiceCollectionTestDoubles.Default();
     }
 
     /// <summary>
@@ -37,9 +32,9 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// </summary>
     public async Task InitializeAsync()
     {
-        Setup();                // Register shared test dependencies
-        await OnInitializeAsync(serviceDescriptors); // Allow derived classes to customize
-        EnsureServicesScope();  // Build provider and create scope
+        SetupSharedTestDependencies();                // Register shared test dependencies
+        await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
+        EnsureServiceScope();  // Build provider and create scope
     }
 
     /// <summary>
@@ -48,7 +43,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// </summary>
     public async Task DisposeAsync()
     {
-        _testServicesScope?.Dispose();
+        _servicesScope?.Dispose();
         await OnDisposeAsync();
     }
 
@@ -71,8 +66,8 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     protected TInstanceType ResolveTypeFromScopedContext<TInstanceType>()
         where TInstanceType : notnull
     {
-        EnsureServicesScope();
-        return _testServicesScope!.ServiceProvider.GetRequiredService<TInstanceType>();
+        EnsureServiceScope();
+        return _servicesScope!.ServiceProvider.GetRequiredService<TInstanceType>();
     }
 
     /// <summary>
@@ -80,14 +75,14 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// If not already created, builds the provider from the service collection
     /// and creates a new scope.
     /// </summary>
-    private void EnsureServicesScope()
+    private void EnsureServiceScope()
     {
-        ArgumentNullException.ThrowIfNull(serviceDescriptors);
+        ArgumentNullException.ThrowIfNull(_serviceDescriptors);
 
-        if (_testServicesScope == null)
+        if (_servicesScope == null)
         {
-            ServiceProvider provider = serviceDescriptors.BuildServiceProvider();
-            _testServicesScope = provider.CreateScope();
+            ServiceProvider provider = _serviceDescriptors.BuildServiceProvider();
+            _servicesScope = provider.CreateScope();
         }
     }
 
@@ -95,10 +90,9 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// Registers shared test dependencies common to all integration tests.
     /// Derived classes can add more via <see cref="OnInitializeAsync"/>.
     /// </summary>
-    private void Setup()
+    private void SetupSharedTestDependencies()
     {
-        serviceDescriptors
-            .AddCosmosDbDependencies()
+        _serviceDescriptors
             .AddSharedTestDependencies()
             .ConfigureAzureSearchClients();
     }

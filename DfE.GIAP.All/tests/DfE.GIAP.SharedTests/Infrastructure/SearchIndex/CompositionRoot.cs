@@ -2,9 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 public static class CompositionRoot
