@@ -5,20 +5,27 @@ namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 public static class DatasetAvailabilityHandlerTestDouble
 {
-    public static IDatasetAvailabilityHandler Create(DownloadType type) => new StubHandler(type);
+    public static IDatasetAvailabilityHandler Create(
+        DownloadType type,
+        IEnumerable<Dataset>? datasetsWithData = null)
+    {
+        return new StubHandler(type, datasetsWithData ?? Array.Empty<Dataset>());
+    }
 
     private sealed class StubHandler : IDatasetAvailabilityHandler
     {
         public DownloadType SupportedDownloadType { get; }
+        private readonly IEnumerable<Dataset> _datasetsWithData;
 
-        public StubHandler(DownloadType type)
+        public StubHandler(DownloadType type, IEnumerable<Dataset> datasetsWithData)
         {
             SupportedDownloadType = type;
+            _datasetsWithData = datasetsWithData;
         }
 
         public Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
         {
-            return Task.FromResult<IEnumerable<Dataset>>(new[] { Dataset.PP });
+            return Task.FromResult(_datasetsWithData);
         }
     }
 }
