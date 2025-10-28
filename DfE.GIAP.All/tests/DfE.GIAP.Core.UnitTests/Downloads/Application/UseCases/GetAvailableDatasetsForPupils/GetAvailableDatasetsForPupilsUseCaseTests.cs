@@ -10,6 +10,24 @@ namespace DfE.GIAP.Core.UnitTests.Downloads.Application.UseCases.GetAvailableDat
 public sealed class GetAvailableDatasetsForPupilsUseCaseTests
 {
     [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenFactoryIsNull()
+    {
+        IDatasetAccessEvaluator evaluator = DatasetAccessEvaluatorTestDouble.AllowAll();
+
+        Assert.Throws<ArgumentNullException>(() =>
+            new GetAvailableDatasetsForPupilsUseCase(null!, evaluator));
+    }
+
+    [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenEvaluatorIsNull()
+    {
+        IDatasetAvailabilityHandlerFactory factory = DatasetAvailabilityHandlerFactoryTestDouble.WithHandlers();
+
+        Assert.Throws<ArgumentNullException>(() =>
+            new GetAvailableDatasetsForPupilsUseCase(factory, null!));
+    }
+
+    [Fact]
     public async Task HandleRequestAsync_Returns_DatasetsWithAccessAndData()
     {
         IAuthorisationContext context = AuthorisationContextTestDouble.Create();

@@ -15,6 +15,8 @@ public class GetAvailableDatasetsForPupilsUseCase : IUseCase<GetAvailableDataset
         IDatasetAvailabilityHandlerFactory datasetAvailabilityFactory,
         IDatasetAccessEvaluator datasetAccessEvaluator)
     {
+        ArgumentNullException.ThrowIfNull(datasetAvailabilityFactory);
+        ArgumentNullException.ThrowIfNull(datasetAccessEvaluator);
         _datasetAvailabilityHandlerFactory = datasetAvailabilityFactory;
         _datasetAccessEvaluator = datasetAccessEvaluator;
     }
