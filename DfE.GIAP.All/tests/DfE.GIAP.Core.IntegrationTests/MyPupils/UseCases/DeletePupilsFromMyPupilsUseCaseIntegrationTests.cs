@@ -11,20 +11,22 @@ using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
+    private readonly CosmosDbFixture _cosmosDbFixture;
+
 #nullable disable
     private MyPupilsTestContext _testContext;
 #nullable enable
-    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture) : base(cosmosDbFixture)
+    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
-
+        _cosmosDbFixture = cosmosDbFixture;
     }
 
-    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId userId);
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+
         services.AddMyPupilsDependencies();
 
         // Initialise fixture and pupils, store in context
@@ -39,10 +41,12 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
 
-        await Fixture.Database.WriteItemAsync(myPupilsDocument);
+        await _cosmosDbFixture.Database.WriteItemAsync(myPupilsDocument);
 
         _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
     }
+
+    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId userId);
 
     // TODO fixed as part of MyPupils work
     /*
@@ -138,7 +142,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns

@@ -4,15 +4,20 @@ using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture) { }
+    private readonly CosmosDbFixture _cosmosDbFixture;
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
+    }
+
+    protected override async Task OnInitializeAsync(IServiceCollection services)
+    {
+        await _cosmosDbFixture.Database.ClearDatabaseAsync();
         services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
     }
 
     [Theory]
@@ -40,7 +45,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         watch.Stop();
 
         // Assert
-        IEnumerable<NewsArticleDto> enumerable = await Fixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto> enumerable = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));
