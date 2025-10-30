@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
@@ -11,17 +12,21 @@ internal sealed class WireMockLocalClient : IWireMockClient
 {
     private readonly WireMockServer _wireMockServer;
 
-    // TODO pass server options - Certificate, Port
-    public WireMockLocalClient()
+    public WireMockLocalClient(WireMockServerOptions serverOptions)
     {
+        WireMockCertificateSettings? cert =
+            string.IsNullOrEmpty(serverOptions.CertificatePath) ?
+                null :
+                new WireMockCertificateSettings()
+                {
+                    X509Certificate = new X509Certificate2(serverOptions.CertificatePath, serverOptions.CertificatePassword ?? string.Empty)
+                };
+
         _wireMockServer = WireMockServer.Start(new WireMockServerSettings
         {
-            Port = 8443,
-            CertificateSettings = new()
-            {
-                X509Certificate = new X509Certificate2("wiremock-cert.pfx", "yourpassword")
-            },
-            UseSSL = true
+            Port = serverOptions.Port,
+            CertificateSettings = cert,
+            UseSSL = serverOptions.EnableSecureConnection
         });
     }
 

@@ -9,24 +9,21 @@ public sealed class SearchIndexFixture : IDisposable
     private readonly IWireMockClient _wireMockClient;
     private readonly AzureSearchIndexClient _searchIndex;
 
-    // TODO pass or read options for connection - IConfiguration from testconfiguration.json and output? Local/Remote client
-    // TODO pass configuration of Index and shape in options so more flexible
+    // TODO Factory to create different types of WireMockClient
+    // TODO Registering json bundle on disk to /__admin/mappings - Rather than programatically generating - could we pass this as Configuration to enable this with a 'default'??
     // TODO expose ClearStubs
     public SearchIndexFixture()
     {
-        Uri uri = new("https://localhost:8443");
-
-        if (!uri.IsAbsoluteUri)
+        WireMockServerOptions options = new()
         {
-            throw new ArgumentException($"SearchIndex endpoint must be an absolute Uri");
-        }
-
-        HttpClient httpClient = new()
-        {
-            BaseAddress = uri
+            Domain = "localhost",
+            Port = 8443,
+            EnableSecureConnection = true,
+            CertificatePassword = "yourpassword",
+            CertificatePath = "wiremock-cert.pfx"
         };
 
-        _wireMockClient = new WireMockRemoteClient(httpClient);
+        _wireMockClient = new WireMockRemoteClient(options);
         _searchIndex = new AzureSearchIndexClient(_wireMockClient);
     }
 
