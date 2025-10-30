@@ -20,9 +20,9 @@ public static class AvailableDatasetsByDownloadType
         },
         [DownloadType.NPD] = new()
         {
-            Dataset.CensusAutumn,
-            Dataset.CensusSpring,
-            Dataset.CensusSummer,
+            Dataset.Census_Autumn,
+            Dataset.Census_Spring,
+            Dataset.Census_Summer,
             Dataset.EYFSP,
             Dataset.KS1,
             Dataset.KS2,

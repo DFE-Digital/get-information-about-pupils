@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 
-public class SpecialEducationalNeedsDto
+public class SpecialEducationalNeedsEntryDto
 {
     [JsonProperty("NCYear")]
     public string? NationalCurriculumYear { get; set; }

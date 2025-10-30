@@ -55,7 +55,7 @@ public static class FurtherEducationPupilDtoTestDoubles
             .RuleFor(p => p.FullTimeEquivalent, f => f.Random.Double(0.5, 1.0).ToString("0.0"))
             .RuleFor(p => p.AcademicYear, f => $"{f.Date.Past(1).Year}/{f.Date.Past(1).Year + 1}");
 
-        Faker<SpecialEducationalNeedsDto> senFaker = new Faker<SpecialEducationalNeedsDto>()
+        Faker<SpecialEducationalNeedsEntryDto> senFaker = new Faker<SpecialEducationalNeedsEntryDto>()
             .StrictMode(true)
             .RuleFor(s => s.NationalCurriculumYear, f => f.Random.Int(1, 13).ToString())
             .RuleFor(s => s.Provision, f => f.PickRandom("SEN Support", "EHCP", "None"))

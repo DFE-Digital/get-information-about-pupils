@@ -43,8 +43,9 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterApplicationDatasetEvaluatorsAndHandlers(this IServiceCollection services)
     {
-        services.AddScoped<IDatasetAvailabilityHandler, FurtherEducationDatasetHandler>();
         services.AddScoped<IDatasetAvailabilityHandlerFactory, DatasetAvailabilityHandlerFactory>();
+        services.AddScoped<IDatasetAvailabilityHandler, FurtherEducationDatasetHandler>();
+        services.AddScoped<IDatasetAvailabilityHandler, NationalPupilDatabaseDatasetHandler>();
         services.AddSingleton<IDatasetAccessEvaluator>(_ =>
         {
             Dictionary<Dataset, IDatasetAccessRule> policies = new()
@@ -57,9 +58,9 @@ public static class CompositionRoot
                 [Dataset.MTC] = DatasetAccessPolicies.Mtc(),
                 [Dataset.PP] = DatasetAccessPolicies.PupilPremium(),
                 [Dataset.SEN] = DatasetAccessPolicies.SpecialEducationNeeds(),
-                [Dataset.CensusAutumn] = DatasetAccessPolicies.CensusAutumn(),
-                [Dataset.CensusSpring] = DatasetAccessPolicies.CensusSpring(),
-                [Dataset.CensusSummer] = DatasetAccessPolicies.CensusSummer()
+                [Dataset.Census_Autumn] = DatasetAccessPolicies.CensusAutumn(),
+                [Dataset.Census_Spring] = DatasetAccessPolicies.CensusSpring(),
+                [Dataset.Census_Summer] = DatasetAccessPolicies.CensusSummer()
             };
 
             return new DatasetAccessPolicyEvaluator(policies);
@@ -78,7 +79,8 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IFurtherEducationRepository, CosmosDbFurtherEducationReadOnlyRepository>();
+        services.AddScoped<IFurtherEducationReadOnlyRepository, CosmosDbFurtherEducationReadOnlyRepository>();
+        services.AddScoped<INationalPupilReadOnlyRepository, CosmosDbNationalPupilReadOnlyRepository>();
 
         return services;
     }
@@ -86,6 +88,7 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureMappers(this IServiceCollection services)
     {
         services.AddScoped<IMapper<FurtherEducationPupilDto, FurtherEducationPupil>, FurtherEducationPupilDtoToEntityMapper>();
+        services.AddScoped<IMapper<NationalPupilDto, NationalPupil>, NationalPupilDtoToEntityMapper>();
 
         return services;
     }
