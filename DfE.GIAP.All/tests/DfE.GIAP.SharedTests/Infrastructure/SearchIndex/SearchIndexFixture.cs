@@ -1,43 +1,51 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
 public sealed class SearchIndexFixture : IDisposable
 {
-    private readonly AzureSearchIndexHttpClient _client;
+    private readonly IWireMockClient _wireMockClient;
+    private readonly AzureSearchIndexClient _searchIndex;
 
+    // TODO pass or read options for connection - IConfiguration from testconfiguration.json and output? Local/Remote client
+    // TODO pass configuration of Index and shape in options so more flexible
+    // TODO expose ClearStubs
     public SearchIndexFixture()
     {
-        _client = new();
-    }
+        Uri uri = new("https://localhost:8443");
 
-    public void Dispose() => _client.Dispose();
+        if (!uri.IsAbsoluteUri)
+        {
+            throw new ArgumentException($"SearchIndex endpoint must be an absolute Uri");
+        }
+
+        HttpClient httpClient = new()
+        {
+            BaseAddress = uri
+        };
+
+        _wireMockClient = new WireMockRemoteClient(httpClient);
+        _searchIndex = new AzureSearchIndexClient(_wireMockClient);
+    }
 
     public async Task<string[]> StubAvailableIndexes(params string[] indexNames)
     {
-        await _client.StubIndexListResponse(indexNames);
+        await _searchIndex.StubIndexListResponse(indexNames);
         return indexNames;
     }
 
-    public async Task<List<AzureIndexEntity>> StubNpdSearchIndex(IEnumerable<AzureIndexEntity>? values = null)
+    public async Task<List<AzureIndexEntity>> StubIndex(string indexName, IEnumerable<AzureIndexEntity>? values = null)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
         List<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values.ToList();
-        await _client.StubSearchResponseForIndex(indexName: "NPD_INDEX_NAME", azureIndexDtos);
+        await _searchIndex.StubIndexSearchResponse(indexName, azureIndexDtos);
         return azureIndexDtos;
     }
 
-    public async Task<List<AzureIndexEntity>> StubPupilPremiumSearchIndex(IEnumerable<AzureIndexEntity>? values = null)
+    public void Dispose()
     {
-        List<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values.ToList();
-        await _client.StubSearchResponseForIndex(indexName: "PUPIL_PREMIUM_INDEX_NAME", azureIndexDtos);
-        return azureIndexDtos;
-    }
-
-    public async Task<List<AzureIndexEntity>> StubFurtherEducationIndex(IEnumerable<AzureIndexEntity>? values = null)
-    {
-        List<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values.ToList();
-        await _client.StubSearchResponseForIndex(indexName: "FE_INDEX_NAME", azureIndexDtos);
-        return azureIndexDtos;
+        _wireMockClient?.Dispose();
     }
 }
