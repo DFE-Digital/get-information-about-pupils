@@ -3,6 +3,8 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
@@ -21,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
@@ -1952,10 +1955,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
 
             var joinedSelectedPupils = String.Join(',', upns.FormatLearnerNumbers());
 
-            _mockDownloadService.CheckForNoDataAvailable(
-                Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<AzureFunctionHeaderDetails>())
-                .Returns(new List<CheckDownloadDataType>() { CheckDownloadDataType.EYFSP });
-
             // act
             var sut = GetController();
             sut.TempData = Substitute.For<ITempDataDictionary>();
@@ -1972,11 +1971,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
             Assert.True(model.SelectedPupilsCount == upns.FormatLearnerNumbers().Length);
             Assert.True(model.LearnerNumber.Equals(upns));
-            Assert.True(
-                model.SearchDownloadDatatypes.Single(
-                    d => d.Value.Equals(CheckDownloadDataType.EYFSP.ToString())
-                    ).Disabled
-                );
         }
 
         [Fact]
@@ -2272,6 +2266,17 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
             _mockAppOptions.Value.Returns(_mockAppSettings);
             _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
+            List<AvailableDatasetResult> availableDatasetResults = new()
+            {
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
+            };
+            GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
+
+            Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
+            mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
+                .ReturnsAsync(response);
+
             return new NPDLearnerNumberSearchController(
                 _mockLogger,
                 _mockCtfService,
@@ -2279,7 +2284,8 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber
                 _mockPaginatedService,
                 _mockMplService,
                 _mockSelectionManager,
-                _mockAppOptions)
+                _mockAppOptions,
+                mockGetAvailableDatasetsForPupilsUseCase.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

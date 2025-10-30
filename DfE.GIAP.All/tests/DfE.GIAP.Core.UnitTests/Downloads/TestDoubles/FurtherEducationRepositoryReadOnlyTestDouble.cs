@@ -3,12 +3,12 @@ using DfE.GIAP.Core.Downloads.Application.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
-public static class FurtherEducationRepositoryTestDouble
+public static class FurtherEducationRepositoryReadOnlyTestDouble
 {
-    public static IFurtherEducationRepository WithPupils(IEnumerable<FurtherEducationPupil> pupils) =>
+    public static IFurtherEducationReadOnlyRepository WithPupils(IEnumerable<FurtherEducationPupil> pupils) =>
         new StubRepository(pupils);
 
-    private sealed class StubRepository : IFurtherEducationRepository
+    private sealed class StubRepository : IFurtherEducationReadOnlyRepository
     {
         private readonly IEnumerable<FurtherEducationPupil> _pupils;
 

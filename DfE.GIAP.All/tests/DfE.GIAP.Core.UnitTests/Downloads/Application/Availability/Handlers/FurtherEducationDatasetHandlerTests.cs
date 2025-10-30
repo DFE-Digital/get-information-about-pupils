@@ -16,7 +16,7 @@ public sealed class FurtherEducationDatasetHandlerTests
             FurtherEducationPupilTestDoubles.Create(includePupilPremium: true)
         };
 
-        IFurtherEducationRepository repository = FurtherEducationRepositoryTestDouble.WithPupils(pupils);
+        IFurtherEducationReadOnlyRepository repository = FurtherEducationRepositoryReadOnlyTestDouble.WithPupils(pupils);
         FurtherEducationDatasetHandler sut = new(repository);
 
         IEnumerable<Dataset> result = await sut
@@ -34,7 +34,7 @@ public sealed class FurtherEducationDatasetHandlerTests
             FurtherEducationPupilTestDoubles.Create(includeSen: true),
         };
 
-        IFurtherEducationRepository repository = FurtherEducationRepositoryTestDouble.WithPupils(pupils);
+        IFurtherEducationReadOnlyRepository repository = FurtherEducationRepositoryReadOnlyTestDouble.WithPupils(pupils);
         FurtherEducationDatasetHandler handler = new(repository);
 
         IEnumerable<Dataset> result = await handler
@@ -53,7 +53,7 @@ public sealed class FurtherEducationDatasetHandlerTests
             FurtherEducationPupilTestDoubles.Create(includeSen: true)
         };
 
-        IFurtherEducationRepository repository = FurtherEducationRepositoryTestDouble.WithPupils(pupils);
+        IFurtherEducationReadOnlyRepository repository = FurtherEducationRepositoryReadOnlyTestDouble.WithPupils(pupils);
         FurtherEducationDatasetHandler handler = new(repository);
 
         IEnumerable<Dataset> result = await handler
@@ -72,7 +72,7 @@ public sealed class FurtherEducationDatasetHandlerTests
             FurtherEducationPupilTestDoubles.Create(includeSen: false)
         };
 
-        IFurtherEducationRepository repository = FurtherEducationRepositoryTestDouble.WithPupils(pupils);
+        IFurtherEducationReadOnlyRepository repository = FurtherEducationRepositoryReadOnlyTestDouble.WithPupils(pupils);
         FurtherEducationDatasetHandler handler = new(repository);
 
         IEnumerable<Dataset> result = await handler

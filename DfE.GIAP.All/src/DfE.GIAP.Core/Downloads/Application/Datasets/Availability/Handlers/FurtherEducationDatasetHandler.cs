@@ -7,11 +7,12 @@ namespace DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
 public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
 {
     public DownloadType SupportedDownloadType => DownloadType.FurtherEducation;
-    private readonly IFurtherEducationRepository _repository;
+    private readonly IFurtherEducationReadOnlyRepository _furtherEducationReadOnlyRepository;
 
-    public FurtherEducationDatasetHandler(IFurtherEducationRepository repository)
+    public FurtherEducationDatasetHandler(IFurtherEducationReadOnlyRepository furtherEducationReadOnlyRepository)
     {
-        _repository = repository;
+        ArgumentNullException.ThrowIfNull(furtherEducationReadOnlyRepository);
+        _furtherEducationReadOnlyRepository = furtherEducationReadOnlyRepository;
     }
 
     public async Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
@@ -20,7 +21,7 @@ public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
             .GetSupportedDatasets(SupportedDownloadType);
 
         HashSet<Dataset> datasets = new();
-        IEnumerable<FurtherEducationPupil> pupils = await _repository.GetPupilsByIdsAsync(pupilIds);
+        IEnumerable<FurtherEducationPupil> pupils = await _furtherEducationReadOnlyRepository.GetPupilsByIdsAsync(pupilIds);
 
         if (pupils.Any(p => p.HasPupilPremiumData))
             datasets.Add(Dataset.PP);

@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Downloads.Application.Repositories;
 
-public interface IFurtherEducationRepository
+public interface IFurtherEducationReadOnlyRepository
 {
     Task<IEnumerable<FurtherEducationPupil>> GetPupilsByIdsAsync(IEnumerable<string> pupilIds);
 }

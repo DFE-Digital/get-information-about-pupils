@@ -4,12 +4,13 @@ namespace DfE.GIAP.Core.Downloads.Application.Enums;
 
 public enum Dataset
 {
+    // TODO: Census dataset names should be Pascal, but FA expects underscores, remove underscores when possible
     [Description("Autumn Census")]
-    CensusAutumn,
+    Census_Autumn,
     [Description("Spring Census")]
-    CensusSpring,
+    Census_Spring,
     [Description("Summer Census")]
-    CensusSummer,
+    Census_Summer,
     [Description("EYFSP")]
     EYFSP,
     [Description("Key Stage 1")]
