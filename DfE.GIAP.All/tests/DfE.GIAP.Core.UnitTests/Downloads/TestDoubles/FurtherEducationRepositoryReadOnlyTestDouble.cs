@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Downloads.Application.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
-public static class FurtherEducationRepositoryTestDouble
+public static class FurtherEducationRepositoryReadOnlyTestDouble
 {
     public static IFurtherEducationReadOnlyRepository WithPupils(IEnumerable<FurtherEducationPupil> pupils) =>
         new StubRepository(pupils);

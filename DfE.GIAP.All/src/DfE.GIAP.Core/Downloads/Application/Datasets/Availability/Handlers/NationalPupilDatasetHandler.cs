@@ -4,12 +4,12 @@ using DfE.GIAP.Core.Downloads.Application.Repositories;
 
 namespace DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
 
-public class NationalPupilDatabaseDatasetHandler : IDatasetAvailabilityHandler
+public class NationalPupilDatasetHandler : IDatasetAvailabilityHandler
 {
     public DownloadType SupportedDownloadType => DownloadType.NPD;
     private readonly INationalPupilReadOnlyRepository _nationalPupilDatabaseReadOnlyRepository;
 
-    public NationalPupilDatabaseDatasetHandler(INationalPupilReadOnlyRepository nationalPupilDatabaseReadOnlyRepository)
+    public NationalPupilDatasetHandler(INationalPupilReadOnlyRepository nationalPupilDatabaseReadOnlyRepository)
     {
         ArgumentNullException.ThrowIfNull(nationalPupilDatabaseReadOnlyRepository);
         _nationalPupilDatabaseReadOnlyRepository = nationalPupilDatabaseReadOnlyRepository;

@@ -45,7 +45,7 @@ public static class CompositionRoot
     {
         services.AddScoped<IDatasetAvailabilityHandlerFactory, DatasetAvailabilityHandlerFactory>();
         services.AddScoped<IDatasetAvailabilityHandler, FurtherEducationDatasetHandler>();
-        services.AddScoped<IDatasetAvailabilityHandler, NationalPupilDatabaseDatasetHandler>();
+        services.AddScoped<IDatasetAvailabilityHandler, NationalPupilDatasetHandler>();
         services.AddSingleton<IDatasetAccessEvaluator>(_ =>
         {
             Dictionary<Dataset, IDatasetAccessRule> policies = new()
