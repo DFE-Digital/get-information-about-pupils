@@ -7,7 +7,7 @@ namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 public sealed class SearchIndexFixture : IDisposable
 {
     private readonly IWireMockClient _wireMockClient;
-    private readonly AzureSearchIndex _searchIndex;
+    private readonly AzureSearchIndexClient _searchIndex;
 
     // TODO pass or read options for connection - IConfiguration from testconfiguration.json and output? Local/Remote client
     // TODO pass configuration of Index and shape in options so more flexible
@@ -27,7 +27,7 @@ public sealed class SearchIndexFixture : IDisposable
         };                                                          
 
         _wireMockClient = new WireMockRemoteClient(httpClient);
-        _searchIndex = new AzureSearchIndex(_wireMockClient);
+        _searchIndex = new AzureSearchIndexClient(_wireMockClient);
     }
     
     public async Task<string[]> StubAvailableIndexes(params string[] indexNames)
@@ -36,16 +36,7 @@ public sealed class SearchIndexFixture : IDisposable
         return indexNames;
     }
 
-    public Task<List<AzureIndexEntity>> StubNpdSearchIndex(IEnumerable<AzureIndexEntity>? values = null)
-        => StubIndex("NPD_INDEX_NAME", values);
-
-    public Task<List<AzureIndexEntity>> StubPupilPremiumSearchIndex(IEnumerable<AzureIndexEntity>? values = null)
-        => StubIndex("PUPIL_PREMIUM_INDEX_NAME", values);
-
-    public Task<List<AzureIndexEntity>> StubFurtherEducationIndex(IEnumerable<AzureIndexEntity>? values = null)
-        => StubIndex("FE_INDEX_NAME", values);
-
-    private async Task<List<AzureIndexEntity>> StubIndex(string indexName, IEnumerable<AzureIndexEntity>? values = null)
+    public async Task<List<AzureIndexEntity>> StubIndex(string indexName, IEnumerable<AzureIndexEntity>? values = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
         List<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values.ToList();

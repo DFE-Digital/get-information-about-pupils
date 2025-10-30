@@ -6,11 +6,11 @@ using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
-internal sealed class AzureSearchIndex
+internal sealed class AzureSearchIndexClient
 {
     private readonly IWireMockClient _wireMockClient;
 
-    public AzureSearchIndex(IWireMockClient wireMockClient)
+    public AzureSearchIndexClient(IWireMockClient wireMockClient)
     {
         ArgumentNullException.ThrowIfNull(wireMockClient);
         _wireMockClient = wireMockClient;
