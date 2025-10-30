@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 public static class FurtherEducationPupilDtoTestDoubles
 {
-    public static List<FurtherEducationPupilDto> Generate(int count = 10, Func<FurtherEducationPupilDto, bool>? predicateToFulfil = null)
+    public static List<FurtherEducationPupilDto> Generate(int count = 10, Func<FurtherEducationPupilDto, bool>? predicate = null)
     {
-        List<FurtherEducationPupilDto> pupils = [];
-
         Faker<FurtherEducationPupilDto> faker = CreateGenerator();
+        List<FurtherEducationPupilDto> pupils = new List<FurtherEducationPupilDto>();
 
-        const int circuitBreakerGenerationCounter = 111_111;
-
-        for (int attempts = 0; pupils.Count < count && attempts < circuitBreakerGenerationCounter; attempts++)
+        const int maxAttempts = 999;
+        for (int i = 0; pupils.Count < count && i < maxAttempts; i++)
         {
             FurtherEducationPupilDto dto = faker.Generate();
-            if (predicateToFulfil is null || predicateToFulfil(dto))
+            if (predicate?.Invoke(dto) != false)
             {
                 pupils.Add(dto);
             }
@@ -29,23 +22,12 @@ public static class FurtherEducationPupilDtoTestDoubles
 
         if (pupils.Count < count)
         {
-            throw new ArgumentException($"Unable to generate {count} DTOs after {circuitBreakerGenerationCounter} attempts.");
+            throw new ArgumentException($"Only generated {pupils.Count} of {count} requested DTOs after {maxAttempts} attempts.");
         }
 
         return pupils;
     }
 
-    public static FurtherEducationPupilDto GenerateEmpty() => new()
-    {
-        UniqueLearnerNumber = null!,
-        Forename = null!,
-        Surname = null!,
-        Gender = null!,
-        DOB = default,
-        ConcatenatedName = null!,
-        PupilPremium = [],
-        specialEducationalNeeds = []
-    };
 
     private static Faker<FurtherEducationPupilDto> CreateGenerator()
     {
