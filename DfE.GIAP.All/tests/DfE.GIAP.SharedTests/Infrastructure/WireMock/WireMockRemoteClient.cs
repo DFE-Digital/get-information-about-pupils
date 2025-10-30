@@ -4,13 +4,16 @@ using Newtonsoft.Json;
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock;
 internal sealed class WireMockRemoteClient : IWireMockClient
 {
-    // TODO RestClient shipped from WireMock meaning no need to manage and dispose of HttpClient
+    // TODO RestClient shipped from WireMock native
     private readonly HttpClient _httpClient;
 
-    public WireMockRemoteClient(HttpClient httpClient)
+    public WireMockRemoteClient(WireMockServerOptions options)
     {
-        ArgumentNullException.ThrowIfNull(httpClient);
-        _httpClient = httpClient;
+        _httpClient = new()
+        {
+            BaseAddress = options.ServerAddress
+        };
+
     }
 
     public void Dispose()
