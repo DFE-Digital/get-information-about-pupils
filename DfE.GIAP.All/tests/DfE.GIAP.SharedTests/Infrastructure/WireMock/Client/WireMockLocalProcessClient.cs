@@ -1,12 +1,13 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 using WireMock.Settings;
 
-namespace DfE.GIAP.SharedTests.Infrastructure.WireMock;
+namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 
 internal sealed class WireMockLocalClient : IWireMockClient
 {

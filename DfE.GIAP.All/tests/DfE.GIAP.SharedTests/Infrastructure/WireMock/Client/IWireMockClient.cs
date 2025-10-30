@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock;
+﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 public interface IWireMockClient : IDisposable
 {
     Task Stub<TDataTransferObject>(
