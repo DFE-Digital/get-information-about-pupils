@@ -3,12 +3,16 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -46,6 +50,8 @@ public class FELearnerNumberController : BaseLearnerNumberController
     public override int MyPupilListLimit => int.MaxValue;
 
     public override string InvalidUPNsConfirmationAction => "";
+    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+
 
 
     public FELearnerNumberController(ILogger<FELearnerNumberController> logger,
@@ -53,7 +59,8 @@ public class FELearnerNumberController : BaseLearnerNumberController
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ISelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
         : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
     {
         _logger = logger ??
@@ -61,6 +68,9 @@ public class FELearnerNumberController : BaseLearnerNumberController
         _downloadService = downloadService ??
             throw new ArgumentNullException(nameof(downloadService));
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
+        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
 
@@ -171,7 +181,7 @@ public class FELearnerNumberController : BaseLearnerNumberController
     [HttpGet]
     public async Task<IActionResult> DownloadSelectedUlnDatabaseData(string selectedPupilsJoined, string uln, int selectedPupilsCount)
     {
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupilsJoined,
             LearnerNumber = uln,
@@ -181,7 +191,6 @@ public class FELearnerNumberController : BaseLearnerNumberController
             ShowTABDownloadType = false
         };
 
-        SearchDownloadHelper.AddUlnDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationHighAge(), User.IsDfeUser());
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumULNsPerSearch;
         ModelState.Clear();
 
@@ -191,13 +200,26 @@ public class FELearnerNumberController : BaseLearnerNumberController
         searchDownloadViewModel.DownloadRoute = UniqueLearnerNumberLabels.DownloadSelectedUlnData;
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumberLabel = "ULN";
 
-        var selectedPupils = selectedPupilsJoined.Split(',');
+        string[] selectedPupils = selectedPupilsJoined.Split(',');
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
-            var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-            var disabledTypes = await _downloadService.CheckForFENoDataAvailable(selectedPupils, downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-            SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
+            GetAvailableDatasetsForPupilsRequest request = new(
+            DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+            SelectedPupils: selectedPupils,
+            AuthorisationContext: new HttpClaimsAuthorisationContext(User));
+            GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
+
+            foreach (AvailableDatasetResult datasetResult in response.AvailableDatasets)
+            {
+                searchDownloadViewModel.SearchDownloadDatatypes.Add(new SearchDownloadDataType
+                {
+                    Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
+                    Value = datasetResult.Dataset.ToString(),
+                    Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
+                });
+            }
         }
+
         searchDownloadViewModel.SearchResultPageHeading = PageHeading;
         //need to update searchbox to show uln wording
         return View(Global.DownloadNPDOptionsView, searchDownloadViewModel);

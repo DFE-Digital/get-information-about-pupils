@@ -1,12 +1,19 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
@@ -63,6 +70,9 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
     private readonly ILogger<FELearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
 
+    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+
+
     public FELearnerTextSearchController(
        ILogger<FELearnerTextSearchController> logger,
        IOptions<AzureAppSettings> azureAppSettings,
@@ -70,7 +80,8 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
        IMyPupilListService mplService,
        ITextSearchSelectionManager selectionManager,
        ISessionProvider sessionProvider,
-       IDownloadService downloadService)
+       IDownloadService downloadService,
+       IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
        : base(logger,
              paginatedSearch,
              mplService,
@@ -83,6 +94,9 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
 
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
+        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
 
@@ -157,7 +171,7 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
         string selectedPupil,
         string searchText)
     {
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupil,
             LearnerNumber = selectedPupil,
@@ -167,13 +181,21 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
             ShowTABDownloadType = false
         };
 
-        if (IndexType == AzureSearchIndexType.FurtherEducation)
+
+        GetAvailableDatasetsForPupilsRequest request = new(
+            DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+            SelectedPupils: new List<string> { selectedPupil },
+            AuthorisationContext: new HttpClaimsAuthorisationContext(User));
+        GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
+
+        foreach (AvailableDatasetResult datasetResult in response.AvailableDatasets)
         {
-            SearchDownloadHelper.AddUlnDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationHighAge(), User.IsDfeUser());
-        }
-        else
-        {
-            SearchDownloadHelper.AddDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationLowAge(), User.GetOrganisationHighAge(), User.IsOrganisationLocalAuthority(), User.IsOrganisationAllAges());
+            searchDownloadViewModel.SearchDownloadDatatypes.Add(new SearchDownloadDataType
+            {
+                Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
+                Value = datasetResult.Dataset.ToString(),
+                Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
+            });
         }
 
         ModelState.Clear();
@@ -184,10 +206,6 @@ public class FELearnerTextSearchController : BaseLearnerTextSearchController
         searchDownloadViewModel.RedirectRoute = Routes.FurtherEducation.LearnerTextSearch;
         searchDownloadViewModel.TextSearchViewModel = new LearnerTextSearchViewModel() { LearnerNumberLabel = LearnerNumberLabel, SearchText = searchText };
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
-
-        var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-        var disabledTypes = await _downloadService.CheckForFENoDataAvailable(new string[] { selectedPupil }, downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-        SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
 
         searchDownloadViewModel.SearchResultPageHeading = PageHeading;
         return View(Global.NonLearnerNumberDownloadOptionsView, searchDownloadViewModel);
