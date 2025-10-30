@@ -3,6 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.Aggregate
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints.GetIndexNames;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints.PostSearchIndex;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 

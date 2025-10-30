@@ -1,7 +1,8 @@
 ﻿using System.Text;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.SharedTests.Infrastructure.WireMock;
+namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 internal sealed class WireMockRemoteClient : IWireMockClient
 {
     // TODO RestClient shipped from WireMock native
