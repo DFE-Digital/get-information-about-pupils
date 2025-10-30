@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Factory;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
