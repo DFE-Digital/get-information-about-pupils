@@ -1,9 +1,9 @@
 ﻿using System.Net;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock;
-public class WireMockResponse<TDataTransferObject>
+public class Response<TDataTransferObject>
 {
-    public WireMockResponse(HttpStatusCode code, TDataTransferObject dto)
+    public Response(HttpStatusCode code, TDataTransferObject dto)
     {
         StatusCode = (int)code;
         Body = dto;

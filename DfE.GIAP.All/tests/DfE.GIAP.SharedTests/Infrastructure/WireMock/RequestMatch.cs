@@ -1,9 +1,9 @@
 ﻿using System.Text;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock;
-public class WireMockRequestMatch
+public class RequestMatch
 {
-    public WireMockRequestMatch(
+    public RequestMatch(
         string? path,
         HttpMethod method,
         IEnumerable<KeyValuePair<string, string?>>? queryParams)
@@ -53,7 +53,7 @@ public class WireMockRequestMatch
         return builder.ToString();
     }
 
-    public static WireMockRequestMatch Create(
+    public static RequestMatch Create(
         string? path,
         HttpMethod method,
         IEnumerable<KeyValuePair<string, string?>> queryParameters)

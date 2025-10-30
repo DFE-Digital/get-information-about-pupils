@@ -18,7 +18,7 @@ internal sealed class WireMockRemoteClient : IWireMockClient
         _httpClient?.Dispose();
     }
 
-    public async Task Stub<TDataTransferObject>(WireMockRequestMatch request, WireMockResponse<TDataTransferObject> response)
+    public async Task Stub<TDataTransferObject>(RequestMatch request, Response<TDataTransferObject> response)
     {
         // TODO use a WireMock type from WireMock library than anon object serialise
         var stub = new

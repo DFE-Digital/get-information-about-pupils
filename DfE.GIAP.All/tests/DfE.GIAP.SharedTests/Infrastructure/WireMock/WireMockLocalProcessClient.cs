@@ -33,7 +33,7 @@ internal sealed class WireMockLocalClient : IWireMockClient
         }
     }
 
-    public Task Stub<TDataTransferObject>(WireMockRequestMatch request, WireMockResponse<TDataTransferObject> response)
+    public Task Stub<TDataTransferObject>(RequestMatch request, Response<TDataTransferObject> response)
     {
         _wireMockServer
             .Given(

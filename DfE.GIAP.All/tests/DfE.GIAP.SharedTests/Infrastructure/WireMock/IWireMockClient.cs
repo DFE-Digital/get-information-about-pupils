@@ -2,6 +2,6 @@
 public interface IWireMockClient : IDisposable
 {
     Task Stub<TDataTransferObject>(
-        WireMockRequestMatch request,
-        WireMockResponse<TDataTransferObject> response);
+        RequestMatch request,
+        Response<TDataTransferObject> response);
 }

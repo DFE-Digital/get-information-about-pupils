@@ -26,7 +26,7 @@ internal sealed class AzureSearchIndex
             })
         };
 
-        WireMockRequestMatch request = new(
+        RequestMatch request = new(
             path: "/indexes",
             method: HttpMethod.Get,
             queryParams: [
@@ -34,7 +34,7 @@ internal sealed class AzureSearchIndex
                 new("$select", "name")
             ]);
 
-        WireMockResponse<AzureSearchGetIndexesResponseDto> response = new(HttpStatusCode.OK, dto);
+        Response<AzureSearchGetIndexesResponseDto> response = new(HttpStatusCode.OK, dto);
 
         await _wireMockClient.Stub(request, response);
     }
@@ -61,14 +61,14 @@ internal sealed class AzureSearchIndex
             })
         };
 
-        WireMockRequestMatch request = new(
+        RequestMatch request = new(
             path: $"/indexes('{indexName}')/docs/search.post.search",
             method: HttpMethod.Post,
             queryParams: [
                 new("api-version", "2025-09-01")
             ]);
 
-        WireMockResponse<AzureSearchPostSearchIndexResponseDto> response = new(HttpStatusCode.OK, dto);
+        Response<AzureSearchPostSearchIndexResponseDto> response = new(HttpStatusCode.OK, dto);
 
         await _wireMockClient.Stub(request, response);
     }
