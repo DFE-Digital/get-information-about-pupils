@@ -1,5 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Factory;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
@@ -9,21 +12,21 @@ public sealed class SearchIndexFixture : IDisposable
     private readonly IWireMockClient _wireMockClient;
     private readonly AzureSearchIndexClient _searchIndex;
 
-    // TODO Factory to create different types of WireMockClient
     // TODO Registering json bundle on disk to /__admin/mappings - Rather than programatically generating - could we pass this as Configuration to enable this with a 'default'??
     // TODO expose ClearStubs
     public SearchIndexFixture()
     {
         WireMockServerOptions options = new()
         {
+            ServerMode = WireMockServerMode.Remote,
             Domain = "localhost",
             Port = 8443,
             EnableSecureConnection = true,
             CertificatePassword = "yourpassword",
-            CertificatePath = "wiremock-cert.pfx"
+            CertificatePath = "wiremock-cert.pfx",
         };
 
-        _wireMockClient = new WireMockRemoteClient(options);
+        _wireMockClient = WireMockClientFactory.Create(options);
         _searchIndex = new AzureSearchIndexClient(_wireMockClient);
     }
 
