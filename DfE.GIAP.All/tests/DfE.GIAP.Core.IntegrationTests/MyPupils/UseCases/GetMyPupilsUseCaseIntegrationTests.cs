@@ -17,33 +17,32 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly SearchIndexFixture _searchIndexFixture;
 
-    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture, SearchIndexFixture searchIndexFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;
+
+        ArgumentNullException.ThrowIfNull(searchIndexFixture);
+        _searchIndexFixture = searchIndexFixture;
     }
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
         await _cosmosDbFixture.Database.ClearDatabaseAsync();
-
-        services
-            .AddMyPupilsDependencies()
-            .ConfigureAzureSearchClients();
+        services.AddMyPupilsDependencies();
     }
 
     [Fact]
     public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
         // Arrange
-        using SearchIndexFixture mockSearchFixture = new();
-
         IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
-        await mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+        await _searchIndexFixture.StubNpdSearchIndex(npdSearchIndexDtos);
 
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
-        await mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
+        await _searchIndexFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
 
         UserId userId = UserIdTestDoubles.Default();
 
@@ -93,8 +92,6 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
-        using SearchIndexFixture mockSearchFixture = new();
-
         UserId userId = UserIdTestDoubles.Default();
 
         await _cosmosDbFixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
