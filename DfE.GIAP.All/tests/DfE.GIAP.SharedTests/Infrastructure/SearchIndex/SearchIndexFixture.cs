@@ -24,12 +24,12 @@ public sealed class SearchIndexFixture : IDisposable
         HttpClient httpClient = new()
         {
             BaseAddress = uri
-        };                                                          
+        };
 
         _wireMockClient = new WireMockRemoteClient(httpClient);
         _searchIndex = new AzureSearchIndexClient(_wireMockClient);
     }
-    
+
     public async Task<string[]> StubAvailableIndexes(params string[] indexNames)
     {
         await _searchIndex.StubIndexListResponse(indexNames);

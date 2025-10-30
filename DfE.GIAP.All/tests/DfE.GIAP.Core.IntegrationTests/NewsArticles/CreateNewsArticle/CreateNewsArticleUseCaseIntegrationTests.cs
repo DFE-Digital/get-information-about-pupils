@@ -42,7 +42,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         // Act
         await sut.HandleRequestAsync(request);
-        watch.Stop(); 
+        watch.Stop();
 
         // Assert
         IEnumerable<NewsArticleDto> enumerable = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();

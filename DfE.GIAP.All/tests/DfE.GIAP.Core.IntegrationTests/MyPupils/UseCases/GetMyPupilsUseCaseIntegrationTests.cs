@@ -39,20 +39,20 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
-        
+
         await _searchIndexFixture.StubIndex(
-            indexName: "NPD_INDEX_NAME", 
+            indexName: "NPD_INDEX_NAME",
             npdSearchIndexDtos);
 
         IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
-        
+
         await _searchIndexFixture.StubIndex(
-            indexName: "PUPIL_PREMIUM_INDEX_NAME", 
+            indexName: "PUPIL_PREMIUM_INDEX_NAME",
             pupilPremiumSearchIndexDtos);
 
         UserId userId = UserIdTestDoubles.Default();
 
-        IEnumerable<UniquePupilNumber> upns = 
+        IEnumerable<UniquePupilNumber> upns =
             npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
                 .Select((t) => t.UPN)
                     .ToUniquePupilNumbers();

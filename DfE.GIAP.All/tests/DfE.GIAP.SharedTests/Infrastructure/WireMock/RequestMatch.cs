@@ -9,7 +9,7 @@ public class RequestMatch
         IEnumerable<KeyValuePair<string, string?>>? queryParams)
     {
         Method = method.Method;
-        
+
         Path = NormalisePath(path);
 
         PathAndQueryString = new StringBuilder()
