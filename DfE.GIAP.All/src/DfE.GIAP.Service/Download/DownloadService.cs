@@ -6,8 +6,6 @@ using Microsoft.Extensions.Options;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Microsoft.Extensions.Hosting;
-using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Common.Application;
 
 namespace DfE.GIAP.Service.Download;
 
@@ -17,7 +15,7 @@ public class DownloadService : IDownloadService
     private readonly IApiService _apiProcessorService;
     private readonly IEventLogging _eventLogging;
     private readonly IHostEnvironment _hostEnvironment;
-    
+
     public DownloadService(
         IOptions<AzureAppSettings> azureFunctionUrls,
         IApiService apiProcessorService,
@@ -151,18 +149,6 @@ public class DownloadService : IDownloadService
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation, ConfirmationGiven = confirmationGiven };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
-
-        return response;
-    }
-
-    public async Task<IEnumerable<DownloadUlnDataType>> CheckForFENoDataAvailable(string[] selectedPupils, string[] selectedDownloadOptions, AzureFunctionHeaderDetails azureFunctionHeaderDetails)
-    {
-        var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
-
-        var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, CheckOnly = true };
-
-        // The response actually gets back a list of UNAVAILABLE datasets... not available! according to the FA!! 
-        var response = await _apiProcessorService.PostAsync<DownloadUlnRequest, IEnumerable<DownloadUlnDataType>>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         return response;
     }
