@@ -6,7 +6,7 @@ public record CosmosDbDatabaseOptions
 
     public CosmosDbDatabaseOptions(string databaseName, IEnumerable<CosmosDbContainerOptions>? containers)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
+        Guard.ThrowIfNullOrWhiteSpace(databaseName, nameof(databaseName));
         DatabaseName = databaseName;
         Containers = (containers ?? []).ToList().AsReadOnly();
     }

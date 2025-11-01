@@ -84,7 +84,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
 
     public async Task<List<TDto>> ReadManyAsync<TDto>(string containerName, IEnumerable<string>? identifiers = null) where TDto : class
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(containerName);
+        Guard.ThrowIfNullOrWhiteSpace(containerName, nameof(containerName));
         ContainerResponse targetContainer = await GetContainerByName(containerName);
 
         // Build the query string
@@ -148,7 +148,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
 
     private async Task<List<ContainerResponse>> CreateAllContainersIfNotExistAsync(Database database)
     {
-        ArgumentNullException.ThrowIfNull(database);
+        Guard.ThrowIfNull(database, nameof(database));
         List<ContainerResponse> containerResponses = [];
 
         foreach (CosmosDbContainerOptions options in _containerOptions)

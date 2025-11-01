@@ -24,15 +24,19 @@ public class RequestMatch
 
     private static string NormalisePath(string? input)
     {
+        char forwardSlash = '/';
+
         if (string.IsNullOrEmpty(input))
         {
-            return "/";
+            return forwardSlash.ToString();
         }
-        if (input.StartsWith('/'))
+
+        if (input!.StartsWith(forwardSlash.ToString()))
         {
-            return input.TrimEnd('/');
+            return input.TrimEnd(forwardSlash);
         }
-        return $"/{input}".TrimEnd('/');
+
+        return $"/{input}".TrimEnd(forwardSlash);
     }
 
     private static string BuildQueryString(IEnumerable<KeyValuePair<string, string?>>? query)

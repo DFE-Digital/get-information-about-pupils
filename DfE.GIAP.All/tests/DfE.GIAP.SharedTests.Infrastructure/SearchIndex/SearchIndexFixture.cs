@@ -35,7 +35,7 @@ public sealed class SearchIndexFixture : IDisposable
 
     public async Task StubIndex(string indexName, IEnumerable<object>? values = null)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
+        Guard.ThrowIfNullOrWhiteSpace(indexName, nameof(indexName));
         List<object> azureIndexDtos = values is null ? [] : values.ToList();
         await _searchIndex.StubIndexSearchResponse(indexName, azureIndexDtos);
     }
