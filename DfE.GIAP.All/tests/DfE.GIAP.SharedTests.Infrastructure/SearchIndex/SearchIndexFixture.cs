@@ -15,7 +15,7 @@ public sealed class SearchIndexFixture : IDisposable
     {
         WireMockServerOptions options = new()
         {
-            ServerMode = WireMockServerMode.InProcess,
+            ServerMode = WireMockServerMode.Remote,
             Domain = "localhost",
             Port = 8443,
             EnableSecureConnection = true,
