@@ -19,7 +19,9 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
         services.AddNewsArticleDependencies();
     }
 
@@ -34,7 +36,9 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
             _ => throw new NotImplementedException()
         });
 
-        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededDTOs);
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteManyAsync(containerName: "news", seededDTOs));
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 

@@ -12,7 +12,7 @@ public static class AzureNpdSearchResponseDtoTestDoubles
 
     private static Faker<AzureNpdSearchResponseDto> CreateFaker()
     {
-        
+
         Faker<AzureNpdSearchResponseDto> faker = new Faker<AzureNpdSearchResponseDto>()
             .RuleFor(t => t.Score, f => f.Random.Double(0, 1))
             .RuleFor(t => t.UPN, _ => UniquePupilNumberTestDoubles.Generate().Value)

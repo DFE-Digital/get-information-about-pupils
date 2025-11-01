@@ -17,7 +17,9 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
         services.AddNewsArticleDependencies();
     }
 
@@ -46,7 +48,11 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         watch.Stop();
 
         // Assert
-        IEnumerable<NewsArticleDto> enumerable = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(containerName: "news");
+        List<NewsArticleDto> enumerable =
+            await _cosmosDbFixture.InvokeAsync(
+                databaseName: _cosmosDbFixture.DatabaseName,
+                (client) => client.ReadManyAsync<NewsArticleDto>(containerName: "news"));
+
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));

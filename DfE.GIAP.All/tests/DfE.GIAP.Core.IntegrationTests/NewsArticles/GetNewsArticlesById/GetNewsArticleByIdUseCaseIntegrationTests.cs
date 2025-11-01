@@ -2,7 +2,6 @@
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
@@ -19,7 +18,10 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
+
         services.AddNewsArticleDependencies();
     }
 
@@ -31,7 +33,10 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededArticles);
+
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteManyAsync(containerName: "news", seededArticles));
 
         NewsArticleDto targetArticle = seededArticles[0];
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.From(targetArticle.id));
@@ -55,7 +60,10 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededArticles);
+
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteManyAsync(containerName: "news", seededArticles));
 
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.New());
 

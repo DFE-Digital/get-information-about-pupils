@@ -11,7 +11,6 @@ public abstract class BaseCosmosDbFixture : IAsyncLifetime
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     protected abstract CosmosDbOptions Options { get; }
     private IReadOnlyDictionary<string, CosmosDbDatabaseClient>? _dbClients = null;
-    public CosmosDbDatabaseClient Database => _dbClients.Single(t => t.Key.Equals("giapsearch")).Value;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     public async Task InitializeAsync()
@@ -38,12 +37,20 @@ public abstract class BaseCosmosDbFixture : IAsyncLifetime
         _dbClients = clients;
     }
 
+    public Task InvokeAsync(string databaseName, Func<CosmosDbDatabaseClient, Task> handler)
+        => handler(
+            GetDatabaseClientByName(databaseName));
+
+    public Task<T> InvokeAsync<T>(string databaseName, Func<CosmosDbDatabaseClient, Task<T>> handler)
+        => handler(
+            GetDatabaseClientByName(databaseName));
+
     public virtual async Task DisposeAsync()
     {
-        if (Database is not null)
+        foreach (KeyValuePair<string, CosmosDbDatabaseClient> item in _dbClients?.ToList() ?? [])
         {
-            await OnDisposeAsync(Database);
-            await Database.DisposeAsync();
+            await OnDisposeAsync(item.Value);
+            await item.Value.DisposeAsync();
         }
     }
 

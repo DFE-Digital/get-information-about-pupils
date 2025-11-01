@@ -7,7 +7,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
@@ -31,7 +30,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
+
         services.AddMyPupilsDependencies();
     }
 
@@ -58,11 +60,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
                 .Select((t) => t.UPN)
                     .ToUniquePupilNumbers();
 
-        await _cosmosDbFixture.Database.WriteItemAsync(
-            containerName: "mypupils",
-            value: MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
-                upns: UniquePupilNumbers.Create(upns)));
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteItemAsync(
+                containerName: "mypupils",
+                value: MyPupilsDocumentDtoTestDoubles.Create(userId, upns: UniquePupilNumbers.Create(upns))));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -102,11 +104,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
-        await _cosmosDbFixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
-            containerName: "mypupils",
-            MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
-                upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteItemAsync<MyPupilsDocumentDto>(
+                containerName: "mypupils",
+                MyPupilsDocumentDtoTestDoubles.Create(userId, upns: UniquePupilNumbers.Create(uniquePupilNumbers: []))));
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
             ResolveApplicationType<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();

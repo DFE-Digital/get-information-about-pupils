@@ -14,6 +14,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
 {
     private readonly string _databaseName;
     private readonly IReadOnlyList<CosmosDbContainerOptions> _containerOptions;
+    // TODO abstract out usage of this, maybe CosmosDbContainerOptions can also pass PartitionKey type e.g int, string?
     private const string ApplicationDataContainerName = "application-data";
     private readonly CosmosClient _cosmosClient;
 
@@ -83,7 +84,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
 
     public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(_databaseName).DeleteAsync();
 
-    public async Task<IEnumerable<TDto>> ReadManyAsync<TDto>(string containerName, IEnumerable<string>? identifiers = null) where TDto : class
+    public async Task<List<TDto>> ReadManyAsync<TDto>(string containerName, IEnumerable<string>? identifiers = null) where TDto : class
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(containerName);
         ContainerResponse targetContainer = await GetContainerByName(containerName);

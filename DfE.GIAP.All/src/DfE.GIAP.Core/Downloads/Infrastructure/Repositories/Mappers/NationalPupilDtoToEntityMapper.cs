@@ -16,7 +16,7 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
     /// <returns>A NationalPupil entity populated with the DTO values.</returns>
     /// <exception cref="ArgumentNullException">Thrown if the input DTO is null.</exception>
     public NationalPupil Map(NationalPupilDto input)
-    {   
+    {
         ArgumentNullException.ThrowIfNull(input);
 
         return new NationalPupil

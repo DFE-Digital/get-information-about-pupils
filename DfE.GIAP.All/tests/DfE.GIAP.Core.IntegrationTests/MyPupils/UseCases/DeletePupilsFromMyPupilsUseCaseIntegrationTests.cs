@@ -24,7 +24,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
 
         services.AddMyPupilsDependencies();
 
@@ -43,7 +45,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
 
-        await _cosmosDbFixture.Database.WriteItemAsync(containerName: "mypupils", myPupilsDocument);
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName, (client) => client.WriteItemAsync(containerName: "mypupils", myPupilsDocument));
 
         _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
     }
@@ -144,7 +147,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>(containerName: "mypupils");
+        IEnumerable<MyPupilsDocumentDto> users =
+            await _cosmosDbFixture.InvokeAsync(
+                databaseName: _cosmosDbFixture.DatabaseName, (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: "mypupils"));
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns
