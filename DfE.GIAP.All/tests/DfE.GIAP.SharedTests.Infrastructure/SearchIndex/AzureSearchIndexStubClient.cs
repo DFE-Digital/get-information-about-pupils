@@ -1,15 +1,15 @@
 ﻿using System.Net;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Server.Client;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
-internal sealed class AzureSearchIndexClient
+internal sealed class AzureSearchIndexStubClient
 {
     private readonly IWireMockClient _wireMockClient;
 
-    public AzureSearchIndexClient(IWireMockClient wireMockClient)
+    public AzureSearchIndexStubClient(IWireMockClient wireMockClient)
     {
         Guard.ThrowIfNull(wireMockClient, nameof(wireMockClient));
         _wireMockClient = wireMockClient;
