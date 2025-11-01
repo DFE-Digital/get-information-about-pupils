@@ -42,6 +42,7 @@ jobs:
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.IntegrationTests/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests/ \
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests.Infrastructure/
             --verify-no-changes \
             --verbosity detailed
 
