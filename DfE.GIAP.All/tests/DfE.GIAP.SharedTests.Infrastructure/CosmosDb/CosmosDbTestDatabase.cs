@@ -14,8 +14,6 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
 {
     private readonly string _databaseName;
     private readonly IReadOnlyList<CosmosDbContainerOptions> _containerOptions;
-    // TODO abstract out usage of this, maybe CosmosDbContainerOptions can also pass PartitionKey type e.g int, string?
-    private const string ApplicationDataContainerName = "application-data";
     private readonly CosmosClient _cosmosClient;
 
     public CosmosDbDatabaseClient(
@@ -73,7 +71,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
                 foreach (dynamic item in queriedItem)
                 {
                     JObject itemObject = JObject.FromObject(item);
-                    (string id, PartitionKey pk) = ExtractDocumentQueryValues(container, itemObject);
+                    (string id, PartitionKey pk) = ExtractDocumentQueryValues(container, itemObject, _containerOptions);
                     deleteTasks.Add(container.Container.DeleteItemAsync<dynamic>(id, pk));
                 }
             }
@@ -110,7 +108,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
     {
         ContainerResponse targetContainer = await GetContainerByName(containerName);
 
-        (string documentId, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(value));
+        (string documentId, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(value), _containerOptions);
 
         await CreateItemInternalAsync(value, targetContainer);
 
@@ -131,7 +129,7 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
         {
             await CreateItemInternalAsync(item, targetContainer);
 
-            (string id, PartitionKey key) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(item));
+            (string id, PartitionKey key) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(item), _containerOptions);
 
             await EnsureItemIsQueryableAsync<TDto>(
                 targetContainer,
@@ -166,24 +164,30 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
         return containerResponses;
     }
 
-    private static async Task CreateItemInternalAsync<T>(T obj, ContainerResponse container) where T : class
+    private async Task CreateItemInternalAsync<T>(T obj, ContainerResponse container) where T : class
     {
-        (string _, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(container, JObject.FromObject(obj));
+        (string _, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(container, JObject.FromObject(obj), _containerOptions);
         ItemResponse<T> response = await container.Container.CreateItemAsync(obj, documentPartitionKey);
         Assert.Contains(response.StatusCode, new[] { HttpStatusCode.Created, HttpStatusCode.OK });
     }
 
 
-    private static (string id, PartitionKey) ExtractDocumentQueryValues(ContainerResponse container, JObject document)
+    private static (string id, PartitionKey) ExtractDocumentQueryValues(ContainerResponse container, JObject document, IEnumerable<CosmosDbContainerOptions> options)
     {
         string containerPartitionKey = container.Resource.PartitionKeyPath.TrimStart('/');
 
         JToken partitionKeyValue = document[containerPartitionKey] ??
             throw new ArgumentException($"Could not find partitionkey {containerPartitionKey} on object");
 
-        PartitionKey partitionKey = container.Container.Id == ApplicationDataContainerName ?
-            new PartitionKey(partitionKeyValue.Value<int>()) :
-                new PartitionKey(partitionKeyValue.ToString());
+        CosmosDbContainerOptions targetOptions =
+            options.Single(
+                (options) => options.ContainerName.Equals(container.Container.Id));
+
+        PartitionKey partitionKey = targetOptions.PartitionKeyType switch
+        {
+            PartitionKeyType.Integer => new(partitionKeyValue.Value<int>()),
+            _ => new(partitionKeyValue.ToString())
+        };
 
         string documentId = document["id"]?.ToString() ?? throw new ArgumentException("Could not find id on object");
 
