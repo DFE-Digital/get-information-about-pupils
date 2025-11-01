@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
-
-namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
+﻿namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
 public static class ConfigurationTestDoubles
 {
@@ -99,30 +97,39 @@ public static class ConfigurationTestDoubles
 
     public static IConfigurationBuilder WithLocalCosmosDbOptions(this IConfigurationBuilder builder)
     {
-        CosmosDbOptions options = CosmosDbOptionsProvider.DefaultLocalOptions();
-
         Dictionary<string, string?> configurationOptions = new()
         {
             ["RepositoryOptions:ConnectionMode"] = "1",
-            ["RepositoryOptions:EndpointUri"] = options.Uri.ToString(),
-            ["RepositoryOptions:PrimaryKey"] = options.Key,
-            ["RepositoryOptions:DatabaseId"] = options.DatabaseNames.Single()
+            ["RepositoryOptions:EndpointUri"] = "https://localhost:8081",
+            ["RepositoryOptions:PrimaryKey"] = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+            ["RepositoryOptions:DatabaseId"] = "giapsearch"
         };
 
-        // Add RepositoryOptions:Containers[]
-        for (int index = 0; index < options.Containers.Count; index++)
+        Dictionary<string, string> containerOptions = new()
         {
-            string containerKey = options.Containers[index].ContainerName;
-            string partitionKey = options.Containers[index].PartitionKey;
+            { "application-data", "/DOCTYPE" },
+            { "news", "/id" },
+            { "users", "/id" },
+            { "mypupils", "/id" }
+            /*new CosmosDbContainerOptions("further-education", "/ULN"),
+                new CosmosDbContainerOptions("pupil-noskill", "/PupilMatchingRef"),
+                new CosmosDbContainerOptions("pupil-premium-v2", "/PupilMatchingRef"),
+                new CosmosDbContainerOptions("reference", "/DOCTYPE")*/
+        };
 
-            configurationOptions.TryAdd($"RepositoryOptions:Containers:{index}:{containerKey}:ContainerName", containerKey);
-            configurationOptions.TryAdd($"RepositoryOptions:Containers:{index}:{containerKey}:PartitionKey", partitionKey);
+        int index = 0;
+
+        foreach (KeyValuePair<string, string> item in containerOptions)
+        {
+            configurationOptions.TryAdd($"RepositoryOptions:Containers:{index}:{item.Key}:ContainerName", item.Key);
+            configurationOptions.TryAdd($"RepositoryOptions:Containers:{index}:{item.Key}:PartitionKey", containerOptions[item.Key]);
+            ++index;
         }
-
-
         builder.AddInMemoryCollection(configurationOptions);
         return builder;
     }
+
+    private sealed class ContainerOptions(string ContainerName, string PartitionKey);
 
     public static IConfigurationBuilder WithDsiOptions(this IConfigurationBuilder builder)
     {

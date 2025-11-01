@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
+﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
+using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -25,12 +26,12 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
     public async Task DeleteNewsArticles_Deletes_SelectedArticle()
     {
         // Arrange
-        IUseCaseRequestOnly<DeleteNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeleteNewsArticleRequest>>()!;
+        IUseCaseRequestOnly<DeleteNewsArticleRequest> sut = ResolveApplicationType<IUseCaseRequestOnly<DeleteNewsArticleRequest>>()!;
 
         // Seed articles
         const int countGenerated = 10;
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate(countGenerated);
-        await _cosmosDbFixture.Database.WriteManyAsync(seededArticles);
+        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededArticles);
 
         NewsArticleDto targetDeleteArticle = seededArticles[0];
         DeleteNewsArticleRequest request = new(Id: NewsArticleIdentifier.From(targetDeleteArticle.id));
@@ -40,7 +41,7 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
 
         //Assert
         IEnumerable<NewsArticleDto> newsArticleDtosShouldReturn = seededArticles.Where(t => t.id != targetDeleteArticle.id);
-        IEnumerable<NewsArticleDto?> queriedArticles = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto?> queriedArticles = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(containerName: "news");
 
         Assert.Equivalent(newsArticleDtosShouldReturn, queriedArticles);
         Assert.Equal(countGenerated - 1, queriedArticles.Count(t => t != null));

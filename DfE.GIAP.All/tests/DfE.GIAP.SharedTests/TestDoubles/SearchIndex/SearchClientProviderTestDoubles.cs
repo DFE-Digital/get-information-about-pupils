@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using Moq;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 public static class SearchClientProviderTestDoubles
 {
     public static Mock<ISearchClientProvider> Default() => new();

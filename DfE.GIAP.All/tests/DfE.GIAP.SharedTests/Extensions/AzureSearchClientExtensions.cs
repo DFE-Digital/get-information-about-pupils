@@ -1,12 +1,34 @@
-﻿using Azure.Search.Documents;
+﻿using Azure;
+using Azure.Core.Pipeline;
+using Azure.Search.Documents;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
-public static class CompositionRoot
+namespace DfE.GIAP.SharedTests.Extensions;
+public static class AzureSearchClientExtensions
 {
+    public static SearchClient WithDisabledTlsValidation(this SearchClient original)
+    {
+        SearchClientOptions insecureOptions = new()
+        {
+            Transport =
+                new HttpClientTransport(
+                    new HttpClient(
+                        new HttpClientHandler
+                        {
+                            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                        }))
+        };
+
+        return new SearchClient(
+            original.Endpoint,
+            original.IndexName,
+            new AzureKeyCredential("original.Credential"),
+            insecureOptions);
+    }
+
     public static IServiceCollection ConfigureAzureSearchClients(this IServiceCollection services)
     {
         services.RemoveAll<ISearchClientProvider>();

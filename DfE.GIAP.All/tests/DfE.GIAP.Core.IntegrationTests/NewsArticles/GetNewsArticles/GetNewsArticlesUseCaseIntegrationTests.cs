@@ -1,4 +1,5 @@
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
@@ -33,12 +34,12 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
             _ => throw new NotImplementedException()
         });
 
-        await _cosmosDbFixture.Database.WriteManyAsync(seededDTOs);
+        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededDTOs);
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 
         // Act
-        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut = ResolveApplicationType<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
 
         GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 

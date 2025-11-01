@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
@@ -26,7 +27,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
     public async Task CreateNewsArticles_Creates_Article(bool isPublished, bool isPinned)
     {
         // Arrange
-        IUseCaseRequestOnly<CreateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<CreateNewsArticleRequest>>()!;
+        IUseCaseRequestOnly<CreateNewsArticleRequest> sut = ResolveApplicationType<IUseCaseRequestOnly<CreateNewsArticleRequest>>()!;
 
         const string stubArticleTitle = "Test title";
         const string stubArticleBody = "Test body";
@@ -45,7 +46,7 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         watch.Stop();
 
         // Assert
-        IEnumerable<NewsArticleDto> enumerable = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>();
+        IEnumerable<NewsArticleDto> enumerable = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(containerName: "news");
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);
 
         Assert.False(string.IsNullOrEmpty(newsArticleDto.id));
@@ -56,6 +57,5 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         Assert.InRange(newsArticleDto.CreatedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
         Assert.InRange(newsArticleDto.ModifiedDate, preRequestCreationDate, preRequestCreationDate + watch.Elapsed);
-
     }
 }

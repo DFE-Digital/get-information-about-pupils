@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
@@ -26,11 +27,11 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
     public async Task GetNewsArticleByIdUseCase_Returns_Article_When_HandleRequest()
     {
         // Arrange
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveApplicationType<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await _cosmosDbFixture.Database.WriteManyAsync(seededArticles);
+        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededArticles);
 
         NewsArticleDto targetArticle = seededArticles[0];
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.From(targetArticle.id));
@@ -50,11 +51,11 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
     public async Task GetNewsArticleByIdUseCase_Returns_Null_When_HandleRequest_Finds_NoArticleMatchingId()
     {
         // Arrange
-        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
+        IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> sut = ResolveApplicationType<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>>()!;
 
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
-        await _cosmosDbFixture.Database.WriteManyAsync(seededArticles);
+        await _cosmosDbFixture.Database.WriteManyAsync(containerName: "news", seededArticles);
 
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.New());
 

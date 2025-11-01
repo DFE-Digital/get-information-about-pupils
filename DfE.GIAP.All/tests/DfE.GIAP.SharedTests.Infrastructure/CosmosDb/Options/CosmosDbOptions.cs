@@ -15,7 +15,16 @@ public record CosmosDbOptions
             .ToList()
             .AsReadOnly();
 
-    public CosmosDbOptions(string uri, string? key, IEnumerable<CosmosDbDatabaseOptions> databases)
+    public CosmosDbOptions(IEnumerable<CosmosDbDatabaseOptions> databaseOptions)
+        : this(
+              "https://localhost:8081",
+              "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+              databaseOptions)
+    {
+
+    }
+
+    public CosmosDbOptions(string uri, string? key, IEnumerable<CosmosDbDatabaseOptions> databaseOptions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(uri);
         if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri? result))
@@ -26,11 +35,11 @@ public record CosmosDbOptions
 
         Key = key ?? string.Empty;
 
-        _databases = databases?.ToList().AsReadOnly() ?? throw new ArgumentNullException(nameof(databases));
+        _databases = databaseOptions?.ToList().AsReadOnly() ?? throw new ArgumentNullException(nameof(databaseOptions));
 
         if (_databases.Count == 0)
         {
-            throw new ArgumentException("At least one database must be specified", nameof(databases)); ;
+            throw new ArgumentException("At least one database must be specified", nameof(databaseOptions)); ;
         }
     }
 

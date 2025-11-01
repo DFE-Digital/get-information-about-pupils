@@ -1,8 +1,6 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
+﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Factory;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
-using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
@@ -17,7 +15,7 @@ public sealed class SearchIndexFixture : IDisposable
     {
         WireMockServerOptions options = new()
         {
-            ServerMode = WireMockServerMode.Remote,
+            ServerMode = WireMockServerMode.InProcess,
             Domain = "localhost",
             Port = 8443,
             EnableSecureConnection = true,
@@ -35,12 +33,11 @@ public sealed class SearchIndexFixture : IDisposable
         return indexNames;
     }
 
-    public async Task<List<AzureIndexEntity>> StubIndex(string indexName, IEnumerable<AzureIndexEntity>? values = null)
+    public async Task StubIndex(string indexName, IEnumerable<object>? values = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
-        List<AzureIndexEntity> azureIndexDtos = values is null ? AzureIndexEntityDtosTestDoubles.Generate() : values.ToList();
+        List<object> azureIndexDtos = values is null ? [] : values.ToList();
         await _searchIndex.StubIndexSearchResponse(indexName, azureIndexDtos);
-        return azureIndexDtos;
     }
 
     public void Dispose()

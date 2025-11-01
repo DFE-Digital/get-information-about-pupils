@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
@@ -32,7 +33,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         UpdateNewsArticlesRequestProperties requestProperties = new(id: unknownArticleId);
         UpdateNewsArticleRequest request = new(requestProperties);
 
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveApplicationType<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
 
         // Act Assert
         Func<Task> act = () => sut.HandleRequestAsync(request);
@@ -46,7 +47,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
     public async Task UpdateNullableRecordSuccessfully(NewsArticleDto seededArticle, bool requestPinned, bool requestPublished)
     {
         // Arrange
-        await _cosmosDbFixture.Database.WriteItemAsync(seededArticle);
+        await _cosmosDbFixture.Database.WriteItemAsync(containerName: "news", seededArticle);
         DateTime beforeRequestCreationDateTimeUtc = DateTime.UtcNow;
         Stopwatch stopWatch = Stopwatch.StartNew();
 
@@ -60,7 +61,7 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         UpdateNewsArticleRequest request = new(requestProperties);
 
-        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveTypeFromScopedContext<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
+        IUseCaseRequestOnly<UpdateNewsArticleRequest> sut = ResolveApplicationType<IUseCaseRequestOnly<UpdateNewsArticleRequest>>();
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -68,8 +69,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         // Assert
         stopWatch.Stop();
 
-        IEnumerable<string> updatedArticleIdentifier = [seededArticle.id];
-        IEnumerable<NewsArticleDto?> articles = await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(updatedArticleIdentifier);
+        List<string> updatedArticleIdentifier = [seededArticle.id];
+        List<NewsArticleDto> articles = (await _cosmosDbFixture.Database.ReadManyAsync<NewsArticleDto>(containerName: "news", updatedArticleIdentifier)).ToList();
         NewsArticleDto? updatedArticle = Assert.Single(articles);
 
         Assert.NotNull(updatedArticle);
