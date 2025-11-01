@@ -26,5 +26,5 @@ public class FurtherEducationPupilDto
     public List<PupilPremiumEntryDto> PupilPremium { get; set; } = new();
 
     [JsonProperty("SEN")]
-    public List<SpecialEducationalNeedsDto> specialEducationalNeeds { get; set; } = new();
+    public List<SpecialEducationalNeedsEntryDto> specialEducationalNeeds { get; set; } = new();
 }

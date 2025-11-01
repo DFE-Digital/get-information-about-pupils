@@ -1920,8 +1920,8 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         List<AvailableDatasetResult> availableDatasetResults = new()
             {
-                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
-                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.PP, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.SEN, HasData: true, CanDownload: true)
             };
         GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
 
