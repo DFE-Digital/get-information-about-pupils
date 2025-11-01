@@ -8,7 +8,7 @@ namespace DfE.GIAP.SharedTests;
 public static class CompositionRoot
 {
     // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
-    public static IServiceCollection AddSharedTestDependencies(this IServiceCollection services)
+    public static IServiceCollection AddSharedApplicationServices(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 

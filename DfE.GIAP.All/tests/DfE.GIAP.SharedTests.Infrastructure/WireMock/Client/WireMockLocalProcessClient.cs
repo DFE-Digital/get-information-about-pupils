@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography.X509Certificates;
-using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
 using Newtonsoft.Json;
 using WireMock.RequestBuilders;

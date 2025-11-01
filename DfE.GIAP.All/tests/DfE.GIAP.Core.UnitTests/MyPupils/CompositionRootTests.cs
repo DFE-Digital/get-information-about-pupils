@@ -35,7 +35,7 @@ public sealed class CompositionRootTests
         // Arrange
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddSharedTestDependencies()
+                .AddSharedApplicationServices()
                 .AddMyPupilsDependencies();
 
         // Act

@@ -1,8 +1,5 @@
 ﻿using System.Net;
 using System.Text;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
@@ -13,14 +10,15 @@ namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 
 
 // TODO composition alternative CosmosDbContext - contains the Client creation and operations, which is passed into each TestDatabase
-public class DefaultCosmosDbTestDatabase : IAsyncDisposable
+public class CosmosDbDatabaseClient : IAsyncDisposable
 {
     private readonly string _databaseName;
     private readonly IReadOnlyList<CosmosDbContainerOptions> _containerOptions;
+    // TODO abstract out usage of this, maybe CosmosDbContainerOptions can also pass PartitionKey type e.g int, string?
     private const string ApplicationDataContainerName = "application-data";
     private readonly CosmosClient _cosmosClient;
 
-    public DefaultCosmosDbTestDatabase(
+    public CosmosDbDatabaseClient(
         Uri cosmosEndpoint,
         string? cosmosAuthKey,
         CosmosDbDatabaseOptions options)
@@ -44,9 +42,9 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
         _containerOptions = options.Containers;
     }
 
-    public async Task InitialiseAsync()
+    public async Task CreateAsync()
     {
-        DatabaseResponse db = await CreateDatabase();
+        DatabaseResponse db = await _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
         await CreateAllContainersIfNotExistAsync(db);
     }
 
@@ -60,7 +58,7 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
 
     public async Task ClearDatabaseAsync()
     {
-        DatabaseResponse response = await CreateDatabase();
+        DatabaseResponse response = await _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
         List<ContainerResponse> containers = await CreateAllContainersIfNotExistAsync(response);
 
         foreach (ContainerResponse container in containers)
@@ -86,35 +84,16 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
 
     public async Task DeleteDatabase() => await _cosmosClient!.GetDatabase(_databaseName).DeleteAsync();
 
-    public async Task<IEnumerable<TDto>> ReadManyAsync<TDto>() where TDto : class
+    public async Task<List<TDto>> ReadManyAsync<TDto>(string containerName, IEnumerable<string>? identifiers = null) where TDto : class
     {
-        ContainerResponse targetContainer = await GetTargetContainerForDto<TDto>();
-
-        List<TDto> output = [];
-        QueryDefinition queryDefinition = new("SELECT * FROM c");
-        FeedIterator<TDto> iterator = targetContainer.Container.GetItemQueryIterator<TDto>(queryDefinition);
-
-        while (iterator.HasMoreResults)
-        {
-            FeedResponse<TDto> item = await iterator.ReadNextAsync();
-            output.AddRange(item.Resource);
-        }
-
-        return output;
-    }
-
-
-    public async Task<IEnumerable<TDto>> ReadManyAsync<TDto>(IEnumerable<string> identifiers) where TDto : class
-    {
-        ContainerResponse targetContainer = await GetTargetContainerForDto<TDto>();
-        Container? container = targetContainer.Container;
-        List<string> targetIdentifiers = identifiers?.ToList() ?? [];
+        ArgumentException.ThrowIfNullOrWhiteSpace(containerName);
+        ContainerResponse targetContainer = await GetContainerByName(containerName);
 
         // Build the query string
-        QueryDefinition query = CreateQueryDefinitionForIdentifiers(targetIdentifiers);
+        QueryDefinition query = CreateQueryDefinitionForIdentifiers(identifiers?.ToList() ?? []);
 
         List<TDto> results = [];
-        FeedIterator<TDto>? iterator = container.GetItemQueryIterator<TDto>(query);
+        FeedIterator<TDto>? iterator = targetContainer.Container.GetItemQueryIterator<TDto>(query);
 
         while (iterator.HasMoreResults)
         {
@@ -127,13 +106,13 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
     }
 
 
-    public async Task WriteItemAsync<TDto>(TDto item) where TDto : class
+    public async Task WriteItemAsync<TDto>(string containerName, TDto value) where TDto : class
     {
-        ContainerResponse targetContainer = await GetTargetContainerForDto<TDto>();
+        ContainerResponse targetContainer = await GetContainerByName(containerName);
 
-        (string documentId, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(item));
+        (string documentId, PartitionKey documentPartitionKey) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(value));
 
-        await CreateItemInternalAsync(item, targetContainer);
+        await CreateItemInternalAsync(value, targetContainer);
 
         await EnsureItemIsQueryableAsync<TDto>(
                 targetContainer.Container,
@@ -142,43 +121,31 @@ public class DefaultCosmosDbTestDatabase : IAsyncDisposable
     }
 
 
-    public async Task WriteManyAsync<TDto>(IEnumerable<TDto> items) where TDto : class
+    public async Task WriteManyAsync<TDto>(string containerName, IEnumerable<TDto> items) where TDto : class
     {
-        ContainerResponse container = await GetTargetContainerForDto<TDto>();
+        ContainerResponse targetContainer = await GetContainerByName(containerName);
 
         List<TDto> createItems = items?.ToList() ?? [];
 
         foreach (TDto item in createItems)
         {
-            await CreateItemInternalAsync(item, container);
+            await CreateItemInternalAsync(item, targetContainer);
 
-            (string id, PartitionKey key) = ExtractDocumentQueryValues(container, JObject.FromObject(item));
+            (string id, PartitionKey key) = ExtractDocumentQueryValues(targetContainer, JObject.FromObject(item));
+
             await EnsureItemIsQueryableAsync<TDto>(
-                container,
+                targetContainer,
                 id,
                 key);
         }
 
     }
 
-    private Task<DatabaseResponse> CreateDatabase() => _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
-
-    private async Task<ContainerResponse> GetTargetContainerForDto<TDto>() where TDto : class
+    private async Task<ContainerResponse> GetContainerByName(string containerName)
     {
-        Dictionary<Type, string> typeToContainerNameMap = new()
-        {
-            {  typeof(NewsArticleDto), "news" },
-            {  typeof(UserDto), "users" },
-            {  typeof(MyPupilsDocumentDto), "mypupils" }
-        };
-
-        DatabaseResponse db = await _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
-        List<ContainerResponse> containers = await CreateAllContainersIfNotExistAsync(db);
-
-        typeToContainerNameMap.TryGetValue(typeof(TDto), out string? containerName);
-
-        string targetContainer = containerName ?? ApplicationDataContainerName; // Default back to ApplicationData for undefined mappings
-        return containers.Single((container) => container.Container.Id == targetContainer);
+        DatabaseResponse databaseResponse = await _cosmosClient!.CreateDatabaseIfNotExistsAsync(_databaseName);
+        List<ContainerResponse> containerResponses = await CreateAllContainersIfNotExistAsync(databaseResponse);
+        return containerResponses.Single(t => t.Container.Id.Equals(containerName, StringComparison.Ordinal));
     }
 
     private async Task<List<ContainerResponse>> CreateAllContainersIfNotExistAsync(Database database)

@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class AggregatePupilsForMyPupilsServiceTestDoubles
 {
     internal static Mock<IAggregatePupilsForMyPupilsApplicationService> Default() => new();

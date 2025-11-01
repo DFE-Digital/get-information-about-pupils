@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.Users.Application;
 
-namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class IMyPupilsReadOnlyRepositoryTestDoubles
 {
     internal static Mock<IMyPupilsReadOnlyRepository> Default() => new();

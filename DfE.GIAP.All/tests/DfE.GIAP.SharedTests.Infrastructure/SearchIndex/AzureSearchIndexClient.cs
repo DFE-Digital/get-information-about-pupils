@@ -1,7 +1,5 @@
 ﻿using System.Net;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
-using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints.GetIndexNames;
-using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints.PostSearchIndex;
+using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 
@@ -21,7 +19,7 @@ internal sealed class AzureSearchIndexClient
     {
         AzureSearchGetIndexesResponseDto dto = new()
         {
-            value = indexNames.Select((index) => new AzureSearchIndexResponseDto
+            value = indexNames.Select((index) => new SearchIndexResponseDto
             {
                 name = index
             })
@@ -42,24 +40,11 @@ internal sealed class AzureSearchIndexClient
 
     public async Task StubIndexSearchResponse(
         string indexName,
-        IEnumerable<AzureIndexEntity> indexDocuments)
+        IEnumerable<object> indexDocuments)
     {
         AzureSearchPostSearchIndexResponseDto dto = new()
         {
-            value = indexDocuments.Select((document) =>
-            {
-                return new AzureSearchIndexSearchResponseDto()
-                {
-                    @searchScore = document.Score,
-                    id = document.id,
-                    UPN = document.UPN,
-                    Forename = document.Forename,
-                    Surname = document.Surname,
-                    DOB = document.DOB?.ToString("yyyy-MM-dd") ?? null,
-                    Sex = document.Sex,
-                    LocalAuthority = document.LocalAuthority
-                };
-            })
+            value = indexDocuments
         };
 
         RequestMatch request = new(

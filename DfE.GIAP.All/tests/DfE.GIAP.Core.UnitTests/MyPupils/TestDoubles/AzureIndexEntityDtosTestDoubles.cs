@@ -1,8 +1,9 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 public static class AzureIndexEntityDtosTestDoubles
 {
     public static List<AzureIndexEntity> Generate(int count = 10)

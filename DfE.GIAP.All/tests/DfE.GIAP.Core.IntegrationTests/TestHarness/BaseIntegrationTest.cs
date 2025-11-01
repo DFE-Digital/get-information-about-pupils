@@ -1,9 +1,8 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
-using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
+﻿using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.Extensions;
 using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.Core.IntegrationTests;
+namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 
 /// <summary>
 /// Abstract base class for integration tests.
@@ -32,8 +31,12 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// </summary>
     public async Task InitializeAsync()
     {
-        SetupSharedTestDependencies();                // Register shared test dependencies
+        _serviceDescriptors
+            .AddSharedApplicationServices()
+            .ConfigureAzureSearchClients();
+
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
+
         EnsureServiceScope();  // Build provider and create scope
     }
 
@@ -63,7 +66,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// Resolve a service of type <typeparamref name="TInstanceType"/> from the scoped service provider.
     /// Ensures the scope is created before resolving.
     /// </summary>
-    protected TInstanceType ResolveTypeFromScopedContext<TInstanceType>()
+    protected TInstanceType ResolveApplicationType<TInstanceType>()
         where TInstanceType : notnull
     {
         EnsureServiceScope();
@@ -84,16 +87,5 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
             ServiceProvider provider = _serviceDescriptors.BuildServiceProvider();
             _servicesScope = provider.CreateScope();
         }
-    }
-
-    /// <summary>
-    /// Registers shared test dependencies common to all integration tests.
-    /// Derived classes can add more via <see cref="OnInitializeAsync"/>.
-    /// </summary>
-    private void SetupSharedTestDependencies()
-    {
-        _serviceDescriptors
-            .AddSharedTestDependencies()
-            .ConfigureAzureSearchClients();
     }
 }
