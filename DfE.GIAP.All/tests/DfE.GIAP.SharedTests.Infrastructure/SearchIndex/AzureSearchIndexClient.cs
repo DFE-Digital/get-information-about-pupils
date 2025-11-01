@@ -11,7 +11,7 @@ internal sealed class AzureSearchIndexClient
 
     public AzureSearchIndexClient(IWireMockClient wireMockClient)
     {
-        ArgumentNullException.ThrowIfNull(wireMockClient);
+        Guard.ThrowIfNull(wireMockClient, nameof(wireMockClient));
         _wireMockClient = wireMockClient;
     }
 

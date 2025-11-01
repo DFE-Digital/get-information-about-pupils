@@ -7,11 +7,11 @@ public record CosmosDbContainerOptions
 
     public CosmosDbContainerOptions(string containerName, string partitionKey = "/id", PartitionKeyType type = PartitionKeyType.String)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(containerName);
+        Guard.ThrowIfNullOrWhiteSpace(containerName, nameof(containerName));
         ContainerName = containerName;
 
-        ArgumentException.ThrowIfNullOrWhiteSpace(partitionKey);
-        PartitionKey = partitionKey.StartsWith('/') ? partitionKey : $"/{partitionKey}";
+        Guard.ThrowIfNullOrWhiteSpace(partitionKey, nameof(partitionKey));
+        PartitionKey = partitionKey.StartsWith("/") ? partitionKey : $"/{partitionKey}";
 
         PartitionKeyType = type;
     }
