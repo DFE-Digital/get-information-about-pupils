@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.Azure.Cosmos" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="WireMock.Net" />
+    <PackageReference Include="WireMock.Net.RestClient" />
     <PackageReference Include="xunit" />
   </ItemGroup>
 </Project>

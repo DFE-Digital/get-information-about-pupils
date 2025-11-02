@@ -2,19 +2,17 @@
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Server.Client;
-internal sealed class WireMockRemoteClient : IWireMockClient
+internal sealed class WireMockHttpClient : IWireMockStubClient
 {
-    // TODO RestClient shipped from WireMock native
     private readonly HttpClient _httpClient;
 
-    public WireMockRemoteClient(HttpClient client)
+    public WireMockHttpClient(HttpClient client)
     {
         _httpClient = client;
     }
 
     public async Task Stub<TDataTransferObject>(RequestMatch request, Response<TDataTransferObject> response)
     {
-        // TODO use a WireMock type from WireMock library than anon object serialise
         var stub = new
         {
             request = new

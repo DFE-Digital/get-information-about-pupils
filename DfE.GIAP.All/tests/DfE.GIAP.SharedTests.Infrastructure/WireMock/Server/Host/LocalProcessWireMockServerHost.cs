@@ -24,7 +24,7 @@ internal class LocalProcessWireMockServerHost : IWireMockServerHost
     }
     public Uri Endpoint => _serverUri;
 
-    public IWireMockClient CreateClient() => new WireMockLocalClient(_server.Value);
+    public IWireMockStubClient CreateClient() => new WireMockLocalProcessStubClient(_server.Value);
 
     public Task StartAsync()
     {

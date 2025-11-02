@@ -5,11 +5,11 @@ using WireMock.Server;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Server.Client;
 
-internal sealed class WireMockLocalClient : IWireMockClient
+internal sealed class WireMockLocalProcessStubClient : IWireMockStubClient
 {
     private readonly WireMockServer _wireMockServer;
 
-    public WireMockLocalClient(WireMockServer wireMockServer)
+    public WireMockLocalProcessStubClient(WireMockServer wireMockServer)
     {
         Guard.ThrowIfNull(wireMockServer, nameof(wireMockServer));
         _wireMockServer = wireMockServer;
