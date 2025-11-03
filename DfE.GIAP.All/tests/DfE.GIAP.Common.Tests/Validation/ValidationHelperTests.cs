@@ -12,7 +12,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string upn = "0123456789012";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.UPNLengthValidator(upn);
             // Assert
             Assert.True(isSuccess);
@@ -24,7 +24,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string upn = "0123456789012345";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.UPNLengthValidator(upn);
             // Assert
             Assert.False(isSuccess);
@@ -36,7 +36,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string upn = "A01234567890C";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.UPNRegexValidator(upn);
             // Assert
             Assert.True(isSuccess);
@@ -48,7 +48,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string upn = "0123456789xxx";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.UPNRegexValidator(upn);
             // Assert
             Assert.False(isSuccess);
@@ -61,7 +61,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string upn = "A09876543210B";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.IsValidUpn(upn);
             // Assert
             Assert.True(isSuccess);
@@ -73,7 +73,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string upn = "0123456789xxx";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.IsValidUpn(upn);
             // Assert
             Assert.False(isSuccess);
@@ -85,7 +85,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string uln = "0123456789";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.ULNLengthValidator(uln);
             // Assert
             Assert.True(isSuccess);
@@ -97,7 +97,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string uln = "0123456789101";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.ULNLengthValidator(uln);
             // Assert
             Assert.False(isSuccess);
@@ -109,7 +109,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string uln = "0123456789";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.ULNRegexValidator(uln);
             // Assert
             Assert.True(isSuccess);
@@ -121,7 +121,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string uln = "0123456789xxx";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.ULNRegexValidator(uln);
             // Assert
             Assert.False(isSuccess);
@@ -134,7 +134,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string uln = "9999375358";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.IsValidUln(uln);
             // Assert
             Assert.True(isSuccess);
@@ -146,7 +146,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             string uln = "0123456789";
 
-            // act
+            // Act
             var isSuccess = ValidationHelper.IsValidUln(uln);
             // Assert
             Assert.False(isSuccess);
@@ -158,7 +158,7 @@ namespace DfE.GIAP.Common.Tests.Validation
             // Arrange
             List<string> listOfIdentifiers = new List<string>() { "9999730830", "9999730831", "9999730831" };
 
-            // act
+            // Act
             var duplicates = ValidationHelper.GetDuplicates(listOfIdentifiers);
 
             // Assert
