@@ -198,12 +198,9 @@ public static class AuthenticationExtensions
             .GetService<IUseCaseRequestOnly<UpdateLastLoggedInRequest>>();
         await upsertUserUseCase.HandleRequestAsync(new UpdateLastLoggedInRequest(authenticatedUserInfo.UserId, DateTime.UtcNow));
 
-        // TEMP LOGGING EVENT - Successful login
-        IEventLogger eventLogger = ctx.HttpContext.RequestServices.GetService<IEventLogger>();
-        eventLogger.LogUserSignIn();
-
         LoggingEvent loggingEvent = CreateLoggingEvent(userId, userEmail, userGivenName, userSurname, ctx.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, userOrganisation, organisationId, authenticatedUserInfo, sessionId);
         await userApiClient.CreateLoggingEvent(loggingEvent);
+        eventLogging.TrackEvent(1120, "User log in successful", userId, sessionId, hostEnvironment.ContentRootPath);
 
     }
 

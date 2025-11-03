@@ -11,7 +11,6 @@ public class BusinessEventPayloadOptions
 
 public enum BusinessEventCategory
 {
-    UserSignIn,
     Search,
     Download
 }

@@ -16,31 +16,15 @@ public class EventLogger : IEventLogger
         _factory = factory;
     }
 
-    public void LogUserSignIn()
-    {
-        BusinessEventPayloadOptions options = new()
-        {
-            EventCategory = BusinessEventCategory.UserSignIn,
-            EventAction = "Login",
-            EventStatus = "Some event status",
-            Description = "Captures user authentication and session creation.",
-            Context = new Dictionary<string, object>
-            {
-                ["UserStatus"] = "What is a user status?",
-            }
-        };
 
-        Log(options);
-    }
-
-    public void LogSearch(string eventAction, string eventStatus, string description, string dataset)
+    public void LogSearch(string dataset)
     {
         BusinessEventPayloadOptions options = new()
         {
             EventCategory = BusinessEventCategory.Search,
-            EventAction = eventAction,
-            EventStatus = eventStatus,
-            Description = description,
+            EventAction = "Some event",
+            EventStatus = "Some status",
+            Description = "Some description",
             Context = new Dictionary<string, object>
             {
                 ["Dataset"] = dataset,
@@ -50,17 +34,17 @@ public class EventLogger : IEventLogger
         Log(options);
     }
 
-    public void LogDownload(string eventAction, string eventStatus, string description, string dataset)
+    public void LogDownload(string dataset)
     {
         BusinessEventPayloadOptions options = new()
         {
             EventCategory = BusinessEventCategory.Download,
-            EventAction = eventAction,
-            EventStatus = eventStatus,
-            Description = description,
+            EventAction = "Some event",
+            EventStatus = "Some status",
+            Description = "Some description",
             Context = new Dictionary<string, object>
             {
-                ["Dataset"] = dataset
+                ["Dataset"] = dataset,
             }
         };
 
