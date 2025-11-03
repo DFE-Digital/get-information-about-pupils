@@ -151,9 +151,10 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
                 databaseName: _cosmosDbFixture.DatabaseName, (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: "mypupils"));
 
         List<string> remainingUpnsAfterDelete =
-            [.. myPupilUpns
-                .Where((upn) => !request.DeletePupilUpns.Contains(upn))
-                .Select(t => t.Value)];
+            myPupilUpns
+                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
+                .Select(t => t.Value)
+                .ToList();
 
         MyPupilsDocumentDto actualUserDto = Assert.Single(users);
         Assert.NotNull(actualUserDto);
