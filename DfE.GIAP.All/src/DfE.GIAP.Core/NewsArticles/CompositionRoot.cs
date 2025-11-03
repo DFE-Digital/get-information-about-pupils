@@ -23,7 +23,6 @@ public static class CompositionRoot
         return services
             .RegisterApplicationDependencies()
             .RegisterInfrastructureDependencies()
-            .AddCosmosDbDependencies();
     }
 
     // Application
