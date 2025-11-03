@@ -37,13 +37,16 @@ public class FELearnerNumberController : Controller
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
     protected readonly ISelectionManager _selectionManager;
+
     private readonly IUseCase<
         SearchRequest,
         SearchResponse> _furtherEducationSearchUseCase;
+
     private readonly IMapper<
         LearnerNumericSearchMappingContext,
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
-    private IUseCase<
+
+    private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 
@@ -79,17 +82,24 @@ public class FELearnerNumberController : Controller
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
-        _furtherEducationSearchUseCase = furtherEducationSearchUseCase ??
-           throw new ArgumentNullException(nameof(furtherEducationSearchUseCase));
-        _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper ??
-            throw new ArgumentNullException(nameof(learnerNumericSearchResponseToViewModelMapper));
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
+        ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
+        _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
+
+        ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
+        _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
+
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
-        _selectionManager = selectionManager ??
-            throw new ArgumentNullException(nameof(selectionManager));
+
+        ArgumentNullException.ThrowIfNull(selectionManager);
+        _selectionManager = selectionManager;
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
