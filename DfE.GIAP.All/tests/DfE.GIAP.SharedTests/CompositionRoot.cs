@@ -33,7 +33,7 @@ public static class CompositionRoot
     private static IServiceCollection AddInMemoryLogger(this IServiceCollection services)
     {
         services.AddSingleton(typeof(ILogger<>), typeof(InMemoryLogger<>));
-        services.AddSingleton<ILoggerService, InMemoryLoggerService>();
+        services.AddSingleton<IApplicationLogger, InMemoryLoggerService>();
 
         return services;
     }

@@ -11,12 +11,12 @@ namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 public class CosmosDbFurtherEducationReadOnlyRepository : IFurtherEducationReadOnlyRepository
 {
     private const string ContainerKey = "further-education"; // This must match the key in the container options.
-    private readonly ILoggerService _logger;
+    private readonly IApplicationLogger _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<FurtherEducationPupilDto, FurtherEducationPupil> _dtoToEntityMapper;
 
     public CosmosDbFurtherEducationReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLogger logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<FurtherEducationPupilDto, FurtherEducationPupil> dtoToEntityMapper)
     {

@@ -3,6 +3,7 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
 using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
 using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
@@ -165,6 +166,7 @@ public static class AuthenticationExtensions
 
         if (userAccess is null)
         {
+            // TODO: TEMP LOGGING EVENT - Unsuccessful login
             eventLogging.TrackEvent(2502, "User log in unsuccessful - user not associated with GIAP service", userId, sessionId, hostEnvironment.ContentRootPath);
             ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
             ctx.HttpContext.Response.Redirect(Routes.Application.UserWithNoRole);
@@ -196,9 +198,13 @@ public static class AuthenticationExtensions
             .GetService<IUseCaseRequestOnly<UpdateLastLoggedInRequest>>();
         await upsertUserUseCase.HandleRequestAsync(new UpdateLastLoggedInRequest(authenticatedUserInfo.UserId, DateTime.UtcNow));
 
+        // TEMP LOGGING EVENT - Successful login
+        IEventLogger eventLogger = ctx.HttpContext.RequestServices.GetService<IEventLogger>();
+        eventLogger.LogUserSignIn();
+
         LoggingEvent loggingEvent = CreateLoggingEvent(userId, userEmail, userGivenName, userSurname, ctx.HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, userOrganisation, organisationId, authenticatedUserInfo, sessionId);
         await userApiClient.CreateLoggingEvent(loggingEvent);
-        eventLogging.TrackEvent(1120, "User log in successful", userId, sessionId, hostEnvironment.ContentRootPath);
+
     }
 
     private static void AddRoleClaims(List<Claim> claims, UserAccess userAccess, AuthenticatedUserInfo userInfo)

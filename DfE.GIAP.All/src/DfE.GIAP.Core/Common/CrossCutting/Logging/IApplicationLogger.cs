@@ -4,7 +4,7 @@
 /// Defines a contract for a logging service that provides a unified entry point
 /// for writing log messages with optional metadata and contextual information.
 /// </summary>
-public interface ILoggerService
+public interface IApplicationLogger
 {
     /// <summary>
     /// Writes a trace-level log entry with the specified message, log level, and optional contextual information.

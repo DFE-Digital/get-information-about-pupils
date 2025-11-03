@@ -15,12 +15,12 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
 {
     private const string ContainerName = "users";
     private readonly ICosmosDbCommandHandler _commandHandler;
-    private readonly ILoggerService _loggerService;
+    private readonly IApplicationLogger _loggerService;
     private readonly IMapper<User, UserDto> _mapper;
 
     public CosmosDbUserWriteOnlyRepository(
         ICosmosDbCommandHandler commandHandler,
-        ILoggerService logger,
+        IApplicationLogger logger,
         IMapper<User, UserDto> mapper)
     {
         ArgumentNullException.ThrowIfNull(commandHandler);

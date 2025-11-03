@@ -17,14 +17,14 @@ public class LoggerServiceTests
     public void Constructor_ThrowsArgumentNullException_When_TraceLogHandlersNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new LoggerService(null!, _factoryMock.Object));
+            new ApplicationLogger(null!, _factoryMock.Object));
     }
 
     [Fact]
     public void Constructor_ThrowsArgumentNullException_When_TraceFactoryIsNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new LoggerService(new List<ITraceLogHandler>(), null!));
+            new ApplicationLogger(new List<ITraceLogHandler>(), null!));
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class LoggerServiceTests
         // Arrange
         Mock<ITraceLogHandler> handlerMock = new();
 
-        LoggerService sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
+        ApplicationLogger sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
 
         // Act
         sut.LogTrace(
@@ -54,7 +54,7 @@ public class LoggerServiceTests
             .Setup(f => f.Create(It.IsAny<TracePayloadOptions>()))
             .Returns(It.IsAny<Log<TracePayload>>());
 
-        LoggerService sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
+        ApplicationLogger sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
 
         // Act
         sut.LogTrace(It.IsAny<LogLevel>(), It.IsAny<string>());
