@@ -90,22 +90,23 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
         try
         {
             UserDto? userDto =
-                await _cosmosDbQueryHandler.ReadItemByIdAsync<UserDto>(
+                await _cosmosDbQueryHandler.TryReadItemByIdAsync<UserDto>(
                     id: id.Value,
                     containerKey: ContainerName,
                     partitionKeyValue: id.Value,
                     ctx);
 
-            return userDto is not null ? _userMapper.Map(userDto) : null;
-        }
-        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
+            if(userDto is not null)
+            {
+                return _userMapper.Map(userDto);
+            }
+
             _loggerService.LogTrace(
                 level: LogLevel.Information,
                 message: $"User with ID '{id.Value}' not found (404) in {nameof(GetUserByIdIfExistsAsync)}",
-                exception: ex,
                 category: "Users",
                 source: nameof(GetUserByIdIfExistsAsync));
+
             return null;
         }
         catch (Exception ex)
