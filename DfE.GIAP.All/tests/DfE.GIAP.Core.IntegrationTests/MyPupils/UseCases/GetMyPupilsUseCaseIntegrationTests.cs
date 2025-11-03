@@ -37,8 +37,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         services
             .AddMyPupilsDependencies()
-            .ConfigureAzureSearchClients()
-            .AddMyPupilsDependencies();
+            .ConfigureAzureSearchClients();
     }
 
     [Fact]
