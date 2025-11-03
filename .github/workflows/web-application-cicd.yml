@@ -15,7 +15,6 @@ env:
   BUILD_CONFIGURATION: Release
   SOLUTION_DIRECTORY: DfE.GIAP.All
   JAVA_VERSION: '17'
-  DOTNET_TFM: net8.0
 
 jobs:
   lint:
@@ -31,8 +30,6 @@ jobs:
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
-        with:
-          global-json-file: global.json
 
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
         run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
