@@ -40,7 +40,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
                     partitionKeyValue: userId.Value,
                     ctx);
 
-            if(userDto is null)
+            if (userDto is null)
             {
                 _logger.LogInformation("Could not find MyPupils for User id {UserId}", userId.Value);
                 return null;

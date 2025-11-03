@@ -96,7 +96,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
                     partitionKeyValue: id.Value,
                     ctx);
 
-            if(userDto is not null)
+            if (userDto is not null)
             {
                 return _userMapper.Map(userDto);
             }
