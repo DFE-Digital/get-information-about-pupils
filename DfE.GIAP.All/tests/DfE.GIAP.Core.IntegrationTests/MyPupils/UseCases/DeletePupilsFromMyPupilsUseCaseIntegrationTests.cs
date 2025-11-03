@@ -48,7 +48,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             databaseName: _cosmosDbFixture.DatabaseName, (client) => client.WriteItemAsync(containerName: "mypupils", myPupilsDocument));
 
         _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
-        services.AddMyPupilsDependencies();
     }
 
     private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId userId);
