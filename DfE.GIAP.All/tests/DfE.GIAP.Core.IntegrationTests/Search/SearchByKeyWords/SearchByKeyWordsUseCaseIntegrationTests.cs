@@ -1,24 +1,30 @@
 ﻿
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
 public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private SearchIndexFixture _mockSearchFixture = null!;
+    private readonly SearchIndexFixture _searchIndexFixture;
+
+    public SearchByKeyWordsUseCaseIntegrationTests(SearchIndexFixture searchIndexFixture)
+    {
+        ArgumentNullException.ThrowIfNull(searchIndexFixture);
+        _searchIndexFixture = searchIndexFixture;
+
+    }
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
-        _mockSearchFixture = new();
-
         IConfiguration searchConfiguration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithSearchIndexOptions()
@@ -37,13 +43,14 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
     {
-        await _mockSearchFixture.StubAvailableIndexes(["FE_INDEX_NAME"]);
+        await _searchIndexFixture!.StubAvailableIndexes(["FE_INDEX_NAME"]);
 
-        List<AzureIndexEntity> furtherEducationSearchIndexDtos =
-            await _mockSearchFixture.StubFurtherEducationIndex(values: AzureIndexEntityDtosTestDoubles.Generate(count: 30));
+        await _searchIndexFixture.StubIndex(
+            indexName: "FE_INDEX_NAME",
+            values: AzureFurtherEducationSearchResponseDtoTestDoubles.Generate(count: 30));
 
         IUseCase<SearchRequest, SearchResponse> sut =
-            ResolveTypeFromScopedContext<IUseCase<SearchRequest, SearchResponse>>()!;
+            ResolveApplicationType<IUseCase<SearchRequest, SearchResponse>>()!;
 
         SortOrder sortOrder = new(
             sortField: "Forename",
@@ -60,11 +67,5 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(SearchResponseStatus.Success, response.Status);
         Assert.Equal(30, response.TotalNumberOfResults);
-    }
-
-    protected override Task OnDisposeAsync()
-    {
-        _mockSearchFixture?.Dispose();
-        return Task.CompletedTask;
     }
 }

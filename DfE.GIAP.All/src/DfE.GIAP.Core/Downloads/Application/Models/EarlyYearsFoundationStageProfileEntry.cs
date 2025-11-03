@@ -1,0 +1,65 @@
+﻿namespace DfE.GIAP.Core.Downloads.Application.Models;
+
+public class EarlyYearsFoundationStageProfileEntry
+{
+    public string? ACADYR { get; set; }
+    public string? PUPILMATCHINGREF { get; set; }
+    public string? UPN { get; set; }
+    public string? SURNAME { get; set; }
+    public string? FORENAME { get; set; }
+    public string? DOB { get; set; }
+    public string? GENDER { get; set; }
+    public string? SEX { get; set; }
+    public string? MTH_ENTRY { get; set; }
+    public string? LA { get; set; }
+    public string? LA_9CODE { get; set; }
+    public string? ESTAB { get; set; }
+    public string? LAESTAB { get; set; }
+    public string? URN { get; set; }
+    public string? NFTYPE { get; set; }
+    public string? NPDPUB { get; set; }
+    public string? LLSOA11 { get; set; }
+    public string? IDACISCORE { get; set; }
+    public string? IDACIRANK { get; set; }
+    public string? COM_G01 { get; set; }
+    public string? COM_G02 { get; set; }
+    public string? COM_G03 { get; set; }
+    public string? PHY_G04 { get; set; }
+    public string? PHY_G05 { get; set; }
+    public string? PSE_G06 { get; set; }
+    public string? PSE_G07 { get; set; }
+    public string? PSE_G08 { get; set; }
+    public string? LIT_G09 { get; set; }
+    public string? LIT_G10 { get; set; }
+    public string? MAT_G11 { get; set; }
+    public string? MAT_G12 { get; set; }
+    public string? UTW_G13 { get; set; }
+    public string? UTW_G14 { get; set; }
+    public string? UTW_G15 { get; set; }
+    public string? EXP_G16 { get; set; }
+    public string? EXP_G17 { get; set; }
+    public string? COM_E01 { get; set; }
+    public string? COM_E02 { get; set; }
+    public string? PSE_E03 { get; set; }
+    public string? PSE_E04 { get; set; }
+    public string? PSE_E05 { get; set; }
+    public string? PHY_E06 { get; set; }
+    public string? PHY_E07 { get; set; }
+    public string? LIT_E08 { get; set; }
+    public string? LIT_E09 { get; set; }
+    public string? LIT_E10 { get; set; }
+    public string? MAT_E11 { get; set; }
+    public string? MAT_E12 { get; set; }
+    public string? UTW_E13 { get; set; }
+    public string? UTW_E14 { get; set; }
+    public string? UTW_E15 { get; set; }
+    public string? EXP_E16 { get; set; }
+    public string? EXP_E17 { get; set; }
+    public string? AGE { get; set; }
+    public string? GLD { get; set; }
+    public string? FSP_IMD_2010 { get; set; }
+    public string? FSP_IMD_2007 { get; set; }
+    public string? FSP_LLSOA { get; set; }
+    public string? FSP_PCON { get; set; }
+    public string? VERSION { get; set; }
+}

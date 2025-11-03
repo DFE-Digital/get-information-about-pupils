@@ -14,10 +14,10 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	</ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="DfE.GIAP.SharedTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Core.UnitTests" />
-		<InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
-		<InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
-	</ItemGroup>
+    <InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
+    <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
+  </ItemGroup>
 </Project>

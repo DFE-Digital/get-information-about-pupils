@@ -152,14 +152,4 @@ public class DownloadService : IDownloadService
 
         return response;
     }
-
-    public async Task<IEnumerable<DownloadUlnDataType>> CheckForFENoDataAvailable(string[] selectedPupils, string[] selectedDownloadOptions, AzureFunctionHeaderDetails azureFunctionHeaderDetails)
-    {
-        var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
-
-        var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, CheckOnly = true };
-        var response = await _apiProcessorService.PostAsync<DownloadUlnRequest, IEnumerable<DownloadUlnDataType>>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
-
-        return response;
-    }
 }

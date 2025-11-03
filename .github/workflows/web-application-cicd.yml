@@ -45,8 +45,9 @@ jobs:
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.IntegrationTests/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests/ \
-            --verify-no-changes \
-            --verbosity detailed
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests.Infrastructure/ \
+            --verbosity detailed \
+            --verify-no-changes
 
   build_unittest_package:
     runs-on: ubuntu-latest

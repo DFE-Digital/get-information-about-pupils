@@ -28,20 +28,6 @@ public class SearchDownloadHelperTests
         Assert.True(test.ExpectedDataTypes.SequenceEqual(model.SearchDownloadDatatypes));
     }
 
-    [Theory]
-    [MemberData(nameof(GetFESearchDownloadDataTypeData))]
-    public void AddUlnDownloadDataTypes_correctly_handles_rbac(DownloadDataTypeTestData test)
-    {
-        // Arrange
-        var model = new LearnerDownloadViewModel();
-
-        // Act
-        SearchDownloadHelper.AddUlnDownloadDataTypes(model, test.User, test.HighAge, test.IsDfe);
-
-        // Assert
-        Assert.True(test.ExpectedDataTypes.SequenceEqual(model.SearchDownloadDatatypes));
-    }
-
     [Fact]
     public void DownloadFile_returns_FileContentResult_for_non_zip()
     {

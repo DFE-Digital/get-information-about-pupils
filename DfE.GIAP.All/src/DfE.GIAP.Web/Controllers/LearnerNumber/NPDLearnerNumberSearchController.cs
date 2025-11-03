@@ -2,6 +2,9 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -9,6 +12,7 @@ using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -43,6 +47,9 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
+    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+
+
 
     public NPDLearnerNumberSearchController(ILogger<NPDLearnerNumberSearchController> logger,
         IDownloadCommonTransferFileService ctfService,
@@ -50,7 +57,8 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         IPaginatedSearchService paginatedSearch,
         IMyPupilListService mplService,
         ISelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
         : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
     {
         _logger = logger ??
@@ -60,6 +68,9 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         _downloadService = downloadService ??
             throw new ArgumentNullException(nameof(downloadService));
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
+        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
 
@@ -168,7 +179,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         string learnerNumber,
         int selectedPupilsCount)
     {
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupilsJoined,
             LearnerNumber = learnerNumber,
@@ -177,8 +188,6 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true
         };
-
-        SearchDownloadHelper.AddDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationLowAge(), User.GetOrganisationHighAge(), User.IsOrganisationLocalAuthority(), User.IsOrganisationAllAges());
 
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
         ModelState.Clear();
@@ -189,12 +198,24 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         searchDownloadViewModel.DownloadRoute = Routes.NationalPupilDatabase.LearnerNumberDownloadFile;
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumberLabel = "UPN";
 
-        var selectedPupils = selectedPupilsJoined.Split(',');
+        string[] selectedPupils = selectedPupilsJoined.Split(',');
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
-            var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-            var disabledTypes = await _downloadService.CheckForNoDataAvailable(selectedPupils, learnerNumber.FormatLearnerNumbers(), downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-            SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
+            GetAvailableDatasetsForPupilsRequest request = new(
+             DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+             SelectedPupils: selectedPupils,
+             AuthorisationContext: new HttpClaimsAuthorisationContext(User));
+            GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
+
+            foreach (AvailableDatasetResult datasetResult in response.AvailableDatasets)
+            {
+                searchDownloadViewModel.SearchDownloadDatatypes.Add(new SearchDownloadDataType
+                {
+                    Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
+                    Value = datasetResult.Dataset.ToString(),
+                    Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
+                });
+            }
         }
         searchDownloadViewModel.SearchResultPageHeading = PageHeading;
         return View(Global.DownloadNPDOptionsView, searchDownloadViewModel);

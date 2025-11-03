@@ -1,13 +1,13 @@
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
@@ -23,23 +23,29 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.Database.ClearDatabaseAsync();
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
 
         services.AddMyPupilsDependencies();
 
         // Initialise fixture and pupils, store in context
-        List<AzureIndexEntity> npdSearchindexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
-        List<AzureIndexEntity> pupilPremiumIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
+        List<AzureNpdSearchResponseDto> npdSearchindexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);
+        List<AzureNpdSearchResponseDto> pupilPremiumIndexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);
 
         UniquePupilNumbers myPupilsUpns =
             UniquePupilNumbers.Create(
-                uniquePupilNumbers: npdSearchindexDtos.Concat(pupilPremiumIndexDtos).Select(t => t.UPN).ToUniquePupilNumbers());
+                uniquePupilNumbers:
+                    npdSearchindexDtos.Concat(pupilPremiumIndexDtos)
+                        .Select(t => t.UPN)
+                        .ToUniquePupilNumbers());
 
         UserId userId = UserIdTestDoubles.Default();
 
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
 
-        await _cosmosDbFixture.Database.WriteItemAsync(myPupilsDocument);
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName, (client) => client.WriteItemAsync(containerName: "mypupils", myPupilsDocument));
 
         _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
         services.AddMyPupilsDependencies();
@@ -121,7 +127,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
     {
         // Arrange
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> sut =
-            ResolveTypeFromScopedContext<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
+            ResolveApplicationType<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>();
 
         IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
@@ -141,7 +147,9 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users =
+            await _cosmosDbFixture.InvokeAsync(
+                databaseName: _cosmosDbFixture.DatabaseName, (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: "mypupils"));
 
         List<string> remainingUpnsAfterDelete =
             [.. myPupilUpns

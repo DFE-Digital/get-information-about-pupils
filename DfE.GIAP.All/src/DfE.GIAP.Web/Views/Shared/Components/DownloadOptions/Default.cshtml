@@ -4,15 +4,12 @@
     <div class="govuk-checkboxes" data-module="govuk-checkboxes">
         @foreach (var item in Model.DownloadTypes)
         {
-            @if (item.CanDownload)
-            {
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="download--'+@item.Value.ToLower()+'--chkbox" name="SelectedDownloadOptions" type="checkbox" value="@item.Value" disabled="@item.Disabled">
-                    <label class="govuk-label govuk-checkboxes__label" id="download--'+@item.Value.ToLower()+'--label" for="download--'+@item.Value.ToLower()+'--chkbox">
-                        @item.Name
-                    </label>
-                </div>
-            }
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="download--'+@item.Value.ToLower()+'--chkbox" name="SelectedDownloadOptions" type="checkbox" value="@item.Value" disabled="@item.Disabled">
+                <label class="govuk-label govuk-checkboxes__label" id="download--'+@item.Value.ToLower()+'--label" for="download--'+@item.Value.ToLower()+'--chkbox">
+                    @item.Name
+                </label>
+            </div>
         }
     </div>
 </div>

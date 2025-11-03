@@ -46,7 +46,7 @@ public sealed class CompositionRootTests
             ServiceCollectionTestDoubles.Default()
                 .AddSearchDependencies(configuration)
                 .AddCosmosDbDependencies()
-                .AddSharedTestDependencies()
+                .AddSharedApplicationServices()
                 .AddMyPupilsDependencies();
 
         // Act
