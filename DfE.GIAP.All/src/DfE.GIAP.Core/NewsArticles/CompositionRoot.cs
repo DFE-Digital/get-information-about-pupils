@@ -22,7 +22,7 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
         return services
             .RegisterApplicationDependencies()
-            .RegisterInfrastructureDependencies()
+            .RegisterInfrastructureDependencies();
     }
 
     // Application
