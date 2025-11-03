@@ -1,8 +1,6 @@
-﻿using DfE.GIAP.Common.Helpers.Rbac;
+﻿using System.Globalization;
+using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Domain.Models.Search;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using Xunit;
 
 namespace DfE.GIAP.Common.Tests.Helpers;
@@ -45,7 +43,7 @@ public class RbacHelperTests
         // Arrange
         List<TestRbac> testData = GetTestList();
 
-        // act
+        // Act
         List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 0, 0);
 
         // Assert
@@ -61,7 +59,7 @@ public class RbacHelperTests
         // Arrange
         List<TestRbac> testData = GetTestList();
 
-        // act
+        // Act
         List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 3, 11, DateTime.Parse("01/10/2022", new CultureInfo("en-gb")));
 
         // Assert
