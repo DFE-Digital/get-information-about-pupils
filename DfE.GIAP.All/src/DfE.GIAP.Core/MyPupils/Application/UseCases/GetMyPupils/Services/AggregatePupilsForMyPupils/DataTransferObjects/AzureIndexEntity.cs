@@ -14,8 +14,6 @@ public class AzureIndexEntity
 
     public string UPN { get; set; }
 
-    public string ULN { get; set; }
-
     public string Surname { get; set; }
 
     public string Forename { get; set; }
