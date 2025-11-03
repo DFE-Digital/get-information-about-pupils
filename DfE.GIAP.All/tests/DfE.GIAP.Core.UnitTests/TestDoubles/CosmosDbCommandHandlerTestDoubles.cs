@@ -90,7 +90,7 @@ internal static class CosmosDbCommandHandlerTestDoubles
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>())).ThrowsAsync(exception));
 
-    internal static Mock<ICosmosDbCommandHandler> MockForCreateNewsArticleAsyncThrows<TInput>(Exception exception) where TInput : class =>
+    internal static Mock<ICosmosDbCommandHandler> MockForCreateAsyncThrows<TInput>(Exception exception) where TInput : class =>
         MockForThrows<TInput>(mock =>
             mock.Setup(handler =>
                 handler.CreateItemAsync(
