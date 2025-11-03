@@ -29,8 +29,8 @@ internal sealed class AzureSearchIndexStubClient
             path: "/indexes",
             method: HttpMethod.Get,
             queryParams: [
-                new("api-version", "2025-09-01"),
-                new("$select", "name")
+                new("$select", "name"),
+                new("api-version", "2025-09-01")
             ]);
 
         Response<AzureSearchGetIndexesResponseDto> response = new(HttpStatusCode.OK, dto);

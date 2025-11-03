@@ -38,9 +38,7 @@ public static class AzureSearchClientExtensions
             IEnumerable<SearchClient> originalClients = sp.GetServices<SearchClient>();
 
             List<SearchClient> insecureClients =
-                originalClients
-                    .Select(client => client.WithDisabledTlsValidation()) // Required as .NET cert store doesn't trust untrustedRoot.
-                    .ToList();
+                [.. originalClients.Select(client => client.WithDisabledTlsValidation())]; // Required as .NET cert store doesn't trust untrustedRoot.
 
             return new SearchClientProvider(
                 insecureClients,
