@@ -35,4 +35,20 @@ internal static class CosmosDbQueryHandlerTestDoubles
 
         return mockHandler;
     }
+
+    internal static Mock<ICosmosDbQueryHandler> MockForTryReadById<T>(Func<T?> value) where T : class
+    {
+        Mock<ICosmosDbQueryHandler> mockHandler = Default();
+
+        mockHandler
+            .Setup(t => t.TryReadItemByIdAsync<T>(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(value)
+            .Verifiable();
+
+        return mockHandler;
+    }
 }

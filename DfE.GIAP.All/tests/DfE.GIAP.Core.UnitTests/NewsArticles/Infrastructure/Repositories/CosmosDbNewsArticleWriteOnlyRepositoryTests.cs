@@ -246,9 +246,8 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler =
-            CosmosDbCommandHandlerTestDoubles
-            .MockForDeleteItemAsyncThrows<NewsArticleDto>(
-                new CosmosException("Simulated failure", HttpStatusCode.NotFound, 1, "activityId", 1.0));
+            CosmosDbCommandHandlerTestDoubles.MockForDeleteItemAsyncThrows<NewsArticleDto>(
+                exception: CosmosExceptionTestDoubles.Default());
 
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
 
