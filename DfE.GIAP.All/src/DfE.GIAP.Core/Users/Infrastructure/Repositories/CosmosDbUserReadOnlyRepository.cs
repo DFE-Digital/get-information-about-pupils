@@ -96,7 +96,7 @@ internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
                     partitionKeyValue: id.Value,
                     ctx);
 
-            if(userDto is null)
+            if (userDto is null)
             {
                 _loggerService.LogTrace(
                 level: LogLevel.Information,
