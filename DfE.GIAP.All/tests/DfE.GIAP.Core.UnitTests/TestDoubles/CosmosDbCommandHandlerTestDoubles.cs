@@ -48,31 +48,6 @@ internal static class CosmosDbCommandHandlerTestDoubles
         return mockHandler;
     }
 
-    internal static Mock<ICosmosDbCommandHandler> MockForReplaceItemAsync(Exception? exceptionToThrow = null)
-    {
-        Mock<ICosmosDbCommandHandler> mockHandler = Default();
-
-        Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task<NewsArticleDto>> setup =
-            (Moq.Language.Flow.ISetup<ICosmosDbCommandHandler, Task<NewsArticleDto>>)mockHandler
-            .Setup(h => h.ReplaceItemAsync(
-                It.IsAny<NewsArticleDto>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<CancellationToken>()));
-
-        if (exceptionToThrow != null)
-        {
-            setup.ThrowsAsync(exceptionToThrow);
-        }
-        else
-        {
-            setup.Verifiable();
-        }
-
-        return mockHandler;
-    }
-
     internal static Mock<ICosmosDbCommandHandler> MockForThrows<TInput>(
         Action<Mock<ICosmosDbCommandHandler>> setupAction) where TInput : class
     {
