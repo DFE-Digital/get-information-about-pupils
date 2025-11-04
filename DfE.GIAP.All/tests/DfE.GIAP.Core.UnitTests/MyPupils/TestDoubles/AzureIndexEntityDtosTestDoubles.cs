@@ -37,6 +37,11 @@ public static class AzureIndexEntityDtosTestDoubles
                 string[] validSexs = [Sex.Male.ToString(), Sex.Female.ToString()];
                 return f.PickRandom(validSexs);
             })
+            .RuleFor(t => t.Gender, f =>
+            {
+                string[] validSexs = [Sex.Male.ToString(), Sex.Female.ToString()];
+                return f.PickRandom(validSexs);
+            })
             .RuleFor(t => t.DOB, f => DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(f.Random.Number(1, 25)))
             .RuleFor(t => t.LocalAuthority, f => f.Random.Number(100, 999).ToString())
             .RuleFor(t => t.id, f => f.Random.Guid().ToString());

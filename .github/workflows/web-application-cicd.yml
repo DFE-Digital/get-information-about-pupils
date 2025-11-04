@@ -179,13 +179,13 @@ jobs:
         shell: bash
 
       - name: Download unit test coverage reports
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: unit-test-coverage
           path: coverage-unit/
 
       - name: Download integration test coverage report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: integration-test-coverage
           path: coverage-integration/
@@ -227,7 +227,7 @@ jobs:
           fetch-depth: 0 # Fetches all history so SonarCloud can find the `main` branch
 
       - name: Download merged coverage report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: merged-coverage-report
           path: merged-coverage-reports

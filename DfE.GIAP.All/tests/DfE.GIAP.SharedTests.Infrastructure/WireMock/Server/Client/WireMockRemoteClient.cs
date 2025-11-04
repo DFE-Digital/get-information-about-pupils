@@ -1,25 +1,15 @@
 ﻿using System.Text;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
+namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Server.Client;
 internal sealed class WireMockRemoteClient : IWireMockClient
 {
     // TODO RestClient shipped from WireMock native
     private readonly HttpClient _httpClient;
 
-    public WireMockRemoteClient(WireMockServerOptions options)
+    public WireMockRemoteClient(HttpClient client)
     {
-        _httpClient = new()
-        {
-            BaseAddress = options.ServerAddress
-        };
-
-    }
-
-    public void Dispose()
-    {
-        _httpClient?.Dispose();
+        _httpClient = client;
     }
 
     public async Task Stub<TDataTransferObject>(RequestMatch request, Response<TDataTransferObject> response)

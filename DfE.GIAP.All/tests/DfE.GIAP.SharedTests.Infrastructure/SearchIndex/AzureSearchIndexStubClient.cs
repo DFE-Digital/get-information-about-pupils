@@ -1,17 +1,17 @@
 ﻿using System.Net;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex.Endpoints;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Server.Client;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
-internal sealed class AzureSearchIndexClient
+internal sealed class AzureSearchIndexStubClient
 {
     private readonly IWireMockClient _wireMockClient;
 
-    public AzureSearchIndexClient(IWireMockClient wireMockClient)
+    public AzureSearchIndexStubClient(IWireMockClient wireMockClient)
     {
-        ArgumentNullException.ThrowIfNull(wireMockClient);
+        Guard.ThrowIfNull(wireMockClient, nameof(wireMockClient));
         _wireMockClient = wireMockClient;
     }
 
@@ -29,8 +29,8 @@ internal sealed class AzureSearchIndexClient
             path: "/indexes",
             method: HttpMethod.Get,
             queryParams: [
-                new("api-version", "2025-09-01"),
-                new("$select", "name")
+                new("$select", "name"),
+                new("api-version", "2025-09-01")
             ]);
 
         Response<AzureSearchGetIndexesResponseDto> response = new(HttpStatusCode.OK, dto);

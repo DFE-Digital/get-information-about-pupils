@@ -1,7 +1,7 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
 public enum WireMockServerMode
 {
-    InProcess,
+    LocalProcess,
     Container,
     Remote
 }
