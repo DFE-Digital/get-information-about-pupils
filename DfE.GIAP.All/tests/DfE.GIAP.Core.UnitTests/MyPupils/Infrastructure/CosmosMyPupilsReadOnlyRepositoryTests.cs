@@ -72,7 +72,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Arrange
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw new Exception("test exception"));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
@@ -97,8 +97,8 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
-                () => throw CosmosExceptionTestDoubles.Default());
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
+                () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.InternalServerError));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
@@ -121,12 +121,11 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     }
 
     [Fact]
-    public async Task GetMyPupilsAsync_LogsAndReturnsNull_When_CosmosException_404_IsThrown()
+    public async Task GetMyPupilsAsync_LogsAndReturnsNull_When_TryRead_Returns_Null()
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
-                () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.NotFound));
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(() => null);
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
@@ -141,6 +140,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Act Assert
 
         UserId userId = UserIdTestDoubles.Default();
+
         Core.MyPupils.Application.Repositories.MyPupils? myPupils =
             await repository.GetMyPupilsOrDefaultAsync(userId, It.IsAny<CancellationToken>());
 
@@ -161,12 +161,11 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
         Mock<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>> mockMapper =
-            MapperTestDoubles.MockFor<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>(
-                stub: myPupils);
+            MapperTestDoubles.MockFor<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>(stub: myPupils);
 
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Default();
         Mock<ICosmosDbQueryHandler> cosmosDbQueryHandlerMock =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(() => myPupilsDocumentDto);
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById(() => myPupilsDocumentDto);
 
         CosmosDbMyPupilsReadOnlyRepository sut = new(
             logger: mockLogger,
@@ -180,9 +179,11 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         Assert.NotNull(response);
         Assert.Equivalent(response, myPupils);
+
         mockMapper.Verify(t => t.Map(myPupilsDocumentDto), Times.Once);
+
         cosmosDbQueryHandlerMock.Verify(
-            (t) => t.ReadItemByIdAsync<MyPupilsDocumentDto>(
+            (t) => t.TryReadItemByIdAsync<MyPupilsDocumentDto>(
                 userId.Value,
                 "mypupils",
                 userId.Value,
