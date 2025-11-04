@@ -26,7 +26,7 @@ public record CosmosDbOptions
 
     public CosmosDbOptions(string uri, string? key, IEnumerable<CosmosDbDatabaseOptions> databaseOptions)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(uri);
+        Guard.ThrowIfNullOrWhiteSpace(uri, nameof(uri));
         if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri? result))
         {
             throw new ArgumentException("Invalid URI format", nameof(uri));

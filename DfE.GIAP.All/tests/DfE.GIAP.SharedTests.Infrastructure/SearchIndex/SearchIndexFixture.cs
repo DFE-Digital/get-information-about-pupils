@@ -1,13 +1,13 @@
-﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Factory;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
+﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Server.Host;
+using Xunit;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
-public sealed class SearchIndexFixture : IDisposable
+public sealed class SearchIndexFixture : IAsyncLifetime
 {
-    private readonly IWireMockClient _wireMockClient;
-    private readonly AzureSearchIndexClient _searchIndex;
+    private readonly IWireMockServerHost _wireMockServerHost;
+    private readonly AzureSearchIndexStubClient _searchIndex;
 
     // TODO Registering json bundle on disk to /__admin/mappings - Rather than programatically generating - could we pass this as Configuration to enable this with a 'default'??
     // TODO expose ClearStubs
@@ -16,6 +16,7 @@ public sealed class SearchIndexFixture : IDisposable
         WireMockServerOptions options = new()
         {
             ServerMode = WireMockServerMode.Remote,
+            EnableLazyInitialiseServer = true,
             Domain = "localhost",
             Port = 8443,
             EnableSecureConnection = true,
@@ -23,8 +24,8 @@ public sealed class SearchIndexFixture : IDisposable
             CertificatePath = "wiremock-cert.pfx",
         };
 
-        _wireMockClient = WireMockClientFactory.Create(options);
-        _searchIndex = new AzureSearchIndexClient(_wireMockClient);
+        _wireMockServerHost = WireMockServerHostFactory.Create(options);
+        _searchIndex = new AzureSearchIndexStubClient(wireMockClient: _wireMockServerHost.CreateClient());
     }
 
     public async Task<string[]> StubAvailableIndexes(params string[] indexNames)
@@ -35,13 +36,19 @@ public sealed class SearchIndexFixture : IDisposable
 
     public async Task StubIndex(string indexName, IEnumerable<object>? values = null)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
+        Guard.ThrowIfNullOrWhiteSpace(indexName, nameof(indexName));
         List<object> azureIndexDtos = values is null ? [] : values.ToList();
         await _searchIndex.StubIndexSearchResponse(indexName, azureIndexDtos);
     }
 
-    public void Dispose()
+    public async Task InitializeAsync()
     {
-        _wireMockClient?.Dispose();
+        await _wireMockServerHost.StartAsync();
+    }
+
+    public Task DisposeAsync()
+    {
+        _wireMockServerHost?.Dispose();
+        return Task.CompletedTask;
     }
 }

@@ -17,7 +17,7 @@ public abstract class BaseCosmosDbFixture : IAsyncLifetime
     {
         Dictionary<string, CosmosDbDatabaseClient> clients = [];
 
-        ArgumentNullException.ThrowIfNull(Options);
+        Guard.ThrowIfNull(Options, nameof(CosmosDbOptions));
 
         foreach (string databaseName in Options.DatabaseNames)
         {
@@ -59,7 +59,7 @@ public abstract class BaseCosmosDbFixture : IAsyncLifetime
 
     private CosmosDbDatabaseClient GetDatabaseClientByName(string databaseName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(databaseName);
+        Guard.ThrowIfNullOrWhiteSpace(databaseName, nameof(databaseName));
 
         CosmosDbDatabaseClient client =
             _dbClients.Single(t => t.Key.Equals(databaseName, StringComparison.Ordinal))

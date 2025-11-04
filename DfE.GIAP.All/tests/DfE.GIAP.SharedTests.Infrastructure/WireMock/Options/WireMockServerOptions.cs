@@ -1,7 +1,9 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
+
 public sealed class WireMockServerOptions
 {
     public WireMockServerMode ServerMode { get; set; } = WireMockServerMode.Remote;
+    public bool EnableLazyInitialiseServer { get; set; } = true;
     public string Domain { get; set; } = "localhost";
     public int Port { get; set; } = 8443;
     // TODO CertificateOptions

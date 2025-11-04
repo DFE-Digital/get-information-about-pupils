@@ -10,7 +10,7 @@ public sealed class CosmosDbFixture : BaseCosmosDbFixture
             new CosmosDbDatabaseOptions(
                 databaseName: DatabaseName,
                 containers: [
-                    new("application-data", "/DOCTYPE" ),
+                    new("application-data", "/DOCTYPE", PartitionKeyType.Integer ),
                     new("news", "/id" ),
                     new("users", "/id" ),
                     new("mypupils", "/id")
