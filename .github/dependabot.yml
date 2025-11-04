@@ -25,7 +25,7 @@ updates:
     commit-message:
       prefix: "chore"
     labels: 
-    - dependencies .NET
+    - "dependencies .NET"
 
   - package-ecosystem: "dotnet-sdk"
     directory: "/"
