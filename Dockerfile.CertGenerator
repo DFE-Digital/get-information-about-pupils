@@ -1,4 +1,5 @@
-FROM openjdk:26-slim
+FROM mcr.microsoft.com/openjdk/jdk:25-ubuntu
+
 
 RUN apt-get update \
     && apt-get install -y openssl \
