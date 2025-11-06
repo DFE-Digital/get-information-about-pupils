@@ -118,6 +118,8 @@ jobs:
           if-no-files-found: error
 
   local_integration_tests:
+    # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Required to check out the code.
@@ -185,6 +187,8 @@ jobs:
           path: coverage-unit/
 
       - name: Download integration test coverage report
+      # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+        if: github.actor != 'dependabot[bot]'
         uses: actions/download-artifact@v6
         with:
           name: integration-test-coverage
@@ -246,7 +250,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: Begin SonarCloud analysis
-        # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+        # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
         if: github.actor != 'dependabot[bot]'
         shell: bash
         run: |
