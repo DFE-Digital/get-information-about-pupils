@@ -10,7 +10,7 @@ namespace DfE.GIAP.Core.Search.Application.Adapters;
 public sealed class SearchServiceAdapterRequest
 {
     /// <summary>
-    /// A key that used to lookup the Index to target
+    /// A key that is used to lookup the SearchIndex to search against
     /// </summary>
     public string SearchIndexKey { get; }
 
