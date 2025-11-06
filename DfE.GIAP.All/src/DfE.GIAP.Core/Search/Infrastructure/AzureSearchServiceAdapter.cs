@@ -9,6 +9,7 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
@@ -64,12 +65,14 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
     public async Task<SearchResults<Learners, SearchFacets>> SearchAsync(
         SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
+        AzureSearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
+
         SearchOptions searchOptions =
             _searchOptionsBuilder
-                .WithSearchMode((SearchMode)_azureSearchOptions.SearchMode)
-                .WithSize(_azureSearchOptions.Size)
+                .WithSearchMode((SearchMode)indexOptions.SearchMode)
+                .WithSize(indexOptions.Size)
                 .WithOffset(searchServiceAdapterRequest.Offset)
-                .WithIncludeTotalCount(_azureSearchOptions.IncludeTotalCount)
+                .WithIncludeTotalCount(indexOptions.IncludeTotalCount)
                 .WithSearchFields(searchServiceAdapterRequest.SearchFields)
                 .WithFacets(searchServiceAdapterRequest.Facets)
                 .WithFilters(searchServiceAdapterRequest.SearchFilterRequests)
@@ -79,7 +82,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
         Response<SearchResults<LearnerDataTransferObject>> searchResults =
             await _searchByKeywordService.SearchAsync<LearnerDataTransferObject>(
                 searchServiceAdapterRequest.SearchKeyword,
-                _azureSearchOptions.SearchIndex,
+                indexOptions.SearchIndex,
                 searchOptions
             ).ConfigureAwait(false)
             ?? throw new InvalidOperationException(

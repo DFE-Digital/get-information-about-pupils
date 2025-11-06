@@ -16,7 +16,11 @@ public class SearchByKeywordRequestTests
         SortOrder sortOrder = SortOrderTestDouble.Stub();
 
         // act
-        SearchRequest request = new("searchKeyword", filterRequests, sortOrder);
+        SearchRequest request = new(
+            searchIndexKey: "stubIndexKey",
+            searchKeywords: "searchKeyword",
+            filterRequests: filterRequests,
+            sortOrder: sortOrder);
 
         // assert
         request.FilterRequests.Should().NotBeNull();
@@ -39,7 +43,10 @@ public class SearchByKeywordRequestTests
         SortOrder sortOrder = SortOrderTestDouble.Stub();
 
         // act
-        SearchRequest request = new("searchKeyword", sortOrder);
+        SearchRequest request = new(
+            searchIndexKey: "stubIndexKey",
+            searchKeywords: "searchKeyword",
+            sortOrder: sortOrder);
 
         // assert
         request.SortOrder.Should().NotBeNull();
@@ -54,7 +61,11 @@ public class SearchByKeywordRequestTests
         const int Offset = 10;
 
         // act
-        SearchRequest request = new("searchKeyword", sortOrder, Offset);
+        SearchRequest request = new(
+            searchIndexKey: "stubIndexKey",
+            searchKeywords: "searchKeyword",
+            sortOrder: sortOrder,
+            offset: Offset);
 
         // assert
         request.SortOrder.Should().NotBeNull();
@@ -66,7 +77,10 @@ public class SearchByKeywordRequestTests
     {
         // act
         SortOrder sortOrder = SortOrderTestDouble.Stub();
-        SearchRequest request = new("searchKeyword", sortOrder);
+        SearchRequest request = new(
+            searchIndexKey: "stubIndexKey",
+            searchKeywords: "searchKeyword",
+            sortOrder: sortOrder);
 
         // assert
         request.SortOrder.Should().NotBeNull();

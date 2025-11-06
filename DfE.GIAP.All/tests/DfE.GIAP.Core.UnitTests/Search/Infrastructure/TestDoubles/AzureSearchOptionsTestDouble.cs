@@ -13,11 +13,25 @@ internal static class AzureSearchOptionsTestDouble
     /// Returns a stubbed <see cref="AzureSearchOptions"/> object with default values
     /// tailored for testing the "Further Education" search index.
     /// </summary>
-    public static AzureSearchOptions Stub() => new()
+    public static AzureSearchOptions Stub()
     {
-        SearchMode = 0,                         // Default search mode (e.g., 'Any' or 'All' depending on enum)
-        Size = 100,                             // Max number of results to return
-        IncludeTotalCount = true,               // Enables total count metadata in search response
-        SearchIndex = "idx-further-education"   // Target index for test scenarios
-    };
+        Dictionary<string, AzureSearchIndexOptions> indexes = new()
+        {
+            {
+                "further-education",
+                new AzureSearchIndexOptions()
+                {
+                    SearchMode = 0,                         // Default search mode (e.g., 'Any' or 'All' depending on enum)
+                    Size = 100,                             // Max number of results to return
+                    IncludeTotalCount = true,               // Enables total count metadata in search response
+                    SearchIndex = "idx-further-education"   // Target index for test scenarios
+                }
+            }
+        };
+
+        return new AzureSearchOptions()
+        {
+            Indexes = indexes
+        };
+    }
 }

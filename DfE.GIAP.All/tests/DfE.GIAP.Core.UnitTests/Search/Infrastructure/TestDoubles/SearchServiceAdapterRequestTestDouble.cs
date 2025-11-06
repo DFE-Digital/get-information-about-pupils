@@ -19,6 +19,7 @@ internal static class SearchServiceAdapterRequestTestDouble
     /// <returns>A preconfigured search request object for test use.</returns>
     public static SearchServiceAdapterRequest Stub(IList<FilterRequest>? filters = null) =>
         new(
+            searchIndexKey: "further-education",                                     // Stubbed index-key for index-options lookup
             "searchKeyword",                                    // Simulated keyword for search input
             ["searchField1", "searchField2"],                   // Fields to search against
             new SortOrder("DOB", "asc", ["DOB", "Surname"]),    // Sort by DOB ascending, fallback to Surname

@@ -438,6 +438,7 @@ public class FELearnerNumberController : Controller
         SearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new SearchRequest(
+                    searchIndexKey: "further-education",
                     searchKeywords: string.Join(" AND ", learnerNumberArray),
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,

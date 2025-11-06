@@ -18,6 +18,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure;
 
 public sealed class AzureSearchServiceAdapterTests
 {
+    private const string _mockSearchIndexKey = "further-education";
     private readonly ISearchByKeywordService _mockSearchByKeywordService;
     private readonly IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> _mockSearchResultMapper =
         PageableSearchResultsToLearnerResultsMapperTestDouble.DefaultMock();
@@ -36,10 +37,12 @@ public sealed class AzureSearchServiceAdapterTests
        ) =>
            new(searchByKeywordService, searchOptions, searchResultMapper, facetsMapper, searchOptionsBuilder);
 
+    private AzureSearchIndexOptions _mockAzureIndexOptions => _mockAzureSearchOptions.Indexes![_mockSearchIndexKey];
+
     public AzureSearchServiceAdapterTests() =>
         _mockSearchByKeywordService =
             new SearchServiceTestDouble()
-                .WithSearchKeywordAndCollection("SearchKeyword", _mockAzureSearchOptions!.SearchIndex)
+                .WithSearchKeywordAndCollection("SearchKeyword", _mockAzureIndexOptions.SearchIndex)
                 .WithSearchResults(new SearchResultFakeBuilder().WithSearchResults().Create())
                 .Create();
 
@@ -72,19 +75,20 @@ public sealed class AzureSearchServiceAdapterTests
         _ = await searchServiceAdapter.SearchAsync(searchServiceAdapterRequest);
 
         // assert
+
         SearchByKeywordServiceTestDouble.keywordPassedToSearchService
             .Should().Be(searchServiceAdapterRequest.SearchKeyword);
         SearchByKeywordServiceTestDouble.indexPassedToSearchService
-            .Should().Be(_mockAzureSearchOptions.SearchIndex);
+            .Should().Be(_mockAzureIndexOptions.SearchIndex);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.Size
-            .Should().Be(_mockAzureSearchOptions.Size);
+            .Should().Be(_mockAzureIndexOptions.Size);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.SearchMode
-            .Should().Be((SearchMode)_mockAzureSearchOptions.SearchMode);
+            .Should().Be((SearchMode)_mockAzureIndexOptions.SearchMode);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.IncludeTotalCount
-            .Should().Be(_mockAzureSearchOptions.IncludeTotalCount);
+            .Should().Be(_mockAzureIndexOptions.IncludeTotalCount);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.SearchFields
             .Should().BeEquivalentTo(searchServiceAdapterRequest.SearchFields);
-        SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService?.Facets
+        SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.Facets
             .Should().BeEquivalentTo(searchServiceAdapterRequest.Facets);
     }
 
@@ -127,6 +131,7 @@ public sealed class AzureSearchServiceAdapterTests
         return searchServiceAdapter
             .Invoking(adapter =>
                 adapter.SearchAsync(new SearchServiceAdapterRequest(
+                    searchIndexKey: _mockSearchIndexKey,
                     searchKeyword: "SearchKeyword",
                     searchFields: [],
                     facets: [],

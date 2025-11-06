@@ -55,6 +55,7 @@ public sealed class SearchUseCase :
             SearchResults<Learners, SearchFacets>? searchResults =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
+                        request.SearchIndexKey,
                         request.SearchKeywords,
                         _searchCriteria.SearchFields,
                         request.SortOrder,
