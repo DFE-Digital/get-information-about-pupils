@@ -21,7 +21,7 @@ public sealed class SearchRequest
     /// <exception cref="ArgumentException">Thrown if searchKeyword is null or empty.</exception>
     public SearchRequest(string searchIndexKey, string searchKeywords, SortOrder sortOrder, int offset = 0)
     {
-        if (string.IsNullOrEmpty(searchIndexKey))
+        if (string.IsNullOrWhiteSpace(searchIndexKey))
         {
             throw new ArgumentException("SearchIndexKey must not be null or empty.", nameof(searchIndexKey));
         }
