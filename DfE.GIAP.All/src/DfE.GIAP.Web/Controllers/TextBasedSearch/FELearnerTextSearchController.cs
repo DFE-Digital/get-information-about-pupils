@@ -734,6 +734,7 @@ public class FELearnerTextSearchController : Controller
         SearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new SearchRequest(
+                    searchIndexKey: "further-education",
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,

@@ -66,10 +66,10 @@ public static class ConfigurationTestDoubles
         Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {
             // AzureSearchOptions: Parameters controlling search behavior
-            ["AzureSearchOptions:SearchIndex"] = "FE_INDEX_NAME",
-            ["AzureSearchOptions:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["AzureSearchOptions:Indexes:further-education:SearchIndex"] = "FE_INDEX_NAME",
+            ["AzureSearchOptions:Indexes:further-education:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["AzureSearchOptions:Indexes:further-education:Size"] = "40000",                  // Max number of results
+            ["AzureSearchOptions:Indexes:further-education:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);

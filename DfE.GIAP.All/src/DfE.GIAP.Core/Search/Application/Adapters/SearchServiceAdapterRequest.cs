@@ -10,6 +10,11 @@ namespace DfE.GIAP.Core.Search.Application.Adapters;
 public sealed class SearchServiceAdapterRequest
 {
     /// <summary>
+    /// A key that is used to lookup the SearchIndex to search against
+    /// </summary>
+    public string SearchIndexKey { get; }
+
+    /// <summary>
     /// The keyword or phrase used to perform the search.
     /// </summary>
     public string SearchKeyword { get; }
@@ -53,6 +58,7 @@ public sealed class SearchServiceAdapterRequest
     /// <exception cref="ArgumentException">Thrown when <paramref name="searchKeyword"/> is null or whitespace.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="searchFields"/> or <paramref name="facets"/> is null or empty.</exception>
     public SearchServiceAdapterRequest(
+        string searchIndexKey,
         string searchKeyword,
         IList<string> searchFields,
         SortOrder sortOrdering,
@@ -60,6 +66,10 @@ public sealed class SearchServiceAdapterRequest
         IList<FilterRequest>? searchFilterRequests = null,
         int offset = 0)
     {
+        SearchIndexKey = !string.IsNullOrWhiteSpace(searchIndexKey) ?
+            searchIndexKey :
+            throw new ArgumentException($"{nameof(searchIndexKey)} cannot be null or whitespace.", searchIndexKey);
+
         SearchKeyword = !string.IsNullOrWhiteSpace(searchKeyword)
             ? searchKeyword
             : throw new ArgumentException(
@@ -81,11 +91,12 @@ public sealed class SearchServiceAdapterRequest
     /// needing to use the constructor directly. Improves readability and usability for consumers of the API.
     /// </summary>
     public static SearchServiceAdapterRequest Create(
+        string searchIndexKey,
         string searchKeyword,
         IList<string> searchFields,
         IList<string> facets,
         SortOrder sortOrdering,
         IList<FilterRequest>? searchFilterRequests = null,
         int offset = 0)
-            => new(searchKeyword, searchFields, sortOrdering, facets, searchFilterRequests, offset);
+            => new(searchIndexKey, searchKeyword, searchFields, sortOrdering, facets, searchFilterRequests, offset);
 }

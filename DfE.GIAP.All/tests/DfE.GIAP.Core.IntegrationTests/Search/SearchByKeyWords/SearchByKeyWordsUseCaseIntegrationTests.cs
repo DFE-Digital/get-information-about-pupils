@@ -43,10 +43,11 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
     {
-        await _searchIndexFixture!.StubAvailableIndexes(["FE_INDEX_NAME"]);
+        const string searchIndexName = "FE_INDEX_NAME";
+        await _searchIndexFixture!.StubAvailableIndexes([searchIndexName]);
 
         await _searchIndexFixture.StubIndex(
-            indexName: "FE_INDEX_NAME",
+            indexName: searchIndexName,
             values: AzureFurtherEducationSearchResponseDtoTestDoubles.Generate(count: 30));
 
         IUseCase<SearchRequest, SearchResponse> sut =
@@ -57,7 +58,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        SearchRequest request = new(searchKeywords: "test", sortOrder);
+        SearchRequest request = new(searchIndexKey: "further-education", searchKeywords: "test", sortOrder);
 
         // act
         SearchResponse response = await sut.HandleRequestAsync(request);

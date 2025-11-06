@@ -37,6 +37,7 @@ public sealed class SearchByKeyWordsUseCaseTests
 
         SearchRequest request =
             new(
+                searchIndexKey: "stubIndexKey",
                 searchKeywords: "searchkeyword",
                 filterRequests: [FilterRequestTestDouble.Fake()],
                 sortOrder: SortOrderTestDouble.Stub()
@@ -67,7 +68,7 @@ public sealed class SearchByKeyWordsUseCaseTests
         Mock<ISearchServiceAdapter<Learners, SearchFacets>> mockSearchServiceAdapter =
             new SearchServiceAdapterTestDouble().MockFor(_searchResults);
 
-        SearchRequest request = new("searchkeyword", SortOrderTestDouble.Stub());
+        SearchRequest request = new(searchIndexKey: "stubIndexKey", searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
 
         SearchUseCase useCase =
             new(_searchByKeywordCriteriaStub, mockSearchServiceAdapter.Object);
@@ -116,7 +117,8 @@ public sealed class SearchByKeyWordsUseCaseTests
         Mock<ISearchServiceAdapter<Learners, SearchFacets>> mockSearchServiceAdapter =
             new SearchServiceAdapterTestDouble().MockFor(_searchResults);
 
-        SearchRequest request = new("searchkeyword", SortOrderTestDouble.Stub());
+        SearchRequest request = new(searchIndexKey: "stubIndexKey", searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
+
         Mock.Get(mockSearchServiceAdapter.Object)
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ThrowsAsync(new ApplicationException());
@@ -144,7 +146,8 @@ public sealed class SearchByKeyWordsUseCaseTests
         Mock<ISearchServiceAdapter<Learners, SearchFacets>> mockSearchServiceAdapter =
             new SearchServiceAdapterTestDouble().MockFor(_searchResults);
 
-        SearchRequest request = new("searchkeyword", SortOrderTestDouble.Stub());
+        SearchRequest request = new(searchIndexKey: "stubIndexKey", searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
+
         Mock.Get(mockSearchServiceAdapter.Object)
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ReturnsAsync(SearchResultsTestDouble.StubWithNoResults);

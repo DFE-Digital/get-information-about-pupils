@@ -11,6 +11,7 @@ public sealed class SearchServiceAdapterRequestTests
     public void Constructor_WithValidArguments_ShouldInitializeProperties()
     {
         // arrange
+        string indexKey = "science";
         string keyword = "math";
         List<string> fields = ["Subject", "Level"];
         List<string> facets = ["Region", "Provider"];
@@ -25,15 +26,39 @@ public sealed class SearchServiceAdapterRequestTests
 
         // act
         SearchServiceAdapterRequest request =
-            new(keyword, fields, sortOrder, facets, filters, offset);
+            new(
+               indexKey, keyword, fields, sortOrder, facets, filters, offset);
 
         // assert
+        request.SearchIndexKey.Should().Be(indexKey);
         request.SearchKeyword.Should().Be(keyword);
         request.SearchFields.Should().BeEquivalentTo(fields);
         request.Facets.Should().BeEquivalentTo(facets);
         request.SortOrdering.Should().Be(sortOrder);
         request.SearchFilterRequests.Should().BeEquivalentTo(filters);
         request.Offset.Should().Be(offset);
+    }
+
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Constructor_WithInvalidIndexKey_ShouldThrowArgumentException(string? invalidIndexKey)
+    {
+        // arrange
+        string keyword = "test";
+        List<string> fields = ["Field"];
+        List<string> facets = ["Facet"];
+        SortOrder sortOrder = new("Field", "asc", ["Field"]);
+
+        // act
+        Action act = () =>
+            new SearchServiceAdapterRequest(invalidIndexKey!, keyword, fields, sortOrder, facets);
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*searchIndexKey*");
     }
 
     [Theory]
@@ -43,13 +68,14 @@ public sealed class SearchServiceAdapterRequestTests
     public void Constructor_WithInvalidKeyword_ShouldThrowArgumentException(string? invalidKeyword)
     {
         // arrange
+        string indexKey = "index";
         List<string> fields = ["Field"];
         List<string> facets = ["Facet"];
         SortOrder sortOrder = new("Field", "asc", ["Field"]);
 
         // act
         Action act = () =>
-            new SearchServiceAdapterRequest(invalidKeyword!, fields, sortOrder, facets);
+            new SearchServiceAdapterRequest(indexKey, invalidKeyword!, fields, sortOrder, facets);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -60,12 +86,13 @@ public sealed class SearchServiceAdapterRequestTests
     public void Constructor_WithEmptySearchFields_ShouldThrowArgumentException()
     {
         // arrange
+        string indexKey = "index";
         string keyword = "test";
         SortOrder sortOrder = new("Field", "asc", ["Field"]);
 
         // act
         Action act = () =>
-            new SearchServiceAdapterRequest(keyword, [], sortOrder, ["Facet"]);
+            new SearchServiceAdapterRequest(indexKey, keyword, [], sortOrder, ["Facet"]);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -76,6 +103,7 @@ public sealed class SearchServiceAdapterRequestTests
     public void Constructor_WithNullFilters_ShouldInitializeEmptyList()
     {
         // arrange
+        string indexKey = "index";
         string keyword = "test";
         List<string> fields = ["Field"];
         List<string> facets = ["Facet"];
@@ -83,7 +111,7 @@ public sealed class SearchServiceAdapterRequestTests
 
         // act
         SearchServiceAdapterRequest request =
-            new(keyword, fields, sortOrder, facets, null);
+            new(indexKey, keyword, fields, sortOrder, facets, null);
 
         // Assert
         request.SearchFilterRequests.Should().NotBeNull();

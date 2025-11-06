@@ -18,7 +18,7 @@ public class CompositionRootTests : IClassFixture<ConfigBuilder>, IClassFixture<
         new()
         {
             {
-                "AzureSearchOptions:SearchIndex",
+                "AzureSearchOptions:Indexes:stubIndexKey:SearchIndex",
                 "idx-further-education-v3"
             }
         };
