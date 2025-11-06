@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Core" Version="1.49.0" />
     <PackageVersion Include="Fare" Version="2.2.1" />
-    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.52.0" />
+    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.54.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
