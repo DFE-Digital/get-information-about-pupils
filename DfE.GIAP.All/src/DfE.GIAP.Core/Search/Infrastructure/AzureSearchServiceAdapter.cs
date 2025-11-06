@@ -65,7 +65,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
     public async Task<SearchResults<Learners, SearchFacets>> SearchAsync(
         SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
-        AzureSearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
+        SearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
 
         SearchOptions searchOptions =
             _searchOptionsBuilder

@@ -37,7 +37,7 @@ public sealed class AzureSearchServiceAdapterTests
        ) =>
            new(searchByKeywordService, searchOptions, searchResultMapper, facetsMapper, searchOptionsBuilder);
 
-    private AzureSearchIndexOptions _mockAzureIndexOptions => _mockAzureSearchOptions.Indexes![_mockSearchIndexKey];
+    private SearchIndexOptions _mockAzureIndexOptions => _mockAzureSearchOptions.Indexes![_mockSearchIndexKey];
 
     public AzureSearchServiceAdapterTests() =>
         _mockSearchByKeywordService =

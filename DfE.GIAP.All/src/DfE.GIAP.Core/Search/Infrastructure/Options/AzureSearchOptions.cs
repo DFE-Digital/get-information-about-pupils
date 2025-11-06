@@ -12,10 +12,10 @@ public class AzureSearchOptions
     /// Represents a collection of Search Index configurations.
     /// </summary>
     [JsonProperty(nameof(Indexes))]
-    public Dictionary<string, AzureSearchIndexOptions>? Indexes { get; set; }
+    public Dictionary<string, SearchIndexOptions>? Indexes { get; set; }
 }
 
-public sealed class AzureSearchIndexOptions
+public sealed class SearchIndexOptions
 {
     /// <summary>
     /// The Azure AI Search index used to target for search requests.
