@@ -1,11 +1,10 @@
-﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
@@ -110,7 +109,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        IEnumerable<MyPupilsDocumentDto> users = await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
+        IEnumerable<MyPupilsDocumentDto> users = await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>();
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns.Where((upn) => !deleteMultiplePupilIdentifiers.Select(t => t.Value).Contains(upn.Value))
@@ -181,7 +180,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         await sut.HandleRequestAsync(request);
 
         // Assert
-        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await Fixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
+        MyPupilsDocumentDto myPupilsDocument = Assert.Single(await _cosmosDbFixture.Database.ReadManyAsync<MyPupilsDocumentDto>());
         Assert.NotNull(myPupilsDocument);
         Assert.Equal(_testContext.UserId.Value, myPupilsDocument.id);
         Assert.Empty(myPupilsDocument.MyPupils.Pupils);

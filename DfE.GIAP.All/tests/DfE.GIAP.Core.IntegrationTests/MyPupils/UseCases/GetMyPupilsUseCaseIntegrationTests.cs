@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
@@ -7,6 +7,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.SharedTests.Extensions;
 using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
@@ -34,12 +35,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
-        services.AddMyPupilsDependencies();
+        services
+            .AddMyPupilsDependencies()
+            .ConfigureAzureSearchClients();
     }
 
     [Fact]
     public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
+
         // Arrange
         List<AzureNpdSearchResponseDto> npdSearchIndexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);
 
@@ -80,7 +84,10 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Equal(npdSearchIndexDtos.Count + pupilPremiumSearchIndexDtos.Count, getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
-        List<MyPupilDto> expectedPupils = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos).Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map).ToList();
+        List<MyPupilDto> expectedPupils =
+            [.. npdSearchIndexDtos
+                .Concat(pupilPremiumSearchIndexDtos).
+                Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map)];
 
         foreach (MyPupilDto expectedPupil in expectedPupils)
         {

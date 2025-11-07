@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.Extensions;
 using DfE.GIAP.SharedTests.TestDoubles;
 

@@ -34,6 +34,12 @@ public class LearnerTextSearchViewModel
     public int Total { get; set; }
     public string PageLearnerNumbers { get; set; } = "";
 
+    /// <summary>
+    /// The offset is used to skip the defined number of records retrieved
+    /// on a search request. 
+    /// </summary>
+    public int Offset => PageNumber * PageSize;
+
     public bool ShowGender { get; set; }
     public bool ShowLocalAuthority { get; set; }
 
