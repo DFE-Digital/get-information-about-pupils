@@ -11,7 +11,9 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.21" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.14.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
@@ -20,5 +22,9 @@
     <InternalsVisibleTo Include="DfE.GIAP.Core.UnitTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
   </ItemGroup>
 </Project>

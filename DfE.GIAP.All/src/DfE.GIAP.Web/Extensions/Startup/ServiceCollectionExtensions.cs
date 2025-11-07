@@ -63,9 +63,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
-        services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
-        services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
-        services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
+        //services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
+        //services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
+        //services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
