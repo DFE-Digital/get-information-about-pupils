@@ -1,69 +1,42 @@
-﻿using System.Net.Http.Headers;
-using DfE.GIAP.Core.Auth.Application;
+﻿using DfE.GIAP.Core.Auth.Application;
 using DfE.GIAP.Core.Auth.Infrastructure;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
-using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
-using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+using DfE.GIAP.Core.NewsArticles;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 
 namespace DfE.GIAP.Core.Auth;
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddAuthFeature(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddAuthDependencies(this IServiceCollection services, IConfiguration config)
     {
         // Bind strongly typed settings
-        services.Configure<OidcSettings>(config.GetSection("OidcSettings"));
-        services.Configure<SignInApiSettings>(config.GetSection("SignInApiSettings"));
+        services.Configure<DsiOptions>(config.GetSection(DsiOptions.SectionName));
 
         // Core application services
         services.AddScoped<IClaimsEnricher, DfeClaimsEnricher>();
         services.AddScoped<IUserContextFactory, UserContextFactory>();
+        services.AddScoped<ISigningCredentialsProvider, SymmetricSigningCredentialsProvider>();
         services.AddScoped<OidcEventsHandler>();
 
-        // Register use cases (already implemented in Core.Users.Application)
-        services.AddScoped<IUseCaseRequestOnly<CreateUserIfNotExistsRequest>, CreateUserIfNotExistsUseCase>();
-        services.AddScoped<IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse>, GetUnreadUserNewsUseCase>();
-        services.AddScoped<IUseCaseRequestOnly<UpdateLastLoggedInRequest>, UpdateLastLoggedInUseCase>();
+        // Register use cases
+        services.AddNewsArticleDependencies();
 
-        // Register DfE Sign-In API client with HttpClient + IOptions
-        services.AddHttpClient<IDfeSignInApiClient, DfeSignInApiClient>((sp, client) =>
-        {
-            SignInApiSettings settings = sp.GetRequiredService<IOptions<SignInApiSettings>>().Value;
-            var keyProvider = sp.GetRequiredService<ISecurityKeyProvider>();
-
-            // Base address
-            client.BaseAddress = new Uri(settings.AuthorisationUrl.TrimEnd('/'));
-
-            // Accept header
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            // Bearer token
-            var token = new JwtSecurityTokenHandler().CreateEncodedJwt(
-                new SecurityTokenDescriptor
-                {
-                    Issuer = settings.ClientId,
-                    Audience = settings.Audience,
-                    SigningCredentials = new SigningCredentials(
-                        keyProvider.SecurityKeyInstance,
-                        keyProvider.SecurityAlgorithm)
-                });
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        });
+        // Register typed HttpClient for the API client
+        services.AddHttpClient<IDfeSignInApiClient, DfeHttpSignInApiClient>();
 
         // Configure OIDC authentication if settings are present
-        OidcSettings oidcSettings = config.GetSection("OidcSettings").Get<OidcSettings>();
-        if (!string.IsNullOrEmpty(oidcSettings?.ClientId))
+        DsiOptions? dsiOptions = config.GetSection(DsiOptions.SectionName).Get<DsiOptions>();
+        ArgumentNullException.ThrowIfNull(dsiOptions);
+
+        if (!string.IsNullOrEmpty(dsiOptions?.ClientId))
         {
             services.AddAuthentication(options =>
             {
@@ -73,18 +46,49 @@ public static class CompositionRoot
             })
             .AddCookie(o =>
             {
-                o.ExpireTimeSpan = TimeSpan.FromMinutes(oidcSettings.SessionTimeoutMinutes);
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(dsiOptions.SessionTimeoutMinutes);
                 o.SlidingExpiration = true;
+                o.LogoutPath = "/auth/logout";
+
+                o.Events.OnRedirectToAccessDenied = ctx =>
+                {
+                    ctx.Response.StatusCode = 403;
+                    ctx.Response.Redirect("/user-with-no-role");
+                    return Task.CompletedTask;
+                };
             })
             .AddOpenIdConnect(o =>
             {
                 o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                o.MetadataAddress = oidcSettings.MetadataAddress;
-                o.ClientId = oidcSettings.ClientId;
-                o.ClientSecret = oidcSettings.ClientSecret;
+                o.MetadataAddress = dsiOptions.MetadataAddress;
+                o.ClientId = dsiOptions.ClientId;
+                o.ClientSecret = dsiOptions.ClientSecret;
                 o.ResponseType = OpenIdConnectResponseType.Code;
-                o.CallbackPath = oidcSettings.CallbackPath;
-                o.SignedOutCallbackPath = oidcSettings.SignedOutCallbackPath;
+                o.RequireHttpsMetadata = true;
+                o.GetClaimsFromUserInfoEndpoint = true;
+                o.SaveTokens = true;
+                o.CallbackPath = dsiOptions.CallbackPath;
+                o.SignedOutCallbackPath = dsiOptions.SignedOutCallbackPath;
+                o.DisableTelemetry = true;
+                o.TokenHandler = new JsonWebTokenHandler
+                {
+                    InboundClaimTypeMap = new Dictionary<string, string>(),
+                    TokenLifetimeInMinutes = 90,
+                    SetDefaultTimesOnTokenCreation = true
+                };
+                o.ProtocolValidator = new OpenIdConnectProtocolValidator
+                {
+                    RequireSub = true,
+                    RequireStateValidation = false,
+                    NonceLifetime = TimeSpan.FromMinutes(60)
+                };
+
+                // Add scope?
+                o.Scope.Clear();
+                o.Scope.Add("openid");
+                o.Scope.Add("email");
+                o.Scope.Add("profile");
+                o.Scope.Add("organisationid");
 
                 // Resolve handler from DI
                 o.Events.OnMessageReceived = ctx =>

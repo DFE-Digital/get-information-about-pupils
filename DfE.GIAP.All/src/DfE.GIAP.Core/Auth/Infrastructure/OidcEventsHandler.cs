@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Security.Claims;
 using DfE.GIAP.Core.Auth.Application;
 using DfE.GIAP.Core.Auth.Application.Models;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
@@ -9,6 +10,7 @@ using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Auth.Infrastructure;
 
@@ -20,7 +22,7 @@ public class OidcEventsHandler
     private readonly IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse> _getUnreadNewsUseCase;
     private readonly IUseCaseRequestOnly<UpdateLastLoggedInRequest> _updateLastLoggedInUseCase;
     //private readonly ISessionProvider _sessionProvider; // TODO: Update to new way
-    private readonly OidcSettings _oidcSettings;
+    private readonly DsiOptions _oidcSettings;
 
     public OidcEventsHandler(
         IClaimsEnricher enricher,
@@ -29,7 +31,7 @@ public class OidcEventsHandler
         IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse> getUnreadNewsUseCase,
         IUseCaseRequestOnly<UpdateLastLoggedInRequest> updateLastLoggedInUseCase,
         //ISessionProvider sessionProvider,
-        OidcSettings oidcSettings)
+        IOptions<DsiOptions> oidcSettings)
     {
         _claimsEnricher = enricher;
         _userContextFactory = userContextFactory;
@@ -37,15 +39,17 @@ public class OidcEventsHandler
         _getUnreadNewsUseCase = getUnreadNewsUseCase;
         _updateLastLoggedInUseCase = updateLastLoggedInUseCase;
         //_sessionProvider = sessionProvider;
-        _oidcSettings = oidcSettings;
+        _oidcSettings = oidcSettings.Value;
     }
 
     public Task OnMessageReceived(MessageReceivedContext ctx)
     {
-        // Defensive null checks
-        if (ctx.Request.Path == ctx.Options.CallbackPath &&
-            string.Equals(ctx.Request.Method, HttpMethods.Get, StringComparison.OrdinalIgnoreCase) &&
-            !ctx.Request.Query.ContainsKey("code"))
+        bool isSpuriousAuthCbRequest =
+           ctx.Request.Path == ctx.Options.CallbackPath &&
+           ctx.Request.Method == HttpMethods.Get &&
+           !ctx.Request.Query.ContainsKey("code");
+
+        if (isSpuriousAuthCbRequest)
         {
             ctx.HandleResponse();
             ctx.Response.Redirect("/");
@@ -57,8 +61,12 @@ public class OidcEventsHandler
     public Task OnRemoteFailure(RemoteFailureContext ctx)
     {
         ctx.HandleResponse();
-        // You might want to log ctx.Failure here
-        return Task.FromException(ctx.Failure ?? new Exception("Unknown remote failure"));
+        if (ctx.Failure is not null)
+            return Task.FromException(ctx.Failure);
+
+        // No exception provided – return a completed task or a default exception
+        return Task.FromException(new Exception("Unknown remote failure during OIDC authentication."));
+
     }
 
     public async Task OnTokenValidated(TokenValidatedContext ctx)

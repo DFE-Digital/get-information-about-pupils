@@ -11,12 +11,12 @@ namespace DfE.GIAP.Core.Auth.Infrastructure;
 public class DfeClaimsEnricher : IClaimsEnricher
 {
     private readonly IDfeSignInApiClient _apiClient;
-    private readonly SignInApiSettings _signInApiSettings;
+    private readonly DsiOptions _dsiOptions;
 
-    public DfeClaimsEnricher(IDfeSignInApiClient apiClient, IOptions<SignInApiSettings> options)
+    public DfeClaimsEnricher(IDfeSignInApiClient apiClient, IOptions<DsiOptions> options)
     {
         _apiClient = apiClient;
-        _signInApiSettings = options.Value;
+        _dsiOptions = options.Value;
     }
 
     public async Task<ClaimsPrincipal> EnrichAsync(ClaimsPrincipal claimsPrincipal)
@@ -25,6 +25,7 @@ public class DfeClaimsEnricher : IClaimsEnricher
 
         string userId = claimsPrincipal.FindFirst("sub")?.Value ?? string.Empty;
         string email = claimsPrincipal.FindFirst("email")?.Value ?? string.Empty;
+        claims.Add(new Claim(AuthClaimTypes.SessionId, Guid.NewGuid().ToString()));
         claims.Add(new Claim(AuthClaimTypes.UserId, userId));
         claims.Add(new Claim(ClaimTypes.Email, email));
 
@@ -34,11 +35,11 @@ public class DfeClaimsEnricher : IClaimsEnricher
         string orgId = org["id"]?.ToString() ?? string.Empty;
 
         // Call DfE Sign-In API
-        UserAccess? userAccess = await _apiClient.GetUserInfo(_signInApiSettings.ServiceId, orgId, userId);
+        UserAccess? userAccess = await _apiClient.GetUserInfo(_dsiOptions.ServiceId, orgId, userId);
         Organisation? organisation = await _apiClient.GetUserOrganisation(userId, orgId);
 
         // Roles
-        if (userAccess?.Roles != null)
+        if (userAccess?.Roles is not null)
         {
             foreach (UserRole role in userAccess.Roles)
             {

@@ -9,16 +9,19 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DfE.GIAP.Core.Auth.Infrastructure;
 
-public class DfeSignInApiClient : IDfeSignInApiClient
+public class DfeHttpSignInApiClient : IDfeSignInApiClient
 {
     private readonly HttpClient _httpClient;
-    private readonly SignInApiSettings _settings;
+    private readonly DsiOptions __dsiOptions;
     private readonly ISigningCredentialsProvider _credentialsProvider;
 
-    public DfeSignInApiClient(HttpClient httpClient, IOptions<SignInApiSettings> options, ISigningCredentialsProvider credentialsProvider)
+    public DfeHttpSignInApiClient(
+        HttpClient httpClient,
+        IOptions<DsiOptions> options,
+        ISigningCredentialsProvider credentialsProvider)
     {
         _httpClient = httpClient;
-        _settings = options.Value;
+        __dsiOptions = options.Value;
         _credentialsProvider = credentialsProvider;
 
         ConfigureHttpClient();
@@ -29,12 +32,12 @@ public class DfeSignInApiClient : IDfeSignInApiClient
         string token = new JwtSecurityTokenHandler().CreateEncodedJwt(
             new SecurityTokenDescriptor
             {
-                Issuer = _settings.ClientId,
-                Audience = _settings.Audience,
+                Issuer = __dsiOptions.ClientId,
+                Audience = __dsiOptions.Audience,
                 SigningCredentials = _credentialsProvider.GetSigningCredentials()
             });
 
-        _httpClient.BaseAddress = new Uri(_settings.AuthorisationUrl.TrimEnd('/'));
+        _httpClient.BaseAddress = new Uri(__dsiOptions.AuthorisationUrl.TrimEnd('/'));
         _httpClient.DefaultRequestHeaders.Accept.Clear();
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -42,7 +45,7 @@ public class DfeSignInApiClient : IDfeSignInApiClient
 
     public async Task<UserAccess?> GetUserInfo(string serviceId, string organisationId, string userId)
     {
-        string url = $"{_settings.GetUserProfileUrl}?serviceId={serviceId}&organisationId={organisationId}&userId={userId}";
+        string url = $"/services/{serviceId}/organisations/{organisationId}/users/{userId}";
         HttpResponseMessage response = await _httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<UserAccess>();
@@ -50,15 +53,15 @@ public class DfeSignInApiClient : IDfeSignInApiClient
 
     public async Task<Organisation?> GetUserOrganisation(string userId, string organisationId)
     {
-        string url = $"{_settings.GetUserOrganisationUrl}?userId={userId}&organisationId={organisationId}";
-        HttpResponseMessage response = await _httpClient.GetAsync(url);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<Organisation>();
+        // Fetch the list of organisations
+        List<Organisation> organisations = await GetUserOrganisations(userId);
+        return organisations?.Find(o => o.Id == organisationId);
     }
 
     public async Task<List<Organisation>> GetUserOrganisations(string userId)
     {
-        string url = $"{_settings.GetUserOrganisationsUrl}?userId={userId}";
+        string url = $"/users/{userId}/organisations";
+
         HttpResponseMessage response = await _httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadFromJsonAsync<List<Organisation>>() ?? new List<Organisation>();
