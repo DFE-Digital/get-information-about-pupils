@@ -177,9 +177,8 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     public async Task CreateNewsArticleAsync_BubblesException_When_CosmosException()
     {
         // Arrange
-        Func<NewsArticleDto> cosmosExceptionGenerator =
-            CosmosExceptionTestDoubles.ThrowsCosmosExceptionDelegate<NewsArticleDto>();
-        Mock<ICosmosDbCommandHandler> mockCommandHandler = CosmosDbCommandHandlerTestDoubles.MockForCreateItemAsync(cosmosExceptionGenerator);
+        Mock<ICosmosDbCommandHandler> mockCommandHandler =
+            CosmosDbCommandHandlerTestDoubles.MockForCreateItemAsyncThrows<NewsArticleDto>(exception: CosmosExceptionTestDoubles.Default());
 
         NewsArticleDto? articleDto = NewsArticleDtoTestDoubles.Generate(1).FirstOrDefault();
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(articleDto);
@@ -247,8 +246,8 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForDeleteItemAsync(
-                CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles.MockForDeleteItemAsyncThrows<NewsArticleDto>(
+                exception: CosmosExceptionTestDoubles.Default());
 
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.Default<NewsArticle, NewsArticleDto>();
 
@@ -309,8 +308,8 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCommandHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForReplaceItemAsync(
-                CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles.MockForReplaceItemAsyncThrows<NewsArticleDto>(
+                exception: CosmosExceptionTestDoubles.Default());
 
         NewsArticleDto? articleDto = NewsArticleDtoTestDoubles.Generate(1).FirstOrDefault();
         Mock<IMapper<NewsArticle, NewsArticleDto>> mockMapper = MapperTestDoubles.MockFor<NewsArticle, NewsArticleDto>(articleDto);

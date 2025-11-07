@@ -117,13 +117,10 @@ public static class ConfigurationTestDoubles
                 new CosmosDbContainerOptions("reference", "/DOCTYPE")*/
         };
 
-        int index = 0;
-
         foreach (KeyValuePair<string, string> item in containerOptions)
         {
-            configurationOptions.TryAdd($"RepositoryOptions:Containers:{index}:{item.Key}:ContainerName", item.Key);
-            configurationOptions.TryAdd($"RepositoryOptions:Containers:{index}:{item.Key}:PartitionKey", containerOptions[item.Key]);
-            ++index;
+            configurationOptions.TryAdd($"RepositoryOptions:Containers:{item.Key}:ContainerName", item.Key);
+            configurationOptions.TryAdd($"RepositoryOptions:Containers:{item.Key}:PartitionKey", containerOptions[item.Key]);
         }
         builder.AddInMemoryCollection(configurationOptions);
         return builder;

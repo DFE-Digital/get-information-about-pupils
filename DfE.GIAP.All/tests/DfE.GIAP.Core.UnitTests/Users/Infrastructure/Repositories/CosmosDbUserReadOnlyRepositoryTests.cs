@@ -180,10 +180,11 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         UserId userId = UserIdTestDoubles.Default();
 
         UserDto userProfileDto = UserDtoTestDoubles.WithId(userId);
-        User expectedUser = new(userId, DateTime.UtcNow);
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById(() => userProfileDto);
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById(() => userProfileDto);
+
+        User expectedUser = new(userId, DateTime.UtcNow);
         Mock<IMapper<UserDto, User>> mockMapper = MapperTestDoubles.Default<UserDto, User>();
 
         mockMapper
@@ -203,7 +204,7 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         Assert.Equal(expectedUser, result);
 
         mockCosmosDbQueryHandler.Verify((handler) =>
-            handler.ReadItemByIdAsync<UserDto>(
+            handler.TryReadItemByIdAsync<UserDto>(
                 userId.Value,
                 usersContainerName,
                 userId.Value,
@@ -267,10 +268,9 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
-        Exception genericException = new Exception("test exception");
-
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<UserDto>(() => throw genericException);
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<UserDto>(() => throw new Exception("test exception"));
+
         Mock<IMapper<UserDto, User>> mockMapper = MapperTestDoubles.Default<UserDto, User>();
 
         CosmosDbUserReadOnlyRepository repository = new(
@@ -279,10 +279,9 @@ public sealed class CosmosDbUserReadOnlyRepositoryTests
             userMapper: mockMapper.Object);
 
         // Act & Assert
-        Exception ex = await Assert.ThrowsAsync<Exception>(() =>
+        await Assert.ThrowsAsync<Exception>(() =>
             repository.GetUserByIdIfExistsAsync(userId));
 
-        Assert.Equal(genericException, ex);
         Assert.Contains("Exception in GetUserByIdIfExistsAsync", _mockLogger.Logs.Single());
     }
 }

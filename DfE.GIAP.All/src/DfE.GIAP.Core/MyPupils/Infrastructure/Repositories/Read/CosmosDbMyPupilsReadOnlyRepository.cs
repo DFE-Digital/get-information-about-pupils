@@ -35,8 +35,8 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
     {
         try
         {
-            MyPupilsDocumentDto userDto =
-                await _cosmosDbQueryHandler.ReadItemByIdAsync<MyPupilsDocumentDto>(
+            MyPupilsDocumentDto? userDto =
+                await _cosmosDbQueryHandler.TryReadItemByIdAsync<MyPupilsDocumentDto>(
                     id: userId.Value,
                     containerKey: ContainerName,
                     partitionKeyValue: userId.Value,
@@ -44,17 +44,12 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
 
             if (userDto is null)
             {
+                _logger.LogInformation("Could not find MyPupils for User id {UserId}", userId.Value);
                 return null;
             }
 
             return _myPupilsDtoToMyPupils.Map(userDto);
         }
-        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
-            _logger.LogInformation(ex, "Could not find MyPupils for User id {UserId}", userId.Value);
-            return null;
-        }
-
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsOrDefaultAsync)}.");
