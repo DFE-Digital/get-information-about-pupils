@@ -14,6 +14,16 @@ using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Auth.Infrastructure;
 
+
+/// <summary>
+/// Handles OpenID Connect (OIDC) authentication events and coordinates user-related actions during the authentication
+/// process.
+/// </summary>
+/// <remarks>This class is intended to be used as an event handler for OIDC authentication flows, such as those
+/// provided by ASP.NET Core's authentication middleware. It manages tasks such as processing authentication callbacks,
+/// handling remote authentication failures, enriching user claims, and updating user information upon successful
+/// authentication. The handler relies on injected services to perform user creation, claims enrichment, and other user
+/// context operations.</remarks>
 public class OidcEventsHandler
 {
     private readonly IClaimsEnricher _claimsEnricher;
