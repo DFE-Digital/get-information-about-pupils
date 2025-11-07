@@ -21,4 +21,8 @@
     <InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
+  </ItemGroup>
 </Project>
