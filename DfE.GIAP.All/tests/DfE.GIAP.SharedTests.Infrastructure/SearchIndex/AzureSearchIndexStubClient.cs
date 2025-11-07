@@ -7,9 +7,9 @@ namespace DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
 
 internal sealed class AzureSearchIndexStubClient
 {
-    private readonly IWireMockClient _wireMockClient;
+    private readonly IWireMockStubClient _wireMockClient;
 
-    public AzureSearchIndexStubClient(IWireMockClient wireMockClient)
+    public AzureSearchIndexStubClient(IWireMockStubClient wireMockClient)
     {
         Guard.ThrowIfNull(wireMockClient, nameof(wireMockClient));
         _wireMockClient = wireMockClient;
