@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
     <InternalsVisibleTo Include="DfE.GIAP.SharedTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Core.UnitTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
