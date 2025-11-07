@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DfE.GIAP.Core.Auth.Application.Claims;
+﻿namespace DfE.GIAP.Core.Auth.Application.Claims;
 
 /// <summary>
 /// Claim type URIs used by the Auth feature.

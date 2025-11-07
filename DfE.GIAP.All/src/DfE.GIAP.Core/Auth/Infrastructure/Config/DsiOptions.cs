@@ -13,7 +13,6 @@ public class DsiOptions
     public string ApiClientSecret { get; set; } = string.Empty;
     public string Audience { get; set; } = string.Empty;
     public string MetadataAddress { get; set; } = string.Empty;
-    public string AuthorityAddress { get; set; } = string.Empty;
     public string AuthorisationUrl { get; set; } = string.Empty;
     public string CallbackPath { get; set; } = string.Empty;
     public string SignedOutCallbackPath { get; set; } = string.Empty;

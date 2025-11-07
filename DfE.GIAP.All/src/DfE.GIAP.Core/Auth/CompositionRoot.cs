@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Collections.Generic;
 
 namespace DfE.GIAP.Core.Auth;
 
@@ -83,11 +81,10 @@ public static class CompositionRoot
                     NonceLifetime = TimeSpan.FromMinutes(60)
                 };
 
-                // Add scope?
                 o.Scope.Clear();
                 o.Scope.Add("openid");
                 o.Scope.Add("email");
-                o.Scope.Add("profile");
+                o.Scope.Add("profile"); // not pulled back?
                 o.Scope.Add("organisationid");
 
                 // Resolve handler from DI
