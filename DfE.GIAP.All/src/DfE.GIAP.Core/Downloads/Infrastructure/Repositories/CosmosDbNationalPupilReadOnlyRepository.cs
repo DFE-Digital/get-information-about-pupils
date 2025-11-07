@@ -11,12 +11,12 @@ namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 public class CosmosDbNationalPupilReadOnlyRepository : INationalPupilReadOnlyRepository
 {
     private const string ContainerKey = "pupil-noskill"; // This must match the key in the container options.
-    private readonly ILoggerService _logger;
+    private readonly IApplicationLogger _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NationalPupilDto, NationalPupil> _dtoToEntityMapper;
 
     public CosmosDbNationalPupilReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLogger logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NationalPupilDto, NationalPupil> dtoToEntityMapper)
     {

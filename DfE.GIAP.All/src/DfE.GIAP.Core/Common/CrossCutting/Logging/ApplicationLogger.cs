@@ -3,12 +3,12 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 
-public class LoggerService : ILoggerService
+public class ApplicationLogger : IApplicationLogger
 {
     private readonly IEnumerable<ITraceLogHandler> _traceLogHandlers;
     private readonly ILogEntryFactory<TracePayloadOptions, TracePayload> _traceLogFactory;
 
-    public LoggerService(
+    public ApplicationLogger(
         IEnumerable<ITraceLogHandler> traceLogHandlers,
         ILogEntryFactory<TracePayloadOptions, TracePayload> traceLogFactory)
     {

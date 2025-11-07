@@ -16,7 +16,10 @@ public class TraceLogFactory : ILogEntryFactory<TracePayloadOptions, TracePayloa
         ISessionProvider sessionProvider,
         IHttpContextAccessor httpContextAccessor)
     {
+        ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
+
+        ArgumentNullException.ThrowIfNull(httpContextAccessor);
         _httpContextAccessor = httpContextAccessor;
     }
 

@@ -49,7 +49,7 @@ public static class LoggerServiceTestDoubles
     }
 }
 
-public sealed class InMemoryLoggerService : ILoggerService
+public sealed class InMemoryLoggerService : IApplicationLogger
 {
     public List<string> Logs { get; } = [];
 

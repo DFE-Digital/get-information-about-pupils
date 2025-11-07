@@ -17,12 +17,12 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILoggerService _loggerService;
+    private readonly IApplicationLogger _loggerService;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
     public CosmosDbNewsArticleReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLogger logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {

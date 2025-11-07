@@ -80,6 +80,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
         services.AddScoped<ILogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
+        services.AddScoped<ILogEntryFactory<BusinessEventPayloadOptions, BusinessEventPayload>, BusinessEventLogFactory>();
 
         return services;
     }

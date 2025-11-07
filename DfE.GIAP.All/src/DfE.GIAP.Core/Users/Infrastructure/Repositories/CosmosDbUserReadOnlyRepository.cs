@@ -16,12 +16,12 @@ namespace DfE.GIAP.Core.Users.Infrastructure.Repositories;
 internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
 {
     private const string ContainerName = "users";
-    private readonly ILoggerService _loggerService;
+    private readonly IApplicationLogger _loggerService;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<UserDto, User> _userMapper;
 
     public CosmosDbUserReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLogger logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<UserDto, User> userMapper)
     {
