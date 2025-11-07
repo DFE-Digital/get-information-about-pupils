@@ -1,6 +1,4 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.Auth.Infrastructure.Config;
-
 namespace DfE.GIAP.Core.Auth.Application;
 
 /// <summary>
@@ -8,8 +6,5 @@ namespace DfE.GIAP.Core.Auth.Application;
 /// </summary>
 public interface IClaimsEnricher
 {
-    Task<ClaimsPrincipal> EnrichAsync(
-        ClaimsPrincipal providerPrincipal,
-        SignInApiSettings signInSettings,
-        CancellationToken ct);
+    Task<ClaimsPrincipal> EnrichAsync(ClaimsPrincipal providerPrincipal);
 }

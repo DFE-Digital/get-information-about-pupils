@@ -1,7 +1,11 @@
-﻿using System.Net.Http.Json;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using DfE.GIAP.Core.Auth.Application;
 using DfE.GIAP.Core.Auth.Application.Models;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DfE.GIAP.Core.Auth.Infrastructure;
 
@@ -9,11 +13,31 @@ public class DfeSignInApiClient : IDfeSignInApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly SignInApiSettings _settings;
+    private readonly ISigningCredentialsProvider _credentialsProvider;
 
-    public DfeSignInApiClient(HttpClient httpClient, SignInApiSettings settings)
+    public DfeSignInApiClient(HttpClient httpClient, IOptions<SignInApiSettings> options, ISigningCredentialsProvider credentialsProvider)
     {
         _httpClient = httpClient;
-        _settings = settings;
+        _settings = options.Value;
+        _credentialsProvider = credentialsProvider;
+
+        ConfigureHttpClient();
+    }
+
+    private void ConfigureHttpClient()
+    {
+        string token = new JwtSecurityTokenHandler().CreateEncodedJwt(
+            new SecurityTokenDescriptor
+            {
+                Issuer = _settings.ClientId,
+                Audience = _settings.Audience,
+                SigningCredentials = _credentialsProvider.GetSigningCredentials()
+            });
+
+        _httpClient.BaseAddress = new Uri(_settings.AuthorisationUrl.TrimEnd('/'));
+        _httpClient.DefaultRequestHeaders.Accept.Clear();
+        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
     public async Task<UserAccess?> GetUserInfo(string serviceId, string organisationId, string userId)
