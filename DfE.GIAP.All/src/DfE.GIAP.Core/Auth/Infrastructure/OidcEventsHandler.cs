@@ -1,11 +1,5 @@
-﻿using System.Security.Claims;
-using DfE.GIAP.Core.Auth.Application;
-using DfE.GIAP.Core.Auth.Application.Models;
+﻿using DfE.GIAP.Core.Auth.Application;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
-using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
-using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
@@ -25,36 +19,16 @@ namespace DfE.GIAP.Core.Auth.Infrastructure;
 /// context operations.</remarks>
 public class OidcEventsHandler
 {
-    private readonly IClaimsEnricher _claimsEnricher;
-    private readonly IUserContextFactory _userContextFactory;
-    private readonly IUseCaseRequestOnly<CreateUserIfNotExistsRequest> _createUserIfNotExistsUseCaes;
-    private readonly IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse> _getUnreadNewsUseCase;
-    private readonly IUseCaseRequestOnly<UpdateLastLoggedInRequest> _updateLastLoggedInUseCase;
-    //private readonly ISessionProvider _sessionProvider; // TODO: Update to new way
+    private readonly IEnumerable<IPostTokenValidatedHandler> _handlers;
     private readonly DsiOptions _oidcSettings;
 
     public OidcEventsHandler(
-        IClaimsEnricher enricher,
-        IUserContextFactory userContextFactory,
-        IUseCaseRequestOnly<CreateUserIfNotExistsRequest> createUserIfNotExistsUseCase,
-        IUseCase<GetUnreadUserNewsRequest, GetUnreadUserNewsResponse> getUnreadNewsUseCase,
-        IUseCaseRequestOnly<UpdateLastLoggedInRequest> updateLastLoggedInUseCase,
-        //ISessionProvider sessionProvider,
+        IEnumerable<IPostTokenValidatedHandler> handlers,
         IOptions<DsiOptions> oidcSettings)
     {
-        ArgumentNullException.ThrowIfNull(enricher);
-        ArgumentNullException.ThrowIfNull(userContextFactory);
-        ArgumentNullException.ThrowIfNull(createUserIfNotExistsUseCase);
-        ArgumentNullException.ThrowIfNull(getUnreadNewsUseCase);
-        ArgumentNullException.ThrowIfNull(updateLastLoggedInUseCase);
-        //ArgumentNullException.ThrowIfNull(sessionProvider);
+        ArgumentNullException.ThrowIfNull(handlers);
         ArgumentNullException.ThrowIfNull(oidcSettings.Value);
-        _claimsEnricher = enricher;
-        _userContextFactory = userContextFactory;
-        _createUserIfNotExistsUseCaes = createUserIfNotExistsUseCase;
-        _getUnreadNewsUseCase = getUnreadNewsUseCase;
-        _updateLastLoggedInUseCase = updateLastLoggedInUseCase;
-        //_sessionProvider = sessionProvider;
+        _handlers = handlers;
         _oidcSettings = oidcSettings.Value;
     }
 
@@ -96,20 +70,13 @@ public class OidcEventsHandler
         ctx.Properties!.IsPersistent = true;
         ctx.Properties!.ExpiresUtc = DateTime.UtcNow.AddMinutes(_oidcSettings.SessionTimeoutMinutes);
 
-        ClaimsPrincipal enrichedClaims = await _claimsEnricher.EnrichAsync(ctx.Principal);
-        ctx.Principal = enrichedClaims;
-
-        AuthenticatedUser userInfo = _userContextFactory.FromPrincipal(enrichedClaims);
-
-        await _createUserIfNotExistsUseCaes.HandleRequestAsync(new CreateUserIfNotExistsRequest(userInfo.UserId));
-        GetUnreadUserNewsResponse news = await _getUnreadNewsUseCase.HandleRequestAsync(new GetUnreadUserNewsRequest(userInfo.UserId));
-        if (news.HasUpdates)
+        TokenAuthorisationContext context = new(ctx);
+        foreach (IPostTokenValidatedHandler handler in _handlers)
         {
-            //_sessionProvider.SetSessionValue("ShowNewsBanner", true);
+            await handler.HandleAsync(context);
         }
-        await _updateLastLoggedInUseCase.HandleRequestAsync(new UpdateLastLoggedInRequest(userInfo.UserId, DateTime.UtcNow));
 
-        // TODO: Logging and event logging
-
+        // Update the principal in the OIDC context if it was enriched
+        ctx.Principal = context.Principal;
     }
 }

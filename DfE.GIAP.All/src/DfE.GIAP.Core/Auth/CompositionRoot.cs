@@ -22,10 +22,13 @@ public static class CompositionRoot
         services.AddScoped<IClaimsEnricher, DfeClaimsEnricher>();
         services.AddScoped<IUserContextFactory, UserContextFactory>();
         services.AddScoped<ISigningCredentialsProvider, SymmetricSigningCredentialsProvider>();
+
+        services.AddScoped<IPostTokenValidatedHandler, ClaimsEnrichmentHandler>();
+        services.AddScoped<IPostTokenValidatedHandler, UserPostLoginHandler>();
         services.AddScoped<OidcEventsHandler>();
 
         // Register use cases
-        services.AddNewsArticleDependencies();
+        services.AddNewsArticleDependencies(); // TODO: Remove when Auth no longer depends on NewsArticles
 
         // Register typed HttpClient for the API client
         services.AddHttpClient<IDfeSignInApiClient, DfeHttpSignInApiClient>();
@@ -84,7 +87,7 @@ public static class CompositionRoot
                 o.Scope.Clear();
                 o.Scope.Add("openid");
                 o.Scope.Add("email");
-                o.Scope.Add("profile"); // not pulled back?
+                o.Scope.Add("profile"); // TODO: Remove as not pulled back?
                 o.Scope.Add("organisationid");
 
                 // Resolve handler from DI
