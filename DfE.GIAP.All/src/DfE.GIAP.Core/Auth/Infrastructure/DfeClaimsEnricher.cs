@@ -15,6 +15,8 @@ public class DfeClaimsEnricher : IClaimsEnricher
 
     public DfeClaimsEnricher(IDfeSignInApiClient apiClient, IOptions<DsiOptions> options)
     {
+        ArgumentNullException.ThrowIfNull(apiClient);
+        ArgumentNullException.ThrowIfNull(options.Value);
         _apiClient = apiClient;
         _dsiOptions = options.Value;
     }

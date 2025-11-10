@@ -11,7 +11,8 @@ public class SymmetricSigningCredentialsProvider : ISigningCredentialsProvider
 
     public SymmetricSigningCredentialsProvider(IOptions<DsiOptions> options)
     {
-        _dsiOptions = options.Value ?? throw new ArgumentNullException(nameof(options));
+        ArgumentNullException.ThrowIfNull(options.Value);
+        _dsiOptions = options.Value;
     }
 
     public SigningCredentials GetSigningCredentials()

@@ -20,6 +20,9 @@ public class DfeHttpSignInApiClient : IDfeSignInApiClient
         IOptions<DsiOptions> options,
         ISigningCredentialsProvider credentialsProvider)
     {
+        ArgumentNullException.ThrowIfNull(httpClient);
+        ArgumentNullException.ThrowIfNull(options.Value);
+        ArgumentNullException.ThrowIfNull(credentialsProvider);
         _httpClient = httpClient;
         __dsiOptions = options.Value;
         _credentialsProvider = credentialsProvider;

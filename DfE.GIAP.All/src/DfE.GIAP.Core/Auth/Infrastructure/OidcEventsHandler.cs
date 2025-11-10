@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using DfE.GIAP.Core.Auth.Application;
 using DfE.GIAP.Core.Auth.Application.Models;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
@@ -43,6 +42,13 @@ public class OidcEventsHandler
         //ISessionProvider sessionProvider,
         IOptions<DsiOptions> oidcSettings)
     {
+        ArgumentNullException.ThrowIfNull(enricher);
+        ArgumentNullException.ThrowIfNull(userContextFactory);
+        ArgumentNullException.ThrowIfNull(createUserIfNotExistsUseCase);
+        ArgumentNullException.ThrowIfNull(getUnreadNewsUseCase);
+        ArgumentNullException.ThrowIfNull(updateLastLoggedInUseCase);
+        //ArgumentNullException.ThrowIfNull(sessionProvider);
+        ArgumentNullException.ThrowIfNull(oidcSettings.Value);
         _claimsEnricher = enricher;
         _userContextFactory = userContextFactory;
         _createUserIfNotExistsUseCaes = createUserIfNotExistsUseCase;
