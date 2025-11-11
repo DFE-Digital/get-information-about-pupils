@@ -34,18 +34,19 @@ public static class CompositionRoot
         services.AddScoped<IPostTokenValidatedHandler, SetUnreadNewsStatusHandler>();
 
         services.AddScoped<PostTokenHandlerBuilder>();
-        services.AddScoped<IReadOnlyList<IPostTokenValidatedHandler>>(sp =>
+        services.AddScoped<OidcEventsHandler>(sp =>
         {
             PostTokenHandlerBuilder builder = sp.GetRequiredService<PostTokenHandlerBuilder>();
-            return builder
+            IReadOnlyList<IPostTokenValidatedHandler> orderedHandlers = builder
                 .StartWith<ClaimsEnrichmentHandler>()
                 .Then<CreateUserIfNotExistHandler>()
                 .Then<UpdateUserLastLoggedInHandler>()
                 .Then<SetUnreadNewsStatusHandler>()
                 .Build();
-        });
 
-        services.AddScoped<OidcEventsHandler>();
+            IOptions<DsiOptions> options = sp.GetRequiredService<IOptions<DsiOptions>>();
+            return new OidcEventsHandler(orderedHandlers, options);
+        });
 
         // Register use cases
         services.AddNewsArticleDependencies(); // TODO: Remove when Auth no longer depends on NewsArticles
