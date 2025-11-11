@@ -1,4 +1,7 @@
-﻿using DfE.GIAP.Core.Auth.Application;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using DfE.GIAP.Core.Auth.Application;
+using DfE.GIAP.Core.Auth.Application.PostTokenHandlers;
 using DfE.GIAP.Core.Auth.Infrastructure;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
 using DfE.GIAP.Core.NewsArticles;
@@ -6,8 +9,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DfE.GIAP.Core.Auth;
 
@@ -21,17 +26,49 @@ public static class CompositionRoot
         // Core application services
         services.AddScoped<IClaimsEnricher, DfeClaimsEnricher>();
         services.AddScoped<IUserContextFactory, UserContextFactory>();
-        services.AddScoped<ISigningCredentialsProvider, SymmetricSigningCredentialsProvider>();
+        services.AddSingleton<ISigningCredentialsProvider, SymmetricSigningCredentialsProvider>();
 
         services.AddScoped<IPostTokenValidatedHandler, ClaimsEnrichmentHandler>();
-        services.AddScoped<IPostTokenValidatedHandler, UserPostLoginHandler>();
+        services.AddScoped<IPostTokenValidatedHandler, CreateUserIfNotExistHandler>();
+        services.AddScoped<IPostTokenValidatedHandler, UpdateUserLastLoggedInHandler>();
+        services.AddScoped<IPostTokenValidatedHandler, SetUnreadNewsStatusHandler>();
+
+        services.AddScoped<PostTokenHandlerBuilder>();
+        services.AddScoped<IReadOnlyList<IPostTokenValidatedHandler>>(sp =>
+        {
+            PostTokenHandlerBuilder builder = sp.GetRequiredService<PostTokenHandlerBuilder>();
+            return builder
+                .StartWith<ClaimsEnrichmentHandler>()
+                .Then<CreateUserIfNotExistHandler>()
+                .Then<UpdateUserLastLoggedInHandler>()
+                .Then<SetUnreadNewsStatusHandler>()
+                .Build();
+        });
+
         services.AddScoped<OidcEventsHandler>();
 
         // Register use cases
         services.AddNewsArticleDependencies(); // TODO: Remove when Auth no longer depends on NewsArticles
 
         // Register typed HttpClient for the API client
-        services.AddHttpClient<IDfeSignInApiClient, DfeHttpSignInApiClient>();
+        services.AddHttpClient<IDfeSignInApiClient, DfeHttpSignInApiClient>((sp, client) =>
+        {
+            DsiOptions options = sp.GetRequiredService<IOptions<DsiOptions>>().Value;
+            ISigningCredentialsProvider credentialsProvider = sp.GetRequiredService<ISigningCredentialsProvider>();
+
+            string token = new JwtSecurityTokenHandler().CreateEncodedJwt(
+                new SecurityTokenDescriptor
+                {
+                    Issuer = options.ClientId,
+                    Audience = options.Audience,
+                    SigningCredentials = credentialsProvider.GetSigningCredentials()
+                });
+
+            client.BaseAddress = new Uri(options.AuthorisationUrl.TrimEnd('/'));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        });
 
         // Configure OIDC authentication if settings are present
         DsiOptions? dsiOptions = config.GetSection(DsiOptions.SectionName).Get<DsiOptions>();

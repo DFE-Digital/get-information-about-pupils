@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Auth.Application;
+﻿using DfE.GIAP.Core.Auth.Application.PostTokenHandlers;
 using DfE.GIAP.Core.Auth.Infrastructure.Config;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -19,11 +19,11 @@ namespace DfE.GIAP.Core.Auth.Infrastructure;
 /// context operations.</remarks>
 public class OidcEventsHandler
 {
-    private readonly IEnumerable<IPostTokenValidatedHandler> _handlers;
+    private readonly IReadOnlyList<IPostTokenValidatedHandler> _handlers;
     private readonly DsiOptions _oidcSettings;
 
     public OidcEventsHandler(
-        IEnumerable<IPostTokenValidatedHandler> handlers,
+        IReadOnlyList<IPostTokenValidatedHandler> handlers,
         IOptions<DsiOptions> oidcSettings)
     {
         ArgumentNullException.ThrowIfNull(handlers);
@@ -76,7 +76,7 @@ public class OidcEventsHandler
             await handler.HandleAsync(context);
         }
 
-        // Update the principal in the OIDC context if it was enriched
+        // Update the principal in the OIDC context that was enriched
         ctx.Principal = context.Principal;
     }
 }

@@ -1,49 +1,17 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using DfE.GIAP.Core.Auth.Application;
 using DfE.GIAP.Core.Auth.Application.Models;
-using DfE.GIAP.Core.Auth.Infrastructure.Config;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace DfE.GIAP.Core.Auth.Infrastructure;
 
 public class DfeHttpSignInApiClient : IDfeSignInApiClient
 {
     private readonly HttpClient _httpClient;
-    private readonly DsiOptions __dsiOptions;
-    private readonly ISigningCredentialsProvider _credentialsProvider;
 
-    public DfeHttpSignInApiClient(
-        HttpClient httpClient,
-        IOptions<DsiOptions> options,
-        ISigningCredentialsProvider credentialsProvider)
+    public DfeHttpSignInApiClient(HttpClient httpClient)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
-        ArgumentNullException.ThrowIfNull(options.Value);
-        ArgumentNullException.ThrowIfNull(credentialsProvider);
         _httpClient = httpClient;
-        __dsiOptions = options.Value;
-        _credentialsProvider = credentialsProvider;
-
-        ConfigureHttpClient();
-    }
-
-    private void ConfigureHttpClient()
-    {
-        string token = new JwtSecurityTokenHandler().CreateEncodedJwt(
-            new SecurityTokenDescriptor
-            {
-                Issuer = __dsiOptions.ClientId,
-                Audience = __dsiOptions.Audience,
-                SigningCredentials = _credentialsProvider.GetSigningCredentials()
-            });
-
-        _httpClient.BaseAddress = new Uri(__dsiOptions.AuthorisationUrl.TrimEnd('/'));
-        _httpClient.DefaultRequestHeaders.Accept.Clear();
-        _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
     }
 
     public async Task<UserAccess?> GetUserInfo(string serviceId, string organisationId, string userId)
