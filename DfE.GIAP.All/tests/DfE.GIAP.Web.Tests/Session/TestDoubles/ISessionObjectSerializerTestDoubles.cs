@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DfE.GIAP.Web.Session.Abstraction;
+﻿using DfE.GIAP.Web.Session.Abstraction;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Session.TestDoubles;
