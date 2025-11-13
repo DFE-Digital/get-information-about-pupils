@@ -10,6 +10,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace DfE.GIAP.Web.Controllers.Admin.ManageNewsArticles;
 
 [Route(Routes.Application.Admin)]
-[Authorize(Roles = Roles.Admin)]
+[Authorize(Roles = AuthRoles.Admin)]
 public class ManageNewsArticlesController : Controller
 {
     private readonly IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> _getNewsArticleByIdUseCase;

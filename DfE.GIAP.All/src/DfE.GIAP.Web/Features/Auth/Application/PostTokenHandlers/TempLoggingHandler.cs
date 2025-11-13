@@ -2,8 +2,6 @@
 using DfE.GIAP.Domain.Models.LoggingEvent;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Auth.Application.Models;
-using DfE.GIAP.Web.Features.Auth.Infrastructure;
 using DfE.GIAP.Web.Helpers.DSIUser;
 using DfE.GIAP.Common.Helpers;
 
@@ -23,7 +21,6 @@ public class TempLoggingHandler : IPostTokenValidatedHandler
         string userEmail = context.Principal.FindFirst("email")?.Value ?? string.Empty;
         string userGivenName = context.Principal.FindFirst("given_name")?.Value ?? string.Empty;
         string userSurname = context.Principal.FindFirst("family_name")?.Value ?? string.Empty;
-        AuthenticatedUser authenticatedUserInfo = UserContextFactory.FromPrincipal(context.Principal);
 
         LoggingEvent loggingEvent = new()
         {
@@ -49,5 +46,4 @@ public class TempLoggingHandler : IPostTokenValidatedHandler
 
         await _userApiClient.CreateLoggingEvent(loggingEvent);
     }
-
 }

@@ -1,6 +1,10 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.Common;
@@ -13,6 +17,8 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
+using DfE.GIAP.Web.Features.Logging;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Cookie;
@@ -22,11 +28,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.FeatureManagement;
-using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Web.Features.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -125,7 +126,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddAuthorizationBuilder()
             .AddPolicy(Policy.RequireAdminApproverAccess, policy =>
-                policy.RequireRole(Roles.Admin, Roles.Approver));
+                policy.RequireRole(AuthRoles.Admin, AuthRoles.Approver));
 
         services.AddControllersWithViews(config =>
         {

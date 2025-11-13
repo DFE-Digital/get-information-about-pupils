@@ -34,7 +34,6 @@ builder.Services
     .AddApplicationInsightsTelemetry() // TODO: This would move to infrastructure, handle IHostingEnvironment within tests
     .AddAllServices()
     .AddWebProviders()
-    //.AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
     .AddAzureAppConfiguration()
