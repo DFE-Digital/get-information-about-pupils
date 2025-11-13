@@ -1,13 +1,14 @@
-﻿using DfE.GIAP.Common.Enums;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Helpers;
@@ -534,8 +535,8 @@ public class SearchDownloadHelperTests
 
             var role = isAdmin switch
             {
-                true => Roles.Admin,
-                false => Roles.Approver
+                true => AuthRoles.Admin,
+                false => AuthRoles.Approver
             };
 
             var organisationId = isLA switch
