@@ -5,7 +5,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Infrastructure;
 using DfE.GIAP.Web.Helpers.DSIUser;
-using Newtonsoft.Json.Linq;
+using DfE.GIAP.Common.Helpers;
 
 namespace DfE.GIAP.Web.Features.Auth.Application.PostTokenHandlers;
 
@@ -25,17 +25,17 @@ public class TempLoggingHandler : IPostTokenValidatedHandler
         string userSurname = context.Principal.FindFirst("family_name")?.Value ?? string.Empty;
         AuthenticatedUser authenticatedUserInfo = UserContextFactory.FromPrincipal(context.Principal);
 
-        LoggingEvent loggingEventA = new()
+        LoggingEvent loggingEvent = new()
         {
             UserGuid = userId,
             UserEmail = userEmail,
             UserGivenName = userGivenName,
             UserSurname = userSurname,
             UserIpAddress = string.Empty,
-            OrganisationGuid = organisationId,
+            OrganisationGuid = context.Principal.GetOrganisationId(),
             OrganisationName = context.Principal.GetOrganisationName() ?? string.Empty,
             OrganisationCategoryID = context.Principal.GetOrganisationCategoryID() ?? string.Empty,
-            OrganisationType = DSIUserHelper.GetOrganisationType(context.Principal.GetOrganisationCategoryID() ?? string.Empty),
+            OrganisationType = DSIUserHelper.GetOrganisationType(context.Principal.GetOrganisationCategoryID()),
             EstablishmentNumber = context.Principal.GetEstablishmentNumber() ?? string.Empty,
             LocalAuthorityNumber = context.Principal.GetLocalAuthorityNumberForEstablishment() ?? string.Empty,
             UKProviderReferenceNumber = context.Principal.GetUKProviderReferenceNumber() ?? string.Empty,
@@ -44,7 +44,7 @@ public class TempLoggingHandler : IPostTokenValidatedHandler
             GIAPUserRole = context.Principal.GetUserRole(),
             ActionName = LogEventActionType.UserLoggedIn.ToString(),
             ActionDescription = LogEventActionType.UserLoggedIn.LogEventActionDescription(),
-            SessionId = sessionId
+            SessionId = context.Principal.GetSessionId(),
         };
 
         await _userApiClient.CreateLoggingEvent(loggingEvent);
