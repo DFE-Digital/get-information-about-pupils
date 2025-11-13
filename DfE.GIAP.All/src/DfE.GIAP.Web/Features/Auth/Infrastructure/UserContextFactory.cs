@@ -1,13 +1,12 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
 
-public class UserContextFactory : IUserContextFactory
+public static class UserContextFactory
 {
-    public AuthenticatedUser FromPrincipal(ClaimsPrincipal principal)
+    public static AuthenticatedUser FromPrincipal(ClaimsPrincipal principal)
     {
         string userId = principal.FindFirst(AuthClaimTypes.UserId)?.Value ?? string.Empty;
 

@@ -1,0 +1,53 @@
+﻿using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Domain.Models.LoggingEvent;
+using DfE.GIAP.Service.Common;
+using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Auth.Application.Models;
+using DfE.GIAP.Web.Features.Auth.Infrastructure;
+using DfE.GIAP.Web.Helpers.DSIUser;
+using Newtonsoft.Json.Linq;
+
+namespace DfE.GIAP.Web.Features.Auth.Application.PostTokenHandlers;
+
+public class TempLoggingHandler : IPostTokenValidatedHandler
+{
+    private readonly ICommonService _userApiClient;
+    public TempLoggingHandler(ICommonService commonService)
+    {
+        _userApiClient = commonService;
+    }
+
+    public async Task HandleAsync(TokenAuthorisationContext context)
+    {
+        string userId = context.Principal.FindFirst("sub")?.Value ?? string.Empty;
+        string userEmail = context.Principal.FindFirst("email")?.Value ?? string.Empty;
+        string userGivenName = context.Principal.FindFirst("given_name")?.Value ?? string.Empty;
+        string userSurname = context.Principal.FindFirst("family_name")?.Value ?? string.Empty;
+        AuthenticatedUser authenticatedUserInfo = UserContextFactory.FromPrincipal(context.Principal);
+
+        LoggingEvent loggingEventA = new()
+        {
+            UserGuid = userId,
+            UserEmail = userEmail,
+            UserGivenName = userGivenName,
+            UserSurname = userSurname,
+            UserIpAddress = string.Empty,
+            OrganisationGuid = organisationId,
+            OrganisationName = context.Principal.GetOrganisationName() ?? string.Empty,
+            OrganisationCategoryID = context.Principal.GetOrganisationCategoryID() ?? string.Empty,
+            OrganisationType = DSIUserHelper.GetOrganisationType(context.Principal.GetOrganisationCategoryID() ?? string.Empty),
+            EstablishmentNumber = context.Principal.GetEstablishmentNumber() ?? string.Empty,
+            LocalAuthorityNumber = context.Principal.GetLocalAuthorityNumberForEstablishment() ?? string.Empty,
+            UKProviderReferenceNumber = context.Principal.GetUKProviderReferenceNumber() ?? string.Empty,
+            UniqueReferenceNumber = context.Principal.GetUniqueReferenceNumber() ?? string.Empty,
+            UniqueIdentifier = context.Principal.GetUniqueIdentifier() ?? string.Empty,
+            GIAPUserRole = context.Principal.GetUserRole(),
+            ActionName = LogEventActionType.UserLoggedIn.ToString(),
+            ActionDescription = LogEventActionType.UserLoggedIn.LogEventActionDescription(),
+            SessionId = sessionId
+        };
+
+        await _userApiClient.CreateLoggingEvent(loggingEvent);
+    }
+
+}

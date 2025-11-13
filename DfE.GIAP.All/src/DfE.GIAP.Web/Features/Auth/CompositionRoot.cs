@@ -22,7 +22,6 @@ public static class CompositionRoot
 
         // Core application services
         services.AddScoped<IClaimsEnricher, DfeClaimsEnricher>();
-        services.AddScoped<IUserContextFactory, UserContextFactory>();
         services.AddSingleton<ISigningCredentialsProvider, SymmetricSigningCredentialsProvider>();
 
         services.AddScoped<IPostTokenValidatedHandler, ClaimsEnrichmentHandler>();
