@@ -53,9 +53,7 @@ public class OidcEventsHandler
         if (ctx.Failure is not null)
             return Task.FromException(ctx.Failure);
 
-        // No exception provided – return a completed task or a default exception
         return Task.FromException(new Exception("Unknown remote failure during OIDC authentication."));
-
     }
 
     public async Task OnTokenValidated(TokenValidatedContext ctx)
@@ -75,7 +73,7 @@ public class OidcEventsHandler
             await handler.HandleAsync(context);
         }
 
-        // Update the principal in the OIDC context that was enriched
+        // Update the principal in the OIDC context with one that has been enriched
         ctx.Principal = context.Principal;
     }
 }

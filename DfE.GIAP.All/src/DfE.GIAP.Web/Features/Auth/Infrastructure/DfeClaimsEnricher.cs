@@ -1,14 +1,10 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Service.ApplicationInsightsTelemetry;
-using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Infrastructure.Config;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
 

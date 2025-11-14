@@ -28,6 +28,7 @@ public static class CompositionRoot
         services.AddScoped<IPostTokenValidatedHandler, CreateUserIfNotExistHandler>();
         services.AddScoped<IPostTokenValidatedHandler, SetUnreadNewsStatusHandler>();
         services.AddScoped<IPostTokenValidatedHandler, UpdateUserLastLoggedInHandler>();
+        services.AddScoped<IPostTokenValidatedHandler, TempLoggingHandler>();
 
         services.AddScoped<PostTokenHandlerBuilder>();
         services.AddScoped<OidcEventsHandler>(sp =>
@@ -38,13 +39,13 @@ public static class CompositionRoot
                 .Then<CreateUserIfNotExistHandler>()
                 .Then<SetUnreadNewsStatusHandler>()
                 .Then<UpdateUserLastLoggedInHandler>()
+                .Then<TempLoggingHandler>()
                 .Build();
 
             IOptions<DsiOptions> options = sp.GetRequiredService<IOptions<DsiOptions>>();
             return new OidcEventsHandler(orderedHandlers, options);
         });
 
-        // Register typed HttpClient for the API client
         services.AddHttpClient<IDfeSignInApiClient, DfeHttpSignInApiClient>((sp, client) =>
         {
             DsiOptions options = sp.GetRequiredService<IOptions<DsiOptions>>().Value;
@@ -64,7 +65,6 @@ public static class CompositionRoot
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         });
 
-        // Configure OIDC authentication if settings are present
         DsiOptions? dsiOptions = config.GetSection(DsiOptions.SectionName).Get<DsiOptions>();
         ArgumentNullException.ThrowIfNull(dsiOptions);
 
