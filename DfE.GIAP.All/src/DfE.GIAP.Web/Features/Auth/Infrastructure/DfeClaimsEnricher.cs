@@ -23,7 +23,7 @@ public class DfeClaimsEnricher : IClaimsEnricher
 
     public async Task<ClaimsPrincipal> EnrichAsync(ClaimsPrincipal claimsPrincipal)
     {
-        List<Claim> claims = new List<Claim>();
+        List<Claim> claims = new();
 
         string userId = claimsPrincipal.FindFirst("sub")?.Value ?? string.Empty;
         string email = claimsPrincipal.FindFirst("email")?.Value ?? string.Empty;

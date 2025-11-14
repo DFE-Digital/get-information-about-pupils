@@ -12,6 +12,7 @@ public class TempLoggingHandler : IPostTokenValidatedHandler
     private readonly ICommonService _userApiClient;
     public TempLoggingHandler(ICommonService commonService)
     {
+        ArgumentNullException.ThrowIfNull(commonService);
         _userApiClient = commonService;
     }
 
