@@ -67,7 +67,7 @@ public class OidcEventsHandler
         ctx.Properties!.IsPersistent = true;
         ctx.Properties!.ExpiresUtc = DateTime.UtcNow.AddMinutes(_oidcSettings.SessionTimeoutMinutes);
 
-        TokenAuthorisationContext context = new(ctx);
+        TokenAuthorisationContext context = new(ctx.Principal);
         foreach (IPostTokenValidatedHandler handler in _handlers)
         {
             await handler.HandleAsync(context);

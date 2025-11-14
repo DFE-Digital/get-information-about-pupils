@@ -6,6 +6,7 @@ public class ClaimsEnrichmentHandler : IPostTokenValidatedHandler
 
     public ClaimsEnrichmentHandler(IClaimsEnricher enricher)
     {
+        ArgumentNullException.ThrowIfNull(enricher);
         _enricher = enricher;
     }
 
