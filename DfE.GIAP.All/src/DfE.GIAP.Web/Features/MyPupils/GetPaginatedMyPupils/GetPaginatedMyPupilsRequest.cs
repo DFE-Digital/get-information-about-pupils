@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Users.Application;
+﻿using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;

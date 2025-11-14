@@ -14,6 +14,7 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -122,7 +123,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetSpecificUserClaimsPrincipal(
              DsiKeys.OrganisationCategory.Establishment,
              DsiKeys.EstablishmentType.CommunitySchool, //not relevant for this test
-             Roles.Approver,
+             AuthRoles.Approver,
                 18,
                 25);
         var result = await sut.PupilUlnSearch(null);

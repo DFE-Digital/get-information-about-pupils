@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 
 namespace DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;

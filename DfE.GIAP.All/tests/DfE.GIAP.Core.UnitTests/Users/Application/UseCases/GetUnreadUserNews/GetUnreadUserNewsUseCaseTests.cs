@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
 using DfE.GIAP.SharedTests.TestDoubles;

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers;
 using Xunit;
 
@@ -21,9 +22,9 @@ public sealed class HttpClaimsAuthorisationContextTests
     }
 
     [Theory]
-    [InlineData(Roles.Admin)]
-    [InlineData(Roles.Approver)]
-    [InlineData(Roles.User)]
+    [InlineData(AuthRoles.Admin)]
+    [InlineData(AuthRoles.Approver)]
+    [InlineData(AuthRoles.User)]
     public void Role_ReturnsExpectedRole_WhenUserIsInRole(string expectedRole)
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]

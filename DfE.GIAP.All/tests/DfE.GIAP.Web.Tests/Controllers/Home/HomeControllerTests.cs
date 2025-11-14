@@ -2,6 +2,7 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Diagnostics;
@@ -119,7 +120,7 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
             user = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
                 DsiKeys.OrganisationCategory.Establishment,
                 DsiKeys.EstablishmentType.FurtherEducation,
-                Roles.Approver,
+                AuthRoles.Approver,
                 18,
                 25);
         }

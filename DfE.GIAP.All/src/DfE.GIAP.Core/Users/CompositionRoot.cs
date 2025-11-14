@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
 using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;

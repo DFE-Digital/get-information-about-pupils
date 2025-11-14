@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 
 namespace DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;

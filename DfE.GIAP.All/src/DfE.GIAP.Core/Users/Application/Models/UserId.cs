@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
 
-namespace DfE.GIAP.Core.Users.Application;
+namespace DfE.GIAP.Core.Users.Application.Models;
 public sealed class UserId : ValueObject<UserId>
 {
     public string Value { get; }

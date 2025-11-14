@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Users.Application.Repositories;
+﻿using DfE.GIAP.Core.Users.Application.Models;
+
+namespace DfE.GIAP.Core.Users.Application.Repositories;
 
 public interface IUserWriteOnlyRepository
 {
