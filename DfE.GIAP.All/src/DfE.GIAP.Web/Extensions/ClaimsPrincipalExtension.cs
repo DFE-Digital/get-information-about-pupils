@@ -17,31 +17,31 @@ public static class ClaimsPrincipalExtension
 
     public static bool IsOrganisationEstablishment(this ClaimsPrincipal principal)
     {
-        string organisationCategoryId = principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);
+        string organisationCategoryId = principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
         return organisationCategoryId == OrganisationCategory.Establishment;
     }
 
     public static bool IsOrganisationLocalAuthority(this ClaimsPrincipal principal)
     {
-        string catId = principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);
+        string catId = principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
         return catId == OrganisationCategory.LocalAuthority;
     }
 
     public static bool IsOrganisationMultiAcademyTrust(this ClaimsPrincipal principal)
     {
-        string catId = principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);
+        string catId = principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
         return catId == OrganisationCategory.MultiAcademyTrust;
     }
 
     public static bool IsOrganisationSingleAcademyTrust(this ClaimsPrincipal principal)
     {
-        string catId = principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);
+        string catId = principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
         return catId == OrganisationCategory.SingleAcademyTrust;
     }
 
     public static bool IsOrganisationFurtherEducation(this ClaimsPrincipal principal)
     {
-        string catId = principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);
+        string catId = principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
         return catId == OrganisationCategory.FurtherEducation;
     }
 
@@ -54,7 +54,7 @@ public static class ClaimsPrincipalExtension
     {
         if (principal.IsOrganisationEstablishment())
         {
-            string establishmentTypeId = principal.GetClaimValue(CustomClaimTypes.OrganisationEstablishmentTypeId);
+            string establishmentTypeId = principal.GetClaimValue(AuthClaimTypes.OrganisationEstablishmentTypeId);
 
             return establishmentTypeId == EstablishmentType.FurtherEducation ||
                    establishmentTypeId == EstablishmentType.FurtherEducationString;
@@ -67,7 +67,7 @@ public static class ClaimsPrincipalExtension
     {
         if (principal.IsOrganisationEstablishment())
         {
-            var highAge = principal.GetClaimValue(CustomClaimTypes.OrganisationHighAge);
+            var highAge = principal.GetClaimValue(AuthClaimTypes.OrganisationHighAge);
 
             if (int.TryParse(highAge, out var age) && age >= 14)
             {
@@ -82,7 +82,7 @@ public static class ClaimsPrincipalExtension
     {
         if (principal.IsOrganisationEstablishment())
         {
-            var establishmentTypeId = principal.GetClaimValue(CustomClaimTypes.OrganisationEstablishmentTypeId);
+            var establishmentTypeId = principal.GetClaimValue(AuthClaimTypes.OrganisationEstablishmentTypeId);
 
             return establishmentTypeId == EstablishmentType.FurtherEducation ||
                    establishmentTypeId == EstablishmentType.FurtherEducationString;
@@ -93,7 +93,7 @@ public static class ClaimsPrincipalExtension
 
     public static bool IsDfeUser(this ClaimsPrincipal principal)
     {
-        string organisationName = principal.GetClaimValue(CustomClaimTypes.OrganisationName);
+        string organisationName = principal.GetClaimValue(AuthClaimTypes.OrganisationName);
         return organisationName == DsiKeys.Common.DepartmentForEducation;
     }
 
@@ -128,12 +128,12 @@ public static class ClaimsPrincipalExtension
 
     public static string GetSessionId(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.SessionId);
+        return principal.GetClaimValue(AuthClaimTypes.SessionId);
     }
 
     public static string GetUserId(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.UserId);
+        return principal.GetClaimValue(AuthClaimTypes.UserId);
     }
 
     public static string GetUserEmail(this ClaimsPrincipal principal)
@@ -153,39 +153,39 @@ public static class ClaimsPrincipalExtension
 
     public static string GetOrganisationId(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.OrganisationId);
+        return principal.GetClaimValue(AuthClaimTypes.OrganisationId);
     }
 
     public static string GetOrganisationCategoryID(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.OrganisationCategoryId);
+        return principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
     }
 
     public static string GetOrganisationName(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.OrganisationName);
+        return principal.GetClaimValue(AuthClaimTypes.OrganisationName);
     }
 
     public static int GetOrganisationLowAge(this ClaimsPrincipal principal)
     {
-        string lowAge = principal.GetClaimValue(CustomClaimTypes.OrganisationLowAge);
+        string lowAge = principal.GetClaimValue(AuthClaimTypes.OrganisationLowAge);
         return int.TryParse(lowAge, out var age) ? age : 0; // Default to 0 if parsing fails
     }
 
     public static int GetOrganisationHighAge(this ClaimsPrincipal principal)
     {
-        string highAge = principal.GetClaimValue(CustomClaimTypes.OrganisationHighAge);
+        string highAge = principal.GetClaimValue(AuthClaimTypes.OrganisationHighAge);
         return int.TryParse(highAge, out var age) ? age : 0; // Default to 0 if parsing fails
     }
 
     public static string GetEstablishmentNumber(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.EstablishmentNumber);
+        return principal.GetClaimValue(AuthClaimTypes.EstablishmentNumber);
     }
 
     public static string GetLocalAuthorityNumberForEstablishment(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.LocalAuthorityNumber);
+        return principal.GetClaimValue(AuthClaimTypes.LocalAuthorityNumber);
     }
 
     public static string GetLocalAuthorityNumberForLocalAuthority(this ClaimsPrincipal principal)
@@ -193,27 +193,27 @@ public static class ClaimsPrincipalExtension
         // If the user is a local authority, use the EstablishmentNumber claim
         if (principal.IsOrganisationLocalAuthority())
         {
-            return principal.GetClaimValue(CustomClaimTypes.EstablishmentNumber);
+            return principal.GetClaimValue(AuthClaimTypes.EstablishmentNumber);
         }
 
         // Otherwise, use the LocalAuthorityNumber claim
-        return principal.GetClaimValue(CustomClaimTypes.LocalAuthorityNumber);
+        return principal.GetClaimValue(AuthClaimTypes.LocalAuthorityNumber);
 
     }
 
     public static string GetUniqueReferenceNumber(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.UniqueReferenceNumber);
+        return principal.GetClaimValue(AuthClaimTypes.UniqueReferenceNumber);
     }
 
     public static string GetUniqueIdentifier(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.UniqueIdentifier);
+        return principal.GetClaimValue(AuthClaimTypes.UniqueIdentifier);
     }
 
     public static string GetUKProviderReferenceNumber(this ClaimsPrincipal principal)
     {
-        return principal.GetClaimValue(CustomClaimTypes.UKProviderReferenceNumber);
+        return principal.GetClaimValue(AuthClaimTypes.UKProviderReferenceNumber);
     }
 
     public static List<string> GetAcademyListForUser(this ClaimsPrincipal principal)
