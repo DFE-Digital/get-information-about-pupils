@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using static DfE.GIAP.Web.Constants.DsiKeys;
 
 namespace DfE.GIAP.Web.Extensions;
@@ -111,17 +112,17 @@ public static class ClaimsPrincipalExtension
 
     public static bool IsAdmin(this ClaimsPrincipal principal)
     {
-        return principal.IsInRole(Roles.Admin);
+        return principal.IsInRole(AuthRoles.Admin);
     }
 
     public static bool IsApprover(this ClaimsPrincipal principal)
     {
-        return principal.IsInRole(Roles.Approver);
+        return principal.IsInRole(AuthRoles.Approver);
     }
 
     public static bool IsNormal(this ClaimsPrincipal principal)
     {
-        return principal.IsInRole(Roles.User);
+        return principal.IsInRole(AuthRoles.User);
     }
 
 
@@ -257,13 +258,11 @@ public static class ClaimsPrincipalExtension
     public static string GetUserRole(this ClaimsPrincipal principal)
     {
         if (principal.IsAdmin())
-            return Roles.Admin;
-
+            return AuthRoles.Admin;
         if (principal.IsApprover())
-            return Roles.Approver;
-
+            return AuthRoles.Approver;
         if (principal.IsNormal())
-            return Roles.User;
+            return AuthRoles.User;
 
         return string.Empty;
     }
