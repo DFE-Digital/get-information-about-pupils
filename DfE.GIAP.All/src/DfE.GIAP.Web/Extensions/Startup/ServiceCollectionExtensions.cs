@@ -11,7 +11,6 @@ using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
-using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
@@ -64,9 +63,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
-        //services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
-        //services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
-        //services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
