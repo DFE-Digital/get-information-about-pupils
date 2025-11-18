@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
@@ -15,16 +16,21 @@ public class PreparedDownloadsController : Controller
 {
     private readonly IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> _getPrePreparedFilesUseCase;
     private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
+    private readonly IEventLogger _eventLogger;
 
     public PreparedDownloadsController(
         IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
-        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase)
+        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase,
+        IEventLogger eventLogger)
     {
         ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);
         _getPrePreparedFilesUseCase = getPrePreparedFilesUseCase;
 
         ArgumentNullException.ThrowIfNull(downloadPrePreparedFileUseCase);
         _downloadPrePreparedFileUseCase = downloadPrePreparedFileUseCase;
+
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     [HttpGet]
@@ -67,6 +73,8 @@ public class PreparedDownloadsController : Controller
         DownloadPreparedFileRequest request = new(name, pathContext);
         DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
             .HandleRequestAsync(request);
+
+        _eventLogger.LogDownload(DownloadType.Prepared, DownloadFileFormat.CSV);
 
         return new FileStreamResult(response.FileStream, response.ContentType)
         {
