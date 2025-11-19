@@ -7,12 +7,12 @@ namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
 public sealed class IsAdminUserAccessRuleTests
 {
     [Fact]
-    public void CanDownload_ReturnsTrue_WhenRoleIsGAIPAdmin()
+    public void CanDownload_ReturnsTrue_WhenRoleIsAdmin()
     {
         // Arrange
         IsAdminUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            role: "GIAPAdmin");
+            isAdminUser: true);
 
         // Act
         bool result = rule.HasAccess(context);
@@ -21,20 +21,13 @@ public sealed class IsAdminUserAccessRuleTests
         Assert.True(result);
     }
 
-    // TODO: Chnage to actual constant roles instead of magic strings
-    [Theory]
-    [InlineData("User")]
-    [InlineData("Admin")]
-    [InlineData("GAIPAdmin")] // typo variant
-    [InlineData("giapadmin")] // case-sensitive mismatch
-    [InlineData("")]
-    [InlineData(null)]
-    public void CanDownload_ReturnsFalse_WhenRoleIsNotGAIPAdmin(string? role)
+    [Fact]
+    public void CanDownload_ReturnsFalse_WhenRoleIsNotAdmin()
     {
         // Arrange
         IsAdminUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            role: role ?? string.Empty);
+            isAdminUser: false);
 
         // Act
         bool result = rule.HasAccess(context);

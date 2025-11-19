@@ -15,7 +15,7 @@ public sealed class MinimumHighAgeRuleTests
     public void CanDownload_ReturnsExpectedResult_BasedOnStatutoryAgeHigh(int threshold, int highAge, bool expected)
     {
         // Arrange
-        MinimumHighAgeRule rule = new(threshold);
+        MinimumHighAgeAccessRule rule = new(threshold);
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
            statutoryAgeHigh: highAge);
 

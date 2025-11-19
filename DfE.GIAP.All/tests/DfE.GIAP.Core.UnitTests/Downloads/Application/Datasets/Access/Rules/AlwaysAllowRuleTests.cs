@@ -10,12 +10,8 @@ public sealed class AlwaysAllowRuleTests
     public void CanDownload_AlwaysReturnsTrue_RegardlessOfContext()
     {
         // Arrange
-        AlwaysAllowRule rule = new();
-        IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            role: "Guest",
-            isDfeUser: false,
-            statutoryAgeLow: 1,
-            statutoryAgeHigh: 99);
+        AlwaysAllowAccessRule rule = new();
+        IAuthorisationContext context = AuthorisationContextTestDouble.Create();
 
         // Act
         bool result = rule.HasAccess(context);
