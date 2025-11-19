@@ -4,15 +4,15 @@ using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
 
-public sealed class IsAdminUserAccessRuleTests
+public sealed class IsEstablishmentUserAccessRuleTests
 {
     [Fact]
-    public void CanDownload_ReturnsTrue_WhenUserIsAdmin()
+    public void CanDownload_ReturnsTrue_WhenUserIsEstablishment()
     {
         // Arrange
         IsAdminUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            isAdminUser: true);
+            isEstablishment: true);
 
         // Act
         bool result = rule.HasAccess(context);
@@ -22,12 +22,12 @@ public sealed class IsAdminUserAccessRuleTests
     }
 
     [Fact]
-    public void CanDownload_ReturnsFalse_WhenUserIsNotAdmin()
+    public void CanDownload_ReturnsFalse_WhenRoleIsNotEstablishment()
     {
         // Arrange
         IsAdminUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            isAdminUser: false);
+            isEstablishment: false);
 
         // Act
         bool result = rule.HasAccess(context);

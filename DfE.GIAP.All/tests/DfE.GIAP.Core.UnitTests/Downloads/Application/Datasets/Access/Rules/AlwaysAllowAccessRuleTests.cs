@@ -4,7 +4,7 @@ using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
 
-public sealed class AlwaysAllowRuleTests
+public sealed class AlwaysAllowAccessRuleTests
 {
     [Fact]
     public void CanDownload_AlwaysReturnsTrue_RegardlessOfContext()

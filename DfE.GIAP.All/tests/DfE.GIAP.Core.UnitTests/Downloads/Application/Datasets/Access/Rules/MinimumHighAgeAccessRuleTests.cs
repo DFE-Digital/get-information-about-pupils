@@ -4,7 +4,7 @@ using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
 
-public sealed class MinimumHighAgeRuleTests
+public sealed class MinimumHighAgeAccessRuleTests
 {
     [Theory]
     [InlineData(14, 14, true)]
