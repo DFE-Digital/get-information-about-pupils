@@ -4,23 +4,25 @@ using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Rules;
 
-public sealed class AlwaysAllowRuleTests
+public sealed class MinimumHighAgeAccessRuleTests
 {
-    [Fact]
-    public void CanDownload_AlwaysReturnsTrue_RegardlessOfContext()
+    [Theory]
+    [InlineData(14, 14, true)]
+    [InlineData(14, 15, true)]
+    [InlineData(14, 13, false)]
+    [InlineData(14, 0, false)]
+    [InlineData(14, 100, true)]
+    public void CanDownload_ReturnsExpectedResult_BasedOnStatutoryAgeHigh(int threshold, int highAge, bool expected)
     {
         // Arrange
-        AlwaysAllowRule rule = new();
+        MinimumHighAgeAccessRule rule = new(threshold);
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            role: "Guest",
-            isDfeUser: false,
-            statutoryAgeLow: 1,
-            statutoryAgeHigh: 99);
+           statutoryAgeHigh: highAge);
 
         // Act
         bool result = rule.HasAccess(context);
 
         // Assert
-        Assert.True(result);
+        Assert.Equal(expected, result);
     }
 }

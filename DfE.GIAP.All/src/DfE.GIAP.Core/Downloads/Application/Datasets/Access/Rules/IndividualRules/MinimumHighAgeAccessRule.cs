@@ -8,11 +8,11 @@ namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRu
 /// </summary>
 /// <remarks>Use this rule to enforce age-based restrictions on dataset access, ensuring that only users who
 /// satisfy the minimum statutory high age requirement are authorized to download the dataset.</remarks>
-internal sealed class MinimumHighAgeRule : IDatasetAccessRule
+internal sealed class MinimumHighAgeAccessRule : IDatasetAccessRule
 {
     private readonly int _threshold;
 
-    public MinimumHighAgeRule(int threshold) => _threshold = threshold;
+    public MinimumHighAgeAccessRule(int threshold) => _threshold = threshold;
 
     public bool HasAccess(IAuthorisationContext context) =>
         context.StatutoryAgeHigh >= _threshold;

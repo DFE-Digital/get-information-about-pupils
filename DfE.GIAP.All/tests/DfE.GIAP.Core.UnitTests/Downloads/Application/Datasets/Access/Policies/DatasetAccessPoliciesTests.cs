@@ -81,7 +81,7 @@ public sealed class DatasetAccessPoliciesTests
     {
         // Arrange
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
-            role: "GIAPAdmin");
+            isAdminUser: true);
 
         IDatasetAccessRule rule = ruleName switch
         {

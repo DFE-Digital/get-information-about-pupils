@@ -8,7 +8,7 @@ namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRu
 /// <remarks>This rule can be used in scenarios where unrestricted access is required, such as for public datasets
 /// or testing purposes. It implements the IDatasetAccessRule interface and always grants permission when
 /// evaluated.</remarks>
-internal sealed class AlwaysAllowRule : IDatasetAccessRule
+internal sealed class AlwaysAllowAccessRule : IDatasetAccessRule
 {
     public bool HasAccess(IAuthorisationContext context) => true;
 }
