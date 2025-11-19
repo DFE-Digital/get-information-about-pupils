@@ -4,6 +4,7 @@ using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
 using DfE.GIAP.Core.Users;
 using DfE.GIAP.Web.Extensions.Startup;
+using DfE.GIAP.Web.Features.Auth;
 using DfE.GIAP.Web.Features.Logging.Middleware;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;
@@ -23,7 +24,8 @@ builder.Services
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
-    .AddDownloadDependencies();
+    .AddDownloadDependencies()
+    .AddAuthDependencies(configuration);
 
 builder.Services
     .AddRoutingConfiguration()
@@ -32,7 +34,6 @@ builder.Services
     .AddApplicationInsightsTelemetry() // TODO: This would move to infrastructure, handle IHostingEnvironment within tests
     .AddAllServices()
     .AddWebProviders()
-    .AddDsiAuthentication(configuration)
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration()
     .AddAzureAppConfiguration()

@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Web.Constants;
+﻿using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Infrastructure.Config;
 using DfE.GIAP.Web.Middleware;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,11 +13,12 @@ namespace DfE.GIAP.Web.Controllers;
 [Route(Routes.Authentication.AuthenticationController)]
 public class AuthenticationController : Controller
 {
-    private readonly AzureAppSettings _azureAppSettings;
+    private readonly DsiOptions _dsiOptions;
 
-    public AuthenticationController(IOptions<AzureAppSettings> azureAppSettings)
+    public AuthenticationController(IOptions<DsiOptions> dsiOptions)
     {
-        _azureAppSettings = azureAppSettings.Value;
+        ArgumentNullException.ThrowIfNull(dsiOptions.Value);
+        _dsiOptions = dsiOptions.Value;
     }
 
     [AllowAnonymous]
@@ -49,6 +50,6 @@ public class AuthenticationController : Controller
         await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-        return Redirect(_azureAppSettings.DsiRedirectUrlAfterSignout);
+        return Redirect(_dsiOptions.RedirectUrlAfterSignout);
     }
 }

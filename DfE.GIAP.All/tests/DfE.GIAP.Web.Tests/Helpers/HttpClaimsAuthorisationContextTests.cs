@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers;
 using Xunit;
 
@@ -21,9 +22,9 @@ public sealed class HttpClaimsAuthorisationContextTests
     }
 
     [Theory]
-    [InlineData(Roles.Admin)]
-    [InlineData(Roles.Approver)]
-    [InlineData(Roles.User)]
+    [InlineData(AuthRoles.Admin)]
+    [InlineData(AuthRoles.Approver)]
+    [InlineData(AuthRoles.User)]
     public void Role_ReturnsExpectedRole_WhenUserIsInRole(string expectedRole)
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
@@ -54,7 +55,7 @@ public sealed class HttpClaimsAuthorisationContextTests
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
         {
-            new Claim(CustomClaimTypes.OrganisationName, DsiKeys.Common.DepartmentForEducation)
+            new Claim(AuthClaimTypes.OrganisationName, DsiKeys.Common.DepartmentForEducation)
         }));
 
         HttpClaimsAuthorisationContext context = new(user);
@@ -67,7 +68,7 @@ public sealed class HttpClaimsAuthorisationContextTests
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
         {
-            new Claim(CustomClaimTypes.OrganisationName, "Some Other Org")
+            new Claim(AuthClaimTypes.OrganisationName, "Some Other Org")
         }));
 
         HttpClaimsAuthorisationContext context = new(user);
@@ -80,7 +81,7 @@ public sealed class HttpClaimsAuthorisationContextTests
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
         {
-            new Claim(CustomClaimTypes.OrganisationLowAge, "5")
+            new Claim(AuthClaimTypes.OrganisationLowAge, "5")
         }));
 
         HttpClaimsAuthorisationContext context = new(user);
@@ -93,7 +94,7 @@ public sealed class HttpClaimsAuthorisationContextTests
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
         {
-            new Claim(CustomClaimTypes.OrganisationLowAge, "invalid")
+            new Claim(AuthClaimTypes.OrganisationLowAge, "invalid")
         }));
 
         HttpClaimsAuthorisationContext context = new(user);
@@ -106,7 +107,7 @@ public sealed class HttpClaimsAuthorisationContextTests
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
         {
-            new Claim(CustomClaimTypes.OrganisationHighAge, "18")
+            new Claim(AuthClaimTypes.OrganisationHighAge, "18")
         }));
 
         HttpClaimsAuthorisationContext context = new(user);
@@ -119,7 +120,7 @@ public sealed class HttpClaimsAuthorisationContextTests
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new[]
         {
-            new Claim(CustomClaimTypes.OrganisationHighAge, "invalid")
+            new Claim(AuthClaimTypes.OrganisationHighAge, "invalid")
         }));
 
         HttpClaimsAuthorisationContext context = new(user);
