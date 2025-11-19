@@ -10,7 +10,7 @@ public sealed class IsLAUserAccessRuleTests
     public void CanDownload_ReturnsTrue_WhenUserIsLA()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        IsLAUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             isLAUser: true);
 
@@ -25,7 +25,7 @@ public sealed class IsLAUserAccessRuleTests
     public void CanDownload_ReturnsFalse_WhenRoleIsNotLA()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        IsLAUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             isLAUser: false);
 

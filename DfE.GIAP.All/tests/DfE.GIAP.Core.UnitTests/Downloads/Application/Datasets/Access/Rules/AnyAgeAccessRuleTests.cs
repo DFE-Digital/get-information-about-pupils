@@ -10,7 +10,7 @@ public sealed class AnyAgeAccessRuleTests
     public void CanDownload_ReturnsTrue_WhenUserIsAnyAge()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        AnyAgeAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             AnyAgeUser: true);
 
@@ -25,7 +25,7 @@ public sealed class AnyAgeAccessRuleTests
     public void CanDownload_ReturnsFalse_WhenUserIsNotAnyAge()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        AnyAgeAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             AnyAgeUser: false);
 

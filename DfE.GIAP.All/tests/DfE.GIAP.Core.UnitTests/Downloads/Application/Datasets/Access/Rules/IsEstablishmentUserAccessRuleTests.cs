@@ -10,7 +10,7 @@ public sealed class IsEstablishmentUserAccessRuleTests
     public void CanDownload_ReturnsTrue_WhenUserIsEstablishment()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        IsEstablishmentUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             isEstablishment: true);
 
@@ -25,7 +25,7 @@ public sealed class IsEstablishmentUserAccessRuleTests
     public void CanDownload_ReturnsFalse_WhenRoleIsNotEstablishment()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        IsEstablishmentUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             isEstablishment: false);
 

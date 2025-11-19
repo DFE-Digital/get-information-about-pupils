@@ -10,7 +10,7 @@ public sealed class IsMATUserAccessRuleTests
     public void CanDownload_ReturnsTrue_WhenUserIsMAT()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        IsMatUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             isMatUser: true);
 
@@ -25,7 +25,7 @@ public sealed class IsMATUserAccessRuleTests
     public void CanDownload_ReturnsFalse_WhenRoleIsNotMAT()
     {
         // Arrange
-        IsAdminUserAccessRule rule = new();
+        IsMatUserAccessRule rule = new();
         IAuthorisationContext context = AuthorisationContextTestDouble.Create(
             isMatUser: false);
 
