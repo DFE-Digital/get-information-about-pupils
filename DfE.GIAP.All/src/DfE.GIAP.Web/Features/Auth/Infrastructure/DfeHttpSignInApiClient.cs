@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
 
@@ -34,6 +35,8 @@ public class DfeHttpSignInApiClient : IDfeSignInApiClient
 
         HttpResponseMessage response = await _httpClient.GetAsync(url);
         response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<List<Organisation>>() ?? new List<Organisation>();
+
+        string json = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<List<Organisation>>(json) ?? new List<Organisation>();
     }
 }
