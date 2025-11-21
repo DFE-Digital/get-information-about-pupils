@@ -3,4 +3,5 @@ using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 
 namespace DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 
-public record DownloadPreparedFileRequest(string FileName, BlobStoragePathContext PathContext) : IUseCaseRequest<DownloadPreparedFileResponse>;
+public record DownloadPreparedFileRequest(string FileName, BlobStoragePathContext PathContext) :
+    IUseCaseRequest<DownloadPreparedFileResponse>;

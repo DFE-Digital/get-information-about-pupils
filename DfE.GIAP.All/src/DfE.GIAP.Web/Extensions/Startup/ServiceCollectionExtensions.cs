@@ -3,6 +3,7 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Service.ApiProcessor;
@@ -77,6 +78,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
         services.AddScoped<ILogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
+        services.AddScoped<IBusinessEventFactory, BusinessEventFactory>();
 
         return services;
     }
