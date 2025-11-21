@@ -18,9 +18,10 @@ internal class RemoteWireMockServerHost : IWireMockServerHost
 
     public Uri Endpoint => _serverOptions.ServerAddress;
 
-    public IWireMockClient CreateClient()
+    public IWireMockStubClient CreateClient()
     {
-        WireMockRemoteClient client = new(_sharedServerHttpClient);
+        WireMockHttpClient client = new(_sharedServerHttpClient);
+        //WireMockRefitStubClient client = new(Endpoint);
         return client;
     }
 

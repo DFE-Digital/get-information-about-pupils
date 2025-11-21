@@ -6,5 +6,5 @@ public interface IWireMockServerHost : IDisposable
 {
     Uri Endpoint { get; }
     Task StartAsync();
-    IWireMockClient CreateClient();
+    IWireMockStubClient CreateClient();
 }
