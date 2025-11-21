@@ -169,13 +169,13 @@ public static class ClaimsPrincipalExtension
     public static int GetOrganisationLowAge(this ClaimsPrincipal principal)
     {
         string lowAge = principal.GetClaimValue(AuthClaimTypes.OrganisationLowAge);
-        return int.TryParse(lowAge, out var age) ? age : 0; // Default to 0 if parsing fails
+        return int.TryParse(lowAge, out int age) ? age : 0; // Default to 0 if parsing fails
     }
 
     public static int GetOrganisationHighAge(this ClaimsPrincipal principal)
     {
         string highAge = principal.GetClaimValue(AuthClaimTypes.OrganisationHighAge);
-        return int.TryParse(highAge, out var age) ? age : 0; // Default to 0 if parsing fails
+        return int.TryParse(highAge, out int age) ? age : 0; // Default to 0 if parsing fails
     }
 
     public static string GetEstablishmentNumber(this ClaimsPrincipal principal)
