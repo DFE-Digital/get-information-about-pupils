@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -127,7 +127,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Build
         uses: ./.github/actions/build
@@ -171,7 +171,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
@@ -226,7 +226,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Fetches all history so SonarCloud can find the `main` branch
 
@@ -302,7 +302,7 @@ jobs:
       app_url: ${{ steps.deploy.outputs.app_url }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Deploy to Azure
         id: deploy
         uses: ./.github/actions/deploy
@@ -321,7 +321,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Run smoke tests
         uses: ./.github/actions/smoke-test
         with:
@@ -344,7 +344,7 @@ jobs:
       app_url: ${{ steps.deploy.outputs.app_url }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Deploy to Azure
         id: deploy
         uses: ./.github/actions/deploy
@@ -363,7 +363,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Run smoke tests
         uses: ./.github/actions/smoke-test
         with:
@@ -377,7 +377,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -398,7 +398,7 @@ jobs:
   #    environment: test
   #    steps:
   #      - name: Checkout code
-  #        uses: actions/checkout@v5
+  #        uses: actions/checkout@v6
   #      - name: Run integration tests
   #        uses: ./.github/actions/integration-test
   #        with:
@@ -414,7 +414,7 @@ jobs:
   #    environment: test
   #    steps:
   #      - name: Checkout code
-  #        uses: actions/checkout@v5
+  #        uses: actions/checkout@v6
   #      - name: Run accessibility tests
   #        uses: ./.github/actions/accessibility-test
   #        with:
@@ -430,7 +430,7 @@ jobs:
   #    environment: test
   #    steps:
   #      - name: Checkout code
-  #        uses: actions/checkout@v5
+  #        uses: actions/checkout@v6
   #      - name: Run performance tests
   #        uses: ./.github/actions/performance-test
   #        with:
@@ -455,7 +455,7 @@ jobs:
       app_url: ${{ steps.deploy.outputs.app_url }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Deploy to Azure
         id: deploy
         uses: ./.github/actions/deploy
@@ -474,7 +474,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Run smoke tests
         uses: ./.github/actions/smoke-test
         with:
@@ -490,7 +490,7 @@ jobs:
   #    runs-on: ubuntu-latest
   #    steps:
   #      - name: Checkout code
-  #        uses: actions/checkout@v5
+  #        uses: actions/checkout@v6
   #      - name: Run performance tests
   #        uses: ./.github/actions/performance-test
   #        with:
@@ -505,7 +505,7 @@ jobs:
   #    runs-on: ubuntu-latest
   #    steps:
   #      - name: Checkout code
-  #        uses: actions/checkout@v5
+  #        uses: actions/checkout@v6
   #      - name: Run security tests
   #        uses: ./.github/actions/security-test
   #        with:
@@ -528,7 +528,7 @@ jobs:
       app_url: ${{ steps.deploy.outputs.app_url }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Deploy to Azure
         id: deploy
         uses: ./.github/actions/deploy
@@ -547,7 +547,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Run smoke tests
         uses: ./.github/actions/smoke-test
         with:
@@ -563,7 +563,7 @@ jobs:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - name: Checkout code
-#        uses: actions/checkout@v5
+#        uses: actions/checkout@v6
 #      - name: Run security tests
 #        uses: ./.github/actions/security-test
 #        with:
