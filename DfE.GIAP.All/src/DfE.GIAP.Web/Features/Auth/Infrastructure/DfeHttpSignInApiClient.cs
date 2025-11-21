@@ -1,5 +1,8 @@
-﻿using DfE.GIAP.Web.Features.Auth.Application;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
+using DfE.GIAP.Web.Features.Auth.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Web.Features.Auth.Infrastructure.Mappers;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
@@ -7,11 +10,16 @@ namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
 public class DfeHttpSignInApiClient : IDfeSignInApiClient
 {
     private readonly HttpClient _httpClient;
+    private readonly IMapper<OrganisationDto, Organisation> _organisationMapper;
 
-    public DfeHttpSignInApiClient(HttpClient httpClient)
+    public DfeHttpSignInApiClient(
+        HttpClient httpClient,
+        IMapper<OrganisationDto, Organisation> organisationMapper)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
+        ArgumentNullException.ThrowIfNull(organisationMapper);
         _httpClient = httpClient;
+        _organisationMapper = organisationMapper;
     }
 
     public async Task<UserAccess?> GetUserInfo(string serviceId, string organisationId, string userId)
@@ -37,6 +45,9 @@ public class DfeHttpSignInApiClient : IDfeSignInApiClient
         response.EnsureSuccessStatusCode();
 
         string json = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<List<Organisation>>(json) ?? new List<Organisation>();
+        List<OrganisationDto> organisationDtos = JsonConvert
+            .DeserializeObject<List<OrganisationDto>>(json) ?? new List<OrganisationDto>();
+
+        return organisationDtos.Select(_organisationMapper.Map).ToList();
     }
 }
