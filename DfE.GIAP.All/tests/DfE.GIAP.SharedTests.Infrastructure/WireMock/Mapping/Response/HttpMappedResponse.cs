@@ -6,7 +6,7 @@ public record HttpMappedResponse
     private readonly string _body;
 
     public HttpMappedResponse(
-        ClientKey key,
+        MappingKey key,
         int statusCode,
         string? body = null)
     {
@@ -17,7 +17,7 @@ public record HttpMappedResponse
     }
 
     public HttpMappedResponse(
-        ClientKey mappingId,
+        MappingKey mappingId,
         HttpStatusCode code,
         string body) : this(mappingId, (int)code, body)
     { }
@@ -36,5 +36,5 @@ public record HttpMappedResponse
             ?? throw new ArgumentException($"Failed to deserialize body to {typeof(TBody).Name}");
     }
 
-    public static HttpMappedResponse Create(ClientKey clientId, int code, string body) => new(clientId, code, body);
+    public static HttpMappedResponse Create(MappingKey clientId, int code, string body) => new(clientId, code, body);
 }

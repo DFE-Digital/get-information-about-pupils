@@ -1,7 +1,7 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
-public record ClientKey
+public record MappingKey
 {
-    public ClientKey(string identifier)
+    public MappingKey(string identifier)
     {
         Guard.ThrowIfNullOrWhiteSpace(identifier, nameof(identifier));
         Value = identifier;

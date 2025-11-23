@@ -21,7 +21,7 @@ internal sealed class WireMockMappingService : IWireMockMappingService
         List<MappingRequest> mappingRequests =
             files.Select((file) =>
                 new MappingRequest(
-                    id: new ClientKey(file.Key),
+                    id: new MappingKey(file.Key),
                     model: _mappingResolver.ResolveMapping(file.FileName))).ToList();
 
         await _server.RegisterMappingsAsync(mappingRequests);
