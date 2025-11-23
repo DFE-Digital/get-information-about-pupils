@@ -10,7 +10,7 @@ services:
       - WIREMOCK_KEYSTORE_STOREPASSWORD=${WIREMOCK_KEYSTORE_STOREPASSWORD}
       - WIREMOCK_KEYSTORE_KEYPASSWORD=${WIREMOCK_KEYSTORE_KEYPASSWORD}
   cosmosdb:
-    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest@sha256:bbf28177ceb0543b2528fc2de7035a4fdb4e658535fff23297a52acbbf67cec8
     ports:
       - 8081:8081
       - 10250-10255:10250-10255
@@ -19,7 +19,7 @@ services:
       AZURE_COSMOS_EMULATOR_ENABLE_CERT_AUTH: true
     network_mode: host
   wiremock: 
-    image: sheyenrath/wiremock.net
+    image: sheyenrath/wiremock.net@sha256:1f33b682c19dfc36795be33df0820f017e6ad0e1e10bbd6e13cf63fb325c2f5a
     ports: 
     - "8443:8443"
     volumes:
