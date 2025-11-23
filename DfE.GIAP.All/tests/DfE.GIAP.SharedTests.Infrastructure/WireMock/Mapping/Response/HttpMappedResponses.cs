@@ -10,14 +10,14 @@ public record HttpMappedResponses
 
     public IReadOnlyCollection<HttpMappedResponse> Responses => _responses.AsReadOnly();
 
-    public HttpMappedResponse GetResponseById(string id)
+    public HttpMappedResponse GetResponseByKey(string key)
     {
-        Guard.ThrowIfNullOrWhiteSpace(id, nameof(id));
+        Guard.ThrowIfNullOrWhiteSpace(key, nameof(key));
 
-        HttpMappedResponse? response = _responses.SingleOrDefault(t => t.Id.Equals(id, StringComparison.Ordinal));
+        HttpMappedResponse? response = _responses.SingleOrDefault(t => t.Key.Equals(key, StringComparison.Ordinal));
 
         return response is null ?
-            throw new ArgumentException($"Unable to find mapped response with identifier: {id}") :
+            throw new ArgumentException($"Unable to find mapped response with identifier: {key}") :
                 response;
     }
 };

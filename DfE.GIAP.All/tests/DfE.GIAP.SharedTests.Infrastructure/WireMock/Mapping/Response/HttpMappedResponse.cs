@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
-using Newtonsoft.Json;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 public record HttpMappedResponse
@@ -8,23 +6,23 @@ public record HttpMappedResponse
     private readonly string _body;
 
     public HttpMappedResponse(
-        ClientMappingId mappingId,
+        ClientKey key,
         int statusCode,
         string? body = null)
     {
-        Guard.ThrowIfNull(mappingId, nameof(mappingId));
-        Id = mappingId.Value;
+        Guard.ThrowIfNull(key, nameof(key));
+        Key = key.Value;
         StatusCode = statusCode;
         _body = body ?? string.Empty;
     }
 
     public HttpMappedResponse(
-        ClientMappingId mappingId,
+        ClientKey mappingId,
         HttpStatusCode code,
         string body) : this(mappingId, (int)code, body)
     { }
 
-    public string Id { get; }
+    public string Key { get; }
     public int StatusCode { get; }
 
     public TBody GetResponseBody<TBody>()
@@ -38,5 +36,5 @@ public record HttpMappedResponse
             ?? throw new ArgumentException($"Failed to deserialize body to {typeof(TBody).Name}");
     }
 
-    public static HttpMappedResponse Create(ClientMappingId clientId, int code, string body) => new(clientId, code, body);
+    public static HttpMappedResponse Create(ClientKey clientId, int code, string body) => new(clientId, code, body);
 }

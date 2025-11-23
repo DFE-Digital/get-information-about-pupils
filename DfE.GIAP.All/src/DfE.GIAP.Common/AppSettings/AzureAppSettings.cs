@@ -5,19 +5,7 @@ namespace DfE.GIAP.Common.AppSettings;
 [ExcludeFromCodeCoverage]
 public class AzureAppSettings
 {
-    //DfE Sign-in related configuration
-    public string DsiAudience { get; set; }
-    public string DsiAuthorisationUrl { get; set; }
-    public string DsiRedirectUrlAfterSignout { get; set; }
-    public string DsiClientId { get; set; }
-    public string DsiClientSecret { get; set; }
-    public string DsiApiClientSecret { get; set; }
-
-    public string DsiMetadataAddress { get; set; }
-    public string DsiServiceId { get; set; }
-
     //Common
-    public int SessionTimeout { get; set; }
     public bool IsSessionIdStoredInCookie { get; set; }
 
     //Search

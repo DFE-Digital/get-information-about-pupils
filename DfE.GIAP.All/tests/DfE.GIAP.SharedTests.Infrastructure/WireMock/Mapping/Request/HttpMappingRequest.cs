@@ -8,7 +8,7 @@ public record HttpMappingRequest
         // Check for duplicates
         IEnumerable<IGrouping<string, HttpMappingFile>> duplicateIds =
             httpMappingFiles
-                .GroupBy((mapping) => mapping.ClientId)
+                .GroupBy((mapping) => mapping.Key)
                 .Where(grouping => grouping.Count() > 1);
 
         if (duplicateIds.Any())

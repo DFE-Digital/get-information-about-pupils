@@ -5,7 +5,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
@@ -44,17 +44,18 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         HttpMappingRequest request = HttpMappingRequest.Create(
             httpMappingFiles: [
                 new HttpMappingFile(
-                    clientId: "npd",
+                    key: "npd",
                     fileName: "contracts/npd_searchindex_returns_many_pupils.json"),
                 new HttpMappingFile(
-                    clientId: "pupil-premium",
+                    key: "pupil-premium",
                     fileName: "contracts/pupilpremium_searchindex_returns_many_pupils.json")
             ]);
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
 
-        AzureSearchPostDto npdResponse = stubbedResponses.GetResponseById("npd").GetResponseBody<AzureSearchPostDto>()!;
-        AzureSearchPostDto pupilPremiumResponse = stubbedResponses.GetResponseById("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
+        AzureSearchPostDto npdResponse = stubbedResponses.GetResponseByKey("npd").GetResponseBody<AzureSearchPostDto>()!;
+
+        AzureSearchPostDto pupilPremiumResponse = stubbedResponses.GetResponseByKey("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
 
         List<UniquePupilNumber> allPupilUpns = npdResponse.value!
             .Select(t => t.UPN)

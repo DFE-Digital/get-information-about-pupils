@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Logging;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Http;
@@ -35,8 +36,8 @@ public class TraceLogFactoryTests
 
         Claim[] claims = new[]
         {
-            new Claim(CustomClaimTypes.UserId, "user-1"),
-            new Claim(CustomClaimTypes.SessionId, "sess-1")
+            new Claim(AuthClaimTypes.UserId, "user-1"),
+            new Claim(AuthClaimTypes.SessionId, "sess-1")
         };
         ClaimsIdentity identity = new ClaimsIdentity(claims, "TestAuth");
         ClaimsPrincipal principal = new ClaimsPrincipal(identity);
