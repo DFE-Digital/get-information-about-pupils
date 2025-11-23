@@ -18,26 +18,46 @@ services:
       AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
       AZURE_COSMOS_EMULATOR_ENABLE_CERT_AUTH: true
     network_mode: host
-  wiremock:
-    image: wiremock/wiremock:3.3.1
-    ports:
-      - "8443:8443"
+  wiremock: 
+    image: sheyenrath/wiremock.net
+    ports: 
+    - "8443:8443"
     volumes:
-      - ${SHARED_CERTIFICATES}:/certs:ro
+    - ${SHARED_CERTIFICATES}:/certs:ro
+    # TODO can I comment out below
     entrypoint:
-      - /docker-entrypoint.sh
-      - --https-port
-      - "8443"
-      - --https-keystore
-      - /certs/wiremock-keystore.jks
-      - --keystore-password
-      - ${WIREMOCK_KEYSTORE_STOREPASSWORD}
-      - --keystore-type
-      - JKS  
-      - --key-manager-password
-      - ${WIREMOCK_KEYSTORE_KEYPASSWORD}
-      # - --verbose
-    restart: unless-stopped
+      - "dotnet"
+      - "./wiremock-net.dll"
+    command:
+      - "--WireMockLogger"
+      - "WireMockConsoleLogger"
+      - "--Urls"
+      - "https://*:8443"
+      - "--X509CertificateFilePath"
+      - "/certs/wiremock-cert.pfx"
+      - --X509CertificatePassword
+      - "yourpassword"
+
+  # wiremock:
+  #   image: wiremock/wiremock:3.3.1
+  #   ports:
+  #     - "8443:8443"
+  #   volumes:
+  #     - ${SHARED_CERTIFICATES}:/certs:ro
+  #   entrypoint:
+  #     - /docker-entrypoint.sh
+  #     - --https-port
+  #     - "8443"
+  #     - --https-keystore
+  #     - /certs/wiremock-keystore.jks
+  #     - --keystore-password
+  #     - ${WIREMOCK_KEYSTORE_STOREPASSWORD}
+  #     - --keystore-type
+  #     - JKS  
+  #     - --key-manager-password
+  #     - ${WIREMOCK_KEYSTORE_KEYPASSWORD}
+  #     - --verbose
+  #   restart: unless-stopped
   integration-tests:
     image: giapweb-core-integration-tests:latest
     build:
