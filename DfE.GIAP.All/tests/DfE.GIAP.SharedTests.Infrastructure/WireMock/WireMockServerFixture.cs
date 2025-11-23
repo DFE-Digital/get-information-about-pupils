@@ -56,24 +56,24 @@ public class WireMockServerFixture : IAsyncLifetime
 
     private async Task<RemoteWireMockHost> CreateRemoteHost()
     {
+        RemoteWireMockHostServerOptions remoteServerOptions = new(_options.ServerAddress);
+
         HttpClient httpClient = new()
         {
             BaseAddress = _options.ServerAddress
         };
 
-        using HttpResponseMessage response = await httpClient.GetAsync("/__admin/mappings");
+        using HttpResponseMessage response = await httpClient.GetAsync(remoteServerOptions.MappingEndpoint);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new InvalidOperationException($"Cannot probe WireMock server at /__admin/mappings");
+            throw new InvalidOperationException($"Cannot probe WireMock server at {remoteServerOptions.MappingEndpoint}");
         }
 
         // Check for Kestrel ServerHeader from WireMock.NET
         bool isRemoteDotnetServer =
             response.Headers.TryGetValues("Server", out IEnumerable<string>? serverValues)
                 && serverValues.Any(t => t.Contains("Kestrel"));
-
-        RemoteWireMockHostServerOptions remoteServerOptions = new(_options.ServerAddress);
 
         IWireMockRemoteClient wireMockRemoteClient =
             isRemoteDotnetServer ?

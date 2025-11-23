@@ -16,7 +16,7 @@ public record HttpMappingRequest
             throw new ArgumentException($"Duplicate identifers for mappings detected: {string.Join(", ", duplicateIds)}");
         }
 
-        Files = httpMappingFiles.ToList().AsReadOnly(); 
+        Files = httpMappingFiles.ToList().AsReadOnly();
     }
 
     public IReadOnlyList<HttpMappingFile> Files { get; }

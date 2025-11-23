@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
@@ -45,17 +46,19 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             httpMappingFiles: [
                 new HttpMappingFile(
                     key: "npd",
-                    fileName: "contracts/npd_searchindex_returns_many_pupils.json"),
+                    fileName: "npd_searchindex_returns_many_pupils.json"),
                 new HttpMappingFile(
                     key: "pupil-premium",
-                    fileName: "contracts/pupilpremium_searchindex_returns_many_pupils.json")
+                    fileName: "pupilpremium_searchindex_returns_many_pupils.json")
             ]);
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
 
-        AzureSearchPostDto npdResponse = stubbedResponses.GetResponseByKey("npd").GetResponseBody<AzureSearchPostDto>()!;
+        AzureSearchPostDto npdResponse =
+            stubbedResponses.GetResponseByKey("npd").GetResponseBody<AzureSearchPostDto>()!;
 
-        AzureSearchPostDto pupilPremiumResponse = stubbedResponses.GetResponseByKey("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
+        AzureSearchPostDto pupilPremiumResponse =
+            stubbedResponses.GetResponseByKey("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
 
         List<UniquePupilNumber> allPupilUpns = npdResponse.value!
             .Select(t => t.UPN)
@@ -116,11 +119,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Arrange
         UserId userId = UserIdTestDoubles.Default();
 
+        MyPupilsDocumentDto document =
+            MyPupilsDocumentDtoTestDoubles.Create(
+                userId,
+                upns: UniquePupilNumbers.Create(uniquePupilNumbers: []));
+
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
-            (client) => client.WriteItemAsync<MyPupilsDocumentDto>(
-                containerName: "mypupils",
-                MyPupilsDocumentDtoTestDoubles.Create(userId, upns: UniquePupilNumbers.Create(uniquePupilNumbers: []))));
+            (client) => client.WriteItemAsync(containerName: "mypupils", document));
+
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
             ResolveApplicationType<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
@@ -151,10 +158,4 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             };
         }
     }
-}
-
-
-public record AzureSearchPostDto
-{
-    public IEnumerable<AzureNpdSearchResponseDto>? value { get; set; }
 }
