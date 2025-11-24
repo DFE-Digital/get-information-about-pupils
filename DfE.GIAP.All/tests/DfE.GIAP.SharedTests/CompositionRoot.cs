@@ -1,5 +1,6 @@
-﻿using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
@@ -26,6 +27,7 @@ public static class CompositionRoot
             .AddInMemoryLogger();
 
         services.AddSingleton(configuration);
+        services.AddSingleton((sp) => sp.GetRequiredService<IOptions<SearchCriteria>>().Value); // TODO What uses this?
 
         return services;
     }

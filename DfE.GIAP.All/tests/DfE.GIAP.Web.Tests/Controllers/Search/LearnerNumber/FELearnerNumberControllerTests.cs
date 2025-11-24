@@ -5,17 +5,20 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Search.Application.UseCases.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
+using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -34,19 +37,31 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
-    private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
-    private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private AzureAppSettings _mockAppSettings = new AzureAppSettings();
-
-    private readonly TestSession _mockSession = new TestSession();
-
+    private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
+        Substitute.For<IUseCase<SearchRequest, SearchResponse>>();
+    private AzureAppSettings _mockAppSettings = new();
+    private readonly IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
+        Substitute.For<IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
+    private readonly TestSession _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+        SearchResponse response =
+            SearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
+
+        _mockUseCase.HandleRequestAsync(
+            Arg.Any<SearchRequest>()).Returns(response);
+
+        _mockLearnerNumberSearchResponseToViewModelMapper.Map(
+            Arg.Any<LearnerNumericSearchMappingContext>()).Returns(
+            new LearnerNumberSearchViewModel()
+            {
+                Learners = _paginatedResultsFake.GetValidLearners().Learners
+            });
     }
 
     #region Search
@@ -181,7 +196,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var result = await sut.PupilUlnSearch(true);
 
@@ -225,8 +239,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         SetupSession();
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var result = await sut.PupilUlnSearch(inputModel, 0, "", "", true);
 
         // assert
@@ -248,45 +260,43 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     public async Task PupilUlnSearch_returns_another_page_of_results_when_navigated_to()
     {
         // arrange
-        var newsPubCommonResponse = new CommonResponseBody()
+        CommonResponseBody newsPubCommonResponse = new()
         {
             Id = "0",
             Body = "test"
         };
 
+        string ulns = _paginatedResultsFake.GetUlns();
 
-        var ulns = _paginatedResultsFake.GetUlns();
-
-        var inputModel = new LearnerNumberSearchViewModel()
+        LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = ulns,
-            PageLearnerNumbers = String.Join(',', _paginatedResultsFake.GetUlns().FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUlns().FormatLearnerNumbers())
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(ulns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. ulns.FormatLearnerNumbers()]);
 
         // act
-        var sut = GetController();
+        FELearnerNumberController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
-        var result = await sut.PupilUlnSearch(inputModel, 1, "", "");
+        IActionResult result = await sut.PupilUlnSearch(inputModel, 1, "", "");
 
         // assert
         Assert.IsType<ViewResult>(result);
-        var viewResult = result as ViewResult;
+        ViewResult? viewResult = result as ViewResult;
 
         Assert.True(viewResult.ViewName.Equals(Global.SearchView));
 
         Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        var model = viewResult.Model as LearnerNumberSearchViewModel;
+        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
 
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
-        model.Learners.AssertSelected(true);
+        model.Learners.AssertSelected(false);
     }
 
     [Fact]
@@ -320,7 +330,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         var result = await sut.PupilUlnSearch(inputModel, 1, "", "");
 
@@ -334,10 +343,10 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var model = viewResult.Model as LearnerNumberSearchViewModel;
 
         AssertAbstractValues(sut, model);
-        model.Learners.AssertSelected(true);
+        model.Learners.AssertSelected(false);
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
         _mockSelectionManager.DidNotReceive().RemoveAll(Arg.Any<string[]>());
-        Assert.Equal(2, model.Learners.Where(l => l.Selected == true).Count());
+        Assert.Equal(2, model.Learners.Where(l => l.Selected == false).Count());
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
@@ -374,7 +383,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         var result = await sut.PupilUlnSearch(inputModel, 1, "", "");
 
@@ -423,8 +431,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var result = await sut.PupilUlnSearch(inputModel, 1, "", "", true);
 
@@ -501,8 +507,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, _paginatedResultsFake.GetInvalidULNLearners());
-
         var result = await sut.PupilUlnSearch(inputModel, 0, "", "", true);
 
         // assert
@@ -516,45 +520,44 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         AssertAbstractValues(sut, model);
         Assert.True(model.Invalid.Count == 1);
-        Assert.True(model.Learners.Count() == 3);
+        Assert.True(model.Learners.Count() == 2);
     }
 
     [Fact]
     public async Task PupilUlnSearch_shows_not_found_UPNs_on_search_if_they_do_not_exist()
     {
         // arrange
-        var newsPubCommonResponse = new CommonResponseBody()
+        CommonResponseBody newsPubCommonResponse = new()
         {
             Id = "0",
             Body = "test"
         };
 
-        var ulns = _paginatedResultsFake.GetUlnsWithNotFound();
-        var inputModel = new LearnerNumberSearchViewModel()
+        string ulns = _paginatedResultsFake.GetUlnsWithNotFound();
+        LearnerNumberSearchViewModel inputModel = new()
         {
-            LearnerNumber = ulns,
+            LearnerNumber = "A203202811068\r\n7621706219\r\n",
             SelectedPupil = ulns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', ulns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', ulns.FormatLearnerNumbers())
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(ulns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. ulns.FormatLearnerNumbers()]);
 
         // act
-        var sut = GetController();
+        FELearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
+        _mockSession.SetString(sut.SearchSessionKey, "A203202811068\r\n7621706219\r\n");
 
-        var result = await sut.PupilUlnSearch(inputModel, 0, "", "", false);
+        IActionResult result = await sut.PupilUlnSearch(inputModel, 0, "", "", false);
 
         // assert
         Assert.IsType<ViewResult>(result);
-        var viewResult = result as ViewResult;
+        ViewResult? viewResult = result as ViewResult;
 
         Assert.True(viewResult.ViewName.Equals(Global.SearchView));
 
         Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        var model = viewResult.Model as LearnerNumberSearchViewModel;
+        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
 
         AssertAbstractValues(sut, model);
         Assert.True(model.NotFound.Count == 1);
@@ -584,8 +587,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var result = await sut.PupilUlnSearch(inputModel, 0, "", "", true);
 
@@ -632,8 +633,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         sut.ControllerContext.HttpContext.Request.Query = Substitute.For<IQueryCollection>();
         sut.ControllerContext.HttpContext.Request.Query.ContainsKey("reset").Returns(true);
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var result = await sut.PupilUlnSearch(inputModel, 0, "", "", true);
 
@@ -688,8 +687,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockSession.SetString(sut.SearchSessionSortField, TestSortField);
         _mockSession.SetString(sut.SearchSessionSortDirection, TestSortDirection);
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var result = await sut.PupilUlnSearch(inputModel, 0, "", "", true);
 
         // assert
@@ -738,7 +735,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         var sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         var result = await sut.PupilUlnSearch(inputModel, 0, "", "", true);
@@ -790,7 +786,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         var result = await sut.PupilUlnSearch(inputModel, 1, "", "");
 
@@ -811,45 +806,44 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     public async Task PupilUlnSearch_search_works_with_notPaged_true()
     {
         // arrange
-        var newsPubCommonResponse = new CommonResponseBody()
+        CommonResponseBody newsPubCommonResponse = new()
         {
             Id = "0",
             Body = "test"
         };
 
-        var ulns = _paginatedResultsFake.GetUlns();
+        string ulns = _paginatedResultsFake.GetUlns();
 
-        var inputModel = new LearnerNumberSearchViewModel()
+        LearnerNumberSearchViewModel inputModel = new()
         {
-            LearnerNumber = ulns,
+            LearnerNumber = "A203102209083\r\nA203202811068",
             SelectAllNoJsChecked = "true",
-            SelectedPupil = new List<string>() { "6424316654" },
+            SelectedPupil = ["6424316654"],
             PageLearnerNumbers = string.Join(',', ulns.FormatLearnerNumbers())
         };
 
-        var paginatedResponse = _paginatedResultsFake.GetValidULNLearners();
+        PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidULNLearners();
         paginatedResponse.ToggleSelectAll(true);
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(ulns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. "A203102209083\r\nA203202811068".FormatLearnerNumbers()]);
 
-        var sut = GetController();
+        FELearnerNumberController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         // act
-        var result = await sut.PupilUlnSearch(inputModel, 1, "", "", calledByController: false);
+        IActionResult result = await sut.PupilUlnSearch(inputModel, 1, "", "", calledByController: false);
 
         // assert
         Assert.IsType<ViewResult>(result);
-        var viewResult = result as ViewResult;
+        ViewResult? viewResult = result as ViewResult;
 
         Assert.True(viewResult.ViewName.Equals(Global.SearchView));
 
         Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        var model = viewResult.Model as LearnerNumberSearchViewModel;
+        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(2, model.Total);
+        Assert.Equal(2, model.Learners.ToList().Count);
     }
 
     #endregion Search
@@ -881,7 +875,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var sortField = "Forename";
         var sortDirection = "asc";
@@ -899,7 +892,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
-        model.Learners.AssertSelected(true);
+        model.Learners.AssertSelected(false);
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -935,7 +928,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         var sortField = "Forename";
         var sortDirection = "asc";
@@ -951,10 +943,10 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var model = viewResult.Model as LearnerNumberSearchViewModel;
 
         AssertAbstractValues(sut, model);
-        model.Learners.AssertSelected(true);
+        model.Learners.AssertSelected(false);
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
         _mockSelectionManager.DidNotReceive().RemoveAll(Arg.Any<string[]>());
-        Assert.Equal(2, model.Learners.Where(l => l.Selected == true).Count());
+        Assert.Equal(2, model.Learners.Where(l => l.Selected == false).Count());
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
@@ -993,7 +985,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         var sortField = "Forename";
         var sortDirection = "asc";
@@ -1037,7 +1028,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         var sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var sortField = "Forename";
         var sortDirection = "asc";
@@ -1080,8 +1070,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUlns());
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var result = await sut.PupilUlnSearch(true);
 
         // assert
@@ -1113,7 +1101,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         var sut = GetController();
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
         var sortField = "Forename";
         var sortDirection = "asc";
 
@@ -1159,8 +1146,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         SetupSession();
 
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var sortField = "Forename";
         var sortDirection = "desc";
@@ -1208,8 +1193,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         var sut = GetController();
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var sortField = "MiddleNames";
         var sortDirection = "asc";
 
@@ -1255,7 +1238,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         SetupSession();
 
         var sut = GetController();
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
         var sortField = "MiddleNames";
         var sortDirection = "desc";
 
@@ -1301,9 +1283,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         SetupSession();
 
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var sortField = "Surname";
         var sortDirection = "asc";
 
@@ -1349,8 +1328,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         SetupSession();
 
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var sortField = "Surname";
         var sortDirection = "desc";
@@ -1398,8 +1375,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         var sut = GetController();
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var sortField = "Gender";
         var sortDirection = "asc";
 
@@ -1445,8 +1420,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         SetupSession();
 
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var sortField = "Gender";
         var sortDirection = "desc";
@@ -1495,8 +1468,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         var sut = GetController();
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         var sortField = "Dob";
         var sortDirection = "asc";
 
@@ -1542,8 +1513,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         SetupSession();
 
         var sut = GetController();
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         var sortField = "Dob";
         var sortDirection = "desc";
@@ -1593,7 +1562,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
         SetupSession();
         var sut = GetController();
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         var result = await sut.ToDownloadSelectedULNData(inputModel);
@@ -1665,7 +1633,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
         SetupSession();
         var sut = GetController();
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         var result = await sut.ToDownloadSelectedULNData(inputModel);
@@ -1931,46 +1898,16 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             .ReturnsAsync(response);
 
         return new FELearnerNumberController(
+            _mockUseCase,
+            _mockLearnerNumberSearchResponseToViewModelMapper,
             _mockLogger,
             _mockDownloadService,
-            _mockPaginatedService,
-            _mockMplService,
             _mockSelectionManager,
             _mockAppOptions,
             mockGetAvailableDatasetsForPupilsUseCase.Object)
         {
             ControllerContext = context
         };
-    }
-
-    private void SetupPaginatedSearch(AzureSearchIndexType indexType, Domain.Search.Learner.PaginatedResponse paginatedResponse)
-    {
-        _mockPaginatedService.GetPage(
-            Arg.Any<string>(),
-            Arg.Any<Dictionary<string, string[]>>(),
-            Arg.Any<int>(),
-            Arg.Any<int>(),
-            Arg.Is(indexType),
-            Arg.Is<AzureSearchQueryType>(x => x == AzureSearchQueryType.Numbers || x == AzureSearchQueryType.Id),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<string>(),
-            Arg.Any<string>())
-            .Returns(paginatedResponse);
-    }
-
-    private void SetupPaginatedSearchGetValidLearners(AzureSearchIndexType indexType)
-    {
-        _mockPaginatedService.GetPage(
-           Arg.Any<string>(),
-            Arg.Any<Dictionary<string, string[]>>(),
-            Arg.Any<int>(),
-            Arg.Any<int>(),
-            Arg.Is(indexType),
-            Arg.Is<AzureSearchQueryType>(x => x == AzureSearchQueryType.Numbers || x == AzureSearchQueryType.Id),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<string>(),
-            Arg.Any<string>())
-            .Returns(_paginatedResultsFake.GetValidULNLearners());
     }
 
     private void SetupSession()
