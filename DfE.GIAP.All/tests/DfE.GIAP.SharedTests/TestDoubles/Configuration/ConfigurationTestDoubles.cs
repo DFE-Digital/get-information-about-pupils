@@ -146,6 +146,7 @@ public static class ConfigurationTestDoubles
 
     public static IConfigurationBuilder WithFilterKeyToFilterExpressionMapOptions(this IConfigurationBuilder builder)
     {
+
         Dictionary<string, string?> configDict = new()
         {
             ["FilterKeyToFilterExpressionMapOptions:FilterChainingLogicalOperator"] = "AndLogicalOperator",

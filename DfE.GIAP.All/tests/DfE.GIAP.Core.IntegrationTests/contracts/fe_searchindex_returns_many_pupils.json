@@ -20,6 +20,7 @@
                 {
                     "@search.score": 0.23840507024939395,
                     "UPN": "X304641945935",
+                    "ULN": "1000000000",
                     "Surname": "Grant",
                     "Forename": "Shanel",
                     "Sex": "M",
@@ -31,6 +32,7 @@
                 {
                     "@search.score": 0.27961029536990567,
                     "UPN": "N013204988611",
+                    "ULN": "1000000001",
                     "Surname": "Hilpert",
                     "Forename": "Trinity",
                     "Sex": "F",
@@ -42,6 +44,7 @@
                 {
                     "@search.score": 0.7643473615668275,
                     "UPN": "N812494910739",
+                    "ULN": "1000000002",
                     "Surname": "Lebsack",
                     "Forename": "Abner",
                     "Sex": "F",
@@ -53,6 +56,7 @@
                 {
                     "@search.score": 0.7839624925270672,
                     "UPN": "D461872414218",
+                    "ULN": "1000000003",
                     "Surname": "Zieme",
                     "Forename": "Alexandra",
                     "Sex": "F",
@@ -64,6 +68,7 @@
                 {
                     "@search.score": 0.2786631789199959,
                     "UPN": "R280021535544",
+                    "ULN": "1000000004",
                     "Surname": "Schinner",
                     "Forename": "Ines",
                     "Sex": "F",
@@ -75,6 +80,7 @@
                 {
                     "@search.score": 0.010031283925083012,
                     "UPN": "K046390671105",
+                    "ULN": "1000000005",
                     "Surname": "Stamm",
                     "Forename": "Alaina",
                     "Sex": "M",
@@ -86,6 +92,7 @@
                 {
                     "@search.score": 0.4041972524129278,
                     "UPN": "Z421036468685",
+                    "ULN": "1000000006",
                     "Surname": "Boyle",
                     "Forename": "Taurean",
                     "Sex": "F",
@@ -97,6 +104,7 @@
                 {
                     "@search.score": 0.5207900947442514,
                     "UPN": "N490692951119",
+                    "ULN": "1000000007",
                     "Surname": "Johnston",
                     "Forename": "Lisandro",
                     "Sex": "F",
@@ -108,6 +116,7 @@
                 {
                     "@search.score": 0.5167807489233379,
                     "UPN": "B630465813172",
+                    "ULN": "1000000008",
                     "Surname": "Fay",
                     "Forename": "Hank",
                     "Sex": "F",
@@ -119,6 +128,7 @@
                 {
                     "@search.score": 0.42130944801447556,
                     "UPN": "M582863618079",
+                    "ULN": "1000000009",
                     "Surname": "O'Reilly",
                     "Forename": "Elvera",
                     "Sex": "F",

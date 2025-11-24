@@ -1,5 +1,4 @@
-﻿
-using DfE.GIAP.Core.IntegrationTests.TestHarness;
+﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
@@ -8,7 +7,6 @@ using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
-using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
@@ -47,8 +45,11 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
         HttpMappingRequest httpRequest = HttpMappingRequest.Create(
             httpMappingFiles: [
                 new HttpMappingFile(
+                    key: "index-names",
+                    fileName: "get_searchindex_names.json"),
+                new HttpMappingFile(
                     key: "further-education",
-                    fileName: "fe_searchindex_returns_many_pupils.json"),
+                    fileName: "fe_searchindex_returns_many_pupils.json")
             ]);
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
@@ -70,6 +71,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(response);
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(SearchResponseStatus.Success, response.Status);
-        Assert.Equal(30, response.TotalNumberOfResults);
+        Assert.Equal(10, response.TotalNumberOfResults);
     }
 }
