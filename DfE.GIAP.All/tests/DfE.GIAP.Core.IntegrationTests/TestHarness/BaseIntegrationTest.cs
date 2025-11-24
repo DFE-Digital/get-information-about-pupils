@@ -67,7 +67,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// Ensures the scope is created before resolving.
     /// </summary>
     protected TInstanceType ResolveApplicationType<TInstanceType>()
-        where TInstanceType : notnull       
+        where TInstanceType : notnull
     {
         EnsureServiceScope();
         return _servicesScope!.ServiceProvider.GetRequiredService<TInstanceType>();
