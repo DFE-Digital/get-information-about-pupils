@@ -435,7 +435,9 @@ public class FELearnerTextSearchController : Controller
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
 
         if (model.SearchFilters != null)
-            _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchFilters);
+        {
+            _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
+        }
 
         return View(SearchView, model);
     }
