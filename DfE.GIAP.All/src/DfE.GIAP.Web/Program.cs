@@ -79,13 +79,7 @@ builder.Services.AddSingleton<IMapper<
 
 builder.Services.AddSingleton<ISearchRule, PartialWordMatchRule>();
 
-builder.Services.AddSingleton<
-    IFilterHandlerRegistry, FilterHandlerRegistry>();
-builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("SurnameLC"));
-builder.Services.AddSingleton<IFilterHandler>(new NameFilterHandler("ForenameLC"));
-builder.Services.AddSingleton<IFilterHandler>(new DobFilterHandler());
 builder.Services.AddSingleton<IFiltersRequestFactory, FiltersRequestFactory>();
-builder.Services.AddSingleton(new GenderFilterHandler("Gender"));
 builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
 {
     Dictionary<string, IFilterHandler> handlers = new()
