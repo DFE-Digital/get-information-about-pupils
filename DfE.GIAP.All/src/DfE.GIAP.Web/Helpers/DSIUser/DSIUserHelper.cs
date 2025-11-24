@@ -4,18 +4,6 @@ namespace DfE.GIAP.Web.Helpers.DSIUser;
 
 public static class DSIUserHelper
 {
-    public static string GetGIAPUserRole(bool isAdmin, bool isApprover, bool isUser)
-    {
-        if (isAdmin)
-            return Roles.Admin;
-        if (isApprover)
-            return Roles.Approver;
-        if (isUser)
-            return Roles.User;
-        return string.Empty;
-
-    }
-
     public static string GetOrganisationType(string organisationCategoryId)
     {
         return organisationCategoryId switch

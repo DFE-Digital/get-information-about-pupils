@@ -1,0 +1,134 @@
+{
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/indexes('NPD_INDEX_NAME')/docs/search.post.search",
+                    "IgnoreCase": true
+                }
+            ]
+        }
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json"
+        },
+        "BodyAsJson": {
+            "value": [
+                {
+                    "@search.score": 0.404232270369578,
+                    "UPN": "FX9LQLIDK1FI",
+                    "Surname": "Rodriguez",
+                    "Forename": "Jamie",
+                    "Sex": "F",
+                    "Gender": "M",
+                    "DOB": "2019-08-09",
+                    "LocalAuthority": "481",
+                    "id": "7ba933d0-5686-4809-95a5-bc9cf889fb80"
+                },
+                {
+                    "@search.score": 0.401139282107036,
+                    "UPN": "N3OS7NL62FF9",
+                    "Surname": "Davis",
+                    "Forename": "Morgan",
+                    "Sex": "M",
+                    "Gender": "F",
+                    "DOB": "2015-01-16",
+                    "LocalAuthority": "788",
+                    "id": "9cb55af7-70d2-4b63-83e0-7104a3ecfadc"
+                },
+                {
+                    "@search.score": 0.813493332612741,
+                    "UPN": "C3HH0JFYC5TJ",
+                    "Surname": "Miller",
+                    "Forename": "Quinn",
+                    "Sex": "M",
+                    "Gender": "M",
+                    "DOB": "2007-12-16",
+                    "LocalAuthority": "497",
+                    "id": "facf2b86-98eb-4b56-b52c-c993d646e793"
+                },
+                {
+                    "@search.score": 0.727191078593707,
+                    "UPN": "VIVSRCZENFQG",
+                    "Surname": "Johnson",
+                    "Forename": "Riley",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2009-11-01",
+                    "LocalAuthority": "765",
+                    "id": "e4c53775-5e42-4734-abc5-44e98a62f0dd"
+                },
+                {
+                    "@search.score": 0.751770042511314,
+                    "UPN": "OB2XMKJZUFZ9",
+                    "Surname": "Williams",
+                    "Forename": "Riley",
+                    "Sex": "M",
+                    "Gender": "F",
+                    "DOB": "2009-06-04",
+                    "LocalAuthority": "224",
+                    "id": "a5fc27a0-f5b5-4495-9bf2-a64c8ea025d2"
+                },
+                {
+                    "@search.score": 0.604738105974243,
+                    "UPN": "P9JMAC96FOCP",
+                    "Surname": "Wilson",
+                    "Forename": "Quinn",
+                    "Sex": "M",
+                    "Gender": "M",
+                    "DOB": "2025-07-29",
+                    "LocalAuthority": "637",
+                    "id": "eb892633-39be-4ae4-9344-b89a4e485957"
+                },
+                {
+                    "@search.score": 0.95650532730007,
+                    "UPN": "CXD07K5Q14ZD",
+                    "Surname": "Davis",
+                    "Forename": "Riley",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2009-03-25",
+                    "LocalAuthority": "380",
+                    "id": "77def888-1c56-4e91-b31b-0960eaa365a9"
+                },
+                {
+                    "@search.score": 0.492484315186169,
+                    "UPN": "4A3MVSKNYLXP",
+                    "Surname": "Smith",
+                    "Forename": "Alex",
+                    "Sex": "F",
+                    "Gender": "M",
+                    "DOB": "2015-06-26",
+                    "LocalAuthority": "166",
+                    "id": "b5abe5b4-d3bf-4d8a-84fb-af54517f8a91"
+                },
+                {
+                    "@search.score": 0.93372732324177,
+                    "UPN": "WW2MK9W8R86A",
+                    "Surname": "Rodriguez",
+                    "Forename": "Casey",
+                    "Sex": "M",
+                    "Gender": "F",
+                    "DOB": "2012-10-30",
+                    "LocalAuthority": "933",
+                    "id": "ac54b9f6-74c4-458c-9afd-eab46d5059e5"
+                },
+                {
+                    "@search.score": 0.599702906409201,
+                    "UPN": "OSFSX8E2PDPS",
+                    "Surname": "Miller",
+                    "Forename": "Morgan",
+                    "Sex": "M",
+                    "Gender": "F",
+                    "DOB": "2016-02-12",
+                    "LocalAuthority": "166",
+                    "id": "f7248283-442b-415d-a6c2-9cac9875c15d"
+                }
+            ]
+
+        }
+    }
+}

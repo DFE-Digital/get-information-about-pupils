@@ -11,6 +11,5 @@ namespace DfE.GIAP.Domain.Models.Common
         [JsonProperty("DataTypes")]
         public string[] DataTypes { get; set; }
         public bool ConfirmationGiven { get; set; }
-        public bool CheckOnly { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
-using User = DfE.GIAP.Core.Users.Application.User;
+using User = DfE.GIAP.Core.Users.Application.Models.User;
 
 namespace DfE.GIAP.Core.Users.Infrastructure.Repositories;
 

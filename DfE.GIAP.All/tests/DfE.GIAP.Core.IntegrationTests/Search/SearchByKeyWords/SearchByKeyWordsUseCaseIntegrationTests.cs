@@ -1,11 +1,12 @@
 ﻿
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.Dto;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using Microsoft.Extensions.Configuration;
@@ -14,9 +15,9 @@ namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
 public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly SearchIndexFixture _searchIndexFixture;
+    private readonly WireMockServerFixture _searchIndexFixture;
 
-    public SearchByKeyWordsUseCaseIntegrationTests(SearchIndexFixture searchIndexFixture)
+    public SearchByKeyWordsUseCaseIntegrationTests(WireMockServerFixture searchIndexFixture)
     {
         ArgumentNullException.ThrowIfNull(searchIndexFixture);
         _searchIndexFixture = searchIndexFixture;
@@ -43,12 +44,14 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
     {
-        const string searchIndexName = "FE_INDEX_NAME";
-        await _searchIndexFixture!.StubAvailableIndexes([searchIndexName]);
+        HttpMappingRequest httpRequest = HttpMappingRequest.Create(
+            httpMappingFiles: [
+                new HttpMappingFile(
+                    key: "further-education",
+                    fileName: "fe_searchindex_returns_many_pupils.json"),
+            ]);
 
-        await _searchIndexFixture.StubIndex(
-            indexName: searchIndexName,
-            values: AzureFurtherEducationSearchResponseDtoTestDoubles.Generate(count: 30));
+        HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
 
         IUseCase<SearchRequest, SearchResponse> sut =
             ResolveApplicationType<IUseCase<SearchRequest, SearchResponse>>()!;
