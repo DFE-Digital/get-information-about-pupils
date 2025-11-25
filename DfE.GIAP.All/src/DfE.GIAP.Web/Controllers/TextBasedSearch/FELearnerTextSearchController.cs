@@ -39,45 +39,45 @@ public class FELearnerTextSearchController : Controller
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
 
     public string PageHeading => ApplicationLabels.SearchFEWithoutUlnPageHeading;
-    public  string SearchSessionKey => Global.FENonUlnSearchSessionKey;
-    public  string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
-    public  string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
-    public  string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
-    public  string DownloadLinksPartial => Global.FENonUlnDownloadLinksView;
-    public  string SearchLearnerNumberAction => Routes.FurtherEducation.LearnerNumberSearch;
-    public  string RedirectUrlFormAction => Global.FELearnerTextSearchAction;
-    public  string LearnerTextDatabaseAction => Global.FELearnerTextSearchAction;
-    public  string LearnerTextDatabaseName => Global.FELearnerTextSearchAction;
-    public  string RedirectFrom => Routes.FurtherEducation.LearnerTextSearch;
+    public string SearchSessionKey => Global.FENonUlnSearchSessionKey;
+    public string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
+    public string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
+    public string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
+    public string DownloadLinksPartial => Global.FENonUlnDownloadLinksView;
+    public string SearchLearnerNumberAction => Routes.FurtherEducation.LearnerNumberSearch;
+    public string RedirectUrlFormAction => Global.FELearnerTextSearchAction;
+    public string LearnerTextDatabaseAction => Global.FELearnerTextSearchAction;
+    public string LearnerTextDatabaseName => Global.FELearnerTextSearchAction;
+    public string RedirectFrom => Routes.FurtherEducation.LearnerTextSearch;
 
-    public  string SurnameFilterUrl => Routes.FurtherEducation.NonULNSurnameFilter;
-    public  string DobFilterUrl => Routes.FurtherEducation.NonULNDobFilter;
-    public  string ForenameFilterUrl => Routes.FurtherEducation.NonULNForenameFilter;
-    public  string MiddlenameFilterUrl => "";
-    public  string GenderFilterUrl => Routes.FurtherEducation.NonULNGenderFilter;
-    public  string SexFilterUrl => Routes.FurtherEducation.NonULNSexFilter;
+    public string SurnameFilterUrl => Routes.FurtherEducation.NonULNSurnameFilter;
+    public string DobFilterUrl => Routes.FurtherEducation.NonULNDobFilter;
+    public string ForenameFilterUrl => Routes.FurtherEducation.NonULNForenameFilter;
+    public string MiddlenameFilterUrl => "";
+    public string GenderFilterUrl => Routes.FurtherEducation.NonULNGenderFilter;
+    public string SexFilterUrl => Routes.FurtherEducation.NonULNSexFilter;
 
-    public  string FormAction => Routes.FurtherEducation.LearnerTextSearch;
-    public  string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.FurtherEducation.LearnerTextSearch}";
-    public  AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
-    public  string SearchView => Global.NonUpnSearchView;
+    public string FormAction => Routes.FurtherEducation.LearnerTextSearch;
+    public string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.FurtherEducation.LearnerTextSearch}";
+    public AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
+    public string SearchView => Global.NonUpnSearchView;
 
-    public  string SearchLearnerNumberController => Routes.Application.Search;
-    public  int MyPupilListLimit => _appSettings.NonUpnNPDMyPupilListLimit; //Not valid for FE so arbitrarily set to default non UPN limit
-    public  string SearchAction => Global.FELearnerTextSearchAction;
-    public  string SearchController => Global.FELearnerTextSearchController;
-    public  ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
-    public  string LearnerTextSearchController => Global.FELearnerTextSearchController;
-    public  string LearnerTextSearchAction => Global.FELearnerTextSearchAction;
-    public  string LearnerNumberAction => Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
+    public string SearchLearnerNumberController => Routes.Application.Search;
+    public int MyPupilListLimit => _appSettings.NonUpnNPDMyPupilListLimit; //Not valid for FE so arbitrarily set to default non UPN limit
+    public string SearchAction => Global.FELearnerTextSearchAction;
+    public string SearchController => Global.FELearnerTextSearchController;
+    public ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
+    public string LearnerTextSearchController => Global.FELearnerTextSearchController;
+    public string LearnerTextSearchAction => Global.FELearnerTextSearchAction;
+    public string LearnerNumberAction => Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
 
     public bool ShowGender => true; //_appSettings.FeUseGender;
-    public  bool ShowLocalAuthority => false;
-    public  string InvalidUPNsConfirmationAction => "";
-    public  string LearnerNumberLabel => Global.FELearnerNumberLabel;
-    public  bool ShowMiddleNames => false;
+    public bool ShowLocalAuthority => false;
+    public string InvalidUPNsConfirmationAction => "";
+    public string LearnerNumberLabel => Global.FELearnerNumberLabel;
+    public bool ShowMiddleNames => false;
 
-    public  string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
+    public string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
 
     private readonly ISessionProvider _sessionProvider;
@@ -124,27 +124,36 @@ public class FELearnerTextSearchController : Controller
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
-        _sessionProvider = sessionProvider ??
-            throw new ArgumentNullException(nameof(sessionProvider));
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
+        ArgumentNullException.ThrowIfNull(sessionProvider);
+        _sessionProvider = sessionProvider;
 
-        _furtherEducationSearchUseCase = furtherEducationSearchUseCase ??
-            throw new ArgumentNullException(nameof(furtherEducationSearchUseCase));
-        _learnerSearchResponseToViewModelMapper = learnerSearchResponseToViewModelMapper ??
-            throw new ArgumentNullException(nameof(learnerSearchResponseToViewModelMapper));
-        _filtersRequestMapper = filtersRequestMapper ??
-            throw new ArgumentNullException(nameof(filtersRequestMapper));
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper ??
-            throw new ArgumentNullException(nameof(sortOrderViewModelToRequestMapper));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
 
-        _selectionManager = selectionManager ??
-            throw new ArgumentNullException(nameof(selectionManager));
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
+        _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
+
+        ArgumentNullException.ThrowIfNull(learnerSearchResponseToViewModelMapper);
+        _learnerSearchResponseToViewModelMapper = learnerSearchResponseToViewModelMapper;
+
+        ArgumentNullException.ThrowIfNull(filtersRequestMapper);
+        _filtersRequestMapper = filtersRequestMapper;
+
+        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
+        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+
+        ArgumentNullException.ThrowIfNull(selectionManager);
+        _selectionManager = selectionManager;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
-        _filtersRequestBuilder = filtersRequestBuilder ??
-            throw new ArgumentNullException(nameof(filtersRequestBuilder));
+
+        ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
+        _filtersRequestBuilder = filtersRequestBuilder;
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
@@ -174,10 +183,14 @@ public class FELearnerTextSearchController : Controller
         model.ShowHiddenUPNWarningMessage = false;
 
         return await Search(
-            model, surnameFilter, middlenameFilter, forenameFilter,
-            searchByRemove, model.PageNumber,
-            ControllerContext.HttpContext.Request.Query.ContainsKey("pageNumber"),
-            calledByController, sortField, sortDirection,
+            model,
+            surnameFilter,
+            middlenameFilter,
+            forenameFilter,
+            searchByRemove,
+            model.PageNumber,
+            sortField,
+            sortDirection,
             ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
     }
 
@@ -236,8 +249,9 @@ public class FELearnerTextSearchController : Controller
 
         GetAvailableDatasetsForPupilsRequest request = new(
             DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
-            SelectedPupils: new List<string> { selectedPupil },
+            SelectedPupils: [selectedPupil],
             AuthorisationContext: new HttpClaimsAuthorisationContext(User));
+
         GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
 
         foreach (AvailableDatasetResult datasetResult in response.AvailableDatasets)
@@ -256,7 +270,11 @@ public class FELearnerTextSearchController : Controller
         searchDownloadViewModel.SearchAction = Global.FELearnerTextSearchAction;
         searchDownloadViewModel.DownloadRoute = Routes.FurtherEducation.DownloadNonUlnFile;
         searchDownloadViewModel.RedirectRoute = Routes.FurtherEducation.LearnerTextSearch;
-        searchDownloadViewModel.TextSearchViewModel = new LearnerTextSearchViewModel() { LearnerNumberLabel = LearnerNumberLabel, SearchText = searchText };
+        searchDownloadViewModel.TextSearchViewModel = new LearnerTextSearchViewModel()
+        {
+            LearnerNumberLabel = LearnerNumberLabel,
+            SearchText = searchText
+        };
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
         searchDownloadViewModel.SearchResultPageHeading = PageHeading;
@@ -371,11 +389,11 @@ public class FELearnerTextSearchController : Controller
     [NonAction]
     public async Task<IActionResult> Search(
        LearnerTextSearchViewModel model,
-       string surnameFilter, string middlenameFilter,
-       string forenameFilter, string searchByRemove,
+       string surnameFilter,
+       string middlenameFilter,
+       string forenameFilter,
+       string searchByRemove,
        int pageNumber,
-       bool hasQueryItem = false,
-       bool calledByController = false,
        string sortField = "",
        string sortDirection = "",
        bool resetSelection = false)
@@ -445,7 +463,7 @@ public class FELearnerTextSearchController : Controller
     [NonAction]
     public virtual async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
     {
-        if(_sessionProvider.ContainsSessionKey(SearchSessionKey))
+        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
             model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
 
         if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
@@ -1015,9 +1033,9 @@ public class FELearnerTextSearchController : Controller
 
     private void SetSortOptions(LearnerTextSearchViewModel model)
     {
-        if(_sessionProvider.ContainsSessionKey(SortDirectionKey))
+        if (_sessionProvider.ContainsSessionKey(SortDirectionKey))
             model.SortDirection = _sessionProvider.GetSessionValue(SortDirectionKey);
-        
+
         if (_sessionProvider.ContainsSessionKey(SortFieldKey))
             model.SortField = _sessionProvider.GetSessionValue(SortFieldKey);
     }
