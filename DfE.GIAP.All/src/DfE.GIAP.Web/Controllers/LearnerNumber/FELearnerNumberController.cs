@@ -303,7 +303,7 @@ public class FELearnerNumberController : Controller
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, IndexType, 0, true).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -379,7 +379,6 @@ public class FELearnerNumberController : Controller
 
             model = await GetPupilsForSearchBuilder(
                 model,
-                IndexType,
                 pageNumber,
                 notPaged).ConfigureAwait(false);
 
@@ -405,7 +404,6 @@ public class FELearnerNumberController : Controller
 
     private async Task<LearnerNumberSearchViewModel> GetPupilsForSearchBuilder(
         LearnerNumberSearchViewModel model,
-        AzureSearchIndexType indexType,
         int pageNumber,
         bool first)
     {
