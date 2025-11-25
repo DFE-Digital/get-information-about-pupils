@@ -60,13 +60,18 @@ public sealed class LearnerTextSearchResponseToViewModelMapper :
                 .Select(_furtherEducationLearnerToViewModelMapper.Map)
                 .ToList() ?? [];
 
-        // Apply result limit if the total exceeds a configured maximum.
-        int limit = input.Model.MaximumResults != 0 ? input.Model.MaximumResults : input.Model.PageSize;
+        // Determine the limit based on if MaximumResults is defined and PageSize
+        int limit =
+            (input.Model.MaximumResults > 0 && input.Model.MaximumResults < input.Model.PageSize)
+                ? input.Model.MaximumResults
+                : input.Model.PageSize;
 
+        // Apply result limit if the total exceeds the configured maximum
         input.Model.Learners =
-            input.Response.TotalNumberOfResults > input.Model.MaximumResults
+            input.Response.TotalNumberOfResults > limit
                 ? [.. learners.Take(limit)]
                 : learners;
+
 
         // Populate meta-data fields for pagination and UI messaging.
         input.Model.Count = input.Response.LearnerSearchResults?.Count ?? 0;
