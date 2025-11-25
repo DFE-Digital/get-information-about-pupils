@@ -385,7 +385,6 @@ public class FELearnerNumberController : Controller
 
             model.PageNumber = pageNumber;
             model.PageSize = PAGESIZE;
-            model.MaximumResults = _appSettings.MaximumULNsPerSearch;
         }
 
         HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);
@@ -420,8 +419,6 @@ public class FELearnerNumberController : Controller
         {
             searchText = model.LearnerIdSearchResult;
         }
-
-        model.MaximumResults = _appSettings.MaximumUPNsPerSearch;
         
         SortOrder sortOrder =
             new(
