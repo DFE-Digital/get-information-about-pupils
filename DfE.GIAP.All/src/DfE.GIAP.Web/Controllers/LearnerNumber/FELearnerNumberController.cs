@@ -105,11 +105,16 @@ public class FELearnerNumberController : Controller
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
+    private bool HasAccessToFurtherEducationNumberSearch =>
+        User.IsEstablishmentWithFurtherEducation() ||
+            User.IsEstablishmentWithAccessToULNPages() ||
+                User.IsDfeUser();
+
     [Route(Routes.FurtherEducation.LearnerNumberSearch)]
     [HttpGet]
     public async Task<IActionResult> PupilUlnSearch(bool? returnToSearch)
     {
-        if (!(User.IsEstablishmentWithFurtherEducation() || User.IsEstablishmentWithAccessToULNPages() || User.IsDfeUser()))
+        if (!HasAccessToFurtherEducationNumberSearch)
         {
             return RedirectToAction("Error", "Home");
         }
@@ -127,9 +132,7 @@ public class FELearnerNumberController : Controller
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        if (!(User.IsEstablishmentWithFurtherEducation() ||
-            User.IsEstablishmentWithAccessToULNPages() ||
-            User.IsDfeUser()))
+        if (!HasAccessToFurtherEducationNumberSearch)
         {
             return RedirectToAction("Error", "Home");
         }
