@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Microsoft.Extensions.Hosting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 namespace DfE.GIAP.Service.Download.CTF;
 
@@ -16,16 +17,19 @@ public class DownloadCommonTransferFileService : IDownloadCommonTransferFileServ
     private AzureAppSettings _azureAppSettings;
     private readonly IEventLogging _eventLogging;
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly IEventLogger _eventLogger;
 
     public DownloadCommonTransferFileService(
         IApiService apiProcessorService,
         IOptions<AzureAppSettings> azureFunctionUrls,
         IEventLogging eventLogging,
+        IEventLogger eventLogger,
         IHostEnvironment hostEnvironment)
     {
         _apiProcessorService = apiProcessorService;
         _azureAppSettings = azureFunctionUrls.Value;
         _eventLogging = eventLogging;
+        _eventLogger = eventLogger;
         _hostEnvironment = hostEnvironment;
     }
 
@@ -66,6 +70,8 @@ public class DownloadCommonTransferFileService : IDownloadCommonTransferFileServ
                                                                                             requestBody,
                                                                                             azureFunctionHeaderDetails)
                                                  .ConfigureAwait(false);
+
+        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return response;
     }

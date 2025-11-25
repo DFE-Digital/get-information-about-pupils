@@ -39,7 +39,7 @@ public abstract class BusinessEvent
 
 
 public enum DownloadType { Search, Prepared, Metadata }
-public enum DownloadFileFormat { CSV, TAB }
+public enum DownloadFileFormat { CSV, TAB, XML }
 public enum DownloadEventType { NPD, FE, PP, CTF, Security }
 
 
