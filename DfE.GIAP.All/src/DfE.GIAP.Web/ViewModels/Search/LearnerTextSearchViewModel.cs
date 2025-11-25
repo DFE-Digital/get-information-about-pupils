@@ -62,7 +62,6 @@ public class LearnerTextSearchViewModel
     public string[] SelectedGenderValues { get; set; }
     public string[] SelectedSexValues { get; set; }
     public FilterErrors FilterErrors { get; set; }
-    public int MaximumResults { get; set; }
     public RedirectUrls RedirectUrls { get; set; }
     public string SelectedPupil { get; set; }
     public string LearnerTextDatabaseName { get; set; }

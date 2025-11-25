@@ -67,7 +67,7 @@ public class LearnerTextSearchResponseToViewModelMapperTests
                 (applicationModelLearners[1], domainLearners[1])
             });
 
-        LearnerTextSearchViewModel model = new() { MaximumResults = 10 };
+        LearnerTextSearchViewModel model = new() { };
         LearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext context =
             LearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext.Create(model, response);
 

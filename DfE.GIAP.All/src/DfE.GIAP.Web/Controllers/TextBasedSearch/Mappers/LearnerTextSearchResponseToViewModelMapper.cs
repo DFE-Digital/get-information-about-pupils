@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using System.Linq;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Search.Learner;
@@ -60,18 +61,8 @@ public sealed class LearnerTextSearchResponseToViewModelMapper :
                 .Select(_furtherEducationLearnerToViewModelMapper.Map)
                 .ToList() ?? [];
 
-        // Determine the limit based on if MaximumResults is defined and PageSize
-        int limit =
-            (input.Model.MaximumResults > 0 && input.Model.MaximumResults < input.Model.PageSize)
-                ? input.Model.MaximumResults
-                : input.Model.PageSize;
-
-        // Apply result limit if the total exceeds the configured maximum
-        input.Model.Learners =
-            input.Response.TotalNumberOfResults > limit
-                ? [.. learners.Take(limit)]
-                : learners;
-
+        // Apply PageSize limit
+        input.Model.Learners = learners.Take(input.Model.PageSize);
 
         // Populate meta-data fields for pagination and UI messaging.
         input.Model.Count = input.Response.LearnerSearchResults?.Count ?? 0;

@@ -705,7 +705,7 @@ public class FELearnerTextSearchController : Controller
             SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
         model = SetSearchFiltersUrls(model);
 
@@ -713,7 +713,6 @@ public class FELearnerTextSearchController : Controller
         {
             model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
             model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
-            model.MaximumResults = IndexType == AzureSearchIndexType.FurtherEducation ? _appSettings.MaximumNonULNResults : _appSettings.MaximumNonUPNResults;
             model.DownloadSelectedLink = DownloadSelectedLink;
 
             if (currentFilters.Count > 0)
