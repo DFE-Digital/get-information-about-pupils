@@ -460,19 +460,6 @@ public class FELearnerTextSearchController : Controller
         return View(SearchView, model);
     }
 
-    [NonAction]
-    public virtual async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
-    {
-        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
-            model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
-
-        if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
-            model.SearchFilters =
-                _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
-
-        return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
-    }
-
 
     [NonAction]
     public async Task<IActionResult> DobSearchFilter(LearnerTextSearchViewModel model)
@@ -633,7 +620,7 @@ public class FELearnerTextSearchController : Controller
         _selectionManager.Clear();
         ClearSortOptions();
 
-        return await Search(model, null, null, null, null, model.PageNumber, false);
+        return await Search(model, null, null, null, null, model.PageNumber);
     }
 
     private void GetPersistedGenderFiltersForViewModel(
