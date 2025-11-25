@@ -1,0 +1,17 @@
+﻿global using System.Text;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Dotnet;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Host;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
+global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Server;
+global using Newtonsoft.Json;
+global using Newtonsoft.Json.Linq;
+global using WireMock.Admin.Mappings;
+global using WireMock.Logging;
+global using WireMock.Server;
+global using WireMock.Settings;
+global using Xunit;

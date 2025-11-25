@@ -1,9 +1,13 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Features.Auth.Application;
+using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Application.PostTokenHandlers;
 using DfE.GIAP.Web.Features.Auth.Infrastructure;
 using DfE.GIAP.Web.Features.Auth.Infrastructure.Config;
+using DfE.GIAP.Web.Features.Auth.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Web.Features.Auth.Infrastructure.Mappers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
@@ -23,6 +27,8 @@ public static class CompositionRoot
         // Core application services
         services.AddScoped<IClaimsEnricher, DfeClaimsEnricher>();
         services.AddSingleton<ISigningCredentialsProvider, SymmetricSigningCredentialsProvider>();
+
+        services.AddScoped<IMapper<OrganisationDto, Organisation>, OrganisationDtoToEntityOrganisation>();
 
         services.AddScoped<IPostTokenValidatedHandler, ClaimsEnrichmentHandler>();
         services.AddScoped<IPostTokenValidatedHandler, CreateUserIfNotExistHandler>();
