@@ -373,9 +373,9 @@ public class FELearnerTextSearchController : Controller
 
             GetPersistedGenderFiltersForViewModel(model);
             GetPersistedSexFiltersForViewModel(model);
-            model = await GenerateLearnerTextSearchViewModel(model, null, null, null, null, model.SortField, model.SortDirection);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
+            model = await GenerateLearnerTextSearchViewModel(model, null, null, null, null, model.SortField, model.SortDirection);
         }
 
         if (!returnToSearch.HasValue)
@@ -434,13 +434,13 @@ public class FELearnerTextSearchController : Controller
         if (!string.IsNullOrEmpty(model.SearchText))
         {
             model = await GenerateLearnerTextSearchViewModel(
-            model,
-            surnameFilter,
-            middlenameFilter,
-            forenameFilter,
-            searchByRemove,
-            model.SortField,
-            model.SortDirection);
+                model,
+                surnameFilter,
+                middlenameFilter,
+                forenameFilter,
+                searchByRemove,
+                model.SortField,
+                model.SortDirection);
         }
 
         model.ReturnRoute = ReturnRoute;
