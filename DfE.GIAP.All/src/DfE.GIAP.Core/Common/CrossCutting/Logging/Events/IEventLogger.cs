@@ -3,10 +3,8 @@
 public interface IEventLogger
 {
     void LogSearch(bool isCustomSearch, string customTextSearch);
-
     void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat, DownloadEventType? downloadEventType = null);
-
-    void LogSignin();
+    void LogSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory);
 }
 
 public class EventLogger : IEventLogger
@@ -34,9 +32,9 @@ public class EventLogger : IEventLogger
         Dispatch(evt);
     }
 
-    public void LogSignin()
+    public void LogSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory)
     {
-        SigninEvent evt = _businessEventFactory.CreateSignin();
+        SigninEvent evt = _businessEventFactory.CreateSignin(userId, sessionId, orgUrn, orgName, orgCategory);
         Dispatch(evt);
     }
 

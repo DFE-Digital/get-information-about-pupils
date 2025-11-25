@@ -35,14 +35,9 @@ public class BusinessEventFactory : IBusinessEventFactory
         return new DownloadEvent(userId, sessionId, description, orgUrn, orgName, orgCategory, downloadType, downloadFormat, downloadEventType);
     }
 
-    public SigninEvent CreateSignin()
+    public SigninEvent CreateSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory)
     {
-        string userId = _httpContextAccessor.HttpContext.User.GetUserId();
-        string sessionId = _httpContextAccessor.HttpContext.User.GetSessionId();
         string description = "User logged in";
-        string orgUrn = _httpContextAccessor.HttpContext.User.GetUniqueReferenceNumber();
-        string orgName = _httpContextAccessor.HttpContext.User.GetOrganisationName();
-        string orgCategory = _httpContextAccessor.HttpContext.User.GetOrganisationCategoryID();
 
         return new SigninEvent(userId, sessionId, description, orgUrn, orgName, orgCategory);
     }
