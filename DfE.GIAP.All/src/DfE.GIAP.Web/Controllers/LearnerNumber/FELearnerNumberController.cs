@@ -319,8 +319,12 @@ public class FELearnerNumberController : Controller
     [NonAction]
     public async Task<IActionResult> Search(
         LearnerNumberSearchViewModel model,
-        int pageNumber, string sortField = "", string sortDirection = "",
-        bool hasQueryItem = false, bool calledByController = false, bool resetSelections = false)
+        int pageNumber,
+        string sortField = "",
+        string sortDirection = "",
+        bool hasQueryItem = false,
+        bool calledByController = false,
+        bool resetSelections = false)
     {
         _logger.LogInformation("BaseLearnerNumberController POST method called");
         if (resetSelections)
