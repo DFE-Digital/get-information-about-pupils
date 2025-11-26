@@ -448,7 +448,7 @@ public class FELearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        model.ShowMiddleNames = ShowMiddleNames;
 
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
 
