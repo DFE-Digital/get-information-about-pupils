@@ -51,7 +51,11 @@ public class LearnerNumericSearchResponseToViewModelMapperTests
                 (applicationModelLearners[1], domainLearners[1])
             });
 
-        LearnerNumberSearchViewModel model = new() { MaximumResults = 10 };
+        LearnerNumberSearchViewModel model = new()
+        {
+            PageSize = 1
+        };
+
         LearnerNumericSearchMappingContext context =
             LearnerNumericSearchMappingContext.Create(model, response);
 

@@ -53,8 +53,6 @@ public class LearnerNumberSearchViewModel
     public string ErrorDetails { get; set; }
     public string SearchBoxErrorMessage { get; set; }
 
-    public int MaximumResults { get; set; }
-
     /// <summary>
     /// The offset is used to skip the defined number of records retrieved
     /// on a search request. 

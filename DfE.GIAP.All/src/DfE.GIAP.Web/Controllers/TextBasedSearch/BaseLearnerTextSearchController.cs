@@ -610,7 +610,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
             model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
-            model.MaximumResults = IndexType == AzureSearchIndexType.FurtherEducation ? _appSettings.MaximumNonULNResults : _appSettings.MaximumNonUPNResults;
             model.DownloadSelectedLink = DownloadSelectedLink;
 
 
@@ -673,15 +672,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         var lowAge = User.GetOrganisationLowAge();
         var highAge = User.GetOrganisationHighAge();
 
-        if (result.Count > model.MaximumResults)
-        {
-            model.Learners = result.Learners.Take(model.MaximumResults).ToList();
-        }
-        else
-        {
-            model.Learners = result.Learners;
-        }
-
+        model.Learners = result.Learners;
         model.Count = (int)result.Count;
         model.Total = result.Count ?? result.Learners.Count;
 

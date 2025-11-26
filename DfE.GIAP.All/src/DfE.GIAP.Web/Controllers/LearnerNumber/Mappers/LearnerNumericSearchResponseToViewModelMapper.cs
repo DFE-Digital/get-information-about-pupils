@@ -35,11 +35,8 @@ public sealed class LearnerNumericSearchResponseToViewModelMapper :
                 .Select(_furtherEducationLearnerToViewModelMapper.Map)
                 .ToList() ?? [];
 
-        // Apply result limit if the total exceeds the configured maximum.
-        input.Model.Learners =
-            input.Response.TotalNumberOfResults > input.Model.MaximumResults
-                ? [.. learners.Take(input.Model.MaximumResults)]
-                : learners;
+        // Apply PageSize limit
+        input.Model.Learners = learners.Take(input.Model.PageSize);
 
         // Populate meta-data fields for pagination and UI messaging.
         input.Model.Total = input.Response.TotalNumberOfResults;
