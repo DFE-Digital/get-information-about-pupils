@@ -15,50 +15,23 @@ public class NationalPupil
     public char? Sex { get; set; }
     public DateTime DOB { get; set; }
 
-    public List<CensusAutumnEntry> CensusAutumn { get; set; } = new();
-    public List<CensusSpringEntry> CensusSpring { get; set; } = new();
-    public List<CensusSummerEntry> CensusSummer { get; set; } = new();
-    public List<EarlyYearsFoundationStageProfileEntry> EarlyYearsFoundationStageProfile { get; set; } = new();
-    public List<PhonicsEntry> Phonics { get; set; } = new();
-    public List<KeyStage1Entry> KeyStage1 { get; set; } = new();
-    public List<KeyStage2Entry> KeyStage2 { get; set; } = new();
+    public List<CensusAutumnEntry>? CensusAutumn { get; set; }
+    public List<CensusSpringEntry>? CensusSpring { get; set; } 
+    public List<CensusSummerEntry>? CensusSummer { get; set; }
+    public List<EarlyYearsFoundationStageProfileEntry>? EarlyYearsFoundationStageProfile { get; set; }
+    public List<PhonicsEntry>? Phonics { get; set; }
+    public List<KeyStage1Entry>? KeyStage1 { get; set; }
+    public List<KeyStage2Entry>? KeyStage2 { get; set; }
     public List<KeyStage4Entry> KeyStage4 { get; set; } = new();
     public List<MtcEntry> MTC { get; set; } = new();
 
-    public bool HasCensusAutumData => CensusAutumn.Any();
-    public bool HasCensusSpringData => CensusSpring.Any();
-    public bool HasCensusSummerData => CensusSummer.Any();
-    public bool HasEYFSPData => EarlyYearsFoundationStageProfile.Any();
-    public bool HasPhonicsData => Phonics.Any();
-    public bool HasKeyStage1Data => KeyStage1.Any();
-    public bool HasKeyStage2Data => KeyStage2.Any();
-    public bool HasKeyStage4Data => KeyStage4.Any();
-    public bool HasMtcData => MTC.Any();
-
-    public void SetAdditionalProperties()
-    {
-        if (CensusSpring != null)
-        {
-            foreach (CensusSpringEntry censusSpringEntity in CensusSpring)
-            {
-                censusSpringEntity.PupilMatchingRef = PupilMatchingRef;
-            }
-        }
-
-        if (CensusSummer != null)
-        {
-            foreach (CensusSummerEntry censusSummerEntity in CensusSummer)
-            {
-                censusSummerEntity.PupilMatchingRef = PupilMatchingRef;
-            }
-        }
-
-        if (CensusAutumn != null)
-        {
-            foreach (CensusAutumnEntry censusAutumnEntity in CensusAutumn)
-            {
-                censusAutumnEntity.PupilMatchingRef = PupilMatchingRef;
-            }
-        }
-    }
+    public bool HasCensusAutumData => CensusAutumn?.Any() ?? false;
+    public bool HasCensusSpringData => CensusSpring?.Any() ?? false;
+    public bool HasCensusSummerData => CensusSummer?.Any() ?? false;
+    public bool HasEYFSPData => EarlyYearsFoundationStageProfile?.Any() ?? false;
+    public bool HasPhonicsData => Phonics?.Any() ?? false;
+    public bool HasKeyStage1Data => KeyStage1?.Any() ?? false;
+    public bool HasKeyStage2Data => KeyStage2?.Any() ?? false;
+    public bool HasKeyStage4Data => KeyStage4?.Any() ?? false;
+    public bool HasMtcData => MTC?.Any() ?? false;
 }
