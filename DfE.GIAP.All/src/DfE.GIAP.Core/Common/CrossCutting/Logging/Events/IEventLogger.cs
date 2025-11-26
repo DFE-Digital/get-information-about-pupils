@@ -1,9 +1,13 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Sinks;
+
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 public interface IEventLogger
 {
     void LogSearch(bool isCustomSearch, string customTextSearch);
-    void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat, DownloadEventType? downloadEventType = null);
+    void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+        DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null);
     void LogSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory);
 }
 
@@ -26,9 +30,10 @@ public class EventLogger : IEventLogger
         Dispatch(evt);
     }
 
-    public void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat, DownloadEventType? downloadEventType = null)
+    public void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+        DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null)
     {
-        DownloadEvent evt = _businessEventFactory.CreateDownload(downloadType, downloadFormat, downloadEventType);
+        DownloadEvent evt = _businessEventFactory.CreateDownload(downloadType, downloadFormat, downloadEventType, batchId, dataset);
         Dispatch(evt);
     }
 

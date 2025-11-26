@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Sinks;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
 using Microsoft.Extensions.DependencyInjection;

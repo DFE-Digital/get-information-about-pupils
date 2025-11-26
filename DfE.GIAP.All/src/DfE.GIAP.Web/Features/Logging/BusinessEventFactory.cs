@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Extensions;
 
 namespace DfE.GIAP.Web.Features.Logging;
@@ -23,7 +24,8 @@ public class BusinessEventFactory : IBusinessEventFactory
         return new SearchEvent(userId, sessionId, description, orgUrn, orgName, orgCategory, isCustomSearch, customTextSearch);
     }
 
-    public DownloadEvent CreateDownload(DownloadType downloadType, DownloadFileFormat downloadFormat, DownloadEventType? downloadEventType = null)
+    public DownloadEvent CreateDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+        DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null)
     {
         string userId = _httpContextAccessor.HttpContext.User.GetUserId();
         string sessionId = _httpContextAccessor.HttpContext.User.GetSessionId();
@@ -32,7 +34,8 @@ public class BusinessEventFactory : IBusinessEventFactory
         string orgName = _httpContextAccessor.HttpContext.User.GetOrganisationName();
         string orgCategory = _httpContextAccessor.HttpContext.User.GetOrganisationCategoryID();
 
-        return new DownloadEvent(userId, sessionId, description, orgUrn, orgName, orgCategory, downloadType, downloadFormat, downloadEventType);
+        return new DownloadEvent(userId, sessionId, description, orgUrn, orgName, orgCategory,
+            downloadType, downloadFormat, downloadEventType, batchId, dataset);
     }
 
     public SigninEvent CreateSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory)

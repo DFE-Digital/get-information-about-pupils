@@ -1,11 +1,7 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
+using Microsoft.ApplicationInsights;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
-
-public interface IEventSink
-{
-    void Write(BusinessEvent evt);
-}
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Sinks;
 
 public class AzureAppInsightEventSink : IEventSink
 {
