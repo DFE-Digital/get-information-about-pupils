@@ -30,6 +30,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -1897,9 +1898,18 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
             .ReturnsAsync(response);
 
+        IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
+
+        Mock<IMapper<(string SortField, string SortDirection), SortOrder>> mockMapper = new();
+
+        mockMapper
+            .Setup((mapper) => mapper.Map(It.IsAny<(string, string)>()))
+            .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
+
         return new FELearnerNumberController(
             _mockUseCase,
             _mockLearnerNumberSearchResponseToViewModelMapper,
+            mockMapper.Object,
             _mockLogger,
             _mockDownloadService,
             _mockSelectionManager,

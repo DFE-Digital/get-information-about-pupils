@@ -46,6 +46,9 @@ public class FELearnerNumberController : Controller
         LearnerNumericSearchMappingContext,
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
 
+    private readonly IMapper<
+        (string Field, string Direction), SortOrder> _sortOrderViewModelToRequestMapper;
+
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
@@ -76,10 +79,13 @@ public class FELearnerNumberController : Controller
         IMapper<
             LearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
+        IMapper<
+            (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
         ILogger<FELearnerNumberController> logger,
         IDownloadService downloadService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
+
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
@@ -87,6 +93,9 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
+
+        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
+        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -303,9 +312,9 @@ public class FELearnerNumberController : Controller
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
+            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
         }
 
         if (!returnToSearch.HasValue)
@@ -381,13 +390,13 @@ public class FELearnerNumberController : Controller
                     model.SelectedPupil);
             }
 
+            model.PageNumber = pageNumber;
+            model.PageSize = PAGESIZE;
+
             model = await GetPupilsForSearchBuilder(
                 model,
                 pageNumber,
                 notPaged).ConfigureAwait(false);
-
-            model.PageNumber = pageNumber;
-            model.PageSize = PAGESIZE;
         }
 
         HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);
@@ -421,13 +430,8 @@ public class FELearnerNumberController : Controller
         {
             searchText = model.LearnerIdSearchResult;
         }
-        
-        SortOrder sortOrder =
-            new(
-                sortField: "Forename",
-                sortDirection: "desc",
-                validSortFields: ["Forename", "Surname"]
-            );
+
+        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map((model.SortField, model.SortDirection));
 
         IList<FilterRequest> filterRequests =
         [
