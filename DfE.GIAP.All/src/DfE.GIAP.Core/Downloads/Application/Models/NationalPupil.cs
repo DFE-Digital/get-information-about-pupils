@@ -16,7 +16,7 @@ public class NationalPupil
     public DateTime DOB { get; set; }
 
     public List<CensusAutumnEntry>? CensusAutumn { get; set; }
-    public List<CensusSpringEntry>? CensusSpring { get; set; } 
+    public List<CensusSpringEntry>? CensusSpring { get; set; }
     public List<CensusSummerEntry>? CensusSummer { get; set; }
     public List<EarlyYearsFoundationStageProfileEntry>? EarlyYearsFoundationStageProfile { get; set; }
     public List<PhonicsEntry>? Phonics { get; set; }
