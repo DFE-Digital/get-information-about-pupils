@@ -115,9 +115,10 @@ public class FELearnerNumberController : Controller
     }
 
     private bool HasAccessToFurtherEducationNumberSearch =>
-        User.IsEstablishmentWithFurtherEducation() ||
-            User.IsEstablishmentWithAccessToULNPages() ||
-                User.IsDfeUser();
+        User.IsAdmin() ||
+            User.IsEstablishmentWithFurtherEducation() ||
+                User.IsEstablishmentWithAccessToULNPages() ||
+                    User.IsDfeUser();
 
     [Route(Routes.FurtherEducation.LearnerNumberSearch)]
     [HttpGet]
