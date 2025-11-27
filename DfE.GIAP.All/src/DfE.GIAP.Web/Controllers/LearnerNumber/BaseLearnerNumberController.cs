@@ -387,7 +387,13 @@ namespace DfE.GIAP.Web.Controllers
                 {
                     _logger.LogError(
                         "Some of the LearnerNumber(s) are not valid identifiers: {Identifiers}...",
-                            string.Join(", ", model.Invalid.Take(10)));
+                            string.Join(", ",
+                            model.Invalid
+                                .Take(10)
+                                .Select((invalidUpn) =>
+                                    invalidUpn
+                                        .Replace("\n", string.Empty)
+                                        .Replace("\r", string.Empty))));
                 }
                 //result.Reverse(); // TODO: why is this here?
             }
