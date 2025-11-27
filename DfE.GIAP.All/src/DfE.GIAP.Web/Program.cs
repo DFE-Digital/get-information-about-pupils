@@ -51,9 +51,7 @@ builder.Services
     .AddAllServices()
     .AddWebProviders()
     .AddAuthConfiguration()
-    .AddCookieAndSessionConfiguration()
-    .AddAzureAppConfiguration()
-    .AddFeatureFlagConfiguration(configuration);
+    .AddCookieAndSessionConfiguration();
 
 builder.Services.AddSingleton<IMapper<
     LearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
@@ -103,7 +101,6 @@ if (app.Environment.IsLocal())
 else
 {
     app.UseExceptionHandler("/Home/Exception");
-    app.UseAzureAppConfiguration();
 }
 
 app.UseHsts();
