@@ -161,7 +161,7 @@ public class FELearnerTextSearchController : Controller
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
-    private bool HasAccessToFurtherEducationNumberSearch =>
+    private bool HasAccessToFurtherEducationSearch =>
         User.IsAdmin() ||
             User.IsEstablishmentWithFurtherEducation() ||
                 User.IsEstablishmentWithAccessToULNPages() ||
@@ -171,7 +171,7 @@ public class FELearnerTextSearchController : Controller
     [HttpGet]
     public async Task<IActionResult> FurtherEducationNonUlnSearch(bool? returnToSearch)
     {
-        if (!HasAccessToFurtherEducationNumberSearch)
+        if (!HasAccessToFurtherEducationSearch)
         {
             return RedirectToAction("Error", "Home");
         }
