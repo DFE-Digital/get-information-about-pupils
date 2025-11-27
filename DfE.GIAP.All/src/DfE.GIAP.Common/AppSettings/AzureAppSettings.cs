@@ -12,7 +12,6 @@ public class AzureAppSettings
     public int MaximumNonUPNResults { get; set; }
     public int MaximumUPNsPerSearch { get; set; }
     public int MaximumULNsPerSearch { get; set; }
-    public int MaximumNonULNResults { get; set; }
     public int NonUpnPPMyPupilListLimit { get; set; }
     public int NonUpnNPDMyPupilListLimit { get; set; }
     public int UpnPPMyPupilListLimit { get; set; }

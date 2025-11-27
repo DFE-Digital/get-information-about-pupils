@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
@@ -7,6 +8,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Application.Models;
+using DfE.GIAP.SharedTests.Extensions;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
@@ -36,7 +38,9 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
-        services.AddMyPupilsDependencies();
+        services
+            .AddMyPupilsDependencies()
+            .ConfigureAzureSearchClients();
     }
 
     [Fact]

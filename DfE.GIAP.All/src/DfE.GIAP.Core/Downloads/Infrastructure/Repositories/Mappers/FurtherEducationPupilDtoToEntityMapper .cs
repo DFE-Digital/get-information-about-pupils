@@ -27,18 +27,18 @@ internal class FurtherEducationPupilDtoToEntityMapper : IMapper<FurtherEducation
             Gender = input.Gender,
             DOB = input.DOB,
             ConcatenatedName = input.ConcatenatedName,
-            PupilPremium = input.PupilPremium.Select(dto => new PupilPremiumEntry
+            PupilPremium = input.PupilPremium?.Select(dto => new PupilPremiumEntry
             {
                 NationalCurriculumYear = dto.NationalCurriculumYear,
                 FullTimeEquivalent = dto.FullTimeEquivalent,
                 AcademicYear = dto.AcademicYear
-            }).ToList(),
-            specialEducationalNeeds = input.specialEducationalNeeds.Select(dto => new SpecialEducationalNeedsEntry
+            }).ToList() ?? [],
+            specialEducationalNeeds = input.specialEducationalNeeds?.Select(dto => new SpecialEducationalNeedsEntry
             {
                 NationalCurriculumYear = dto.NationalCurriculumYear,
                 Provision = dto.Provision,
                 AcademicYear = dto.AcademicYear
-            }).ToList()
+            }).ToList() ?? []
         };
     }
 }
