@@ -31,6 +31,7 @@ using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchR
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
+[FeatureGate(FeatureFlags.FurtherEducation)]
 [Route(Routes.Application.Search)]
 public class FELearnerTextSearchController : Controller
 {
