@@ -161,10 +161,21 @@ public class FELearnerTextSearchController : Controller
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
+    private bool HasAccessToFurtherEducationSearch =>
+        User.IsAdmin() ||
+            User.IsEstablishmentWithFurtherEducation() ||
+                User.IsEstablishmentWithAccessToULNPages() ||
+                    User.IsDfeUser();
+
     [Route(Routes.FurtherEducation.LearnerTextSearch)]
     [HttpGet]
     public async Task<IActionResult> FurtherEducationNonUlnSearch(bool? returnToSearch)
     {
+        if (!HasAccessToFurtherEducationSearch)
+        {
+            return RedirectToAction("Error", "Home");
+        }
+
         _logger.LogInformation("Further education non ULN search GET method called");
         return await Search(returnToSearch);
     }
