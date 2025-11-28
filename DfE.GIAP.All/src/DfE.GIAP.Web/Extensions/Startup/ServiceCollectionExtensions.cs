@@ -27,7 +27,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.FeatureManagement;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -40,21 +39,6 @@ public static class ServiceCollectionExtensions
             .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName))
             .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName)) // TODO: Move
             .Configure<BlobStorageOptions>(configuration.GetSection(BlobStorageOptions.SectionName)); // TODO: Move
-
-        return services;
-    }
-
-    internal static IServiceCollection AddFeatureFlagConfiguration(this IServiceCollection services, IConfigurationManager configuration)
-    {
-        services.AddFeatureManagement(configuration);
-
-        AzureAppSettings appSettings = configuration.Get<AzureAppSettings>();
-        string connectionUrl = appSettings.FeatureFlagAppConfigUrl;
-        if (!string.IsNullOrWhiteSpace(connectionUrl))
-        {
-            configuration.AddAzureAppConfiguration(options =>
-                options.Connect(connectionUrl).UseFeatureFlags());
-        }
 
         return services;
     }

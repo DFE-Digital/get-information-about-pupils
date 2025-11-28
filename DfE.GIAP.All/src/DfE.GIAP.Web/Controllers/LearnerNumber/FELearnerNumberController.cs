@@ -25,12 +25,10 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.FeatureManagement.Mvc;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
-[FeatureGate(FeatureFlags.FurtherEducation)]
 [Route(Routes.Application.Search)]
 public class FELearnerNumberController : Controller
 {
@@ -119,16 +117,17 @@ public class FELearnerNumberController : Controller
         _eventLogger = eventLogger;
     }
 
-    private bool HasAccessToFurtherEducationNumberSearch =>
-        User.IsEstablishmentWithFurtherEducation() ||
-            User.IsEstablishmentWithAccessToULNPages() ||
-                User.IsDfeUser();
+    private bool HasAccessToFurtherEducationSearch =>
+        User.IsAdmin() ||
+            User.IsEstablishmentWithFurtherEducation() ||
+                User.IsEstablishmentWithAccessToULNPages() ||
+                    User.IsDfeUser();
 
     [Route(Routes.FurtherEducation.LearnerNumberSearch)]
     [HttpGet]
     public async Task<IActionResult> PupilUlnSearch(bool? returnToSearch)
     {
-        if (!HasAccessToFurtherEducationNumberSearch)
+        if (!HasAccessToFurtherEducationSearch)
         {
             return RedirectToAction("Error", "Home");
         }
@@ -146,7 +145,7 @@ public class FELearnerNumberController : Controller
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        if (!HasAccessToFurtherEducationNumberSearch)
+        if (!HasAccessToFurtherEducationSearch)
         {
             return RedirectToAction("Error", "Home");
         }
