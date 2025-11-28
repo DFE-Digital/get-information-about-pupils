@@ -5,7 +5,7 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 public interface IEventLogger
 {
-    void LogSearch(bool isCustomSearch, string customTextSearch);
+    void LogSearch(SearchIdentifierType searchIdentifierType, bool isCustomSearch, Dictionary<string, bool> filterFlags);
     void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null);
     void LogSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory);
@@ -24,9 +24,9 @@ public class EventLogger : IEventLogger
         _sinks = sinks;
     }
 
-    public void LogSearch(bool isCustomSearch, string customTextSearch)
+    public void LogSearch(SearchIdentifierType searchIdentifierType, bool isCustomSearch, Dictionary<string, bool> filterFlags)
     {
-        SearchEvent evt = _businessEventFactory.CreateSearch(isCustomSearch, customTextSearch);
+        SearchEvent evt = _businessEventFactory.CreateSearch(searchIdentifierType, isCustomSearch, filterFlags);
         Dispatch(evt);
     }
 

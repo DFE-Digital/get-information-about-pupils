@@ -1,11 +1,16 @@
 ﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 
-public class SigninEvent : BusinessEvent
+public record SigninEvent(
+    string UserId,
+    string SessionId,
+    string Description,
+    string OrgURN,
+    string OrgName,
+    string OrgCategory,
+    SigninPayload Payload)
+    : BusinessEvent<SigninPayload>(UserId, SessionId, Description, OrgURN, OrgName, OrgCategory, Payload)
 {
-    public SigninEvent(string userId, string sessionId, string description,
-        string orgURN, string orgName, string orgCategory)
-        : base(userId, sessionId, description, orgURN, orgName, orgCategory) { }
-
-    public override string EventName => "SigninEvent";
+    public override string EventName => nameof(SigninEvent);
 }
 
+public record SigninPayload() : IEventPayload;

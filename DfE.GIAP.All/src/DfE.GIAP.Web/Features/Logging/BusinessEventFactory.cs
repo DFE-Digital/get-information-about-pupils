@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿using System.Security.Claims;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Extensions;
 
@@ -12,37 +13,49 @@ public class BusinessEventFactory : IBusinessEventFactory
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public SearchEvent CreateSearch(bool isCustomSearch, string customTextSearch)
+    public SearchEvent CreateSearch(SearchIdentifierType searchIdentifierType, bool isCustomSearch, Dictionary<string, bool> filterFlags)
     {
-        string userId = _httpContextAccessor.HttpContext.User.GetUserId();
-        string sessionId = _httpContextAccessor.HttpContext.User.GetSessionId();
-        string description = "User performed a search";
-        string orgUrn = _httpContextAccessor.HttpContext.User.GetUniqueReferenceNumber();
-        string orgName = _httpContextAccessor.HttpContext.User.GetOrganisationName();
-        string orgCategory = _httpContextAccessor.HttpContext.User.GetOrganisationCategoryID();
+        ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
+        SearchPayload payload = new(searchIdentifierType, isCustomSearch, filterFlags);
 
-        return new SearchEvent(userId, sessionId, description, orgUrn, orgName, orgCategory, isCustomSearch, customTextSearch);
+        return new SearchEvent(
+            UserId: user.GetUserId(),
+            SessionId: user.GetSessionId(),
+            Description: "User performed a search",
+            OrgURN: user.GetUniqueReferenceNumber(),
+            OrgName: user.GetOrganisationName(),
+            OrgCategory: user.GetOrganisationCategoryID(),
+            Payload: payload);
     }
 
     public DownloadEvent CreateDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null)
     {
-        string userId = _httpContextAccessor.HttpContext.User.GetUserId();
-        string sessionId = _httpContextAccessor.HttpContext.User.GetSessionId();
-        string description = "User performed a download";
-        string orgUrn = _httpContextAccessor.HttpContext.User.GetUniqueReferenceNumber();
-        string orgName = _httpContextAccessor.HttpContext.User.GetOrganisationName();
-        string orgCategory = _httpContextAccessor.HttpContext.User.GetOrganisationCategoryID();
+        ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
+        DownloadPayload payload = new(downloadType, downloadFormat, downloadEventType, batchId, dataset);
 
-        return new DownloadEvent(userId, sessionId, description, orgUrn, orgName, orgCategory,
-            downloadType, downloadFormat, downloadEventType, batchId, dataset);
+        return new DownloadEvent(
+            UserId: user.GetUserId(),
+            SessionId: user.GetSessionId(),
+            Description: "User performed a download",
+            OrgURN: user.GetUniqueReferenceNumber(),
+            OrgName: user.GetOrganisationName(),
+            OrgCategory: user.GetOrganisationCategoryID(),
+            Payload: payload);
     }
 
     public SigninEvent CreateSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory)
     {
-        string description = "User logged in";
+        SigninPayload payload = new();
 
-        return new SigninEvent(userId, sessionId, description, orgUrn, orgName, orgCategory);
+        return new SigninEvent(
+            UserId: userId,
+            SessionId: sessionId,
+            Description: "User logged in",
+            OrgURN: orgUrn,
+            OrgName: orgName,
+            OrgCategory: orgCategory,
+            Payload: payload);
     }
 }
 

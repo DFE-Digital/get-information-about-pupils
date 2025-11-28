@@ -1,36 +1,50 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
+﻿using System.Reflection;
 
-public abstract class BusinessEvent
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
+
+public abstract record BusinessEvent(
+    string UserId,
+    string SessionId,
+    string Description,
+    string OrgURN,
+    string OrgName,
+    string OrgCategory)
 {
-    public string UserId { get; }
-    public string SessionId { get; }
-    public string Description { get; }
-    public string OrgURN { get; }
-    public string OrgName { get; }
-    public string OrgCategory { get; }
-
-    protected BusinessEvent(string userId, string sessionId, string description,
-        string orgURN, string orgName, string orgCategory)
-    {
-        UserId = userId;
-        SessionId = sessionId;
-        Description = description;
-        OrgURN = orgURN;
-        OrgName = orgName;
-        OrgCategory = orgCategory;
-    }
-
     public abstract string EventName { get; }
-    public virtual IDictionary<string, string> ToProperties()
+    public abstract IDictionary<string, string> ToProperties();
+
+    protected IDictionary<string, string> BaseProperties() => new Dictionary<string, string>
     {
-        return new Dictionary<string, string>
+        ["UserId"] = UserId,
+        ["SessionId"] = SessionId,
+        ["Description"] = Description,
+        ["OrgURN"] = OrgURN,
+        ["OrgName"] = OrgName,
+        ["OrgCategory"] = OrgCategory
+
+    };
+}
+
+public abstract record BusinessEvent<TPayload>(
+    string UserId,
+    string SessionId,
+    string Description,
+    string OrgURN,
+    string OrgName,
+    string OrgCategory,
+    TPayload Payload) : BusinessEvent(UserId, SessionId, Description, OrgURN, OrgName, OrgCategory)
+    where TPayload : IEventPayload
+{
+    public TPayload Properties => Payload;
+
+    public override IDictionary<string, string> ToProperties()
+    {
+        IDictionary<string, string> props = BaseProperties();
+        foreach (PropertyInfo p in typeof(TPayload).GetProperties())
         {
-            { "UserId", UserId },
-            { "SessionId", SessionId },
-            { "Description", Description },
-            { "OrgURN", OrgURN },
-            { "OrgName", OrgName },
-            { "OrgCategory", OrgCategory }
-        };
+            props[p.Name] = p.GetValue(Payload)?.ToString() ?? string.Empty;
+        }
+
+        return props;
     }
 }

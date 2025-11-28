@@ -144,6 +144,21 @@ public class DownloadService : IDownloadService
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "tab" };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getTABFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
+        string loggingBatchId = Guid.NewGuid().ToString();
+        foreach (string dataset in requestBody.DataTypes)
+        {
+            // TODO: Temp quick solution
+            if (Enum.TryParse<Dataset>(dataset, out Dataset datasetEnum))
+            {
+                _eventLogger.LogDownload(
+                    Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                    DownloadFileFormat.TAB,
+                    DownloadEventType.NPD,
+                    loggingBatchId,
+                    datasetEnum);
+            }
+        }
+
         return response;
     }
 
@@ -183,6 +198,21 @@ public class DownloadService : IDownloadService
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation, ConfirmationGiven = confirmationGiven };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+
+        string loggingBatchId = Guid.NewGuid().ToString();
+        foreach (string dataset in requestBody.DataTypes)
+        {
+            // TODO: Temp quick solution
+            if (Enum.TryParse<Dataset>(dataset, out Dataset datasetEnum))
+            {
+                _eventLogger.LogDownload(
+                    Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                    DownloadFileFormat.CSV,
+                    DownloadEventType.PP,
+                    loggingBatchId,
+                    datasetEnum);
+            }
+        }
 
         return response;
     }

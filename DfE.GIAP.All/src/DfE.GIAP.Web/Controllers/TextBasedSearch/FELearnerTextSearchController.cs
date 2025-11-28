@@ -5,6 +5,7 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -83,6 +84,7 @@ public class FELearnerTextSearchController : Controller
     private readonly ISessionProvider _sessionProvider;
     private readonly IDownloadService _downloadService;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+    private readonly IEventLogger _eventLogger;
     private readonly ILogger<FELearnerTextSearchController> _logger;
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly AzureAppSettings _appSettings;
@@ -121,6 +123,7 @@ public class FELearnerTextSearchController : Controller
         IPaginatedSearchService paginatedSearch,
         ITextSearchSelectionManager selectionManager,
         IDownloadService downloadService,
+        IEventLogger eventLogger,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
@@ -157,6 +160,8 @@ public class FELearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     [Route(Routes.FurtherEducation.LearnerTextSearch)]
@@ -709,6 +714,11 @@ public class FELearnerTextSearchController : Controller
         List<CurrentFilterDetail> currentFilters =
             SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
+
+        bool isCustomSearch = !string.IsNullOrWhiteSpace(model.SearchText);
+        Dictionary<string, bool> flags = ConvertFiltersToFlags(currentFilters);
+        _eventLogger.LogSearch(SearchIdentifierType.ULN, isCustomSearch, flags);
+
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
         model.ShowMiddleNames = ShowMiddleNames;
 
@@ -749,6 +759,22 @@ public class FELearnerTextSearchController : Controller
 
         return _learnerSearchResponseToViewModelMapper.Map(
             LearnerTextSearchMappingContext.Create(model, searchResponse));
+    }
+
+    public static Dictionary<string, bool> ConvertFiltersToFlags(List<CurrentFilterDetail> filters)
+    {
+        Dictionary<string, bool> flags = new();
+
+        if (filters is null)
+            return flags;
+
+        foreach (CurrentFilterDetail filerDetails in filters)
+        {
+            // True if the filter has at least one value
+            flags[filerDetails.FilterType.ToString()] = true;
+        }
+
+        return flags;
     }
 
     private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
