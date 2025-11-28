@@ -9,6 +9,7 @@ public class AzureAppInsightEventSink : IEventSink
 
     public AzureAppInsightEventSink(TelemetryClient telemetryClient)
     {
+        ArgumentNullException.ThrowIfNull(telemetryClient);
         _telemetryClient = telemetryClient;
     }
 

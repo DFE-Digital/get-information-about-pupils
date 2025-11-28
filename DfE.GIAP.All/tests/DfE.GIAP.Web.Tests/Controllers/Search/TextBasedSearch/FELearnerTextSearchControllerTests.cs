@@ -4,6 +4,7 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -1436,6 +1437,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         var httpContextStub = new DefaultHttpContext() { User = user, Session = new Mock<ISession>().Object };
         var mockTempData = new TempDataDictionary(httpContextStub, _mockTempDataProvider);
+        Mock<IEventLogger> mockEventLogger = new();
 
         List<AvailableDatasetResult> availableDatasetResults = new()
             {
@@ -1459,6 +1461,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             _mockPaginatedService,
             _mockSelectionManager,
             _mockDownloadService,
+            mockEventLogger.Object,
             _mockAppOptions,
             mockGetAvailableDatasetsForPupilsUseCase.Object)
         {
