@@ -4,8 +4,7 @@ using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.ApiProcessor;
 using Microsoft.Extensions.Options;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Service.ApplicationInsightsTelemetry;
-using Microsoft.Extensions.Hosting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 namespace DfE.GIAP.Service.Download;
 
@@ -13,19 +12,16 @@ public class DownloadService : IDownloadService
 {
     private AzureAppSettings _azureAppSettings;
     private readonly IApiService _apiProcessorService;
-    private readonly IEventLogging _eventLogging;
-    private readonly IHostEnvironment _hostEnvironment;
+    private readonly IEventLogger _eventLogger;
 
     public DownloadService(
         IOptions<AzureAppSettings> azureFunctionUrls,
         IApiService apiProcessorService,
-        IEventLogging eventLogging,
-        IHostEnvironment hostEnvironment)
+        IEventLogger eventLogger)
     {
         _azureAppSettings = azureFunctionUrls.Value;
         _apiProcessorService = apiProcessorService;
-        _eventLogging = eventLogging;
-        _hostEnvironment = hostEnvironment;
+        _eventLogger = eventLogger;
     }
 
 
@@ -37,23 +33,24 @@ public class DownloadService : IDownloadService
                                              ReturnRoute returnRoute)
     {
         var getCSVFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
-        switch (returnRoute)
-        {
-            case ReturnRoute.NationalPupilDatabase:
-                _eventLogging.TrackEvent(1107, $"NPD UPN CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.NonNationalPupilDatabase:
-                _eventLogging.TrackEvent(1110, $"NPD non-UPN CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.MyPupilList:
-                _eventLogging.TrackEvent(1117, $"MPL CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-        }
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "csv" };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+
+        string loggingBatchId = Guid.NewGuid().ToString();
+        foreach (string dataset in requestBody.DataTypes)
+        {
+            // TODO: Temp quick solution
+            if (Enum.TryParse<Dataset>(dataset, out Dataset datasetEnum))
+            {
+                _eventLogger.LogDownload(
+                    Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                    DownloadFileFormat.CSV,
+                    DownloadEventType.NPD,
+                    loggingBatchId,
+                    datasetEnum);
+            }
+        }
 
         return response;
     }
@@ -66,19 +63,23 @@ public class DownloadService : IDownloadService
     {
         var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
 
-        switch (returnRoute)
-        {
-            case ReturnRoute.UniqueLearnerNumber:
-                _eventLogging.TrackEvent(1114, $"FE ULN CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.NonUniqueLearnerNumber:
-                _eventLogging.TrackEvent(1115, $"FE non-ULN CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-        }
-
         var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven };
         var response = await _apiProcessorService.PostAsync<DownloadUlnRequest, ReturnFile>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+
+        string loggingBatchId = Guid.NewGuid().ToString();
+        foreach (string dataset in requestBody.DataTypes)
+        {
+            // TODO: Temp quick solution
+            if (Enum.TryParse<Dataset>(dataset, out Dataset datasetEnum))
+            {
+                _eventLogger.LogDownload(
+                    Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                    DownloadFileFormat.CSV,
+                    DownloadEventType.FE,
+                    loggingBatchId,
+                    datasetEnum);
+            }
+        }
 
         return response;
     }
@@ -92,23 +93,23 @@ public class DownloadService : IDownloadService
     {
         var getTABFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
 
-        switch (returnRoute)
-        {
-            case ReturnRoute.NationalPupilDatabase:
-                _eventLogging.TrackEvent(1108, $"NPD UPN TAB download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.NonNationalPupilDatabase:
-                _eventLogging.TrackEvent(1111, $"NPD non-UPN TAB download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.MyPupilList:
-                _eventLogging.TrackEvent(1118, $"MPL TAB download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-        }
-
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "tab" };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getTABFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+
+        string loggingBatchId = Guid.NewGuid().ToString();
+        foreach (string dataset in requestBody.DataTypes)
+        {
+            // TODO: Temp quick solution
+            if (Enum.TryParse<Dataset>(dataset, out Dataset datasetEnum))
+            {
+                _eventLogger.LogDownload(
+                    Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                    DownloadFileFormat.TAB,
+                    DownloadEventType.NPD,
+                    loggingBatchId,
+                    datasetEnum);
+            }
+        }
 
         return response;
     }
@@ -132,23 +133,15 @@ public class DownloadService : IDownloadService
     {
         var getFile = _azureAppSettings.DownloadPupilPremiumByUPNFforCSVUrl;
 
-        switch (returnRoute)
-        {
-            case ReturnRoute.PupilPremium:
-                _eventLogging.TrackEvent(1112, $"PP UPN CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.NonPupilPremium:
-                _eventLogging.TrackEvent(1113, $"PP non-UPN CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-
-            case ReturnRoute.MyPupilList:
-                _eventLogging.TrackEvent(1119, $"MPL PP CSV download initiated", azureFunctionHeaderDetails.ClientId, azureFunctionHeaderDetails.SessionId, _hostEnvironment.ContentRootPath);
-                break;
-        }
-
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation, ConfirmationGiven = confirmationGiven };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+
+        string loggingBatchId = Guid.NewGuid().ToString();
+
+        _eventLogger.LogDownload(
+            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            DownloadFileFormat.CSV,
+            DownloadEventType.PP);
 
         return response;
     }

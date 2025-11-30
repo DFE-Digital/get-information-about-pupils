@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
@@ -25,6 +26,7 @@ public class PreparedDownloadsControllerTests
         // Arrange
         Mock<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>> mockGetPreparedFilesUseCase = new();
         Mock<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>> mockDownloadPreparedFileUseCase = new();
+        Mock<IEventLogger> mockEventLogger = new();
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         List<BlobItemMetadata> blobItems = new()
@@ -42,8 +44,8 @@ public class PreparedDownloadsControllerTests
 
         PreparedDownloadsController controller = new(
             mockGetPreparedFilesUseCase.Object,
-            mockDownloadPreparedFileUseCase.Object
-        );
+            mockDownloadPreparedFileUseCase.Object,
+            mockEventLogger.Object);
         controller.ControllerContext = new ControllerContext
         {
             HttpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal())
@@ -68,6 +70,7 @@ public class PreparedDownloadsControllerTests
         // Arrange
         Mock<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>> mockGetPreparedFilesUseCase = new();
         Mock<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>> mockDownloadPreparedFileUseCase = new();
+        Mock<IEventLogger> mockEventLogger = new();
 
         string fileName = "template.csv";
         string contentType = "text/csv";
@@ -81,8 +84,9 @@ public class PreparedDownloadsControllerTests
 
         PreparedDownloadsController controller = new(
             mockGetPreparedFilesUseCase.Object,
-            mockDownloadPreparedFileUseCase.Object
-        );
+            mockDownloadPreparedFileUseCase.Object,
+            mockEventLogger.Object);
+
         controller.ControllerContext = new ControllerContext
         {
             HttpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal())

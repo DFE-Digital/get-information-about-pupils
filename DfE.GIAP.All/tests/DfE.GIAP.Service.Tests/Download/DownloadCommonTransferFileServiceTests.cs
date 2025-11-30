@@ -7,10 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Threading.Tasks;
-using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Xunit;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 namespace DfE.GIAP.Service.Tests.Download
 {
@@ -45,10 +43,9 @@ namespace DfE.GIAP.Service.Tests.Download
             var settings = new AzureAppSettings() { DownloadCommonTransferFileUrl = url };
             var mockAppSettings = new Mock<IOptions<AzureAppSettings>>();
             mockAppSettings.SetupGet(x => x.Value).Returns(settings);
-            var eventLogging = new Mock<IEventLogging>();
-            var hostEnvironment = new Mock<IHostEnvironment>();
+            Mock<IEventLogger> eventLogger = new Mock<IEventLogger>();
 
-            var downloadCTFService = new DownloadCommonTransferFileService(apiProcessorService, mockAppSettings.Object, eventLogging.Object, hostEnvironment.Object);
+            var downloadCTFService = new DownloadCommonTransferFileService(apiProcessorService, mockAppSettings.Object, eventLogger.Object);
 
             // Act
             var actual = await downloadCTFService.GetCommonTransferFile(upns, upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);

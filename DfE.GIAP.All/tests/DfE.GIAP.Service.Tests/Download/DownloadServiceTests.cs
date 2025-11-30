@@ -9,8 +9,8 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
-using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Xunit;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 namespace DfE.GIAP.Service.Tests.Download;
 
@@ -46,10 +46,9 @@ public class DownloadServiceTests
         var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url };
         var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
-        var eventLogging = new Mock<IEventLogging>();
-        var hostEnvironment = new Mock<IHostEnvironment>();
+        var eventLogging = new Mock<IEventLogger>();
 
-        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object, hostEnvironment.Object);
+        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
         var actual = await downloadService.GetCSVFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
@@ -92,9 +91,9 @@ public class DownloadServiceTests
         var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url };
         var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
-        var eventLogging = new Mock<IEventLogging>();
+        var eventLogging = new Mock<IEventLogger>();
         var hostEnvironment = new Mock<IHostEnvironment>();
-        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object, hostEnvironment.Object);
+        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
         var actual = await downloadService.GetTABFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
@@ -136,9 +135,8 @@ public class DownloadServiceTests
         var urls = new AzureAppSettings() { DownloadPupilPremiumByUPNFforCSVUrl = url };
         var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
-        var eventLogging = new Mock<IEventLogging>();
-        var hostEnvironment = new Mock<IHostEnvironment>();
-        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object, hostEnvironment.Object);
+        var eventLogging = new Mock<IEventLogger>();
+        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
         var actual = await downloadService.GetPupilPremiumCSVFile(upns, upns, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.PupilPremium);
@@ -168,9 +166,10 @@ public class DownloadServiceTests
         var url = "http://somewhere.net";
         var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url, DownloadOptionsCheckLimit = 500 };
         var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
+        var eventLogging = new Mock<IEventLogger>();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
 
-        var sut = new DownloadService(fakeAppSettings.Object, mockApiService, null, null);
+        var sut = new DownloadService(fakeAppSettings.Object, mockApiService, eventLogging.Object);
 
         // act
         var result = await sut.CheckForNoDataAvailable(upns, upns, dataTypes, azureFunctionHeaderDetails);
