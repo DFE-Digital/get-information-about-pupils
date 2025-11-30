@@ -7,6 +7,7 @@ using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.Core.MyPupils.Domain;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 
@@ -60,7 +61,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(myPupilsId, upns);
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(myPupilsId, upns);
 
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
@@ -83,7 +84,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         mockWriteRepository.Verify(repo =>
             repo.SaveMyPupilsAsync(
-                It.Is<Core.MyPupils.Domain.AggregateRoot.MyPupils>(
+                It.Is<MyPupilsAggregate>(
                     (myPupilsAggregate) => myPupilsAggregate.GetMyPupils().SequenceEqual(expectedListAfterDelete))), Times.Once);
     }
 
@@ -97,7 +98,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(upns);
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(upns);
 
         readRepositoryMock
             .Setup((repo) => repo.GetMyPupilsOrDefaultAsync(myPupils.AggregateId))

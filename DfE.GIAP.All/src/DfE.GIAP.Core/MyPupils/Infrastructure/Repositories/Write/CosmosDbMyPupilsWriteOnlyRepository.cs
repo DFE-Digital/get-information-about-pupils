@@ -1,7 +1,5 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
@@ -10,12 +8,12 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
 {
     private readonly ILogger<CosmosDbMyPupilsWriteOnlyRepository> _logger;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
-    private readonly IMapper<Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto> _mapToDto;
+    private readonly IMapper<MyPupilsAggregate, MyPupilsDocumentDto> _mapToDto;
 
     public CosmosDbMyPupilsWriteOnlyRepository(
         ILogger<CosmosDbMyPupilsWriteOnlyRepository> logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
-        IMapper<Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto> mapToDto)
+        IMapper<MyPupilsAggregate, MyPupilsDocumentDto> mapToDto)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -27,7 +25,7 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
         _mapToDto = mapToDto;
     }
 
-    public async Task SaveMyPupilsAsync(Domain.AggregateRoot.MyPupils myPupils)
+    public async Task SaveMyPupilsAsync(MyPupilsAggregate myPupils)
     {
         try
         {

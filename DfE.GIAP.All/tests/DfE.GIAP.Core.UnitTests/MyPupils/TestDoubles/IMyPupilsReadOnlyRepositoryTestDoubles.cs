@@ -1,14 +1,13 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application;
-using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class IMyPupilsReadOnlyRepositoryTestDoubles
 {
     internal static Mock<IMyPupilsReadOnlyRepository> Default() => new();
 
-    internal static Mock<IMyPupilsReadOnlyRepository> MockForGetMyPupils(Core.MyPupils.Domain.AggregateRoot.MyPupils stub)
+    internal static Mock<IMyPupilsReadOnlyRepository> MockForGetMyPupils(MyPupilsAggregate stub)
     {
         Mock<IMyPupilsReadOnlyRepository> mock = Default();
         mock.Setup(
@@ -18,7 +17,7 @@ internal static class IMyPupilsReadOnlyRepositoryTestDoubles
         return mock;
     }
 
-    internal static Mock<IMyPupilsReadOnlyRepository> MockForGetMyPupilsOrDefault(Core.MyPupils.Domain.AggregateRoot.MyPupils? stub)
+    internal static Mock<IMyPupilsReadOnlyRepository> MockForGetMyPupilsOrDefault(MyPupilsAggregate? stub)
     {
         Mock<IMyPupilsReadOnlyRepository> mock = Default();
         mock.Setup(

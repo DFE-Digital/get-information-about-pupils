@@ -1,10 +1,10 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Azure.Cosmos;
@@ -22,7 +22,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         Func<CosmosDbMyPupilsWriteOnlyRepository> construct = () => new(
             logger: null!,
             cosmosDbCommandHandler: CosmosDbCommandHandlerTestDoubles.Default().Object,
-            mapToDto: MapperTestDoubles.Default<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>().Object);
+            mapToDto: MapperTestDoubles.Default<MyPupilsAggregate, MyPupilsDocumentDto>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -35,7 +35,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         Func<CosmosDbMyPupilsWriteOnlyRepository> construct = () => new(
             logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
             cosmosDbCommandHandler: null!,
-            mapToDto: MapperTestDoubles.Default<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>().Object);
+            mapToDto: MapperTestDoubles.Default<MyPupilsAggregate, MyPupilsDocumentDto>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -59,19 +59,19 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: new Exception("test exception"));
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDto>(exception: new Exception("test exception"));
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Default();
 
-        Mock<IMapper<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>> mapperMock =
-            MapperTestDoubles.MockFor<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>(stub: document);
+        Mock<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsAggregate, MyPupilsDocumentDto>(stub: document);
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
             logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
             cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             mapToDto: mapperMock.Object);
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Default();
 
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() => repository.SaveMyPupilsAsync(myPupils));
@@ -82,14 +82,14 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDto>(exception: CosmosExceptionTestDoubles.Default());
 
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Default();
 
-        Mock<IMapper<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>> mapperMock =
-            MapperTestDoubles.MockFor<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>(
+        Mock<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsAggregate, MyPupilsDocumentDto>(
                 stub: document);
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
@@ -98,7 +98,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             mapToDto: mapperMock.Object);
 
         // Act Assert
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Default();
 
         await Assert.ThrowsAsync<CosmosException>(() => repository.SaveMyPupilsAsync(myPupils));
 
@@ -112,12 +112,12 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         // Arrange
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(uniquePupilNumbers: []);
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Create(myPupils.AggregateId, uniquePupilNumbers);
 
-        Mock<IMapper<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>> mapperMock =
-            MapperTestDoubles.MockFor<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>(stub: document);
+        Mock<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsAggregate, MyPupilsDocumentDto>(stub: document);
 
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
 
@@ -136,8 +136,10 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         commandHandlerDouble.Verify(handler =>
             handler.UpsertItemAsync(
                 It.Is<MyPupilsDocumentDto>(
-                    (dto) => dto.id == myPupils.AggregateId.Value &&
-                        dto.MyPupils.Pupils != null && !dto.MyPupils.Pupils.Any()),
+                    (dto) =>
+                        dto.id == myPupils.AggregateId.Value &&
+                            dto.MyPupils.Pupils != null &&
+                                !dto.MyPupils.Pupils.Any()),
                 MyPupilsContainerName,
                 It.Is<string>((pk) => pk == myPupils.AggregateId.Value),
                 It.IsAny<CancellationToken>()),
@@ -152,12 +154,12 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 3));
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Create(myPupils.AggregateId, uniquePupilNumbers);
 
-        Mock<IMapper<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>> mapper =
-            MapperTestDoubles.MockFor<Core.MyPupils.Domain.AggregateRoot.MyPupils, MyPupilsDocumentDto>(stub: document);
+        Mock<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>> mapper =
+            MapperTestDoubles.MockFor<MyPupilsAggregate, MyPupilsDocumentDto>(stub: document);
 
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
 

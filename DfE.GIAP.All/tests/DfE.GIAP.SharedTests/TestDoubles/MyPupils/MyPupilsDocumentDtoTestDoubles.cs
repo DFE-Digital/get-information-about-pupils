@@ -1,7 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.AggregateRoot;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilsDocumentDtoTestDoubles

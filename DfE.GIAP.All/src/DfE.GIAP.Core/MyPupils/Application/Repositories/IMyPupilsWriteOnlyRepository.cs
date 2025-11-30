@@ -1,6 +1,8 @@
+using DfE.GIAP.Core.MyPupils.Domain;
+
 namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 
 public interface IMyPupilsWriteOnlyRepository
 {
-    Task SaveMyPupilsAsync(Domain.AggregateRoot.MyPupils myPupils);
+    Task SaveMyPupilsAsync(MyPupilsAggregate myPupils);
 }

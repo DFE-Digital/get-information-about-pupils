@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -53,7 +54,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         List<UniquePupilNumber> originalMyPupils = UniquePupilNumberTestDoubles.Generate(count: 15);
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupilsAggregate = MyPupilsAggregateRootTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
+        MyPupilsAggregate myPupilsAggregate = MyPupilsAggregateRootTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
 
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
@@ -71,7 +72,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         // Assert
         readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
-        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Once);
+        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
         List<UniquePupilNumber> expectedUniquePupilNumbers = originalMyPupils.Concat([new UniquePupilNumber(upnsWithInvalidUpns[1])]).ToList();
 
@@ -88,7 +89,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         List<UniquePupilNumber> originalMyPupils = UniquePupilNumberTestDoubles.Generate(count: 5);
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupilsAggregate = MyPupilsAggregateRootTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
+        MyPupilsAggregate myPupilsAggregate = MyPupilsAggregateRootTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
 
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
@@ -102,7 +103,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         // Assert
         readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
-        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Once);
+        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
         List<UniquePupilNumber> expectedUniquePupilNumbers = originalMyPupils.Concat(addUpns).ToList();
 

@@ -4,11 +4,10 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
@@ -21,7 +20,7 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Default();
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
         List<Pupil> pupils =
@@ -105,7 +104,7 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils =
+        MyPupilsAggregate myPupils =
             MyPupilsAggregateRootTestDoubles.Create(
                 UniquePupilNumbers.Create(uniquePupilNumbers: []));
 

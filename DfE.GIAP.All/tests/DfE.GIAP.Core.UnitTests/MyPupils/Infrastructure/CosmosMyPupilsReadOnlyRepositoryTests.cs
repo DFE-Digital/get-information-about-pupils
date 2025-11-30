@@ -2,6 +2,7 @@
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Options;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
@@ -71,7 +72,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Arrange
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDto>(
                 () => throw new Exception("test exception"));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
@@ -94,7 +95,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDto>(
                 () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.InternalServerError));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
@@ -119,7 +120,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(() => null);
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDto>(() => null);
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
@@ -133,7 +134,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         // Act
-        Core.MyPupils.Domain.AggregateRoot.MyPupils? myPupils = await repository.GetMyPupilsOrDefaultAsync(myPupilsId);
+        MyPupilsAggregate? myPupils = await repository.GetMyPupilsOrDefaultAsync(myPupilsId);
 
         // Assert
         Assert.Null(myPupils);
@@ -152,12 +153,12 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 10));
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils = MyPupilsAggregateRootTestDoubles.Create(myPupilsId, upns);
+        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(myPupilsId, upns);
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
-        Mock<IMapper<MyPupilsDocumentDto, Core.MyPupils.Domain.AggregateRoot.MyPupils>> mockMapper =
-            MapperTestDoubles.MockFor<MyPupilsDocumentDto, Core.MyPupils.Domain.AggregateRoot.MyPupils>(stub: myPupils);
+        Mock<IMapper<MyPupilsDocumentDto, MyPupilsAggregate>> mockMapper =
+            MapperTestDoubles.MockFor<MyPupilsDocumentDto, MyPupilsAggregate>(stub: myPupils);
 
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Default();
         
@@ -172,7 +173,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             myPupilsOptions: options);
 
         // Act
-        Core.MyPupils.Domain.AggregateRoot.MyPupils? response = await sut.GetMyPupilsOrDefaultAsync(myPupilsId);
+        MyPupilsAggregate? response = await sut.GetMyPupilsOrDefaultAsync(myPupilsId);
 
         // Assert
 
@@ -180,7 +181,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         Assert.Equivalent(response, myPupils);
         
         cosmosDbQueryHandlerMock.Verify(
-            (t) => t.ReadItemByIdAsync<MyPupilsDocumentDto>(
+            (t) => t.ReadItemByIdAsync<MyPupilsDto>(
                 myPupilsId.Value,
                 "mypupils",
                 myPupilsId.Value,

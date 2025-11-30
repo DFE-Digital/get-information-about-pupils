@@ -3,7 +3,6 @@ using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,7 +32,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         _myPupilsOptions = myPupilsOptions.Value;
     }
 
-    public async Task<Domain.AggregateRoot.MyPupils?> GetMyPupilsOrDefaultAsync(MyPupilsId id)
+    public async Task<MyPupilsAggregate?> GetMyPupilsOrDefaultAsync(MyPupilsId id)
     {
         ArgumentNullException.ThrowIfNull(id);
 
@@ -54,8 +53,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
             IEnumerable<UniquePupilNumber> myPupils =
                 myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN).ToUniquePupilNumbers();
 
-            return new
-                Domain.AggregateRoot.MyPupils(
+            return new MyPupilsAggregate(
                     id,
                     UniquePupilNumbers.Create(myPupils),
                     _myPupilsOptions.PupilsLimit);
@@ -67,12 +65,11 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         }
     }
 
-    public async Task<Domain.AggregateRoot.MyPupils> GetMyPupils(MyPupilsId id)
+    public async Task<MyPupilsAggregate> GetMyPupils(MyPupilsId id)
     {
-        Domain.AggregateRoot.MyPupils? myPupils = await GetMyPupilsOrDefaultAsync(id);
+        MyPupilsAggregate? myPupils = await GetMyPupilsOrDefaultAsync(id);
 
-        return myPupils
-            ?? new Domain.AggregateRoot.MyPupils(
+        return myPupils ?? new MyPupilsAggregate(
                 id,
                 UniquePupilNumbers.Create([]),
                 _myPupilsOptions.PupilsLimit);

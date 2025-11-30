@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
@@ -33,7 +34,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
     {
         MyPupilsId id = new(request.UserId);
 
-        Domain.AggregateRoot.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+        MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 
         if (myPupils is null || myPupils.HasNoPupils)
         {
@@ -47,12 +48,12 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
             UniquePupilNumbers.Create(
                 myPupils.GetMyPupils());
 
-        MyPupilsModel aggregatedPupils =
-            MyPupilsModel.Create(
-                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
-                        .Select(_mapPupilToPupilDtoMapper.Map)
-                            .ToList());
+        List<MyPupilDto> myPupilsDtos =
+            (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
+                .Select(_mapPupilToPupilDtoMapper.Map)
+                .ToList();
 
-        return new GetMyPupilsResponse(aggregatedPupils);
+        return new GetMyPupilsResponse(
+            MyPupils: MyPupilsModel.Create(myPupilsDtos));
     }
 }

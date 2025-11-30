@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -55,7 +56,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
             new DeleteAllMyPupilsRequest(UserId: "id"));
 
         readRepoMock.Verify(t => t.GetMyPupilsOrDefaultAsync(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
-        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Never);
+        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Never);
     }
 
     [Fact]
@@ -63,7 +64,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
     {
         MyPupilsId id = new("id");
 
-        Core.MyPupils.Domain.AggregateRoot.MyPupils myPupilsAggregate =
+        MyPupilsAggregate myPupilsAggregate =
             MyPupilsAggregateRootTestDoubles.Create(
                 id,
                 uniquePupilNumbers: UniquePupilNumbers.Create(UniquePupilNumberTestDoubles.Generate(count: 15)));
@@ -79,7 +80,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
             new DeleteAllMyPupilsRequest(id.Value));
 
         readRepoMock.Verify(t => t.GetMyPupilsOrDefaultAsync(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
-        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<Core.MyPupils.Domain.AggregateRoot.MyPupils>()), Times.Once);
+        writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
         Assert.Equal(0, myPupilsAggregate.PupilCount);
         Assert.True(myPupilsAggregate.HasNoPupils);

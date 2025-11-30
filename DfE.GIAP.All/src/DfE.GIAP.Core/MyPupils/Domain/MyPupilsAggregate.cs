@@ -2,21 +2,22 @@
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Domain.AggregateRoot;
-public sealed class MyPupils : AggregateRoot<MyPupilsId>
+namespace DfE.GIAP.Core.MyPupils.Domain;
+public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
 {
     private readonly UniquePupilNumbers _pupils;
     private readonly int _maxPupilsLimit;
 
-    public MyPupils(
+    public MyPupilsAggregate(
         MyPupilsId identifier,
         UniquePupilNumbers pupils,
         int maxPupilLimit) : base(identifier)
     {
         _pupils = pupils ?? UniquePupilNumbers.Create([]);
+
         _maxPupilsLimit = maxPupilLimit;
 
-        if (_pupils.Count > maxPupilLimit)
+        if (_pupils.Count > _maxPupilsLimit)
         {
             throw new MyPupilsLimitExceededException(maxPupilLimit);
         }
@@ -45,7 +46,7 @@ public sealed class MyPupils : AggregateRoot<MyPupilsId>
             return;
         }
 
-        IEnumerable<UniquePupilNumber> deleteUpns = deletePupilsNumbers.GetUniquePupilNumbers();
+        List<UniquePupilNumber> deleteUpns = deletePupilsNumbers.GetUniquePupilNumbers().ToList();
 
         if (deleteUpns.All(deleteUpn => !_pupils.Contains(deleteUpn)))
         {
