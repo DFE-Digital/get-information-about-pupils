@@ -1,5 +1,5 @@
 ﻿@{
-    bool isAdmin = User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Approver);
+    bool isAdmin = User.IsInRole(AuthRoles.Admin) || User.IsInRole(AuthRoles.Approver);
     if (isAdmin)
     {
         <li class="govuk-service-navigation__item">

@@ -1,4 +1,5 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
+﻿using System.Net;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
@@ -189,8 +190,7 @@ public sealed class CosmosDbNewsArticleWriteOnlyRepositoryTests
             entityToDtoMapper: mockMapper.Object);
 
         // Act
-        Func<Task> act = () => sut.CreateNewsArticleAsync(NewsArticleTestDoubles.Create());
-
+        Func<Task> act = async () => await sut.CreateNewsArticleAsync(NewsArticleTestDoubles.Create());
 
         // Assert
         await Assert.ThrowsAsync<CosmosException>(act);

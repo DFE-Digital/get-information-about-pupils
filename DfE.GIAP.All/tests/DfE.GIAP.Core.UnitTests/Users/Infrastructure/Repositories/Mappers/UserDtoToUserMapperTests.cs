@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Core.Users.Application;
+﻿using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
 using DfE.GIAP.SharedTests.TestDoubles;
-using User = DfE.GIAP.Core.Users.Application.User;
+using User = DfE.GIAP.Core.Users.Application.Models.User;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories.Mappers;
 public sealed class UserDtoToUserMapperTests

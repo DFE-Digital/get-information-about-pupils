@@ -41,56 +41,29 @@ public class NationalPupilDto
     public DateTime DOB { get; set; }
 
     [JsonProperty("Census_Autumn")]
-    public List<CensusAutumnEntryDto> CensusAutumn { get; set; } = new();
+    public List<CensusAutumnEntryDto>? CensusAutumn { get; set; }
 
     [JsonProperty("Census_Spring")]
-    public List<CensusSpringEntryDto> CensusSpring { get; set; } = new();
+    public List<CensusSpringEntryDto>? CensusSpring { get; set; }
 
     [JsonProperty("Census_Summer")]
-    public List<CensusSummerEntryDto> CensusSummer { get; set; } = new();
+    public List<CensusSummerEntryDto>? CensusSummer { get; set; }
 
     [JsonProperty("EYFSP")]
-    public List<EarlyYearsFoundationStageProfileEntryDto> EarlyYearsFoundationStageProfile { get; set; } = new();
+    public List<EarlyYearsFoundationStageProfileEntryDto>? EarlyYearsFoundationStageProfile { get; set; }
 
     [JsonProperty("Phonics")]
-    public List<PhonicsEntryDto> Phonics { get; set; } = new();
+    public List<PhonicsEntryDto>? Phonics { get; set; }
 
     [JsonProperty("KS1")]
-    public List<KeyStage1EntryDto> KeyStage1 { get; set; } = new();
+    public List<KeyStage1EntryDto>? KeyStage1 { get; set; }
 
     [JsonProperty("KS2")]
-    public List<KeyStage2EntryDto> KeyStage2 { get; set; } = new();
+    public List<KeyStage2EntryDto>? KeyStage2 { get; set; }
 
     [JsonProperty("KS4")]
-    public List<KeyStage4EntryDto> KeyStage4 { get; set; } = new();
+    public List<KeyStage4EntryDto>? KeyStage4 { get; set; }
 
     [JsonProperty("MTC")]
-    public List<MtcEntryDto> MTC { get; set; } = new();
-
-    public void SetAdditionalProperties()
-    {
-        if (CensusSpring != null)
-        {
-            foreach (CensusSpringEntryDto censusSpringEntity in CensusSpring)
-            {
-                censusSpringEntity.PupilMatchingRef = PupilMatchingRef;
-            }
-        }
-
-        if (CensusSummer != null)
-        {
-            foreach (CensusSummerEntryDto censusSummerEntity in CensusSummer)
-            {
-                censusSummerEntity.PupilMatchingRef = PupilMatchingRef;
-            }
-        }
-
-        if (CensusAutumn != null)
-        {
-            foreach (CensusAutumnEntryDto censusAutumnEntity in CensusAutumn)
-            {
-                censusAutumnEntity.PupilMatchingRef = PupilMatchingRef;
-            }
-        }
-    }
+    public List<MtcEntryDto>? MTC { get; set; }
 }

@@ -1,8 +1,6 @@
 ﻿using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles

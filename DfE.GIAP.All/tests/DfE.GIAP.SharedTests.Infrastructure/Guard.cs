@@ -17,4 +17,12 @@ internal static class Guard
             throw new ArgumentException($"{paramName} cannot be null or empty");
         }
     }
+
+    internal static void ThrowIfNullOrEmpty<T>(IEnumerable<T> values, string paramName)
+    {
+        if (values is null || !values.Any())
+        {
+            throw new ArgumentException("Enumeration cannot be null or empty");
+        }
+    }
 }
