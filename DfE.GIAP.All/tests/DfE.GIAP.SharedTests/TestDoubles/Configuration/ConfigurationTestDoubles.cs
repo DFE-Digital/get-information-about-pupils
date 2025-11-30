@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
+namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
 public static class ConfigurationTestDoubles
 {
@@ -66,10 +66,10 @@ public static class ConfigurationTestDoubles
         Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {
             // AzureSearchOptions: Parameters controlling search behavior
-            ["AzureSearchOptions:SearchIndex"] = "FE_INDEX_NAME",
-            ["AzureSearchOptions:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["AzureSearchOptions:Indexes:further-education:SearchIndex"] = "FE_INDEX_NAME",
+            ["AzureSearchOptions:Indexes:further-education:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["AzureSearchOptions:Indexes:further-education:Size"] = "40000",                  // Max number of results
+            ["AzureSearchOptions:Indexes:further-education:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
@@ -140,6 +140,44 @@ public static class ConfigurationTestDoubles
         };
 
         builder.AddInMemoryCollection(dsiStubConfig);
+
+        return builder;
+    }
+
+    public static IConfigurationBuilder WithFilterKeyToFilterExpressionMapOptions(this IConfigurationBuilder builder)
+    {
+
+        Dictionary<string, string?> configDict = new()
+        {
+            ["FilterKeyToFilterExpressionMapOptions:FilterChainingLogicalOperator"] = "AndLogicalOperator",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:SurnameLC:FilterExpressionKey"] = "SearchCollectionValuedFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:SurnameLC:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ForenameLC:FilterExpressionKey"] = "SearchCollectionValuedFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ForenameLC:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOB:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOB:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYearMonth:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYearMonth:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYear:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:DOBYear:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Gender:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Gender:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Sex:FilterExpressionKey"] = "SearchByEqualityFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:Sex:FilterExpressionValuesDelimiter"] = ",",
+
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ULN:FilterExpressionKey"] = "SearchInFilterExpression",
+            ["FilterKeyToFilterExpressionMapOptions:SearchFilterToExpressionMap:ULN:FilterExpressionValuesDelimiter"] = ",",
+        };
+
+
+        builder.AddInMemoryCollection(configDict);
         return builder;
     }
 }
