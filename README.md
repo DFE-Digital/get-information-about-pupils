@@ -37,15 +37,10 @@ https://www.gov.uk/guidance/get-information-about-pupil-giap
 | npm | <https://status.npmjs.org> | `npm` package restore |
 | NuGet | <https://status.nuget.org> | `dotnet` package restore |
 
+Related repositories
+- [GIAP wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
 
 ## Getting Started / Setup
-
-Related repositories
-
-- [get-information-about-pupils-wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
-
-### Development quick-start
-
 Prerequisites
 - [Git](https://git-scm.com/downloads) (for getting a copy of the source code and contributing changes)
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (for building and running the C#/.NET web
@@ -120,8 +115,8 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 - node
 - gulp
 - DSI (DfE sign-in)
-- [CosmosDb Infrastructure library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
-
+- [Azure CosmosDb library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
+- [Azure AISearch library](https://github.com/DFE-Digital/infrastructure-cognitive-search)
 
 ### Settings
 
@@ -256,3 +251,4 @@ The Gulp task runs behind the scenes when you compile your project.
 Unless stated otherwise, the codebase is released under the MIT License. This covers both the codebase and any sample code in the documentation.
 
 The documentation is © Crown copyright and available under the terms of the Open Government 3.0 licence
+
