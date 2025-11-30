@@ -11,11 +11,11 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
     private const int DefaultPageSize = 20; // the maximum pupils returned for any query
     private readonly ISearchClientProvider _searchClientProvider;
-    private readonly IMapper<DecoratedSearchIndexDto, Pupil> _mapper;
+    private readonly IMapper<AzureIndexEntityWithPupilType, Pupil> _mapper;
 
     public TempAggregatePupilsForMyPupilsApplicationService(
         ISearchClientProvider searchClientProvider,
-        IMapper<DecoratedSearchIndexDto, Pupil> mapper)
+        IMapper<AzureIndexEntityWithPupilType, Pupil> mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         ArgumentNullException.ThrowIfNull(searchClientProvider);
@@ -33,18 +33,18 @@ internal sealed class TempAggregatePupilsForMyPupilsApplicationService : IAggreg
             return [];
         }
 
-        List<DecoratedSearchIndexDto> allResults = [];
+        List<AzureIndexEntityWithPupilType> allResults = [];
 
         const int maxIndexQuerySize = 500;
         foreach (UniquePupilNumber[] upnBatch in uniquePupilNumbers.GetUniquePupilNumbers().Chunk(maxIndexQuerySize))
         {
             SearchOptions searchOptions = CreateSearchClientOptions(upnBatch);
 
-            IEnumerable<DecoratedSearchIndexDto> npdResults =
+            IEnumerable<AzureIndexEntityWithPupilType> npdResults =
                 (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", searchOptions))
                     .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase);
 
-            IEnumerable<DecoratedSearchIndexDto> ppResults =
+            IEnumerable<AzureIndexEntityWithPupilType> ppResults =
                 (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", searchOptions))
                     .ToDecoratedSearchIndexDto(PupilType.PupilPremium);
 

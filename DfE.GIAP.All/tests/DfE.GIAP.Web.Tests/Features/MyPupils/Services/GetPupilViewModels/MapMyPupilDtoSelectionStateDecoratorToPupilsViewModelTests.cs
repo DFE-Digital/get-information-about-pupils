@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
@@ -42,11 +42,11 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     public void Map_Maps_With_MappingApplied_For_PupilPremium()
     {
         // Arrange
-        MyPupilDto createdPupilWithPupilPremium = MyPupilDtoBuilder.Create()
+        MyPupilModel createdPupilWithPupilPremium = MyPupilDtoBuilder.Create()
             .WithPupilPremium(true)
             .Build();
 
-        MyPupilDto createdPupil = MyPupilDtoBuilder.Create()
+        MyPupilModel createdPupil = MyPupilDtoBuilder.Create()
             .WithPupilPremium(false)
             .Build();
 
@@ -104,7 +104,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     }
 
     private static void AssertMappedPupil(
-        MyPupilDto input,
+        MyPupilModel input,
         PupilViewModel output,
         bool expectPupilIsSelected)
     {

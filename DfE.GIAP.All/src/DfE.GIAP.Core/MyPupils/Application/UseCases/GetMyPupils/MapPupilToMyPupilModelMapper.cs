@@ -1,12 +1,10 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Domain.Entities;
+﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Mapper;
-internal sealed class MapPupilToPupilDtoMapper : IMapper<Pupil, MyPupilDto>
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+internal sealed class MapPupilToMyPupilModelMapper : IMapper<Pupil, MyPupilModel>
 {
-    public MyPupilDto Map(Pupil pupil)
+    public MyPupilModel Map(Pupil pupil)
     {
         ArgumentNullException.ThrowIfNull(pupil);
         return new()

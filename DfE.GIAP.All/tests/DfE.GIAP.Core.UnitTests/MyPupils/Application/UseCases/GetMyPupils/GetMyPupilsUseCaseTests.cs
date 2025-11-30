@@ -2,8 +2,6 @@
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -30,7 +28,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
-        Mock<IMapper<Pupil, MyPupilDto>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilDto>();
+        Mock<IMapper<Pupil, MyPupilModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilModel>();
         MyPupilsModel myPupilDtos = MyPupilDtosTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
@@ -73,7 +71,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
-        Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
+        Mock<IMapper<Pupil, MyPupilModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilModel>();
 
         GetMyPupilsRequest request = new(myPupilsId.Value);
 
@@ -112,7 +110,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
-        Mock<IMapper<Pupil, MyPupilDto>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilDto>();
+        Mock<IMapper<Pupil, MyPupilModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilModel>();
 
         GetMyPupilsRequest request = new(myPupilsId.Value);
 

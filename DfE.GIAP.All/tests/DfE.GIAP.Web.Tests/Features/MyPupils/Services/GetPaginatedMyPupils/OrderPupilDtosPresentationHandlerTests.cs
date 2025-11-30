@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Order;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
@@ -59,7 +59,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         MyPupilsModel response = sut.Handle(pupils, state);
 
         // Assert
-        IEnumerable<MyPupilDto> expected =
+        IEnumerable<MyPupilModel> expected =
             sortDirection == SortDirection.Ascending ?
                 pupils.Values.OrderBy(t => t.Forename) :
                 pupils.Values.OrderByDescending(t => t.Forename);
@@ -84,7 +84,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Act
         MyPupilsModel response = sut.Handle(pupils, state);
 
-        IEnumerable<MyPupilDto> expected =
+        IEnumerable<MyPupilModel> expected =
             sortDirection == SortDirection.Ascending ?
                 pupils.Values.OrderBy(t => t.Surname) :
                 pupils.Values.OrderByDescending(t => t.Surname);
@@ -111,7 +111,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         MyPupilsModel response = sut.Handle(pupils, state);
 
         // Assert
-        IEnumerable<MyPupilDto> expected =
+        IEnumerable<MyPupilModel> expected =
             sortDirection == SortDirection.Ascending ?
                 pupils.Values.OrderBy(t => t.ParseDateOfBirth()) :
                 pupils.Values.OrderByDescending(t => t.ParseDateOfBirth());
@@ -137,7 +137,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         MyPupilsModel response = sut.Handle(pupils, presentationState);
 
         // Assert
-        IEnumerable<MyPupilDto> expected =
+        IEnumerable<MyPupilModel> expected =
             sortDirection == SortDirection.Ascending ?
                 pupils.Values.OrderBy(t => t.Sex) :
                 pupils.Values.OrderByDescending(t => t.Sex);

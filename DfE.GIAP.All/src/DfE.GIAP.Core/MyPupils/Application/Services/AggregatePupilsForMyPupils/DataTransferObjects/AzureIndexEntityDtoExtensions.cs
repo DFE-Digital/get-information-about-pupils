@@ -3,8 +3,8 @@
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 internal static class AzureIndexEntityDtoExtensions
 {
-    internal static IEnumerable<DecoratedSearchIndexDto> ToDecoratedSearchIndexDto(
+    internal static IEnumerable<AzureIndexEntityWithPupilType> ToDecoratedSearchIndexDto(
         this IEnumerable<AzureIndexEntity> azureIndexDtos,
         PupilType pupilType)
-            => azureIndexDtos?.Select(t => new DecoratedSearchIndexDto(t, pupilType)) ?? [];
+            => azureIndexDtos?.Select(t => new AzureIndexEntityWithPupilType(t, pupilType)) ?? [];
 }

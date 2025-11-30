@@ -18,7 +18,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
     {
         // Arrange
         Mock<ISearchClientProvider> searchClientProviderMock = SearchClientProviderTestDoubles.Default();
-        Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
+        Mock<IMapper<AzureIndexEntityWithPupilType, Pupil>> mapper = MapperTestDoubles.MockFor<AzureIndexEntityWithPupilType, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         // Act
@@ -34,7 +34,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
     {
         // Arrange
         Mock<ISearchClientProvider> searchClientProviderMock = new();
-        Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
+        Mock<IMapper<AzureIndexEntityWithPupilType, Pupil>> mapper = MapperTestDoubles.MockFor<AzureIndexEntityWithPupilType, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
         IEnumerable<UniquePupilNumber> generatedUpns = UniquePupilNumberTestDoubles.Generate(4001);
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(generatedUpns);
@@ -58,7 +58,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
 
         Mock<ISearchClientProvider> searchClientProviderMock = SearchClientProviderTestDoubles.MockFor(searchClientKeyToResponseData);
 
-        Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
+        Mock<IMapper<AzureIndexEntityWithPupilType, Pupil>> mapper = MapperTestDoubles.MockFor<AzureIndexEntityWithPupilType, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         // Act
@@ -87,7 +87,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
 
         Mock<ISearchClientProvider> searchClientProviderMock = SearchClientProviderTestDoubles.MockFor(searchClientKeyToResponseData);
 
-        Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
+        Mock<IMapper<AzureIndexEntityWithPupilType, Pupil>> mapper = MapperTestDoubles.MockFor<AzureIndexEntityWithPupilType, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         // Act
@@ -114,7 +114,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
 
         Mock<ISearchClientProvider> searchClientProviderMock = SearchClientProviderTestDoubles.MockFor(searchClientKeyToResponseData);
 
-        Mock<IMapper<DecoratedSearchIndexDto, Pupil>> mapper = MapperTestDoubles.MockFor<DecoratedSearchIndexDto, Pupil>();
+        Mock<IMapper<AzureIndexEntityWithPupilType, Pupil>> mapper = MapperTestDoubles.MockFor<AzureIndexEntityWithPupilType, Pupil>();
         TempAggregatePupilsForMyPupilsApplicationService service = new(searchClientProviderMock.Object, mapper.Object);
 
         List<UniquePupilNumber> requestUpns =

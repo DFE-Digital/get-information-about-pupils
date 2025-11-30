@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using System.Linq.Expressions;
@@ -7,7 +7,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.Presentat
 
 public sealed class OrderMyPupilDtosPresentationHandler : IMyPupilDtosPresentationHandler
 {
-    private static readonly Dictionary<string, Expression<Func<MyPupilDto, IComparable>>> s_sortKeyToExpression = new()
+    private static readonly Dictionary<string, Expression<Func<MyPupilModel, IComparable>>> s_sortKeyToExpression = new()
         {
             { "forename", (t) => t.Forename },
             { "surname", (t) => t.Surname },
@@ -24,13 +24,13 @@ public sealed class OrderMyPupilDtosPresentationHandler : IMyPupilDtosPresentati
             return myPupils;
         }
 
-        if (!s_sortKeyToExpression.TryGetValue(state.SortBy.ToLowerInvariant(), out Expression<Func<MyPupilDto, IComparable>> expression)
+        if (!s_sortKeyToExpression.TryGetValue(state.SortBy.ToLowerInvariant(), out Expression<Func<MyPupilModel, IComparable>> expression)
                 || expression is null)
         {
             throw new ArgumentException($"Unable to find sortable expression for {state.SortBy}");
         }
 
-        IEnumerable<MyPupilDto> outputPupils
+        IEnumerable<MyPupilModel> outputPupils
             = state.SortDirection == SortDirection.Ascending ?
                     myPupils.Values.AsQueryable().OrderBy(expression) :
                     myPupils.Values.AsQueryable().OrderByDescending(expression);

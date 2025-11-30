@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
@@ -19,7 +19,7 @@ public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilDtosPresent
             return MyPupilsModel.Create([]);
         }
 
-        List<MyPupilDto> pagedResults = myPupils.Values
+        List<MyPupilModel> pagedResults = myPupils.Values
                 .Skip(skip)
                 .Take(DefaultPageSize)
                 .ToList();

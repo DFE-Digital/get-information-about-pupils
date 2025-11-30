@@ -2,8 +2,6 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -13,12 +11,12 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsApplicationService;
-    private readonly IMapper<Pupil, MyPupilDto> _mapPupilToPupilDtoMapper;
+    private readonly IMapper<Pupil, MyPupilModel> _mapPupilToPupilDtoMapper;
 
     public GetMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
         IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsApplicationService,
-        IMapper<Pupil, MyPupilDto> mapPupilToPupilDtoMapper)
+        IMapper<Pupil, MyPupilModel> mapPupilToPupilDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
@@ -48,7 +46,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
             UniquePupilNumbers.Create(
                 myPupils.GetMyPupils());
 
-        List<MyPupilDto> myPupilsDtos =
+        List<MyPupilModel> myPupilsDtos =
             (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
                 .Select(_mapPupilToPupilDtoMapper.Map)
                 .ToList();

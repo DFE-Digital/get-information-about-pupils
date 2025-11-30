@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Paginate;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
@@ -96,7 +96,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         MyPupilsModel response = sut.Handle(pupils, presentationState);
 
         // Assert
-        IEnumerable<MyPupilDto> expectedPagedPupils = pupils.Values.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
+        IEnumerable<MyPupilModel> expectedPagedPupils = pupils.Values.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
 
         Assert.NotNull(response);
         Assert.Equal(3, response.Count);

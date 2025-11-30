@@ -4,9 +4,9 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
-internal sealed class MapDecoratedSearchIndexDtoToPupilMapper : IMapper<DecoratedSearchIndexDto, Pupil>
+internal sealed class MapDecoratedSearchIndexDtoToPupilMapper : IMapper<AzureIndexEntityWithPupilType, Pupil>
 {
-    public Pupil Map(DecoratedSearchIndexDto input) =>
+    public Pupil Map(AzureIndexEntityWithPupilType input) =>
         new(
             identifier: new UniquePupilNumber(input.SearchIndexDto.UPN),
             pupilType: input.PupilType,
