@@ -19,7 +19,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
     //    // Arrange
     //    MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-    //    Core.MyPupils.Domain.AggregateRoot.MyPupils myPupils =
+    //    MyPupilsAggregate myPupils =
     //        MyPupilsTestDoubles.Create(
     //            myPupilsId,
     //            UniquePupilNumbers.Create(
@@ -46,7 +46,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
     //    writeRepoMock.Verify(writeRepo =>
     //        writeRepo.SaveMyPupilsAsync(
     //            myPupilsId,
-    //            It.Is<Core.MyPupils.Domain.AggregateRoot.MyPupils>(myPupils => !myPupils.GetMyPupils().Any()),
+    //            It.Is<MyPupilsAggregate>(myPupils => !myPupils.GetMyPupils().Any()),
     //            It.IsAny<CancellationToken>()),
     //        Times.Once);
     //}
