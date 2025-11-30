@@ -6,15 +6,26 @@ public static class OptionsTestDoubles
 {
     public static IOptions<T> Default<T>() where T : class, new()
     {
-        return ConfigureOptions(new T());
+        return MockAs(new T());
     }
 
-    public static IOptions<T> ConfigureOptionsWithNullValue<T>() where T : class
+    public static IOptions<T> MockNullOptions<T>() where T : class
     {
-        return ConfigureOptions<T>(value: null);
+        return MockAs<T>(value: null);
     }
 
-    public static IOptions<T> ConfigureOptions<T>(Action<T> configure) where T : class, new()
+    public static IOptions<T> MockAs<T>(T? value) where T : class
+    {
+        Mock<IOptions<T>> mock = new();
+
+        mock.Setup(t => t.Value)
+            .Returns(value!)
+            .Verifiable();
+
+        return mock.Object;
+    }
+
+    public static IOptions<T> MockAs<T>(Action<T> configure) where T : class, new()
     {
         Mock<IOptions<T>> mock = new();
 
@@ -27,13 +38,6 @@ public static class OptionsTestDoubles
             })
             .Verifiable();
 
-        return mock.Object;
-    }
-
-    private static IOptions<T> ConfigureOptions<T>(T? value) where T : class
-    {
-        Mock<IOptions<T>> mock = new();
-        mock.Setup(t => t.Value).Returns(value!).Verifiable();
         return mock.Object;
     }
 }

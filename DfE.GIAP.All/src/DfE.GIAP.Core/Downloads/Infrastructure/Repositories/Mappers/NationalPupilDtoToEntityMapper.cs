@@ -33,7 +33,7 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
             Gender = input.Gender,
             Sex = input.Sex,
             DOB = input.DOB,
-            CensusAutumn = input.CensusAutumn.Select(dto => new CensusAutumnEntry
+            CensusAutumn = input.CensusAutumn?.Select(dto => new CensusAutumnEntry
             {
                 PupilMatchingRef = input.PupilMatchingRef,
                 AcademicYear = dto.AcademicYear,
@@ -71,8 +71,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 DisabilityAccessFundIndicator = dto.DisabilityAccessFundIndicator,
                 TLevelNonqualHrs = dto.TLevelNonqualHrs,
                 TLevelQualHrs = dto.TLevelQualHrs
-            }).ToList(),
-            CensusSpring = input.CensusSpring.Select(dto => new CensusSpringEntry
+            }).ToList() ?? [],
+            CensusSpring = input.CensusSpring?.Select(dto => new CensusSpringEntry
             {
                 PupilMatchingRef = input.PupilMatchingRef,
                 AcademicYear = dto.AcademicYear,
@@ -116,8 +116,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 Funding_Basis_ECO = dto.Funding_Basis_ECO,
                 Funding_Basis_HSD = dto.Funding_Basis_HSD,
                 Funding_Basis_LAA = dto.Funding_Basis_LAA
-            }).ToList(),
-            CensusSummer = input.CensusSummer.Select(dto => new CensusSummerEntry
+            }).ToList() ?? [],
+            CensusSummer = input.CensusSummer?.Select(dto => new CensusSummerEntry
             {
                 PupilMatchingRef = input.PupilMatchingRef,
                 AcademicYear = dto.AcademicYear,
@@ -157,8 +157,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 ExtendedHours = dto.ExtendedHours,
                 ExpandedHours = dto.ExpandedHours,
                 DisabilityAccessFundIndicator = dto.DisabilityAccessFundIndicator
-            }).ToList(),
-            EarlyYearsFoundationStageProfile = input.EarlyYearsFoundationStageProfile.Select(dto => new EarlyYearsFoundationStageProfileEntry
+            }).ToList() ?? [],
+            EarlyYearsFoundationStageProfile = input.EarlyYearsFoundationStageProfile?.Select(dto => new EarlyYearsFoundationStageProfileEntry
             {
                 ACADYR = dto.ACADYR,
                 PUPILMATCHINGREF = dto.PUPILMATCHINGREF,
@@ -220,8 +220,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 FSP_LLSOA = dto.FSP_LLSOA,
                 FSP_PCON = dto.FSP_PCON,
                 VERSION = dto.VERSION
-            }).ToList(),
-            Phonics = input.Phonics.Select(dto => new PhonicsEntry
+            }).ToList() ?? [],
+            Phonics = input.Phonics?.Select(dto => new PhonicsEntry
             {
                 AcademicYear = dto.AcademicYear,
                 PupilMatchingReference = dto.PupilMatchingReference,
@@ -242,8 +242,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 Version = dto.Version,
                 Phonics_Mark_Aut21 = dto.Phonics_Mark_Aut21,
                 Phonics_Outcome_Aut21 = dto.Phonics_Outcome_Aut21
-            }).ToList(),
-            KeyStage1 = input.KeyStage1.Select(dto => new KeyStage1Entry
+            }).ToList() ?? [],
+            KeyStage1 = input.KeyStage1?.Select(dto => new KeyStage1Entry
             {
                 ACADYR = dto.ACADYR,
                 PUPILMATCHINGREF = dto.PUPILMATCHINGREF,
@@ -308,8 +308,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 SCIPHYSPROC = dto.SCIPHYSPROC,
                 SCIENCE = dto.SCIENCE,
                 VERSION = dto.VERSION
-            }).ToList(),
-            KeyStage2 = input.KeyStage2.Select(dto => new KeyStage2Entry
+            }).ToList() ?? [],
+            KeyStage2 = input.KeyStage2?.Select(dto => new KeyStage2Entry
             {
                 ACADYR = dto.ACADYR,
                 PupilMatchingRef = dto.PupilMatchingRef,
@@ -519,8 +519,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 READPROGSCORE_EM_ADJUSTED_noSpeccon = dto.READPROGSCORE_EM_ADJUSTED_noSpeccon,
                 MATPROGSCORE_EM_ADJUSTED_noSpeccon = dto.MATPROGSCORE_EM_ADJUSTED_noSpeccon,
                 VERSION = dto.VERSION
-            }).ToList(),
-            KeyStage4 = input.KeyStage4.Select(dto => new KeyStage4Entry
+            }).ToList() ?? [],
+            KeyStage4 = input.KeyStage4?.Select(dto => new KeyStage4Entry
             {
                 ACADYR = dto.ACADYR,
                 PUPILMATCHINGREF = dto.PUPILMATCHINGREF,
@@ -994,8 +994,8 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 APAPDSCI_PTQ_EE = dto.APAPDSCI_PTQ_EE,
                 FLAG24ENGPRG_PTQ_EE = dto.FLAG24ENGPRG_PTQ_EE,
                 VERSION = dto.VERSION
-            }).ToList(),
-            MTC = input.MTC.Select(dto => new MtcEntry
+            }).ToList() ?? [],
+            MTC = input.MTC?.Select(dto => new MtcEntry
             {
                 ACADYR = dto.ACADYR,
                 PupilMatchingRef = dto.PupilMatchingRef,
@@ -1014,7 +1014,7 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 FormMark = dto.FormMark,
                 PupilStatus = dto.PupilStatus,
                 ReasonNotTakingCheck = dto.ReasonNotTakingCheck
-            }).ToList(),
+            }).ToList() ?? [],
         };
     }
 }

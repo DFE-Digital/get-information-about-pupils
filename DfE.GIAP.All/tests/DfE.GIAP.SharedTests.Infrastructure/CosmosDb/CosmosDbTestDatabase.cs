@@ -136,7 +136,6 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
                 id,
                 key);
         }
-
     }
 
     private async Task<ContainerResponse> GetContainerByName(string containerName)

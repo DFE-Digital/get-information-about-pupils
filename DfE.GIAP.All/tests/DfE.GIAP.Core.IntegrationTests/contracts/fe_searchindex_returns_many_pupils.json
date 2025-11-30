@@ -1,0 +1,143 @@
+{
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/indexes('FE_INDEX_NAME')/docs/search.post.search",
+                    "IgnoreCase": true
+                }
+            ]
+        }
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json"
+        },
+        "BodyAsJson": {
+            "value": [
+                {
+                    "@search.score": 0.23840507024939395,
+                    "UPN": "X304641945935",
+                    "ULN": "1000000000",
+                    "Surname": "Grant",
+                    "Forename": "Shanel",
+                    "Sex": "M",
+                    "Gender": "M",
+                    "DOB": "2007-11-10",
+                    "LocalAuthority": "628",
+                    "id": "548c8cde-a1a8-87a5-3309-3523acd708d4"
+                },
+                {
+                    "@search.score": 0.27961029536990567,
+                    "UPN": "N013204988611",
+                    "ULN": "1000000001",
+                    "Surname": "Hilpert",
+                    "Forename": "Trinity",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2008-11-10",
+                    "LocalAuthority": "539",
+                    "id": "919dde2b-5f00-e977-8cc7-a06623e47e2a"
+                },
+                {
+                    "@search.score": 0.7643473615668275,
+                    "UPN": "N812494910739",
+                    "ULN": "1000000002",
+                    "Surname": "Lebsack",
+                    "Forename": "Abner",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2020-11-10",
+                    "LocalAuthority": "319",
+                    "id": "fe8684b7-914e-b905-f66a-071d82d70f2f"
+                },
+                {
+                    "@search.score": 0.7839624925270672,
+                    "UPN": "D461872414218",
+                    "ULN": "1000000003",
+                    "Surname": "Zieme",
+                    "Forename": "Alexandra",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2024-11-10",
+                    "LocalAuthority": "238",
+                    "id": "d1122937-3119-9f15-50fd-0c5c06d5d8fc"
+                },
+                {
+                    "@search.score": 0.2786631789199959,
+                    "UPN": "R280021535544",
+                    "ULN": "1000000004",
+                    "Surname": "Schinner",
+                    "Forename": "Ines",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2006-11-10",
+                    "LocalAuthority": "680",
+                    "id": "f64260cf-cb9b-4c59-a439-e06b5532ac28"
+                },
+                {
+                    "@search.score": 0.010031283925083012,
+                    "UPN": "K046390671105",
+                    "ULN": "1000000005",
+                    "Surname": "Stamm",
+                    "Forename": "Alaina",
+                    "Sex": "M",
+                    "Gender": "M",
+                    "DOB": "2023-11-10",
+                    "LocalAuthority": "843",
+                    "id": "133232fa-c78a-4ed1-26c7-73317330eea6"
+                },
+                {
+                    "@search.score": 0.4041972524129278,
+                    "UPN": "Z421036468685",
+                    "ULN": "1000000006",
+                    "Surname": "Boyle",
+                    "Forename": "Taurean",
+                    "Sex": "F",
+                    "Gender": "M",
+                    "DOB": "2022-11-10",
+                    "LocalAuthority": "502",
+                    "id": "5e375829-c083-c7b4-c8fc-f9166ffb73ce"
+                },
+                {
+                    "@search.score": 0.5207900947442514,
+                    "UPN": "N490692951119",
+                    "ULN": "1000000007",
+                    "Surname": "Johnston",
+                    "Forename": "Lisandro",
+                    "Sex": "F",
+                    "Gender": "M",
+                    "DOB": "2010-11-10",
+                    "LocalAuthority": "511",
+                    "id": "9c09821b-0366-56a8-be13-99f8b0c810ad"
+                },
+                {
+                    "@search.score": 0.5167807489233379,
+                    "UPN": "B630465813172",
+                    "ULN": "1000000008",
+                    "Surname": "Fay",
+                    "Forename": "Hank",
+                    "Sex": "F",
+                    "Gender": "M",
+                    "DOB": "2013-11-10",
+                    "LocalAuthority": "724",
+                    "id": "ebbe6451-9a40-09ed-71e4-d71bc6371489"
+                },
+                {
+                    "@search.score": 0.42130944801447556,
+                    "UPN": "M582863618079",
+                    "ULN": "1000000009",
+                    "Surname": "O'Reilly",
+                    "Forename": "Elvera",
+                    "Sex": "F",
+                    "Gender": "F",
+                    "DOB": "2021-11-10",
+                    "LocalAuthority": "112",
+                    "id": "152d720e-4724-ebf8-1372-3cc0edccc850"
+                }
+            ]
+        }
+    }
+}
