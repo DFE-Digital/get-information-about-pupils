@@ -1,24 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<RootNamespace>DfE.GIAP.Core</RootNamespace>
-		<TargetFramework>net8.0</TargetFramework>
-	</PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>DfE.GIAP.Core</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Azure.Search.Documents" Version="11.6.1" />
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.25.1" />
-		<PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="1.0.0" />
-		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Search.Documents" Version="11.7.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
+    <PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="2.0.0-0" />
+    <PackageReference Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" Version="1.0.2-87" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.10" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.14.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="DfE.GIAP.SharedTests" />
     <InternalsVisibleTo Include="DfE.GIAP.Core.UnitTests" />
-		<InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
-		<InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
-	</ItemGroup>
+    <InternalsVisibleTo Include="DfE.GIAP.Core.IntegrationTests" />
+    <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
+  </ItemGroup>
 </Project>

@@ -1,10 +1,10 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Logging;
-using User = DfE.GIAP.Core.Users.Application.User;
+using User = DfE.GIAP.Core.Users.Application.Models.User;
 
 namespace DfE.GIAP.Core.Users.Infrastructure.Repositories;
 
@@ -15,19 +15,19 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
 {
     private const string ContainerName = "users";
     private readonly ICosmosDbCommandHandler _commandHandler;
-    private readonly ILogger<CosmosDbUserWriteOnlyRepository> _logger;
+    private readonly ILoggerService _loggerService;
     private readonly IMapper<User, UserDto> _mapper;
 
     public CosmosDbUserWriteOnlyRepository(
         ICosmosDbCommandHandler commandHandler,
-        ILogger<CosmosDbUserWriteOnlyRepository> logger,
+        ILoggerService logger,
         IMapper<User, UserDto> mapper)
     {
         ArgumentNullException.ThrowIfNull(commandHandler);
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(mapper);
         _commandHandler = commandHandler;
-        _logger = logger;
+        _loggerService = logger;
         _mapper = mapper;
     }
 
@@ -53,7 +53,12 @@ internal sealed class CosmosDbUserWriteOnlyRepository : IUserWriteOnlyRepository
         }
         catch (CosmosException ex)
         {
-            _logger.LogCritical(ex, $"CosmosException in {nameof(UpsertUserAsync)}.");
+            _loggerService.LogTrace(
+                level: LogLevel.Critical,
+                message: $"CosmosException in {nameof(UpsertUserAsync)}",
+                exception: ex,
+                category: "Users",
+                source: nameof(UpsertUserAsync));
             throw;
         }
     }

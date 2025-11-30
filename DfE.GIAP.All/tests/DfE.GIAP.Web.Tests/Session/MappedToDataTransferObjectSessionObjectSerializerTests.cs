@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Session.Infrastructure.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

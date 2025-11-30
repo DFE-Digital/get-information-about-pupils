@@ -6,8 +6,8 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
@@ -27,7 +27,7 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedTestDependencies();
+        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedApplicationServices();
 
         // Act
         IServiceCollection registeredServices = CompositionRoot.AddNewsArticleDependencies(services);

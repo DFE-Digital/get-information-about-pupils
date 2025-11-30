@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases.UpdateNewsArticle;
 public sealed class UpdateNewsArticleUseCaseTests
@@ -23,17 +23,17 @@ public sealed class UpdateNewsArticleUseCaseTests
     public void UpdateNewsArticleRequestProperties_Default_Properties_When_Constructed()
     {
         // Arrange
-        DateTime utcDateBeforeCreation = DateTime.UtcNow;
-        Stopwatch watch = Stopwatch.StartNew();
+        DateTime before = DateTime.UtcNow;
 
         // Act
         UpdateNewsArticlesRequestProperties properties = new(id: "VALID_ID");
-        watch.Stop();
 
         // Assert
         Assert.Equal("VALID_ID", properties.Id.Value);
-        Assert.InRange(properties.CreatedDate, utcDateBeforeCreation, utcDateBeforeCreation.Add(watch.Elapsed));
-        Assert.InRange(properties.ModifiedDate, utcDateBeforeCreation, utcDateBeforeCreation.Add(watch.Elapsed));
+
+        DateTime after = DateTime.UtcNow;
+        Assert.InRange(properties.CreatedDate, before, after);
+        Assert.InRange(properties.ModifiedDate, before, after);
 
         Assert.Null(properties.Title);
         Assert.Null(properties.Body);

@@ -4,8 +4,12 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
 
 env:
   BUILD_CONFIGURATION: Release
@@ -38,8 +42,9 @@ jobs:
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.IntegrationTests/ \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests/ \
-            --verify-no-changes \
-            --verbosity detailed
+            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests.Infrastructure/ \
+            --verbosity detailed \
+            --verify-no-changes
 
   build_unittest_package:
     runs-on: ubuntu-latest
@@ -87,7 +92,7 @@ jobs:
           done
 
       - name: Upload unit test projects coverage reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: unit-test-coverage
           path: coverage-unit/
@@ -106,13 +111,15 @@ jobs:
         run: ls -hal ${{ github.workspace }}/publish
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: packaged_app_for_deployment
           path: publish
           if-no-files-found: error
 
   local_integration_tests:
+    # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Required to check out the code.
@@ -127,24 +134,31 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create .env file
+        shell: bash
+        run: |
+          echo "WIREMOCK_KEYSTORE_STOREPASSWORD=${{ secrets.WIREMOCK_KEYSTORE_STOREPASSWORD }}" >> .env
+          echo "WIREMOCK_KEYSTORE_KEYPASSWORD=${{ secrets.WIREMOCK_KEYSTORE_KEYPASSWORD }}" >> .env
+          echo "SHARED_CERTIFICATES=./certs" >> .env
+
       - name: Run Integration Tests with Coverage
         shell: bash
         run: |
           sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
           export DOCKER_BUILDKIT=1
-
-          # Build test image
-          docker build \
-          --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-          -t giap-integration-tests \
-          -f Dockerfile.IntegrationTests .
+          
+          # Initcontainer to generate certificates enabling WireMock
+          docker compose up --build certgenerator
 
           # Run tests
-          docker compose up --abort-on-container-exit --exit-code-from integration-tests
+          docker compose up cosmosdb wiremock integration-tests \
+            --build \
+            --abort-on-container-exit \
+            --exit-code-from integration-tests
 
       - name: Upload integration test coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: integration-test-coverage
           path: coverage-integration/cobertura.xml
@@ -167,13 +181,15 @@ jobs:
         shell: bash
 
       - name: Download unit test coverage reports
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: unit-test-coverage
           path: coverage-unit/
 
       - name: Download integration test coverage report
-        uses: actions/download-artifact@v5
+      # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+        if: github.actor != 'dependabot[bot]'
+        uses: actions/download-artifact@v6
         with:
           name: integration-test-coverage
           path: coverage-integration/
@@ -195,7 +211,7 @@ jobs:
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
       - name: Upload merged coverage report to SonarQube
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: merged-coverage-report
           path: merged-coverage-reports/SonarQube.xml
@@ -215,7 +231,7 @@ jobs:
           fetch-depth: 0 # Fetches all history so SonarCloud can find the `main` branch
 
       - name: Download merged coverage report
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: merged-coverage-report
           path: merged-coverage-reports
@@ -234,7 +250,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: Begin SonarCloud analysis
-        # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+        # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
         if: github.actor != 'dependabot[bot]'
         shell: bash
         run: |

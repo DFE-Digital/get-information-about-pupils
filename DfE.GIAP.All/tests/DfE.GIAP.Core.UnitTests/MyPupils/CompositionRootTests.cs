@@ -1,4 +1,5 @@
 ﻿using Azure.Search.Documents;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
@@ -11,8 +12,11 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.Search;
 using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
@@ -32,9 +36,16 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
+        IConfiguration configuration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+            .WithSearchIndexOptions()
+            .Build();
+
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddSharedTestDependencies()
+                .AddSearchDependencies(configuration)
+                .AddCosmosDbDependencies()
+                .AddSharedApplicationServices()
                 .AddMyPupilsDependencies();
 
         // Act

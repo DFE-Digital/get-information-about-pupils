@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.UnitTests.Common.TextSanitiser;
@@ -12,7 +12,7 @@ public sealed class CompositionRootTests
     {
         // Arrange
         IServiceCollection services = ServiceCollectionTestDoubles.Default()
-            .AddSharedTestDependencies()
+            .AddSharedApplicationServices()
             .AddFeaturesSharedDependencies();
 
         // Act

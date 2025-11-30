@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
+namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 
 public interface IMyPupilsWriteOnlyRepository
 {

@@ -1,5 +1,8 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
@@ -7,11 +10,12 @@ using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
-using DfE.GIAP.Service.DsiApiClient;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
+using DfE.GIAP.Web.Features.Logging;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
@@ -19,12 +23,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.FeatureManagement;
-using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Web.Features.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -41,29 +39,11 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    internal static IServiceCollection AddFeatureFlagConfiguration(this IServiceCollection services, IConfigurationManager configuration)
-    {
-        services.AddFeatureManagement(configuration);
-
-        AzureAppSettings appSettings = configuration.Get<AzureAppSettings>();
-        string connectionUrl = appSettings.FeatureFlagAppConfigUrl;
-        if (!string.IsNullOrWhiteSpace(connectionUrl))
-        {
-            configuration.AddAzureAppConfiguration(options =>
-                options.Connect(connectionUrl).UseFeatureFlags());
-        }
-
-        return services;
-    }
-
     internal static IServiceCollection AddAllServices(this IServiceCollection services)
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
-        services.AddScoped<ISecurityKeyProvider, SymmetricSecurityKeyProvider>();
-        services.AddHttpClient<IDsiHttpClientProvider, DsiHttpClientProvider>();
-        services.AddScoped<IDfeSignInApiClient, DfeSignInApiClient>();
         services.AddScoped<IDownloadService, DownloadService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
@@ -74,7 +54,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddTransient<IEventLogging, EventLogging>();
-
         services.AddScoped<ILogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
 
         return services;
@@ -121,7 +100,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddAuthorizationBuilder()
             .AddPolicy(Policy.RequireAdminApproverAccess, policy =>
-                policy.RequireRole(Roles.Admin, Roles.Approver));
+                policy.RequireRole(AuthRoles.Admin, AuthRoles.Approver));
 
         services.AddControllersWithViews(config =>
         {

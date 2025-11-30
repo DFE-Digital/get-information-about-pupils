@@ -6,6 +6,7 @@ using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -2226,6 +2227,18 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         _mockAppOptions.Value.Returns(_mockAppSettings);
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
+
+        List<AvailableDatasetResult> availableDatasetResults = new()
+            {
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
+            };
+        GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
+
+        Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
+        mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
+            .ReturnsAsync(response);
+
         return new NPDLearnerNumberSearchController(
             _mockLogger,
             _mockCtfService,
@@ -2233,7 +2246,9 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _mockPaginatedService,
             _mockSelectionManager,
             _mockAppOptions,
-            _addPupilsUseCaseMock)
+            _addPupilsUseCaseMock,
+            mockGetAvailableDatasetsForPupilsUseCase.Object
+            )
         {
             ControllerContext = new ControllerContext()
             {

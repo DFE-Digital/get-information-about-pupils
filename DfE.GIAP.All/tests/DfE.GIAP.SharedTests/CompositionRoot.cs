@@ -1,22 +1,33 @@
-﻿using DfE.GIAP.Core.Common;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.SharedTests.TestDoubles;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
 namespace DfE.GIAP.SharedTests;
+
 public static class CompositionRoot
 {
     // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
-    public static IServiceCollection AddSharedTestDependencies(this IServiceCollection services)
+    public static IServiceCollection AddSharedApplicationServices(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        IConfiguration configuration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+                .WithLocalCosmosDbOptions() // TODO below this are not shared dependencies, should allow client to pass their own configuration and merge in
+                .WithSearchIndexOptions()
+                .WithAzureSearchConnectionOptions()
+                .WithAzureSearchOptions()
+                .WithSearchCriteriaOptions()
+                .Build();
+
         services
             .AddFeaturesSharedDependencies()
-            .AddLocalConfiguration()
             .AddInMemoryLogger();
+
+        services.AddSingleton(configuration);
+        services.AddSingleton((sp) => sp.GetRequiredService<IOptions<SearchCriteria>>().Value); // TODO What uses this?
 
         return services;
     }
@@ -24,32 +35,7 @@ public static class CompositionRoot
     private static IServiceCollection AddInMemoryLogger(this IServiceCollection services)
     {
         services.AddSingleton(typeof(ILogger<>), typeof(InMemoryLogger<>));
-        return services;
-    }
-
-    private static IServiceCollection AddLocalConfiguration(this IServiceCollection services)
-    {
-        Dictionary<string, string> contentConfiguration = new()
-        {
-            // PageContentOptions
-            ["PageContentOptions:Content:TestPage1:0:Key"] = "TestContentKey1",
-
-            // ContentRepositoryOptions
-            ["ContentRepositoryOptions:ContentKeyToDocumentMapping:TestContentKey1:DocumentId"] = "DocumentId1",
-
-            // SearchIndexOptions
-            ["SearchIndexOptions:Url"] = "https://localhost:44444",
-            ["SearchIndexOptions:Key"] = "SEFSOFOIWSJFSO",
-            ["SearchIndexOptions:Indexes:npd:Name"] = "npd",
-            ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "pupil-premium-index",
-        };
-
-        IConfiguration configuration = ConfigurationTestDoubles.Default()
-                .WithLocalCosmosDb()
-                .WithConfiguration(contentConfiguration)
-                .Build();
-
-        services.AddSingleton(configuration);
+        services.AddSingleton<ILoggerService, InMemoryLoggerService>();
 
         return services;
     }

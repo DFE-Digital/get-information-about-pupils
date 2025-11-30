@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 public interface IMyPupilsReadOnlyRepository

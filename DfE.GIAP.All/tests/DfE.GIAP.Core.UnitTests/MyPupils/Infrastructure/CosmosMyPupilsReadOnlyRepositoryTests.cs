@@ -1,12 +1,11 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using Microsoft.Azure.Cosmos;
@@ -72,7 +71,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Arrange
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw new Exception("test exception"));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
@@ -95,8 +94,8 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
-                () => throw CosmosExceptionTestDoubles.Default());
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
+                () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.InternalServerError));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
@@ -116,12 +115,11 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     }
 
     [Fact]
-    public async Task GetMyPupilsAsync_LogsAndReturnsNull_When_CosmosException_404_IsThrown()
+    public async Task GetMyPupilsAsync_LogsAndReturnsNull_When_TryRead_Returns_Null()
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(
-                () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.NotFound));
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(() => null);
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
@@ -158,8 +156,13 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
+        Mock<IMapper<MyPupilsDocumentDto, Core.MyPupils.Domain.AggregateRoot.MyPupils>> mockMapper =
+            MapperTestDoubles.MockFor<MyPupilsDocumentDto, Core.MyPupils.Domain.AggregateRoot.MyPupils>(stub: myPupils);
+
+        MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Default();
+        
         Mock<ICosmosDbQueryHandler> cosmosDbQueryHandlerMock =
-            CosmosDbQueryHandlerTestDoubles.MockForReadById<MyPupilsDocumentDto>(() => MyPupilsDocumentDtoTestDoubles.Create(myPupilsId, upns));
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById(() => myPupilsDocumentDto);
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
@@ -175,12 +178,16 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         Assert.NotNull(response);
         Assert.Equivalent(response, myPupils);
+        
         cosmosDbQueryHandlerMock.Verify(
             (t) => t.ReadItemByIdAsync<MyPupilsDocumentDto>(
                 myPupilsId.Value,
                 "mypupils",
                 myPupilsId.Value,
                 It.IsAny<CancellationToken>()), Times.Once);
+
+        mockMapper.Verify(t => t.Map(myPupilsDocumentDto), Times.Once);
+
     }
 
 }

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
@@ -40,14 +39,15 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
 
         try
         {
-            MyPupilsDocumentDto myPupilsDocumentDto =
-                await _cosmosDbQueryHandler.ReadItemByIdAsync<MyPupilsDocumentDto>(
+            MyPupilsDocumentDto? myPupilsDocumentDto =
+                await _cosmosDbQueryHandler.TryReadItemByIdAsync<MyPupilsDocumentDto>(
                     id: id.Value,
                     containerKey: ContainerName,
                     partitionKeyValue: id.Value);
 
             if (myPupilsDocumentDto is null)
             {
+                _logger.LogInformation("Could not find MyPupils for User id {UserId}", id.Value);
                 return null;
             }
 
@@ -60,12 +60,6 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
                     UniquePupilNumbers.Create(myPupils),
                     _myPupilsOptions.PupilsLimit);
         }
-        catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
-            _logger.LogInformation(ex, "Could not find MyPupils for User id {UserId}", id.Value);
-            return null;
-        }
-
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsOrDefaultAsync)}.");

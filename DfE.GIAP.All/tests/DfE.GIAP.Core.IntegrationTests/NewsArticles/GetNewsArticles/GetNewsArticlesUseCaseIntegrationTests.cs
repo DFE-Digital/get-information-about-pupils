@@ -1,21 +1,28 @@
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
-[Collection(IntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
+    private readonly CosmosDbFixture _cosmosDbFixture;
+
+    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
         services.AddNewsArticleDependencies();
-        return Task.CompletedTask;
     }
 
     [Theory]
@@ -29,12 +36,14 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
             _ => throw new NotImplementedException()
         });
 
-        await Fixture.Database.WriteManyAsync(seededDTOs);
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteManyAsync(containerName: "news", seededDTOs));
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);
 
         // Act
-        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut = ResolveTypeFromScopedContext<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
+        IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> sut = ResolveApplicationType<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>()!;
 
         GetNewsArticlesResponse response = await sut.HandleRequestAsync(request);
 

@@ -129,7 +129,9 @@ public abstract class BaseLearnerTextSearchController : Controller
 
             GetPersistedGenderFiltersForViewModel(model);
             GetPersistedSexFiltersForViewModel(model);
-            model = await GenerateLearnerTextSearchViewModel(model, null, null, null, null, model.SortField, model.SortDirection);
+            model = await GenerateLearnerTextSearchViewModel(model, null, null, null, null,
+                model.SortField,
+                model.SortDirection);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -162,9 +164,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (notPaged && !model.NoPupilSelected)
         {
-            SetSelections(
-                model.PageLearnerNumbers.Split(','),
-                model.SelectedPupil);
+            SetSelections(model.SelectedPupil);
         }
 
         if (resetSelection || searchByRemove != null)
@@ -393,7 +393,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return await ReturnToRoute(model).ConfigureAwait(false);
     }
 
-    private async Task<IActionResult> ReturnToRoute(LearnerTextSearchViewModel model)
+    protected async Task<IActionResult> ReturnToRoute(LearnerTextSearchViewModel model)
     {
         _selectionManager.Clear();
         ClearSortOptions();
@@ -401,7 +401,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return await Search(model, null, null, null, null, model.PageNumber, false);
     }
 
-    private void GetPersistedGenderFiltersForViewModel(
+    protected void GetPersistedGenderFiltersForViewModel(
         LearnerTextSearchViewModel model)
     {
         var genderFilters =
@@ -413,7 +413,7 @@ public abstract class BaseLearnerTextSearchController : Controller
             model.SelectedGenderValues = genderFilters;
     }
 
-    private void GetPersistedSexFiltersForViewModel(
+    protected void GetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model)
     {
         var sexFilters =
@@ -424,19 +424,19 @@ public abstract class BaseLearnerTextSearchController : Controller
         if (sexFilters != null)
             model.SelectedSexValues = sexFilters;
     }
-    private void SetPersistedGenderFiltersForViewModel(
+    protected void SetPersistedGenderFiltersForViewModel(
         LearnerTextSearchViewModel model) =>
             TempData.SetPersistedObject(
                 model.SelectedGenderValues,
                 PersistedSelectedGenderFiltersKey);
 
-    private void SetPersistedSexFiltersForViewModel(
+    protected void SetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model) =>
         TempData.SetPersistedObject(
             model.SelectedSexValues,
             PersistedSelectedSexFiltersKey);
 
-    private void RemoveGenderFilterItemFromModel(
+    protected void RemoveGenderFilterItemFromModel(
         LearnerTextSearchViewModel model,
         string genderFilterItem)
     {
@@ -448,7 +448,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
     }
 
-    private void RemoveSexFilterItemFromModel(
+    protected void RemoveSexFilterItemFromModel(
         LearnerTextSearchViewModel model,
         string sexFilterItem)
     {
@@ -460,14 +460,14 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
     }
 
-    private void RemoveAllGenderFilterItemsFromModel(
+    protected void RemoveAllGenderFilterItemsFromModel(
         LearnerTextSearchViewModel model)
     {
         model.SelectedGenderValues = null;
         SetPersistedGenderFiltersForViewModel(model);
         TempData.Remove(PersistedSelectedGenderFiltersKey);
     }
-    private void RemoveAllSexFilterItemsFromModel(
+    protected void RemoveAllSexFilterItemsFromModel(
         LearnerTextSearchViewModel model)
     {
         model.SelectedSexValues = null;
@@ -525,9 +525,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulateNavigation(model);
         SetSortOptions(model);
 
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         string selectedUpn = GetSelected();
 
@@ -590,7 +588,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return View(SearchView, searchViewModel);
     }
 
-    private async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
+    protected async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
         LearnerTextSearchViewModel model,
         string surnameFilter,
         string middlenameFilter,
@@ -610,7 +608,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
             model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
-            model.MaximumResults = IndexType == AzureSearchIndexType.FurtherEducation ? _appSettings.MaximumNonULNResults : _appSettings.MaximumNonUPNResults;
             model.DownloadSelectedLink = DownloadSelectedLink;
 
 
@@ -673,15 +670,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         var lowAge = User.GetOrganisationLowAge();
         var highAge = User.GetOrganisationHighAge();
 
-        if (result.Count > model.MaximumResults)
-        {
-            model.Learners = result.Learners.Take(model.MaximumResults).ToList();
-        }
-        else
-        {
-            model.Learners = result.Learners;
-        }
-
+        model.Learners = result.Learners;
         model.Count = (int)result.Count;
         model.Total = result.Count ?? result.Learners.Count;
 
@@ -871,7 +860,7 @@ public abstract class BaseLearnerTextSearchController : Controller
                 filterDataItem.Value = filterDataItem.Value.SwitchSexToParseName()));
     }
 
-    private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
+    protected List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
        string surnameFilter, string middlenameFilter, string forenameFilter, string searchByRemove)
     {
         List<CurrentFilterDetail> currentFilters = !string.IsNullOrEmpty(model.SearchFilters.CurrentFiltersAppliedString)
@@ -940,7 +929,7 @@ public abstract class BaseLearnerTextSearchController : Controller
                 new CurrentFilterDetail
                 {
                     FilterType = filterType,
-                    FilterName = filterValue
+                    FilterName = filterValue.ToLowerInvariant()
                 }
             );
         }
@@ -979,7 +968,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return currentFilters;
     }
 
-    private LearnerTextSearchViewModel SetSearchFiltersUrls(LearnerTextSearchViewModel model)
+    protected LearnerTextSearchViewModel SetSearchFiltersUrls(LearnerTextSearchViewModel model)
     {
         model.RedirectUrls.SurnameFilterURL = SurnameFilterUrl;
         model.RedirectUrls.FormAction = FormAction;
@@ -1147,7 +1136,7 @@ public abstract class BaseLearnerTextSearchController : Controller
             model.SortField = this.HttpContext.Session.GetString(SortFieldKey);
     }
 
-    private void ClearSortOptions()
+    protected void ClearSortOptions()
     {
         this.HttpContext.Session.Remove(SortDirectionKey);
         this.HttpContext.Session.Remove(SortFieldKey);
@@ -1196,7 +1185,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return model;
     }
 
-    protected virtual void SetSelections(IEnumerable<string> available, string selected)
+    protected virtual void SetSelections(string selected)
     {
         if (!string.IsNullOrEmpty(selected))
         {

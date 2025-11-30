@@ -1,64 +1,89 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.IntegrationTests.Fixture.CosmosDb;
-using DfE.GIAP.Core.IntegrationTests.Fixture.SearchIndex;
+
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.Users.Application.Models;
+using DfE.GIAP.SharedTests.Extensions;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using Microsoft.Extensions.Options;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
-[Collection(IntegrationTestCollectionMarker.Name)]
+
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture fixture) : base(fixture)
+    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly WireMockServerFixture _searchIndexFixture;
+
+    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
+
+        ArgumentNullException.ThrowIfNull(searchIndexFixture);
+        _searchIndexFixture = searchIndexFixture;
     }
 
-    protected override Task OnInitializeAsync(IServiceCollection services)
+    protected override async Task OnInitializeAsync(IServiceCollection services)
     {
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.ClearDatabaseAsync());
+
         services
             .AddMyPupilsDependencies()
             .ConfigureAzureSearchClients();
-
-        return Task.CompletedTask;
     }
 
     [Fact]
     public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
-        // Arrange
-        using SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
+        HttpMappingRequest request = HttpMappingRequest.Create(
+            httpMappingFiles: [
+                new HttpMappingFile(
+                    key: "npd",
+                    fileName: "npd_searchindex_returns_many_pupils.json"),
+                new HttpMappingFile(
+                    key: "pupil-premium",
+                    fileName: "pupilpremium_searchindex_returns_many_pupils.json")
+            ]);
 
-        IEnumerable<AzureIndexEntity> npdSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 10);
-        mockSearchFixture.StubNpdSearchIndex(npdSearchIndexDtos);
+        HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
 
-        IEnumerable<AzureIndexEntity> pupilPremiumSearchIndexDtos = AzureIndexEntityDtosTestDoubles.Generate(count: 25);
-        mockSearchFixture.StubPupilPremiumSearchIndex(pupilPremiumSearchIndexDtos);
+        AzureSearchPostDto npdResponse =
+            stubbedResponses.GetResponseByKey("npd").GetResponseBody<AzureSearchPostDto>()!;
+
+        AzureSearchPostDto pupilPremiumResponse =
+            stubbedResponses.GetResponseByKey("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
+
+        List<UniquePupilNumber> allPupilUpns = npdResponse.value!
+            .Select(t => t.UPN)
+            .Concat(pupilPremiumResponse.value!.Select(t => t.UPN))
+            .Select(t => new UniquePupilNumber(t))
+            .ToList();
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        IEnumerable<UniquePupilNumber> upns
-            = npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
-                .Select((t) => t.UPN)
-                    .ToUniquePupilNumbers();
+        MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(
+            myPupilsId,
+            upns: UniquePupilNumbers.Create(allPupilUpns));
 
-        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
-            MyPupilsDocumentDtoTestDoubles.Create(
-                myPupilsId,
-                upns: UniquePupilNumbers.Create(upns)));
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteItemAsync(
+                containerName: "mypupils", value: myPupilsDocument));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
-            ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
+            ResolveApplicationType<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
@@ -67,14 +92,14 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Assert
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.MyPupils);
-        Assert.Equal(npdSearchIndexDtos.Count() + pupilPremiumSearchIndexDtos.Count(), getMyPupilsResponse.MyPupils.Count);
+        Assert.Equal(35, getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
         List<MyPupilDto> expectedPupils =
-            npdSearchIndexDtos.Concat(pupilPremiumSearchIndexDtos)
-                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map)
-                .ToList();
+            npdResponse.value!
+                .Concat(pupilPremiumResponse.value!)
+                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!).ToList();
 
         foreach (MyPupilDto expectedPupil in expectedPupils)
         {
@@ -87,7 +112,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumSearchIndexDtos.Any((pupilPremiumDto) => pupilPremiumDto.UPN.Equals(expectedPupil.UniquePupilNumber));
+            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => new UniquePupilNumber(t!.UPN).Equals(expectedPupil.UniquePupilNumber));
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
@@ -96,18 +121,20 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
-        using SearchIndexFixture mockSearchFixture = new(
-            ResolveTypeFromScopedContext<IOptions<SearchIndexOptions>>());
-
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        await Fixture.Database.WriteItemAsync<MyPupilsDocumentDto>(
+        MyPupilsDocumentDto document =
             MyPupilsDocumentDtoTestDoubles.Create(
                 myPupilsId,
-                upns: UniquePupilNumbers.Create(uniquePupilNumbers: [])));
+                upns: UniquePupilNumbers.Create(uniquePupilNumbers: []));
+
+        await _cosmosDbFixture.InvokeAsync(
+            databaseName: _cosmosDbFixture.DatabaseName,
+            (client) => client.WriteItemAsync(containerName: "mypupils", document));
+
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
-            ResolveTypeFromScopedContext<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
+            ResolveApplicationType<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>();
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
@@ -119,14 +146,14 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Empty(getMyPupilsResponse.MyPupils.Values);
     }
 
-    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureIndexEntity, MyPupilDto>
+    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureNpdSearchResponseDto, MyPupilDto>
     {
-        public MyPupilDto Map(AzureIndexEntity input)
+        public MyPupilDto Map(AzureNpdSearchResponseDto input)
         {
             return new()
             {
                 UniquePupilNumber = new(input.UPN),
-                DateOfBirth = input.DOB?.ToString("yyyy-MM-dd") ?? string.Empty,
+                DateOfBirth = input.DOB ?? string.Empty,
                 Forename = input.Forename,
                 Surname = input.Surname,
                 Sex = input.Sex?.ToString() ?? string.Empty,

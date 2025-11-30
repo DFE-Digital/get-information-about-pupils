@@ -5,12 +5,15 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -70,6 +73,8 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
+    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+
 
 
     public NPDLearnerTextSearchController(ILogger<NPDLearnerTextSearchController> logger,
@@ -79,6 +84,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
        IDownloadCommonTransferFileService ctfService,
        ISessionProvider sessionProvider,
        IDownloadService downloadService,
+       IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
        : base(logger,
              paginatedSearch,
@@ -95,6 +101,9 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
+        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
 
@@ -188,9 +197,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     [HttpPost]
     public async Task<IActionResult> ToDownloadNpdCommonTransferFileData(LearnerTextSearchViewModel model)
     {
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         var selectedPupil = GetSelected();
 
@@ -277,9 +284,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedNPDDataNonUPN(LearnerTextSearchViewModel model)
     {
-        SetSelections(
-        model.PageLearnerNumbers.Split(','),
-        model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         var selectedPupil = GetSelected();
 
@@ -308,7 +313,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
         string selectedPupil,
         string searchText)
     {
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupil,
             LearnerNumber = selectedPupil,
@@ -317,8 +322,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true
         };
-
-        SearchDownloadHelper.AddDownloadDataTypes(searchDownloadViewModel, User, User.GetOrganisationLowAge(), User.GetOrganisationHighAge(), User.IsOrganisationLocalAuthority(), User.IsOrganisationAllAges());
 
         ModelState.Clear();
 
@@ -329,15 +332,22 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
         searchDownloadViewModel.TextSearchViewModel = new LearnerTextSearchViewModel() { LearnerNumberLabel = LearnerNumberLabel, SearchText = searchText };
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
-        var downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-        selectedPupil = PupilHelper.CheckIfStarredPupil(selectedPupil) ? RbacHelper.DecodeUpn(selectedPupil) : selectedPupil;
-        var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
+        GetAvailableDatasetsForPupilsRequest request = new(
+           DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+           SelectedPupils: new List<string> { selectedPupil },
+           AuthorisationContext: new HttpClaimsAuthorisationContext(User));
+        GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
 
+        foreach (AvailableDatasetResult datasetResult in response.AvailableDatasets)
+        {
+            searchDownloadViewModel.SearchDownloadDatatypes.Add(new SearchDownloadDataType
+            {
+                Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
+                Value = datasetResult.Dataset.ToString(),
+                Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
+            });
+        }
 
-        var disabledTypes = await _downloadService.CheckForNoDataAvailable(new string[] { selectedPupil },
-            sortOrder,
-            downloadTypeArray, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())).ConfigureAwait(false);
-        SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
         searchDownloadViewModel.SearchResultPageHeading = PageHeading;
         return View(Global.NonLearnerNumberDownloadOptionsView, searchDownloadViewModel);
     }

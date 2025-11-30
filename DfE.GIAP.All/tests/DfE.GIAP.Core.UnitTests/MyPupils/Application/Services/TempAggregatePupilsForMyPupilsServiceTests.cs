@@ -6,8 +6,9 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Dat
 using DfE.GIAP.Core.MyPupils.Application.Services.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.Services;
 public sealed class TempAggregatePupilsForMyPupilsServiceTests

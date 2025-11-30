@@ -176,13 +176,14 @@ public abstract class BaseLearnerNumberController : Controller
                     model.SelectedPupil);
             }
 
+            model.PageNumber = pageNumber;
+            model.PageSize = PAGESIZE;
+            
             model = await GetPupilsForSearchBuilder(
                 model,
                 IndexType,
                 pageNumber,
                 notPaged).ConfigureAwait(false);
-            model.PageNumber = pageNumber;
-            model.PageSize = PAGESIZE;
         }
 
         this.HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);

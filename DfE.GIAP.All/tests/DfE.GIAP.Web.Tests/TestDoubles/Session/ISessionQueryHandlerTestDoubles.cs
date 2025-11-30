@@ -2,6 +2,7 @@
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.Session;
+
 internal static class ISessionQueryHandlerTestDoubles
 {
     internal static Mock<ISessionQueryHandler<TSessionObject>> Default<TSessionObject>() where TSessionObject : class

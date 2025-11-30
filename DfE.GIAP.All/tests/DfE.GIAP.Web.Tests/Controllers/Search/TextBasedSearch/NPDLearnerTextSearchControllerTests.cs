@@ -4,6 +4,7 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
@@ -763,9 +764,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        _mockDownloadService.CheckForNoDataAvailable(Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<AzureFunctionHeaderDetails>())
-                          .Returns(new List<CheckDownloadDataType>() { CheckDownloadDataType.EYFSP });
-
         // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = Substitute.For<ITempDataDictionary>();
@@ -781,11 +779,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
         Assert.Equal(model.SelectedPupils, upn);
         Assert.Equal(1, model.SelectedPupilsCount);
-        Assert.True(
-                model.SearchDownloadDatatypes.Single(
-                    d => d.Value.Equals(CheckDownloadDataType.EYFSP.ToString())
-                    ).Disabled
-        );
     }
 
     [Theory]
@@ -1243,9 +1236,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             DownloadType = DownloadType.NPD
         };
 
-        _mockDownloadService.CheckForNoDataAvailable(Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<AzureFunctionHeaderDetails>())
-              .Returns(new List<CheckDownloadDataType>() { CheckDownloadDataType.EYFSP });
-
         _mockDownloadService.GetCSVFile(
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
@@ -1280,11 +1270,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
         Assert.Equal(_paginatedResultsFake.GetBase64EncodedUpn(), model.SelectedPupils);
         Assert.Equal(1, model.SelectedPupilsCount);
-        Assert.True(
-                model.SearchDownloadDatatypes.Single(
-                    d => d.Value.Equals(CheckDownloadDataType.EYFSP.ToString())
-                    ).Disabled
-        );
     }
 
     [Fact]
@@ -1313,7 +1298,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         // Act
         NPDLearnerTextSearchController sut = GetController();
-        
+
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.DownloadCancellationReturn(new StarredPupilConfirmationViewModel());
@@ -1776,6 +1761,17 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
+        List<AvailableDatasetResult> availableDatasetResults = new()
+            {
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
+            };
+        GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
+
+        Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
+        mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
+            .ReturnsAsync(response);
+
         return new NPDLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
@@ -1784,6 +1780,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
              _mockCtfService,
              _mockSessionProvider.Object,
              _mockDownloadService,
+             mockGetAvailableDatasetsForPupilsUseCase.Object,
              new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object)
         {
             ControllerContext = new ControllerContext()

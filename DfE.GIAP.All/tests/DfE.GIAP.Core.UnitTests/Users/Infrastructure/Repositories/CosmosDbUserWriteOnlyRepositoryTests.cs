@@ -1,24 +1,21 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
-using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
-using User = DfE.GIAP.Core.Users.Application.User;
+using User = DfE.GIAP.Core.Users.Application.Models.User;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
 
 public sealed class CosmosDbUserWriteOnlyRepositoryTests
 {
-    private readonly InMemoryLogger<CosmosDbUserWriteOnlyRepository> _mockLogger;
+    private readonly InMemoryLoggerService _mockLogger;
 
     public CosmosDbUserWriteOnlyRepositoryTests()
     {
-        _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbUserWriteOnlyRepository>();
+        _mockLogger = LoggerServiceTestDoubles.MockLoggerService();
     }
 
     [Fact]
@@ -116,7 +113,7 @@ public sealed class CosmosDbUserWriteOnlyRepositoryTests
 
         // Act & Assert
         await Assert.ThrowsAsync<CosmosException>(act);
-        Assert.Equal("CosmosException in UpsertUserAsync.", _mockLogger.Logs.Single());
+        Assert.Equal("CosmosException in UpsertUserAsync", _mockLogger.Logs.Single());
         mockCommandHandler.Verify(m => m.UpsertItemAsync(
             It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<string>(), default), Times.Once);
     }

@@ -3,20 +3,20 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.SharedTests.TestDoubles;
 using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Infrastructure.Repositories;
 
 public sealed class CosmosDbNewsArticleReadOnlyRepositoryTests
 {
     private readonly string _validId = "any_valid_id";
-    private readonly InMemoryLogger<CosmosDbNewsArticleReadOnlyRepository> _mockLogger;
+    private readonly InMemoryLoggerService _mockLogger;
 
     public CosmosDbNewsArticleReadOnlyRepositoryTests()
     {
-        _mockLogger = LoggerTestDoubles.MockLogger<CosmosDbNewsArticleReadOnlyRepository>();
+        _mockLogger = LoggerServiceTestDoubles.MockLoggerService();
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public sealed class CosmosDbNewsArticleReadOnlyRepositoryTests
 
         // Act Assert
         await Assert.ThrowsAsync<ArgumentException>(act);
-        Assert.Equal("GetNewsArticleByIdAsync called with null or empty id.", _mockLogger.Logs.Single());
+        Assert.Equal("GetNewsArticleByIdAsync called with null or empty id", _mockLogger.Logs.Single());
     }
 
     [Fact]

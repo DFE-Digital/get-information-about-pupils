@@ -4,7 +4,6 @@ using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.Download;
 using DfE.GIAP.Service.ApiProcessor;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using Microsoft.Extensions.Hosting;
