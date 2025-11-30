@@ -35,14 +35,15 @@ funding allocation, helping schools effectively manage the financial aspects of 
 
 https://www.gov.uk/guidance/get-information-about-pupil-giap
 
-Related repositories
-- [GIAP wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
-    - [Onboarding](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/onboarding.md)
-    - [Environments](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/environments.md)
-    - [Deployment](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/deployments.md)
-    - [ADRs](https://github.com/DFE-Digital/get-information-about-pupils-wiki/adr)
 
 ## Getting Started / Setup
+
+Read the [GIAP wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
+  - [Onboarding](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/onboarding.md)
+  - [Environments](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/environments.md)
+  - [Deployment](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/deployments.md)
+  - [ADRs](https://github.com/DFE-Digital/get-information-about-pupils-wiki/adr)
+
 Prerequisites
 - [Git](https://git-scm.com/downloads) (for getting a copy of the source code and contributing changes)
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (for building and running the C#/.NET web
@@ -253,5 +254,6 @@ The Gulp task runs behind the scenes when you compile your project.
 Unless stated otherwise, the codebase is released under the MIT License. This covers both the codebase and any sample code in the documentation.
 
 The documentation is © Crown copyright and available under the terms of the Open Government 3.0 licence
+
 
 
