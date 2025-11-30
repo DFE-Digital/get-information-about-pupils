@@ -24,4 +24,12 @@
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
 
+  <!--WireMock stubs-->
+  <ItemGroup>
+    <None Include="contracts\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>true</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

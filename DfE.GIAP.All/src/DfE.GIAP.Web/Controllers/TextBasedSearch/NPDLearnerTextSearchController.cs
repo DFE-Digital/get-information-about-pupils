@@ -198,9 +198,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     [HttpPost]
     public async Task<IActionResult> ToDownloadNpdCommonTransferFileData(LearnerTextSearchViewModel model)
     {
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         var selectedPupil = GetSelected();
 
@@ -287,9 +285,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedNPDDataNonUPN(LearnerTextSearchViewModel model)
     {
-        SetSelections(
-        model.PageLearnerNumbers.Split(','),
-        model.SelectedPupil);
+        SetSelections(model.SelectedPupil);
 
         var selectedPupil = GetSelected();
 

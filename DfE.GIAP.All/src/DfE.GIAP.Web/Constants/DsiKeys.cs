@@ -2,21 +2,6 @@
 
 public static class DsiKeys
 {
-    public static class Scope
-    {
-        public const string OpenId = "openid";
-        public const string Email = "email";
-        public const string Profile = "profile";
-        public const string OrganisationId = "organisationid";
-    }
-
-    public static class CallbackPaths
-    {
-        public const string Dsi = "/auth/cb";
-        public const string SignedOut = "/signout/complete";
-        public const string Logout = "/auth/logout";
-    }
-
     public static class Common
     {
         //NOTE: DfE user is set up as a LA with 001 as the LA number.

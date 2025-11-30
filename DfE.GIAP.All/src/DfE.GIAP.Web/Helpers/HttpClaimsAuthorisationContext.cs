@@ -14,8 +14,14 @@ public sealed class HttpClaimsAuthorisationContext : IAuthorisationContext
         _user = user;
     }
 
-    public string Role => _user.GetUserRole();
+    public bool IsAdminUser => _user.IsAdmin();
     public bool IsDfeUser => _user.IsDfeUser();
+    public bool IsEstablishment => _user.IsOrganisationEstablishment();
+    public bool IsLAUser => _user.IsOrganisationLocalAuthority();
+    public bool IsMatUser => _user.IsOrganisationMultiAcademyTrust();
+    public bool IsSatUser => _user.IsOrganisationSingleAcademyTrust();
+    public bool AnyAgeUser => _user.IsOrganisationAllAges();
+
     public int StatutoryAgeLow => _user.GetOrganisationLowAge();
     public int StatutoryAgeHigh => _user.GetOrganisationHighAge();
     public IReadOnlyCollection<string> Claims => _user.Claims.Select(c => c.Type).Distinct().ToList();

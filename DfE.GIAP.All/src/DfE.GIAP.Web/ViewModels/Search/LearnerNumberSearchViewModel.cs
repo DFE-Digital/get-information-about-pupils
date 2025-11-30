@@ -1,8 +1,7 @@
-﻿using DfE.GIAP.Common.Validation;
-using DfE.GIAP.Domain.Search.Learner;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Common.Validation;
+using DfE.GIAP.Domain.Search.Learner;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 
@@ -53,4 +52,10 @@ public class LearnerNumberSearchViewModel
     public List<string> NotFound { get; set; } = new List<string>();
     public string ErrorDetails { get; set; }
     public string SearchBoxErrorMessage { get; set; }
+
+    /// <summary>
+    /// The offset is used to skip the defined number of records retrieved
+    /// on a search request. 
+    /// </summary>
+    public int Offset => PageNumber * PageSize;
 }
