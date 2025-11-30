@@ -1,0 +1,32 @@
+{
+    "Request": {
+        "Path": {
+            "Matchers": [
+                {
+                    "Name": "WildcardMatcher",
+                    "Pattern": "/indexes",
+                    "IgnoreCase": true
+                }
+            ]
+        }
+    },
+    "Response": {
+        "StatusCode": 200,
+        "Headers": {
+            "Content-Type": "application/json"
+        },
+        "BodyAsJson": {
+            "value": [
+                {
+                    "name": "NPD_INDEX_NAME"
+                },
+                {
+                    "name": "PUPIL_PREMIUM_INDEX_NAME"
+                },
+                {
+                    "name": "FE_INDEX_NAME"
+                }
+            ]
+        }
+    }
+}

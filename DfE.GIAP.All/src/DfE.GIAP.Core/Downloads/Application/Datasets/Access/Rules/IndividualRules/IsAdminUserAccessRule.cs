@@ -9,5 +9,5 @@ namespace DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules.IndividualRu
 /// certain dataset actions to administrative users within the authorization context.</remarks>
 internal sealed class IsAdminUserAccessRule : IDatasetAccessRule
 {
-    public bool HasAccess(IAuthorisationContext context) => context.Role == "GIAPAdmin";
+    public bool HasAccess(IAuthorisationContext context) => context.IsAdminUser;
 }

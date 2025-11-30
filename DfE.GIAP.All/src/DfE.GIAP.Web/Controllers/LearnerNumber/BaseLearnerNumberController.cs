@@ -373,7 +373,7 @@ namespace DfE.GIAP.Web.Controllers
 
             if (potentialErrorLearnerNumbers.Any())
             {
-                foreach (var learnerNumber in potentialErrorLearnerNumbers)
+                foreach (string learnerNumber in potentialErrorLearnerNumbers)
                 {
                     bool isValid = ValidateLearnerNumber(learnerNumber);
 
@@ -383,7 +383,18 @@ namespace DfE.GIAP.Web.Controllers
                     }
                 }
 
-                _logger.LogError("Some of the LearnerNumber(s) have not been found in our database");
+                if (model.Invalid.Count != 0)
+                {
+                    _logger.LogError(
+                        "Some of the LearnerNumber(s) are not valid identifiers: {Identifiers}...",
+                            string.Join(", ",
+                            model.Invalid
+                                .Take(10)
+                                .Select((invalidUpn) =>
+                                    invalidUpn
+                                        .Replace("\n", string.Empty)
+                                        .Replace("\r", string.Empty))));
+                }
                 //result.Reverse(); // TODO: why is this here?
             }
 

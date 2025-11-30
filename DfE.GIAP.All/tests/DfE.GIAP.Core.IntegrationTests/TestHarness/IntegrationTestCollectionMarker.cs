@@ -1,9 +1,8 @@
-﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
-using DfE.GIAP.SharedTests.Infrastructure.SearchIndex;
+﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 
 namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 [CollectionDefinition(Name)]
-public sealed class IntegrationTestCollectionMarker : ICollectionFixture<CosmosDbFixture>, ICollectionFixture<SearchIndexFixture>
+public sealed class IntegrationTestCollectionMarker : ICollectionFixture<CosmosDbFixture>, ICollectionFixture<WireMockServerFixture>
 {
     public const string Name = "IntegrationTests";
 }

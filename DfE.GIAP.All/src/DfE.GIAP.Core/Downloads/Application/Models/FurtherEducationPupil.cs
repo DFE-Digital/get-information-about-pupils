@@ -8,9 +8,9 @@ public class FurtherEducationPupil
     public string? Gender { get; set; }
     public DateTime DOB { get; set; }
     public string? ConcatenatedName { get; set; }
-    public List<PupilPremiumEntry> PupilPremium { get; set; } = new();
-    public List<SpecialEducationalNeedsEntry> specialEducationalNeeds { get; set; } = new();
+    public List<PupilPremiumEntry>? PupilPremium { get; set; }
+    public List<SpecialEducationalNeedsEntry>? specialEducationalNeeds { get; set; }
 
-    public bool HasPupilPremiumData => PupilPremium.Any();
-    public bool HasSpecialEducationalNeedsData => specialEducationalNeeds.Any();
+    public bool HasPupilPremiumData => PupilPremium?.Any() ?? false;
+    public bool HasSpecialEducationalNeedsData => specialEducationalNeeds?.Any() ?? false;
 }
