@@ -6,9 +6,9 @@ public static class MyPupilsDocumentDtoTestDoubles
 {
     public static MyPupilsDocumentDto Create(MyPupilsId id, UniquePupilNumbers upns)
     {
-        List<MyPupilsPupilItemDto> pupilUpns =
+        List<MyPupilsPupilDto> pupilUpns =
             upns.GetUniquePupilNumbers()
-                .Select((upn) => new MyPupilsPupilItemDto()
+                .Select((upn) => new MyPupilsPupilDto()
                 {
                     UPN = upn.Value
                 })

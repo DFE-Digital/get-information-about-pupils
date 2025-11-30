@@ -6,7 +6,7 @@ internal sealed class MyPupilsAggregateToMyPupilsDocumentDtoMapper : IMapper<MyP
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        IEnumerable<MyPupilsPupilItemDto> updatedPupils = input.GetMyPupils()?.Select((upn) => new MyPupilsPupilItemDto()
+        IEnumerable<MyPupilsPupilDto> updatedPupils = input.GetMyPupils()?.Select((upn) => new MyPupilsPupilDto()
         {
             UPN = upn.Value
         }) ?? [];
