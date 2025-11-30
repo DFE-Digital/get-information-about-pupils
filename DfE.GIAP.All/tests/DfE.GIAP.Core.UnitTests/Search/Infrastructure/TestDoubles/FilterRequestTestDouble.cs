@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
+﻿using Bogus;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -29,14 +30,19 @@ internal static class FilterRequestTestDouble
     public static FilterRequest Fake()
     {
         // Instantiate a Bogus faker for generating realistic fake data.
-        Bogus.Faker faker = new();
+        Faker faker = new();
 
         // Construct and return a FilterRequest with:
         // - A random job type as the filter name
         // - Two random job titles as the filter values
+        List<object> filterValues = [
+            faker.Name.JobTitle(),
+            faker.Name.JobTitle()
+        ];
+
         return new FilterRequest(
             faker.Name.JobType(),
-            [faker.Name.JobTitle(), faker.Name.JobTitle()]
+            filterValues
         );
     }
 }

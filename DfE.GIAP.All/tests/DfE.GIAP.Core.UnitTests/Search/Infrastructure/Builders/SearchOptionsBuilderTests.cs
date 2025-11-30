@@ -148,7 +148,7 @@ public sealed class SearchOptionsBuilderTests
             new(mockSearchFilterExpressionsBuilder.Object);
 
         // act
-        _ = searchOptionsBuilder.WithFilters(serviceAdapterInputFilterRequest).Build();
+        searchOptionsBuilder.WithFilters(serviceAdapterInputFilterRequest).Build();
 
         // assert
         foreach (FilterRequest filterRequest in serviceAdapterInputFilterRequest)
