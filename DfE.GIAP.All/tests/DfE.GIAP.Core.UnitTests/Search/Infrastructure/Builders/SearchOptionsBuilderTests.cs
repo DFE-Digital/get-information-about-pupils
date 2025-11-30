@@ -148,14 +148,14 @@ public sealed class SearchOptionsBuilderTests
             new(mockSearchFilterExpressionsBuilder.Object);
 
         // act
-        searchOptionsBuilder.WithFilters(serviceAdapterInputFilterRequest).Build();
+        _ = searchOptionsBuilder.WithFilters(serviceAdapterInputFilterRequest).Build();
 
         // assert
         foreach (FilterRequest filterRequest in serviceAdapterInputFilterRequest)
         {
             SearchFilterRequest matchingFilterRequest =
                 requestMadeToFilterExpressionBuilder
-                    .First(request =>
+                    .Single(request =>
                         request.FilterKey == filterRequest.FilterName);
 
             Assert.NotNull(matchingFilterRequest);

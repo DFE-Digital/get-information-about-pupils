@@ -33,7 +33,7 @@ internal static class FilterRequestTestDouble
         Faker faker = new();
 
         // Construct and return a FilterRequest with:
-        // - A random job type as the filter name
+        // - A random id as the FilterName
         // - Two random job titles as the filter values
         List<object> filterValues = [
             faker.Name.JobTitle(),
@@ -41,7 +41,7 @@ internal static class FilterRequestTestDouble
         ];
 
         return new FilterRequest(
-            faker.Name.JobType(),
+            faker.Random.Guid().ToString(),
             filterValues
         );
     }
