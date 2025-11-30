@@ -6,6 +6,13 @@
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DFE-Digital_get-information-about-pupils&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DFE-Digital_get-information-about-pupils)
 
+| Tool   | StatusPage | Usage |
+|--------|------------|-------|
+| GitHub | <https://www.githubstatus.com> | Source code, GitHub actions for CI/CD |
+| Azure | <https://status.azure.com> | CIP Infrastructure |
+| npm | <https://status.npmjs.org> | `npm` package restore |
+| NuGet | <https://status.nuget.org> | `dotnet` package restore |
+
 # Get Information About Pupils
 
 The Get Information About Pupils (GIAP) service allows education professionals to search
@@ -28,17 +35,12 @@ funding allocation, helping schools effectively manage the financial aspects of 
 
 https://www.gov.uk/guidance/get-information-about-pupil-giap
 
-## Status pages
-
-| Tool   | StatusPage | Usage |
-|--------|------------|-------|
-| GitHub | <https://www.githubstatus.com> | Source code, GitHub actions for CI/CD |
-| Azure | <https://status.azure.com> | CIP Infrastructure |
-| npm | <https://status.npmjs.org> | `npm` package restore |
-| NuGet | <https://status.nuget.org> | `dotnet` package restore |
-
 Related repositories
 - [GIAP wiki](https://github.com/DFE-Digital/get-information-about-pupils-wiki)
+    - [Onboarding](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/onboarding.md)
+    - [Environments](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/environments.md)
+    - [Deployment](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/deployments.md)
+    - [ADRs](https://github.com/DFE-Digital/get-information-about-pupils-wiki/adr)
 
 ## Getting Started / Setup
 Prerequisites
@@ -251,4 +253,5 @@ The Gulp task runs behind the scenes when you compile your project.
 Unless stated otherwise, the codebase is released under the MIT License. This covers both the codebase and any sample code in the documentation.
 
 The documentation is © Crown copyright and available under the terms of the Open Government 3.0 licence
+
 
