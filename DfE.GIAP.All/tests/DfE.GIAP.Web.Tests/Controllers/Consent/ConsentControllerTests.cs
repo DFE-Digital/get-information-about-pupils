@@ -55,7 +55,7 @@ public sealed class ConsentControllerTests
     {
         // Arrange
         Mock<ISessionProvider> mockSessionProvider = new();
-        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptionsWithNullValue<AzureAppSettings>();
+        IOptions<AzureAppSettings> options = OptionsTestDoubles.MockNullOptions<AzureAppSettings>();
         Mock<ICookieProvider> mockCookieProvider = new();
 
         // Act
@@ -90,7 +90,7 @@ public sealed class ConsentControllerTests
     {
         // Arrange
         Mock<ISessionProvider> mockSessionProvider = new();
-        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = true);
+        IOptions<AzureAppSettings> options = OptionsTestDoubles.MockAs<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = true);
         Mock<ICookieProvider> mockCookieProvider = new();
 
         ConsentController controller = new(
@@ -124,7 +124,7 @@ public sealed class ConsentControllerTests
     {
         // Arrange
         Mock<ISessionProvider> mockSessionProvider = new();
-        IOptions<AzureAppSettings> options = OptionsTestDoubles.ConfigureOptions<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = false);
+        IOptions<AzureAppSettings> options = OptionsTestDoubles.MockAs<AzureAppSettings>((t) => t.IsSessionIdStoredInCookie = false);
         Mock<ICookieProvider> mockCookieProvider = new();
 
         ConsentController controller = new(

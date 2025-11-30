@@ -155,7 +155,7 @@ public sealed class SearchOptionsBuilderTests
         {
             SearchFilterRequest matchingFilterRequest =
                 requestMadeToFilterExpressionBuilder
-                    .First(request =>
+                    .Single(request =>
                         request.FilterKey == filterRequest.FilterName);
 
             Assert.NotNull(matchingFilterRequest);
