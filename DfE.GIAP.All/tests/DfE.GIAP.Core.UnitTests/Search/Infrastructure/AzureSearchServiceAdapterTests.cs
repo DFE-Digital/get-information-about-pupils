@@ -10,6 +10,7 @@ using DfE.GIAP.Core.Search.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
@@ -66,7 +67,7 @@ public sealed class AzureSearchServiceAdapterTests
         ISearchServiceAdapter<Learners, SearchFacets> searchServiceAdapter =
             CreateSearchServiceAdapterWith(
                 mockService.Object,
-                IOptionsTestDouble.IOptionsMockFor(_mockAzureSearchOptions),
+                OptionsTestDoubles.MockAs(_mockAzureSearchOptions),
                 _mockSearchResultMapper,
                 _mockFacetsMapper,
                 _mockSearchOptionsBuilder);
@@ -93,23 +94,21 @@ public sealed class AzureSearchServiceAdapterTests
     }
 
     [Fact]
-    public void Search_WithNoSearchOptions_ThrowsApplicationException()
+    public void Search_WithNullSearchOptions_ThrowsApplicationException()
     {
         // act, assert
-        try
+
+        Func<AzureSearchServiceAdapter> act = () =>
         {
-            _ = new AzureSearchServiceAdapter(
+            return new(
                 _mockSearchByKeywordService,
-                IOptionsTestDouble.IOptionsMockFor<AzureSearchOptions>(null!),
+                OptionsTestDoubles.MockNullOptions<AzureSearchOptions>(),
                 _mockSearchResultMapper,
                 _mockFacetsMapper,
                 _mockSearchOptionsBuilder);
-            Assert.True(false);
-        }
-        catch (ArgumentNullException)
-        {
-            Assert.True(true);
-        }
+        };
+
+        Assert.Throws<ArgumentNullException>(act);
     }
 
     [Fact]
@@ -122,7 +121,7 @@ public sealed class AzureSearchServiceAdapterTests
         ISearchServiceAdapter<Learners, SearchFacets> searchServiceAdapter =
             CreateSearchServiceAdapterWith(
                 _mockSearchByKeywordService,
-                IOptionsTestDouble.IOptionsMockFor(_mockAzureSearchOptions),
+                OptionsTestDoubles.MockAs(_mockAzureSearchOptions),
                 mockEstablishmentResultsMapper,
                 _mockFacetsMapper,
                 _mockSearchOptionsBuilder);
