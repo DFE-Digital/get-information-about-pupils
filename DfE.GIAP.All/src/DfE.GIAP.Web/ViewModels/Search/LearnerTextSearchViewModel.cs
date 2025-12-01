@@ -11,13 +11,11 @@ public class LearnerTextSearchViewModel
 {
     public LearnerTextSearchViewModel()
     {
-        this.SearchFilters = new SearchFilters();
-        this.FilterErrors = new FilterErrors();
-        this.RedirectUrls = new RedirectUrls();
+        SearchFilters = new SearchFilters();
+        FilterErrors = new FilterErrors();
+        RedirectUrls = new RedirectUrls();
     }
 
-
-    public string PageTitle { get; set; }
     public string PageHeading { get; set; }
 
     public string DownloadLinksPartial { get; set; }
@@ -26,7 +24,6 @@ public class LearnerTextSearchViewModel
     public string LearnerTextSearchAction { get; set; }
     public string LearnerNumberController { get; set; }
     public string LearnerNumberAction { get; set; }
-    public string CSVDownloadAction { get; set; }
     public string InvalidUPNsConfirmationAction { get; set; }
 
     public int PageNumber { get; set; }
