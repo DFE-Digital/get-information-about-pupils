@@ -19,7 +19,7 @@ public class GenderFilterHandlerTests
         Dictionary<string, string[]> requestFilters = [];
         CurrentFilterDetail filter = new()
         {
-            FilterName = "F",
+            FilterName = "Male",
             FilterType = FilterType.Sex
         };
 
@@ -31,10 +31,10 @@ public class GenderFilterHandlerTests
             model.Filters.Single(filterData => filterData.Name == TargetKey);
 
         Assert.Single(genderFilter.Items);
-        Assert.Equal("F", genderFilter.Items[0].Value);
+        Assert.Equal("M", genderFilter.Items[0].Value);
 
         Assert.True(requestFilters.ContainsKey(TargetKey));
-        Assert.Equal("F", requestFilters[TargetKey][0]);
+        Assert.Equal("M", requestFilters[TargetKey][0]);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class GenderFilterHandlerTests
         Dictionary<string, string[]> requestFilters = [];
         CurrentFilterDetail filter = new()
         {
-            FilterName = "F",
+            FilterName = "Female",
             FilterType = FilterType.Sex
         };
 
