@@ -101,14 +101,6 @@ public static class PupilHelper
         return errorMessage;
     }
 
-    public static string SwitchGenderToParseName(this string genderValue) =>
-        genderValue switch
-        {
-            "F" => "Female",
-            "M" => "Male",
-            _ => "Unknown"
-        };
-
     public static string SwitchSexToParseName(this string sexValue) =>
         sexValue switch
         {

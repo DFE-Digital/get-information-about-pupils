@@ -50,8 +50,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         _paginatedResultsFake = paginatedResultsFake;
     }
 
-    #region Search
-
     [Fact]
     public async Task NationalPupilDatabase_returns_empty_page_when_first_navigated_to()
     {
@@ -587,11 +585,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal("123\nA203202811068", model.LearnerNumberIds);
         Assert.True(model.Learners.SequenceEqual(expectedLearners));
     }
-
-    #endregion Search
-
-    #region Sorting
-
+    
     [Fact]
     public async Task NationalPupilDatabase_preserves_sort_settings_when_navigated_to()
     {
@@ -1105,7 +1099,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     }
 
     [Fact]
-    public async Task NationalPupilDatabase_updates_model_with_sorting_gender_asc_correctly()
+    public async Task NationalPupilDatabase_updates_model_with_sorting_sex_asc_correctly()
     {
         // arrange
         var newsPubCommonResponse = new CommonResponseBody()
@@ -1133,7 +1127,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
-        var sortField = "Gender";
+        var sortField = "Sex";
         var sortDirection = "asc";
         var result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
@@ -1184,7 +1178,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
-        var sortField = "Gender";
+        var sortField = "Sex";
         var sortDirection = "desc";
         var result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
@@ -1307,10 +1301,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
-
-    #endregion Sorting
-
-    #region Invalid UPNs
 
     [Fact]
     public async Task NPDInvalidUpns_shows_invalid_upn_page_upns_only()
@@ -1496,8 +1486,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.False(sut.ModelState.IsValid);
     }
 
-    #endregion Invalid UPNs
-
     [Fact]
     public async Task AddToMyPupilList_adds_to_mpl()
     {
@@ -1644,8 +1632,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(Global.SearchView, viewResult.ViewName);
         Assert.Equal(Messages.Common.Errors.MyPupilListLimitExceeded, model.ErrorDetails);
     }
-
-    #region Download CTF
 
     [Fact]
     public async Task DownloadCommonTransferFileData_returns_data()
@@ -1841,10 +1827,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.True(viewResult.ViewName.Equals(Global.SearchView));
         Assert.Contains(Messages.Downloads.Errors.UPNLimitExceeded, model.ErrorDetails);
     }
-
-    #endregion Download CTF
-
-    #region Download NPD
 
     [Fact]
     public async Task ToDownloadSelectedNPDDataUpn_returns_to_search_page_with_error_if_no_pupil_selected()
@@ -2199,8 +2181,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>()).ConfigureAwait(false);
     }
-
-    #endregion Download NPD
 
     private void AssertAbstractValues(NPDLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
     {

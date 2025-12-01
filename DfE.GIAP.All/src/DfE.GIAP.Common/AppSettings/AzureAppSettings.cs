@@ -48,10 +48,4 @@ public class AzureAppSettings
 
     // flag indicating that we should show the LA number
     public bool UseLAColumn { get; set; }
-
-    //flags for using gender on the search screens
-    public bool NpdUseGender { get; set; }
-    public bool PpUseGender { get; set; }
-    public bool FeUseGender { get; set; }
-    public string FeatureFlagAppConfigUrl { get; set; }
 }

@@ -1,12 +1,10 @@
-﻿namespace DfE.GIAP.Core.Models.Search
+﻿namespace DfE.GIAP.Core.Models.Search;
+
+public enum FilterType
 {
-    public enum FilterType
-    {
-        Surname,
-        MiddleName,
-        Forename,
-        Dob,
-        Gender,
-        Sex
-    }
+    Surname,
+    MiddleName,
+    Forename,
+    Dob,
+    Sex
 }
