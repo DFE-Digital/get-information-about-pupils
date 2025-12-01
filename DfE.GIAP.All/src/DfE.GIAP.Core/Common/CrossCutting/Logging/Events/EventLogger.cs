@@ -12,6 +12,8 @@ public class EventLogger : IEventLogger
         IBusinessEventFactory businessEventFactory,
         IEnumerable<IEventSink> sinks)
     {
+        ArgumentNullException.ThrowIfNull(businessEventFactory);
+        ArgumentNullException.ThrowIfNull(sinks);
         _businessEventFactory = businessEventFactory;
         _sinks = sinks;
     }
