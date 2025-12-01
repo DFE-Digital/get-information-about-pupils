@@ -10,12 +10,6 @@
     }
     <partial name="~/Views/Shared/LearnerText/_ForenameFilter.cshtml" model="Model" />
     <partial name="~/Views/Shared/LearnerText/_DOBFilter.cshtml" model="Model" />
-    @if (Model.ShowGender)
-    {
-        <partial name="~/Views/Shared/LearnerText/_GenderFilter.cshtml" model="Model" />
-    }
-    else
-    {
-        <partial name="~/Views/Shared/LearnerText/_SexFilter.cshtml" model="Model" />
-    }
+    <partial name="~/Views/Shared/LearnerText/_SexFilter.cshtml" model="Model" />
+    
 </div>

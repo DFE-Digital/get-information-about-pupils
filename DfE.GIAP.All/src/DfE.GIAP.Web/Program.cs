@@ -85,7 +85,7 @@ builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
         { "SurnameLC", new NameFilterHandler("SurnameLC") },
         { "ForenameLC", new NameFilterHandler("ForenameLC") },
         { "DOB", new DobFilterHandler() },
-        { "Gender", new GenderFilterHandler("Gender") }
+        { "Sex", new GenderFilterHandler("Sex") }
     };
 
     return new FilterHandlerRegistry(handlers);

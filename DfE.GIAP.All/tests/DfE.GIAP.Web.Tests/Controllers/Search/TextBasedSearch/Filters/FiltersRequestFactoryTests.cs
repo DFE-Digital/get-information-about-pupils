@@ -47,14 +47,14 @@ public class FiltersRequestFactoryTests
     }
 
     [Fact]
-    public void GenerateFilterRequest_WithSingleGenderValue_AppendsGenderFilter()
+    public void GenerateFilterRequest_WithSingleSexValue_AppendsGenderFilter()
     {
         // arrange
         Mock<IFilterHandlerRegistry> registryMock = new();
         FiltersRequestFactory factory = new(registryMock.Object);
         LearnerTextSearchViewModel model = new()
         {
-            SelectedGenderValues = ["Female"]
+            SelectedSexValues = ["Female"]
         };
         List<CurrentFilterDetail> filters = [];
 
@@ -66,7 +66,7 @@ public class FiltersRequestFactoryTests
             filterHandlerRegistry.ApplyFilters(
                 It.Is<List<CurrentFilterDetail>>(currentFilterDetails =>
                     currentFilterDetails.Any(currentFilterDetail =>
-                        currentFilterDetail.FilterType == FilterType.Gender &&
+                        currentFilterDetail.FilterType == FilterType.Sex &&
                         currentFilterDetail.FilterName == "Female")),
                 model, result),
                 Times.Once);
@@ -80,7 +80,7 @@ public class FiltersRequestFactoryTests
         FiltersRequestFactory factory = new(registryMock.Object);
         LearnerTextSearchViewModel model = new()
         {
-            SelectedGenderValues = ["Male", "Female"]
+            SelectedSexValues = ["Male", "Female"]
         };
         List<CurrentFilterDetail> filters = [];
 
@@ -92,7 +92,7 @@ public class FiltersRequestFactoryTests
             filterHandlerRegistry.ApplyFilters(
                 It.Is<List<CurrentFilterDetail>>(currentFilterDetails =>
                     currentFilterDetails.Any(currentFilterDetail =>
-                        currentFilterDetail.FilterType == FilterType.Gender)),
+                        currentFilterDetail.FilterType == FilterType.Sex)),
                 model, result),
                 Times.Never);
     }

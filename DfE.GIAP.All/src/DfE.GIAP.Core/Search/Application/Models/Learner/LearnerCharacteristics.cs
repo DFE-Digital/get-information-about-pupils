@@ -16,7 +16,7 @@ public sealed class LearnerCharacteristics : ValueObject<LearnerCharacteristics>
     public DateOfBirth BirthDate { get; }
 
     /// <summary>
-    /// Gets the learner's gender.
+    /// Gets the learner's Sex.
     /// </summary>
     public Gender Sex { get; }
 
