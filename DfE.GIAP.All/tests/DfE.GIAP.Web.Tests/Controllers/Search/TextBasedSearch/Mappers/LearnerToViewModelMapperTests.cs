@@ -7,7 +7,7 @@ using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacterist
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers;
 
-public class LearnerToViewModelMapperTests
+public sealed class LearnerToViewModelMapperTests
 {
     private readonly LearnerToViewModelMapper _mapper = new();
 
