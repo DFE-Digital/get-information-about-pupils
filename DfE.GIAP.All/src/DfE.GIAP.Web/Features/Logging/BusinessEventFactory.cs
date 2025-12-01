@@ -10,6 +10,7 @@ public class BusinessEventFactory : IBusinessEventFactory
     private readonly IHttpContextAccessor _httpContextAccessor;
     public BusinessEventFactory(IHttpContextAccessor httpContextAccessor)
     {
+        ArgumentNullException.ThrowIfNull(httpContextAccessor);
         _httpContextAccessor = httpContextAccessor;
     }
 
