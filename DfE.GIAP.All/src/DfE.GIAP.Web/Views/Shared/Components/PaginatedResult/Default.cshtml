@@ -34,22 +34,12 @@
                                 Date of birth
                             </button>
                         </th>
-                        @if (Model.ShowGender)
-                        {
-                            <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-gender--text" aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Gender, Model.ActiveSortField, Model.ActiveSortDirection)">
-                                <button id="search--sort-gender--button" asp-action="@Model.ControllerAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@AzureSearchFields.Gender" asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Gender, Model.ActiveSortField, Model.ActiveSortDirection)">
-                                    Gender
-                                </button>
-                            </th>
-                        }
-                        else
-                        {
-                            <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-sex--text" aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.ActiveSortField, Model.ActiveSortDirection)">
-                                <button id="search--sort-sex--button" asp-action="@Model.ControllerAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@AzureSearchFields.Sex" asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.ActiveSortField, Model.ActiveSortDirection)">
-                                    Sex
-                                </button>
-                            </th>
-                        }
+                        <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-sex--text" aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.ActiveSortField, Model.ActiveSortDirection)">
+                            <button id="search--sort-sex--button" asp-action="@Model.ControllerAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@AzureSearchFields.Sex" asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.ActiveSortField, Model.ActiveSortDirection)">
+                                Sex
+                            </button>
+                        </th>
+                        
                         @if (Model.ShowPP)
                         {
                             <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>

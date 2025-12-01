@@ -59,7 +59,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerTextSearchController => Global.PPNonUpnController;
     public override string LearnerTextSearchAction => SearchAction;
     public override string LearnerNumberAction => Global.PPAction;
-    public override bool ShowGender => _appSettings.PpUseGender;
+    
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;

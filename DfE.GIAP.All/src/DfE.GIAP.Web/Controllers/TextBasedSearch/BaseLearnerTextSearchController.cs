@@ -67,7 +67,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string LearnerTextSearchController { get; }
     public abstract string LearnerTextSearchAction { get; }
     public abstract string LearnerNumberAction { get; }
-    public abstract bool ShowGender { get; }
     public abstract bool ShowLocalAuthority { get; }
     public abstract string InvalidUPNsConfirmationAction { get; }
     public abstract string LearnerNumberLabel { get; }
@@ -1163,7 +1162,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading;
-        model.ShowGender = ShowGender;
         model.ShowLocalAuthority = ShowLocalAuthority;
         return model;
     }

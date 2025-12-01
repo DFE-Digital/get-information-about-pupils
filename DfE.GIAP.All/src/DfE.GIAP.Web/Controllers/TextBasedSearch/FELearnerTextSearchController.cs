@@ -71,7 +71,6 @@ public class FELearnerTextSearchController : Controller
     public string LearnerTextSearchAction => Global.FELearnerTextSearchAction;
     public string LearnerNumberAction => Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
 
-    public bool ShowGender => true; //_appSettings.FeUseGender;
     public bool ShowLocalAuthority => false;
     public string InvalidUPNsConfirmationAction => "";
     public string LearnerNumberLabel => Global.FELearnerNumberLabel;
@@ -1046,8 +1045,7 @@ public class FELearnerTextSearchController : Controller
 
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
-        model.PageHeading = PageHeading;
-        model.ShowGender = ShowGender;
+        model.PageHeading = PageHeading; 
         model.ShowLocalAuthority = ShowLocalAuthority;
         return model;
     }

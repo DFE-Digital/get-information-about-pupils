@@ -67,7 +67,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerTextSearchController => Global.NPDTextSearchController;
     public override string LearnerTextSearchAction => SearchAction;
     public override string LearnerNumberAction => Global.NPDAction;
-    public override bool ShowGender => _appSettings.NpdUseGender;
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override string InvalidUPNsConfirmationAction => Global.NPDNonUpnInvalidUPNsConfirmation;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;

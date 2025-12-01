@@ -39,8 +39,6 @@ public class LearnerTextSearchViewModel
     /// on a search request. 
     /// </summary>
     public int Offset => PageNumber * PageSize;
-
-    public bool ShowGender { get; set; }
     public bool ShowLocalAuthority { get; set; }
 
     public bool ShowMiddleNames { get; set; }
