@@ -237,14 +237,14 @@ public class MyPupilListControllerTests :
     }
 
     [Fact]
-    public async Task MyPupilList_returns_pupils_with_sorting_asc_correctly_applied_gender()
+    public async Task MyPupilList_returns_pupils_with_sorting_asc_correctly_applied_sex()
     {
         // arrange
         var upns = _paginatedResultsFake.GetUpns();
         var upnArray = upns.FormatLearnerNumbers();
 
         SetUpLearnerList(upnArray);
-        var inputModel = GetInputModel(upns, AzureSearchFields.Gender, AzureSearchSortDirections.Ascending);
+        var inputModel = GetInputModel(upns, AzureSearchFields.Sex, AzureSearchSortDirections.Ascending);
 
         var sut = GetController();
         SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
@@ -262,14 +262,14 @@ public class MyPupilListControllerTests :
     }
 
     [Fact]
-    public async Task MyPupilList_returns_pupils_with_sorting_desc_correctly_applied_gender()
+    public async Task MyPupilList_returns_pupils_with_sorting_desc_correctly_applied_sex()
     {
         // arrange
         var upns = _paginatedResultsFake.GetUpns();
         var upnArray = upns.FormatLearnerNumbers();
 
         SetUpLearnerList(upnArray);
-        var inputModel = GetInputModel(upns, AzureSearchFields.Gender, AzureSearchSortDirections.Descending);
+        var inputModel = GetInputModel(upns, AzureSearchFields.Sex, AzureSearchSortDirections.Descending);
 
         var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Sex);
         var sut = GetController();
