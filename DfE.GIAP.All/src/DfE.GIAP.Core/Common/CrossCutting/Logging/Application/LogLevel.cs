@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 
 /// <summary>
 /// Defines the severity levels for log entries, indicating the importance

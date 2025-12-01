@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
@@ -16,12 +16,12 @@ namespace DfE.GIAP.Core.Users.Infrastructure.Repositories;
 internal sealed class CosmosDbUserReadOnlyRepository : IUserReadOnlyRepository
 {
     private const string ContainerName = "users";
-    private readonly ILoggerService _loggerService;
+    private readonly IApplicationLoggerService _loggerService;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<UserDto, User> _userMapper;
 
     public CosmosDbUserReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLoggerService logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<UserDto, User> userMapper)
     {

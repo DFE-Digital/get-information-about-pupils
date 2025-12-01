@@ -1,16 +1,16 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 
-public class LoggerService : ILoggerService
+public class ApplicationLoggerService : IApplicationLoggerService
 {
     private readonly IEnumerable<ITraceLogHandler> _traceLogHandlers;
-    private readonly ILogEntryFactory<TracePayloadOptions, TracePayload> _traceLogFactory;
+    private readonly IApplicationLogEntryFactory<TracePayloadOptions, TracePayload> _traceLogFactory;
 
-    public LoggerService(
+    public ApplicationLoggerService(
         IEnumerable<ITraceLogHandler> traceLogHandlers,
-        ILogEntryFactory<TracePayloadOptions, TracePayload> traceLogFactory)
+        IApplicationLogEntryFactory<TracePayloadOptions, TracePayload> traceLogFactory)
     {
         ArgumentNullException.ThrowIfNull(traceLogHandlers);
         ArgumentNullException.ThrowIfNull(traceLogFactory);

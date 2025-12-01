@@ -1,12 +1,12 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging.Handlers;
+namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging.Application.Handlers;
 public class TraceLogHandlerTests
 {
     private static IOptions<LoggingOptions> CreateOptions(Dictionary<string, SinkConfig> sinks)

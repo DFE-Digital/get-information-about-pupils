@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
 public class TracePayloadOptions
 {

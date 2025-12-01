@@ -1,14 +1,14 @@
 ﻿using System.Collections.Concurrent;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging.Sinks;
+namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging.Application.Sinks;
 public class AzureAppInsightTraceSinkTests
 {
     private static (AzureAppInsightTraceSink sink, StubTelemetryChannel channel) CreateSink()

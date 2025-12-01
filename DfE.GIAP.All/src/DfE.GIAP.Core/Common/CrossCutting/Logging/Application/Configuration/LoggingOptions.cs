@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Configuration;
 
 /// <summary>
 /// Represents the root configuration options for the logging system.

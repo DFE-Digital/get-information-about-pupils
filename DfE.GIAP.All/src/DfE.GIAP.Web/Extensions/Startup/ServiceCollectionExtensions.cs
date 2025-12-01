@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IEventLogging, EventLogging>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
 
-        services.AddScoped<ILogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
+        services.AddScoped<IApplicationLogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
         services.AddScoped<IBusinessEventFactory, BusinessEventFactory>();
 
         return services;

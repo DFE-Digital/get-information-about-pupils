@@ -1,7 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Sinks;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
@@ -18,7 +19,7 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterApplicationDependencies(this IServiceCollection services)
     {
-        services.AddScoped<ILoggerService, LoggerService>();
+        services.AddScoped<IApplicationLoggerService, ApplicationLoggerService>();
         services.AddSingleton<ITraceLogHandler, TraceLogHandler>();
 
         services.AddScoped<IEventLogger, EventLogger>();

@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 
 /// <summary>
 /// Defines a factory contract for creating strongly-typed log entries
@@ -13,7 +13,7 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging;
 /// <typeparam name="TPayload">
 /// The type of the payload that will be wrapped in the log entry.
 /// </typeparam>
-public interface ILogEntryFactory<TPayloadOptions, TPayload>
+public interface IApplicationLogEntryFactory<TPayloadOptions, TPayload>
 {
     /// <summary>
     /// Creates a new <see cref="Log{TPayload}"/> instance using the specified options.

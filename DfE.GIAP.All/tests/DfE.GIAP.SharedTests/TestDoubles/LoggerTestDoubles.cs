@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using Microsoft.Extensions.Logging;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
@@ -49,12 +49,12 @@ public static class LoggerServiceTestDoubles
     }
 }
 
-public sealed class InMemoryLoggerService : ILoggerService
+public sealed class InMemoryLoggerService : IApplicationLoggerService
 {
     public List<string> Logs { get; } = [];
 
     public void LogTrace(
-        Core.Common.CrossCutting.Logging.LogLevel level,
+        Core.Common.CrossCutting.Logging.Application.LogLevel level,
         string message,
         Exception? exception = null,
         string? category = null,

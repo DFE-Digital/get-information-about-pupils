@@ -1,30 +1,30 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Handlers;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
-namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging;
+namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging.Application;
 
-public class LoggerServiceTests
+public class ApplicationLoggerServiceTests
 {
-    private readonly Mock<ILogEntryFactory<TracePayloadOptions, TracePayload>> _factoryMock;
+    private readonly Mock<IApplicationLogEntryFactory<TracePayloadOptions, TracePayload>> _factoryMock;
 
-    public LoggerServiceTests()
+    public ApplicationLoggerServiceTests()
     {
-        _factoryMock = new Mock<ILogEntryFactory<TracePayloadOptions, TracePayload>>();
+        _factoryMock = new Mock<IApplicationLogEntryFactory<TracePayloadOptions, TracePayload>>();
     }
 
     [Fact]
     public void Constructor_ThrowsArgumentNullException_When_TraceLogHandlersNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new LoggerService(null!, _factoryMock.Object));
+            new ApplicationLoggerService(null!, _factoryMock.Object));
     }
 
     [Fact]
     public void Constructor_ThrowsArgumentNullException_When_TraceFactoryIsNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            new LoggerService(new List<ITraceLogHandler>(), null!));
+            new ApplicationLoggerService(new List<ITraceLogHandler>(), null!));
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class LoggerServiceTests
         // Arrange
         Mock<ITraceLogHandler> handlerMock = new();
 
-        LoggerService sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
+        ApplicationLoggerService sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
 
         // Act
         sut.LogTrace(
@@ -54,7 +54,7 @@ public class LoggerServiceTests
             .Setup(f => f.Create(It.IsAny<TracePayloadOptions>()))
             .Returns(It.IsAny<Log<TracePayload>>());
 
-        LoggerService sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
+        ApplicationLoggerService sut = new(new[] { handlerMock.Object }, _factoryMock.Object);
 
         // Act
         sut.LogTrace(It.IsAny<LogLevel>(), It.IsAny<string>());

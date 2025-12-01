@@ -13,7 +13,7 @@ public class AzureAppInsightEventSink : IEventSink
         _telemetryClient = telemetryClient;
     }
 
-    public void Write(BusinessEvent evt)
+    public void Log(BusinessEvent evt)
     {
         _telemetryClient.TrackEvent(evt.EventName, evt.ToProperties());
     }

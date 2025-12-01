@@ -4,5 +4,5 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Sinks;
 
 public interface IEventSink
 {
-    void Write(BusinessEvent evt);
+    void Log(BusinessEvent evt);
 }

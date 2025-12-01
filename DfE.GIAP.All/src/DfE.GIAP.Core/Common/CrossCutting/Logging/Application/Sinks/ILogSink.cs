@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Sinks;
+namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Sinks;
 
 /// <summary>
 /// Defines a contract for a log sink that receives and persists log entries
