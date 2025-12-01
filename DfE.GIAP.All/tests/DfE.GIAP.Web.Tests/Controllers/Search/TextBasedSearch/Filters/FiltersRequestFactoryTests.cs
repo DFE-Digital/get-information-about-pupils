@@ -47,6 +47,57 @@ public class FiltersRequestFactoryTests
     }
 
     [Fact]
+    public void GenerateFilterRequest_WithSingleSexValue_AppendsGenderFilter()
+    {
+        // arrange
+        Mock<IFilterHandlerRegistry> registryMock = new();
+        FiltersRequestFactory factory = new(registryMock.Object);
+        LearnerTextSearchViewModel model = new()
+        {
+            SelectedSexValues = ["Female"]
+        };
+        List<CurrentFilterDetail> filters = [];
+
+        // act
+        Dictionary<string, string[]> result = factory.GenerateFilterRequest(model, filters);
+
+        // assert
+        registryMock.Verify(filterHandlerRegistry =>
+            filterHandlerRegistry.ApplyFilters(
+                It.Is<List<CurrentFilterDetail>>(currentFilterDetails =>
+                    currentFilterDetails.Any(currentFilterDetail =>
+                        currentFilterDetail.FilterType == FilterType.Sex &&
+                        currentFilterDetail.FilterName == "Female")),
+                model, result),
+                Times.Once);
+    }
+
+    [Fact]
+    public void GenerateFilterRequest_WithMultipleGenderValues_DoesNotAppendGenderFilter()
+    {
+        // arrange
+        Mock<IFilterHandlerRegistry> registryMock = new();
+        FiltersRequestFactory factory = new(registryMock.Object);
+        LearnerTextSearchViewModel model = new()
+        {
+            SelectedSexValues = ["Male", "Female"]
+        };
+        List<CurrentFilterDetail> filters = [];
+
+        // act
+        Dictionary<string, string[]> result = factory.GenerateFilterRequest(model, filters);
+
+        // assert
+        registryMock.Verify(filterHandlerRegistry =>
+            filterHandlerRegistry.ApplyFilters(
+                It.Is<List<CurrentFilterDetail>>(currentFilterDetails =>
+                    currentFilterDetails.Any(currentFilterDetail =>
+                        currentFilterDetail.FilterType == FilterType.Sex)),
+                model, result),
+                Times.Never);
+    }
+
+    [Fact]
     public void GenerateFilterRequest_WithValidFilters_DelegatesToRegistry()
     {
         // arrange
