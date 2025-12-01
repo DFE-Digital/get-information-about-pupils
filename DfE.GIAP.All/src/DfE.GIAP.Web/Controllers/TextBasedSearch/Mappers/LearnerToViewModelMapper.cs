@@ -42,7 +42,7 @@ public sealed class LearnerToViewModelMapper :
             Forename = input.Name.FirstName,
 
             // Converts gender enum to human-readable string using description meta-data
-            Gender = MapGenderDescription(input.Characteristics.Sex),
+            Sex = MapSexDescription(input.Characteristics.Sex),
 
             // Maps birth date directly; assumes implicit conversion from value object to DateTime
             DOB = input.Characteristics.BirthDate
@@ -58,7 +58,7 @@ public sealed class LearnerToViewModelMapper :
     /// </summary>
     /// <param name="gender">The gender enum value to convert.</param>
     /// <returns>A string description of the gender, suitable for UI display.</returns>
-    private static string MapGenderDescription(Gender gender)
+    private static string MapSexDescription(Gender gender)
     {
         // Use reflection to retrieve the DescriptionAttribute from the enum field
         DescriptionAttribute descriptionAttribute =

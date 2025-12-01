@@ -250,7 +250,7 @@ public class MyPupilListControllerTests :
         SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
         SetupPaginatedSearch(AzureSearchIndexType.PupilPremium, _paginatedResultsFake.GetValidLearners());
 
-        var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.Gender);
+        var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderBy(x => x.Sex);
 
         // act
         var result = await sut.MyPupilList(inputModel, 0);
@@ -271,7 +271,7 @@ public class MyPupilListControllerTests :
         SetUpLearnerList(upnArray);
         var inputModel = GetInputModel(upns, AzureSearchFields.Gender, AzureSearchSortDirections.Descending);
 
-        var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Gender);
+        var expectedList = _paginatedResultsFake.GetValidLearners().Learners.OrderByDescending(x => x.Sex);
         var sut = GetController();
 
         SetupPaginatedSearch(AzureSearchIndexType.NPD, _paginatedResultsFake.GetValidLearners());
