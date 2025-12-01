@@ -2,6 +2,12 @@
 
 namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
+/// <summary>
+/// Defines methods for creating business event objects representing user actions such as downloads, searches, and
+/// sign-ins.
+/// </summary>
+/// <remarks>Implementations of this interface provide a standardized way to construct event objects for tracking
+/// and auditing purposes. The created events can be used for logging, analytics, or compliance workflows.</remarks>
 public interface IBusinessEventFactory
 {
     DownloadEvent CreateDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
