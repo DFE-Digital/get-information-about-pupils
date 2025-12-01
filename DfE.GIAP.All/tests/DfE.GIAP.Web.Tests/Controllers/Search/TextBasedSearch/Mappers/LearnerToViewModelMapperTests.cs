@@ -51,7 +51,7 @@ public class LearnerToViewModelMapperTests
         // act
         object? result =
             typeof(LearnerToViewModelMapper)
-                .GetMethod("MapGenderDescription", BindingFlags.NonPublic | BindingFlags.Static)!
+                .GetMethod("MapSexDescription", BindingFlags.NonPublic | BindingFlags.Static)!
                 .Invoke(null, [gender]);
 
         // assert
