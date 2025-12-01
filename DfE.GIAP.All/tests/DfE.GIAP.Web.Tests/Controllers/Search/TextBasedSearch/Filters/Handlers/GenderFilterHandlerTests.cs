@@ -8,7 +8,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Filters.Handlers
 
 public class GenderFilterHandlerTests
 {
-    private const string TargetKey = "Gender";
+    private const string TargetKey = "Sex";
     private readonly GenderFilterHandler _handler = new(TargetKey);
 
     [Fact]
@@ -19,8 +19,8 @@ public class GenderFilterHandlerTests
         Dictionary<string, string[]> requestFilters = [];
         CurrentFilterDetail filter = new()
         {
-            FilterName = "John",
-            FilterType = FilterType.Forename
+            FilterName = "F",
+            FilterType = FilterType.Sex
         };
 
         // act
@@ -31,10 +31,10 @@ public class GenderFilterHandlerTests
             model.Filters.Single(filterData => filterData.Name == TargetKey);
 
         Assert.Single(genderFilter.Items);
-        Assert.Equal("John", genderFilter.Items[0].Value);
+        Assert.Equal("F", genderFilter.Items[0].Value);
 
         Assert.True(requestFilters.ContainsKey(TargetKey));
-        Assert.Equal("John", requestFilters[TargetKey][0]);
+        Assert.Equal("F", requestFilters[TargetKey][0]);
     }
 
     [Fact]
@@ -48,15 +48,15 @@ public class GenderFilterHandlerTests
                 new FilterData
                 {
                     Name = TargetKey,
-                    Items = [new FilterDataItem { Value = "John" }]
+                    Items = [new FilterDataItem { Value = "F" }]
                 }
             ]
         };
         Dictionary<string, string[]> requestFilters = [];
         CurrentFilterDetail filter = new()
         {
-            FilterName = "John",
-            FilterType = FilterType.Forename
+            FilterName = "F",
+            FilterType = FilterType.Sex
         };
 
         // act
@@ -67,10 +67,10 @@ public class GenderFilterHandlerTests
             model.Filters.Single((filterData) => filterData.Name == TargetKey);
 
         Assert.Single(filterData.Items); // No duplicate added
-        Assert.Equal("John", filterData.Items[0].Value);
+        Assert.Equal("F", filterData.Items[0].Value);
 
         Assert.True(requestFilters.ContainsKey(TargetKey));
-        Assert.Equal("John", requestFilters[TargetKey][0]);
+        Assert.Equal("F", requestFilters[TargetKey][0]);
     }
 
     [Fact]
@@ -84,15 +84,17 @@ public class GenderFilterHandlerTests
                 new FilterData
                 {
                     Name = TargetKey,
-                    Items = [new FilterDataItem { Value = "John" }]
+                    Items = [new FilterDataItem { Value = "F" }]
                 }
             ]
         };
+
         Dictionary<string, string[]> requestFilters = [];
+
         CurrentFilterDetail filter = new()
         {
-            FilterName = "Doe",
-            FilterType = FilterType.Surname
+            FilterName = "M",
+            FilterType = FilterType.Sex
         };
 
         // act
@@ -103,11 +105,11 @@ public class GenderFilterHandlerTests
             model.Filters.Single(filterData => filterData.Name == TargetKey);
 
         Assert.Equal(2, filters.Items.Count);
-        Assert.Contains(filters.Items, i => i.Value == "John");
-        Assert.Contains(filters.Items, i => i.Value == "Doe");
+        Assert.Contains(filters.Items, i => i.Value == "F");
+        Assert.Contains(filters.Items, i => i.Value == "M");
 
         Assert.True(requestFilters.ContainsKey(TargetKey));
-        Assert.Equal(["John", "Doe"], requestFilters[TargetKey]);
+        Assert.Equal(["F", "M"], requestFilters[TargetKey]);
     }
 
     [Fact]
@@ -118,8 +120,8 @@ public class GenderFilterHandlerTests
         Dictionary<string, string[]> requestFilters = [];
         CurrentFilterDetail filter = new()
         {
-            FilterName = "John",
-            FilterType = FilterType.Forename
+            FilterName = "F",
+            FilterType = FilterType.Sex
         };
 
         // act
@@ -128,8 +130,8 @@ public class GenderFilterHandlerTests
         // assert
         Assert.NotNull(model.Filters);
         Assert.Single(model.Filters);
-        Assert.Equal("John", model.Filters[0].Items[0].Value);
-        Assert.Equal("John", requestFilters[TargetKey][0]);
+        Assert.Equal("F", model.Filters[0].Items[0].Value);
+        Assert.Equal("F", requestFilters[TargetKey][0]);
     }
 }
 
