@@ -43,7 +43,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string DobFilterUrl => Routes.PupilPremium.NonUpnDobFilter;
     public override string ForenameFilterUrl => Routes.PupilPremium.NonUpnForenameFilter;
     public override string MiddlenameFilterUrl => Routes.PupilPremium.NonUpnMiddlenameFilter;
-    public override string GenderFilterUrl => Routes.PupilPremium.NonUpnGenderFilter;
 
     public override string SexFilterUrl => Routes.PupilPremium.NonUpnSexFilter;
     public override string FormAction => Routes.PupilPremium.NonUPN;
@@ -145,13 +144,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
     {
         return await ForenameSearchFilter(model, forenameFilter);
-    }
-
-    [Route(Routes.PupilPremium.NonUpnGenderFilter)]
-    [HttpPost]
-    public async Task<IActionResult> GenderFilter(LearnerTextSearchViewModel model)
-    {
-        return await GenderSearchFilter(model);
     }
 
     [Route(Routes.PupilPremium.NonUpnSexFilter)]

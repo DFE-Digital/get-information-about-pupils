@@ -28,7 +28,6 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 public abstract class BaseLearnerTextSearchController : Controller
 {
     public const int PAGESIZE = 20;
-    private const string PersistedSelectedGenderFiltersKey = "PersistedSelectedGenderFilters";
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
 
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
@@ -58,7 +57,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string ForenameFilterUrl { get; }
     public abstract string MiddlenameFilterUrl { get; }
     public abstract string SurnameFilterUrl { get; }
-    public abstract string GenderFilterUrl { get; }
     public abstract string SexFilterUrl { get; }
     public abstract string DownloadLinksPartial { get; }
     public abstract AzureSearchIndexType IndexType { get; }
@@ -125,8 +123,6 @@ public abstract class BaseLearnerTextSearchController : Controller
             }
 
             SetSortOptions(model);
-
-            GetPersistedGenderFiltersForViewModel(model);
             GetPersistedSexFiltersForViewModel(model);
             model = await GenerateLearnerTextSearchViewModel(model, null, null, null, null,
                 model.SortField,
@@ -155,7 +151,6 @@ public abstract class BaseLearnerTextSearchController : Controller
        string sortDirection = "",
        bool resetSelection = false)
     {
-        GetPersistedGenderFiltersForViewModel(model);
         GetPersistedSexFiltersForViewModel(model);
         model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
         model.LearnerNumberLabel = LearnerNumberLabel;
@@ -170,16 +165,12 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             _selectionManager.Clear();
             ClearSortOptions();
-            RemoveGenderFilterItemFromModel(model, searchByRemove);
             RemoveSexFilterItemFromModel(model, searchByRemove);
-
-            SetPersistedGenderFiltersForViewModel(model);
             SetPersistedSexFiltersForViewModel(model);
         }
 
         if (resetSelection && searchByRemove == null)
         {
-            RemoveAllGenderFilterItemsFromModel(model);
             RemoveAllSexFilterItemsFromModel(model);
         }
 
@@ -377,14 +368,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     }
 
     [NonAction]
-    public async Task<IActionResult> GenderSearchFilter(LearnerTextSearchViewModel model)
-    {
-        SetPersistedGenderFiltersForViewModel(model);
-        ModelState.Clear();
-        return await ReturnToRoute(model).ConfigureAwait(false);
-    }
-
-    [NonAction]
     public async Task<IActionResult> SexSearchFilter(LearnerTextSearchViewModel model)
     {
         SetPersistedSexFiltersForViewModel(model);
@@ -400,18 +383,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         return await Search(model, null, null, null, null, model.PageNumber, false);
     }
 
-    protected void GetPersistedGenderFiltersForViewModel(
-        LearnerTextSearchViewModel model)
-    {
-        var genderFilters =
-            TempData.GetPersistedObject<string[]>(
-                PersistedSelectedGenderFiltersKey,
-                keepTempDataBetweenRequests: true);
-
-        if (genderFilters != null)
-            model.SelectedGenderValues = genderFilters;
-    }
-
     protected void GetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model)
     {
@@ -423,29 +394,12 @@ public abstract class BaseLearnerTextSearchController : Controller
         if (sexFilters != null)
             model.SelectedSexValues = sexFilters;
     }
-    protected void SetPersistedGenderFiltersForViewModel(
-        LearnerTextSearchViewModel model) =>
-            TempData.SetPersistedObject(
-                model.SelectedGenderValues,
-                PersistedSelectedGenderFiltersKey);
 
     protected void SetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model) =>
         TempData.SetPersistedObject(
             model.SelectedSexValues,
             PersistedSelectedSexFiltersKey);
-
-    protected void RemoveGenderFilterItemFromModel(
-        LearnerTextSearchViewModel model,
-        string genderFilterItem)
-    {
-        if (!string.IsNullOrWhiteSpace(genderFilterItem))
-        {
-            model.SelectedGenderValues =
-                model.SelectedGenderValues?.Where(selectedGenderValue =>
-                    selectedGenderValue.SwitchGenderToParseName() != genderFilterItem).ToArray();
-        }
-    }
 
     protected void RemoveSexFilterItemFromModel(
         LearnerTextSearchViewModel model,
@@ -459,13 +413,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
     }
 
-    protected void RemoveAllGenderFilterItemsFromModel(
-        LearnerTextSearchViewModel model)
-    {
-        model.SelectedGenderValues = null;
-        SetPersistedGenderFiltersForViewModel(model);
-        TempData.Remove(PersistedSelectedGenderFiltersKey);
-    }
     protected void RemoveAllSexFilterItemsFromModel(
         LearnerTextSearchViewModel model)
     {
@@ -527,7 +474,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         SetSelections(model.SelectedPupil);
 
-        var selected = GetSelected();
+        string selected = GetSelected();
 
         if (string.IsNullOrEmpty(selected))
         {
@@ -654,18 +601,17 @@ public abstract class BaseLearnerTextSearchController : Controller
     {
         var requestFilters = GenerateRequestModel(model, currentFilters);
         PaginatedResponse result = await _paginatedSearch.GetPage(
-          model.SearchText,
-          requestFilters,
-          first ? _appSettings.MaximumNonUPNResults : PAGESIZE,
-          pageNumber,
-          indexType,
-          AzureSearchQueryType.Text,
-          AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-          sortField,
-          sortDirection
+            model.SearchText,
+            requestFilters,
+            first ? _appSettings.MaximumNonUPNResults : PAGESIZE,
+            pageNumber,
+            indexType,
+            AzureSearchQueryType.Text,
+            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
+            sortField,
+            sortDirection
           );
 
-        ParseGender(ref result);
         ParseSex(ref result);
 
         var lowAge = User.GetOrganisationLowAge();
@@ -801,24 +747,20 @@ public abstract class BaseLearnerTextSearchController : Controller
                         }
                     }
                 }
-                if (filter.FilterType == FilterType.Gender)
-                {
-                    var currentSelectedGenderList = new List<string>();
-                    if (model.SelectedGenderValues != null)
-                        currentSelectedGenderList = model.SelectedGenderValues.ToList();
-                    if (!currentSelectedGenderList.Any(x => x.Equals(filter.FilterName.Substring(0, 1))))
-                        currentSelectedGenderList.Add(filter.FilterName.Substring(0, 1));
-                    model.SelectedGenderValues = currentSelectedGenderList.ToArray();
-                }
 
                 if (filter.FilterType == FilterType.Sex)
                 {
-                    var currentSelectedSexList = new List<string>();
+                    List<string> currentSelectedSexList = [];
                     if (model.SelectedSexValues != null)
+                    {
                         currentSelectedSexList = model.SelectedSexValues.ToList();
+                    }
+                        
                     if (!currentSelectedSexList.Any(x => x.Equals(filter.FilterName.Substring(0, 1))))
+                    {
                         currentSelectedSexList.Add(filter.FilterName.Substring(0, 1));
-                    model.SelectedSexValues = currentSelectedSexList.ToArray();
+                    }
+                    model.SelectedSexValues = [.. currentSelectedSexList];
                 }
             }
         }
@@ -832,33 +774,23 @@ public abstract class BaseLearnerTextSearchController : Controller
         if (forenameList.ToArray().Length > 0)
             requestFilters.Add("forename", forenameList.ToArray());
 
-        if (model.SelectedGenderValues != null && model.SelectedGenderValues.Length > 0)
-            requestFilters.Add("gender", model.SelectedGenderValues.ToArray());
-
         if (model.SelectedSexValues != null && model.SelectedSexValues.Length > 0)
             requestFilters.Add("sex", model.SelectedSexValues.ToArray());
 
         return requestFilters;
     }
 
-    private void ParseGender(ref PaginatedResponse result)
-    {
-        var genderFilter = result.Filters.Where(filterData =>
-            filterData.Name.Equals("Gender")).ToList();
-
-        genderFilter.ForEach(filterData =>
-            filterData.Items.ForEach(filterDataItem =>
-                filterDataItem.Value = filterDataItem.Value.SwitchGenderToParseName()));
-    }
-
     private void ParseSex(ref PaginatedResponse result)
     {
-        var sexFilter = result.Filters.Where(filterData =>
-            filterData.Name.Equals("Sex")).ToList();
+        List<FilterData> sexFilter = result.Filters.Where(
+            (filterData) =>
+                filterData.Name.Equals("Sex")).ToList();
 
-        sexFilter.ForEach(filterData =>
-            filterData.Items.ForEach(filterDataItem =>
-                filterDataItem.Value = filterDataItem.Value.SwitchSexToParseName()));
+        sexFilter.ForEach(
+            (filterData) =>
+                filterData.Items.ForEach(
+                    (filterDataItem) =>
+                        filterDataItem.Value = filterDataItem.Value.SwitchSexToParseName()));
     }
 
     protected List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
@@ -869,7 +801,6 @@ public abstract class BaseLearnerTextSearchController : Controller
                                                    : new List<CurrentFilterDetail>();
 
         currentFilters = CheckDobFilter(model, currentFilters);
-        currentFilters = CheckGenderFilter(model, currentFilters);
         currentFilters = CheckSexFilter(model, currentFilters);
 
         if (!string.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Forename) ||
@@ -921,7 +852,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         return currentFilters;
     }
 
-    private void AddNameFilter(ref List<CurrentFilterDetail> currentFilters, FilterType filterType, string filterValue)
+    private static void AddNameFilter(ref List<CurrentFilterDetail> currentFilters, FilterType filterType, string filterValue)
     {
         if (!currentFilters.Any(x => x.FilterType == filterType && x.FilterName.Equals(filterValue)))
         {
@@ -936,34 +867,29 @@ public abstract class BaseLearnerTextSearchController : Controller
         }
     }
 
-    private List<CurrentFilterDetail> RemoveFilterValue(string searchByRemove, List<CurrentFilterDetail> currentFilters, LearnerTextSearchViewModel model)
+    private static List<CurrentFilterDetail> RemoveFilterValue(string searchByRemove, List<CurrentFilterDetail> currentFilters, LearnerTextSearchViewModel model)
     {
         if (!string.IsNullOrEmpty(searchByRemove))
         {
-            var item = currentFilters.Find(x => x.FilterName == searchByRemove);
+            CurrentFilterDetail item = currentFilters.Find((x) => x.FilterName == searchByRemove);
+
             if (item != null)
             {
                 currentFilters.Remove(item);
             }
-            var genderFiltersActive = currentFilters.Find(x => x.FilterType == FilterType.Gender);
-            if (genderFiltersActive != null && model.SelectedGenderValues == null && currentFilters.Count() >= 1)
+
+            CurrentFilterDetail sexFiltersActive = currentFilters.Find(x => x.FilterType == FilterType.Sex);
+
+            if (sexFiltersActive != null &&
+                    model.SelectedSexValues == null &&
+                        currentFilters.Count >= 1)
             {
-                List<string> currentSelectedGenderList = new List<string>();
-                foreach (var filter in currentFilters)
-                {
-                    currentSelectedGenderList.Add(filter.FilterName.Substring(0, 1));
-                }
-                model.SelectedGenderValues = currentSelectedGenderList.ToArray();
-            }
-            var sexFiltersActive = currentFilters.Find(x => x.FilterType == FilterType.Sex);
-            if (sexFiltersActive != null && model.SelectedSexValues == null && currentFilters.Count() >= 1)
-            {
-                List<string> currentSelectedSexList = new List<string>();
-                foreach (var filter in currentFilters)
+                List<string> currentSelectedSexList = [];
+                foreach (CurrentFilterDetail filter in currentFilters)
                 {
                     currentSelectedSexList.Add(filter.FilterName.Substring(0, 1));
                 }
-                model.SelectedSexValues = currentSelectedSexList.ToArray();
+                model.SelectedSexValues = [.. currentSelectedSexList];
             }
         }
         return currentFilters;
@@ -977,27 +903,9 @@ public abstract class BaseLearnerTextSearchController : Controller
         model.RedirectUrls.DobFilterUrl = DobFilterUrl;
         model.RedirectUrls.ForenameFilterUrl = ForenameFilterUrl;
         model.RedirectUrls.MiddlenameFilterUrl = MiddlenameFilterUrl;
-        model.RedirectUrls.GenderFilterUrl = GenderFilterUrl;
         model.RedirectUrls.SexFilterUrl = SexFilterUrl;
 
         return model;
-    }
-
-    private List<CurrentFilterDetail> CheckGenderFilter(
-        LearnerTextSearchViewModel model,
-        List<CurrentFilterDetail> currentFilters)
-    {
-        if (model.SelectedGenderValues?.Length > 0)
-        {
-            RemoveAllGenderFilters(currentFilters);
-            AddSelectedGenderValuesToCurrentFilters(model, currentFilters);
-        }
-        else if (model.SelectedGenderValues == null && currentFilters.Count > 0)
-        {
-            RemoveSelectedFilterValueFromCurrentFilters(currentFilters, model);
-            model.SelectedGenderValues = null;
-        }
-        return currentFilters;
     }
 
     private List<CurrentFilterDetail> CheckSexFilter(
@@ -1009,27 +917,14 @@ public abstract class BaseLearnerTextSearchController : Controller
             RemoveAllSexFilters(currentFilters);
             AddSelectedSexValuesToCurrentFilters(model, currentFilters);
         }
+
         else if (model.SelectedSexValues == null && currentFilters.Count > 0)
         {
             RemoveSelectedFilterValueFromCurrentFilters(currentFilters, model);
             model.SelectedSexValues = null;
         }
-        return currentFilters;
-    }
 
-    private void AddSelectedGenderValuesToCurrentFilters(
-        LearnerTextSearchViewModel model,
-        List<CurrentFilterDetail> currentFilters)
-    {
-        model.SelectedGenderValues.Distinct().ToList().ForEach(genderFilterItem =>
-        {
-            currentFilters.Add(
-                new CurrentFilterDetail
-                {
-                    FilterType = FilterType.Gender,
-                    FilterName = genderFilterItem.SwitchGenderToParseName()
-                });
-        });
+        return currentFilters;
     }
 
     private void AddSelectedSexValuesToCurrentFilters(
@@ -1046,49 +941,31 @@ public abstract class BaseLearnerTextSearchController : Controller
                 });
         });
     }
-    private void RemoveAllGenderFilters(
-        List<CurrentFilterDetail> currentFilters) =>
-            currentFilters.RemoveAll(currentFilterDetail =>
-                currentFilterDetail.FilterType == FilterType.Gender);
 
-    private void RemoveAllSexFilters(
+    private static void RemoveAllSexFilters(
         List<CurrentFilterDetail> currentFilters) =>
         currentFilters.RemoveAll(currentFilterDetail =>
             currentFilterDetail.FilterType == FilterType.Sex);
 
-    private IEnumerable<string> ExtractGenderValuesFromCurrentFilterDetail(
-        IEnumerable<CurrentFilterDetail> currentFilters) =>
-            currentFilters.Where(currentFilterDetail =>
-                    currentFilterDetail.FilterType == FilterType.Gender)
-                        .Select(currentFilterDetail =>
-                            currentFilterDetail.FilterName);
-
-    private IEnumerable<string> ExtractSexValuesFromCurrentFilterDetail(
+    private static IEnumerable<string> ExtractSexValuesFromCurrentFilterDetail(
         IEnumerable<CurrentFilterDetail> currentFilters) =>
         currentFilters.Where(currentFilterDetail =>
                 currentFilterDetail.FilterType == FilterType.Sex)
             .Select(currentFilterDetail =>
                 currentFilterDetail.FilterName);
 
-    private void RemoveSelectedFilterValueFromCurrentFilters(
+    private static void RemoveSelectedFilterValueFromCurrentFilters(
         List<CurrentFilterDetail> currentFilters,
         LearnerTextSearchViewModel model)
     {
-        IEnumerable<string> currentFiltersGender =
-                ExtractGenderValuesFromCurrentFilterDetail(currentFilters);
-
-        currentFiltersGender.ToList().ForEach(gender =>
-                currentFilters = RemoveFilterValue(gender, currentFilters, model));
-
-
         IEnumerable<string> currentFiltersSex =
             ExtractSexValuesFromCurrentFilterDetail(currentFilters);
 
-        currentFiltersSex.ToList().ForEach(sex =>
-            currentFilters = RemoveFilterValue(sex, currentFilters, model));
+        currentFiltersSex.ToList().ForEach(
+            (sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
     }
 
-    private List<CurrentFilterDetail> CheckDobFilter(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters)
+    private static List<CurrentFilterDetail> CheckDobFilter(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters)
     {
         if (model.SearchFilters.CustomFilterText.DobDay > 0 && model.SearchFilters.CustomFilterText.DobMonth > 0 &&
                model.SearchFilters.CustomFilterText.DobYear > 0)
@@ -1139,15 +1016,15 @@ public abstract class BaseLearnerTextSearchController : Controller
 
     protected void ClearSortOptions()
     {
-        this.HttpContext.Session.Remove(SortDirectionKey);
-        this.HttpContext.Session.Remove(SortFieldKey);
+        HttpContext.Session.Remove(SortDirectionKey);
+        HttpContext.Session.Remove(SortFieldKey);
     }
 
 
     private void SetLearnerNumberId(LearnerTextSearchViewModel model)
     {
 
-        foreach (var learner in model.Learners)
+        foreach (Learner learner in model.Learners)
         {
             learner.LearnerNumberId = learner.LearnerNumber switch
             {

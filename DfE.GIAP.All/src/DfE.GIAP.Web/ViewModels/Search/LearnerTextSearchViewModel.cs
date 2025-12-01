@@ -57,7 +57,6 @@ public class LearnerTextSearchViewModel
 
     public List<FilterData> Filters { get; set; }
     public SearchFilters SearchFilters { get; set; }
-    public string[] SelectedGenderValues { get; set; }
     public string[] SelectedSexValues { get; set; }
     public FilterErrors FilterErrors { get; set; }
     public RedirectUrls RedirectUrls { get; set; }

@@ -50,7 +50,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override string DobFilterUrl => Routes.NationalPupilDatabase.NonUpnDobFilter;
     public override string ForenameFilterUrl => Routes.NationalPupilDatabase.NonUpnForenameFilter;
     public override string MiddlenameFilterUrl => Routes.NationalPupilDatabase.NonUpnMiddlenameFilter;
-    public override string GenderFilterUrl => Routes.NationalPupilDatabase.NonUpnGenderFilter;
     public override string SexFilterUrl => Routes.NationalPupilDatabase.NonUpnSexFilter;
     public override string FormAction => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
     public override string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN}";
@@ -168,13 +167,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
     {
         return await ForenameSearchFilter(model, forenameFilter);
-    }
-
-    [Route(Routes.NationalPupilDatabase.NonUpnGenderFilter)]
-    [HttpPost]
-    public async Task<IActionResult> GenderFilter(LearnerTextSearchViewModel model)
-    {
-        return await GenderSearchFilter(model);
     }
 
     [Route(Routes.NationalPupilDatabase.NonUpnSexFilter)]

@@ -523,7 +523,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        IActionResult result = await sut.GenderFilter(searchViewModel);
+        IActionResult result = await sut.SexFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
@@ -532,7 +532,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
-        Assert.Equal(model.SelectedGenderValues[0], genderFilter);
+        Assert.Equal(model.SelectedSexValues[0], genderFilter);
     }
 
     [Fact]
@@ -548,7 +548,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        IActionResult result = await sut.GenderFilter(searchViewModel);
+        IActionResult result = await sut.SexFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
@@ -557,7 +557,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
-        Assert.Null(model.SelectedGenderValues);
+        Assert.Null(model.SelectedSexValues);
     }
 
     [Fact]
@@ -573,7 +573,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
-        IActionResult result = await sut.GenderFilter(searchViewModel);
+        IActionResult result = await sut.SexFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
@@ -582,7 +582,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
-        Assert.Null(model.SelectedGenderValues);
+        Assert.Null(model.SelectedSexValues);
     }
 
     [Fact]
@@ -1462,13 +1462,15 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.True(string.IsNullOrEmpty(model.SortDirection));
     }
 
-    private static LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(string searchText, SearchFilters searchFilters, string[] selectedGenderValues = null)
+    private static LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(
+        string searchText,
+        SearchFilters searchFilters,
+        string[] selectedGenderValues = null)
     {
         return new()
         {
             SearchText = searchText,
-            SearchFilters = searchFilters,
-            SelectedGenderValues = selectedGenderValues
+            SearchFilters = searchFilters
         };
     }
 
