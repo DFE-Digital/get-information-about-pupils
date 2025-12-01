@@ -536,8 +536,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     {
         // Arrange
         SetupContentServicePublicationSchedule();
-        var searchText = "John Smith";
-        var forenameFilter = "Forename";
+        const string searchText = "John Smith";
+        const string forenameFilter = "Forename";
 
         LearnerTextSearchViewModel searchViewModel =
             SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
@@ -556,19 +556,149 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 Learners = _paginatedResultsFake.GetValidLearners().Learners
             });
 
-        // act
-        var sut = GetController();
+        // Act
+        FELearnerTextSearchController sut = GetController();
 
-        var result = await sut.ForenameFilter(searchViewModel, forenameFilter);
+        IActionResult result = await sut.ForenameFilter(searchViewModel, forenameFilter);
 
         // Assert
-        var viewResult = Assert.IsType<ViewResult>(result);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        var model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel? model = viewResult.Model as LearnerTextSearchViewModel;
+        Assert.NotNull(model);
+
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
         Assert.Equal(model.SearchFilters.CustomFilterText.Forename, searchViewModel.SearchFilters.CustomFilterText.Forename);
+    }
+
+    [Theory]
+    [InlineData("M")]
+    [InlineData("F")]
+    [InlineData("O")]
+    public async Task SexFilter_Returns_to_route_with_correct_sex_filter(string sexFilter)
+    {
+        // Arrange
+        SetupContentServicePublicationSchedule();
+        const string searchText = "John Smith";
+
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<LearnerTextSearchMappingContext>()).Returns(
+            new LearnerTextSearchViewModel()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                SelectedSexValues = [sexFilter],
+                Learners = _paginatedResultsFake.GetValidLearners().Learners
+            });
+
+        // act
+        FELearnerTextSearchController sut = GetController();
+
+        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+
+        IActionResult result = await sut.SexFilter(searchViewModel);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+
+        LearnerTextSearchViewModel? model = viewResult.Model as LearnerTextSearchViewModel;
+        Assert.NotNull(model);
+
+        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+        Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
+        Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
+        Assert.Equal(model.SelectedSexValues[0], sexFilter);
+    }
+
+    [Fact]
+    public async Task SexFilter_returns_all_sexes_when_no_sex_selected()
+    {
+        // Arrange
+        SetupContentServicePublicationSchedule();
+        const string searchText = "Smith";
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+        searchFilters.CurrentFiltersAppliedString =
+            @"[{ ""FilterName"":""Female"",""FilterType"":6}]";
+
+        LearnerTextSearchViewModel searchViewModel =
+            new()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+
+        // act
+        FELearnerTextSearchController sut = GetController();
+
+        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+
+        IActionResult result = await sut.SexFilter(searchViewModel);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+        LearnerTextSearchViewModel? model = viewResult.Model as LearnerTextSearchViewModel;
+
+        Assert.NotNull(model);
+        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+        Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
+        Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
+        Assert.Null(model.SelectedSexValues);
+    }
+
+    [Fact]
+    public async Task SexFilter_returns_all_sexes_when_more_than_one_sex_deselected()
+    {
+        // Arrange
+        SetupContentServicePublicationSchedule();
+        const string searchText = "Smith";
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+        searchFilters.CurrentFiltersAppliedString =
+            @"[{""FilterName"":""Female"",""FilterType"":6}, {""FilterName"":""Male"",""FilterType"":6}]";
+
+        LearnerTextSearchViewModel searchViewModel =
+            new()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+
+        // act
+        FELearnerTextSearchController sut = GetController();
+
+        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+
+        IActionResult result = await sut.SexFilter(searchViewModel);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+        Assert.NotNull(viewResult);
+
+        LearnerTextSearchViewModel? model = viewResult.Model as LearnerTextSearchViewModel;
+        Assert.NotNull(model);
+
+        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+        Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
+        Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
+        Assert.Null(model.SelectedSexValues);
     }
 
     [Fact]
