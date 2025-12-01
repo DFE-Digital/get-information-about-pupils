@@ -41,7 +41,7 @@ public sealed class LearnerToViewModelMapper :
             Surname = input.Name.Surname,
             Forename = input.Name.FirstName,
 
-            // Converts gender enum to human-readable string using description meta-data
+            // Converts sex enum to human-readable string using description meta-data
             Sex = MapSexDescription(input.Characteristics.Sex),
 
             // Maps birth date directly; assumes implicit conversion from value object to DateTime
