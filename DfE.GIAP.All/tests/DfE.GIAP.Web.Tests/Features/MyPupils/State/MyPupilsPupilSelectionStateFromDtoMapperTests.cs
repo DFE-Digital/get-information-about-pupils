@@ -39,7 +39,7 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         // Assert
         Assert.True(result.IsAllPupilsSelected);
         Assert.True(result.IsAnyPupilSelected);
-        Assert.All(pupils, pupil => Assert.True(result.IsPupilSelected(pupil)));
+        Assert.All(pupils, pupil => Assert.True(result.IsPupilSelected(pupil.Value)));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         Assert.True(result.IsAllPupilsDeselected);
         Assert.False(result.IsAllPupilsSelected);
         Assert.False(result.IsAnyPupilSelected);
-        Assert.All(pupils, pupil => Assert.False(result.IsPupilSelected(pupil)));
+        Assert.All(pupils, pupil => Assert.False(result.IsPupilSelected(pupil.Value)));
     }
 
     [Fact]
@@ -95,9 +95,9 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         Assert.False(result.IsAllPupilsSelected);
         Assert.False(result.IsAllPupilsDeselected);
         Assert.True(result.IsAnyPupilSelected);
-        Assert.True(result.IsPupilSelected(pupils[0]));
-        Assert.True(result.IsPupilSelected(pupils[1]));
-        Assert.False(result.IsPupilSelected(pupils[2]));
-        Assert.False(result.IsPupilSelected(pupils[3]));
+        Assert.True(result.IsPupilSelected(pupils[0].Value));
+        Assert.True(result.IsPupilSelected(pupils[1].Value));
+        Assert.False(result.IsPupilSelected(pupils[2].Value));
+        Assert.False(result.IsPupilSelected(pupils[3].Value));
     }
 }

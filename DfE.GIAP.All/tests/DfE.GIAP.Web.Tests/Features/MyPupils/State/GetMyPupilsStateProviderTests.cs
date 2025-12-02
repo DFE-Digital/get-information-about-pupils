@@ -1,13 +1,12 @@
-﻿using Xunit;
-using Moq;
+﻿using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Session.Abstraction.Query;
-using DfE.GIAP.Web.Tests.TestDoubles.Session;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Web.Tests.TestDoubles.Session;
+using Moq;
+using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.State;
 
@@ -72,9 +71,12 @@ public sealed class GetMyPupilsStateProviderTests
         Mock<ISessionQueryHandler<MyPupilsPresentationState>> presentationHandler =
             ISessionQueryHandlerTestDoubles.MockFor(expectedPresentationState);
 
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 10);
+        List<string> upns =
+            UniquePupilNumberTestDoubles.Generate(count: 10)
+                .Select(t => t.Value)
+                .ToList();
 
-        MyPupilsPupilSelectionState expectedSelectionState = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(
+        MyPupilsPupilSelectionState expectedSelectionState = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
             new()
             {
                 { upns.Take(5).ToList(), true },

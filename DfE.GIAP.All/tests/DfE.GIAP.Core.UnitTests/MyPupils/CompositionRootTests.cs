@@ -7,8 +7,7 @@ using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
@@ -60,7 +59,7 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsApplicationService>());
         Assert.NotNull(provider.GetService<IMapper<DecoratedSearchIndexDto, Pupil>>());
-        Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilDto>>());
+        Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilModel>>());
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IMapper<MyPupilsDocumentDto, Core.MyPupils.Application.Repositories.MyPupils>>());

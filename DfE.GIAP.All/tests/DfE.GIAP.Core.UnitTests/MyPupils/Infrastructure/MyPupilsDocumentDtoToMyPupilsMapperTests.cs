@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read.Mapper;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
@@ -95,7 +95,7 @@ public sealed class MyPupilsDocumentDtoToMyPupilsMapperTests
         List<UniquePupilNumber> generatedUpns = UniquePupilNumberTestDoubles.Generate(count: 10);
 
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Create(
-            userId: UserIdTestDoubles.Default(),
+            id: MyPupilsIdTestDoubles.Default(),
             upns: UniquePupilNumbers.Create(generatedUpns));
 
         // Act

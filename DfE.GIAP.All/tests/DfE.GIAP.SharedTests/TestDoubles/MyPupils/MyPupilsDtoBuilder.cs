@@ -1,12 +1,12 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public sealed class MyPupilDtoBuilder
 {
     private const string DATE_OF_BIRTH_FORMAT = "yyyy-MM-dd";
-    private static readonly Faker<MyPupilDto> s_faker = MyPupilDtosTestDoubles.CreateGenerator();
+    private static readonly Faker<MyPupilModel> s_faker = MyPupilDtosTestDoubles.CreateGenerator();
 
     private UniquePupilNumber? _uniquePupilNumber;
     private string? _forename;
@@ -42,15 +42,15 @@ public sealed class MyPupilDtoBuilder
 
     public static MyPupilDtoBuilder Create() => new();
 
-    public static MyPupilDto BuildDefault() => new MyPupilDtoBuilder().Build();
+    public static MyPupilModel BuildDefault() => new MyPupilDtoBuilder().Build();
 
-    public MyPupilDto Build()
+    public MyPupilModel Build()
     {
-        MyPupilDto defaulter = s_faker.Generate();
+        MyPupilModel defaulter = s_faker.Generate();
 
         return new()
         {
-            UniquePupilNumber = _uniquePupilNumber ?? defaulter.UniquePupilNumber,
+            UniquePupilNumber = _uniquePupilNumber?.Value ?? defaulter.UniquePupilNumber,
             Forename = _forename ?? defaulter.Forename,
             Surname = _surname ?? defaulter.Surname,
             DateOfBirth = (_dateOfBirth ?? DateTime.UnixEpoch).ToString(DATE_OF_BIRTH_FORMAT),

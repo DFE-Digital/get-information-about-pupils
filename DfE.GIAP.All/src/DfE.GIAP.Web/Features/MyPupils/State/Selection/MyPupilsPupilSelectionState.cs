@@ -1,11 +1,8 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using NuGet.Packaging;
-
-namespace DfE.GIAP.Web.Features.MyPupils.State.Selection;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
 public sealed class MyPupilsPupilSelectionState
 {
-    private readonly Dictionary<UniquePupilNumber, bool> _pupilsToSelectedMap = [];
+    private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
 
     private SelectionState _state = SelectionState.Manual;
 
@@ -17,17 +14,11 @@ public sealed class MyPupilsPupilSelectionState
 
     public static MyPupilsPupilSelectionState CreateDefault() => new();
 
-    public IReadOnlyDictionary<UniquePupilNumber, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
+    public IReadOnlyDictionary<string, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
+    public IReadOnlyList<string> GetSelectedPupils() => _pupilsToSelectedMap.Where(t => t.Value).Select(t => t.Key).ToList().AsReadOnly();
 
-    public bool IsPupilSelected(UniquePupilNumber upn)
-    {
-        return _state switch
-        {
-            SelectionState.SelectAll => true,
-            SelectionState.DeselectAll => false,
-            _ => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected
-        };
-    }
+    // Note: A pupil under SelectAll or DeselectAll, may have a manual selection/deselection applied, so is treated as "apply at the point of SelectAll/Deselect", not infer all future SelectionState from it.
+    public bool IsPupilSelected(string upn) => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected;
 
     public void SelectAllPupils()
     {
@@ -47,16 +38,22 @@ public sealed class MyPupilsPupilSelectionState
             isSelected: false);
     }
 
-    public void UpsertPupilSelectionState(IEnumerable<UniquePupilNumber> upns, bool isSelected)
+    public void UpsertPupilSelectionState(IEnumerable<string> upns, bool isSelected)
     {
         ArgumentNullException.ThrowIfNull(upns);
 
-        bool selectionValue = IsAllPupilsSelected || (!IsAllPupilsDeselected && isSelected);
-
-        foreach (UniquePupilNumber upn in upns)
+        foreach (string upn in upns)
         {
-            _pupilsToSelectedMap[upn] = selectionValue;
+            ArgumentException.ThrowIfNullOrWhiteSpace(upn); // TODO UpnValidator?
+            _pupilsToSelectedMap[upn] = isSelected;
         }
+    }
+
+    public void RemovePupils(IEnumerable<string> upns)
+    {
+        ArgumentNullException.ThrowIfNull(upns);
+
+        upns.ToList().ForEach((upn) => _pupilsToSelectedMap.Remove(upn));
     }
 
     public void ResetState()

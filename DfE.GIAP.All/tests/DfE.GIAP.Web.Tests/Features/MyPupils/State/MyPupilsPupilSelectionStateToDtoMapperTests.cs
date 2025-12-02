@@ -23,7 +23,10 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
     public void Map_Returns_SelectAll_When_AllPupilsSelected()
     {
         // Arrange
-        List<UniquePupilNumber> pupils = UniquePupilNumberTestDoubles.Generate(count: 3);
+        List<string> pupils = UniquePupilNumberTestDoubles.Generate(count: 3)
+            .Select(t => t.Value)
+            .ToList();
+
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
         state.UpsertPupilSelectionState(pupils, isSelected: true);
         state.SelectAllPupils();
@@ -36,14 +39,17 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         // Assert
         Assert.Equal(PupilSelectionModeDto.SelectAll, result.State);
         Assert.Equal(pupils.Count, result.PupilUpnToSelectedMap.Count);
-        Assert.All(pupils, p => Assert.True(result.PupilUpnToSelectedMap[p.Value]));
+        Assert.All(pupils, pupil => Assert.True(result.PupilUpnToSelectedMap[pupil]));
     }
 
     [Fact]
     public void Map_Returns_DeselectAll_When_AllPupilsDeselected()
     {
         // Arrange
-        List<UniquePupilNumber> pupils = UniquePupilNumberTestDoubles.Generate(count: 3);
+        List<string> pupils = UniquePupilNumberTestDoubles.Generate(count: 3)
+            .Select(t => t.Value)
+            .ToList();
+
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
         state.UpsertPupilSelectionState(pupils, isSelected: false);
         state.DeselectAllPupils();
@@ -56,14 +62,17 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         // Assert
         Assert.Equal(PupilSelectionModeDto.DeselectAll, result.State);
         Assert.Equal(pupils.Count, result.PupilUpnToSelectedMap.Count);
-        Assert.All(pupils, p => Assert.False(result.PupilUpnToSelectedMap[p.Value]));
+        Assert.All(pupils, pupil => Assert.False(result.PupilUpnToSelectedMap[pupil]));
     }
 
     [Fact]
     public void Map_Returns_NotSpecified_When_SelectionIsMixed()
     {
         // Arrange
-        List<UniquePupilNumber> pupils = UniquePupilNumberTestDoubles.Generate(count: 4);
+        List<string> pupils = UniquePupilNumberTestDoubles.Generate(count: 4)
+            .Select(t => t.Value)
+            .ToList();
+
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
         state.UpsertPupilSelectionState([pupils[0], pupils[1]], isSelected: true);
         state.UpsertPupilSelectionState([pupils[2], pupils[3]], isSelected: false);
@@ -76,9 +85,9 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         // Assert
         Assert.Equal(PupilSelectionModeDto.ManualSelection, result.State);
         Assert.Equal(4, result.PupilUpnToSelectedMap.Count);
-        Assert.True(result.PupilUpnToSelectedMap[pupils[0].Value]);
-        Assert.True(result.PupilUpnToSelectedMap[pupils[1].Value]);
-        Assert.False(result.PupilUpnToSelectedMap[pupils[2].Value]);
-        Assert.False(result.PupilUpnToSelectedMap[pupils[3].Value]);
+        Assert.True(result.PupilUpnToSelectedMap[pupils[0]]);
+        Assert.True(result.PupilUpnToSelectedMap[pupils[1]]);
+        Assert.False(result.PupilUpnToSelectedMap[pupils[2]]);
+        Assert.False(result.PupilUpnToSelectedMap[pupils[3]]);
     }
 }

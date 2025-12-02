@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Paginate;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
@@ -18,7 +18,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
 
         PaginateMyPupilDtosPresentationHandler sut = new();
 
-        Action act = () => sut.Handle(It.IsAny<MyPupilDtos>(), presentationState);
+        Action act = () => sut.Handle(It.IsAny<MyPupilsModel>(), presentationState);
 
         Assert.Throws<ArgumentOutOfRangeException>(act);
     }
@@ -29,12 +29,12 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Default();
 
-        MyPupilDtos pupils = MyPupilDtos.Empty();
+        MyPupilsModel pupils = MyPupilsModel.Empty();
 
         PaginateMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, presentationState);
+        MyPupilsModel response = sut.Handle(pupils, presentationState);
 
         // Assert
         Assert.NotNull(response);
@@ -49,12 +49,12 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 1);
 
-        MyPupilDtos inputPupils = MyPupilDtosTestDoubles.Generate(count: pupilCount);
+        MyPupilsModel inputPupils = MyPupilDtosTestDoubles.Generate(count: pupilCount);
 
         PaginateMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(inputPupils, presentationState);
+        MyPupilsModel response = sut.Handle(inputPupils, presentationState);
 
         // Assert
         Assert.NotNull(response);
@@ -67,12 +67,12 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 2);
 
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
         PaginateMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, presentationState);
+        MyPupilsModel response = sut.Handle(pupils, presentationState);
 
         // Assert
         Assert.NotNull(response);
@@ -88,15 +88,15 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: pageRequested);
 
         int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
-        MyPupilDtos pupils = MyPupilDtosTestDoubles.Generate(count: inputPupilCount);
+        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: inputPupilCount);
 
         PaginateMyPupilDtosPresentationHandler sut = new();
 
         // Act
-        MyPupilDtos response = sut.Handle(pupils, presentationState);
+        MyPupilsModel response = sut.Handle(pupils, presentationState);
 
         // Assert
-        IEnumerable<MyPupilDto> expectedPagedPupils = pupils.Values.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
+        IEnumerable<MyPupilModel> expectedPagedPupils = pupils.Values.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
 
         Assert.NotNull(response);
         Assert.Equal(3, response.Count);

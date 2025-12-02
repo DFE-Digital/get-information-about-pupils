@@ -1,5 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application.Models;
 
@@ -22,31 +24,19 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
     public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
     {
-        ArgumentNullException.ThrowIfNull(request);
-        UserId userId = new(request.UserId);
+        MyPupilsId id = new(request.UserId);
 
-        if (request.DeleteAll)
+        MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+
+        if (myPupils is null)
         {
-            await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(userId, UniquePupilNumbers.Create(uniquePupilNumbers: []));
-            return;
+            return; // nothing to delete
         }
 
-        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(userId);
+        myPupils.DeletePupils(
+            UniquePupilNumbers.Create(
+                uniquePupilNumbers: request.DeletePupilUpns.ToUniquePupilNumbers()));
 
-        IEnumerable<UniquePupilNumber> userMyPupilUpnsBeforeDelete = myPupils!.Pupils.GetUniquePupilNumbers();
-
-        if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilUpnsBeforeDelete.Contains(deleteUpn)))
-        {
-            throw new ArgumentException($"None of the pupil identifiers {string.Join(',', request.DeletePupilUpns)} are part of the User {userId.Value} MyPupils");
-        }
-
-        List<UniquePupilNumber> updatedMyPupilsAfterDelete =
-            userMyPupilUpnsBeforeDelete
-                .Where(upn => !request.DeletePupilUpns.Contains(upn))
-                .ToList();
-
-        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(
-            userId,
-            UniquePupilNumbers.Create(updatedMyPupilsAfterDelete));
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupils);
     }
 }

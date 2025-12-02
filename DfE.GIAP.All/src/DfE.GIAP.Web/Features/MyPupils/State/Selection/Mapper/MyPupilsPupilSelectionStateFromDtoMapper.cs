@@ -1,6 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
 
 namespace DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
@@ -18,18 +16,18 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
         switch (input.State)
         {
             case PupilSelectionModeDto.SelectAll:
-                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys.ToUniquePupilNumbers(), false);
+                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys, false);
                 state.SelectAllPupils();
                 break;
             case PupilSelectionModeDto.DeselectAll:
-                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys.ToUniquePupilNumbers(), true);
+                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys, true);
                 state.DeselectAllPupils();
                 break;
             default:
-                IEnumerable<UniquePupilNumber> selectedPupils = input.PupilUpnToSelectedMap.Where(t => t.Value).Select(t => t.Key).ToUniquePupilNumbers();
+                IEnumerable<string> selectedPupils = input.PupilUpnToSelectedMap.Select(t => t.Key);
                 state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
 
-                IEnumerable<UniquePupilNumber> notSelectedPupils = input.PupilUpnToSelectedMap.Where(t => !t.Value).Select(t => t.Key).ToUniquePupilNumbers();
+                IEnumerable<string> notSelectedPupils = input.PupilUpnToSelectedMap.Select(t => t.Key);
                 state.UpsertPupilSelectionState(notSelectedPupils, isSelected: false);
                 break;
         }
