@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
 using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
@@ -13,16 +14,21 @@ public class GlossaryController : Controller
 {
     private readonly IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> _getPrePreparedFilesUseCase;
     private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
+    private readonly IEventLogger _eventLogger;
 
     public GlossaryController(
         IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
-        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase)
+        IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase,
+        IEventLogger eventLogger)
     {
         ArgumentNullException.ThrowIfNull(getPrePreparedFilesUseCase);
         _getPrePreparedFilesUseCase = getPrePreparedFilesUseCase;
 
         ArgumentNullException.ThrowIfNull(downloadPrePreparedFileUseCase);
         _downloadPrePreparedFileUseCase = downloadPrePreparedFileUseCase;
+
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     [AllowWithoutConsent]
@@ -60,6 +66,8 @@ public class GlossaryController : Controller
         DownloadPreparedFileRequest request = new(name, pathContext);
         DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
             .HandleRequestAsync(request);
+
+        _eventLogger.LogDownload(DownloadType.Metadata, DownloadFileFormat.CSV);
 
         return new FileStreamResult(response.FileStream, response.ContentType)
         {

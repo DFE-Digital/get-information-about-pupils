@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
 public static class LogFactoryTestDoubles
