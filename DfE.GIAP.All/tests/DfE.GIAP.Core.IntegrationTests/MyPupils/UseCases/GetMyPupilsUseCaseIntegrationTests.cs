@@ -108,7 +108,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => new UniquePupilNumber(t!.UPN).Equals(expectedPupil.UniquePupilNumber));
+            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => t!.UPN == expectedPupil.UniquePupilNumber);
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
