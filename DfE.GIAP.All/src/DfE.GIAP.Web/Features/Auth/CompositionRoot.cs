@@ -34,7 +34,7 @@ public static class CompositionRoot
         services.AddScoped<IPostTokenValidatedHandler, CreateUserIfNotExistHandler>();
         services.AddScoped<IPostTokenValidatedHandler, SetUnreadNewsStatusHandler>();
         services.AddScoped<IPostTokenValidatedHandler, UpdateUserLastLoggedInHandler>();
-        services.AddScoped<IPostTokenValidatedHandler, TempLoggingHandler>();
+        services.AddScoped<IPostTokenValidatedHandler, EventLoggingHandler>();
 
         services.AddScoped<PostTokenHandlerBuilder>();
         services.AddScoped<OidcEventsHandler>(sp =>
@@ -45,7 +45,7 @@ public static class CompositionRoot
                 .Then<CreateUserIfNotExistHandler>()
                 .Then<SetUnreadNewsStatusHandler>()
                 .Then<UpdateUserLastLoggedInHandler>()
-                .Then<TempLoggingHandler>()
+                .Then<EventLoggingHandler>()
                 .Build();
 
             IOptions<DsiOptions> options = sp.GetRequiredService<IOptions<DsiOptions>>();
