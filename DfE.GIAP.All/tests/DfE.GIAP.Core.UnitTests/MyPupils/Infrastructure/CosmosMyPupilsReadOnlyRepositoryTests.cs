@@ -152,7 +152,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 10));
 
-        MyPupilsAggregate myPupils =  MyPupilsAggregateTestDoubles.Create(myPupilsId, upns);
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Create(myPupilsId, upns);
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
