@@ -1,6 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
@@ -11,12 +11,12 @@ namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 public class CosmosDbNationalPupilReadOnlyRepository : INationalPupilReadOnlyRepository
 {
     private const string ContainerKey = "pupil-noskill"; // This must match the key in the container options.
-    private readonly ILoggerService _logger;
+    private readonly IApplicationLoggerService _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NationalPupilDto, NationalPupil> _dtoToEntityMapper;
 
     public CosmosDbNationalPupilReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLoggerService logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NationalPupilDto, NationalPupil> dtoToEntityMapper)
     {

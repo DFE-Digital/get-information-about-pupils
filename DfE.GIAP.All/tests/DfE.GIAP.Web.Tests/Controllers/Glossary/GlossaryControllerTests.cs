@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
@@ -19,6 +20,7 @@ public class GlossaryControllerTests
         // Arrange
         Mock<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>> mockGetPreparedFilesUseCase = new();
         Mock<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>> mockDownloadPreparedFileUseCase = new();
+        Mock<IEventLogger> mockEventLogger = new();
 
         List<BlobItemMetadata> blobItems = new List<BlobItemMetadata>
         {
@@ -34,7 +36,8 @@ public class GlossaryControllerTests
 
         GlossaryController controller = new(
             getPrePreparedFilesUseCase: mockGetPreparedFilesUseCase.Object,
-            downloadPrePreparedFileUseCase: mockDownloadPreparedFileUseCase.Object);
+            downloadPrePreparedFileUseCase: mockDownloadPreparedFileUseCase.Object,
+            eventLogger: mockEventLogger.Object);
 
         // Act
         IActionResult result = await controller.Index();
@@ -52,6 +55,7 @@ public class GlossaryControllerTests
         // Arrange
         Mock<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>> mockGetPreparedFilesUseCase = new();
         Mock<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>> mockDownloadPreparedFileUseCase = new();
+        Mock<IEventLogger> mockEventLogger = new();
 
         DateTimeOffset now = DateTimeOffset.UtcNow;
         List<BlobItemMetadata> blobItems = new()
@@ -69,8 +73,8 @@ public class GlossaryControllerTests
 
         GlossaryController controller = new(
             mockGetPreparedFilesUseCase.Object,
-            mockDownloadPreparedFileUseCase.Object
-        );
+            mockDownloadPreparedFileUseCase.Object,
+            mockEventLogger.Object);
 
         // Act
         IActionResult result = await controller.Index();
@@ -91,6 +95,7 @@ public class GlossaryControllerTests
         // Arrange
         Mock<IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse>> mockGetPreparedFilesUseCase = new();
         Mock<IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse>> mockDownloadPreparedFileUseCase = new();
+        Mock<IEventLogger> mockEventLogger = new();
 
         string fileName = "template.csv";
         string contentType = "text/csv";
@@ -104,7 +109,8 @@ public class GlossaryControllerTests
 
         GlossaryController controller = new(
             getPrePreparedFilesUseCase: mockGetPreparedFilesUseCase.Object,
-            downloadPrePreparedFileUseCase: mockDownloadPreparedFileUseCase.Object);
+            downloadPrePreparedFileUseCase: mockDownloadPreparedFileUseCase.Object,
+            eventLogger: mockEventLogger.Object);
 
         // Act
         FileStreamResult result = await controller.GetBulkUploadTemplateFile(fileName);

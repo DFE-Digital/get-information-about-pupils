@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
