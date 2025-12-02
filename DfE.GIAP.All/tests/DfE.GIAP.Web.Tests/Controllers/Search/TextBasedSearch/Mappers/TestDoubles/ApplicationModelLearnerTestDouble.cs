@@ -41,19 +41,19 @@ public static class ApplicationModelLearnerTestDouble
     /// <param name="firstname">First name of the learner.</param>
     /// <param name="surname">Last name of the learner.</param>
     /// <param name="birthDate">Date of birth for age-based diagnostics.</param>
-    /// <param name="gender">Gender for demographic filtering and assertions.</param>
+    /// <param name="sex">Gender for demographic filtering and assertions.</param>
     /// <returns>A scaffolded <see cref="Learner"/> domain object.</returns>
     public static Learner Stub(
         string uniqueLearnerNumber,
         string firstname,
         string surname,
         DateTime birthDate,
-        LearnerCharacteristics.Gender gender)
+        LearnerCharacteristics.Gender sex)
     {
         // Construct domain components using helper methods for modularity and reuse
         LearnerIdentifier learnerIdentifier = Identifier(uniqueLearnerNumber);
         LearnerName learnerName = Name(firstname, surname);
-        LearnerCharacteristics learnerCharacteristics = Characteristics(birthDate, gender);
+        LearnerCharacteristics learnerCharacteristics = Characteristics(birthDate, sex);
 
         // Compose and return the full Learner object
         return new(learnerIdentifier, learnerName, learnerCharacteristics);

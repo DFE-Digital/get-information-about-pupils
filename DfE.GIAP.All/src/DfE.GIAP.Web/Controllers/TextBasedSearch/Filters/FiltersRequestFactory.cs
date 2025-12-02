@@ -38,14 +38,13 @@ public class FiltersRequestFactory : IFiltersRequestFactory
         // Initialize an empty filter dictionary.
         Dictionary<string, string[]> requestFilters = [];
 
-        // Gender is setup a bit differently and we only care is we have a single value selected,
+        // Sex is setup a bit differently and we only care is we have a single value selected,
         // otherwise we can ignore (the assumption being we return both male and female by default).
-        if (model.SelectedGenderValues?.Length == 1)
+        if (model.SelectedSexValues?.Length == 1)
         {
             currentFilters.Add(new CurrentFilterDetail() {
-                FilterName =
-                    model.SelectedGenderValues.FirstOrDefault(),
-                    FilterType = FilterType.Gender
+                FilterName = model.SelectedSexValues.FirstOrDefault(),
+                FilterType = FilterType.Sex
             });
         }
 

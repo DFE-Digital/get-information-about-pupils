@@ -11,13 +11,11 @@ public class LearnerTextSearchViewModel
 {
     public LearnerTextSearchViewModel()
     {
-        this.SearchFilters = new SearchFilters();
-        this.FilterErrors = new FilterErrors();
-        this.RedirectUrls = new RedirectUrls();
+        SearchFilters = new SearchFilters();
+        FilterErrors = new FilterErrors();
+        RedirectUrls = new RedirectUrls();
     }
 
-
-    public string PageTitle { get; set; }
     public string PageHeading { get; set; }
 
     public string DownloadLinksPartial { get; set; }
@@ -26,7 +24,6 @@ public class LearnerTextSearchViewModel
     public string LearnerTextSearchAction { get; set; }
     public string LearnerNumberController { get; set; }
     public string LearnerNumberAction { get; set; }
-    public string CSVDownloadAction { get; set; }
     public string InvalidUPNsConfirmationAction { get; set; }
 
     public int PageNumber { get; set; }
@@ -39,8 +36,6 @@ public class LearnerTextSearchViewModel
     /// on a search request. 
     /// </summary>
     public int Offset => PageNumber * PageSize;
-
-    public bool ShowGender { get; set; }
     public bool ShowLocalAuthority { get; set; }
 
     public bool ShowMiddleNames { get; set; }
@@ -59,7 +54,6 @@ public class LearnerTextSearchViewModel
 
     public List<FilterData> Filters { get; set; }
     public SearchFilters SearchFilters { get; set; }
-    public string[] SelectedGenderValues { get; set; }
     public string[] SelectedSexValues { get; set; }
     public FilterErrors FilterErrors { get; set; }
     public RedirectUrls RedirectUrls { get; set; }

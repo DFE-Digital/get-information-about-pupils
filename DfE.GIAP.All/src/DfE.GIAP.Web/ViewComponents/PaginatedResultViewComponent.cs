@@ -1,7 +1,5 @@
 ﻿using DfE.GIAP.Domain.Search.Learner;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 
 namespace DfE.GIAP.Web.ViewComponents;
 
@@ -18,7 +16,6 @@ public class PaginatedResultViewComponent : ViewComponent
         int pageSize,
         int total,
         string controllerAction,
-        bool showGender,
         bool showPP,
         bool showLocalAuthority,
         string activeSortField,
@@ -39,7 +36,6 @@ public class PaginatedResultViewComponent : ViewComponent
             PageNumber = pageNumber,
             AvailablePages = GetAvailablePages(numberOfPages, pageNumber),
             ControllerAction = controllerAction,
-            ShowGender = showGender,
             ShowPP = showPP,
             ShowLocalAuthority = showLocalAuthority,
             ActiveSortField = activeSortField,
@@ -122,7 +118,6 @@ public class PaginatedResultViewComponent : ViewComponent
         public List<int> AvailablePages { get; set; } = new List<int>();
         public string ControllerAction { get; set; }
         public bool ShowPP { get; set; }
-        public bool ShowGender { get; set; }
         public string ActiveSortField { get; set; }
         public string ActiveSortDirection { get; set; }
     }

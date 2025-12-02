@@ -102,7 +102,6 @@ public static class Routes
         public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
         public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
         public const string NonUpnDobFilter = "/search/npd-nonupn/dob-filter";
-        public const string NonUpnGenderFilter = "/search/npd-nonupn/gender-filter";
         public const string NonUpnSexFilter = "/search/npd-nonupn/sex-filter";
         public const string NonUpnForenameFilter = "/search/npd-nonupn/forename-filter";
         public const string NonUpnMiddlenameFilter = "/search/npd-nonupn/middlename-filter";
@@ -116,7 +115,6 @@ public static class Routes
         public const string NonUPN = "pp-nonupn";
         public const string NonUPNSurnameFilter = "/search/pp-nonupn/surname-filter";
         public const string NonUpnDobFilter = "/search/pp-nonupn/dob-filter";
-        public const string NonUpnGenderFilter = "/search/pp-nonupn/gender-filter";
         public const string NonUpnSexFilter = "/search/pp-nonupn/sex-filter";
         public const string NonUpnForenameFilter = "/search/pp-nonupn/forename-filter";
         public const string NonUpnMiddlenameFilter = "/search/pp-nonupn/middlename-filter";
@@ -137,7 +135,6 @@ public static class Routes
         public const string NonULNSurnameFilter = "/search/fe-non-uln/surname-filter";
         public const string NonULNForenameFilter = "/search/fe-non-uln/forename-filter";
         public const string NonULNDobFilter = "/search/fe-non-uln/dob-filter";
-        public const string NonULNGenderFilter = "/search/fe-non-uln/gender-filter";
         public const string NonULNSexFilter = "/search/fe-non-uln/sex-filter";
         public const string DownloadNonUlnRequest = "download-nonuln-fe";
         public const string DownloadNonUlnFile = "download-nonuln-fe-file";
