@@ -63,7 +63,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsOrDefaultAsync)}.");
-            throw;
+            return null;
         }
     }
 

@@ -12,25 +12,23 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
         // Construct with initial selection map
         MyPupilsPupilSelectionState state = new();
 
-        // Apply selection mode
-        switch (input.State)
+        // Apply SelectionMode
+        if (input.State == PupilSelectionModeDto.SelectAll)
         {
-            case PupilSelectionModeDto.SelectAll:
-                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys, false);
-                state.SelectAllPupils();
-                break;
-            case PupilSelectionModeDto.DeselectAll:
-                state.UpsertPupilSelectionState(input.PupilUpnToSelectedMap.Keys, true);
-                state.DeselectAllPupils();
-                break;
-            default:
-                IEnumerable<string> selectedPupils = input.PupilUpnToSelectedMap.Select(t => t.Key);
-                state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
-
-                IEnumerable<string> notSelectedPupils = input.PupilUpnToSelectedMap.Select(t => t.Key);
-                state.UpsertPupilSelectionState(notSelectedPupils, isSelected: false);
-                break;
+            state.SelectAllPupils();
         }
+
+        else if (input.State == PupilSelectionModeDto.DeselectAll)
+        {
+            state.DeselectAllPupils();
+        }
+
+        // Then apply selectedState of each pupil
+        List<string> selectedPupils = input.PupilUpnToSelectedMap.Where(t => t.Value).Select(t => t.Key).ToList();
+        state.UpsertPupilSelectionState(selectedPupils, isSelected: true);
+
+        List<string> deselectedPupils = input.PupilUpnToSelectedMap.Where(t => !t.Value).Select(t => t.Key).ToList();
+        state.UpsertPupilSelectionState(deselectedPupils, isSelected: false);
 
         return state;
     }

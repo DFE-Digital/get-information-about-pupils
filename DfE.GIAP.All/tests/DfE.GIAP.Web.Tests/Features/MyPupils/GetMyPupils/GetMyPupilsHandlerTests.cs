@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser;
@@ -79,8 +78,6 @@ public sealed class GetMyPupilsHandlerTests
     public async Task HandleAsync_Maps_Out_Pupils()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
-
         MyPupilsModel stubPaginatedMyPupilDtos = MyPupilDtosTestDoubles.Generate(count: 1);
         PaginatedMyPupilsResponse paginatedResponseStub = new(stubPaginatedMyPupilDtos);
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.MockFor(paginatedResponseStub);
@@ -108,7 +105,7 @@ public sealed class GetMyPupilsHandlerTests
 
         paginatedHandlerMock.Verify((handler)
             => handler.HandleAsync(
-                It.Is<GetPaginatedMyPupilsRequest>((request) => request.MyPupilsId.Equals(userId))), Times.Once);
+                It.Is<GetPaginatedMyPupilsRequest>((request) => request.MyPupilsId.Equals(myPupilsId.Value))), Times.Once);
 
         mapperMock.Verify((mapper)
             => mapper.Map(

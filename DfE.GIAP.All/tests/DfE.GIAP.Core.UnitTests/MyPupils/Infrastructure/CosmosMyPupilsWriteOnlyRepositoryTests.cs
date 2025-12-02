@@ -14,6 +14,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
 {
     private const string MyPupilsContainerName = "mypupils";
 
+
     [Fact]
     public void Constructor_ThrowsArgumentNullException_When_LoggerIsNull()
     {
@@ -58,7 +59,8 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDto>(exception: new Exception("test exception"));
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(
+                new Exception("test exception"));
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Default();
 
@@ -81,7 +83,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDto>(exception: CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: CosmosExceptionTestDoubles.Default());
 
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
 
