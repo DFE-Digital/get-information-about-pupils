@@ -72,7 +72,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Arrange
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw new Exception("test exception"));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
@@ -95,7 +95,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
-            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDto>(
+            CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.InternalServerError));
 
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
