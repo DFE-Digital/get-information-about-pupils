@@ -24,7 +24,7 @@ namespace DfE.GIAP.Web.Controllers
     /// This is unit tested via its concrete implementations
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public abstract partial class BaseLearnerNumberController : Controller
+    public abstract class BaseLearnerNumberController : Controller
     {
         public const int PAGESIZE = 20;
         public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
