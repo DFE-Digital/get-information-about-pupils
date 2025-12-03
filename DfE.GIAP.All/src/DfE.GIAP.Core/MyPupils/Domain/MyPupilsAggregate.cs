@@ -11,15 +11,17 @@ public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
     public MyPupilsAggregate(
         MyPupilsId identifier,
         UniquePupilNumbers pupils,
-        int maxPupilLimit) : base(identifier)
+        int maxPupilsLimit) : base(identifier)
     {
-        _pupils = pupils ?? UniquePupilNumbers.Create([]);
+        ArgumentNullException.ThrowIfNull(identifier);
 
-        _maxPupilsLimit = maxPupilLimit;
+        _pupils = pupils ?? UniquePupilNumbers.Empty();
+
+        _maxPupilsLimit = maxPupilsLimit;
 
         if (_pupils.Count > _maxPupilsLimit)
         {
-            throw new MyPupilsLimitExceededException(maxPupilLimit);
+            throw new MyPupilsLimitExceededException(maxPupilsLimit);
         }
     }
 
@@ -27,11 +29,9 @@ public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
 
     public bool HasNoPupils => PupilCount == 0;
 
-    public void Add(UniquePupilNumbers addPupilNumbers)
+    public void AddPupils(UniquePupilNumbers addPupilNumbers)
     {
-        int newTotal = _pupils.Count + addPupilNumbers.Count;
-
-        if (newTotal > _maxPupilsLimit)
+        if ((_pupils.Count + addPupilNumbers.Count) > _maxPupilsLimit)
         {
             throw new MyPupilsLimitExceededException(_maxPupilsLimit);
         }
@@ -43,7 +43,7 @@ public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
     {
         if (deletePupilsNumbers is null || deletePupilsNumbers.Count == 0)
         {
-            return;
+            return; // TODO consider throw?
         }
 
         List<UniquePupilNumber> deleteUpns = deletePupilsNumbers.GetUniquePupilNumbers().ToList();

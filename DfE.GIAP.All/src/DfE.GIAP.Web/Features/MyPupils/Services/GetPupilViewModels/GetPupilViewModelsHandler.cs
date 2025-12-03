@@ -8,11 +8,11 @@ namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
-    private readonly IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
+    private readonly IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
 
     public GetPupilViewModelsHandler(
         IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
-        IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel> mapToViewModel)
+        IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel> mapToViewModel)
     {
         ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsQueryHandler);
         _getPaginatedMyPupilsQueryHandler = getPaginatedMyPupilsQueryHandler;
@@ -27,13 +27,11 @@ internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
         ArgumentNullException.ThrowIfNull(request.State);
 
         GetPaginatedMyPupilsRequest paginatedPupilsRequest = new(
-            UserId: request.UserId,
+            MyPupilsId: request.UserId,
             PresentationState: request.State.PresentationState);
 
         PaginatedMyPupilsResponse response = await _getPaginatedMyPupilsQueryHandler.HandleAsync(paginatedPupilsRequest);
-
-        MyPupilsDtoSelectionStateDecorator mappable = new(response.Pupils, request.State.SelectionState);
-
+        MyPupilsModelSelectionStateDecorator mappable = new(response.Pupils, request.State.SelectionState);
         PupilsViewModel viewModel = _mapToViewModel.Map(mappable);
 
         return viewModel;

@@ -58,7 +58,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(myPupilsId, upns);
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Create(myPupilsId, upns);
 
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
@@ -95,7 +95,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
         Mock<IMyPupilsWriteOnlyRepository> mockWriteRepository = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(upns);
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Create(upns);
 
         readRepositoryMock
             .Setup((repo) => repo.GetMyPupilsOrDefaultAsync(myPupils.AggregateId))

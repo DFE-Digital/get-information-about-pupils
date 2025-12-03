@@ -13,7 +13,7 @@
     }
     @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
     {
-        <partial name="~/Views/Search/MyPupilList/_AddToMyPupilListError.cshtml" />
+        <partial name="~/Views/MyPupilList/_AddToMyPupilListError.cshtml" />
     }
 
     @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))

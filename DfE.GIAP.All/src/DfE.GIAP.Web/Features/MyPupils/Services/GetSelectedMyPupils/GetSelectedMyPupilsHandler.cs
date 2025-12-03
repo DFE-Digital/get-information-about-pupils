@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+﻿using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;

@@ -67,7 +67,7 @@ public sealed class GetPaginatedMyPupilsHandlerTests
         PaginatedMyPupilsResponse response =
             await sut.HandleAsync(
                 new GetPaginatedMyPupilsRequest(
-                    UserId: myPupilsId.Value,
+                    MyPupilsId: myPupilsId.Value,
                     PresentationState: stubPupilsPresentationState));
 
         // Assert

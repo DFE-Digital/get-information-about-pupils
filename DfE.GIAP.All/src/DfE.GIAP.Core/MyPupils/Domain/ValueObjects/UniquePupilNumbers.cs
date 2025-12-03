@@ -7,8 +7,10 @@ public sealed class UniquePupilNumbers
     {
         _uniquePupilNumbers = uniquePupilNumbers?.ToHashSet() ?? [];
     }
+
     public static UniquePupilNumbers Create(IEnumerable<UniquePupilNumber> uniquePupilNumbers) => new(uniquePupilNumbers);
 
+    public static UniquePupilNumbers Empty() => Create([]);
     public int Count => _uniquePupilNumbers.Count;
     public bool IsEmpty => Count == 0;
     public IReadOnlyList<UniquePupilNumber> GetUniquePupilNumbers() => _uniquePupilNumbers.ToList().AsReadOnly();

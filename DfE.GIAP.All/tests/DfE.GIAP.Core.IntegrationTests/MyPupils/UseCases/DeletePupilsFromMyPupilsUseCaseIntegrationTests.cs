@@ -40,15 +40,16 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
                         .Select(t => t.UPN)
                         .ToUniquePupilNumbers());
 
-        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
+        MyPupilsId myPupilId = MyPupilsIdTestDoubles.Default();
 
-        MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(myPupilsId, myPupilsUpns);
+        MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(myPupilId, myPupilsUpns);
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName, (client) => client.WriteItemAsync(containerName: "mypupils", myPupilsDocument));
 
-        _testContext = new MyPupilsTestContext(myPupilsUpns, myPupilsId);
+        _testContext = new MyPupilsTestContext(myPupilsUpns, myPupilId);
     }
+
 
     // TODO fixed as part of MyPupils work
     /*
@@ -129,7 +130,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         List<string> deleteMultiplePupilIdentifiers =
         [
             myPupilUpns[0].Value,
-            null, // Unknown identifier not part of the list
+            null!, // Unknown identifier not part of the list
             myPupilUpns[myPupilUpns.Count - 1].Value
         ];
 
@@ -148,8 +149,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn.Value))
                 .Select(t => t.Value)
+                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
                 .ToList();
 
         MyPupilsDocumentDto actualDocument = Assert.Single(myPupilsDocument);

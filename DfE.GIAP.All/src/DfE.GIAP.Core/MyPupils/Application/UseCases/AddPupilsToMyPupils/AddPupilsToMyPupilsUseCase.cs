@@ -5,7 +5,6 @@ using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-
 public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>
 {
     private readonly IMyPupilsReadOnlyRepository _readRepository;
@@ -30,8 +29,9 @@ public sealed class AddPupilsToMyPupilsUseCase : IUseCaseRequestOnly<AddPupilsTo
 
         MyPupilsAggregate myPupils = await _readRepository.GetMyPupils(id);
 
-        myPupils.Add(
-            UniquePupilNumbers.Create(uniquePupilNumbers: request.UniquePupilNumbers.ToUniquePupilNumbers()));
+        myPupils.AddPupils(
+            UniquePupilNumbers.Create(
+                request.UniquePupilNumbers.ToUniquePupilNumbers()));
 
         await _writeRepository.SaveMyPupilsAsync(myPupils);
     }

@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Configuration;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Models;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Configuration;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Service.ApiProcessor;
 using DfE.GIAP.Service.ApplicationInsightsTelemetry;
@@ -17,6 +19,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Logging;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +57,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddTransient<IEventLogging, EventLogging>();
-        services.AddScoped<ILogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
+        services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
+        services.AddScoped<IApplicationLogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
+        services.AddScoped<IBusinessEventFactory, BusinessEventFactory>();
 
         return services;
     }

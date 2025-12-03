@@ -24,7 +24,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     public void Map_Returns_EmptyList_When_Input_Is_EmptyList()
     {
         // Arrange
-        MyPupilsDtoSelectionStateDecorator mappable = new(
+        MyPupilsModelSelectionStateDecorator mappable = new(
             MyPupilsModel.Create(pupils: []),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
@@ -56,7 +56,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         // Act
         PupilsViewModel response = sut.Map(
-            new MyPupilsDtoSelectionStateDecorator(
+            new MyPupilsModelSelectionStateDecorator(
                 inputPupils,
                 MyPupilsPupilSelectionStateTestDoubles.Default()));
 
@@ -90,7 +90,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         // Act
         PupilsViewModel response = sut.Map(
-            new MyPupilsDtoSelectionStateDecorator(createdPupils, selectionState));
+            new MyPupilsModelSelectionStateDecorator(createdPupils, selectionState));
 
         // Assert
         Assert.NotNull(response);

@@ -10,7 +10,9 @@ using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.Services.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -61,6 +63,8 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilModel>>());
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
+        Assert.NotNull(provider.GetService<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>>());
+
         Assert.NotNull(provider.GetService<IMyPupilsWriteOnlyRepository>());
 
         Assert.NotNull(provider.GetService<ISearchClientProvider>());

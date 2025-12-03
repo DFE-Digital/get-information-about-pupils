@@ -3,13 +3,13 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 
-internal sealed class MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper : IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>
+internal sealed class MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper : IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>
 {
-    public PupilsViewModel Map(MyPupilsDtoSelectionStateDecorator input)
+    public PupilsViewModel Map(MyPupilsModelSelectionStateDecorator input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        IEnumerable<PupilViewModel> pupils = input.PupilDtos.Values.Select((dto) =>
+        IEnumerable<PupilViewModel> pupils = input.Pupils.Values.Select((dto) =>
         {
             PupilViewModel viewModel = new()
             {

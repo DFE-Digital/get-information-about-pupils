@@ -1,4 +1,4 @@
-﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
+using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -59,7 +59,8 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDto>(exception: new Exception("test exception"));
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(
+                new Exception("test exception"));
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Default();
 
@@ -71,7 +72,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             mapToDto: mapperMock.Object);
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
 
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() => repository.SaveMyPupilsAsync(myPupils));
@@ -82,7 +83,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
-            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDto>(exception: CosmosExceptionTestDoubles.Default());
+            CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: CosmosExceptionTestDoubles.Default());
 
         InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
 
@@ -98,7 +99,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             mapToDto: mapperMock.Object);
 
         // Act Assert
-        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
 
         await Assert.ThrowsAsync<CosmosException>(() => repository.SaveMyPupilsAsync(myPupils));
 
@@ -112,7 +113,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         // Arrange
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(uniquePupilNumbers: []);
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Create(uniquePupilNumbers);
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Create(myPupils.AggregateId, uniquePupilNumbers);
 
@@ -154,7 +155,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(count: 3));
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateRootTestDoubles.Create(uniquePupilNumbers);
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Create(uniquePupilNumbers);
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Create(myPupils.AggregateId, uniquePupilNumbers);
 

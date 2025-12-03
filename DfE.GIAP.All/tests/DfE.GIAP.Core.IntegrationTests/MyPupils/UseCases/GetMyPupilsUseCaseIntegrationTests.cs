@@ -1,4 +1,3 @@
-
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
@@ -6,12 +5,10 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.SharedTests.Extensions;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
@@ -111,7 +108,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => new UniquePupilNumber(t!.UPN).Equals(expectedPupil.UniquePupilNumber));
+            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => t!.UPN == expectedPupil.UniquePupilNumber);
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }

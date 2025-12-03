@@ -1,6 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.Logging;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.Extensions;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
@@ -17,12 +17,12 @@ namespace DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 internal class CosmosDbNewsArticleReadOnlyRepository : INewsArticleReadOnlyRepository
 {
     private const string ContainerName = "news";
-    private readonly ILoggerService _loggerService;
+    private readonly IApplicationLoggerService _loggerService;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly IMapper<NewsArticleDto, NewsArticle> _dtoToEntityMapper;
 
     public CosmosDbNewsArticleReadOnlyRepository(
-        ILoggerService logger,
+        IApplicationLoggerService logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
         IMapper<NewsArticleDto, NewsArticle> dtoToEntityMapper)
     {

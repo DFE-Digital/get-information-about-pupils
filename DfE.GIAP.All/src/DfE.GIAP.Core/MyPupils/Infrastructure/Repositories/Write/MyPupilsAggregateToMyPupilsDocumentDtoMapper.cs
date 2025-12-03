@@ -1,5 +1,4 @@
-﻿
-namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
+﻿namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 internal sealed class MyPupilsAggregateToMyPupilsDocumentDtoMapper : IMapper<MyPupilsAggregate, MyPupilsDocumentDto>
 {
     public MyPupilsDocumentDto Map(MyPupilsAggregate input)

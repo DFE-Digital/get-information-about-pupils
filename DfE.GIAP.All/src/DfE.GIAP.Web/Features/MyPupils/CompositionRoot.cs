@@ -51,7 +51,7 @@ public static class CompositionRoot
     private static IServiceCollection AddGetPupilViewModels(this IServiceCollection services)
     {
         services
-            .AddSingleton<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>, MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper>()
+            .AddSingleton<IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>, MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper>()
             .AddScoped<IGetPupilViewModelsHandler, GetPupilViewModelsHandler>();
         return services;
     }

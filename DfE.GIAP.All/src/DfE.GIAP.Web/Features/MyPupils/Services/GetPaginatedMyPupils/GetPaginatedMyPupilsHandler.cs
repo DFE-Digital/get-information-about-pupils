@@ -23,7 +23,7 @@ internal sealed class GetPaginatedMyPupilsHandler : IGetPaginatedMyPupilsHandler
 
     public async Task<PaginatedMyPupilsResponse> HandleAsync(GetPaginatedMyPupilsRequest request)
     {
-        GetMyPupilsRequest getPupilsRequest = new(request.UserId);
+        GetMyPupilsRequest getPupilsRequest = new(request.MyPupilsId);
         GetMyPupilsResponse response = await _useCase.HandleRequestAsync(getPupilsRequest);
         MyPupilsModel results = _presentationHandler.Handle(response.MyPupils, request.PresentationState);
         return new(results);

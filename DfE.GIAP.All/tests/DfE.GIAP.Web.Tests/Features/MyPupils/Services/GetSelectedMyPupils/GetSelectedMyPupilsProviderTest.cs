@@ -73,4 +73,3 @@ public sealed class GetSelectedMyPupilsProviderTest
         Assert.DoesNotContain(notSelected.Value, result);
     }
 }
-

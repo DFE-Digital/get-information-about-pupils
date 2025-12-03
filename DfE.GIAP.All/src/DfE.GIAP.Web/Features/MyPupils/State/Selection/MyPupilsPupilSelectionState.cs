@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
-public sealed class MyPupilsPupilSelectionState 
+public sealed class MyPupilsPupilSelectionState
 {
     private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
 

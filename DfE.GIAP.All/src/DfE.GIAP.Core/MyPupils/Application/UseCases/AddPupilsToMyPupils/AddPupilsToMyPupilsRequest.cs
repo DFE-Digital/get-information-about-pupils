@@ -7,7 +7,7 @@ public record AddPupilsToMyPupilsRequest : IUseCaseRequest
         string userId,
         IEnumerable<string> pupils)
     {
-        UserId = userId;
+        UserId = userId ?? string.Empty;
 
         UniquePupilNumbers =
             (pupils?.Distinct()

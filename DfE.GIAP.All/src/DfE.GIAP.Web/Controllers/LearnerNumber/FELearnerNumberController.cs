@@ -6,6 +6,7 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -52,6 +53,9 @@ public class FELearnerNumberController : Controller
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+
+    private readonly IEventLogger _eventLogger;
+
     public const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
@@ -84,6 +88,7 @@ public class FELearnerNumberController : Controller
         IDownloadService downloadService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
+        IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
@@ -110,6 +115,9 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
+        
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -440,6 +448,8 @@ public class FELearnerNumberController : Controller
             )
         ];
 
+        _eventLogger.LogSearch(SearchIdentifierType.ULN, false, new());
+
         SearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new SearchRequest(
@@ -449,6 +459,7 @@ public class FELearnerNumberController : Controller
                     sortOrder: sortOrder,
                     offset: model.Offset))
             .ConfigureAwait(false);
+
 
         LearnerNumberSearchViewModel result =
             _learnerNumericSearchResponseToViewModelMapper.Map(
@@ -514,7 +525,7 @@ public class FELearnerNumberController : Controller
         model.PageLearnerNumbers = string.Join(',', model.Learners.Select(l => l.LearnerNumberId));
         return model;
     }
-    
+
     private static List<string> SetLearnerNumberIds(
         IEnumerable<Domain.Search.Learner.Learner> learners)
     {
@@ -531,7 +542,8 @@ public class FELearnerNumberController : Controller
                 default:
                     learner.LearnerNumberId = learner.LearnerNumber;
                     break;
-            };
+            }
+            ;
         }
 
         return idList;

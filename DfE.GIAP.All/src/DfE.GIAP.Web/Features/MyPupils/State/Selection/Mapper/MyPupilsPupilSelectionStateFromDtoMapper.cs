@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
 
 namespace DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
@@ -14,12 +13,12 @@ public class MyPupilsPupilSelectionStateFromDtoMapper : IMapper<MyPupilsPupilSel
         MyPupilsPupilSelectionState state = new();
 
         // Apply SelectionMode
-        if(input.State == PupilSelectionModeDto.SelectAll)
+        if (input.State == PupilSelectionModeDto.SelectAll)
         {
             state.SelectAllPupils();
         }
 
-        else if(input.State == PupilSelectionModeDto.DeselectAll)
+        else if (input.State == PupilSelectionModeDto.DeselectAll)
         {
             state.DeselectAllPupils();
         }

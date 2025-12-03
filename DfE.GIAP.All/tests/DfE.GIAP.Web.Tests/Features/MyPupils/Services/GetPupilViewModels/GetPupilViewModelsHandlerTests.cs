@@ -20,7 +20,7 @@ public sealed class GetPupilViewModelsHandlerTests
     public void Constructor_Throws_When_PaginatedHandler_Is_Null()
     {
         // Arrange
-        Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
+        Mock<IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsModelSelectionStateDecorator, PupilsViewModel>();
         Func<GetPupilViewModelsHandler> construct = () => new(null, mapperMock.Object);
 
         // Act Assert
@@ -43,8 +43,8 @@ public sealed class GetPupilViewModelsHandlerTests
     {
         // Arrange
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
-        Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
-
+        Mock<IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsModelSelectionStateDecorator, PupilsViewModel>();
+        
         GetPupilViewModelsHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         Func<Task> act = async () => await sut.GetPupilsAsync(null);
@@ -58,12 +58,14 @@ public sealed class GetPupilViewModelsHandlerTests
     {
         // Arrange
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.Default();
-        Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>();
+        Mock<IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.Default<MyPupilsModelSelectionStateDecorator, PupilsViewModel>();
 
         GetPupilViewModelsHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
+
         GetPupilViewModelsRequest request = new(
-            UserId: MyPupilsIdTestDoubles.Default().Value,
+            UserId: myPupilsId.Value,
             State: null);
 
         Func<Task> act = async () => await sut.GetPupilsAsync(request);
@@ -76,22 +78,22 @@ public sealed class GetPupilViewModelsHandlerTests
     public async Task HandleAsync_Maps_Out_Pupils()
     {
         // Arrange
-        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
-
         MyPupilsModel stubPaginatedMyPupilDtos = MyPupilDtosTestDoubles.Generate(count: 1);
         PaginatedMyPupilsResponse paginatedResponseStub = new(stubPaginatedMyPupilDtos);
         Mock<IGetPaginatedMyPupilsHandler> paginatedHandlerMock = IGetPaginatedMyPupilsHandlerTestDoubles.MockFor(paginatedResponseStub);
 
         PupilsViewModel pupils = PupilsViewModelTestDoubles.Generate(count: 10);
 
-        Mock<IMapper<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.MockFor<MyPupilsDtoSelectionStateDecorator, PupilsViewModel>(pupils);
+        Mock<IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>> mapperMock = MapperTestDoubles.MockFor<MyPupilsModelSelectionStateDecorator, PupilsViewModel>(pupils);
 
         GetPupilViewModelsHandler sut = new(paginatedHandlerMock.Object, mapperMock.Object);
 
         MyPupilsPupilSelectionState selectionState = new();
         MyPupilsState state = new(MyPupilsPresentationStateTestDoubles.Default(), selectionState);
 
-        GetPupilViewModelsRequest request = new(myPupilsId.Value, state);
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
+
+        GetPupilViewModelsRequest request = new(UserId: myPupilsId.Value, state);
 
         // Act
         PupilsViewModel response = await sut.GetPupilsAsync(request);
@@ -103,10 +105,10 @@ public sealed class GetPupilViewModelsHandlerTests
 
         paginatedHandlerMock.Verify((handler)
             => handler.HandleAsync(
-                It.Is<GetPaginatedMyPupilsRequest>((request) => request.UserId.Equals(myPupilsId.Value))), Times.Once);
+                It.Is<GetPaginatedMyPupilsRequest>((request) => request.MyPupilsId.Equals(myPupilsId.Value))), Times.Once);
 
         mapperMock.Verify((mapper)
             => mapper.Map(
-                It.Is<MyPupilsDtoSelectionStateDecorator>((request) => request.PupilDtos.Values.SequenceEqual(stubPaginatedMyPupilDtos.Values))), Times.Once);
+                It.Is<MyPupilsModelSelectionStateDecorator>((request) => request.Pupils.Values.SequenceEqual(stubPaginatedMyPupilDtos.Values))), Times.Once);
     }
 }
