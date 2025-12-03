@@ -369,34 +369,24 @@ namespace DfE.GIAP.Web.Controllers
                 }
             }
 
-            var potentialErrorLearnerNumbers = learnerNumberArray.Distinct().ToList();
+            List<string> invalidIdentifiers =
+                learnerNumberArray?.Select((learnerNumber) =>
+                    learnerNumber
+                        .Replace("\r", string.Empty)
+                        .Replace("\n", string.Empty))
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .Distinct()
+                    .Where((sanitisedLearnerNumber) => !ValidateLearnerNumber(sanitisedLearnerNumber))
+                    .ToList() ?? [];
 
-            if (potentialErrorLearnerNumbers.Any())
+            model.Invalid.AddRange(invalidIdentifiers);
+
+            if (invalidIdentifiers.Count > 0)
             {
-                foreach (string learnerNumber in potentialErrorLearnerNumbers)
-                {
-                    bool isValid = ValidateLearnerNumber(learnerNumber);
-
-                    if (!isValid)
-                    {
-                        model.Invalid.Add(learnerNumber);
-                    }
-                }
-
-                if (model.Invalid.Count != 0)
-                {
-                    _logger.LogError(
-                        "Some of the LearnerNumber(s) are not valid identifiers: {Identifiers}...",
-                            string.Join(", ",
-                            model.Invalid
-                                .Take(10)
-                                .Select((invalidUpn) =>
-                                    invalidUpn
-                                        .Replace("\n", string.Empty)
-                                        .Replace("\r", string.Empty))));
-                }
-                //result.Reverse(); // TODO: why is this here?
+                _logger.LogError(
+                    "Some LearnerNumber(s) are not valid identifiers: {Identifiers}", string.Join(", ", invalidIdentifiers.Take(100)));
             }
+
 
             // ensure that the selections are set appropriately
             var selected = GetSelected(combinedIdLearnerNumberArray);
