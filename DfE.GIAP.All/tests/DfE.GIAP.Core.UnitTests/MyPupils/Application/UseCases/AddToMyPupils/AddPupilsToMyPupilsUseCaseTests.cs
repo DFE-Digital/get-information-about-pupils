@@ -54,7 +54,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         List<UniquePupilNumber> originalMyPupils = UniquePupilNumberTestDoubles.Generate(count: 15);
 
-        MyPupilsAggregate myPupilsAggregate = MyPupilsAggregateRootTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
+        MyPupilsAggregate myPupilsAggregate = MyPupilsAggregateTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
 
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 
@@ -89,7 +89,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         List<UniquePupilNumber> originalMyPupils = UniquePupilNumberTestDoubles.Generate(count: 5);
 
-        MyPupilsAggregate myPupilsAggregate = MyPupilsAggregateRootTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
+        MyPupilsAggregate myPupilsAggregate = MyPupilsAggregateTestDoubles.Create(id, UniquePupilNumbers.Create(originalMyPupils));
 
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
 

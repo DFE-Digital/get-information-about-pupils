@@ -65,7 +65,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
         MyPupilsId id = new("id");
 
         MyPupilsAggregate myPupilsAggregate =
-            MyPupilsAggregateRootTestDoubles.Create(
+            MyPupilsAggregateTestDoubles.Create(
                 id,
                 uniquePupilNumbers: UniquePupilNumbers.Create(UniquePupilNumberTestDoubles.Generate(count: 15)));
 
