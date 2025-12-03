@@ -268,12 +268,17 @@ public abstract class BaseLearnerNumberController : Controller
         }
 
         List<string> invalidUPNs = selected.Where(x => !ValidationHelper.IsValidUpn(x)).ToList();
-
+    
         if (invalidUPNs.Count > 0)
         {
-            model.SelectedPupil = model.SelectedPupil.Except(invalidUPNs).ToList();
-            selected = selected.Where(t => !invalidUPNs.Contains(t)).ToHashSet();
+            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
+            {
+                LearnerNumber = string.Join("\n", invalidUPNs)
+            });
         }
+
+        model.SelectedPupil = model.SelectedPupil.Except(invalidUPNs).ToList();
+        selected = selected.Where(t => !invalidUPNs.Contains(t)).ToHashSet();
 
         try
         {
@@ -287,14 +292,6 @@ public abstract class BaseLearnerNumberController : Controller
         {
             model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
             return await ReturnToPage(model);
-        }
-
-        if (invalidUPNs.Count > 0)
-        {
-            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
-            {
-                LearnerNumber = string.Join("\n", invalidUPNs)
-            });
         }
 
         model.ItemAddedToMyPupilList = true;
@@ -427,7 +424,119 @@ public abstract class BaseLearnerNumberController : Controller
 
         model.Learners = model.Learners.Union(nonUPNResult.Learners);
 
+<<<<<<< HEAD
         return model;
+=======
+                    default:
+                        learner.LearnerNumberId = learner.LearnerNumber;
+                        break;
+                }
+                ;
+            }
+
+            return idList;
+        }
+
+        #endregion Private Methods
+
+        #region Protected Methods
+
+        protected HashSet<string> GetSelected(string[] available)
+        {
+            // ensure we remove the missing items
+            var missing = JsonConvert.DeserializeObject<List<string>>(this.HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY));
+
+            if (missing != null)
+            {
+                var actuallyAvailable = available.Except(missing).ToArray();
+                return _selectionManager.GetSelected(actuallyAvailable);
+            }
+
+            return _selectionManager.GetSelected(available);
+        }
+
+        protected virtual void SetSelections(IEnumerable<string> available, IEnumerable<string> selected)
+        {
+            IEnumerable<string> toAdd;
+            IEnumerable<string> toRemove;
+
+            if (selected != null)
+            {
+                toAdd = selected;
+                toRemove = available.Except(selected);
+            }
+            else
+            {
+                toAdd = new List<string>();
+                toRemove = available; // nothing selected, remove them all.
+            }
+
+            _selectionManager.AddAll(toAdd);
+            _selectionManager.RemoveAll(toRemove);
+        }
+
+        protected abstract Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model);
+
+        protected abstract bool ValidateLearnerNumber(string learnerNumber);
+
+        protected abstract string GenerateValidationMessage();
+
+        protected LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
+        {
+            model.PageHeading = PageHeading;
+            model.LearnerNumberLabel = LearnerNumberLabel;
+            model.ShowLocalAuthority = ShowLocalAuthority;
+
+            return model;
+        }
+
+        protected LearnerNumberSearchViewModel PopulateNavigation(LearnerNumberSearchViewModel model)
+        {
+            model.DownloadLinksPartial = DownloadLinksPartial;
+            model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
+            model.SearchAction = SearchAction;
+            model.FullTextLearnerSearchController = FullTextLearnerSearchController;
+            model.FullTextLearnerSearchAction = FullTextLearnerSearchAction;
+            return model;
+        }
+
+        private LearnerNumberSearchViewModel PopulateSorting(LearnerNumberSearchViewModel model, string sortField, string sortDirection)
+        {
+            if (!string.IsNullOrEmpty(sortField) && !string.IsNullOrEmpty(sortDirection))
+            {
+                SetSortingDataIntoSession(sortField, sortDirection);
+                SetSortingDataIntoModel(model, sortField, sortDirection);
+            }
+            else if (!string.IsNullOrEmpty(this.HttpContext.Session.GetString(SearchSessionSortField)) && !string.IsNullOrEmpty(this.HttpContext.Session.GetString(SearchSessionSortDirection)))
+                SetSortingDataIntoModel(model, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection));
+            return model;
+        }
+
+        // Stores sorting data into session to make it reachable on returnToSearch
+        protected void SetSortingDataIntoSession(string sortField, string sortDirection)
+        {
+            this.HttpContext.Session.SetString(SearchSessionSortField, sortField);
+            this.HttpContext.Session.SetString(SearchSessionSortDirection, sortDirection);
+        }
+
+        protected LearnerNumberSearchViewModel SetSortingDataIntoModel(LearnerNumberSearchViewModel model, string sortField, string sortDirection)
+        {
+            model.SortField = sortField;
+            model.SortDirection = sortDirection;
+            return model;
+        }
+
+        private void ClearSortingDataFromSession()
+        {
+            if (this.HttpContext.Session.Keys.Contains(SearchSessionSortField) && this.HttpContext.Session.Keys.Contains(SearchSessionSortDirection))
+            {
+                this.HttpContext.Session.Remove(SearchSessionSortField);
+                this.HttpContext.Session.Remove(SearchSessionSortDirection);
+            }
+        }
+
+        #endregion Protected Methods
+>>>>>>> main
     }
 
     private List<string> SetLearnerNumberIds(PaginatedResponse result)
