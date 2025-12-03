@@ -41,17 +41,17 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
                         .Select(t => t.UPN)
                         .ToUniquePupilNumbers());
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilId = MyPupilsIdTestDoubles.Default();
 
-        MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(userId, myPupilsUpns);
+        MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(myPupilId, myPupilsUpns);
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName, (client) => client.WriteItemAsync(containerName: "mypupils", myPupilsDocument));
 
-        _testContext = new MyPupilsTestContext(myPupilsUpns, userId);
+        _testContext = new MyPupilsTestContext(myPupilsUpns, myPupilId);
     }
 
-    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, UserId userId);
+    private sealed record MyPupilsTestContext(UniquePupilNumbers MyPupilUpns, MyPupilsId myPupilsId);
 
     // TODO fixed as part of MyPupils work
     /*
@@ -131,17 +131,16 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         IReadOnlyList<UniquePupilNumber> myPupilUpns = _testContext!.MyPupilUpns.GetUniquePupilNumbers();
 
-        List<UniquePupilNumber> deleteMultiplePupilIdentifiers =
+        List<string> deleteMultiplePupilIdentifiers =
         [
-            myPupilUpns[0],
+            myPupilUpns[0].Value,
             null!, // Unknown identifier not part of the list
-            myPupilUpns[myPupilUpns.Count - 1]
+            myPupilUpns[myPupilUpns.Count - 1].Value
         ];
 
         DeletePupilsFromMyPupilsRequest request = new(
-            _testContext.userId.Value,
-            deleteMultiplePupilIdentifiers,
-            DeleteAll: false);
+            _testContext.myPupilsId.Value,
+            deleteMultiplePupilIdentifiers);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -153,8 +152,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         List<string> remainingUpnsAfterDelete =
             myPupilUpns
-                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
                 .Select(t => t.Value)
+                .Where((upn) => !deleteMultiplePupilIdentifiers.Contains(upn))
                 .ToList();
 
         MyPupilsDocumentDto actualUserDto = Assert.Single(users);

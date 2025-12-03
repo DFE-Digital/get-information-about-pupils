@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
@@ -8,15 +8,15 @@ using DfE.GIAP.Web.Tests.TestDoubles.Session;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetSelectedMyPupils;
-public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetSelectedMyPupils;
+public sealed class GetSelectedMyPupilsProviderTest
 {
     [Fact]
     public void Constructor_Throws_When_SessionQueryHandler_Is_Null()
     {
         // Arrange
-        Func<GetSelectedMyPupilUniquePupilNumbersProvider> construct =
-            () => new GetSelectedMyPupilUniquePupilNumbersProvider(null!);
+        Func<GetSelectedMyPupilsHandler> construct =
+            () => new GetSelectedMyPupilsHandler(null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -30,14 +30,14 @@ public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
             ISessionQueryHandlerTestDoubles.MockFor(
                 SessionQueryResponse<MyPupilsPupilSelectionState>.NoValue());
 
-        GetSelectedMyPupilUniquePupilNumbersProvider provider = new(sessionQueryHandlerMock.Object);
+        GetSelectedMyPupilsHandler provider = new(sessionQueryHandlerMock.Object);
 
         // Act
-        UniquePupilNumbers result = provider.GetSelectedMyPupils();
+        IEnumerable<string> result = provider.GetSelectedMyPupils();
 
         // Assert
         Assert.NotNull(result);
-        Assert.Empty(result.GetUniquePupilNumbers());
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -48,13 +48,13 @@ public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
         UniquePupilNumber selected = uniquePupilsNumbers[0];
         UniquePupilNumber notSelected = uniquePupilsNumbers[1];
 
-        Dictionary<List<UniquePupilNumber>, bool> selection = new()
+        Dictionary<List<string>, bool> selection = new()
         {
-            { [selected], true },
-            { [notSelected], false }
+            { [selected.Value], true },
+            { [notSelected.Value ], false }
         };
 
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selection);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selection);
 
         // Arrange
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> sessionQueryHandlerMock =
@@ -62,15 +62,14 @@ public sealed class GetSelectedMyPupilUniquePupilNumbersProviderTests
                 SessionQueryResponse<MyPupilsPupilSelectionState>.Create(
                     value: state));
 
-        GetSelectedMyPupilUniquePupilNumbersProvider provider = new(sessionQueryHandlerMock.Object);
+        GetSelectedMyPupilsHandler provider = new(sessionQueryHandlerMock.Object);
 
         // Act
-        UniquePupilNumbers result = provider.GetSelectedMyPupils();
+        IEnumerable<string> result = provider.GetSelectedMyPupils();
 
         // Assert
-        UniquePupilNumber responseUniquePupilNumber = Assert.Single(result.GetUniquePupilNumbers());
-        Assert.Equal(selected, responseUniquePupilNumber);
-        Assert.DoesNotContain(notSelected, result.GetUniquePupilNumbers());
+        string responseUniquePupilNumber = Assert.Single(result);
+        Assert.Equal(selected.Value, responseUniquePupilNumber);
+        Assert.DoesNotContain(notSelected.Value, result);
     }
 }
-

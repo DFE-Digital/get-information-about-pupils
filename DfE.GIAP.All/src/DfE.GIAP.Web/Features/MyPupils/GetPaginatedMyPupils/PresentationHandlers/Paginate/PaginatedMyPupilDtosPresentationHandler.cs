@@ -1,11 +1,11 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Paginate;
 
 public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilDtosPresentationHandler
 {
-    public MyPupilDtos Handle(MyPupilDtos myPupils, MyPupilsPresentationState state)
+    public MyPupilsModel Handle(MyPupilsModel myPupils, MyPupilsPresentationState state)
     {
         const int DefaultPageSize = 20;
 
@@ -15,14 +15,14 @@ public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilDtosPresent
 
         if (skip >= myPupils.Count)
         {
-            return MyPupilDtos.Create([]);
+            return MyPupilsModel.Create([]);
         }
 
-        List<MyPupilDto> pagedResults = myPupils.Values
+        List<MyPupilModel> pagedResults = myPupils.Values
                 .Skip(skip)
                 .Take(DefaultPageSize)
                 .ToList();
 
-        return MyPupilDtos.Create(pupils: pagedResults);
+        return MyPupilsModel.Create(pupils: pagedResults);
     }
 }

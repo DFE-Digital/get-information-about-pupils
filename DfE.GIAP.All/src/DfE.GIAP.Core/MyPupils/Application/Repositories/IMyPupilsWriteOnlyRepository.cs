@@ -1,9 +1,8 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Users.Application.Models;
+﻿using DfE.GIAP.Core.MyPupils.Domain;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 
 public interface IMyPupilsWriteOnlyRepository
 {
-    Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils);
+    Task SaveMyPupilsAsync(MyPupilsAggregate myPupils);
 }

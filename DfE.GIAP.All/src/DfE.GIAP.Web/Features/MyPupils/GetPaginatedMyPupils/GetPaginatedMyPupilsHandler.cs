@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
@@ -24,9 +23,9 @@ internal sealed class GetPaginatedMyPupilsHandler : IGetPaginatedMyPupilsHandler
 
     public async Task<PaginatedMyPupilsResponse> HandleAsync(GetPaginatedMyPupilsRequest request)
     {
-        GetMyPupilsRequest getPupilsRequest = new(request.UserId);
+        GetMyPupilsRequest getPupilsRequest = new(request.MyPupilsId);
         GetMyPupilsResponse response = await _useCase.HandleRequestAsync(getPupilsRequest);
-        MyPupilDtos results = _presentationHandler.Handle(response.MyPupils, request.PresentationState);
+        MyPupilsModel results = _presentationHandler.Handle(response.MyPupils, request.PresentationState);
         return new(results);
     }
 }

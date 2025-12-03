@@ -37,14 +37,16 @@ public sealed class MyPupilsPupilSelectionStateTests
     public void SelectAllPupils_Updates_State_WithSomePupils()
     {
         // Arrange
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);
+        List<string> upns = UniquePupilNumberTestDoubles.Generate(count: 3)
+            .Select(t => t.Value)
+            .ToList();
 
-        Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping = new()
+        Dictionary<List<string>, bool> selectionStateMapping = new()
         {
             { upns , false }
         };
 
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
         state.SelectAllPupils();
@@ -58,15 +60,17 @@ public sealed class MyPupilsPupilSelectionStateTests
     public void DeselectAllPupils_Clears_Selections()
     {
         // Arrange
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);
+        List<string> upns = UniquePupilNumberTestDoubles.Generate(count: 3)
+            .Select(t => t.Value)
+            .ToList();
 
-        Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping = new()
+        Dictionary<List<string>, bool> selectionStateMapping = new()
         {
             { [upns[0]] , false },
             { [upns[1], upns[2]], true },
         };
 
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
         state.DeselectAllPupils();
@@ -81,14 +85,16 @@ public sealed class MyPupilsPupilSelectionStateTests
     public void ResetState_Clears_All_Data()
     {
         // Arrange
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 2);
+        List<string> upns = UniquePupilNumberTestDoubles.Generate(count: 2)
+            .Select(t => t.Value)
+            .ToList();
 
-        Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping = new()
+        Dictionary<List<string>, bool> selectionStateMapping = new()
         {
             { upns, true }
         };
 
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
         state.ResetState();
@@ -114,16 +120,18 @@ public sealed class MyPupilsPupilSelectionStateTests
     {
         // Arrange Act
         // Arrange
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);
+        List<string> upns = UniquePupilNumberTestDoubles.Generate(count: 3)
+            .Select(t => t.Value)
+            .ToList();
 
-        Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping = new()
+        Dictionary<List<string>, bool> selectionStateMapping = new()
         {
             { [upns[0]], false },
             { [upns[1]], true }
         };
 
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
-        IReadOnlyDictionary<UniquePupilNumber, bool> selectionState = state.GetPupilsWithSelectionState();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
+        IReadOnlyDictionary<string, bool> selectionState = state.GetPupilsWithSelectionState();
 
         // Act
         state.UpsertPupilSelectionState([], It.IsAny<bool>());
@@ -137,8 +145,8 @@ public sealed class MyPupilsPupilSelectionStateTests
     {
         // Arrange
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
-        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-        
+        string upn = UniquePupilNumberTestDoubles.Generate().Value;
+
         // Act
         state.UpsertPupilSelectionState([upn, upn], true);
 
@@ -158,27 +166,29 @@ public sealed class MyPupilsPupilSelectionStateTests
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
 
         // Act
-        state.UpsertPupilSelectionState([upn], selected);
+        state.UpsertPupilSelectionState([upn.Value], selected);
 
 
         // Assert
-        Assert.Equal(selected, state.IsPupilSelected(upn));
-        Assert.Equal(selected, state.GetPupilsWithSelectionState()[upn]);
+        Assert.Equal(selected, state.IsPupilSelected(upn.Value));
+        Assert.Equal(selected, state.GetPupilsWithSelectionState()[upn.Value]);
     }
 
     [Fact]
     public void UpsertUniquePupilNumberSelectionState_Applies_SelectionStatePerUpn()
     {
         // Arrange
-        List<UniquePupilNumber> upns = UniquePupilNumberTestDoubles.Generate(count: 3);
+        List<string> upns = UniquePupilNumberTestDoubles.Generate(count: 3)
+            .Select(t => t.Value)
+            .ToList(); ;
 
-        Dictionary<List<UniquePupilNumber>, bool> selectionStateMapping = new()
+        Dictionary<List<string>, bool> selectionStateMapping = new()
         {
             { [upns[1]] , false },
             { [upns[0]] , true }
         };
 
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithSelectionState(selectionStateMapping);
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
         state.UpsertPupilSelectionState([upns[1]], true);
@@ -188,7 +198,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         Assert.True(state.IsPupilSelected(upns[1]));
         Assert.False(state.IsPupilSelected(upns[0]));
 
-        IReadOnlyDictionary<UniquePupilNumber, bool> selectionState = state.GetPupilsWithSelectionState();
+        IReadOnlyDictionary<string, bool> selectionState = state.GetPupilsWithSelectionState();
         Assert.Contains(upns[0], selectionState);
         Assert.Contains(upns[1], selectionState);
     }
