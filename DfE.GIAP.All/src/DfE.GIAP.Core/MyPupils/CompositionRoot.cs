@@ -39,7 +39,7 @@ public static class CompositionRoot
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>, DeleteAllMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, MyPupilModel>, MapPupilToMyPupilModelMapper>()
-            .AddScoped<IAggregatePupilsForMyPupilsApplicationService, TempAggregatePupilsForMyPupilsApplicationService>()
+            .AddScoped<IAggregatePupilsForMyPupilsApplicationService, AggregatePupilsForMyPupilsApplicationService>()
             .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, MapDecoratedSearchIndexDtoToPupilMapper>();
 
         return services;
