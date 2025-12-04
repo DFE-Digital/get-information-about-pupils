@@ -178,18 +178,10 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         Assert.Equivalent(response, myPupils);
         
         cosmosDbQueryHandlerMock.Verify(
-            (t) => t.ReadItemByIdAsync<MyPupilsDto>(
-                myPupilsId.Value,
-                "mypupils",
-                myPupilsId.Value,
-                It.IsAny<CancellationToken>()), Times.Once);
-
-        cosmosDbQueryHandlerMock.Verify(
             (t) => t.TryReadItemByIdAsync<MyPupilsDocumentDto>(
                 myPupilsId.Value,
                 "mypupils",
                 myPupilsId.Value,
                 It.IsAny<CancellationToken>()), Times.Once);
     }
-
 }
