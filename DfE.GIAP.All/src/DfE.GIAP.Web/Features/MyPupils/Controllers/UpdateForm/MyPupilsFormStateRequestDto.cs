@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.ViewModel;
+using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
 public sealed class MyPupilsFormStateRequestDto
 {
@@ -23,11 +25,21 @@ public sealed class MyPupilsFormStateRequestDto
     [FromQuery]
     // TODO Validator for ModelState, Validate XSS
     public string SortDirection { get; set; } = string.Empty;
+    public MyPupilsErrorViewModel Error { get; set; } = null; // Used by other actions to error when posting back to the form
 
-    public MyPupilsFormSelectionModeRequestDto SelectAllMode =>
-#pragma warning disable S3358 // Ternary operators should not be nested
-            !SelectAll.HasValue ? MyPupilsFormSelectionModeRequestDto.ManualSelection :
-                SelectAll.Value ? MyPupilsFormSelectionModeRequestDto.SelectAll :
-                    MyPupilsFormSelectionModeRequestDto.DeselectAll;
-#pragma warning restore S3358 // Ternary operators should not be nested
+    public MyPupilsFormSelectionModeRequestDto SelectAllState
+    {
+        get
+        {
+            if (SelectAll.HasValue && SelectAll.Value)
+            {
+                return MyPupilsFormSelectionModeRequestDto.SelectAll;
+            }
+            if (SelectAll.HasValue && !SelectAll.Value)
+            {
+                return MyPupilsFormSelectionModeRequestDto.DeselectAll;
+            }
+            return MyPupilsFormSelectionModeRequestDto.ManualSelection; ;
+        }
+    }
 }

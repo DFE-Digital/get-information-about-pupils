@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
@@ -74,7 +75,7 @@ public class UpdateMyPupilsFormController : Controller
 
         // Update SelectionState
         GetSelectionStateUpdateStrategy(
-            mode: formDto.SelectAllMode,
+            mode: formDto.SelectAllState,
             currentPageOfPupils: currentPupilViewModels.Pupils.Select(t => t.UniquePupilNumber).ToList(),
             selectedPupilsOnForm: formDto.SelectedPupils)
                 .Invoke(state.SelectionState);
