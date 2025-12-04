@@ -21,7 +21,7 @@ public class UpdateMyPupilsFormController : Controller
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
     private readonly ISessionCommandHandler<MyPupilsPresentationState> _presentationStateCommandHandler;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _pupilSelectionStateCommandHandler;
-    private readonly IGetMyPupilsHandler _getPupilViewModelsForUserHandler;
+    private readonly IGetMyPupilsHandler _getMyPupilsHandler;
 
     public UpdateMyPupilsFormController(
         ILogger<UpdateMyPupilsFormController> logger,
@@ -47,7 +47,7 @@ public class UpdateMyPupilsFormController : Controller
         _pupilSelectionStateCommandHandler = pupilSelectionStateCommandHandler;
 
         ArgumentNullException.ThrowIfNull(getPupilViewModelsForUserHandler);
-        _getPupilViewModelsForUserHandler = getPupilViewModelsForUserHandler;
+        _getMyPupilsHandler = getPupilViewModelsForUserHandler;
     }
 
     [HttpPost]
@@ -60,8 +60,8 @@ public class UpdateMyPupilsFormController : Controller
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
         MyPupilsResponse response =
-                await _getPupilViewModelsForUserHandler.GetPupilsAsync(
-                    new MyPupilsRequest(userId, state));
+            await _getMyPupilsHandler.GetPupilsAsync(
+                new MyPupilsRequest(userId, state));
 
         if (!ModelState.IsValid)
         {
@@ -74,11 +74,13 @@ public class UpdateMyPupilsFormController : Controller
         }
 
         // Update SelectionState
-        GetSelectionStateUpdateStrategy(
-            mode: formDto.SelectAllState,
-            currentPageOfPupils: response.MyPupils.Pupils.Select(t => t.UniquePupilNumber).ToList(),
-            selectedPupilsOnForm: formDto.SelectedPupils)
-                .Invoke(state.SelectionState);
+        Action<MyPupilsPupilSelectionState> updateSelectionStateStrategy =
+            GetSelectionStateUpdateStrategy(
+                mode: formDto.SelectAllState,
+                currentPageOfPupils: response.MyPupils,
+                selectedPupilsOnForm: formDto.SelectedPupils);
+
+        updateSelectionStateStrategy.Invoke(state.SelectionState);
 
         _pupilSelectionStateCommandHandler.StoreInSession(state.SelectionState);
 
@@ -97,26 +99,30 @@ public class UpdateMyPupilsFormController : Controller
 
     private static Action<MyPupilsPupilSelectionState> GetSelectionStateUpdateStrategy(
         MyPupilsFormSelectionModeRequestDto mode,
-        List<string> currentPageOfPupils,
+        MyPupilsPresentationModel currentPageOfPupils,
         List<string> selectedPupilsOnForm)
     {
+        List<string> currentPageOfPupilsIdentifiers =
+            currentPageOfPupils.Pupils
+                .Select(pupil => pupil.UniquePupilNumber).ToList();
+
         Action<MyPupilsPupilSelectionState> selectionStateHandler = mode switch
         {
             MyPupilsFormSelectionModeRequestDto.SelectAll => (state) =>
             {
-                state.UpsertPupilSelectionState(currentPageOfPupils, true);
+                state.UpsertPupilSelectionState(currentPageOfPupilsIdentifiers, true);
                 state.SelectAllPupils();
             },
             MyPupilsFormSelectionModeRequestDto.DeselectAll => (state) =>
             {
 
-                state.UpsertPupilSelectionState(currentPageOfPupils, false);
+                state.UpsertPupilSelectionState(currentPageOfPupilsIdentifiers, false);
                 state.DeselectAllPupils();
             },
             _ => (state) =>
             {
                 List<string> selectedPupils = selectedPupilsOnForm?.ToList() ?? [];
-                List<string> deselectedPupils = currentPageOfPupils.Except(selectedPupils).ToList();
+                List<string> deselectedPupils = currentPageOfPupilsIdentifiers.Except(selectedPupils).ToList();
 
                 state.UpsertPupilSelectionState(selectedPupils, true);
                 state.UpsertPupilSelectionState(deselectedPupils, false);
