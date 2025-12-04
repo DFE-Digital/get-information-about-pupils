@@ -1,12 +1,13 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
+
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetPupilViewModels;
 public sealed class PaginateMyPupilsModelPresentationHandlerTests
 {
     private const int DEFAULT_PAGE_SIZE = 20;

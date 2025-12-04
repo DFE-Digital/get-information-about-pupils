@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -9,7 +8,6 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
@@ -85,6 +83,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             myPupilsOptions: options);
 
         // Act & Assert
+
         await Assert.ThrowsAsync<Exception>(() =>
             repository.GetMyPupils(id: MyPupilsIdTestDoubles.Default()));
     }
@@ -175,7 +174,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         Assert.NotNull(response);
         Assert.Equivalent(response, myPupils);
-
+        
         cosmosDbQueryHandlerMock.Verify(
             (t) => t.TryReadItemByIdAsync<MyPupilsDocumentDto>(
                 myPupilsId.Value,
@@ -183,5 +182,4 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
                 myPupilsId.Value,
                 It.IsAny<CancellationToken>()), Times.Once);
     }
-
 }

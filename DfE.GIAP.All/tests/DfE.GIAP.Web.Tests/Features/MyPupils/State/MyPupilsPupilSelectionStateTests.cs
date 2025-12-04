@@ -146,7 +146,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         // Arrange
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
-
+        
         // Act
         state.UpsertPupilSelectionState([upn, upn], true);
 

@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetPupilViewModels;
 public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
 {
     [Fact]
@@ -27,6 +27,7 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
         PupilsSelectionContext mappable = new(
             MyPupilsModel.Create(pupils: []),
             MyPupilsPupilSelectionStateTestDoubles.Default());
+
 
         PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
@@ -76,6 +77,7 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
     {
         // Arrange
         MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
+
 
         PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 

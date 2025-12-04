@@ -1,5 +1,5 @@
 ﻿using Azure.Search.Documents;
-using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
+using DfE.GIAP.Core.MyPupils.Application.Services.Search.Provider;
 using Moq;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.SearchIndex;

@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetPupilViewModels;
 
 public sealed class OrderMyPupilsModelPresentationHandlerTests
 {
@@ -34,6 +34,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey: "unknown-sortByKey");
 
+
         OrderMyPupilsModelPresentationHandler sut = new();
 
         // Act Assert
@@ -52,6 +53,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+
 
         OrderMyPupilsModelPresentationHandler sut = new();
 
@@ -79,6 +81,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
+
         OrderMyPupilsModelPresentationHandler sut = new();
 
         // Act
@@ -105,6 +108,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
+
         OrderMyPupilsModelPresentationHandler sut = new();
 
         // Act
@@ -130,6 +134,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+
 
         OrderMyPupilsModelPresentationHandler sut = new();
 

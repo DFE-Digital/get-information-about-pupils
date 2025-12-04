@@ -19,6 +19,7 @@ public sealed class GetMyPupilsUseCaseTests
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
+
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
         List<Pupil> pupils =
@@ -103,8 +104,9 @@ public sealed class GetMyPupilsUseCaseTests
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsAggregate myPupils =
+
             MyPupilsAggregateTestDoubles.Create(
-                UniquePupilNumbers.Create(uniquePupilNumbers: []));
+                UniquePupilNumbers.Empty());
 
         Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
