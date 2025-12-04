@@ -1,18 +1,18 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 
-public sealed class OrderMyPupilModelPresentationHandler : IMyPupilsModelPresentationHandler
+public sealed class OrderMyPupilsModelPresentationHandler : IMyPupilsModelPresentationHandler
 {
     private static readonly Dictionary<string, Expression<Func<MyPupilModel, IComparable>>> s_sortKeyToExpression = new()
-        {
-            { "forename", (t) => t.Forename },
-            { "surname", (t) => t.Surname },
-            { "dob", (t) => t.ParseDateOfBirth() },
-            { "sex", (t) => t.Sex }
-        };
+    {
+        { "forename", (t) => t.Forename },
+        { "surname", (t) => t.Surname },
+        { "dob", (t) => t.ParseDateOfBirth() },
+        { "sex", (t) => t.Sex }
+    };
 
     public MyPupilsModel Handle(
         MyPupilsModel myPupils,

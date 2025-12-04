@@ -1,19 +1,19 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
-public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetPupilViewModels;
+public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
 {
     [Fact]
     public void Map_Throws_When_Input_Is_Null()
     {
         // Arrange
-        PupilsSelectionContextToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
         Action act = () => sut.Map(null);
 
         // Act Assert
@@ -28,7 +28,8 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
             MyPupilsModel.Create(pupils: []),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
-        PupilsSelectionContextToPupilsViewModelMapper sut = new();
+
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
         // Act
         MyPupilsPresentationModel response = sut.Map(mappable);
@@ -52,7 +53,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         MyPupilsModel inputPupils = MyPupilsModel.Create([createdPupilWithPupilPremium, createdPupil]);
 
-        PupilsSelectionContextToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
         // Act
         MyPupilsPresentationModel response = sut.Map(
@@ -77,7 +78,8 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         // Arrange
         MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
 
-        PupilsSelectionContextToPupilsViewModelMapper sut = new();
+
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
         Dictionary<List<string>, bool> selectionStateMapping = new()
         {

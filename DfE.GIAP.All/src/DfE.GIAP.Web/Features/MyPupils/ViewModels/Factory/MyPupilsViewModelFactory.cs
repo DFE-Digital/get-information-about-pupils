@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+﻿using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
@@ -7,16 +7,16 @@ namespace DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 
 internal sealed class MyPupilsViewModelFactory : IMyPupilsViewModelFactory
 {
-    public ViewModel.MyPupilsViewModel CreateViewModel(
+    public MyPupilsViewModel CreateViewModel(
         MyPupilsState state,
-        GetPupilViewModels.MyPupilsPresentationModel pupils,
+        MyPupilsPresentationModel pupils,
         MyPupilsViewModelContext context)
     {
         ArgumentNullException.ThrowIfNull(state);
 
         MyPupilsViewModelContext guardedContext = context ?? MyPupilsViewModelContext.Default();
 
-        ViewModel.MyPupilsViewModel myPupilsViewModel = new(pupils ?? GetPupilViewModels.MyPupilsPresentationModel.Create([]))
+        MyPupilsViewModel myPupilsViewModel = new(pupils ?? MyPupilsPresentationModel.Create([]))
         {
             PageNumber = state.PresentationState.Page,
             SortDirection = state.PresentationState.SortDirection == SortDirection.Ascending ? "asc" : "desc",

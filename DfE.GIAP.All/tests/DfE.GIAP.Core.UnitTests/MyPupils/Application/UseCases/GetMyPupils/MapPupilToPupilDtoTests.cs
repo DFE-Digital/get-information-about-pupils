@@ -6,7 +6,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
 
-public sealed class MapPupilToPupilDtoMapperTests
+public sealed class MapPupilToMyPupilModelMapperTests
 {
     [Fact]
     public void Map_ValidPupil_ReturnsExpectedDto()

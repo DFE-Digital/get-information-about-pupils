@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.GetSelectedMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils.GetSelectedMyPupils;
 
 internal sealed class GetSelectedMyPupilsHandler : IGetSelectedMyPupilsHandler
 {

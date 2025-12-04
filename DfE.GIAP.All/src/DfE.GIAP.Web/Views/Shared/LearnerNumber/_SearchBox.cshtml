@@ -22,10 +22,23 @@
         <button type="submit" class="govuk-button" data-module="govuk-button" asp-action="@Model.SearchAction" asp-route-reset="true" id="search--btn" value="Select" name="select">
             Search
         </button>
-        <a class="govuk-link" id="link-search-again" asp-action="@Model.SearchAction" asp-route-reset="true" value="SearchAgain" name="searchAgain">Search again</a>
-        <a class="govuk-link" id="search-searchwithout--link" asp-controller="@Model.FullTextLearnerSearchController" asp-action="@Model.FullTextLearnerSearchAction"
-           value="SearchWithoutUpn" name="searchWithoutUpn">
-            Search without @Model.LearnerNumberLabel
+
+        <a id="link-search-again"
+            class="govuk-link"
+            asp-action="@Model.SearchAction"
+            asp-route-reset="true"
+            value="SearchAgain"
+            name="searchAgain">
+            Search again
+        </a>
+
+        <a id="search-searchwithout--link"
+            class="govuk-link"
+            asp-controller="@Model.FullTextLearnerSearchController"
+            asp-action="@Model.FullTextLearnerSearchAction"
+            value="SearchWithoutUpn"
+            name="searchWithoutUpn">
+           Search by name
         </a>
     </div>
 </form>

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 
 public readonly struct PageNumber
 {

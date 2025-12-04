@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 
 public record PupilsSelectionContext
 {

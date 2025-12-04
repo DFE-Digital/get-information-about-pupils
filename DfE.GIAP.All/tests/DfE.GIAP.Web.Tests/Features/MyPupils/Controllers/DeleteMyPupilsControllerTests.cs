@@ -4,8 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
@@ -193,7 +192,8 @@ public sealed class DeleteMyPupilsControllerTests
                     It.IsAny<MyPupilsState>(),
                     It.IsAny<MyPupilsPresentationModel>(),
                     It.IsAny<MyPupilsViewModelContext>()))
-                .Returns(new MyPupilsViewModel(pupils: PupilsViewModelTestDoubles.Generate(10)))
+                .Returns(new MyPupilsViewModel(
+                    pupils: MyPupilsPresentationModelTestDoubles.Generate(10)))
                 .Verifiable();
 
         DeleteMyPupilsController sut = new(
@@ -268,7 +268,7 @@ public sealed class DeleteMyPupilsControllerTests
                     It.IsAny<MyPupilsState>(),
                     It.IsAny<MyPupilsPresentationModel>(),
                     It.IsAny<MyPupilsViewModelContext>()))
-                .Returns(new MyPupilsViewModel(pupils: PupilsViewModelTestDoubles.Generate(10)))
+                .Returns(new MyPupilsViewModel(pupils: MyPupilsPresentationModelTestDoubles.Generate(10)))
                 .Verifiable();
 
         DeleteMyPupilsController sut = new(
@@ -310,7 +310,7 @@ public sealed class DeleteMyPupilsControllerTests
         viewModelFactoryMock.Verify(
             (viewModelFactory) => viewModelFactory.CreateViewModel(
                 It.IsAny<MyPupilsState>(),
-                It.IsAny<Web.Features.MyPupils.GetPupilViewModels.MyPupilsPresentationModel>(),
+                It.IsAny<MyPupilsPresentationModel>(),
                 It.Is<MyPupilsViewModelContext>(t => t.Error.Equals("You have not selected any pupils"))), Times.Once);
     }
 
@@ -336,7 +336,7 @@ public sealed class DeleteMyPupilsControllerTests
                     allPupilsSelectedStub))
             .Verifiable();
 
-        MyPupilsPresentationModel pupilsOnPage = PupilsViewModelTestDoubles.Generate(10);
+        MyPupilsPresentationModel pupilsOnPage = MyPupilsPresentationModelTestDoubles.Generate(10);
         MyPupilsResponse response = new(pupilsOnPage);
 
         getPupilsHandlerMock

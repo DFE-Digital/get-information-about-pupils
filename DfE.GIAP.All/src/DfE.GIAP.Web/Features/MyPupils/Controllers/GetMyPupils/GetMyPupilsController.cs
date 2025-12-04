@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using Microsoft.AspNetCore.Mvc;

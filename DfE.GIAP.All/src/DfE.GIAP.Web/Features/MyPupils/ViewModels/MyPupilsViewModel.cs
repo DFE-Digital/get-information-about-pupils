@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+﻿using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 
@@ -6,7 +6,7 @@ public record MyPupilsViewModel
 {
     private const int DEFAULT_PAGE_SIZE = 20;
 
-    public MyPupilsViewModel(GetPupilViewModels.MyPupilsPresentationModel pupils)
+    public MyPupilsViewModel(MyPupilsPresentationModel pupils)
     {
         ArgumentNullException.ThrowIfNull(pupils);
         Pupils = pupils;

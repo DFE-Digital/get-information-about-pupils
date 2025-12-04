@@ -1,10 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Options;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.GetSelectedMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
@@ -46,18 +46,17 @@ public static class CompositionRoot
     private static IServiceCollection AddGetPupilViewModels(this IServiceCollection services)
     {
         services
-            .AddSingleton<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>, PupilsSelectionContextToPupilsViewModelMapper
-            >()
-            .AddScoped<IGetMyPupilsHandler, GetPupilViewModels.GetMyPupilsHandler>();
+            .AddSingleton<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>, PupilsSelectionContextToMyPupilsPresentationModelMapper>()
+            .AddScoped<IGetMyPupilsHandler, GetMyPupilsHandler>();
         // TODO implement the generic ChainedEvaluationHandler and IEvaluationHandler<Tin, TOut>
-        services.AddSingleton<OrderMyPupilModelPresentationHandler>();
-        services.AddSingleton<PaginateMyPupilDtosPresentationHandler>();
+        services.AddSingleton<OrderMyPupilsModelPresentationHandler>();
+        services.AddSingleton<PaginateMyPupilsModelPresentationHandler>();
 
         services.AddSingleton<IMyPupilsModelPresentationHandler>(sp =>
         {
             return new ChainedEvaluationMyPupilDtosPresentationHandler(
-                    current: sp.GetRequiredService<OrderMyPupilModelPresentationHandler>())
-                .ChainNext(next: sp.GetRequiredService<PaginateMyPupilDtosPresentationHandler>());
+                    current: sp.GetRequiredService<OrderMyPupilsModelPresentationHandler>())
+                .ChainNext(next: sp.GetRequiredService<PaginateMyPupilsModelPresentationHandler>());
         });
 
         return services;

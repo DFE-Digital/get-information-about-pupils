@@ -1,9 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
-
-internal sealed class PupilsSelectionContextToPupilsViewModelMapper : IMapper<PupilsSelectionContext, MyPupilsPresentationModel>
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
+internal sealed class PupilsSelectionContextToMyPupilsPresentationModelMapper : IMapper<PupilsSelectionContext, MyPupilsPresentationModel>
 {
     public MyPupilsPresentationModel Map(PupilsSelectionContext input)
     {

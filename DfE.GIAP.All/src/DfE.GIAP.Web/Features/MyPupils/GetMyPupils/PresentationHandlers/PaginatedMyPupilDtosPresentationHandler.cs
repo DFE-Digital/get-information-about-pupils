@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 
-public sealed class PaginateMyPupilDtosPresentationHandler : IMyPupilsModelPresentationHandler
+public sealed class PaginateMyPupilsModelPresentationHandler : IMyPupilsModelPresentationHandler
 {
     public MyPupilsModel Handle(MyPupilsModel myPupils, MyPupilsPresentationState state)
     {

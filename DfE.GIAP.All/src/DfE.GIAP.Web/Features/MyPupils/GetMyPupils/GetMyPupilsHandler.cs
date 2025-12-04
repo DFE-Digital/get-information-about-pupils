@@ -1,11 +1,10 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 
 internal sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 {

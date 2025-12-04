@@ -3,18 +3,17 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
-public sealed class GetPupilViewModelsHandlerTests
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetPupilViewModels;
+public sealed class GetMyPupislHandlerTests
 {
     [Fact]
     public void Constructor_Throws_When_UseCase_Is_Null()
@@ -56,7 +55,7 @@ public sealed class GetPupilViewModelsHandlerTests
     public async Task HandleAsync_Throws_When_Request_Is_Null()
     {
         // Arrange
-        Mock<IUseCase<Core.MyPupils.Application.UseCases.GetMyPupils.GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
+        Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
         Mock<IMyPupilsModelPresentationHandler> presentationHandlerMock = new();
         Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationModel>();
 
@@ -72,7 +71,7 @@ public sealed class GetPupilViewModelsHandlerTests
     public async Task GetPupilsAsync_Maps_Out_Pupils()
     {
         // Arrange
-        
+
         MyPupilsModel stubMyPupilsModel = MyPupilDtosTestDoubles.Generate(count: 1);
         GetMyPupilsResponse useCaseResponseStub = new(stubMyPupilsModel);
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
@@ -81,7 +80,7 @@ public sealed class GetPupilViewModelsHandlerTests
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
             .ReturnsAsync(useCaseResponseStub);
 
-        MyPupilsPresentationModel pupilViewModelsStub = PupilsViewModelTestDoubles.Generate(count: 10);
+        MyPupilsPresentationModel pupilViewModelsStub = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
 
         Mock<IMyPupilsModelPresentationHandler> presentationHandlerMock = new();
         presentationHandlerMock

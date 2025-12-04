@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
-using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
@@ -104,7 +103,7 @@ public sealed class GetMyPupilsControllerTests
             .Verifiable();
 
         
-        MyPupilsPresentationModel pupilsViewModel = PupilsViewModelTestDoubles.Generate(count: 10);
+        MyPupilsPresentationModel pupilsViewModel = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
         MyPupilsResponse response = new(pupilsViewModel);
 
         Mock<IGetMyPupilsHandler> handlerMock = new();

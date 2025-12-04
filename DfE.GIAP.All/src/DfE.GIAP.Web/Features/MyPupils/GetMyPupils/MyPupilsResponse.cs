@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
-
-namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 
 public record MyPupilsResponse
 {

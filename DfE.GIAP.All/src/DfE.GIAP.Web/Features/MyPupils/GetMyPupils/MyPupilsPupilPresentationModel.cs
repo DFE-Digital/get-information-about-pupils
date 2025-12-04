@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 
 public record MyPupilsPupilPresentationModel
 {
