@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 internal static class PupilsViewModelTestDoubles
