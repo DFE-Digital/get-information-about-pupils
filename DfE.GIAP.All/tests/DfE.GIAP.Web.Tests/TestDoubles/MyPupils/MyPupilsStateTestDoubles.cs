@@ -7,4 +7,9 @@ internal static class MyPupilsStateTestDoubles
 {
     internal static MyPupilsState Create(MyPupilsPresentationState presentationState, MyPupilsPupilSelectionState selectionState)
         => new(presentationState, selectionState);
+
+    internal static MyPupilsState Default()
+    => Create(
+        MyPupilsPresentationStateTestDoubles.Default(),
+        MyPupilsPupilSelectionStateTestDoubles.Default());
 }

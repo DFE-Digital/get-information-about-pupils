@@ -1,11 +1,11 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.Mapper;
 
-public record MyPupilsModelSelectionStateDecorator
+public record PupilsSelectionContext
 {
-    public MyPupilsModelSelectionStateDecorator(MyPupilsModel myPupils, MyPupilsPupilSelectionState selectionState)
+    public PupilsSelectionContext(MyPupilsModel myPupils, MyPupilsPupilSelectionState selectionState)
     {
         ArgumentNullException.ThrowIfNull(myPupils);
         Pupils = myPupils;

@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Paginate;
+﻿using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils.GetPaginatedMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
 public class PageNumberTests
 {
     [Theory]

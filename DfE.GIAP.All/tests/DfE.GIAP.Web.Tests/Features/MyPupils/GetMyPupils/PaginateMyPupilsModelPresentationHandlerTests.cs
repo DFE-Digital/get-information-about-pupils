@@ -1,13 +1,13 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Paginate;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils.GetPaginatedMyPupils;
-public sealed class PaginatePupilDtosPresentationHandlerTests
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
+public sealed class PaginateMyPupilsModelPresentationHandlerTests
 {
     private const int DEFAULT_PAGE_SIZE = 20;
 
@@ -16,7 +16,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
     {
         MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 0);
 
-        PaginateMyPupilDtosPresentationHandler sut = new();
+        PaginateMyPupilsModelPresentationHandler sut = new();
 
         Action act = () => sut.Handle(It.IsAny<MyPupilsModel>(), presentationState);
 
@@ -31,7 +31,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilsModel.Empty();
 
-        PaginateMyPupilDtosPresentationHandler sut = new();
+        PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, presentationState);
@@ -51,7 +51,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
 
         MyPupilsModel inputPupils = MyPupilDtosTestDoubles.Generate(count: pupilCount);
 
-        PaginateMyPupilDtosPresentationHandler sut = new();
+        PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(inputPupils, presentationState);
@@ -69,7 +69,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
-        PaginateMyPupilDtosPresentationHandler sut = new();
+        PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, presentationState);
@@ -90,7 +90,7 @@ public sealed class PaginatePupilDtosPresentationHandlerTests
         int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: inputPupilCount);
 
-        PaginateMyPupilDtosPresentationHandler sut = new();
+        PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, presentationState);

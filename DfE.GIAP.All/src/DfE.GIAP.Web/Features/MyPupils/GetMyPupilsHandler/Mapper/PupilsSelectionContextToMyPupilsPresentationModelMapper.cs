@@ -1,17 +1,16 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.Mapper;
 
-internal sealed class MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper : IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>
+internal sealed class PupilsSelectionContextToMyPupilsPresentationModelMapper : IMapper<PupilsSelectionContext, MyPupilsPresentationModel>
 {
-    public PupilsViewModel Map(MyPupilsModelSelectionStateDecorator input)
+    public MyPupilsPresentationModel Map(PupilsSelectionContext input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        IEnumerable<PupilViewModel> pupils = input.Pupils.Values.Select((dto) =>
+        IEnumerable<MyPupilsPupilPresentationModel> pupils = input.Pupils.Values.Select((dto) =>
         {
-            PupilViewModel viewModel = new()
+            MyPupilsPupilPresentationModel viewModel = new()
             {
                 UniquePupilNumber = dto.UniquePupilNumber,
                 Forename = dto.Forename,
@@ -25,6 +24,6 @@ internal sealed class MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMap
             return viewModel;
         });
 
-        return PupilsViewModel.Create(pupils);
+        return MyPupilsPresentationModel.Create(pupils);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.GetSelectedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
@@ -8,7 +8,7 @@ using DfE.GIAP.Web.Tests.TestDoubles.Session;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetSelectedMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
 public sealed class GetSelectedMyPupilsProviderTest
 {
     [Fact]
