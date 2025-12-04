@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 
-public sealed class OrderMyPupilDtosPresentationHandler : IMyPupilsModelPresentationHandler
+public sealed class OrderMyPupilsModelPresentationHandler : IMyPupilsModelPresentationHandler
 {
     private static readonly Dictionary<string, Expression<Func<MyPupilModel, IComparable>>> s_sortKeyToExpression = new()
         {

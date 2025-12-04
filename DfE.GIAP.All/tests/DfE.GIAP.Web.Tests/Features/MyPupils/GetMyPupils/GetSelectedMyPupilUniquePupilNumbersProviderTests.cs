@@ -8,7 +8,7 @@ using DfE.GIAP.Web.Tests.TestDoubles.Session;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetSelectedMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
 public sealed class GetSelectedMyPupilsProviderTest
 {
     [Fact]
