@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
+﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;

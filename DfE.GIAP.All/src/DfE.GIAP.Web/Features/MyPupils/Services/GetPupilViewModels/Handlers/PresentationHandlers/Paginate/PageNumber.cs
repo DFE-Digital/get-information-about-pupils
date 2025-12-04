@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Paginate;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers.Paginate;
 
 public readonly struct PageNumber
 {

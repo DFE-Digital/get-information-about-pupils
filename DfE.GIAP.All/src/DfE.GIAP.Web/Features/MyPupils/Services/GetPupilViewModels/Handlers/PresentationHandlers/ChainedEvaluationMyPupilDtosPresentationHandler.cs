@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers;
+namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers;
 
 // TODO could genericise for any ChainedHandler
 public class ChainedEvaluationMyPupilDtosPresentationHandler : IMyPupilDtosPresentationHandler
