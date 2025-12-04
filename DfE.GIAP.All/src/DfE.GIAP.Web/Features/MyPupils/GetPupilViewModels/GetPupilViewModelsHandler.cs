@@ -2,15 +2,16 @@
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
 namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser;
 
-internal sealed class GetMyPupilsForUserHandler : IGetMyPupilsForUserHandler
+internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
 {
     private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
     private readonly IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
 
-    public GetMyPupilsForUserHandler(
+    public GetPupilViewModelsHandler(
         IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
         IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel> mapToViewModel)
     {
@@ -21,7 +22,7 @@ internal sealed class GetMyPupilsForUserHandler : IGetMyPupilsForUserHandler
         _mapToViewModel = mapToViewModel;
     }
 
-    public async Task<PupilsViewModel> HandleAsync(GetMyPupilsForUserRequest request)
+    public async Task<PupilsViewModel> GetPupilsAsync(GetPupilViewModelsRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.State);
