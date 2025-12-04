@@ -1,20 +1,20 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
-namespace DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 
 // TODO could genericise for any ChainedHandler
-public class ChainedEvaluationMyPupilDtosPresentationHandler : IMyPupilDtosPresentationHandler
+public class ChainedEvaluationMyPupilDtosPresentationHandler : IMyPupilsModelPresentationHandler
 {
-    private readonly IMyPupilDtosPresentationHandler _current;
+    private readonly IMyPupilsModelPresentationHandler _current;
     private ChainedEvaluationMyPupilDtosPresentationHandler _next;
 
-    public ChainedEvaluationMyPupilDtosPresentationHandler(IMyPupilDtosPresentationHandler current)
+    public ChainedEvaluationMyPupilDtosPresentationHandler(IMyPupilsModelPresentationHandler current)
     {
         _current = current;
     }
 
-    public ChainedEvaluationMyPupilDtosPresentationHandler ChainNext(IMyPupilDtosPresentationHandler next)
+    public ChainedEvaluationMyPupilDtosPresentationHandler ChainNext(IMyPupilsModelPresentationHandler next)
     {
         if (_next is null)
         {

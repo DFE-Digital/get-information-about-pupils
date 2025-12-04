@@ -1,19 +1,19 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsForUser.ViewModel;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
-public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
+public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
 {
     [Fact]
     public void Map_Throws_When_Input_Is_Null()
     {
         // Arrange
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
         Action act = () => sut.Map(null);
 
         // Act Assert
@@ -24,14 +24,14 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     public void Map_Returns_EmptyList_When_Input_Is_EmptyList()
     {
         // Arrange
-        MyPupilsModelSelectionStateDecorator mappable = new(
+        PupilsSelectionContext mappable = new(
             MyPupilsModel.Create(pupils: []),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
         // Act
-        PupilsViewModel response = sut.Map(mappable);
+        MyPupilsPresentationModel response = sut.Map(mappable);
 
         Assert.NotNull(response);
         Assert.Empty(response.Pupils);
@@ -52,11 +52,11 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         MyPupilsModel inputPupils = MyPupilsModel.Create([createdPupilWithPupilPremium, createdPupil]);
 
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
         // Act
-        PupilsViewModel response = sut.Map(
-            new MyPupilsModelSelectionStateDecorator(
+        MyPupilsPresentationModel response = sut.Map(
+            new PupilsSelectionContext(
                 inputPupils,
                 MyPupilsPupilSelectionStateTestDoubles.Default()));
 
@@ -66,7 +66,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         Assert.NotEmpty(response.Pupils);
         Assert.Equal(2, response.Count);
 
-        List<PupilViewModel> responsePupils = response.Pupils.ToList();
+        List<MyPupilsPupilPresentationModel> responsePupils = response.Pupils.ToList();
         AssertMappedPupil(createdPupilWithPupilPremium, responsePupils[0], expectPupilIsSelected: false);
         AssertMappedPupil(createdPupil, responsePupils[1], expectPupilIsSelected: false);
     }
@@ -77,7 +77,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         // Arrange
         MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
 
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
 
         Dictionary<List<string>, bool> selectionStateMapping = new()
         {
@@ -89,8 +89,8 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
             MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
-        PupilsViewModel response = sut.Map(
-            new MyPupilsModelSelectionStateDecorator(createdPupils, selectionState));
+        MyPupilsPresentationModel response = sut.Map(
+            new PupilsSelectionContext(createdPupils, selectionState));
 
         // Assert
         Assert.NotNull(response);
@@ -98,14 +98,14 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         Assert.NotEmpty(response.Pupils);
         Assert.Equal(2, response.Count);
 
-        List<PupilViewModel> responsePupils = response.Pupils.ToList();
+        List<MyPupilsPupilPresentationModel> responsePupils = response.Pupils.ToList();
         AssertMappedPupil(createdPupils.Values[0], responsePupils[0], expectPupilIsSelected: true);
         AssertMappedPupil(createdPupils.Values[1], responsePupils[1], expectPupilIsSelected: false);
     }
 
     private static void AssertMappedPupil(
         MyPupilModel input,
-        PupilViewModel output,
+        MyPupilsPupilPresentationModel output,
         bool expectPupilIsSelected)
     {
         Assert.Equal(input.UniquePupilNumber, output.UniquePupilNumber);

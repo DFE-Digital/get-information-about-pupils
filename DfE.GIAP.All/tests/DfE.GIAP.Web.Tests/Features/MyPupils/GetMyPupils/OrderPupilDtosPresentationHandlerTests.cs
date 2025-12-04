@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetPaginatedMyPupils.PresentationHandlers.Order;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils.GetPaginatedMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
 
 public sealed class OrderPupilDtosPresentationHandlerTests
 {
