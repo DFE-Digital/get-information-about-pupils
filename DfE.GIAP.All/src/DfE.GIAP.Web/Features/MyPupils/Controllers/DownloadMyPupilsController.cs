@@ -8,7 +8,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.GetSelectedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;

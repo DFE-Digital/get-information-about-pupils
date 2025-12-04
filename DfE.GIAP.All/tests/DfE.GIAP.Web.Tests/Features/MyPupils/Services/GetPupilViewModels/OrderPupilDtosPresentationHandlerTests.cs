@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPaginatedMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;
 
 public sealed class OrderPupilDtosPresentationHandlerTests
 {

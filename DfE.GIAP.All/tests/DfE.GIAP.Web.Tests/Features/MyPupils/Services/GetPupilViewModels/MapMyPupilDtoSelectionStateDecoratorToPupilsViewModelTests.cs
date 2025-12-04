@@ -13,7 +13,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     public void Map_Throws_When_Input_Is_Null()
     {
         // Arrange
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToPupilsViewModelMapper sut = new();
         Action act = () => sut.Map(null);
 
         // Act Assert
@@ -24,11 +24,11 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
     public void Map_Returns_EmptyList_When_Input_Is_EmptyList()
     {
         // Arrange
-        MyPupilsModelSelectionStateDecorator mappable = new(
+        PupilsSelectionContext mappable = new(
             MyPupilsModel.Create(pupils: []),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToPupilsViewModelMapper sut = new();
 
         // Act
         PupilsViewModel response = sut.Map(mappable);
@@ -52,11 +52,11 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         MyPupilsModel inputPupils = MyPupilsModel.Create([createdPupilWithPupilPremium, createdPupil]);
 
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToPupilsViewModelMapper sut = new();
 
         // Act
         PupilsViewModel response = sut.Map(
-            new MyPupilsModelSelectionStateDecorator(
+            new PupilsSelectionContext(
                 inputPupils,
                 MyPupilsPupilSelectionStateTestDoubles.Default()));
 
@@ -77,7 +77,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
         // Arrange
         MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
 
-        MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper sut = new();
+        PupilsSelectionContextToPupilsViewModelMapper sut = new();
 
         Dictionary<List<string>, bool> selectionStateMapping = new()
         {
@@ -90,7 +90,7 @@ public sealed class MapMyPupilDtoSelectionStateDecoratorToPupilsViewModelTests
 
         // Act
         PupilsViewModel response = sut.Map(
-            new MyPupilsModelSelectionStateDecorator(createdPupils, selectionState));
+            new PupilsSelectionContext(createdPupils, selectionState));
 
         // Assert
         Assert.NotNull(response);

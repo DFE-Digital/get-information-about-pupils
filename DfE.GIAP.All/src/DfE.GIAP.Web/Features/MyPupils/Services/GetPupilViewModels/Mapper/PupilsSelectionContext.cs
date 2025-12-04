@@ -3,9 +3,9 @@ using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 
-public record MyPupilsModelSelectionStateDecorator
+public record PupilsSelectionContext
 {
-    public MyPupilsModelSelectionStateDecorator(MyPupilsModel myPupils, MyPupilsPupilSelectionState selectionState)
+    public PupilsSelectionContext(MyPupilsModel myPupils, MyPupilsPupilSelectionState selectionState)
     {
         ArgumentNullException.ThrowIfNull(myPupils);
         Pupils = myPupils;

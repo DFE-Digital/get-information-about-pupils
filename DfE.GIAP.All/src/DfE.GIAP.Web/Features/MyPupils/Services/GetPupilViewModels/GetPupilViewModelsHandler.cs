@@ -1,38 +1,47 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 
 internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
 {
-    private readonly IGetPaginatedMyPupilsHandler _getPaginatedMyPupilsQueryHandler;
-    private readonly IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel> _mapToViewModel;
+    private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _useCase;
+    private readonly IMapper<PupilsSelectionContext, PupilsViewModel> _mapToViewModel;
+    private readonly IMyPupilDtosPresentationHandler _presentationHandler;
 
     public GetPupilViewModelsHandler(
-        IGetPaginatedMyPupilsHandler getPaginatedMyPupilsQueryHandler,
-        IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel> mapToViewModel)
+        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> useCase,
+        IMyPupilDtosPresentationHandler presentationHandler,
+        IMapper<PupilsSelectionContext, PupilsViewModel> mapToViewModel)
     {
-        ArgumentNullException.ThrowIfNull(getPaginatedMyPupilsQueryHandler);
-        _getPaginatedMyPupilsQueryHandler = getPaginatedMyPupilsQueryHandler;
+        ArgumentNullException.ThrowIfNull(useCase);
+        _useCase = useCase;
+
+        ArgumentNullException.ThrowIfNull(presentationHandler);
+        _presentationHandler = presentationHandler;
 
         ArgumentNullException.ThrowIfNull(mapToViewModel);
-        _mapToViewModel = mapToViewModel;
+        _mapToViewModel = mapToViewModel;    
     }
 
     public async Task<PupilsViewModel> GetPupilsAsync(GetPupilViewModelsRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(request.State);
 
-        GetPaginatedMyPupilsRequest paginatedPupilsRequest = new(
-            MyPupilsId: request.UserId,
-            PresentationState: request.State.PresentationState);
+        GetMyPupilsResponse response =
+            await _useCase.HandleRequestAsync(
+                new GetMyPupilsRequest(request.UserId));
 
-        PaginatedMyPupilsResponse response = await _getPaginatedMyPupilsQueryHandler.HandleAsync(paginatedPupilsRequest);
-        MyPupilsModelSelectionStateDecorator mappable = new(response.Pupils, request.State.SelectionState);
-        PupilsViewModel viewModel = _mapToViewModel.Map(mappable);
+        MyPupilsModel outputtedPupilModels = _presentationHandler.Handle(response.MyPupils, request.State.PresentationState);
+
+        PupilsViewModel viewModel =
+            _mapToViewModel.Map(
+                new PupilsSelectionContext(
+                    outputtedPupilModels, request.State.SelectionState));
 
         return viewModel;
     }

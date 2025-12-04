@@ -4,11 +4,10 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Order;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPaginatedMyPupils.PresentationHandlers.Paginate;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.GetSelectedMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
@@ -35,7 +34,6 @@ public static class CompositionRoot
 
         services
             .AddSessionStateHandlers()
-            .AddGetPaginatedMyPupils()
             .AddGetPupilViewModels()
             .AddGetSelectedMyPupils();
 
@@ -51,13 +49,9 @@ public static class CompositionRoot
     private static IServiceCollection AddGetPupilViewModels(this IServiceCollection services)
     {
         services
-            .AddSingleton<IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>, MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper>()
+            .AddSingleton<IMapper<PupilsSelectionContext, PupilsViewModel>, PupilsSelectionContextToPupilsViewModelMapper
+            >()
             .AddScoped<IGetPupilViewModelsHandler, GetPupilViewModelsHandler>();
-        return services;
-    }
-
-    private static IServiceCollection AddGetPaginatedMyPupils(this IServiceCollection services)
-    {
         // TODO implement the generic ChainedEvaluationHandler and IEvaluationHandler<Tin, TOut>
         services.AddSingleton<OrderMyPupilDtosPresentationHandler>();
         services.AddSingleton<PaginateMyPupilDtosPresentationHandler>();
@@ -68,7 +62,6 @@ public static class CompositionRoot
                     current: sp.GetRequiredService<OrderMyPupilDtosPresentationHandler>())
                 .ChainNext(next: sp.GetRequiredService<PaginateMyPupilDtosPresentationHandler>());
         });
-        services.AddScoped<IGetPaginatedMyPupilsHandler, GetPaginatedMyPupilsHandler>();
 
         return services;
     }

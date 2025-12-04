@@ -3,9 +3,9 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.ViewModels;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
 
-internal sealed class MyPupilDtoPupilSelectionStateDecoratorToPupilsViewModelMapper : IMapper<MyPupilsModelSelectionStateDecorator, PupilsViewModel>
+internal sealed class PupilsSelectionContextToPupilsViewModelMapper : IMapper<PupilsSelectionContext, PupilsViewModel>
 {
-    public PupilsViewModel Map(MyPupilsModelSelectionStateDecorator input)
+    public PupilsViewModel Map(PupilsSelectionContext input)
     {
         ArgumentNullException.ThrowIfNull(input);
 

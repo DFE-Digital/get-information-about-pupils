@@ -1,5 +1,3 @@
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class MyPupilsModel
 {
@@ -11,7 +9,7 @@ public sealed class MyPupilsModel
                 .AsReadOnly();
     }
 
-    public static MyPupilsModel Empty() => Create([]);
+    public static MyPupilsModel Empty() => Create(pupils: []);
     public static MyPupilsModel Create(IEnumerable<MyPupilModel> pupils) => new(pupils);
 
     public IReadOnlyList<MyPupilModel> Values { get; }
