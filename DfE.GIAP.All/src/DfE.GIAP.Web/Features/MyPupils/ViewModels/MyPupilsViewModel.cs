@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+﻿using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
 namespace DfE.GIAP.Web.Features.MyPupils.ViewModel;
 
@@ -6,7 +6,7 @@ public record MyPupilsViewModel
 {
     private const int DEFAULT_PAGE_SIZE = 20;
 
-    public MyPupilsViewModel(PupilsViewModel pupils)
+    public MyPupilsViewModel(GetPupilViewModels.MyPupilsPresentationModel pupils)
     {
         ArgumentNullException.ThrowIfNull(pupils);
         Pupils = pupils;
@@ -19,7 +19,7 @@ public record MyPupilsViewModel
     public string SortField { get; init; } = string.Empty;
     public string SortDirection { get; init; } = string.Empty;
     public MyPupilsErrorViewModel Error { get; init; } = MyPupilsErrorViewModel.NOOP();
-    public PupilsViewModel Pupils { get; init; }
+    public MyPupilsPresentationModel Pupils { get; init; }
     public bool HasPupils => Pupils.Count > 0;
     public string PageHeading => "My pupil list";
     public string DownloadController => "DownloadMyPupils";

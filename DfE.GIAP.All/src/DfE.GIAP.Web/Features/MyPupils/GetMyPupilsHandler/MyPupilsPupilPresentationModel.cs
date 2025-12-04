@@ -1,6 +1,6 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
-public record PupilViewModel
+public record MyPupilsPupilPresentationModel
 {
     public string UniquePupilNumber { get; init; }
     public string Forename { get; init; }

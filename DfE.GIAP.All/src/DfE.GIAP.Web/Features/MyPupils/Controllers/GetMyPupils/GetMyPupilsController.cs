@@ -1,12 +1,11 @@
 ﻿using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Routes;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 
 [Route(Constants.Routes.MyPupilList.MyPupils)]
 public class GetMyPupilsController : Controller
@@ -14,13 +13,13 @@ public class GetMyPupilsController : Controller
     private readonly ILogger<GetMyPupilsController> _logger;
     private readonly IGetMyPupilsStateProvider _stateProvider;
     private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
-    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
+    private readonly IGetMyPupilsHandler _getPupilViewModelsForUserHandler;
 
     public GetMyPupilsController(
         ILogger<GetMyPupilsController> logger,
         IMyPupilsViewModelFactory viewModelFactory,
         IGetMyPupilsStateProvider stateProvider,
-        IGetPupilViewModelsHandler getPupilViewModelsHandler)
+        IGetMyPupilsHandler getPupilViewModelsHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -44,14 +43,14 @@ public class GetMyPupilsController : Controller
 
         MyPupilsState state = _stateProvider.GetState();
 
-        PupilsViewModel pupilViewModels =
+        MyPupilsResponse response =
             await _getPupilViewModelsForUserHandler.GetPupilsAsync(
-                new GetPupilViewModelsRequest(userId, state));
+                new MyPupilsRequest(userId, state));
 
-        MyPupilsViewModel viewModel =
+        ViewModel.MyPupilsViewModel viewModel =
             _myPupilsViewModelFactory.CreateViewModel(
                 state,
-                pupilViewModels,
+                response.MyPupils,
                 context: new MyPupilsViewModelContext(isDeletePupilsSucessful: TempData.TryGetValue("IsDeleteSuccessful", out _)));
 
         return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);

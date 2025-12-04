@@ -2,10 +2,10 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.Routes;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
@@ -29,7 +29,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
@@ -54,7 +54,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -78,7 +78,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
@@ -103,7 +103,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -127,7 +127,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -151,7 +151,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
@@ -176,7 +176,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
@@ -191,7 +191,7 @@ public sealed class DeleteMyPupilsControllerTests
             (factory)
                 => factory.CreateViewModel(
                     It.IsAny<MyPupilsState>(),
-                    It.IsAny<PupilsViewModel>(),
+                    It.IsAny<MyPupilsPresentationModel>(),
                     It.IsAny<MyPupilsViewModelContext>()))
                 .Returns(new MyPupilsViewModel(pupils: PupilsViewModelTestDoubles.Generate(10)))
                 .Verifiable();
@@ -216,7 +216,7 @@ public sealed class DeleteMyPupilsControllerTests
         Assert.NotNull(viewResult);
         Assert.Equal(MyPupilsViewPath, viewResult.ViewName);
 
-        MyPupilsViewModel myPupilsViewModel = Assert.IsType<MyPupilsViewModel>(viewResult.Model);
+        MyPupilsViewModel myPupilsViewModel = Assert.IsType<Web.Features.MyPupils.ViewModel.MyPupilsViewModel>(viewResult.Model);
         Assert.NotNull(myPupilsViewModel);
         Assert.NotNull(myPupilsViewModel.Pupils);
         Assert.Equal(10, myPupilsViewModel.Pupils.Count);
@@ -236,7 +236,7 @@ public sealed class DeleteMyPupilsControllerTests
         viewModelFactoryMock.Verify(
             (viewModelFactory) => viewModelFactory.CreateViewModel(
                 It.IsAny<MyPupilsState>(),
-                It.IsAny<PupilsViewModel>(),
+                It.IsAny<MyPupilsPresentationModel>(),
                 It.Is<MyPupilsViewModelContext>(t => t.Error.Equals("There has been a problem with selections. Please try again."))), Times.Once);
     }
 
@@ -246,7 +246,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
@@ -266,7 +266,7 @@ public sealed class DeleteMyPupilsControllerTests
             (factory)
                 => factory.CreateViewModel(
                     It.IsAny<MyPupilsState>(),
-                    It.IsAny<PupilsViewModel>(),
+                    It.IsAny<MyPupilsPresentationModel>(),
                     It.IsAny<MyPupilsViewModelContext>()))
                 .Returns(new MyPupilsViewModel(pupils: PupilsViewModelTestDoubles.Generate(10)))
                 .Verifiable();
@@ -290,7 +290,7 @@ public sealed class DeleteMyPupilsControllerTests
         Assert.NotNull(viewResult);
         Assert.Equal(MyPupilsViewPath, viewResult.ViewName);
 
-        MyPupilsViewModel myPupilsViewModel = Assert.IsType<MyPupilsViewModel>(viewResult.Model);
+        Web.Features.MyPupils.ViewModel.MyPupilsViewModel myPupilsViewModel = Assert.IsType<Web.Features.MyPupils.ViewModel.MyPupilsViewModel>(viewResult.Model);
         Assert.NotNull(myPupilsViewModel);
         Assert.NotNull(myPupilsViewModel.Pupils);
         Assert.Equal(10, myPupilsViewModel.Pupils.Count);
@@ -310,7 +310,7 @@ public sealed class DeleteMyPupilsControllerTests
         viewModelFactoryMock.Verify(
             (viewModelFactory) => viewModelFactory.CreateViewModel(
                 It.IsAny<MyPupilsState>(),
-                It.IsAny<PupilsViewModel>(),
+                It.IsAny<Web.Features.MyPupils.GetPupilViewModels.MyPupilsPresentationModel>(),
                 It.Is<MyPupilsViewModelContext>(t => t.Error.Equals("You have not selected any pupils"))), Times.Once);
     }
 
@@ -320,7 +320,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> getPupilsHandlerMock = new();
+        Mock<IGetMyPupilsHandler> getPupilsHandlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
@@ -336,11 +336,12 @@ public sealed class DeleteMyPupilsControllerTests
                     allPupilsSelectedStub))
             .Verifiable();
 
-        PupilsViewModel pupilsOnPage = PupilsViewModelTestDoubles.Generate(10);
+        MyPupilsPresentationModel pupilsOnPage = PupilsViewModelTestDoubles.Generate(10);
+        MyPupilsResponse response = new(pupilsOnPage);
 
         getPupilsHandlerMock
-            .Setup(t => t.GetPupilsAsync(It.IsAny<GetPupilViewModelsRequest>()))
-            .ReturnsAsync(pupilsOnPage)
+            .Setup(t => t.GetPupilsAsync(It.IsAny<MyPupilsRequest>()))
+            .ReturnsAsync(response)
             .Verifiable();
 
         DeleteMyPupilsController sut = new(
@@ -393,7 +394,7 @@ public sealed class DeleteMyPupilsControllerTests
         viewModelFactoryMock.Verify(
             (viewModelFactory) => viewModelFactory.CreateViewModel(
                 It.IsAny<MyPupilsState>(),
-                It.IsAny<PupilsViewModel>(),
+                It.IsAny<MyPupilsPresentationModel>(),
                 It.IsAny<MyPupilsViewModelContext>()), Times.Never);
     }
 }

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers.Paginate;
+﻿using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.GetPupilViewModels;

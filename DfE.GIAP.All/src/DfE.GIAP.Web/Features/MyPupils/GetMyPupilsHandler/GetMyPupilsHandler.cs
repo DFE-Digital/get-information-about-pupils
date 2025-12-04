@@ -1,22 +1,22 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels.Mapper;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
+namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
-internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
+internal sealed class GetMyPupilsHandler : IGetMyPupilsHandler
 {
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _useCase;
-    private readonly IMapper<PupilsSelectionContext, PupilsViewModel> _mapToViewModel;
-    private readonly IMyPupilDtosPresentationHandler _presentationHandler;
+    private readonly IMapper<PupilsSelectionContext, MyPupilsPresentationModel> _mapToViewModel;
+    private readonly IMyPupilsModelPresentationHandler _presentationHandler;
 
-    public GetPupilViewModelsHandler(
+    public GetMyPupilsHandler(
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> useCase,
-        IMyPupilDtosPresentationHandler presentationHandler,
-        IMapper<PupilsSelectionContext, PupilsViewModel> mapToViewModel)
+        IMyPupilsModelPresentationHandler presentationHandler,
+        IMapper<PupilsSelectionContext, MyPupilsPresentationModel> mapToViewModel)
     {
         ArgumentNullException.ThrowIfNull(useCase);
         _useCase = useCase;
@@ -25,10 +25,10 @@ internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
         _presentationHandler = presentationHandler;
 
         ArgumentNullException.ThrowIfNull(mapToViewModel);
-        _mapToViewModel = mapToViewModel;    
+        _mapToViewModel = mapToViewModel;
     }
 
-    public async Task<PupilsViewModel> GetPupilsAsync(GetPupilViewModelsRequest request)
+    public async Task<MyPupilsResponse> GetPupilsAsync(MyPupilsRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -38,11 +38,11 @@ internal sealed class GetPupilViewModelsHandler : IGetPupilViewModelsHandler
 
         MyPupilsModel outputtedPupilModels = _presentationHandler.Handle(response.MyPupils, request.State.PresentationState);
 
-        PupilsViewModel viewModel =
+        MyPupilsPresentationModel viewModel =
             _mapToViewModel.Map(
                 new PupilsSelectionContext(
                     outputtedPupilModels, request.State.SelectionState));
 
-        return viewModel;
+        return new MyPupilsResponse(viewModel);
     }
 }

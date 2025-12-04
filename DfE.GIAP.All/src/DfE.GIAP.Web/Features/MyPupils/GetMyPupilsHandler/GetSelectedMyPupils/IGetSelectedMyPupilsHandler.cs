@@ -1,4 +1,4 @@
-namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.GetSelectedMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.GetSelectedMyPupils;
 
 public interface IGetSelectedMyPupilsHandler
 {

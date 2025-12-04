@@ -1,11 +1,10 @@
 ﻿using System.Linq.Expressions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers.Order;
+namespace DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 
-public sealed class OrderMyPupilDtosPresentationHandler : IMyPupilDtosPresentationHandler
+public sealed class OrderMyPupilModelPresentationHandler : IMyPupilsModelPresentationHandler
 {
     private static readonly Dictionary<string, Expression<Func<MyPupilModel, IComparable>>> s_sortKeyToExpression = new()
         {

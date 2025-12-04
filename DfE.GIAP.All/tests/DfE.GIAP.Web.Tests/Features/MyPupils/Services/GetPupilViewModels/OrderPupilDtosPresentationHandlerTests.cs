@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.PresentationHandlers.Order;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
@@ -18,7 +18,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 10);
 
-        OrderMyPupilDtosPresentationHandler sut = new();
+        OrderMyPupilModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, state);
@@ -34,7 +34,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
         // Arrange
         MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey: "unknown-sortByKey");
 
-        OrderMyPupilDtosPresentationHandler sut = new();
+        OrderMyPupilModelPresentationHandler sut = new();
 
         // Act Assert
         Action act = () => sut.Handle(It.IsAny<MyPupilsModel>(), state);
@@ -53,7 +53,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
-        OrderMyPupilDtosPresentationHandler sut = new();
+        OrderMyPupilModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, state);
@@ -79,7 +79,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
-        OrderMyPupilDtosPresentationHandler sut = new();
+        OrderMyPupilModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, state);
@@ -105,7 +105,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
-        OrderMyPupilDtosPresentationHandler sut = new();
+        OrderMyPupilModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, state);
@@ -131,7 +131,7 @@ public sealed class OrderPupilDtosPresentationHandlerTests
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
-        OrderMyPupilDtosPresentationHandler sut = new();
+        OrderMyPupilModelPresentationHandler sut = new();
 
         // Act
         MyPupilsModel response = sut.Handle(pupils, presentationState);

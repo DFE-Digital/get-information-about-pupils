@@ -1,25 +1,25 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 internal static class PupilsViewModelTestDoubles
 {
-    internal static PupilsViewModel Generate(int count)
+    internal static MyPupilsPresentationModel Generate(int count)
     {
-        return PupilsViewModel.Create(
+        return MyPupilsPresentationModel.Create(
             pupils: GeneratePupils(count));
     }
 
-    private static List<PupilViewModel> GeneratePupils(int count)
+    private static List<MyPupilsPupilPresentationModel> GeneratePupils(int count)
     {
         return CreateGenerator().Generate(count);
     }
 
-    internal static Faker<PupilViewModel> CreateGenerator()
+    internal static Faker<MyPupilsPupilPresentationModel> CreateGenerator()
     {
-        Faker<PupilViewModel> faker = new();
+        Faker<MyPupilsPupilPresentationModel> faker = new();
         faker.StrictMode(true);
         faker.RuleFor(t => t.UniquePupilNumber, (f) => UniquePupilNumberTestDoubles.Generate().Value);
         faker.RuleFor(t => t.DateOfBirth, (f)

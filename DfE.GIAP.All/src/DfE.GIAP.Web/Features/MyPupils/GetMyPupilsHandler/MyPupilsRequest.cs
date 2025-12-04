@@ -1,11 +1,11 @@
 ﻿using DfE.GIAP.Core.Users.Application;
 using DfE.GIAP.Web.Features.MyPupils.State;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
+namespace DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 
-public record GetPupilViewModelsRequest
+public record MyPupilsRequest
 {
-    public GetPupilViewModelsRequest(string userId, MyPupilsState state)
+    public MyPupilsRequest(string userId, MyPupilsState state)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(userId);
         UserId = userId;

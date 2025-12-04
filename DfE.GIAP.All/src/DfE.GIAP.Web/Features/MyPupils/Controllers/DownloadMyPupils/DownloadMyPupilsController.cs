@@ -6,9 +6,9 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels.Handlers.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
@@ -18,7 +18,7 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Routes;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
 
 [Route(Constants.Routes.MyPupilList.MyPupils)]
 public class DownloadMyPupilsController : Controller
@@ -29,7 +29,7 @@ public class DownloadMyPupilsController : Controller
     private readonly IDownloadService _downloadService;
     private readonly IGetSelectedMyPupilsHandler _getSelectedMyPupilsProvider;
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
-    private readonly IGetPupilViewModelsHandler _getPupilViewModelsHandler;
+    private readonly IGetMyPupilsHandler _getPupilViewModelsHandler;
     private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
 
@@ -42,7 +42,7 @@ public class DownloadMyPupilsController : Controller
         IMyPupilsViewModelFactory myPupilsViewModelFactory,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
-        IGetPupilViewModelsHandler getPupilViewModelsHandler)
+        IGetMyPupilsHandler getPupilViewModelsHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -65,7 +65,7 @@ public class DownloadMyPupilsController : Controller
 
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
-        
+
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
         _getMyPupilsStateProvider = getMyPupilsStateProvider;
 
@@ -187,8 +187,8 @@ public class DownloadMyPupilsController : Controller
 
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
-        PupilsViewModel pupilViewModels = await _getPupilViewModelsHandler.GetPupilsAsync(
-            new GetPupilViewModelsRequest(
+        MyPupilsResponse response = await _getPupilViewModelsHandler.GetPupilsAsync(
+            new MyPupilsRequest(
                 userId, state));
 
         if (formSelectedPupils.Count > 0)
@@ -210,18 +210,18 @@ public class DownloadMyPupilsController : Controller
                 Constants.Routes.MyPupilList.MyPupilListView,
                 model: _myPupilsViewModelFactory.CreateViewModel(
                     state,
-                    pupilViewModels,
+                    response.MyPupils,
                     MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Common.Errors.NoPupilsSelected)));
         }
 
         if (downloadType == DownloadType.CTF && allSelectedPupils.Length > _appSettings.CommonTransferFileUPNLimit)
         {
-            
+
             return View(
                 Constants.Routes.MyPupilList.MyPupilListView,
                 model: _myPupilsViewModelFactory.CreateViewModel(
                        state,
-                       pupilViewModels,
+                       response.MyPupils,
                        MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.UPNLimitExceeded)));
         }
 
@@ -247,11 +247,11 @@ public class DownloadMyPupilsController : Controller
                 Constants.Routes.MyPupilList.MyPupilListView,
                 model: _myPupilsViewModelFactory.CreateViewModel(
                    state,
-                   pupilViewModels,
+                   response.MyPupils,
                    context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.NoDataForSelectedPupils)));
         }
 
-        if(downloadType == DownloadType.PupilPremium)
+        if (downloadType == DownloadType.PupilPremium)
         {
             UserOrganisation userOrganisation = new()
             {
@@ -287,11 +287,11 @@ public class DownloadMyPupilsController : Controller
                 Constants.Routes.MyPupilList.MyPupilListView,
                 model: _myPupilsViewModelFactory.CreateViewModel(
                         state,
-                        pupilViewModels,
+                        response.MyPupils,
                         context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.NoDataForSelectedPupils)));
         }
 
-        if(downloadType == DownloadType.NPD)
+        if (downloadType == DownloadType.NPD)
         {
             return await DownloadSelectedNationalPupilDatabaseData(string.Join(",", allSelectedPupils));
         }
@@ -301,7 +301,7 @@ public class DownloadMyPupilsController : Controller
             Constants.Routes.MyPupilList.MyPupilListView,
             model: _myPupilsViewModelFactory.CreateViewModel(
                 state,
-                pupilViewModels,
+                response.MyPupils,
                 context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.UnknownDownloadType)));
     }
 }

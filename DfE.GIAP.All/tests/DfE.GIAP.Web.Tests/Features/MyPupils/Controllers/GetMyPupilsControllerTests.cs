@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Routes;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.ViewModel;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
@@ -19,7 +19,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         // Act Assert
         Func<GetMyPupilsController> construct = () => new(
@@ -37,7 +37,7 @@ public sealed class GetMyPupilsControllerTests
         // Arrange
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
         Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
 
         // Act Assert
         Func<GetMyPupilsController> construct = () => new(
@@ -55,7 +55,7 @@ public sealed class GetMyPupilsControllerTests
         // Arrange
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
 
         // Act Assert
         Func<GetMyPupilsController> construct = () => new(
@@ -103,19 +103,21 @@ public sealed class GetMyPupilsControllerTests
             .Returns(state)
             .Verifiable();
 
-        PupilsViewModel pupilsViewModel = PupilsViewModelTestDoubles.Generate(count: 10);
+        
+        MyPupilsPresentationModel pupilsViewModel = PupilsViewModelTestDoubles.Generate(count: 10);
+        MyPupilsResponse response = new(pupilsViewModel);
 
-        Mock<IGetPupilViewModelsHandler> handlerMock = new();
+        Mock<IGetMyPupilsHandler> handlerMock = new();
         handlerMock
-            .Setup(handler => handler.GetPupilsAsync(It.IsAny<GetPupilViewModelsRequest>()))
-            .ReturnsAsync(pupilsViewModel);
+            .Setup(handler => handler.GetPupilsAsync(It.IsAny<MyPupilsRequest>()))
+            .ReturnsAsync(response);
 
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         viewModelFactoryMock.Setup(
             (factory)
                 => factory.CreateViewModel(
                         It.IsAny<MyPupilsState>(),
-                        It.IsAny<PupilsViewModel>(),
+                        It.IsAny<MyPupilsPresentationModel>(),
                         It.IsAny<MyPupilsViewModelContext>()))
                 .Returns(new MyPupilsViewModel(pupilsViewModel))
                 .Verifiable();

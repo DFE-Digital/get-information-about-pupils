@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
@@ -21,7 +21,7 @@ public class UpdateMyPupilsFormController : Controller
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
     private readonly ISessionCommandHandler<MyPupilsPresentationState> _presentationStateCommandHandler;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _pupilSelectionStateCommandHandler;
-    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
+    private readonly IGetMyPupilsHandler _getPupilViewModelsForUserHandler;
 
     public UpdateMyPupilsFormController(
         ILogger<UpdateMyPupilsFormController> logger,
@@ -29,7 +29,7 @@ public class UpdateMyPupilsFormController : Controller
         IMyPupilsViewModelFactory myPupilsViewModelFactory,
         ISessionCommandHandler<MyPupilsPresentationState> presentationStateCommandHandler,
         ISessionCommandHandler<MyPupilsPupilSelectionState> pupilSelectionStateCommandHandler,
-        IGetPupilViewModelsHandler getPupilViewModelsForUserHandler)
+        IGetMyPupilsHandler getPupilViewModelsForUserHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -59,9 +59,9 @@ public class UpdateMyPupilsFormController : Controller
 
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
-        PupilsViewModel currentPupilViewModels =
+        MyPupilsResponse response =
                 await _getPupilViewModelsForUserHandler.GetPupilsAsync(
-                    new GetPupilViewModelsRequest(userId, state));
+                    new MyPupilsRequest(userId, state));
 
         if (!ModelState.IsValid)
         {
@@ -69,14 +69,14 @@ public class UpdateMyPupilsFormController : Controller
                 Constants.Routes.MyPupilList.MyPupilListView,
                 model: _myPupilsViewModelFactory.CreateViewModel(
                             state,
-                            currentPupilViewModels,
+                            response.MyPupils,
                             context: MyPupilsViewModelContext.CreateWithErrorMessage(PupilHelper.GenerateValidationMessageUpnSearch(ModelState))));
         }
 
         // Update SelectionState
         GetSelectionStateUpdateStrategy(
             mode: formDto.SelectAllState,
-            currentPageOfPupils: currentPupilViewModels.Pupils.Select(t => t.UniquePupilNumber).ToList(),
+            currentPageOfPupils: response.MyPupils.Pupils.Select(t => t.UniquePupilNumber).ToList(),
             selectedPupilsOnForm: formDto.SelectedPupils)
                 .Invoke(state.SelectionState);
 

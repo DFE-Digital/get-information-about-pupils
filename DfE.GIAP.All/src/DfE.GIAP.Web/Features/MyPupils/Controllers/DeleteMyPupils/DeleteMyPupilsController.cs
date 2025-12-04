@@ -3,8 +3,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetMyPupilsForUser;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupilViewModels;
+using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler;
+using DfE.GIAP.Web.Features.MyPupils.GetPupilViewModels;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Selection;
 using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
@@ -12,7 +12,7 @@ using DfE.GIAP.Web.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Controllers;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 
 #nullable enable
 
@@ -25,7 +25,7 @@ public class DeleteMyPupilsController : Controller
     private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsUseCase;
     private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
-    private readonly IGetPupilViewModelsHandler _getPupilViewModelsForUserHandler;
+    private readonly IGetMyPupilsHandler _getPupilViewModelsForUserHandler;
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
@@ -34,7 +34,7 @@ public class DeleteMyPupilsController : Controller
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deleteSomePupilsUseCase,
         IGetMyPupilsStateProvider getMyPupilsStateProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
-        IGetPupilViewModelsHandler getPupilViewModelsHandler)
+        IGetMyPupilsHandler getPupilViewModelsHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -67,9 +67,11 @@ public class DeleteMyPupilsController : Controller
 
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
-        PupilsViewModel currentPagePupilViewModels =
+        MyPupilsResponse response =
             await _getPupilViewModelsForUserHandler.GetPupilsAsync(
-                new GetPupilViewModelsRequest(userId, state));
+                new MyPupilsRequest(userId, state));
+
+        MyPupilsPresentationModel currentPagePupilViewModels = response.MyPupils;
 
         if (TryEvaluateErrorViewResult(conditionsToErrorMessages: new()
             {
@@ -120,7 +122,7 @@ public class DeleteMyPupilsController : Controller
     private bool TryEvaluateErrorViewResult(
         Dictionary<Func<bool>, string> conditionsToErrorMessages,
         MyPupilsState state,
-        PupilsViewModel pupilViewModels,
+        MyPupilsPresentationModel pupilViewModels,
         out ViewResult? result)
     {
 
