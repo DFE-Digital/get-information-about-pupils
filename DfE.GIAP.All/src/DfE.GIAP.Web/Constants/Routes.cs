@@ -79,8 +79,8 @@ public static class Routes
 
     public static class MyPupilList
     {
-        public const string MyPupils = "my-pupil-list";
-        public const string DeleteMyPupils = $"{MyPupils}/Delete";
+        public const string MyPupilsBase = "~/my-pupil-list";
+        public const string DeleteMyPupils = $"{MyPupilsBase}/Delete";
         public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
         public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
         public const string MyPupilListView = "~/Views/MyPupilList/Index.cshtml";

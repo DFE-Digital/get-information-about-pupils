@@ -1,9 +1,8 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
-using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
+using DfE.GIAP.Web.Features.MyPupils.State.Models;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,7 @@ public sealed class GetMyPupilsControllerTests
     public void Constructor_Throws_When_Logger_Is_Null()
     {
         // Arrange
-        Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
+        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
         Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         // Act Assert
@@ -35,7 +34,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
-        Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
+        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
         Mock<IGetMyPupilsHandler> handlerMock = new();
 
         // Act Assert
@@ -71,7 +70,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
-        Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
+        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
 
         // Act Assert
@@ -96,14 +95,14 @@ public sealed class GetMyPupilsControllerTests
             MyPupilsPresentationStateTestDoubles.Default(),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
-        Mock<IGetMyPupilsStateProvider> stateProviderMock = new();
+        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
         stateProviderMock
             .Setup(stateProvider => stateProvider.GetState())
             .Returns(state)
             .Verifiable();
 
         
-        MyPupilsPresentationModel pupilsViewModel = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
+        MyPupilsPresentationPupilModels pupilsViewModel = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
         MyPupilsResponse response = new(pupilsViewModel);
 
         Mock<IGetMyPupilsHandler> handlerMock = new();
@@ -116,7 +115,7 @@ public sealed class GetMyPupilsControllerTests
             (factory)
                 => factory.CreateViewModel(
                         It.IsAny<MyPupilsState>(),
-                        It.IsAny<MyPupilsPresentationModel>(),
+                        It.IsAny<MyPupilsPresentationPupilModels>(),
                         It.IsAny<MyPupilsViewModelContext>()))
                 .Returns(new MyPupilsViewModel(pupilsViewModel))
                 .Verifiable();
@@ -148,7 +147,7 @@ public sealed class GetMyPupilsControllerTests
         Assert.Equal(1, viewModel.PageNumber);
         Assert.Equal(string.Empty, viewModel.SortDirection);
         Assert.Equal(string.Empty, viewModel.SortField);
-        Assert.False(viewModel.SelectAll);;
+        Assert.False(viewModel.IsAllPupilsSelected);;
 
         Assert.False(viewModel.IsAnyPupilsSelected);
         Assert.False(viewModel.IsAnyPupilsSelected);

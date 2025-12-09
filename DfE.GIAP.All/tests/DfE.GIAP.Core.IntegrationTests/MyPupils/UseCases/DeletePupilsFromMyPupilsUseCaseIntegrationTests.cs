@@ -26,7 +26,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
-        services.AddMyPupilsDependencies();
+        services.AddMyPupilsCore();
 
         // Initialise fixture and pupils, store in context
         List<AzureNpdSearchResponseDto> npdSearchindexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);

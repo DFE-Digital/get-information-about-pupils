@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 public static class MyPupilsPupilSelectionStateTestDoubles
@@ -11,7 +11,7 @@ public static class MyPupilsPupilSelectionStateTestDoubles
         MyPupilsPupilSelectionState state = Default();
         selectionStateMapping.ToList().ForEach(mapping =>
         {
-            state.UpsertPupilSelectionState(mapping.Key, mapping.Value);
+            state.UpsertPupilSelections(mapping.Key, mapping.Value);
         });
         return state;
     }
@@ -19,7 +19,7 @@ public static class MyPupilsPupilSelectionStateTestDoubles
     public static MyPupilsPupilSelectionState WithAllPupilsSelected(IEnumerable<string> pupils)
     {
         MyPupilsPupilSelectionState state = Default();
-        state.UpsertPupilSelectionState(pupils, true);
+        state.UpsertPupilSelections(pupils, true);
         state.SelectAllPupils();
         return state;
     }

@@ -1,8 +1,9 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 
@@ -13,7 +14,7 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
     public void Map_Throws_When_Input_Is_Null()
     {
         // Arrange
-        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
+        MyPupilsModelToMyPupilsPresentationPupilModel sut = new();
         Action act = () => sut.Map(null);
 
         // Act Assert
@@ -29,13 +30,13 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
 
-        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
+        MyPupilsModelToMyPupilsPresentationPupilModel sut = new();
 
         // Act
-        MyPupilsPresentationModel response = sut.Map(mappable);
+        MyPupilsPresentationPupilModels response = sut.Map(mappable);
 
         Assert.NotNull(response);
-        Assert.Empty(response.Pupils);
+        Assert.Empty(response.Values);
         Assert.Equal(0, response.Count);
     }
 
@@ -53,21 +54,21 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
 
         MyPupilsModel inputPupils = MyPupilsModel.Create([createdPupilWithPupilPremium, createdPupil]);
 
-        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
+        MyPupilsModelToMyPupilsPresentationPupilModel sut = new();
 
         // Act
-        MyPupilsPresentationModel response = sut.Map(
+        MyPupilsPresentationPupilModels response = sut.Map(
             new PupilsSelectionContext(
                 inputPupils,
                 MyPupilsPupilSelectionStateTestDoubles.Default()));
 
         // Assert
         Assert.NotNull(response);
-        Assert.NotNull(response.Pupils);
-        Assert.NotEmpty(response.Pupils);
+        Assert.NotNull(response.Values);
+        Assert.NotEmpty(response.Values);
         Assert.Equal(2, response.Count);
 
-        List<MyPupilsPupilPresentationModel> responsePupils = response.Pupils.ToList();
+        List<MyPupilsPresentationPupilModel> responsePupils = response.Values.ToList();
         AssertMappedPupil(createdPupilWithPupilPremium, responsePupils[0], expectPupilIsSelected: false);
         AssertMappedPupil(createdPupil, responsePupils[1], expectPupilIsSelected: false);
     }
@@ -79,7 +80,7 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
         MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
 
 
-        PupilsSelectionContextToMyPupilsPresentationModelMapper sut = new();
+        MyPupilsModelToMyPupilsPresentationPupilModel sut = new();
 
         Dictionary<List<string>, bool> selectionStateMapping = new()
         {
@@ -91,23 +92,23 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
             MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
-        MyPupilsPresentationModel response = sut.Map(
+        MyPupilsPresentationPupilModels response = sut.Map(
             new PupilsSelectionContext(createdPupils, selectionState));
 
         // Assert
         Assert.NotNull(response);
-        Assert.NotNull(response.Pupils);
-        Assert.NotEmpty(response.Pupils);
+        Assert.NotNull(response.Values);
+        Assert.NotEmpty(response.Values);
         Assert.Equal(2, response.Count);
 
-        List<MyPupilsPupilPresentationModel> responsePupils = response.Pupils.ToList();
+        List<MyPupilsPresentationPupilModel> responsePupils = response.Values.ToList();
         AssertMappedPupil(createdPupils.Values[0], responsePupils[0], expectPupilIsSelected: true);
         AssertMappedPupil(createdPupils.Values[1], responsePupils[1], expectPupilIsSelected: false);
     }
 
     private static void AssertMappedPupil(
         MyPupilModel input,
-        MyPupilsPupilPresentationModel output,
+        MyPupilsPresentationPupilModel output,
         bool expectPupilIsSelected)
     {
         Assert.Equal(input.UniquePupilNumber, output.UniquePupilNumber);

@@ -1,0 +1,28 @@
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.State.Models;
+
+namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
+
+public sealed class PaginateMyPupilsModelPresentationHandler : IMyPupilsPresentationModelHandler
+{
+    public MyPupilsPresentationPupilModels Handle(MyPupilsPresentationPupilModels myPupils, MyPupilsState state)
+    {
+        const int DefaultPageSize = 20;
+
+        PageNumber page = PageNumber.Page(state.PresentationState.Page);
+
+        int skip = DefaultPageSize * (page.Value - 1);
+
+        if (skip >= myPupils.Count)
+        {
+            return MyPupilsPresentationPupilModels.Empty();
+        }
+
+        List<MyPupilsPresentationPupilModel> pagedResults = myPupils.Values
+                .Skip(skip)
+                .Take(DefaultPageSize)
+                .ToList();
+
+        return MyPupilsPresentationPupilModels.Create(pagedResults);
+    }
+}

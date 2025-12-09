@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.Mapper;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 
@@ -28,7 +28,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
             .ToList();
 
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
-        state.UpsertPupilSelectionState(pupils, isSelected: true);
+        state.UpsertPupilSelections(pupils, isSelected: true);
         state.SelectAllPupils();
 
         MyPupilsPupilSelectionStateToDtoMapper sut = new();
@@ -51,7 +51,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
             .ToList();
 
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
-        state.UpsertPupilSelectionState(pupils, isSelected: false);
+        state.UpsertPupilSelections(pupils, isSelected: false);
         state.DeselectAllPupils();
 
         MyPupilsPupilSelectionStateToDtoMapper sut = new();
@@ -74,8 +74,8 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
             .ToList();
 
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
-        state.UpsertPupilSelectionState([pupils[0], pupils[1]], isSelected: true);
-        state.UpsertPupilSelectionState([pupils[2], pupils[3]], isSelected: false);
+        state.UpsertPupilSelections([pupils[0], pupils[1]], isSelected: true);
+        state.UpsertPupilSelections([pupils[2], pupils[3]], isSelected: false);
 
         MyPupilsPupilSelectionStateToDtoMapper sut = new();
 

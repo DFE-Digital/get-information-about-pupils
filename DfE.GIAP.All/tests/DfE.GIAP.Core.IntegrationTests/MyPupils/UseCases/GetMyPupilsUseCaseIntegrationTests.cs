@@ -35,7 +35,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             (client) => client.ClearDatabaseAsync());
 
         services
-            .AddMyPupilsDependencies()
+            .AddMyPupilsCore()
             .ConfigureAzureSearchClients();
     }
 

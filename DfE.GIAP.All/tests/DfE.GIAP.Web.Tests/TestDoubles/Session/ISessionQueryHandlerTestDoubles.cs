@@ -11,7 +11,7 @@ internal static class ISessionQueryHandlerTestDoubles
     internal static Mock<ISessionQueryHandler<TSessionObject>> MockFor<TSessionObject>(TSessionObject stubSessionObject) where TSessionObject : class
     {
         Mock<ISessionQueryHandler<TSessionObject>> mock = Default<TSessionObject>();
-        mock.Setup(t => t.GetSessionObject())
+        mock.Setup(t => t.Handle())
             .Returns(SessionQueryResponse<TSessionObject>.Create(stubSessionObject))
             .Verifiable();
 
@@ -21,7 +21,7 @@ internal static class ISessionQueryHandlerTestDoubles
     internal static Mock<ISessionQueryHandler<TSessionObject>> MockFor<TSessionObject>(SessionQueryResponse<TSessionObject> response) where TSessionObject : class
     {
         Mock<ISessionQueryHandler<TSessionObject>> mock = Default<TSessionObject>();
-        mock.Setup(t => t.GetSessionObject())
+        mock.Setup(t => t.Handle())
             .Returns(response)
             .Verifiable();
 

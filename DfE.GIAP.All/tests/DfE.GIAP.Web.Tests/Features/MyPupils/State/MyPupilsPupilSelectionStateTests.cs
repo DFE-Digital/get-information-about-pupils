@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
@@ -97,7 +97,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
-        state.ResetState();
+        state.DeselectAllPupils();
 
         // Assert
         Assert.False(state.IsAllPupilsSelected);
@@ -112,7 +112,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.Default();
 
         // Assert
-        Assert.Throws<ArgumentNullException>(() => state.UpsertPupilSelectionState(null, It.IsAny<bool>()));
+        Assert.Throws<ArgumentNullException>(() => state.UpsertPupilSelections(null, It.IsAny<bool>()));
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         IReadOnlyDictionary<string, bool> selectionState = state.GetPupilsWithSelectionState();
 
         // Act
-        state.UpsertPupilSelectionState([], It.IsAny<bool>());
+        state.UpsertPupilSelections([], It.IsAny<bool>());
 
         // Assert
         Assert.Equivalent(selectionState, state.GetPupilsWithSelectionState());
@@ -148,7 +148,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         string upn = UniquePupilNumberTestDoubles.Generate().Value;
         
         // Act
-        state.UpsertPupilSelectionState([upn, upn], true);
+        state.UpsertPupilSelections([upn, upn], true);
 
         // Assert
         Assert.Single(state.GetPupilsWithSelectionState());
@@ -166,7 +166,7 @@ public sealed class MyPupilsPupilSelectionStateTests
         UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
 
         // Act
-        state.UpsertPupilSelectionState([upn.Value], selected);
+        state.UpsertPupilSelections([upn.Value], selected);
 
 
         // Assert
@@ -191,8 +191,8 @@ public sealed class MyPupilsPupilSelectionStateTests
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
 
         // Act
-        state.UpsertPupilSelectionState([upns[1]], true);
-        state.UpsertPupilSelectionState([upns[0]], false);
+        state.UpsertPupilSelections([upns[1]], true);
+        state.UpsertPupilSelections([upns[0]], false);
 
         // Assert
         Assert.True(state.IsPupilSelected(upns[1]));

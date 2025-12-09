@@ -6,45 +6,47 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.GetSelectedMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Logging;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.ViewModels.Factory;
+using DfE.GIAP.Web.Features.MyPupils.State.Models;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using LogLevel = DfE.GIAP.Web.Features.MyPupils.Logging.LogLevel;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Areas.DownloadMyPupils;
 
-[Route(Constants.Routes.MyPupilList.MyPupils)]
+[Route(Routes.MyPupilList.MyPupilsBase)]
 public class DownloadMyPupilsController : Controller
 {
     private readonly ILogger<DownloadMyPupilsController> _logger;
+    private readonly IMyPupilsLogSink _myPupilsLogSink;
     private readonly AzureAppSettings _appSettings;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
-    private readonly IGetSelectedMyPupilsHandler _getSelectedMyPupilsProvider;
-    private readonly IGetMyPupilsStateProvider _getMyPupilsStateProvider;
-    private readonly IGetMyPupilsHandler _getPupilViewModelsHandler;
-    private readonly IMyPupilsViewModelFactory _myPupilsViewModelFactory;
+    private readonly IMyPupilsPresentationService _myPupilsPresentationService;
+    private readonly IGetMyPupilsStateQueryHandler _getMyPupilsStateProvider;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
 
     public DownloadMyPupilsController(
         ILogger<DownloadMyPupilsController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
+        IMyPupilsLogSink myPupilsLogSink,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
-        IGetSelectedMyPupilsHandler getSelectedMyPupilsProvider,
-        IMyPupilsViewModelFactory myPupilsViewModelFactory,
+        IMyPupilsPresentationService myPupilsPresentationService,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
-        IGetMyPupilsStateProvider getMyPupilsStateProvider,
-        IGetMyPupilsHandler getPupilViewModelsHandler)
+        IGetMyPupilsStateQueryHandler getMyPupilsStateProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(myPupilsLogSink);
+        _myPupilsLogSink = myPupilsLogSink;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -56,36 +58,30 @@ public class DownloadMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
 
-        ArgumentNullException.ThrowIfNull(getSelectedMyPupilsProvider);
-        _getSelectedMyPupilsProvider = getSelectedMyPupilsProvider;
-
-        ArgumentNullException.ThrowIfNull(myPupilsViewModelFactory);
-        _myPupilsViewModelFactory = myPupilsViewModelFactory;
+        ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
+        _myPupilsPresentationService = myPupilsPresentationService;
 
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
 
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
         _getMyPupilsStateProvider = getMyPupilsStateProvider;
-
-        ArgumentNullException.ThrowIfNull(getPupilViewModelsHandler);
-        _getPupilViewModelsHandler = getPupilViewModelsHandler;
     }
 
     [HttpPost]
-    [Route(Constants.Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
+    [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     public Task<IActionResult> ToDownloadCommonTransferFileData([FromForm] List<string> SelectedPupils) => HandleDownloadRequest(DownloadType.CTF, SelectedPupils);
 
     [HttpPost]
-    [Route(Constants.Routes.PupilPremium.LearnerNumberDownloadRequest)]
+    [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
     public Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN([FromForm] List<string> SelectedPupils) => HandleDownloadRequest(DownloadType.PupilPremium, SelectedPupils);
 
     [HttpPost]
-    [Route(Constants.Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
+    [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
     public Task<IActionResult> ToDownloadSelectedNPDDataUPN([FromForm] List<string> SelectedPupils) => HandleDownloadRequest(DownloadType.NPD, SelectedPupils);
 
     [HttpPost]
-    [Route(Constants.Routes.DownloadSelectedNationalPupilDatabaseData)]
+    [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(string selectedPupilsJoined)
     {
         string[] selectedPupils = selectedPupilsJoined.Split(',');
@@ -97,7 +93,7 @@ public class DownloadMyPupilsController : Controller
             SelectedPupilsCount = selectedPupils.Length,
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true,
-            DownloadRoute = Constants.Routes.NationalPupilDatabase.LearnerNumberDownloadFile,
+            DownloadRoute = Routes.NationalPupilDatabase.LearnerNumberDownloadFile,
             SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
         };
 
@@ -133,7 +129,7 @@ public class DownloadMyPupilsController : Controller
     }
 
     [HttpPost]
-    [Route(Constants.Routes.NationalPupilDatabase.LearnerNumberDownloadFile)]
+    [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadFile)]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
         if (!string.IsNullOrEmpty(model.SelectedPupils))
@@ -152,7 +148,7 @@ public class DownloadMyPupilsController : Controller
 
                 if (downloadFile == null)
                 {
-                    return base.RedirectToAction(Constants.Routes.Application.Error, Constants.Routes.Application.Home);
+                    return base.RedirectToAction(Routes.Application.Error, Routes.Application.Home);
                 }
 
                 if (downloadFile.Bytes != null)
@@ -186,49 +182,41 @@ public class DownloadMyPupilsController : Controller
 
         MyPupilsState state = _getMyPupilsStateProvider.GetState();
 
-        MyPupilsResponse response = await _getPupilViewModelsHandler.GetPupilsAsync(
-            new MyPupilsRequest(
-                userId, state));
-
         if (formSelectedPupils.Count > 0)
         {
-            MyPupilsPupilSelectionState selectionState = state.SelectionState;
-            selectionState.UpsertPupilSelectionState(formSelectedPupils, true);
-            _selectionStateSessionCommandHandler.StoreInSession(selectionState);
+            state.SelectionState.UpsertPupilSelections(formSelectedPupils, true);
+            _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
         }
 
-        string[] allSelectedPupils =
-            _getSelectedMyPupilsProvider.GetSelectedMyPupils()
-                .Concat(formSelectedPupils)
-                .Distinct()
-                .ToArray();
+        List<string> allSelectedPupils =
+            (await _myPupilsPresentationService.GetSelectedPupilUniquePupilNumbers(userId: User.GetUserId()))
+                .ToList();
 
-        if (allSelectedPupils.Length == 0)
+        if (allSelectedPupils.Count == 0)
         {
-            return View(
-                Constants.Routes.MyPupilList.MyPupilListView,
-                model: _myPupilsViewModelFactory.CreateViewModel(
-                    state,
-                    response.MyPupils,
-                    MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Common.Errors.NoPupilsSelected)));
+            _myPupilsLogSink.Add(
+                new MyPupilsLog(
+                    LogLevel.Error,
+                    Messages.Common.Errors.NoPupilsSelected));
+
+            return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
         }
 
-        if (downloadType == DownloadType.CTF && allSelectedPupils.Length > _appSettings.CommonTransferFileUPNLimit)
+        if (downloadType == DownloadType.CTF && allSelectedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
         {
+            _myPupilsLogSink.Add(
+                new MyPupilsLog(
+                    LogLevel.Error,
+                    Messages.Downloads.Errors.UPNLimitExceeded));
 
-            return View(
-                Constants.Routes.MyPupilList.MyPupilListView,
-                model: _myPupilsViewModelFactory.CreateViewModel(
-                       state,
-                       response.MyPupils,
-                       MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.UPNLimitExceeded)));
+            return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
         }
 
         if (downloadType == DownloadType.CTF)
         {
             ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
-                allSelectedPupils,
-                allSelectedPupils,
+                allSelectedPupils.ToArray(),
+                allSelectedPupils.ToArray(),
                 User.GetLocalAuthorityNumberForEstablishment(),
                 User.GetEstablishmentNumber(),
                 User.IsOrganisationEstablishment(),
@@ -237,17 +225,17 @@ public class DownloadMyPupilsController : Controller
                     User.GetSessionId()),
                 ReturnRoute.MyPupilList);
 
-            if (downloadFile.Bytes != null)
+            if (downloadFile.Bytes == null)
             {
                 return SearchDownloadHelper.DownloadFile(downloadFile);
             }
 
-            return View(
-                Constants.Routes.MyPupilList.MyPupilListView,
-                model: _myPupilsViewModelFactory.CreateViewModel(
-                   state,
-                   response.MyPupils,
-                   context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.NoDataForSelectedPupils)));
+            _myPupilsLogSink.Add(
+                new MyPupilsLog(
+                    LogLevel.Error,
+                    Messages.Downloads.Errors.NoDataForSelectedPupils));
+
+            return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
         }
 
         if (downloadType == DownloadType.PupilPremium)
@@ -261,10 +249,9 @@ public class DownloadMyPupilsController : Controller
                 IsSAT = User.IsOrganisationSingleAcademyTrust()
             };
 
-
             ReturnFile downloadFile = await _downloadService.GetPupilPremiumCSVFile(
-                allSelectedPupils,
-                allSelectedPupils,
+                allSelectedPupils.ToArray(),
+                allSelectedPupils.ToArray(),
                 true,
                 AzureFunctionHeaderDetails.Create(
                     userId,
@@ -274,7 +261,9 @@ public class DownloadMyPupilsController : Controller
 
             if (downloadFile == null)
             {
-                return RedirectToAction(actionName: Constants.Routes.Application.Error, controllerName: Constants.Routes.Application.Home);
+                return RedirectToAction(
+                    actionName: Routes.Application.Error,
+                    controllerName: Routes.Application.Home);
             }
 
             if (downloadFile.Bytes != null)
@@ -282,12 +271,12 @@ public class DownloadMyPupilsController : Controller
                 return SearchDownloadHelper.DownloadFile(downloadFile);
             }
 
-            return View(
-                Constants.Routes.MyPupilList.MyPupilListView,
-                model: _myPupilsViewModelFactory.CreateViewModel(
-                        state,
-                        response.MyPupils,
-                        context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.NoDataForSelectedPupils)));
+            _myPupilsLogSink.Add(
+                new MyPupilsLog(
+                    LogLevel.Error,
+                    Messages.Downloads.Errors.NoDataForSelectedPupils));
+
+            return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
         }
 
         if (downloadType == DownloadType.NPD)
@@ -295,12 +284,11 @@ public class DownloadMyPupilsController : Controller
             return await DownloadSelectedNationalPupilDatabaseData(string.Join(",", allSelectedPupils));
         }
 
+        _myPupilsLogSink.Add(
+            new MyPupilsLog(
+                LogLevel.Error,
+                Messages.Downloads.Errors.UnknownDownloadType));
 
-        return View(
-            Constants.Routes.MyPupilList.MyPupilListView,
-            model: _myPupilsViewModelFactory.CreateViewModel(
-                state,
-                response.MyPupils,
-                context: MyPupilsViewModelContext.CreateWithErrorMessage(Messages.Downloads.Errors.UnknownDownloadType)));
+        return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
     }
 }

@@ -31,7 +31,7 @@ public sealed class CompositionRootTests
     public void ThrowsArgumentNullException_When_ServicesIsNull()
     {
         IServiceCollection? serviceCollection = null;
-        Action register = () => CompositionRoot.AddMyPupilsDependencies(serviceCollection!);
+        Action register = () => CompositionRoot.AddMyPupilsCore(serviceCollection!);
         Assert.Throws<ArgumentNullException>(register);
     }
 
@@ -49,7 +49,7 @@ public sealed class CompositionRootTests
                 .AddSearchDependencies(configuration)
                 .AddCosmosDbDependencies()
                 .AddSharedApplicationServices()
-                .AddMyPupilsDependencies();
+                .AddMyPupilsCore();
 
         // Act
         IServiceProvider provider = services.BuildServiceProvider();

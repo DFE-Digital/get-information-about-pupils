@@ -74,7 +74,7 @@ public sealed class AspNetCoreSessionQueryHandlerTests
         AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, sessionObjectSerializerMock.Object);
 
         // Act
-        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.GetSessionObject();
+        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.Handle();
 
         // Assert
         Assert.Null(sessionQueryResponse.Value); // defaults
@@ -100,7 +100,7 @@ public sealed class AspNetCoreSessionQueryHandlerTests
         AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, serializer.Object);
 
         // Act
-        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.GetSessionObject();
+        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.Handle();
 
         // Assert
         Assert.Equal(stubSessionObject, sessionQueryResponse.Value);

@@ -1,11 +1,10 @@
-﻿@using DfE.GIAP.Web.Features.MyPupils.ViewModel
+﻿@using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils
 @using DfE.GIAP.Web.Helpers
+
 @model MyPupilsViewModel
 
 @{
     ViewData["Title"] = Model.PageHeading;
-    string selectAllButtonValue = Model.IsAnyPupilsSelected ? "false" : "true";
-    string selectAllButtonText = Model.IsAnyPupilsSelected ? "Deselect all pupils" : "Select all pupils";
 }
 
 @if (Model.IsDeleteSuccessful)
@@ -19,7 +18,7 @@
         @Model.PageHeading
     </h1>
 
-    @if (Model.Error.HasErrorMessage)
+@*     @if (Model.Error.HasErrorMessage)
     {
         <div class="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
@@ -28,9 +27,14 @@
                 @Model.Error.Message
             </span>
         </div>
-    }
+    } *@
 
     <form asp-controller="@Model.UpdateFormController" asp-action="Index" method="POST">
+
+        @foreach (string pupilUpn in Model.Pupils.Values.Select(x => x.UniquePupilNumber))
+        {
+            <input type="hidden" name="CurrentPupils" value="@pupilUpn" />
+        }
 
         @if (Model.HasPupils)
         {
@@ -68,6 +72,11 @@
                     </button>
                 </div>
             </div>
+        }
+
+        @{
+            string selectAllButtonValue = Model.IsAnyPupilsSelected ? "false" : "true";
+            string selectAllButtonText = Model.IsAnyPupilsSelected ? "Deselect all pupils" : "Select all pupils";
         }
 
         <div class="govuk-grid-row govuk-button-group">
@@ -180,7 +189,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="govuk-table__body">
-                                        @foreach (var pupil in Model.Pupils.Pupils)
+                                        @foreach (var pupil in Model.Pupils.Values)
                                         {
                                             <tr class="govuk-table__row">
                                                 <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
@@ -190,7 +199,7 @@
                                                                name="SelectedPupils"
                                                                type="checkbox"
                                                                value="@pupil.UniquePupilNumber"
-                                                        @(pupil.IsSelected ? "checked" : string.Empty) />
+                                                               @(pupil.IsSelected ? "checked" : string.Empty) />
 
                                                         <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
                                                             <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>

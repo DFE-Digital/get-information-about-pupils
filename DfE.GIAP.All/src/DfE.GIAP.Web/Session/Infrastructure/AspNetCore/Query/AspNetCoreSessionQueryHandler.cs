@@ -24,7 +24,7 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    public SessionQueryResponse<TSessionObject> GetSessionObject()
+    public SessionQueryResponse<TSessionObject> Handle()
     {
         ISession session = _sessionProvider.GetSession();
 
@@ -32,7 +32,7 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
 
         if (string.IsNullOrWhiteSpace(sessionObjectAccessKey) || !session.TryGetValue(sessionObjectAccessKey, out byte[] _))
         {
-            return SessionQueryResponse<TSessionObject>.NoValue();
+            return SessionQueryResponse<TSessionObject>.CreateWithNoValue();
         }
 
         string sessionValue = session.GetString(sessionObjectAccessKey);

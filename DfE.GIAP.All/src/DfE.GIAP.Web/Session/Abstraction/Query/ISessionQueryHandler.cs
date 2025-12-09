@@ -2,5 +2,5 @@
 
 public interface ISessionQueryHandler<TSessionObject> where TSessionObject : class
 {
-    SessionQueryResponse<TSessionObject> GetSessionObject();
+    SessionQueryResponse<TSessionObject> Handle();
 }

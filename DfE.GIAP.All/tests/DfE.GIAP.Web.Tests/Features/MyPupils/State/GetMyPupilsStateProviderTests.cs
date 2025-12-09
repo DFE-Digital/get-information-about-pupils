@@ -1,7 +1,8 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+using DfE.GIAP.Web.Features.MyPupils.State.Models;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Tests.TestDoubles.Session;
@@ -19,7 +20,7 @@ public sealed class GetMyPupilsStateProviderTests
             ISessionQueryHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new GetMyPupilsStateProvider(null, selectionStateHandler.Object));
+            new GetMyPupilsStateQueryHandler(null, selectionStateHandler.Object));
     }
 
     [Fact]
@@ -29,25 +30,25 @@ public sealed class GetMyPupilsStateProviderTests
             ISessionQueryHandlerTestDoubles.Default<MyPupilsPresentationState>();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new GetMyPupilsStateProvider(presentationHandler.Object, null!));
+            new GetMyPupilsStateQueryHandler(presentationHandler.Object, null!));
     }
 
     [Fact]
     public void GetState_ReturnsDefaultStates_WhenSessionResponsesAreEmpty()
     {
         SessionQueryResponse<MyPupilsPresentationState> presentationState =
-            SessionQueryResponse<MyPupilsPresentationState>.NoValue();
+            SessionQueryResponse<MyPupilsPresentationState>.CreateWithNoValue();
 
         Mock<ISessionQueryHandler<MyPupilsPresentationState>> presentationHandlerMock =
             ISessionQueryHandlerTestDoubles.MockFor(presentationState);
 
         SessionQueryResponse<MyPupilsPupilSelectionState> selectionState =
-            SessionQueryResponse<MyPupilsPupilSelectionState>.NoValue();
+            SessionQueryResponse<MyPupilsPupilSelectionState>.CreateWithNoValue();
 
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandlerMock =
             ISessionQueryHandlerTestDoubles.MockFor(selectionState);
 
-        GetMyPupilsStateProvider handler = new(
+        GetMyPupilsStateQueryHandler handler = new(
             presentationHandlerMock.Object,
             selectionStateHandlerMock.Object);
 
@@ -86,7 +87,7 @@ public sealed class GetMyPupilsStateProviderTests
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandler =
             ISessionQueryHandlerTestDoubles.MockFor<MyPupilsPupilSelectionState>(expectedSelectionState);
 
-        GetMyPupilsStateProvider handler = new(
+        GetMyPupilsStateQueryHandler handler = new(
             presentationHandler.Object,
             selectionStateHandler.Object);
 

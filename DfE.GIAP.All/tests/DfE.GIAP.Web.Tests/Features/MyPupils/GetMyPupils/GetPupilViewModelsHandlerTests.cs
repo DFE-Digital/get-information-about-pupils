@@ -5,9 +5,10 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.State.Models;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
@@ -19,8 +20,8 @@ public sealed class GetPupilViewModelsHandlerTests
     public void Constructor_Throws_When_UseCase_Is_Null()
     {
         // Arrange
-        Mock<IMyPupilsModelPresentationHandler> presentationHandlerMock = new();
-        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationModel>();
+        Mock<IMyPupilsPresentationModelHandler> presentationHandlerMock = new();
+        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationPupilModels>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationPupilModels>();
         Func<GetMyPupilsHandler> construct = () => new(null, presentationHandlerMock.Object, mapperMock.Object);
 
         // Act Assert
@@ -32,7 +33,7 @@ public sealed class GetPupilViewModelsHandlerTests
     {
         // Arrange
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
-        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationModel>();
+        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationPupilModels>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationPupilModels>();
         Func<GetMyPupilsHandler> construct = () => new(useCaseMock.Object, null, mapperMock.Object);
 
         // Act Assert
@@ -44,7 +45,7 @@ public sealed class GetPupilViewModelsHandlerTests
     {
         // Arrange
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
-        Mock<IMyPupilsModelPresentationHandler> presentationHandlerMock = new();
+        Mock<IMyPupilsPresentationModelHandler> presentationHandlerMock = new();
         Func<GetMyPupilsHandler> construct = () => new(useCaseMock.Object, presentationHandlerMock.Object, null);
 
         // Act Assert
@@ -56,8 +57,8 @@ public sealed class GetPupilViewModelsHandlerTests
     {
         // Arrange
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
-        Mock<IMyPupilsModelPresentationHandler> presentationHandlerMock = new();
-        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationModel>();
+        Mock<IMyPupilsPresentationModelHandler> presentationHandlerMock = new();
+        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationPupilModels>> mapperMock = MapperTestDoubles.Default<PupilsSelectionContext, MyPupilsPresentationPupilModels>();
 
         GetMyPupilsHandler sut = new(useCaseMock.Object, presentationHandlerMock.Object, mapperMock.Object);
 
@@ -80,15 +81,15 @@ public sealed class GetPupilViewModelsHandlerTests
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
             .ReturnsAsync(useCaseResponseStub);
 
-        MyPupilsPresentationModel pupilViewModelsStub = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
+        MyPupilsPresentationPupilModels pupilViewModelsStub = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
 
-        Mock<IMyPupilsModelPresentationHandler> presentationHandlerMock = new();
+        Mock<IMyPupilsPresentationModelHandler> presentationHandlerMock = new();
         presentationHandlerMock
             .Setup((handler) => handler.Handle(stubMyPupilsModel, It.IsAny<MyPupilsPresentationState>()))
             .Returns(stubMyPupilsModel);
 
-        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationModel>> mapperMock =
-            MapperTestDoubles.MockFor<PupilsSelectionContext, MyPupilsPresentationModel>(pupilViewModelsStub);
+        Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationPupilModels>> mapperMock =
+            MapperTestDoubles.MockFor<PupilsSelectionContext, MyPupilsPresentationPupilModels>(pupilViewModelsStub);
 
         GetMyPupilsHandler sut = new(
             useCaseMock.Object, presentationHandlerMock.Object, mapperMock.Object);
@@ -103,7 +104,7 @@ public sealed class GetPupilViewModelsHandlerTests
         // Assert
         Assert.NotNull(response);
         Assert.Equal(10, response.MyPupils.Count);
-        Assert.Equivalent(pupilViewModelsStub.Pupils, response.MyPupils);
+        Assert.Equivalent(pupilViewModelsStub.Values, response.MyPupils);
 
         useCaseMock.Verify(u => u.HandleRequestAsync(It.Is<GetMyPupilsRequest>(r => r.MyPupilsId.Equals("id"))), Times.Once);
 

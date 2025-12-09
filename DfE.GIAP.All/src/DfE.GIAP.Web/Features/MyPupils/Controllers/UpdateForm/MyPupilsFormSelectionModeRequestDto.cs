@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
 public enum MyPupilsFormSelectionModeRequestDto
 {

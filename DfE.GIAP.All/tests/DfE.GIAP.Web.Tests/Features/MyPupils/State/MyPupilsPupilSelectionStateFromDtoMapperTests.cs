@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.Mapper;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.State;
@@ -61,7 +61,6 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         MyPupilsPupilSelectionState result = sut.Map(dto);
 
         // Assert
-        Assert.True(result.IsAllPupilsDeselected);
         Assert.False(result.IsAllPupilsSelected);
         Assert.False(result.IsAnyPupilSelected);
         Assert.All(pupils, pupil => Assert.False(result.IsPupilSelected(pupil.Value)));
@@ -93,7 +92,6 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
 
         // Assert
         Assert.False(result.IsAllPupilsSelected);
-        Assert.False(result.IsAllPupilsDeselected);
         Assert.True(result.IsAnyPupilSelected);
         Assert.True(result.IsPupilSelected(pupils[0].Value));
         Assert.True(result.IsPupilSelected(pupils[1].Value));

@@ -1,8 +1,6 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Routes.UpdateForm;
-using DfE.GIAP.Web.Features.MyPupils.ViewModel;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
+namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
 public sealed class MyPupilsFormStateRequestDto
 {
@@ -13,6 +11,10 @@ public sealed class MyPupilsFormStateRequestDto
     [FromForm]
     // TODO Validator for ModelState, Validate XSS, PageNumber fixed size guard
     public List<string> SelectedPupils { get; set; } = []; // Selected pupils on current page
+
+    // TODO Validator for ModelState, Validate XSS, PageNumber fixed size guard
+    [FromForm]
+    public List<string> CurrentPupils { get; set; } = [];
 
     [FromQuery]
     // TODO Validator for ModelState
@@ -25,7 +27,6 @@ public sealed class MyPupilsFormStateRequestDto
     [FromQuery]
     // TODO Validator for ModelState, Validate XSS
     public string SortDirection { get; set; } = string.Empty;
-    public MyPupilsErrorViewModel Error { get; set; } = null; // Used by other actions to error when posting back to the form
 
     public MyPupilsFormSelectionModeRequestDto SelectAllState
     {

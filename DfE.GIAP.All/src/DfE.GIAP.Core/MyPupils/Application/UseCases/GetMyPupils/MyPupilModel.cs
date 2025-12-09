@@ -10,9 +10,4 @@ public record MyPupilModel
     public required string Sex { get; init; }
     public required bool IsPupilPremium { get; init; }
     public required int LocalAuthorityCode { get; init; }
-    public DateTime ParseDateOfBirth()
-    {
-        return DateTime.TryParse(
-            DateOfBirth, new CultureInfo("en-GB"), out DateTime result) ? result : DateTime.MinValue;
-    }
 }

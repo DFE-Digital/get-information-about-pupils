@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.State.Presentation;
+﻿using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;

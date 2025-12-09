@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
@@ -20,9 +21,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddMyPupilsDependencies(this IServiceCollection services)
+    public static IServiceCollection AddMyPupilsCore(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
+
+        services
+            .AddOptions<MyPupilsOptions>();
 
         services
             .AddMyPupilsApplication()
