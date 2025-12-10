@@ -16,32 +16,25 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapper
         switch (mode)
         {
             case SelectionMode.All:
+
                 state.SelectAll();
-                if (dto.DeselectionExceptions is { Count: > 0 })
+
+                foreach (string upn in dto.DeselectionExceptions?.Where(t => !string.IsNullOrWhiteSpace(t)) ?? [])
                 {
-                    foreach (string upn in dto.DeselectionExceptions)
-                    {
-                        if (!string.IsNullOrWhiteSpace(upn))
-                        {
-                            state.Deselect(upn);
-                        }
-                    }
+                    state.Deselect(upn);
                 }
+
                 break;
 
             case SelectionMode.None:
             default:
+
                 // None mode: apply explicit selections only.
-                if (dto.ExplicitSelections is { Count: > 0 })
+                foreach (string upn in dto.ExplicitSelections?.Where(t => !string.IsNullOrWhiteSpace(t)) ?? [])
                 {
-                    foreach (string upn in dto.ExplicitSelections)
-                    {
-                        if (!string.IsNullOrWhiteSpace(upn))
-                        {
-                            state.Select(upn);
-                        }
-                    }
+                    state.Select(upn);
                 }
+
                 break;
         }
 

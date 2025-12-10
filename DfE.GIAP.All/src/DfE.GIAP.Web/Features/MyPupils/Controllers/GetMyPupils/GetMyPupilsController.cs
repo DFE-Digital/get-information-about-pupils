@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,13 +23,16 @@ public class GetMyPupilsController : Controller
     }
 
     [HttpGet]
-    // TODO enable passing FromQuery Page/Sorting
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(MyPupilsQueryRequestDto request)
     {
         _logger.LogInformation("{Controller}.{Action} GET method is called", nameof(GetMyPupilsController), nameof(Index));
 
         MyPupilsPresentationResponse response =
-            await _myPupilsPresentationService.GetPupils(userId: User.GetUserId());
+            await _myPupilsPresentationService.GetPupils(
+                userId: User.GetUserId(),
+                request.PageNumber,
+                request.SortField,
+                request.SortDirection);
 
         // TODO IMapper<MyPupilsPresentationResponseModel -> MyPupilsViewModel>
         MyPupilsViewModel viewModel = new()

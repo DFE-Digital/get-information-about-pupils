@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Logging;
 #nullable enable
@@ -30,7 +31,12 @@ public sealed class MyPupilsLogSink : IMyPupilsLogSink
     {
         ITempDataDictionary tempData = GetTempDataFromHttpContext();
         tempData.TryGetValue(_myPupilsLoggingOptions.Value.MessagesKey, out object? stored);
-        return (stored as List<MyPupilsLog>) ?? [];
+        if(stored is null)
+        {
+            return [];
+        }
+
+        return JsonConvert.DeserializeObject<List<MyPupilsLog>>(stored as string) ?? [];
     }
 
     public void Add(MyPupilsLog log)
@@ -45,10 +51,10 @@ public sealed class MyPupilsLogSink : IMyPupilsLogSink
         if (tempData.Peek(_myPupilsLoggingOptions.Value.MessagesKey) is not List<MyPupilsLog> stored) // TODO we should throw here as 2 things are using TempDataDictionary
         {
             stored = [];
-            tempData[_myPupilsLoggingOptions.Value.MessagesKey] = stored;
         }
 
         stored.Add(log);
+        tempData[_myPupilsLoggingOptions.Value.MessagesKey] = JsonConvert.SerializeObject(stored);
     }
 
     private ITempDataDictionary GetTempDataFromHttpContext()

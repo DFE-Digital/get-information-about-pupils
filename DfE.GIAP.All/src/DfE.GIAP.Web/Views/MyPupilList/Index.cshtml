@@ -29,7 +29,7 @@
         </div>
     } *@
 
-    <form asp-controller="@Model.UpdateFormController" asp-action="Index" method="POST">
+    <form asp-controller="@Model.UpdateFormController" asp-action="@Model.UpdateFormAction" method="POST">
 
         @foreach (string pupilUpn in Model.Pupils.Values.Select(x => x.UniquePupilNumber))
         {
@@ -82,7 +82,7 @@
         <div class="govuk-grid-row govuk-button-group">
             <div class="govuk-grid-column-one-quarter">
                 <button asp-controller="@Model.UpdateFormController"
-                    asp-action="Index"
+                    asp-action="@Model.UpdateFormAction"
                     asp-route-pageNumber="@Model.PageNumber"
                     asp-route-sortField="@Model.SortField"
                     asp-route-sortDirection="@Model.SortDirection"
@@ -140,7 +140,7 @@
                                                 aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)">
                                                 <button
                                                     asp-controller="@Model.UpdateFormController"
-                                                    asp-action="Index"
+                                                    asp-action="@Model.UpdateFormAction"
                                                     asp-route-pageNumber="@Model.PageNumber"
                                                     asp-route-sortField="@AzureSearchFields.Forename"
                                                     asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
@@ -152,7 +152,7 @@
                                                 aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)">
                                                 <button 
                                                     asp-controller="@Model.UpdateFormController"
-                                                    asp-action="Index"
+                                                    asp-action="@Model.UpdateFormAction"
                                                     asp-route-pageNumber="@Model.PageNumber"
                                                     asp-route-sortField="@AzureSearchFields.Surname"
                                                     asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
@@ -166,8 +166,8 @@
                                                 id="search--search-pupils-heading-dob--text"
                                                 aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)">
                                                 <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="Index"
-                                                    asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
                                                     asp-route-sortField="@AzureSearchFields.DOB"
                                                     asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
                                                     id="search--sort-dob--button">Date of birth
@@ -178,8 +178,8 @@
                                                 id="search--search-pupils-heading-sex--text"
                                                 aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)">
                                                 <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="Index"
-                                                    asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
                                                     asp-route-sortField="@AzureSearchFields.Sex"
                                                     asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
                                                         id="search--sort-sex--button">Sex</button>
@@ -241,7 +241,7 @@
                                     {
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="Index"
+                                                asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@(Model.PageNumber - 1)"
                                                 asp-route-sortField="@Model.SortField"
                                                 asp-route-sortDirection="@Model.SortDirection"
@@ -250,7 +250,7 @@
                                         </li>
                                         <li class="page-list-first">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="Index"
+                                                asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="1"
                                                 asp-route-sortField="@Model.SortField"
                                                 asp-route-sortDirection="@Model.SortDirection"
@@ -262,7 +262,7 @@
                                     {
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="Index"
+                                                asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@(Model.PageNumber - 1)"
                                                 asp-route-sortField="@Model.SortField"
                                                 asp-route-sortDirection="@Model.SortDirection"
@@ -275,7 +275,7 @@
                                     {
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="Index"
+                                                asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@(Model.PageNumber + 1)"
                                                 asp-route-sortField="@Model.SortField"
                                                 asp-route-sortDirection="@Model.SortDirection"
@@ -285,7 +285,7 @@
                                         </li>
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="Index"
+                                                asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@(Model.PageNumber + 1)"
                                                 asp-route-sortField="@Model.SortField"
                                                 asp-route-sortDirection="@Model.SortDirection"

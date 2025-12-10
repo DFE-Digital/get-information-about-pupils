@@ -2,9 +2,10 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Areas.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Models;
 using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
@@ -26,7 +27,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -49,7 +50,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -70,7 +71,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -91,7 +92,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
 
@@ -111,7 +112,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
 
@@ -131,7 +132,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         Mock<ILogger<DeleteMyPupilsController>> loggerMock = new();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -152,13 +153,13 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
 
         stateProviderMock
-            .Setup(t => t.GetState())
+            .Setup(t => t.GetPupilSelections())
             .Returns(MyPupilsStateTestDoubles.Default())
             .Verifiable();
 
@@ -219,7 +220,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -227,7 +228,7 @@ public sealed class DeleteMyPupilsControllerTests
         MyPupilsPupilSelectionState noPupilsSelectedInState = MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState([]);
 
         stateProviderMock
-            .Setup(t => t.GetState())
+            .Setup(t => t.GetPupilSelections())
             .Returns(
                 MyPupilsStateTestDoubles.Create(
                     MyPupilsPresentationStateTestDoubles.Default(),
@@ -289,7 +290,7 @@ public sealed class DeleteMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<DeleteMyPupilsController> loggerMock = LoggerTestDoubles.MockLogger<DeleteMyPupilsController>();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> sessionCommandHandlerMock = new();
         Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>> deletePupilsUseCaseMock = new();
         Mock<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>> deleteAllPupilsUseCaseMock = new();
@@ -297,7 +298,7 @@ public sealed class DeleteMyPupilsControllerTests
         MyPupilsPupilSelectionState allPupilsSelectedStub = MyPupilsPupilSelectionStateTestDoubles.WithAllPupilsSelected([]);
 
         stateProviderMock
-            .Setup(t => t.GetState())
+            .Setup(t => t.GetPupilSelections())
             .Returns(
                 MyPupilsStateTestDoubles.Create(
                     MyPupilsPresentationStateTestDoubles.Default(),

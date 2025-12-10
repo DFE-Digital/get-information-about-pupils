@@ -6,7 +6,6 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Logging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Models;
 using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ using Microsoft.Extensions.Options;
 using LogLevel = DfE.GIAP.Web.Features.MyPupils.Logging.LogLevel;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Areas.DeleteMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 
 #nullable enable
 
@@ -24,7 +23,7 @@ public class DeleteMyPupilsController : Controller
     private readonly ILogger<DeleteMyPupilsController> _logger;
     private readonly MyPupilsOptions _options;
     private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsUseCase;
-    private readonly IGetMyPupilsStateQueryHandler _getMyPupilsStateProvider;
+    private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsSelectionState;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
     private readonly IMyPupilsLogSink _myPupilsLogSink;
     private readonly IMyPupilsPresentationService _myPupilsPresentationService;
@@ -35,7 +34,7 @@ public class DeleteMyPupilsController : Controller
         IMyPupilsLogSink myPupilsMessageSink,
         IMyPupilsPresentationService myPupilsPresentationService,
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsUseCase,
-        IGetMyPupilsStateQueryHandler getMyPupilsStateProvider,
+        IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateCommandHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -50,12 +49,12 @@ public class DeleteMyPupilsController : Controller
 
         ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
         _myPupilsPresentationService = myPupilsPresentationService;
-        
+
         ArgumentNullException.ThrowIfNull(deletePupilsUseCase);
         _deletePupilsFromMyPupilsUseCase = deletePupilsUseCase;
 
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
-        _getMyPupilsStateProvider = getMyPupilsStateProvider;
+        _getMyPupilsSelectionState = getMyPupilsStateProvider;
 
         ArgumentNullException.ThrowIfNull(selectionStateCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateCommandHandler;
@@ -63,7 +62,7 @@ public class DeleteMyPupilsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete([FromForm] List<string> SelectedPupils)
+    public async Task<IActionResult> Delete([FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto queryRequest)
     {
         _logger.LogInformation("{Controller}.{Action} POST method called", nameof(DeleteMyPupilsController), nameof(Delete));
 
@@ -76,30 +75,30 @@ public class DeleteMyPupilsController : Controller
                     LogLevel.Error,
                     "There has been a problem with your delete selections. Please try again."));
 
-            return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
+            return RedirectToGetMyPupils(queryRequest);
         }
 
-        MyPupilsState state = _getMyPupilsStateProvider.GetState();
+        MyPupilsPupilSelectionState selectionState = _getMyPupilsSelectionState.GetPupilSelections();
 
-        if (SelectedPupils.Count == 0 && !state.SelectionState.IsAnyPupilSelected)
+        if (SelectedPupils.Count == 0 && !selectionState.IsAnyPupilSelected)
         {
             _myPupilsLogSink.Add(
                 new MyPupilsLog(
                     LogLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
 
-            return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
+            return RedirectToGetMyPupils(queryRequest);
         }
 
         string userId = User.GetUserId();
 
         SelectedPupils.AddRange(
-            await _myPupilsPresentationService.GetSelectedPupilUniquePupilNumbers(userId));
+                await _myPupilsPresentationService.GetSelectedPupilUniquePupilNumbers(userId));
 
         await _deletePupilsFromMyPupilsUseCase.HandleRequestAsync(
             new DeletePupilsFromMyPupilsRequest(
-                userId,
-                SelectedPupils));
+                UserId: userId,
+                DeletePupilUpns: SelectedPupils.Distinct()));
 
         _myPupilsLogSink.Add(
             new MyPupilsLog(
@@ -107,9 +106,22 @@ public class DeleteMyPupilsController : Controller
                 $"Selected MyPupils were deleted from user: {userId}."));
 
         // Reset selection state after deletion
-        state.SelectionState.ResetState();
-        _selectionStateSessionCommandHandler.StoreInSession(state.SelectionState);
+        selectionState.ResetState();
+        _selectionStateSessionCommandHandler.StoreInSession(selectionState);
 
-        return LocalRedirect(Routes.MyPupilList.MyPupilsBase);
+        return RedirectToGetMyPupils(queryRequest);
+    }
+
+    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto request)
+    {
+        return RedirectToAction(
+            actionName: "Index",
+            controllerName: "GetMyPupils",
+            new
+            {
+                request.PageNumber,
+                request.SortField,
+                request.SortDirection
+            });
     }
 }

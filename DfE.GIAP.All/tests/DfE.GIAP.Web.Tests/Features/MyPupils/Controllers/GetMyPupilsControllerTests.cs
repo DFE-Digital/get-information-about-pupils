@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Features.MyPupils.State.Models;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
@@ -16,7 +17,7 @@ public sealed class GetMyPupilsControllerTests
     public void Constructor_Throws_When_Logger_Is_Null()
     {
         // Arrange
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<IGetMyPupilsHandler> handlerMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
         // Act Assert
@@ -34,7 +35,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<IGetMyPupilsHandler> handlerMock = new();
 
         // Act Assert
@@ -70,7 +71,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange
         InMemoryLogger<GetMyPupilsController> inMemoryLogger = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         Mock<IMyPupilsViewModelFactory> viewModelFactoryMock = new();
 
         // Act Assert
@@ -95,9 +96,9 @@ public sealed class GetMyPupilsControllerTests
             MyPupilsPresentationStateTestDoubles.Default(),
             MyPupilsPupilSelectionStateTestDoubles.Default());
 
-        Mock<IGetMyPupilsStateQueryHandler> stateProviderMock = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> stateProviderMock = new();
         stateProviderMock
-            .Setup(stateProvider => stateProvider.GetState())
+            .Setup(stateProvider => stateProvider.GetPupilSelections())
             .Returns(state)
             .Verifiable();
 

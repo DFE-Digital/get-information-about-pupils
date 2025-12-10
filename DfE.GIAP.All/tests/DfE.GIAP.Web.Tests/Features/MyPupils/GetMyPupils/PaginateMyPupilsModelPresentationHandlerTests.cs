@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
@@ -15,7 +15,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     [Fact]
     public void Handle_Throws_When_PageNumber_Is_LessThan_1()
     {
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 0);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 0);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
@@ -28,7 +28,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
         // Arrange
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Default();
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Default();
 
         MyPupilsModel pupils = MyPupilsModel.Empty();
 
@@ -48,7 +48,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     public void Handle_Returns_Pupils_Up_To_PageSize(int pupilCount)
     {
         // Arrange
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 1);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 1);
 
         MyPupilsModel inputPupils = MyPupilDtosTestDoubles.Generate(count: pupilCount);
 
@@ -66,7 +66,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     public void Handle_Returns_PageOfPupils_When_PageNumber_Requested()
     {
         // Arrange
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 2);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 2);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
@@ -86,7 +86,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         // Arrange
         const int fullPagesOfPupils = 4;
         const int pageRequested = fullPagesOfPupils + 1;
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(page: pageRequested);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: pageRequested);
 
         int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: inputPupilCount);

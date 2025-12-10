@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Logging;
+﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
+using DfE.GIAP.Web.Features.MyPupils.Logging;
 using DfE.GIAP.Web.Features.MyPupils.State;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,13 @@ public class UpdateMyPupilsFormController : Controller
 {
     private readonly ILogger<UpdateMyPupilsFormController> _logger;
     private readonly IMyPupilsLogSink _myPupilsLogSink;
-    private readonly IUpdateMyPupilsStateCommandHandler _updateMyPupilsStateCommandHandler;
+    private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsStateCommandHandler;
 
 
     public UpdateMyPupilsFormController(
         ILogger<UpdateMyPupilsFormController> logger,
         IMyPupilsLogSink myPupilsLogSink,
-        IUpdateMyPupilsStateCommandHandler updateMyPupilsStateCommandHandler)
+        IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsStateCommandHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -31,7 +32,7 @@ public class UpdateMyPupilsFormController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(MyPupilsFormStateRequestDto formDto)
+    public async Task<IActionResult> Index(MyPupilsFormStateRequestDto formDto, MyPupilsQueryRequestDto query)
     {
         _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsFormController), nameof(Index));
 
@@ -42,11 +43,24 @@ public class UpdateMyPupilsFormController : Controller
                     level: LogLevel.Error,
                     message: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
 
-            return LocalRedirect(Constants.Routes.MyPupilList.MyPupilsBase);
+            return RedirectToGetMyPupils(query);
         }
 
         _updateMyPupilsStateCommandHandler.Handle(formDto);
 
-        return LocalRedirect(Constants.Routes.MyPupilList.MyPupilsBase);
+        return RedirectToGetMyPupils(query);
+    }
+
+    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto request)
+    {
+        return RedirectToAction(
+            actionName: "Index",
+            controllerName: "GetMyPupils",
+            new
+            {
+                PageNumber = request.PageNumber,
+                SortField = request.SortField,
+                SortDirection = request.SortDirection
+            });
     }
 }

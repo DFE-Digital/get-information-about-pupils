@@ -1,26 +1,30 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.State.Models;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
+﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
+using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
 public record MyPupilsPresentationResponse
 {
-    public MyPupilsPresentationResponse(MyPupilsPresentationPupilModels pupils, MyPupilsState state)
+    public MyPupilsPresentationResponse(
+        MyPupilsPresentationPupilModels pupils,
+        MyPupilsPresentationQueryModel presentation,
+        MyPupilsPupilSelectionState selectionState)
     {
         MyPupils = pupils ??
             MyPupilsPresentationPupilModels.Create([]);
 
-        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(selectionState);
+        ArgumentNullException.ThrowIfNull(presentation);
 
-        PageNumber = state.PresentationState.Page;
+        PageNumber = presentation.Page;
 
         SortedDirection =
-            state.PresentationState.SortDirection
+            presentation.SortDirection
                 == SortDirection.Ascending
                     ? "asc" : "desc";
 
-        SortedField = state.PresentationState.SortBy;
+        SortedField = presentation.SortBy;
 
-        IsAnyPupilsSelected = state.SelectionState.IsAnyPupilSelected;
+        IsAnyPupilsSelected = selectionState.IsAnyPupilSelected;
     }
 
     public MyPupilsPresentationPupilModels MyPupils { get; }
@@ -31,5 +35,6 @@ public record MyPupilsPresentationResponse
 
     public static MyPupilsPresentationResponse Create(
         MyPupilsPresentationPupilModels pupils,
-        MyPupilsState state) => new(pupils, state);
+        MyPupilsPresentationQueryModel presentation,
+        MyPupilsPupilSelectionState selectionState) => new(pupils, presentation, selectionState);
 }

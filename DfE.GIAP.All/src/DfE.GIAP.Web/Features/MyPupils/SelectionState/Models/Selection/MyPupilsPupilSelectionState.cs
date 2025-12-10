@@ -1,14 +1,6 @@
 ﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 
 // Note: SelectAll or DeselectAll states - may have a subsequent manual selection/deselection applied, so this state is applied at the point of SelectAll/Deselect", not infer all future SelectionState from it. i.e. a pupil can be manually deselected after SelectAll has been applied
-
-
-public enum SelectionMode
-{
-    None, // Track explicit selections only.
-    All   // Everything selected by default; track deselection exceptions.
-}
-
 public sealed class MyPupilsPupilSelectionState
 {
     private SelectionMode _mode = SelectionMode.None;
@@ -103,70 +95,17 @@ public sealed class MyPupilsPupilSelectionState
             : _explicitSelections.Contains(upn);
     }
 
-    public IReadOnlyCollection<string> GetExplicitSelections() => _explicitSelections.ToList().AsReadOnly();
-    public IReadOnlyCollection<string> GetDeselectedExceptions() => _deselectionUpnExceptions.ToList().AsReadOnly();
+    // TODO can we create a GetSelectedPupils - which switches on mode
+
+    public IReadOnlyCollection<string> GetExplicitSelections()
+        => _explicitSelections.ToList().AsReadOnly();
+
+    public IReadOnlyCollection<string> GetDeselectedExceptions()
+        => _deselectionUpnExceptions.ToList().AsReadOnly();
 }
 
-
-/*public sealed class MyPupilsPupilSelectionState
+public enum SelectionMode
 {
-    public MyPupilsPupilSelectionState()
-    {
-        ResetState();
-    }
-
-    private readonly Dictionary<string, bool> _pupilsToSelectedMap = [];
-
-    *//*public bool IsAllPupilsSelected => _state == SelectionState.SelectAll;
-*//*
-    public bool IsAnyPupilSelected => _pupilsToSelectedMap.Values.Any(t => t);
-
-    public static MyPupilsPupilSelectionState CreateDefault() => new();
-
-    public IReadOnlyDictionary<string, bool> GetPupilsWithSelectionState() => _pupilsToSelectedMap.AsReadOnly();
-    public IReadOnlyList<string> GetSelectedPupils()
-        => _pupilsToSelectedMap
-                .Where((pupilUpn) => pupilUpn.Value)
-                .Select(t => t.Key)
-                .ToList().AsReadOnly();
-
-    public bool IsPupilSelected(string upn) => _pupilsToSelectedMap.TryGetValue(upn, out bool selected) && selected;
-
-    public void SelectAllPupils()
-    {
-        UpsertPupilSelections(
-            _pupilsToSelectedMap.Keys,
-            isSelected: true);
-    }
-
-    public void DeselectAllPupils()
-    {
-        UpsertPupilSelections(
-            _pupilsToSelectedMap.Keys,
-            isSelected: false);
-    }
-
-    public void RemovePupils(IEnumerable<string> upns)
-    {
-        upns.ToList().ForEach((upn) =>
-        {
-            _pupilsToSelectedMap.Remove(upn);
-        });
-    }
-
-    public void ResetState()
-    {
-        _pupilsToSelectedMap.Clear();
-    }
-
-    public void UpsertPupilSelections(IEnumerable<string> upns, bool isSelected)
-    {
-        ArgumentNullException.ThrowIfNull(upns);
-
-        foreach (string upn in upns)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(upn); // TODO UpnValidator?
-            _pupilsToSelectedMap[upn] = isSelected;
-        }
-    }
-}*/
+    None, // Track explicit selections only.
+    All   // Everything selected by default; track deselection exceptions.
+}

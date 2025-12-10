@@ -16,18 +16,6 @@ public sealed class MyPupilsFormStateRequestDto
     [FromForm]
     public List<string> CurrentPupils { get; set; } = [];
 
-    [FromQuery]
-    // TODO Validator for ModelState
-    public int PageNumber { get; set; } = 1;
-
-    [FromQuery]
-    // TODO Validator for ModelState, Validate XSS
-    public string SortField { get; set; } = string.Empty;
-
-    [FromQuery]
-    // TODO Validator for ModelState, Validate XSS
-    public string SortDirection { get; set; } = string.Empty;
-
     public MyPupilsFormSelectionModeRequestDto SelectAllState
     {
         get

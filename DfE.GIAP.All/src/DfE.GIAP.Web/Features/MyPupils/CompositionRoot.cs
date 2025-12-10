@@ -4,9 +4,9 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Logging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
 using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.Mapper;
@@ -72,13 +72,13 @@ public static class CompositionRoot
     private static IServiceCollection AddSessionStateHandlers(this IServiceCollection services)
     {
         services
-            .AddScoped<ISessionQueryHandler<MyPupilsPresentationState>, AspNetCoreSessionQueryHandler<MyPupilsPresentationState>>()
-            .AddScoped<ISessionCommandHandler<MyPupilsPresentationState>, AspNetCoreSessionCommandHandler<MyPupilsPresentationState>>()
+            .AddScoped<ISessionQueryHandler<MyPupilsPresentationQueryModel>, AspNetCoreSessionQueryHandler<MyPupilsPresentationQueryModel>>()
+            .AddScoped<ISessionCommandHandler<MyPupilsPresentationQueryModel>, AspNetCoreSessionCommandHandler<MyPupilsPresentationQueryModel>>()
 
             .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()
             .AddScoped<ISessionCommandHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionCommandHandler<MyPupilsPupilSelectionState>>()
-            .AddScoped<IGetMyPupilsStateQueryHandler, GetMyPupilsStateQueryHandler>()
-            .AddScoped<IUpdateMyPupilsStateCommandHandler, UpdateMyPupilsStateCommandHandler>()
+            .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
+            .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>()
             // Serailizers into State
             .AddSingleton<MyPupilsPupilSelectionStateFromDtoMapper>()
             .AddSingleton<MyPupilsPupilSelectionStateToDtoMapper>()
@@ -88,7 +88,7 @@ public static class CompositionRoot
                     sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
                     sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
             })
-            .AddSingleton<ISessionObjectSerializer<MyPupilsPresentationState>, DefaultSessionObjectSerializer<MyPupilsPresentationState>>();
+            .AddSingleton<ISessionObjectSerializer<MyPupilsPresentationQueryModel>, DefaultSessionObjectSerializer<MyPupilsPresentationQueryModel>>();
         return services;
     }
 }

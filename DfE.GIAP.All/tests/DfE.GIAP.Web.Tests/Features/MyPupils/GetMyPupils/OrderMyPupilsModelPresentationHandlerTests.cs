@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
@@ -14,7 +14,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
     public void Handle_SortBy_Empty_Returns_Unsorted_Pupils()
     {
         // Arrange
-        MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey: string.Empty);
+        MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey: string.Empty);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 10);
 
@@ -32,7 +32,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
     public void Handle_SortBy_UnknownKey_Throws_ArgumentException()
     {
         // Arrange
-        MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey: "unknown-sortByKey");
+        MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey: "unknown-sortByKey");
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
@@ -50,7 +50,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
     public void Handle_SortBy_Forename_Returns_SortedPupils_By_Forename(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
@@ -77,7 +77,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
     public void Handle_SortBy_Surname_Returns_SortedPupils_By_Surname(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
@@ -104,7 +104,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
     public void Handle_SortBy_DateOfBirth_Returns_SortedPupils_By_DateOfBirth(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 
@@ -131,7 +131,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
     public void Handle_SortBy_Sex_Returns_SortedPupils_By_Sex(string sortKey, SortDirection sortDirection)
     {
         // Arrange
-        MyPupilsPresentationState presentationState = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
         MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
 

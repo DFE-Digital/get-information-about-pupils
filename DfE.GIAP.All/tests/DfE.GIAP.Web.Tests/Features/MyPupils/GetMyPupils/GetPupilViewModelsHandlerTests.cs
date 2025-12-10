@@ -6,9 +6,9 @@ using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Models;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Presentation;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Moq;
 using Xunit;
@@ -85,7 +85,7 @@ public sealed class GetPupilViewModelsHandlerTests
 
         Mock<IMyPupilsPresentationModelHandler> presentationHandlerMock = new();
         presentationHandlerMock
-            .Setup((handler) => handler.Handle(stubMyPupilsModel, It.IsAny<MyPupilsPresentationState>()))
+            .Setup((handler) => handler.Handle(stubMyPupilsModel, It.IsAny<MyPupilsPresentationQueryModel>()))
             .Returns(stubMyPupilsModel);
 
         Mock<IMapper<PupilsSelectionContext, MyPupilsPresentationPupilModels>> mapperMock =
