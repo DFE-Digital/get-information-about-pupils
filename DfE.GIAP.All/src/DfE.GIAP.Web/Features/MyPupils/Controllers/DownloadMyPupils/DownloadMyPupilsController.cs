@@ -7,16 +7,16 @@ using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.Logging;
+using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
-using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using LogLevel = DfE.GIAP.Web.Features.MyPupils.Logging.LogLevel;
+using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Areas.DownloadMyPupils;
 
@@ -24,7 +24,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Areas.DownloadMyPupils;
 public class DownloadMyPupilsController : Controller
 {
     private readonly ILogger<DownloadMyPupilsController> _logger;
-    private readonly IMyPupilsLogSink _myPupilsLogSink;
+    private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly AzureAppSettings _appSettings;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
@@ -35,7 +35,7 @@ public class DownloadMyPupilsController : Controller
     public DownloadMyPupilsController(
         ILogger<DownloadMyPupilsController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
-        IMyPupilsLogSink myPupilsLogSink,
+        IMyPupilsMessageSink myPupilsLogSink,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
         IMyPupilsPresentationService myPupilsPresentationService,
@@ -201,8 +201,8 @@ public class DownloadMyPupilsController : Controller
         if (allSelectedPupils.Count == 0)
         {
             _myPupilsLogSink.Add(
-                new MyPupilsLog(
-                    LogLevel.Error,
+                new MyPupilsMessage(
+                    MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
 
             return RedirectToGetMyPupils(query);
@@ -211,8 +211,8 @@ public class DownloadMyPupilsController : Controller
         if (downloadType == DownloadType.CTF && allSelectedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
         {
             _myPupilsLogSink.Add(
-                new MyPupilsLog(
-                    LogLevel.Error,
+                new MyPupilsMessage(
+                    MessageLevel.Error,
                     Messages.Downloads.Errors.UPNLimitExceeded));
 
             return RedirectToGetMyPupils(query);
@@ -237,8 +237,8 @@ public class DownloadMyPupilsController : Controller
             }
 
             _myPupilsLogSink.Add(
-                new MyPupilsLog(
-                    LogLevel.Error,
+                new MyPupilsMessage(
+                    MessageLevel.Error,
                     Messages.Downloads.Errors.NoDataForSelectedPupils));
 
             return RedirectToGetMyPupils(query);
@@ -278,8 +278,8 @@ public class DownloadMyPupilsController : Controller
             }
 
             _myPupilsLogSink.Add(
-                new MyPupilsLog(
-                    LogLevel.Error,
+                new MyPupilsMessage(
+                    MessageLevel.Error,
                     Messages.Downloads.Errors.NoDataForSelectedPupils));
 
             return RedirectToGetMyPupils(query);
@@ -291,8 +291,8 @@ public class DownloadMyPupilsController : Controller
         }
 
         _myPupilsLogSink.Add(
-            new MyPupilsLog(
-                LogLevel.Error,
+            new MyPupilsMessage(
+                MessageLevel.Error,
                 Messages.Downloads.Errors.UnknownDownloadType));
 
         return RedirectToGetMyPupils(query);

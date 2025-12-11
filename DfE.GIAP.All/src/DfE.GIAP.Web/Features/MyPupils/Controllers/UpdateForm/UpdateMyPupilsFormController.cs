@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.Logging;
-using DfE.GIAP.Web.Features.MyPupils.State;
+using DfE.GIAP.Web.Features.MyPupils.Messaging;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc;
-using LogLevel = DfE.GIAP.Web.Features.MyPupils.Logging.LogLevel;
+using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
@@ -11,13 +11,13 @@ namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 public class UpdateMyPupilsFormController : Controller
 {
     private readonly ILogger<UpdateMyPupilsFormController> _logger;
-    private readonly IMyPupilsLogSink _myPupilsLogSink;
+    private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsStateCommandHandler;
 
 
     public UpdateMyPupilsFormController(
         ILogger<UpdateMyPupilsFormController> logger,
-        IMyPupilsLogSink myPupilsLogSink,
+        IMyPupilsMessageSink myPupilsLogSink,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsStateCommandHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -39,8 +39,8 @@ public class UpdateMyPupilsFormController : Controller
         if (!ModelState.IsValid)
         {
             _myPupilsLogSink.Add(
-                new MyPupilsLog(
-                    level: LogLevel.Error,
+                new MyPupilsMessage(
+                    level: MessageLevel.Error,
                     message: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
 
             return RedirectToGetMyPupils(query);

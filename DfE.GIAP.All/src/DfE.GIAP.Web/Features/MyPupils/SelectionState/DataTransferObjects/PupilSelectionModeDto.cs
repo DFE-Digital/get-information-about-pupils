@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.DataTransferObjects;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
 
 public enum PupilSelectionModeDto
 {

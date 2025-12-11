@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.State.Models;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 internal static class MyPupilsStateTestDoubles

@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
-using DfE.GIAP.Web.Features.MyPupils.State;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
 using DfE.GIAP.Web.Features.MyPupils.State.Models;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
 using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Tests.TestDoubles.Session;

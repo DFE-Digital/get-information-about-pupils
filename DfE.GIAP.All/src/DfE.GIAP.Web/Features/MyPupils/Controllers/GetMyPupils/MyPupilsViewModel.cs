@@ -7,6 +7,7 @@ public record MyPupilsViewModel
     private const int DEFAULT_PAGE_SIZE = 20;
     public bool IsDeleteSuccessful { get; init; } = false;
     public bool IsAnyPupilsSelected { get; init; } = false;
+    public string Error { get; init; } = string.Empty;
     public int PageNumber { get; init; } = 1;
     public string SortField { get; init; } = string.Empty;
     public string SortDirection { get; init; } = string.Empty;

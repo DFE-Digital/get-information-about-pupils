@@ -1,15 +1,19 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Logging;
+using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Messaging;
+using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.Messaging.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
 using DfE.GIAP.Web.Session.Abstraction;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.Session.Abstraction.Query;
@@ -30,31 +34,35 @@ public static class CompositionRoot
            
         services
             .AddSessionStateHandlers()
-            .AddGetMyPupilsPresentationServices();
+            .AddMyPupilsPresentationServices();
 
         return services;
     }
 
 
-    private static IServiceCollection AddGetMyPupilsPresentationServices(this IServiceCollection services)
+    private static IServiceCollection AddMyPupilsPresentationServices(this IServiceCollection services)
     {
+        services.AddOptions<MyPupilsMessagingOptions>();
 
-        services.AddOptions<MyPupilsLoggingOptions>();
-
+        // PresentationService
         services
+            .AddSingleton<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MapMyPupilsPresentationResponseModelToViewModel>()
             .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
             .AddSingleton<IMapper<MyPupilModel, MyPupilsPresentationPupilModel>, MyPupilsModelToMyPupilsPresentationPupilModel>()
-            .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>()
-            .AddScoped<IMyPupilsLogSink, MyPupilsLogSink>();
+            .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>();
 
-        
+        // MessagingSink
+        services
+            .AddScoped<IMyPupilsMessageSink, MyPupilsMessageSink>()
+            .AddSingleton<IMapper<MyPupilsMessage, MyPupilsMessageDto>, MyPupilsMessageToMyPupilsMessageDtoMapper>()
+            .AddSingleton<IMapper<MyPupilsMessageDto, MyPupilsMessage>, MyPupilsMessageDtoToMyPupilsMessageMapper>();
+
+        // TODO implement the generic ChainedEvaluationHandlerBuilder and IEvaluator<Tin, TOut>
         services
             .AddSingleton<OrderMyPupilsModelPresentationHandler>()
             .AddSingleton<PaginateMyPupilsModelPresentationHandler>()
-            .AddSingleton<ApplySelectionToPupilPresentationHandler>();
-
-        // TODO implement the generic ChainedEvaluationHandlerBuilder and IEvaluator<Tin, TOut>
-        services.AddSingleton<IMyPupilsPresentationModelHandler>(sp =>
+            .AddSingleton<ApplySelectionToPupilPresentationHandler>()
+            .AddSingleton<IMyPupilsPresentationModelHandler>(sp =>
         {
             var order = new ChainedEvaluationMyPupilDtosPresentationHandler(sp.GetRequiredService<OrderMyPupilsModelPresentationHandler>());
 
@@ -71,15 +79,7 @@ public static class CompositionRoot
 
     private static IServiceCollection AddSessionStateHandlers(this IServiceCollection services)
     {
-        services
-            .AddScoped<ISessionQueryHandler<MyPupilsPresentationQueryModel>, AspNetCoreSessionQueryHandler<MyPupilsPresentationQueryModel>>()
-            .AddScoped<ISessionCommandHandler<MyPupilsPresentationQueryModel>, AspNetCoreSessionCommandHandler<MyPupilsPresentationQueryModel>>()
-
-            .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()
-            .AddScoped<ISessionCommandHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionCommandHandler<MyPupilsPupilSelectionState>>()
-            .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
-            .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>()
-            // Serailizers into State
+        services// Serailizers for State
             .AddSingleton<MyPupilsPupilSelectionStateFromDtoMapper>()
             .AddSingleton<MyPupilsPupilSelectionStateToDtoMapper>()
             .AddSingleton<ISessionObjectSerializer<MyPupilsPupilSelectionState>>(sp =>
@@ -88,7 +88,15 @@ public static class CompositionRoot
                     sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
                     sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
             })
-            .AddSingleton<ISessionObjectSerializer<MyPupilsPresentationQueryModel>, DefaultSessionObjectSerializer<MyPupilsPresentationQueryModel>>();
+            // Session handlers
+            .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()
+            .AddScoped<ISessionCommandHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionCommandHandler<MyPupilsPupilSelectionState>>();
+
+        services
+            .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
+            .AddScoped<IClearMyPupilsPupilSelectionsCommandHandler, ClearMyPupilsPupilSelectionsCommandHandler>()
+            .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>();
+            
         return services;
     }
 }

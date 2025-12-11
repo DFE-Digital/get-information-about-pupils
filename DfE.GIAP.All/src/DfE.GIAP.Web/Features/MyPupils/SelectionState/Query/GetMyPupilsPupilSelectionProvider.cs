@@ -1,8 +1,7 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
-using DfE.GIAP.Web.Session.Abstraction.Query;
+﻿using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Session.Abstraction.Query.Extensions;
 
-namespace DfE.GIAP.Web.Features.MyPupils.State;
+namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
 
 internal sealed class GetMyPupilsPupilSelectionProvider : IGetMyPupilsPupilSelectionProvider
 {
@@ -13,7 +12,7 @@ internal sealed class GetMyPupilsPupilSelectionProvider : IGetMyPupilsPupilSelec
     {
         ArgumentNullException.ThrowIfNull(selectionStateSessionQueryHandler);
         _selectionStateSessionQueryHandler = selectionStateSessionQueryHandler;
-        
+
     }
 
     public MyPupilsPupilSelectionState GetPupilSelections()

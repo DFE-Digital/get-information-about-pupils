@@ -3,7 +3,7 @@ using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Xunit;
 

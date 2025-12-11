@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 // Note: SelectAll or DeselectAll states - may have a subsequent manual selection/deselection applied, so this state is applied at the point of SelectAll/Deselect", not infer all future SelectionState from it. i.e. a pupil can be manually deselected after SelectAll has been applied
 public sealed class MyPupilsPupilSelectionState
@@ -9,7 +9,7 @@ public sealed class MyPupilsPupilSelectionState
     private readonly HashSet<string> _explicitSelections = [];
 
     // In All mode, we keep exceptions (deselected UPNs).
-    private readonly HashSet<string> _deselectionUpnExceptions = [];
+    private readonly HashSet<string> _deselectedUpnExceptions = [];
 
     public MyPupilsPupilSelectionState()
     {
@@ -26,21 +26,21 @@ public sealed class MyPupilsPupilSelectionState
     {
         _mode = SelectionMode.None;
         _explicitSelections.Clear();
-        _deselectionUpnExceptions.Clear();
+        _deselectedUpnExceptions.Clear();
     }
 
     public void SelectAll()
     {
         _mode = SelectionMode.All;
         _explicitSelections.Clear();
-        _deselectionUpnExceptions.Clear();
+        _deselectedUpnExceptions.Clear();
     }
 
     public void DeselectAll()
     {
         _mode = SelectionMode.None;
         _explicitSelections.Clear();
-        _deselectionUpnExceptions.Clear();
+        _deselectedUpnExceptions.Clear();
     }
 
     public void Select(string upn)
@@ -49,7 +49,7 @@ public sealed class MyPupilsPupilSelectionState
 
         if (_mode == SelectionMode.All)
         {
-            _deselectionUpnExceptions.Remove(upn); // selecting = remove exception
+            _deselectedUpnExceptions.Remove(upn); // selecting = remove exception
         }
         else
         {
@@ -63,7 +63,7 @@ public sealed class MyPupilsPupilSelectionState
 
         if (_mode == SelectionMode.All)
         {
-            _deselectionUpnExceptions.Add(upn); // deselecting = add exception
+            _deselectedUpnExceptions.Add(upn); // deselecting = add exception
         }
         else
         {
@@ -91,17 +91,15 @@ public sealed class MyPupilsPupilSelectionState
         ArgumentException.ThrowIfNullOrWhiteSpace(upn);
 
         return _mode == SelectionMode.All
-            ? !_deselectionUpnExceptions.Contains(upn)
+            ? !_deselectedUpnExceptions.Contains(upn)
             : _explicitSelections.Contains(upn);
     }
-
-    // TODO can we create a GetSelectedPupils - which switches on mode
 
     public IReadOnlyCollection<string> GetExplicitSelections()
         => _explicitSelections.ToList().AsReadOnly();
 
     public IReadOnlyCollection<string> GetDeselectedExceptions()
-        => _deselectionUpnExceptions.ToList().AsReadOnly();
+        => _deselectedUpnExceptions.ToList().AsReadOnly();
 }
 
 public enum SelectionMode

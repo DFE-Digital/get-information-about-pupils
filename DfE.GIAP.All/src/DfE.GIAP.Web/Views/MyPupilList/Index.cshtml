@@ -18,16 +18,16 @@
         @Model.PageHeading
     </h1>
 
-@*     @if (Model.Error.HasErrorMessage)
+    @if (!string.IsNullOrEmpty(Model.Error))
     {
         <div class="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
             <span id="results--heading-errormessage" class="govuk-error-message">
                 <span class="govuk-visually-hidden">Error:</span>
-                @Model.Error.Message
+                @Model.Error
             </span>
         </div>
-    } *@
+    }
 
     <form asp-controller="@Model.UpdateFormController" asp-action="@Model.UpdateFormAction" method="POST">
 
@@ -82,14 +82,15 @@
         <div class="govuk-grid-row govuk-button-group">
             <div class="govuk-grid-column-one-quarter">
                 <button asp-controller="@Model.UpdateFormController"
-                    asp-action="@Model.UpdateFormAction"
-                    asp-route-pageNumber="@Model.PageNumber"
-                    asp-route-sortField="@Model.SortField"
-                    asp-route-sortDirection="@Model.SortDirection"
-                    class="govuk-button govuk-button--secondary"
-                    type="submit"
-                    name="SelectAll"
-                    value="@selectAllButtonValue">@selectAllButtonText
+                        asp-action="@Model.UpdateFormAction"
+                        asp-route-pageNumber="@Model.PageNumber"
+                        asp-route-sortField="@Model.SortField"
+                        asp-route-sortDirection="@Model.SortDirection"
+                        class="govuk-button govuk-button--secondary"
+                        type="submit"
+                        name="SelectAll"
+                        value="@selectAllButtonValue">
+                    @selectAllButtonText
                 </button>
             </div>
 
@@ -108,8 +109,8 @@
             @if (!@Model.HasPupils)
             {
                 string noPupilsMessage = Model.PageNumber == 1 ?
-                    ApplicationLabels.SearchMyPupilListNoPupilFound :
-                        ApplicationLabels.MyPupilListNoMorePupils;
+                ApplicationLabels.SearchMyPupilListNoPupilFound :
+                ApplicationLabels.MyPupilListNoMorePupils;
 
                 <div id="results--detail-warningmessage" class="govuk-warning-text">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -138,25 +139,27 @@
                                                 class="govuk-table__header"
                                                 id="search--search-pupils-heading-firstname--text"
                                                 aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)">
-                                                <button
-                                                    asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="@Model.PageNumber"
-                                                    asp-route-sortField="@AzureSearchFields.Forename"
-                                                    asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
-                                                    id="search--sort-firstname--button">First</button>
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-route-sortField="@AzureSearchFields.Forename"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-firstname--button">
+                                                    First
+                                                </button>
                                             </th>
                                             <th scope="col"
                                                 class="govuk-table__header"
                                                 id="search--search-pupils-heading-surname--text"
                                                 aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)">
-                                                <button 
-                                                    asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="@Model.PageNumber"
-                                                    asp-route-sortField="@AzureSearchFields.Surname"
-                                                    asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
-                                                    id="search--sort-surname--button">Surname</button>
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-route-sortField="@AzureSearchFields.Surname"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-surname--button">
+                                                    Surname
+                                                </button>
                                             </th>
                                             <th scope="col"
                                                 class="govuk-table__header"
@@ -168,9 +171,10 @@
                                                 <button asp-controller="@Model.UpdateFormController"
                                                         asp-action="@Model.UpdateFormAction"
                                                         asp-route-pageNumber="@Model.PageNumber"
-                                                    asp-route-sortField="@AzureSearchFields.DOB"
-                                                    asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
-                                                    id="search--sort-dob--button">Date of birth
+                                                        asp-route-sortField="@AzureSearchFields.DOB"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-dob--button">
+                                                    Date of birth
                                                 </button>
                                             </th>
                                             <th scope="col"
@@ -180,9 +184,11 @@
                                                 <button asp-controller="@Model.UpdateFormController"
                                                         asp-action="@Model.UpdateFormAction"
                                                         asp-route-pageNumber="@Model.PageNumber"
-                                                    asp-route-sortField="@AzureSearchFields.Sex"
-                                                    asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
-                                                        id="search--sort-sex--button">Sex</button>
+                                                        asp-route-sortField="@AzureSearchFields.Sex"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-sex--button">
+                                                    Sex
+                                                </button>
                                             </th>
                                             <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
                                             <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-local-authority--text">LA</th>
@@ -199,7 +205,7 @@
                                                                name="SelectedPupils"
                                                                type="checkbox"
                                                                value="@pupil.UniquePupilNumber"
-                                                               @(pupil.IsSelected ? "checked" : string.Empty) />
+                                                        @(pupil.IsSelected ? "checked" : string.Empty) />
 
                                                         <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
                                                             <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
@@ -241,33 +247,39 @@
                                     {
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="@Model.UpdateFormAction"
-                                                asp-route-pageNumber="@(Model.PageNumber - 1)"
-                                                asp-route-sortField="@Model.SortField"
-                                                asp-route-sortDirection="@Model.SortDirection"
-                                                id="page-previous"
-                                                type="submit">&#60;&#60; Previous</button>
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-previous"
+                                                    type="submit">
+                                                &#60;&#60; Previous
+                                            </button>
                                         </li>
                                         <li class="page-list-first">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="@Model.UpdateFormAction"
-                                                asp-route-pageNumber="1"
-                                                asp-route-sortField="@Model.SortField"
-                                                asp-route-sortDirection="@Model.SortDirection"
-                                                id="page-first"
-                                                type="submit">1</button>
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="1"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-first"
+                                                    type="submit">
+                                                1
+                                            </button>
                                         </li>
                                     }
                                     @if (Model.DisplayPreviousPageNumber)
                                     {
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="@Model.UpdateFormAction"
-                                                asp-route-pageNumber="@(Model.PageNumber - 1)"
-                                                asp-route-sortField="@Model.SortField"
-                                                asp-route-sortDirection="@Model.SortDirection"
-                                                id="page-previous"
-                                                type="submit">@(Model.PageNumber - 1)</button>
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-previous"
+                                                    type="submit">
+                                                @(Model.PageNumber - 1)
+                                            </button>
                                         </li>
                                     }
                                     <li>@Model.PageNumber</li>
@@ -275,22 +287,25 @@
                                     {
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="@Model.UpdateFormAction"
-                                                asp-route-pageNumber="@(Model.PageNumber + 1)"
-                                                asp-route-sortField="@Model.SortField"
-                                                asp-route-sortDirection="@Model.SortDirection"
-                                                id="page-next-number"
-                                                type="submit">@(Model.PageNumber + 1)
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-next-number"
+                                                    type="submit">
+                                                @(Model.PageNumber + 1)
                                             </button>
                                         </li>
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
-                                                asp-action="@Model.UpdateFormAction"
-                                                asp-route-pageNumber="@(Model.PageNumber + 1)"
-                                                asp-route-sortField="@Model.SortField"
-                                                asp-route-sortDirection="@Model.SortDirection"
-                                                id="page-next"
-                                                type="submit">Next &#62;&#62;</button>
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-next"
+                                                    type="submit">
+                                                Next &#62;&#62;
+                                            </button>
                                         </li>
                                     }
                                 </ul>

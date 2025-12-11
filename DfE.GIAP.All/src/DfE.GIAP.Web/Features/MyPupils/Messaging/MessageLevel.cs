@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Logging;
+namespace DfE.GIAP.Web.Features.MyPupils.Messaging;
 
-public enum LogLevel
+public enum MessageLevel
 {
     [Description("Debug")]
     Debug,

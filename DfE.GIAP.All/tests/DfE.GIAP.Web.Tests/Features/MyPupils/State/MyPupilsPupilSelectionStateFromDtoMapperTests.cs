@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.State;

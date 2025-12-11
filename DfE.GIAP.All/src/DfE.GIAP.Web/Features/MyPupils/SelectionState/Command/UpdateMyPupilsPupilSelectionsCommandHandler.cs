@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 
-namespace DfE.GIAP.Web.Features.MyPupils.State;
+namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
 
 public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilSelectionsCommandHandler
 {

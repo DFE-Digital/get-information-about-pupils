@@ -1,28 +1,38 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.Users.Application.Models;
+using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.State;
-using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {
-    private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _useCase;
+    private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsUseCase;
+    private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IMyPupilsPresentationModelHandler _presentationHandler;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsStateProvider;
+    private readonly IClearMyPupilsPupilSelectionsCommandHandler _clearMyPupilsPupilSelectionsCommandHandler;
     private readonly IMapper<MyPupilsModel, MyPupilsPresentationPupilModels> _mapper;
 
     public MyPupilsPresentationService(
-        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> useCase,
+        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsUseCase,
+        IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
         IMyPupilsPresentationModelHandler handler,
         IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider,
+        IClearMyPupilsPupilSelectionsCommandHandler clearMyPupilsPupilSelectionsCommandHandler,
         IMapper<MyPupilsModel, MyPupilsPresentationPupilModels> mapper)
     {
-        ArgumentNullException.ThrowIfNull(useCase);
-        _useCase = useCase;
+        ArgumentNullException.ThrowIfNull(getMyPupilsUseCase);
+        _getMyPupilsUseCase = getMyPupilsUseCase;
+
+        ArgumentNullException.ThrowIfNull(deletePupilsUseCase);
+        _deletePupilsUseCase = deletePupilsUseCase;
 
         ArgumentNullException.ThrowIfNull(handler);
         _presentationHandler = handler;
@@ -30,29 +40,48 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
         _getMyPupilsStateProvider = getMyPupilsStateProvider;
 
+        ArgumentNullException.ThrowIfNull(clearMyPupilsPupilSelectionsCommandHandler);
+        _clearMyPupilsPupilSelectionsCommandHandler = clearMyPupilsPupilSelectionsCommandHandler;
+        
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;
     }
 
+    public async Task DeletePupils(
+        string userId,
+        IEnumerable<string> selectedPupilUpnsOnPage)
+    {
+        List<string> selectedPupils = selectedPupilUpnsOnPage.ToList();
+
+        // Enrich SelectedPupils with all other selected pupils
+        selectedPupils.AddRange(
+            await GetSelectedPupilUniquePupilNumbers(userId));
+
+        await _deletePupilsUseCase.HandleRequestAsync(
+            new DeletePupilsFromMyPupilsRequest(
+                UserId: userId,
+                DeletePupilUpns: selectedPupils.Distinct()));
+
+        _clearMyPupilsPupilSelectionsCommandHandler.Handle();
+    }
+
     public async Task<MyPupilsPresentationResponse> GetPupils(
         string userId,
-        int pageNumber,
-        string sortField,
-        string sortDirection)
+        MyPupilsQueryRequestDto query)
     {
         UserId id = new(userId);
 
         MyPupilsPupilSelectionState selectionState = _getMyPupilsStateProvider.GetPupilSelections();
 
         GetMyPupilsResponse response =
-            await _useCase.HandleRequestAsync(
+            await _getMyPupilsUseCase.HandleRequestAsync(
                 new GetMyPupilsRequest(id.Value));
 
         MyPupilsPresentationQueryModel updatedPresentationModel =
             new(
-                pageNumber,
-                sortField,
-                sortDirection == "asc" ? SortDirection.Ascending : SortDirection.Descending);
+                query.PageNumber,
+                query.SortField,
+                query.SortDirection.Equals("asc", StringComparison.OrdinalIgnoreCase) ? SortDirection.Ascending : SortDirection.Descending);
 
         MyPupilsState currentState = new(updatedPresentationModel, selectionState);
 
@@ -74,7 +103,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         if (state.Mode == SelectionMode.All)
         {
             GetMyPupilsResponse response =
-                await _useCase.HandleRequestAsync(
+                await _getMyPupilsUseCase.HandleRequestAsync(
                     new GetMyPupilsRequest(userId));
 
             return response.MyPupils.Identifiers.Except(

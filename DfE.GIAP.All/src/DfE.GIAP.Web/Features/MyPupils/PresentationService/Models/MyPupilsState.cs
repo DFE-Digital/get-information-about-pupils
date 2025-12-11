@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.State.Models.Selection;
+﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 
