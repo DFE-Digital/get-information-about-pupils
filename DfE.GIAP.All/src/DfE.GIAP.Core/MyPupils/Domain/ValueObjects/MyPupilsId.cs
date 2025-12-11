@@ -1,12 +1,13 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class MyPupilsId : ValueObject<MyPupilsId>
 {
-    public MyPupilsId(string value)
+    public MyPupilsId(UserId userId)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
-        Value = value;
+        ArgumentNullException.ThrowIfNull(userId);
+        Value = userId.Value;
     }
 
     public string Value { get; }

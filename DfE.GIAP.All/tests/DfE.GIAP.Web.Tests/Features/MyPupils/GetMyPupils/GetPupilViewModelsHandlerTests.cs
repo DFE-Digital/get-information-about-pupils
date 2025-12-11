@@ -106,7 +106,7 @@ public sealed class GetPupilViewModelsHandlerTests
         Assert.Equal(10, response.MyPupils.Count);
         Assert.Equivalent(pupilViewModelsStub.Values, response.MyPupils);
 
-        useCaseMock.Verify(u => u.HandleRequestAsync(It.Is<GetMyPupilsRequest>(r => r.MyPupilsId.Equals("id"))), Times.Once);
+        useCaseMock.Verify(u => u.HandleRequestAsync(It.Is<GetMyPupilsRequest>(r => r.UserId.Equals("id"))), Times.Once);
 
         presentationHandlerMock.Verify(p => p.Handle(stubMyPupilsModel, state.PresentationState), Times.Once);
 

@@ -8,9 +8,7 @@ public sealed class PaginateMyPupilsModelPresentationHandler : IMyPupilsPresenta
     {
         const int DefaultPageSize = 20;
 
-        PageNumber page = PageNumber.Page(state.PresentationState.Page);
-
-        int skip = DefaultPageSize * (page.Value - 1);
+        int skip = DefaultPageSize * (state.PresentationState.Page.Value - 1);
 
         if (skip >= myPupils.Count)
         {

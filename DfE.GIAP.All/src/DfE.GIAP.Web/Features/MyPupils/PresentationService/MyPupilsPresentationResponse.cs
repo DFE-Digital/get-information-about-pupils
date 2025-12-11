@@ -15,14 +15,12 @@ public record MyPupilsPresentationResponse
         ArgumentNullException.ThrowIfNull(selectionState);
         ArgumentNullException.ThrowIfNull(presentation);
 
-        PageNumber = presentation.Page;
+        PageNumber = presentation.Page.Value;
 
         SortedDirection =
-            presentation.SortDirection
-                == SortDirection.Ascending
-                    ? "asc" : "desc";
+            presentation.Sort.Direction == SortDirection.Ascending ? "asc" : "desc";
 
-        SortedField = presentation.SortBy;
+        SortedField = presentation.Sort.Field;
 
         IsAnyPupilsSelected = selectionState.IsAnyPupilSelected;
     }

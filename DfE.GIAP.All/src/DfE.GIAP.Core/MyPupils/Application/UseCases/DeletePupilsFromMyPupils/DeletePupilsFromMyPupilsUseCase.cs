@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>
@@ -24,7 +25,9 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        MyPupilsId id = new(request.UserId);
+        UserId userId = new(request.UserId);
+
+        MyPupilsId id = new(userId);
 
         MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 

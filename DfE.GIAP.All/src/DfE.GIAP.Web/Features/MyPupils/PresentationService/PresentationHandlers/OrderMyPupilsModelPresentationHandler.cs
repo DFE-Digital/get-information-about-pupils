@@ -17,20 +17,20 @@ public sealed class OrderMyPupilsModelPresentationHandler : IMyPupilsPresentatio
         MyPupilsPresentationPupilModels myPupils,
         MyPupilsState state)
     {
-        if (string.IsNullOrEmpty(state.PresentationState.SortBy))
+        if (string.IsNullOrEmpty(state.PresentationState.Sort.Field))
         {
             return myPupils;
         }
 
-        if (!s_sortKeyToExpression.TryGetValue(state.PresentationState.SortBy.ToLowerInvariant(),
+        if (!s_sortKeyToExpression.TryGetValue(state.PresentationState.Sort.Field.ToLowerInvariant(),
                 out Expression<Func<MyPupilsPresentationPupilModel, IComparable>> expression)
                     || expression is null)
         {
-            throw new ArgumentException($"Unable to find sortable expression for {state.PresentationState.SortBy}");
+            throw new ArgumentException($"Unable to find sortable expression for {state.PresentationState.Sort.Field}");
         }
 
-        IEnumerable<MyPupilsPresentationPupilModel> outputPupils
-            = state.PresentationState.SortDirection == SortDirection.Ascending ?
+        IEnumerable<MyPupilsPresentationPupilModel> outputPupils =
+            state.PresentationState.Sort.Direction == SortDirection.Ascending ?
                 myPupils.Values.AsQueryable().OrderBy(expression) :
                     myPupils.Values.AsQueryable().OrderByDescending(expression);
 

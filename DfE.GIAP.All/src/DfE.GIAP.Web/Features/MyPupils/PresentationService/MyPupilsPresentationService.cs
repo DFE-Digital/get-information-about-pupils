@@ -77,11 +77,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             await _getMyPupilsUseCase.HandleRequestAsync(
                 new GetMyPupilsRequest(id.Value));
 
-        MyPupilsPresentationQueryModel updatedPresentationModel =
-            new(
-                query.PageNumber,
-                query.SortField,
-                query.SortDirection.Equals("asc", StringComparison.OrdinalIgnoreCase) ? SortDirection.Ascending : SortDirection.Descending);
+        MyPupilsPresentationQueryModel updatedPresentationModel = new(query.PageNumber, query.SortField, query.SortDirection);
 
         MyPupilsState currentState = new(updatedPresentationModel, selectionState);
 

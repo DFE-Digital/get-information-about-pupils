@@ -1,9 +1,15 @@
 ﻿namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 
-public record MyPupilsPresentationQueryModel(
-    int Page,
-    string SortBy,
-    SortDirection SortDirection) // TODO GUARD FOR INVALID STATES
+public record MyPupilsPresentationQueryModel
 {
-    public static MyPupilsPresentationQueryModel CreateDefault() => new(Page: 1, SortBy: string.Empty, SortDirection: SortDirection.Descending);
+    public MyPupilsPresentationQueryModel(int pageNumber, string sortBy, string sortDirection)
+    {
+        Page = new(pageNumber);
+        Sort = new(sortBy, sortDirection);
+    }
+
+    public PageNumber Page { get; }
+    public SortOptions Sort { get; }
+    
+    public static MyPupilsPresentationQueryModel CreateDefault() => new(1, string.Empty, "desc");
 }

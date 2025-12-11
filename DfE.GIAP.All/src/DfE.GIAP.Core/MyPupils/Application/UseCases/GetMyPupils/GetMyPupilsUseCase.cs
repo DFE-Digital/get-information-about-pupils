@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
@@ -29,7 +30,9 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
-        MyPupilsId id = new(request.MyPupilsId);
+        UserId userId = new(request.UserId);
+
+        MyPupilsId id = new(userId);
 
         MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 
