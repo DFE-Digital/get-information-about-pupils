@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
-internal sealed class MapDecoratedSearchIndexDtoToPupilMapper : IMapper<AzureIndexEntityWithPupilType, Pupil>
+internal sealed class AzureIndexEntityWithPupilTypeToPupilMapper : IMapper<AzureIndexEntityWithPupilType, Pupil>
 {
     public Pupil Map(AzureIndexEntityWithPupilType input) =>
         new(

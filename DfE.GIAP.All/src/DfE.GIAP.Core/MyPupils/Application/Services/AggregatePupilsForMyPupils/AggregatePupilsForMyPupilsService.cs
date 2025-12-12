@@ -22,7 +22,6 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
         _mapper = mapper;
     }
 
-
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(UniquePupilNumbers uniquePupilNumbers)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count, UpnQueryLimit);

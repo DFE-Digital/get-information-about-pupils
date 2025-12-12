@@ -36,14 +36,14 @@ public static class CompositionRoot
         services
             // UseCases
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
-            .AddSingleton<IMapper<Pupil, MyPupilModel>, MapPupilToMyPupilModelMapper>()
+            .AddSingleton<IMapper<Pupil, MyPupilModel>, PupilToMyPupilModelMapper>()
 
             .AddScoped<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>, AddPupilsToMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>, DeleteAllMyPupilsUseCase>()
             // AggregatePupilsService
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, AggregatePupilsForMyPupilsApplicationService>()
-            .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, MapDecoratedSearchIndexDtoToPupilMapper>();
+            .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, AzureIndexEntityWithPupilTypeToPupilMapper>();
 
         return services;
     }

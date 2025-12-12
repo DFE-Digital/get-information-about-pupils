@@ -25,7 +25,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithLocalAuthorityCode(new LocalAuthorityCode(200))
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilModelMapper mapper = new();
 
         // Act
         MyPupilModel result = mapper.Map(pupil);
@@ -44,7 +44,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
     public void Map_ThrowsNull_If_Pupil_Is_Null()
     {
         Pupil? pupil = null;
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilModelMapper mapper = new();
 
         // Act
         Func<MyPupilModel> act = () => mapper.Map(pupil!);
@@ -61,7 +61,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithDateOfBirth(null!)
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilModelMapper mapper = new();
 
         // Act
         MyPupilModel result = mapper.Map(pupil);
@@ -78,7 +78,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithSex(null!)
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilModelMapper mapper = new();
 
         // Act
         MyPupilModel result = mapper.Map(pupil);
@@ -95,7 +95,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithPupilType(PupilType.NationalPupilDatabase)
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilModelMapper mapper = new();
 
         // Act
         MyPupilModel result = mapper.Map(pupil);
