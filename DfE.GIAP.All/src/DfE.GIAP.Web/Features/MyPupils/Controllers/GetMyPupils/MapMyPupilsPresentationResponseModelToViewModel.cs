@@ -31,6 +31,7 @@ public sealed class MapMyPupilsPresentationResponseModelToViewModel : IMapper<My
         {
             Pupils = source.MyPupils,
             PageNumber = source.PageNumber,
+            LastPageNumber = source.TotalPages,
             SortDirection = source.SortedDirection,
             SortField = source.SortedField,
             IsAnyPupilsSelected = source.IsAnyPupilsSelected,

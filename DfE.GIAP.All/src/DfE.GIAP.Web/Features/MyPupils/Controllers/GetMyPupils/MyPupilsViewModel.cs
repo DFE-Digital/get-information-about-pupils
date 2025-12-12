@@ -9,6 +9,7 @@ public record MyPupilsViewModel
     public bool IsAnyPupilsSelected { get; init; } = false;
     public string Error { get; init; } = string.Empty;
     public int PageNumber { get; init; } = 1;
+    public int LastPageNumber { get; init; } = 1;
     public string SortField { get; init; } = string.Empty;
     public string SortDirection { get; init; } = string.Empty;
     public MyPupilsPresentationPupilModels Pupils { get; init; }
@@ -20,5 +21,5 @@ public record MyPupilsViewModel
     public string UpdateFormAction => "Index";
     public string UniquePupilNumberLabel => "UPN";
     public bool DisplayPreviousPageNumber => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
-    public bool IsMorePageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
+    public bool DisplayNextPageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
 }

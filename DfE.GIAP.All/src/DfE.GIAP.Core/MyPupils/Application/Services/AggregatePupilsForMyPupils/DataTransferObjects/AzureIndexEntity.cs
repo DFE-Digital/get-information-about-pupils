@@ -18,10 +18,11 @@ public class AzureIndexEntity
 
     public string Forename { get; set; }
 
-    public string Sex { get; set; }
+#nullable enable
+    public string? Sex { get; set; }
 
-    public string Gender { get; set; }
-
+    public string? Gender { get; set; }
+#nullable disable
     public DateTime? DOB { get; set; }
 
     public string LocalAuthority { get; set; }

@@ -9,7 +9,6 @@ namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils
 internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
-    private const int DefaultPageSize = 20; // the maximum pupils returned for any query
     private readonly ISearchClientProvider _searchClientProvider;
     private readonly IMapper<AzureIndexEntityWithPupilType, Pupil> _mapper;
 
@@ -72,7 +71,6 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
         SearchOptions options = new()
         {
-            Size = DefaultPageSize,
             Filter = filter
         };
 
@@ -84,8 +82,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
         options.Select.Add("DOB");
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
-
-        // options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
+        //options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
 
         return options;
     }

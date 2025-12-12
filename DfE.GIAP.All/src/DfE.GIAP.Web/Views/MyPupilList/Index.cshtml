@@ -243,7 +243,8 @@
                             </fieldset>
                             <div>
                                 <ul class="pagination-list">
-                                    @if (Model.PageNumber != 1)
+                                    <!-- Previous page number -->
+                                    @if (Model.PageNumber > 1)
                                     {
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
@@ -270,6 +271,11 @@
                                     }
                                     @if (Model.DisplayPreviousPageNumber)
                                     {
+                                        if(Model.PageNumber > 3)
+                                        {
+                                            <li class="page-list-number-separator">...</li>
+                                        }
+
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
                                                     asp-action="@Model.UpdateFormAction"
@@ -282,8 +288,11 @@
                                             </button>
                                         </li>
                                     }
+
                                     <li>@Model.PageNumber</li>
-                                    @if (Model.IsMorePageAvailable)
+
+                                    <!-- Next page number -->
+                                    @if (Model.DisplayNextPageAvailable)
                                     {
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
@@ -296,6 +305,25 @@
                                                 @(Model.PageNumber + 1)
                                             </button>
                                         </li>
+                                        @if (Model.LastPageNumber > Model.PageNumber + 2)
+                                        {
+                                            <li class="page-list-number-separator">...</li>
+                                        }
+                                        <!-- Last page number available -->
+                                        @if (Model.LastPageNumber > Model.PageNumber + 1)
+                                        {
+                                            <li class="page-list-last">
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@(Model.LastPageNumber)"
+                                                        asp-route-sortField="@Model.SortField"
+                                                        asp-route-sortDirection="@Model.SortDirection"
+                                                        id="page-last"
+                                                        type="submit">
+                                                    @(Model.LastPageNumber)
+                                                </button>
+                                            </li>
+                                        }
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
                                                     asp-action="@Model.UpdateFormAction"

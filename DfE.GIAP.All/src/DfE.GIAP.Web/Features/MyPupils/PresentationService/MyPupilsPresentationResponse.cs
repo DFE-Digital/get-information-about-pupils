@@ -5,11 +5,12 @@ namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
 public record MyPupilsPresentationResponse
 {
     public MyPupilsPresentationResponse(
-        MyPupilsPresentationPupilModels pupils,
+        MyPupilsPresentationPupilModels currentPupils,
         MyPupilsPresentationQueryModel presentation,
-        MyPupilsPupilSelectionState selectionState)
+        MyPupilsPupilSelectionState selectionState,
+        int totalPupilCount)
     {
-        MyPupils = pupils ??
+        MyPupils = currentPupils ??
             MyPupilsPresentationPupilModels.Create([]);
 
         ArgumentNullException.ThrowIfNull(selectionState);
@@ -17,22 +18,25 @@ public record MyPupilsPresentationResponse
 
         PageNumber = presentation.Page.Value;
 
-        SortedDirection =
-            presentation.Sort.Direction == SortDirection.Ascending ? "asc" : "desc";
+        SortedDirection = presentation.Sort.Direction switch
+        {
+            SortDirection.Ascending => "asc",
+            SortDirection.Descending => "desc",
+            _ => string.Empty
+        };
 
         SortedField = presentation.Sort.Field;
 
         IsAnyPupilsSelected = selectionState.IsAnyPupilSelected;
+
+        TotalPages = totalPupilCount == 0 ? 1
+            : (int)Math.Ceiling(totalPupilCount / (double)presentation.PageSize);
     }
 
     public MyPupilsPresentationPupilModels MyPupils { get; }
     public int PageNumber { get; init; }
+    public int TotalPages { get; init; }
     public string SortedDirection { get; init; }
     public string SortedField { get; init; }
     public bool IsAnyPupilsSelected { get; init; }
-
-    public static MyPupilsPresentationResponse Create(
-        MyPupilsPresentationPupilModels pupils,
-        MyPupilsPresentationQueryModel presentation,
-        MyPupilsPupilSelectionState selectionState) => new(pupils, presentation, selectionState);
 }

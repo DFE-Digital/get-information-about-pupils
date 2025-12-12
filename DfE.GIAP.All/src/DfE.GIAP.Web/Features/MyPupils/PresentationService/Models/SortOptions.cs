@@ -7,9 +7,14 @@ public record SortOptions
         Field = string.IsNullOrWhiteSpace(sortField) ? string.Empty : sortField;
 
         Direction =
-            sortDirection is null ? SortDirection.Descending :
-                sortDirection.Equals("asc", StringComparison.OrdinalIgnoreCase)
-                    ? SortDirection.Ascending : SortDirection.Descending;
+            string.IsNullOrWhiteSpace(sortDirection) ?
+                SortDirection.None :
+                    sortDirection.ToLowerInvariant() switch
+                    {
+                        "asc" => SortDirection.Ascending,
+                        "desc" => SortDirection.Descending,
+                        _ => SortDirection.None
+                    };
     }
 
     public string Field { get; }

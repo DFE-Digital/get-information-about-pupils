@@ -76,19 +76,18 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             await _getMyPupilsUseCase.HandleRequestAsync(
                 new GetMyPupilsRequest(id.Value));
 
-        MyPupilsPresentationQueryModel updatedPresentationModel = new(query.PageNumber, query.SortField, query.SortDirection);
-
-        MyPupilsState currentState = new(updatedPresentationModel, selectionState);
+        MyPupilsPresentationQueryModel updatedPresentation = new(query.PageNumber, query.SortField, query.SortDirection);
 
         MyPupilsPresentationPupilModels handledPupilModels =
             _presentationHandler.Handle(
                 pupils: _mapper.Map(response.MyPupils),
-                state: currentState);
+                state: new MyPupilsState(updatedPresentation, selectionState));
 
-        return MyPupilsPresentationResponse.Create(
+        return new(
             handledPupilModels,
-            updatedPresentationModel,
-            selectionState);
+            updatedPresentation,
+            selectionState,
+            totalPupilCount: response.MyPupils.Count);
     }
 
     public async Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbers(string userId)

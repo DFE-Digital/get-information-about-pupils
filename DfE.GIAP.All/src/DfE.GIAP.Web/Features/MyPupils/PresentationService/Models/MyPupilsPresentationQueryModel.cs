@@ -10,6 +10,7 @@ public record MyPupilsPresentationQueryModel
 
     public PageNumber Page { get; }
     public SortOptions Sort { get; }
+    public int PageSize { get; } = 20;
     
-    public static MyPupilsPresentationQueryModel CreateDefault() => new(1, string.Empty, "desc");
+    public static MyPupilsPresentationQueryModel CreateDefault() => new(1, string.Empty, string.Empty);
 }
