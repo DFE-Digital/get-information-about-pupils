@@ -4,8 +4,7 @@
 /// </summary>
 public static class AzureSearchIndexExtensions
 {
-    public static SearchIndexOptions GetIndexOptions(
-    this AzureSearchOptions searchOptions, string searchIndexKey)
+    public static SearchIndexOptions GetIndexOptions(this AzureSearchOptions searchOptions, string searchIndexKey)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(searchIndexKey);
         ArgumentNullException.ThrowIfNull(searchOptions.Indexes);

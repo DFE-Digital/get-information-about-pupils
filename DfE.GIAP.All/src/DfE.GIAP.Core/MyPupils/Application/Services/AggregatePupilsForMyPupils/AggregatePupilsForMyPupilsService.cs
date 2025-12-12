@@ -1,10 +1,11 @@
 ﻿using Azure.Search.Documents;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Application.Services.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
+// TODO this COULD be replaced with a CosmosDb implementation to avoid what it previously used - AzureSearch
 internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA

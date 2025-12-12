@@ -1,26 +1,29 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
-using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options.Extensions;
-using DfE.GIAP.Core.MyPupils.Application.Services.Search.Provider;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
 using Microsoft.Extensions.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 internal sealed class SearchClientProvider : ISearchClientProvider
 {
-    private readonly SearchIndexOptions _searchOptions;
-    private readonly IEnumerable<SearchClient> _searchClients;
+    private readonly IReadOnlyList<SearchClient> _searchClients;
+    private readonly AzureSearchOptions _options;
 
     public SearchClientProvider(
         IEnumerable<SearchClient> searchClients,
-        IOptions<SearchIndexOptions> searchOptions)
+        IOptions<AzureSearchOptions> options)
     {
-        if (!searchClients.Any())
+        if (searchClients is null || !searchClients.Any())
         {
-            throw new ArgumentException("No search clients registered");
+            throw new ArgumentException("Search clients cannot be null or empty");
         }
-        _searchClients = searchClients;
-        _searchOptions = searchOptions.Value;
+
+        _searchClients = searchClients.ToList().AsReadOnly();
+
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Value);
+        _options = options.Value;
     }
 
     public async Task<List<TResult>> InvokeSearchAsync<TResult>(
@@ -53,7 +56,7 @@ internal sealed class SearchClientProvider : ISearchClientProvider
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(clientKey);
 
-        string indexNameFromOptions = _searchOptions.GetIndexOptionsByName(clientKey).Name;
-        return _searchClients.Single((t) => t.IndexName == indexNameFromOptions);
+        string indexName = _options.GetIndexOptions(clientKey).SearchIndex;
+        return _searchClients.Single((t) => t.IndexName == indexName);
     }
 }
