@@ -2,7 +2,7 @@
 using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 using DfE.GIAP.Web.Features.MyPupils.State.Models;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Microsoft.AspNetCore.Http;

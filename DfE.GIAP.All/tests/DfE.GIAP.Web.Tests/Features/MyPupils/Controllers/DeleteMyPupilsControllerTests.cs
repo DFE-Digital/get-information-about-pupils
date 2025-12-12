@@ -7,7 +7,7 @@ using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 using Microsoft.AspNetCore.Http;

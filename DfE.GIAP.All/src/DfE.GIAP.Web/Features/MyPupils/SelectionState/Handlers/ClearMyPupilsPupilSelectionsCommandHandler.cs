@@ -1,7 +1,6 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
-using DfE.GIAP.Web.Session.Abstraction.Command;
+﻿using DfE.GIAP.Web.Session.Abstraction.Command;
 
-namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
+namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 
 public sealed class ClearMyPupilsPupilSelectionsCommandHandler : IClearMyPupilsPupilSelectionsCommandHandler
 {

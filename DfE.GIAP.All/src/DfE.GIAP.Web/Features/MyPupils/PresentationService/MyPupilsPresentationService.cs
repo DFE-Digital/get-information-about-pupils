@@ -7,8 +7,7 @@ using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService

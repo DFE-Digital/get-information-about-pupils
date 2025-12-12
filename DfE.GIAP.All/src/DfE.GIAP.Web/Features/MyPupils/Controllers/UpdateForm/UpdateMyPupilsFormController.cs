@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Command;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;

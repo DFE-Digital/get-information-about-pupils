@@ -10,7 +10,7 @@ using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Query;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.ViewModels.Search;

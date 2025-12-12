@@ -16,6 +16,7 @@ public abstract class AggregateRoot<TIdentifier> : Entity<TIdentifier>, IAggrega
     /// </param>
     protected AggregateRoot(TIdentifier identifier) : base(identifier)
     {
+        ArgumentNullException.ThrowIfNull(identifier);
     }
 
     /// <summary>
