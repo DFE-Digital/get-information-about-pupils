@@ -5,7 +5,6 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.SharedTests.Extensions;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
@@ -35,8 +34,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             (client) => client.ClearDatabaseAsync());
 
         services
-            .AddMyPupilsCore()
-            .ConfigureAzureSearchClients();
+            .AddMyPupilsCore();
     }
 
     [Fact]
