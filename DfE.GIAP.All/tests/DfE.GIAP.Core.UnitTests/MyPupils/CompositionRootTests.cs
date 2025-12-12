@@ -6,7 +6,6 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Application.Services.Search.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
@@ -42,13 +41,14 @@ public sealed class CompositionRootTests
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
             .WithSearchIndexOptions()
+            .WithAzureSearchConnectionOptions()
             .Build();
 
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
+                .AddSharedApplicationServices()
                 .AddSearchDependencies(configuration)
                 .AddCosmosDbDependencies()
-                .AddSharedApplicationServices()
                 .AddMyPupilsCore();
 
         // Act
@@ -58,13 +58,15 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider);
 
         Assert.NotNull(provider.GetService<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>());
+        Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilModel>>());
+
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>());
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>());
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<DeleteAllMyPupilsRequest>>());
 
         Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsApplicationService>());
         Assert.NotNull(provider.GetService<IMapper<AzureIndexEntityWithPupilType, Pupil>>());
-        Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilModel>>());
+        
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>>());
@@ -73,6 +75,5 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<ISearchClientProvider>());
         Assert.NotNull(provider.GetService<IEnumerable<SearchClient>>());
-        Assert.NotNull(provider.GetService<IOptions<SearchIndexOptions>>());
     }
 }

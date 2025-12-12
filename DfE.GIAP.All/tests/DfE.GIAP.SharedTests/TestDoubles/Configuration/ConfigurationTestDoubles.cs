@@ -70,6 +70,14 @@ public static class ConfigurationTestDoubles
             ["AzureSearchOptions:Indexes:further-education:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
             ["AzureSearchOptions:Indexes:further-education:Size"] = "40000",                  // Max number of results
             ["AzureSearchOptions:Indexes:further-education:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["AzureSearchOptions:Indexes:npd:SearchIndex"] = "NPD_INDEX_NAME",
+            ["AzureSearchOptions:Indexes:npd:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["AzureSearchOptions:Indexes:npd:Size"] = "40000",                  // Max number of results
+            ["AzureSearchOptions:Indexes:npd:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["AzureSearchOptions:Indexes:pupil-premium:SearchIndex"] = "PUPILPREMIUM_INDEX_NAME",
+            ["AzureSearchOptions:Indexes:pupil-premium:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["AzureSearchOptions:Indexes:pupil-premium:Size"] = "40000",                  // Max number of results
+            ["AzureSearchOptions:Indexes:pupil-premium:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);

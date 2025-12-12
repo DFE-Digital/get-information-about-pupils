@@ -62,7 +62,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
     [Fact]
     public async Task HandleAsync_DeletesAllPupils()
     {
-        MyPupilsId id = new("id");
+        MyPupilsId id = MyPupilsIdTestDoubles.Default();
 
         MyPupilsAggregate myPupilsAggregate =
             MyPupilsAggregateTestDoubles.Create(
@@ -79,7 +79,7 @@ public sealed class DeleteAllMyPupilsUseCaseTests
         await sut.HandleRequestAsync(
             new DeleteAllMyPupilsRequest(id.Value));
 
-        readRepoMock.Verify(t => t.GetMyPupilsOrDefaultAsync(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
+        readRepoMock.Verify(t => t.GetMyPupilsOrDefaultAsync(It.Is<MyPupilsId>(t => t.Value.Equals(id.Value))), Times.Once);
         writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
         Assert.Equal(0, myPupilsAggregate.PupilCount);
