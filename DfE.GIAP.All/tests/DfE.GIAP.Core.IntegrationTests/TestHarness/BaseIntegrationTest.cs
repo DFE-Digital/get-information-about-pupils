@@ -32,8 +32,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _serviceDescriptors
-            .AddSharedApplicationServices()
-            .ConfigureAzureSearchClients();
+            .AddSharedApplicationServices();
 
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
 
