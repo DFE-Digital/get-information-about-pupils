@@ -20,7 +20,6 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;

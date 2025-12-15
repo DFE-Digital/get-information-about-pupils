@@ -15,10 +15,10 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
     private readonly WireMockServerFixture _searchIndexFixture;
 
-    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
+    public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;
