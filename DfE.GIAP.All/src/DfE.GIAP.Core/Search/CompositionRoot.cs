@@ -42,11 +42,9 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(configuration);
 
         // Bind Azure Search configuration options.
-        services.AddOptions<AzureSearchOptions>()
-            .Configure<IConfiguration>((settings, configuration) =>
-                configuration
-                    .GetSection(nameof(AzureSearchOptions))
-                    .Bind(settings));
+        services
+            .AddOptions<AzureSearchOptions>()
+            .Bind(configuration.GetSection(nameof(AzureSearchOptions)));
 
         // Register core search services and mappers.
         services
@@ -87,12 +85,10 @@ public static class CompositionRoot
         services.AddAzureSearchFilterServices(configuration);
 
         // Bind search criteria configuration options.
-        services.AddOptions<SearchCriteria>()
-            .Configure<IConfiguration>((settings, configuration) =>
-                configuration
-                    .GetSection(nameof(SearchCriteria))
-                    .Bind(settings));
-
+        services
+            .AddOptions<SearchCriteria>()
+            .Bind(configuration.GetSection(nameof(SearchCriteria)));
+            
         // Bind the SortField configuration options.
         services
             .Configure<SortFieldOptions>(

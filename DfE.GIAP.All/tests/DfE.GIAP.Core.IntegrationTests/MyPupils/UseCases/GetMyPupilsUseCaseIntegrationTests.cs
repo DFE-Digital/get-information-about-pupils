@@ -1,3 +1,5 @@
+using System.Configuration;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
@@ -5,11 +7,15 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
+using DfE.GIAP.SharedTests.TestDoubles.Configuration;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
+using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
@@ -17,6 +23,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly GiapCosmosDbFixture _cosmosDbFixture;
     private readonly WireMockServerFixture _searchIndexFixture;
+    private const string MyPupilsContainerName = "mypupils";
 
     public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
     {
@@ -32,6 +39,20 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
+
+        IConfiguration indexConfiguration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+                .WithAzureSearchOptions()
+                .WithAzureSearchConnectionOptions()
+                .Build();
+
+        services
+            .AddOptions<AzureSearchOptions>()
+            .Bind(indexConfiguration.GetSection(nameof(AzureSearchOptions)));
+
+        services
+            .AddOptions<AzureSearchConnectionOptions>()
+            .Bind(indexConfiguration.GetSection(nameof(AzureSearchConnectionOptions)));
 
         services
             .AddMyPupilsCore();
@@ -53,10 +74,14 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
 
         AzureSearchPostDto npdResponse =
-            stubbedResponses.GetResponseByKey("npd").GetResponseBody<AzureSearchPostDto>()!;
+            stubbedResponses
+                .GetResponseByKey("npd")
+                .GetResponseBody<AzureSearchPostDto>()!;
 
         AzureSearchPostDto pupilPremiumResponse =
-            stubbedResponses.GetResponseByKey("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
+            stubbedResponses
+                .GetResponseByKey("pupil-premium")
+                .GetResponseBody<AzureSearchPostDto>()!;
 
         List<UniquePupilNumber> allPupilUpns = npdResponse.value!
             .Select(t => t.UPN)
@@ -72,8 +97,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
-            (client) => client.WriteItemAsync(
-                containerName: "mypupils", value: myPupilsDocument));
+            (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, myPupilsDocument));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -124,7 +148,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
-            (client) => client.WriteItemAsync(containerName: "mypupils", document));
+            (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, document));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =

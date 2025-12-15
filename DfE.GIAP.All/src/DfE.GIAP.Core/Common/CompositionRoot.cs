@@ -11,11 +11,13 @@ public static class CompositionRoot
     public static IServiceCollection AddFeaturesSharedDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-        services.AddCosmosDbDependencies();
-        services.TryAddEnumerable(new ServiceDescriptor(typeof(IEnumerable<ITextSanitiserHandler>), Array.Empty<ITextSanitiserHandler>()));
-        services.AddSingleton<ITextSanitiserInvoker, TextSanitisationInvoker>();
 
-        services.AddCrossCuttingLoggingDependencies();
+        services
+            .AddCosmosDbDependencies()
+            .AddCrossCuttingLoggingDependencies();
+
+        services.TryAddEnumerable(new ServiceDescriptor(typeof(IEnumerable<ITextSanitiserHandler>), Array.Empty<ITextSanitiserHandler>()));
+        services.TryAddSingleton<ITextSanitiserInvoker, TextSanitisationInvoker>();
 
         return services;
     }

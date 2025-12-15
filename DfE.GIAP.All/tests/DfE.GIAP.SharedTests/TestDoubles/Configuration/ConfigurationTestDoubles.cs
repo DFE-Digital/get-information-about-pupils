@@ -30,23 +30,6 @@ public static class ConfigurationTestDoubles
         return builder;
     }
 
-    // TODO migrate to using AzureSearchIndexOptions
-    public static IConfigurationBuilder WithSearchIndexOptions(this IConfigurationBuilder builder)
-    {
-        Dictionary<string, string?> searchIndexStubConfig = new()
-        {
-            ["SearchIndexOptions:Url"] = "https://localhost:8443",
-            ["SearchIndexOptions:Key"] = "ANY_KEY",
-            ["SearchIndexOptions:Indexes:npd:Name"] = "NPD_INDEX_NAME",
-            ["SearchIndexOptions:Indexes:pupil-premium:Name"] = "PUPIL_PREMIUM_INDEX_NAME",
-            ["SearchIndexOptions:Indexes:further-education:Name"] = "FE_INDEX_NAME",
-        };
-
-        builder.AddInMemoryCollection(searchIndexStubConfig);
-
-        return builder;
-    }
-
     public static IConfigurationBuilder WithAzureSearchConnectionOptions(this IConfigurationBuilder builder)
     {
         Dictionary<string, string?> searchConnectionStubConfig = new()
@@ -74,7 +57,7 @@ public static class ConfigurationTestDoubles
             ["AzureSearchOptions:Indexes:npd:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
             ["AzureSearchOptions:Indexes:npd:Size"] = "40000",                  // Max number of results
             ["AzureSearchOptions:Indexes:npd:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["AzureSearchOptions:Indexes:pupil-premium:SearchIndex"] = "PUPILPREMIUM_INDEX_NAME",
+            ["AzureSearchOptions:Indexes:pupil-premium:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
             ["AzureSearchOptions:Indexes:pupil-premium:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
             ["AzureSearchOptions:Indexes:pupil-premium:Size"] = "40000",                  // Max number of results
             ["AzureSearchOptions:Indexes:pupil-premium:IncludeTotalCount"] = "true",      // Whether to include result count

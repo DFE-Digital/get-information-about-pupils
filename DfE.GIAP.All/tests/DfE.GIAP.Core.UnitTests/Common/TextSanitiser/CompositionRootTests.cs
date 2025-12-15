@@ -12,7 +12,7 @@ public sealed class CompositionRootTests
     {
         // Arrange
         IServiceCollection services = ServiceCollectionTestDoubles.Default()
-            .AddSharedApplicationServices()
+            .AddAspNetCoreRuntimeProvidedServices()
             .AddFeaturesSharedDependencies();
 
         // Act

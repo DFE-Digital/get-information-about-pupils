@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
@@ -27,14 +28,15 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedApplicationServices();
+        IServiceCollection services =   
+            ServiceCollectionTestDoubles.Default()
+                .AddGiapSharedServices()
+                .AddNewsArticleDependencies();
 
         // Act
-        IServiceCollection registeredServices = CompositionRoot.AddNewsArticleDependencies(services);
-        IServiceProvider provider = registeredServices.BuildServiceProvider();
+        IServiceProvider provider = services.BuildServiceProvider();
 
         // Assert
-        Assert.NotNull(registeredServices);
         Assert.NotNull(provider);
 
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>());
@@ -46,7 +48,5 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IMapper<NewsArticleDto, NewsArticle>>());
         Assert.NotNull(provider.GetService<INewsArticleReadOnlyRepository>());
         Assert.NotNull(provider.GetService<INewsArticleWriteOnlyRepository>());
-
-        Assert.NotNull(provider.GetService<ITextSanitiserInvoker>());
     }
 }

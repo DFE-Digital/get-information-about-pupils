@@ -1,5 +1,5 @@
 ﻿using Azure.Search.Documents;
-using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
@@ -14,7 +14,7 @@ using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
-using DfE.GIAP.Core.Search;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Configuration;
@@ -39,16 +39,29 @@ public sealed class CompositionRootTests
         // Arrange
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
-            .WithSearchIndexOptions()
-            .WithAzureSearchConnectionOptions()
-            .Build();
+                .WithAzureSearchConnectionOptions()
+                .WithAzureSearchOptions()
+                .Build();
 
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddSharedApplicationServices()
-                .AddSearchDependencies(configuration)
-                .AddCosmosDbDependencies()
-                .AddMyPupilsCore();
+                .AddAspNetCoreRuntimeProvidedServices()
+                .AddGiapSharedServices(configuration);
+
+        // TODO TEMP while the dependency on AzureSearch for MyPupils exists
+        services.AddOptions<AzureSearchOptions>()
+            .Configure<IConfiguration>((settings, configuration) =>
+                configuration
+                    .GetSection(nameof(AzureSearchOptions))
+                    .Bind(settings));
+
+        services.AddOptions<AzureSearchConnectionOptions>()
+            .Configure<IConfiguration>((settings, configuration) =>
+                configuration
+                    .GetSection(nameof(AzureSearchConnectionOptions))
+                    .Bind(settings));
+
+        services.AddMyPupilsCore();
 
         // Act
         IServiceProvider provider = services.BuildServiceProvider();
