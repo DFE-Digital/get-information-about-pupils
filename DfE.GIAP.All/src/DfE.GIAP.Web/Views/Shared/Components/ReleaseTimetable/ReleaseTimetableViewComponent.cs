@@ -40,8 +40,8 @@ public class ReleaseTimetableViewComponent : ViewComponent
     {
         ReleaseTimetableViewModel model = new()
         {
-            SchoolCensusData = new List<SchoolCensusDataViewModel>
-            {
+            SchoolCensusData =
+            [
                 new SchoolCensusDataViewModel
                 {
                     AcademicYear = "2025-26",
@@ -56,11 +56,11 @@ public class ReleaseTimetableViewComponent : ViewComponent
                 {
                     AcademicYear = "2024-25",
                     AutumnCensus = true,
-                    SpringCensus = false,
-                    SummerCensus = false,
+                    SpringCensus = true,
+                    SummerCensus = true,
                     PupilPremium = true,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    DisadvantagePremium16To18 = true,
+                    Sen16To18 = true
                 },
                 new SchoolCensusDataViewModel
                 {
@@ -152,9 +152,20 @@ public class ReleaseTimetableViewComponent : ViewComponent
                     DisadvantagePremium16To18 = false,
                     Sen16To18 = false
                 },
-            },
-            AttainmentData = new List<AttainmentDataViewModel>
-            {
+            ],
+            AttainmentData =
+            [
+                new AttainmentDataViewModel
+                {
+                    AcademicYear = "2024-25",
+                    KeyStage1 = false,
+                    KeyStage2 = false,
+                    KeyStage4 = false,
+                    EYFSP = true,
+                    Phonics = false,
+                    PhonicsAutumnY2 = false,
+                    MTC = true
+                },
                 new AttainmentDataViewModel
                 {
                     AcademicYear = "2023-24",
@@ -162,7 +173,7 @@ public class ReleaseTimetableViewComponent : ViewComponent
                     KeyStage2 = true,
                     KeyStage4 = true,
                     EYFSP = true,
-                    Phonics = false,
+                    Phonics = true,
                     PhonicsAutumnY2 = true,
                     MTC = true
                 },
@@ -364,7 +375,7 @@ public class ReleaseTimetableViewComponent : ViewComponent
                     PhonicsAutumnY2 = false,
                     MTC = false
                 },
-            }
+            ]
         };
 
         return View(model);
