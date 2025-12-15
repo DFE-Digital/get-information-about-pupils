@@ -13,7 +13,8 @@ public class SessionProvider : ISessionProvider
     }
 
     private ISession Session => _httpContextAccessor.HttpContext?.Session
-        ?? throw new InvalidOperationException("HttpContext or Session is not available. Make sure session middleware is properly configured.");
+        ?? throw new InvalidOperationException(
+            "HttpContext or Session is not available. Make sure session middleware is properly configured.");
 
     public void SetSessionValue(string key, string value)
     {
@@ -28,13 +29,13 @@ public class SessionProvider : ISessionProvider
         Session.SetString(key, json);
     }
 
-    public string? GetSessionValue(string key)
+    public string GetSessionValue(string key)
     {
         ArgumentException.ThrowIfNullOrEmpty(key);
         return Session.GetString(key);
     }
 
-    public T? GetSessionValueOrDefault<T>(string key)
+    public T GetSessionValueOrDefault<T>(string key)
     {
         string json = GetSessionValue(key);
         return json == null ? default(T) : JsonSerializer.Deserialize<T>(json);
