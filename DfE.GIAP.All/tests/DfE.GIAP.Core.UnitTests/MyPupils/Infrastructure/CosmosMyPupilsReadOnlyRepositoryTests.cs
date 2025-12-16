@@ -1,11 +1,13 @@
 ﻿using System.Net;
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
@@ -21,12 +23,14 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Arrange
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
 
 
         Func<CosmosDbMyPupilsReadOnlyRepository> construct = () => new(
             logger: null!,
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
-            options);
+            options,
+            mapperMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -40,27 +44,53 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
+
         Func<CosmosDbMyPupilsReadOnlyRepository> construct = () => new(
             logger: mockLogger,
             cosmosDbQueryHandler: null!,
-            options);
+            options,
+            mapperMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
 
     [Fact]
-    public void Constructor_ThrowsArgumentNullException_When_MapperIsNull()
+    public void Constructor_ThrowsArgumentNullException_When_Options_IsNull()
     {
         // Arrange
         InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
+
         Func<CosmosDbMyPupilsReadOnlyRepository> construct = () => new(
             logger: mockLogger,
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
-            myPupilsOptions: null!);
+            myPupilsOptions: null!,
+            mapperMock.Object);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_ThrowsArgumentNullException_When_Mapper_IsNull()
+    {
+        // Arrange
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+
+        Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
+
+        IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
+
+        Func<CosmosDbMyPupilsReadOnlyRepository> construct = () => new(
+            logger: mockLogger,
+            cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
+            myPupilsOptions: options,
+            null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -70,7 +100,6 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     public async Task GetMyPupilsAsync_Throws_When_NonCosmosExceptionOccurs()
     {
         // Arrange
-
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw new Exception("test exception"));
@@ -79,10 +108,13 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
+
         CosmosDbMyPupilsReadOnlyRepository repository = new(
             logger: mockLogger,
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
-            myPupilsOptions: options);
+            myPupilsOptions: options,
+            mapToUniquePupilNumbers: mapperMock.Object);
 
         // Act & Assert
 
@@ -102,10 +134,13 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
+
         CosmosDbMyPupilsReadOnlyRepository repository = new(
             logger: mockLogger,
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
-            myPupilsOptions: options);
+            myPupilsOptions: options,
+            mapToUniquePupilNumbers: mapperMock.Object);
 
         // Act Assert
         MyPupilsAggregate? response = await repository.GetMyPupilsOrDefaultAsync(id: MyPupilsIdTestDoubles.Default());
@@ -126,10 +161,13 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
+
         CosmosDbMyPupilsReadOnlyRepository repository = new(
             logger: mockLogger,
             cosmosDbQueryHandler: mockCosmosDbQueryHandler.Object,
-            myPupilsOptions: options);
+            myPupilsOptions: options,
+            mapperMock.Object);
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
@@ -159,21 +197,26 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Default();
 
+        List<string> existingPupilsOnDocument = myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN).ToList();
+
         Mock<ICosmosDbQueryHandler> cosmosDbQueryHandlerMock =
             CosmosDbQueryHandlerTestDoubles.MockForTryReadById(() => myPupilsDocumentDto);
+
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock =
+            MapperTestDoubles.MockFor<IEnumerable<string>, UniquePupilNumbers>(stub: upns);
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
         CosmosDbMyPupilsReadOnlyRepository sut = new(
             logger: mockLogger,
             cosmosDbQueryHandler: cosmosDbQueryHandlerMock.Object,
-            myPupilsOptions: options);
+            myPupilsOptions: options,
+            mapToUniquePupilNumbers: mapperMock.Object);
 
         // Act
         MyPupilsAggregate? response = await sut.GetMyPupilsOrDefaultAsync(myPupilsId);
 
         // Assert
-
         Assert.NotNull(response);
         Assert.Equivalent(response, myPupils);
         
@@ -183,5 +226,10 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
                 "mypupils",
                 myPupilsId.Value,
                 It.IsAny<CancellationToken>()), Times.Once);
+
+        mapperMock.Verify(
+            (mapper) => mapper.Map(
+                It.Is<IEnumerable<string>>(
+                    (ups)=> ups.SequenceEqual(existingPupilsOnDocument))), Times.Once);
     }
 }

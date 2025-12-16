@@ -1,6 +1,5 @@
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
@@ -22,7 +21,6 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         _cosmosDbFixture = cosmosDbFixture;
     }
 
-    private sealed record MyPupilsTestContext(string MyPupilsId, List<string> MyPupilUpns);
     protected async override Task OnInitializeAsync(IServiceCollection services)
     {
         await _cosmosDbFixture.InvokeAsync(
@@ -45,7 +43,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         MyPupilsDocumentDto myPupilsDocument =
             MyPupilsDocumentDtoTestDoubles.Create(
                 myPupilId,
-                UniquePupilNumbers.Create(myPupilsUpns.ToUniquePupilNumbers()));
+                UniquePupilNumbers.Create(
+                    myPupilsUpns.Select(t => new UniquePupilNumber(t))));
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
@@ -54,7 +53,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         _testContext = new MyPupilsTestContext(myPupilId.Value, myPupilsUpns);
     }
 
-    
+    private sealed record MyPupilsTestContext(string MyPupilsId, List<string> MyPupilUpns);
+
     [Fact]
     public async Task DeletePupilsFromMyPupils_DeletesAPupil_When_Identifier_Is_Part_Of_MyPupils()
     {

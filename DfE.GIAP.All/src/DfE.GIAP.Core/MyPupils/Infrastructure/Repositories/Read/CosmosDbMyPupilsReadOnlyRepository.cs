@@ -1,5 +1,4 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -15,21 +14,26 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
     private readonly ILogger<CosmosDbMyPupilsReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
     private readonly MyPupilsOptions _myPupilsOptions;
+    private readonly IMapper<IEnumerable<string>, UniquePupilNumbers> _mapToUniquePupilNumbers;
 
     public CosmosDbMyPupilsReadOnlyRepository(
         ILogger<CosmosDbMyPupilsReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IOptions<MyPupilsOptions> myPupilsOptions)
+        IOptions<MyPupilsOptions> myPupilsOptions,
+        IMapper<IEnumerable<string>, UniquePupilNumbers> mapToUniquePupilNumbers)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
 
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
-
+        
         ArgumentNullException.ThrowIfNull(myPupilsOptions);
         ArgumentNullException.ThrowIfNull(myPupilsOptions.Value);
         _myPupilsOptions = myPupilsOptions.Value;
+
+        ArgumentNullException.ThrowIfNull(mapToUniquePupilNumbers);
+        _mapToUniquePupilNumbers = mapToUniquePupilNumbers;
     }
 
     public async Task<MyPupilsAggregate?> GetMyPupilsOrDefaultAsync(MyPupilsId id)
@@ -50,13 +54,14 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
                 return null;
             }
 
-            IEnumerable<UniquePupilNumber> myPupils =
-                myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN).ToUniquePupilNumbers();
+            UniquePupilNumbers myPupils =
+                _mapToUniquePupilNumbers.Map(
+                    myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN));
 
             return new MyPupilsAggregate(
-                    id,
-                    UniquePupilNumbers.Create(myPupils),
-                    _myPupilsOptions.PupilsLimit);
+                id,
+                myPupils,
+                _myPupilsOptions.PupilsLimit);
         }
         catch (CosmosException ex)
         {

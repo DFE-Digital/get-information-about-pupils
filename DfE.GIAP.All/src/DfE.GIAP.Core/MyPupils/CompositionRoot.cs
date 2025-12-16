@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
@@ -9,6 +10,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
@@ -34,6 +36,7 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsApplication(this IServiceCollection services)
     {
         services
+            .AddSingleton<IMapper<IEnumerable<string>, UniquePupilNumbers>, UniquePupilNumbersMapper>()
             // UseCases
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddSingleton<IMapper<Pupil, MyPupilModel>, PupilToMyPupilModelMapper>()

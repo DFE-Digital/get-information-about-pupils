@@ -29,8 +29,8 @@ public static class MyPupilsDocumentDtoTestDoubles
     public static MyPupilsDocumentDto Default()
     {
         return Create(
-                MyPupilsIdTestDoubles.Default(),
-                UniquePupilNumbers.Create(
+                id: MyPupilsIdTestDoubles.Default(),
+                upns: UniquePupilNumbers.Create(
                     uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 10))
             );
     }

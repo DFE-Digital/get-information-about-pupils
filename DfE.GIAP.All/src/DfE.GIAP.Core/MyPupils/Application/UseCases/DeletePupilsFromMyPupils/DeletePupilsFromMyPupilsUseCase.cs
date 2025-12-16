@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application.Models;
@@ -9,16 +8,21 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IMyPupilsWriteOnlyRepository _myPupilsWriteOnlyRepository;
+    private readonly IMapper<IEnumerable<string>, UniquePupilNumbers> _mapToUniquePupilNumbers;
 
     public DeletePupilsFromMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
-        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository)
+        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository,
+        IMapper<IEnumerable<string>, UniquePupilNumbers> mapToUniquePupilNumbers)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
 
         ArgumentNullException.ThrowIfNull(myPupilsWriteOnlyRepository);
         _myPupilsWriteOnlyRepository = myPupilsWriteOnlyRepository;
+
+        ArgumentNullException.ThrowIfNull(mapToUniquePupilNumbers);
+        _mapToUniquePupilNumbers = mapToUniquePupilNumbers;
     }
 
     public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
@@ -37,8 +41,7 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
         }
 
         myPupils.DeletePupils(
-            UniquePupilNumbers.Create(
-                uniquePupilNumbers: request.DeletePupilUpns.ToUniquePupilNumbers()));
+            _mapToUniquePupilNumbers.Map(request.DeletePupilUpns));
 
         await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupils);
     }
