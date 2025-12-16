@@ -1,12 +1,13 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 
-namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+namespace DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 public sealed class MyPupilDtoBuilder
 {
     private const string DATE_OF_BIRTH_FORMAT = "yyyy-MM-dd";
-    private static readonly Faker<MyPupilModel> s_faker = MyPupilDtosTestDoubles.CreateGenerator();
+    private static readonly Faker<MyPupilModel> s_faker = MyPupilModelTestDoubles.CreateGenerator();
 
     private UniquePupilNumber? _uniquePupilNumber;
     private string? _forename;

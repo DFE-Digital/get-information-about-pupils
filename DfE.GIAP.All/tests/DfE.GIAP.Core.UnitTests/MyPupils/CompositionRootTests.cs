@@ -15,9 +15,8 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
-using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.Configuration;
+using DfE.GIAP.SharedTests.Runtime;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
@@ -45,8 +44,8 @@ public sealed class CompositionRootTests
 
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddAspNetCoreRuntimeProvidedServices()
-                .AddGiapSharedServices(configuration);
+                .AddAspNetCoreRuntimeProvidedServices(configuration)
+                .AddFeaturesSharedServices();
 
         // TODO TEMP while the dependency on AzureSearch for MyPupils exists
         services.AddOptions<AzureSearchOptions>()

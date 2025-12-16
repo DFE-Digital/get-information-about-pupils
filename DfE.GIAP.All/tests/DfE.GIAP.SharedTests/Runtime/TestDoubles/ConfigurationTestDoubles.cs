@@ -1,4 +1,4 @@
-namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
+namespace DfE.GIAP.SharedTests.Runtime.TestDoubles;
 
 public static class ConfigurationTestDoubles
 {

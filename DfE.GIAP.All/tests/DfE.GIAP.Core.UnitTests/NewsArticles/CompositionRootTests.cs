@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
@@ -7,8 +6,8 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
@@ -30,7 +29,8 @@ public sealed class CompositionRootTests
         // Arrange
         IServiceCollection services =   
             ServiceCollectionTestDoubles.Default()
-                .AddGiapSharedServices()
+                .AddAspNetCoreRuntimeProvidedServices()
+                .AddFeaturesSharedServices()
                 .AddNewsArticleDependencies();
 
         // Act

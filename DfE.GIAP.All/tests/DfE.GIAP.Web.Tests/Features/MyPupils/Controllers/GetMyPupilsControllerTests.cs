@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.SharedTests.TestDoubles;
+﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;

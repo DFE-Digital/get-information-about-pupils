@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.SharedTests.TestDoubles;
+﻿namespace DfE.GIAP.SharedTests.Common;
 public static class DateTimeTestDoubles
 {
     public static DateTime GenerateFor(int year, int month, int day)

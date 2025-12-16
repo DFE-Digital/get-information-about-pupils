@@ -1,9 +1,12 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
+using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-public static class MyPupilDtosTestDoubles
+namespace DfE.GIAP.SharedTests.Features.MyPupils.Application;
+public static class MyPupilModelTestDoubles
 {
     public static MyPupilsModel Generate(int count)
     {

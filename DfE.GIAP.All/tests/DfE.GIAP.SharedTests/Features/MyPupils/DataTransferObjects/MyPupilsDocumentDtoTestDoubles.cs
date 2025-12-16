@@ -1,7 +1,9 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
+using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+namespace DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 public static class MyPupilsDocumentDtoTestDoubles
 {
     public static MyPupilsDocumentDto Create(MyPupilsId id, UniquePupilNumbers upns)

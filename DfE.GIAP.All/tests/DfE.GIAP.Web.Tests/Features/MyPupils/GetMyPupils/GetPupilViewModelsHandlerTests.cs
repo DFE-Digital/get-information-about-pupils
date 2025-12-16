@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
@@ -73,7 +73,7 @@ public sealed class GetPupilViewModelsHandlerTests
     {
         // Arrange
 
-        MyPupilsModel stubMyPupilsModel = MyPupilDtosTestDoubles.Generate(count: 1);
+        MyPupilsModel stubMyPupilsModel = MyPupilModelTestDoubles.Generate(count: 1);
         GetMyPupilsResponse useCaseResponseStub = new(stubMyPupilsModel);
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 

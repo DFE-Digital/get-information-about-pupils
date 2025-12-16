@@ -6,8 +6,9 @@ using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
+using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class GetMyPupilsUseCaseTests
@@ -30,7 +31,7 @@ public sealed class GetMyPupilsUseCaseTests
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
         Mock<IMapper<Pupil, MyPupilModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilModel>();
-        MyPupilsModel myPupilDtos = MyPupilDtosTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
+        MyPupilsModel myPupilDtos = MyPupilModelTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 

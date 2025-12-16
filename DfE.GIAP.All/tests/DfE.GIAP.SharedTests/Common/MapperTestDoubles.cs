@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using Moq;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.Common;
 
 public static class MapperTestDoubles
 {

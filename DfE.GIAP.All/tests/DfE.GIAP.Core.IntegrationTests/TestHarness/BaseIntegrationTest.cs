@@ -1,5 +1,5 @@
-using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 
@@ -32,7 +32,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     {
         _serviceDescriptors
             .AddAspNetCoreRuntimeProvidedServices()
-            .AddGiapSharedServices();
+            .AddFeaturesSharedServices();
 
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
 

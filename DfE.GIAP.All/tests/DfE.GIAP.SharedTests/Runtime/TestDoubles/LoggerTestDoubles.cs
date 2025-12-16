@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.SharedTests.TestDoubles;
+namespace DfE.GIAP.SharedTests.Runtime.TestDoubles;
 
 // TODO: Remove once phased out ILogger in favor of ILoggerService
 public static class LoggerTestDoubles

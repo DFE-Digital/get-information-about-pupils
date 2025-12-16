@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
+using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.GetMyPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
@@ -77,7 +78,7 @@ public sealed class PupilsSelectionContextToMyPupilsPresentationModelMapperTests
     public void Map_Maps_With_MappingApplied_For_IsPupilSelected()
     {
         // Arrange
-        MyPupilsModel createdPupils = MyPupilDtosTestDoubles.Generate(count: 2);
+        MyPupilsModel createdPupils = MyPupilModelTestDoubles.Generate(count: 2);
 
 
         MyPupilsModelToMyPupilsPresentationPupilModel sut = new();

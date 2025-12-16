@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
@@ -50,7 +50,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 1);
 
-        MyPupilsModel inputPupils = MyPupilDtosTestDoubles.Generate(count: pupilCount);
+        MyPupilsModel inputPupils = MyPupilModelTestDoubles.Generate(count: pupilCount);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
@@ -68,7 +68,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 2);
 
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
@@ -89,7 +89,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: pageRequested);
 
         int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: inputPupilCount);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: inputPupilCount);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
@@ -16,7 +16,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey: string.Empty);
 
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 10);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: 10);
 
         OrderMyPupilsModelPresentationHandler sut = new();
 
@@ -52,7 +52,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: 20);
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
@@ -79,7 +79,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: 20);
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
@@ -106,7 +106,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel state = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: 20);
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
@@ -133,7 +133,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilsModel pupils = MyPupilDtosTestDoubles.Generate(count: 20);
+        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: 20);
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
