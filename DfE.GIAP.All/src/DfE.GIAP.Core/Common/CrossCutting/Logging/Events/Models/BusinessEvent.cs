@@ -28,13 +28,10 @@ public abstract record BusinessEvent(
 
     protected IDictionary<string, string> BaseProperties() => new Dictionary<string, string>
     {
-        ["UserId"] = UserId,
-        ["SessionId"] = SessionId,
         ["Description"] = Description,
         ["OrgURN"] = OrgURN,
         ["OrgName"] = OrgName,
         ["OrgCategory"] = OrgCategory
-
     };
 }
 
