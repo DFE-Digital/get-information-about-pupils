@@ -296,6 +296,12 @@
                                     <!-- Next page number -->
                                     @if (Model.MorePagesAvailable)
                                     {
+                                        <!-- Last page number available should either be
+                                        {current} {next} ... {lastPage}
+                                        {current} {next} {lastPage}
+                                        -->
+
+                                        <!-- Always display next page -->
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
                                                     asp-action="@Model.UpdateFormAction"
@@ -307,14 +313,13 @@
                                                 @(Model.PageNumber + 1)
                                             </button>
                                         </li>
-                                        <!-- Last page number available should either be
-                                        {current} {next} ... {lastPage}
-                                        {current} {next} {lastPage}
-                                        -->
+
+                                        <!-- If more than 2 pages remaining add separator -->
                                         @if (Model.LastPageNumber > Model.PageNumber + 2)
                                         {
                                             <li class="page-list-number-separator">...</li>
                                         }
+                                        <!-- If last page number is not the next page number then display -->
                                         @if (Model.LastPageNumber > Model.PageNumber + 1)
                                         {
                                             <li class="page-list-last">
