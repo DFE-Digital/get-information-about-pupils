@@ -31,7 +31,7 @@
 
     <form asp-controller="@Model.UpdateFormController" asp-action="@Model.UpdateFormAction" method="POST">
 
-        @foreach (string pupilUpn in Model.Pupils.Values.Select(x => x.UniquePupilNumber))
+        @foreach (string pupilUpn in Model.CurrentPageOfPupils.Values.Select(x => x.UniquePupilNumber))
         {
             <input type="hidden" name="CurrentPupils" value="@pupilUpn" />
         }
@@ -195,7 +195,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="govuk-table__body">
-                                        @foreach (var pupil in Model.Pupils.Values)
+                                        @foreach (var pupil in Model.CurrentPageOfPupils.Values)
                                         {
                                             <tr class="govuk-table__row">
                                                 <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">

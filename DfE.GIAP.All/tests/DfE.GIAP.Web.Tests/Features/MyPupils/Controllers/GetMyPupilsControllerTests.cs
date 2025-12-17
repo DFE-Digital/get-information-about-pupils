@@ -142,7 +142,7 @@ public sealed class GetMyPupilsControllerTests
         Assert.NotNull(viewModel.Error);
         Assert.False(viewModel.Error.HasErrorMessage);
 
-        Assert.Equal(viewModel.Pupils, pupilsViewModel);
+        Assert.Equal(viewModel.CurrentPageOfPupils, pupilsViewModel);
         Assert.True(viewModel.HasPupils);
 
         Assert.Equal(1, viewModel.PageNumber);

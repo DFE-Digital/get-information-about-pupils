@@ -192,8 +192,8 @@ public sealed class DeleteMyPupilsControllerTests
 
         MyPupilsViewModel myPupilsViewModel = Assert.IsType<MyPupilsViewModel>(viewResult.Model);
         Assert.NotNull(myPupilsViewModel);
-        Assert.NotNull(myPupilsViewModel.Pupils);
-        Assert.Equal(10, myPupilsViewModel.Pupils.Count);
+        Assert.NotNull(myPupilsViewModel.CurrentPageOfPupils);
+        Assert.Equal(10, myPupilsViewModel.CurrentPageOfPupils.Count);
 
         string log = Assert.Single(loggerMock.Logs);
         Assert.Equal("DeleteMyPupilsController.Delete POST method called", log);
@@ -262,8 +262,8 @@ public sealed class DeleteMyPupilsControllerTests
 
         MyPupilsViewModel myPupilsViewModel = Assert.IsType<MyPupilsViewModel>(viewResult.Model);
         Assert.NotNull(myPupilsViewModel);
-        Assert.NotNull(myPupilsViewModel.Pupils);
-        Assert.Equal(10, myPupilsViewModel.Pupils.Count);
+        Assert.NotNull(myPupilsViewModel.CurrentPageOfPupils);
+        Assert.Equal(10, myPupilsViewModel.CurrentPageOfPupils.Count);
 
         string log = Assert.Single(loggerMock.Logs);
         Assert.Equal("DeleteMyPupilsController.Delete POST method called", log);

@@ -29,7 +29,7 @@ public sealed class MapMyPupilsPresentationResponseModelToViewModel : IMapper<My
 
         return new MyPupilsViewModel
         {
-            Pupils = source.MyPupils,
+            CurrentPageOfPupils = source.MyPupils,
             PageNumber = source.PageNumber,
             LastPageNumber = source.TotalPages,
             SortDirection = source.SortedDirection,

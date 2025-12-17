@@ -12,9 +12,12 @@ public record MyPupilsViewModel
     public int LastPageNumber { get; init; } = 1;
     public string SortField { get; init; } = string.Empty;
     public string SortDirection { get; init; } = string.Empty;
-    public MyPupilsPresentationPupilModels Pupils { get; init; }
-    public bool HasPupils => Pupils.Count > 0;
-    public bool MorePagesAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
+    public MyPupilsPresentationPupilModels CurrentPageOfPupils { get; init; }
+    public bool HasPupils => CurrentPageOfPupils.Count > 0;
+    public bool MorePagesAvailable =>
+        CurrentPageOfPupils.Count == DEFAULT_PAGE_SIZE &&
+            LastPageNumber > PageNumber;
+
     public string PageHeading => "My pupil list";
     public string DownloadController => "DownloadMyPupils";
     public string DeleteMyPupilsController => "DeleteMyPupils";
