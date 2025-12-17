@@ -17,7 +17,7 @@ public static class CompositionRoot
             .AddCrossCuttingLoggingDependencies();
 
         services.TryAddEnumerable(new ServiceDescriptor(typeof(IEnumerable<ITextSanitiserHandler>), Array.Empty<ITextSanitiserHandler>()));
-        services.TryAddSingleton<ITextSanitiserInvoker, TextSanitisationInvoker>();
+        services.TryAddSingleton<ITextSanitiser, TextSanitiser>();
 
         return services;
     }
