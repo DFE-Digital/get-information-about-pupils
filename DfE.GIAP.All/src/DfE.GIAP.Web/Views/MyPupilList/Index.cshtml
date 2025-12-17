@@ -269,13 +269,14 @@
                                             </button>
                                         </li>
                                     }
-                                    @if (Model.DisplayPreviousPageNumber)
-                                    {
-                                        if(Model.PageNumber > 3)
-                                        {
-                                            <li class="page-list-number-separator">...</li>
-                                        }
 
+                                    @if (Model.PageNumber > 3)
+                                    {
+                                    <li class="page-list-number-separator">...</li>
+                                    }
+
+                                    @if(Model.PageNumber > 2)
+                                    {
                                         <li class="page-list-previous">
                                             <button asp-controller="@Model.UpdateFormController"
                                                     asp-action="@Model.UpdateFormAction"
@@ -289,10 +290,11 @@
                                         </li>
                                     }
 
+                                    <!-- Current page number -->
                                     <li>@Model.PageNumber</li>
 
                                     <!-- Next page number -->
-                                    @if (Model.DisplayNextPageAvailable)
+                                    @if (Model.MorePagesAvailable)
                                     {
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
@@ -305,11 +307,14 @@
                                                 @(Model.PageNumber + 1)
                                             </button>
                                         </li>
+                                        <!-- Last page number available should either be
+                                        {current} {next} ... {lastPage}
+                                        {current} {next} {lastPage}
+                                        -->
                                         @if (Model.LastPageNumber > Model.PageNumber + 2)
                                         {
                                             <li class="page-list-number-separator">...</li>
                                         }
-                                        <!-- Last page number available -->
                                         @if (Model.LastPageNumber > Model.PageNumber + 1)
                                         {
                                             <li class="page-list-last">

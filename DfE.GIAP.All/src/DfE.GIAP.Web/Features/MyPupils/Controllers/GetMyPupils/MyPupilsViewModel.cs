@@ -14,12 +14,11 @@ public record MyPupilsViewModel
     public string SortDirection { get; init; } = string.Empty;
     public MyPupilsPresentationPupilModels Pupils { get; init; }
     public bool HasPupils => Pupils.Count > 0;
+    public bool MorePagesAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
     public string PageHeading => "My pupil list";
     public string DownloadController => "DownloadMyPupils";
     public string DeleteMyPupilsController => "DeleteMyPupils";
     public string UpdateFormController => "UpdateMyPupilsForm";
     public string UpdateFormAction => "Index";
     public string UniquePupilNumberLabel => "UPN";
-    public bool DisplayPreviousPageNumber => PageNumber > 2; // If we enable this for Page 2, it will show 1, 1, 2
-    public bool DisplayNextPageAvailable => Pupils.Count == DEFAULT_PAGE_SIZE;
 }
