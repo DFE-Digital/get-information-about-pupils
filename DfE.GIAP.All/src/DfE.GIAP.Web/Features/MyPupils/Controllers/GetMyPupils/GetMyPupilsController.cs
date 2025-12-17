@@ -28,7 +28,10 @@ public class GetMyPupilsController : Controller
         _mapToPupilsViewModel = mapToPupilsViewModel;
     }
 
+
     [HttpGet]
+    // Prevent browser-caching e.g. back button presenting stale state
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public async Task<IActionResult> Index(MyPupilsQueryRequestDto query)
     {
         _logger.LogInformation("{Controller}.{Action} GET method is called", nameof(GetMyPupilsController), nameof(Index));

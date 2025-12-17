@@ -31,6 +31,8 @@ public class UpdateMyPupilsFormController : Controller
     }
 
     [HttpPost]
+    // Prevent browser-caching from back button presenting stale state
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(MyPupilsFormStateRequestDto formDto, MyPupilsQueryRequestDto query)
     {
