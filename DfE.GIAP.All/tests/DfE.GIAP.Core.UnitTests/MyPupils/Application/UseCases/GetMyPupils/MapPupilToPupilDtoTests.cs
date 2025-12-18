@@ -29,7 +29,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
         PupilToMyPupilModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(uniquePupilNumber.Value, result.UniquePupilNumber);
@@ -48,7 +48,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
         PupilToMyPupilModelMapper mapper = new();
 
         // Act
-        Func<MyPupilModel> act = () => mapper.Map(pupil!);
+        Func<MyPupilsModel> act = () => mapper.Map(pupil!);
 
         // Assert
         Assert.Throws<ArgumentNullException>(act);
@@ -65,7 +65,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
         PupilToMyPupilModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.DateOfBirth);
@@ -82,7 +82,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
         PupilToMyPupilModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.Sex);
@@ -99,7 +99,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
         PupilToMyPupilModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.False(result.IsPupilPremium);

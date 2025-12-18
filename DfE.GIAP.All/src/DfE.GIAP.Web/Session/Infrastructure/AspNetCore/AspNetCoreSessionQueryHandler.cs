@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Session.Abstraction.Query;
 using DfE.GIAP.Web.Session.Abstraction;
 
-namespace DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
+namespace DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
 
 public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQueryHandler<TSessionObject> where TSessionObject : class
 {

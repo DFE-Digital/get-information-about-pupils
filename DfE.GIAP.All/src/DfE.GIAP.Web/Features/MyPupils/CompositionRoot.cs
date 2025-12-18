@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
@@ -16,8 +15,7 @@ using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 using DfE.GIAP.Web.Session.Abstraction;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 using DfE.GIAP.Web.Session.Abstraction.Query;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Command;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
+using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
 using DfE.GIAP.Web.Session.Infrastructure.Serialization;
 
 namespace DfE.GIAP.Web.Features.MyPupils;
@@ -46,8 +44,8 @@ public static class CompositionRoot
         // PresentationService
         services
             .AddSingleton<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MapMyPupilsPresentationResponseModelToViewModel>()
-            .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
-            .AddSingleton<IMapper<MyPupilModel, MyPupilsPresentationPupilModel>, MyPupilsModelToMyPupilsPresentationPupilModel>()
+            .AddSingleton<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
+            .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>, MyPupilModelToMyPupilsPresentationPupilModelMapper>()
             .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>();
 
         // MessagingSink
@@ -93,7 +91,7 @@ public static class CompositionRoot
 
         services
             .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
-            .AddScoped<IClearMyPupilsPupilSelectionsCommandHandler, ClearMyPupilsPupilSelectionsCommandHandler>()
+            .AddScoped<IClearMyPupilsPupilSelectionsHandler, ClearMyPupilsPupilSelectionsHandler>()
             .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>();
             
         return services;

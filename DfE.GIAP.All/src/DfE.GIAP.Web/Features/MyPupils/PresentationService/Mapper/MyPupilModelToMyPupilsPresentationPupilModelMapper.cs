@@ -2,9 +2,9 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
-internal sealed class MyPupilsModelToMyPupilsPresentationPupilModel : IMapper<MyPupilModel, MyPupilsPresentationPupilModel>
+internal sealed class MyPupilModelToMyPupilsPresentationPupilModelMapper : IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>
 {
-    public MyPupilsPresentationPupilModel Map(MyPupilModel input)
+    public MyPupilsPresentationPupilModel Map(MyPupilsModel input)
     {
         ArgumentNullException.ThrowIfNull(input);
 

@@ -3,5 +3,5 @@
 public record MyPupilsMessagingOptions
 {
     public string DeleteSuccessfulKey { get; set; } = "DeleteSuccessful";
-    public string LogsKey { get; internal set; } = "MyPupilsLogs";
+    public string MessagesKey { get; internal set; } = "MyPupilsLogs";
 }

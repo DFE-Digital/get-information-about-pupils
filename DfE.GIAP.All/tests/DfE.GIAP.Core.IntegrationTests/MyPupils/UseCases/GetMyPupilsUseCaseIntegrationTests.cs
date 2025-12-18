@@ -115,14 +115,14 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
-        List<MyPupilModel> expectedPupils =
+        List<MyPupilsModel> expectedPupils =
             npdResponse.value!
                 .Concat(pupilPremiumResponse.value!)
                 .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!).ToList();
 
-        foreach (MyPupilModel expectedPupil in expectedPupils)
+        foreach (MyPupilsModel expectedPupil in expectedPupils)
         {
-            MyPupilModel? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
+            MyPupilsModel? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
 
             Assert.NotNull(actual);
             Assert.Equal(expectedPupil.Forename, actual.Forename);
@@ -165,9 +165,9 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Empty(getMyPupilsResponse.MyPupils.Values);
     }
 
-    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureNpdSearchResponseDto, MyPupilModel>
+    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureNpdSearchResponseDto, MyPupilsModel>
     {
-        public MyPupilModel Map(AzureNpdSearchResponseDto input)
+        public MyPupilsModel Map(AzureNpdSearchResponseDto input)
         {
             return new()
             {

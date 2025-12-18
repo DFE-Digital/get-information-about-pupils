@@ -3,16 +3,16 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
 
-public class MyPupilModelsToMyPupilsPresentationPupilModelMapper : IMapper<MyPupilsModel, MyPupilsPresentationPupilModels>
+public class MyPupilModelsToMyPupilsPresentationPupilModelMapper : IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>
 {
-    private readonly IMapper<MyPupilModel, MyPupilsPresentationPupilModel> _mapper;
+    private readonly IMapper<MyPupilsModel, MyPupilsPresentationPupilModel> _mapper;
 
-    public MyPupilModelsToMyPupilsPresentationPupilModelMapper(IMapper<MyPupilModel, MyPupilsPresentationPupilModel> mapper)
+    public MyPupilModelsToMyPupilsPresentationPupilModelMapper(IMapper<MyPupilsModel, MyPupilsPresentationPupilModel> mapper)
     {
         ArgumentNullException.ThrowIfNull(mapper);
         _mapper = mapper;
     }
-    public MyPupilsPresentationPupilModels Map(MyPupilsModel input)
+    public MyPupilsPresentationPupilModels Map(MyPupilsModels input)
     {
         return
             MyPupilsPresentationPupilModels.Create(

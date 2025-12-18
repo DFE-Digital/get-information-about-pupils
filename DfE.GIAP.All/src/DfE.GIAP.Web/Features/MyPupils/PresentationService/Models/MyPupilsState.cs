@@ -4,10 +4,10 @@ namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 
 public record MyPupilsState
 {
-    public MyPupilsState(MyPupilsPresentationQueryModel presentationState, MyPupilsPupilSelectionState selectionState)
+    public MyPupilsState(MyPupilsPresentationQueryModel query, MyPupilsPupilSelectionState selectionState)
     {
-        ArgumentNullException.ThrowIfNull(presentationState);
-        PresentationState = presentationState;
+        ArgumentNullException.ThrowIfNull(query);
+        PresentationState = query;
 
         ArgumentNullException.ThrowIfNull(selectionState);
         SelectionState = selectionState;
@@ -15,4 +15,7 @@ public record MyPupilsState
 
     public MyPupilsPresentationQueryModel PresentationState { get; init; }
     public MyPupilsPupilSelectionState SelectionState { get; init; }
+
+    public static MyPupilsState Create(
+        MyPupilsPresentationQueryModel query, MyPupilsPupilSelectionState selectionState) => new(query, selectionState);
 }

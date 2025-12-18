@@ -39,7 +39,7 @@ public static class CompositionRoot
             .AddSingleton<IMapper<IEnumerable<string>, UniquePupilNumbers>, UniquePupilNumbersMapper>()
             // UseCases
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
-            .AddSingleton<IMapper<Pupil, MyPupilModel>, PupilToMyPupilModelMapper>()
+            .AddSingleton<IMapper<Pupil, MyPupilsModel>, PupilToMyPupilModelMapper>()
 
             .AddScoped<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>, AddPupilsToMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()

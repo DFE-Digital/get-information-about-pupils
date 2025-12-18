@@ -4,7 +4,7 @@ using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 internal static class MyPupilsPresentationModelTestDoubles
 {
     internal static MyPupilsPresentationPupilModels Generate(int count)

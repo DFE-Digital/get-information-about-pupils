@@ -1,11 +1,11 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
+﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
 [Route(Constants.Routes.MyPupilList.MyPupilsBase)]
 public class UpdateMyPupilsFormController : Controller
@@ -60,9 +60,9 @@ public class UpdateMyPupilsFormController : Controller
             controllerName: "GetMyPupils",
             new
             {
-                PageNumber = request.PageNumber,
-                SortField = request.SortField,
-                SortDirection = request.SortDirection
+                request.PageNumber,
+                request.SortField,
+                request.SortDirection
             });
     }
 }

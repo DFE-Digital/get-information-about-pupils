@@ -1876,6 +1876,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     [Fact]
     public async Task ToDownloadSelectedNPDDataUpn_returns_options_page_when_pupils_selected()
     {
+        // TODO fix test
         var upns = _paginatedResultsFake.GetUpns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1887,11 +1888,14 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
 
-        var joinedSelectedPupils = String.Join(',', upns.FormatLearnerNumbers());
+        var joinedSelectedPupils = string.Join(',', upns.FormatLearnerNumbers());
 
         _mockDownloadService.CheckForNoDataAvailable(
-            Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<AzureFunctionHeaderDetails>())
-            .Returns(new List<CheckDownloadDataType>() { CheckDownloadDataType.EYFSP });
+                Arg.Any<string[]>(),
+                Arg.Any<string[]>(),
+                Arg.Any<string[]>(),
+                Arg.Any<AzureFunctionHeaderDetails>()
+            ).Returns([CheckDownloadDataType.EYFSP]);
 
         // act
         var sut = GetController();

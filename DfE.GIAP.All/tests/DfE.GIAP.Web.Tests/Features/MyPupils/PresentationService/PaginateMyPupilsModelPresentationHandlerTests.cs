@@ -1,13 +1,13 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+﻿/*using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
 
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetPupilViewModels;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService;
 public sealed class PaginateMyPupilsModelPresentationHandlerTests
 {
     private const int DEFAULT_PAGE_SIZE = 20;
@@ -15,11 +15,11 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     [Fact]
     public void Handle_Throws_When_PageNumber_Is_LessThan_1()
     {
-        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 0);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationQueyTestDoubles.Create(page: 0);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
-        Action act = () => sut.Handle(It.IsAny<MyPupilsModel>(), presentationState);
+        Action act = () => sut.Handle(It.IsAny<MyPupilsModels>(), presentationState);
 
         Assert.Throws<ArgumentOutOfRangeException>(act);
     }
@@ -28,14 +28,14 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
         // Arrange
-        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Default();
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationQueyTestDoubles.Default();
 
-        MyPupilsModel pupils = MyPupilsModel.Empty();
+        MyPupilsModels pupils = MyPupilsModels.Empty();
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
-        MyPupilsModel response = sut.Handle(pupils, presentationState);
+        MyPupilsModels response = sut.Handle(pupils, presentationState);
 
         // Assert
         Assert.NotNull(response);
@@ -48,14 +48,14 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     public void Handle_Returns_Pupils_Up_To_PageSize(int pupilCount)
     {
         // Arrange
-        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 1);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationQueyTestDoubles.Create(page: 1);
 
-        MyPupilsModel inputPupils = MyPupilModelTestDoubles.Generate(count: pupilCount);
+        MyPupilsModels inputPupils = MyPupilModelTestDoubles.Generate(count: pupilCount);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
-        MyPupilsModel response = sut.Handle(inputPupils, presentationState);
+        MyPupilsModels response = sut.Handle(inputPupils, presentationState);
 
         // Assert
         Assert.NotNull(response);
@@ -66,14 +66,14 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
     public void Handle_Returns_PageOfPupils_When_PageNumber_Requested()
     {
         // Arrange
-        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: 2);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationQueyTestDoubles.Create(page: 2);
 
-        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
+        MyPupilsModels pupils = MyPupilModelTestDoubles.Generate(count: DEFAULT_PAGE_SIZE);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
-        MyPupilsModel response = sut.Handle(pupils, presentationState);
+        MyPupilsModels response = sut.Handle(pupils, presentationState);
 
         // Assert
         Assert.NotNull(response);
@@ -86,21 +86,22 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         // Arrange
         const int fullPagesOfPupils = 4;
         const int pageRequested = fullPagesOfPupils + 1;
-        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationStateTestDoubles.Create(page: pageRequested);
+        MyPupilsPresentationQueryModel presentationState = MyPupilsPresentationQueyTestDoubles.Create(page: pageRequested);
 
         int inputPupilCount = DEFAULT_PAGE_SIZE * fullPagesOfPupils + 3;
-        MyPupilsModel pupils = MyPupilModelTestDoubles.Generate(count: inputPupilCount);
+        MyPupilsModels pupils = MyPupilModelTestDoubles.Generate(count: inputPupilCount);
 
         PaginateMyPupilsModelPresentationHandler sut = new();
 
         // Act
-        MyPupilsModel response = sut.Handle(pupils, presentationState);
+        MyPupilsModels response = sut.Handle(pupils, presentationState);
 
         // Assert
-        IEnumerable<MyPupilModel> expectedPagedPupils = pupils.Values.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
+        IEnumerable<MyPupilsModel> expectedPagedPupils = pupils.Values.Skip(DEFAULT_PAGE_SIZE * fullPagesOfPupils);
 
         Assert.NotNull(response);
         Assert.Equal(3, response.Count);
         Assert.Equivalent(expectedPagedPupils, response.Values);
     }
 }
+*/

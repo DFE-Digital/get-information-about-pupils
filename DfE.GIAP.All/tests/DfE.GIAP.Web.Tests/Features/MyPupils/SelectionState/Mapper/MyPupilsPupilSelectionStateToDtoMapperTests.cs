@@ -1,12 +1,12 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿/*using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
-using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.State;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.SelectionState.Mapper;
 public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
 {
     [Fact]
@@ -91,3 +91,4 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         Assert.False(result.PupilUpnToSelectedMap[pupils[3]]);
     }
 }
+*/

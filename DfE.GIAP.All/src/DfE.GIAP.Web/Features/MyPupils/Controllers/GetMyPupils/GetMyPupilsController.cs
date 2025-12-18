@@ -1,10 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 
 [Route(Constants.Routes.MyPupilList.MyPupilsBase)]
 public class GetMyPupilsController : Controller

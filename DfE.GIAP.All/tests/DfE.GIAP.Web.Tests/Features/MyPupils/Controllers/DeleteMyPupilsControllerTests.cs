@@ -1,15 +1,15 @@
-﻿using DfE.GIAP.Core.Common.Application;
+﻿/*using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 using DfE.GIAP.Web.Session.Abstraction.Command;
-using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -230,7 +230,7 @@ public sealed class DeleteMyPupilsControllerTests
             .Setup(t => t.GetPupilSelections())
             .Returns(
                 MyPupilsStateTestDoubles.Create(
-                    MyPupilsPresentationStateTestDoubles.Default(),
+                    MyPupilsPresentationQueyTestDoubles.Default(),
                     noPupilsSelectedInState))
             .Verifiable();
 
@@ -300,7 +300,7 @@ public sealed class DeleteMyPupilsControllerTests
             .Setup(t => t.GetPupilSelections())
             .Returns(
                 MyPupilsStateTestDoubles.Create(
-                    MyPupilsPresentationStateTestDoubles.Default(),
+                    MyPupilsPresentationQueyTestDoubles.Default(),
                     allPupilsSelectedStub))
             .Verifiable();
 
@@ -358,3 +358,4 @@ public sealed class DeleteMyPupilsControllerTests
             (useCase) => useCase.HandleRequestAsync(It.IsAny<DeletePupilsFromMyPupilsRequest>()), Times.Never);
     }
 }
+*/

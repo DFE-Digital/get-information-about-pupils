@@ -69,7 +69,7 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider);
 
         Assert.NotNull(provider.GetService<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>());
-        Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilModel>>());
+        Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilsModel>>());
 
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>());
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>());

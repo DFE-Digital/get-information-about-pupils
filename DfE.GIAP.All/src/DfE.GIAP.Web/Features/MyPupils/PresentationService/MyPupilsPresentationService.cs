@@ -16,16 +16,16 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;
     private readonly IMyPupilsPresentationModelHandler _presentationHandler;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsStateProvider;
-    private readonly IClearMyPupilsPupilSelectionsCommandHandler _clearMyPupilsPupilSelectionsCommandHandler;
-    private readonly IMapper<MyPupilsModel, MyPupilsPresentationPupilModels> _mapper;
+    private readonly IClearMyPupilsPupilSelectionsHandler _clearMyPupilsPupilSelectionsCommandHandler;
+    private readonly IMapper<MyPupilsModels, MyPupilsPresentationPupilModels> _mapper;
 
     public MyPupilsPresentationService(
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsUseCase,
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
         IMyPupilsPresentationModelHandler handler,
         IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider,
-        IClearMyPupilsPupilSelectionsCommandHandler clearMyPupilsPupilSelectionsCommandHandler,
-        IMapper<MyPupilsModel, MyPupilsPresentationPupilModels> mapper)
+        IClearMyPupilsPupilSelectionsHandler clearMyPupilsPupilSelectionsCommandHandler,
+        IMapper<MyPupilsModels, MyPupilsPresentationPupilModels> mapper)
     {
         ArgumentNullException.ThrowIfNull(getMyPupilsUseCase);
         _getMyPupilsUseCase = getMyPupilsUseCase;

@@ -2,9 +2,9 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-internal sealed class PupilToMyPupilModelMapper : IMapper<Pupil, MyPupilModel>
+internal sealed class PupilToMyPupilModelMapper : IMapper<Pupil, MyPupilsModel>
 {
-    public MyPupilModel Map(Pupil pupil)
+    public MyPupilsModel Map(Pupil pupil)
     {
         ArgumentNullException.ThrowIfNull(pupil);
         return new()

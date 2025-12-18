@@ -2,12 +2,12 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
 
-public sealed class ClearMyPupilsPupilSelectionsCommandHandler : IClearMyPupilsPupilSelectionsCommandHandler
+public sealed class ClearMyPupilsPupilSelectionsHandler : IClearMyPupilsPupilSelectionsHandler
 {
     private readonly IGetMyPupilsPupilSelectionProvider _stateProvider;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _sessionCommandHandler;
 
-    public ClearMyPupilsPupilSelectionsCommandHandler(
+    public ClearMyPupilsPupilSelectionsHandler(
         IGetMyPupilsPupilSelectionProvider stateProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> sessionCommandHandler)
     {

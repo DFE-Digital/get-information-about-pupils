@@ -30,8 +30,8 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
-        Mock<IMapper<Pupil, MyPupilModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilModel>();
-        MyPupilsModel myPupilDtos = MyPupilModelTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
+        Mock<IMapper<Pupil, MyPupilsModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
+        MyPupilsModels myPupilDtos = MyPupilModelTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 
@@ -73,7 +73,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
-        Mock<IMapper<Pupil, MyPupilModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilModel>();
+        Mock<IMapper<Pupil, MyPupilsModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
 
         GetMyPupilsRequest request = new(myPupilsId.Value);
 
@@ -113,7 +113,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
-        Mock<IMapper<Pupil, MyPupilModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilModel>();
+        Mock<IMapper<Pupil, MyPupilsModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
 
         GetMyPupilsRequest request = new(myPupilsId.Value);
 

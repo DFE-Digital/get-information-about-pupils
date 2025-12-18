@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Areas.GetMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 
 public record MyPupilsViewModel
 {

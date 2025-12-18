@@ -11,12 +11,12 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsApplicationService;
-    private readonly IMapper<Pupil, MyPupilModel> _mapPupilToPupilDtoMapper;
+    private readonly IMapper<Pupil, MyPupilsModel> _mapPupilToPupilDtoMapper;
 
     public GetMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
         IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsApplicationService,
-        IMapper<Pupil, MyPupilModel> mapPupilToPupilDtoMapper)
+        IMapper<Pupil, MyPupilsModel> mapPupilToPupilDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
@@ -40,7 +40,7 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
         {
             return
                 new GetMyPupilsResponse(
-                    MyPupilsModel.Create(
+                    MyPupilsModels.Create(
                         pupils: []));
         }
 
@@ -48,12 +48,12 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
             UniquePupilNumbers.Create(
                 myPupils.GetMyPupils());
 
-        List<MyPupilModel> myPupilsDtos =
+        List<MyPupilsModel> myPupilsDtos =
             (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
                 .Select(_mapPupilToPupilDtoMapper.Map)
                 .ToList();
 
         return new GetMyPupilsResponse(
-            MyPupils: MyPupilsModel.Create(myPupilsDtos));
+            MyPupils: MyPupilsModels.Create(myPupilsDtos));
     }
 }

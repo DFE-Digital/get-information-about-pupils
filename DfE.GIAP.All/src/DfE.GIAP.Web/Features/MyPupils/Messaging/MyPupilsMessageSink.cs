@@ -46,7 +46,7 @@ public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
     {
         ITempDataDictionary tempData = GetTempData();
 
-        object? raw = tempData[_options.LogsKey]; // read & remove
+        object? raw = tempData[_options.MessagesKey]; // read & remove
 
         if (raw is not string json || string.IsNullOrWhiteSpace(json))
         {
@@ -71,7 +71,7 @@ public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
             existingLogs = existingLogs.Skip(existingLogs.Count - MaxLogMessages).ToList();
         }
 
-        tempData[_options.LogsKey] =
+        tempData[_options.MessagesKey] =
             JsonConvert.SerializeObject(
                 value: existingLogs.Select(_mapToDto.Map).ToList());
     }
@@ -80,7 +80,7 @@ public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
     {
         ITempDataDictionary tempData = GetTempData();
 
-        object? peeked = tempData.Peek(_options.LogsKey);
+        object? peeked = tempData.Peek(_options.MessagesKey);
 
         if (peeked is null)
         {
