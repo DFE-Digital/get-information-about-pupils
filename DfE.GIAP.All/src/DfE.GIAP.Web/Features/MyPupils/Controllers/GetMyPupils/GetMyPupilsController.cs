@@ -33,7 +33,7 @@ public class GetMyPupilsController : Controller
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public async Task<IActionResult> Index(MyPupilsQueryRequestDto query)
     {
-        _logger.LogInformation("{Controller}.{Action} GET method is called", nameof(GetMyPupilsController), nameof(Index));
+        _logger.LogInformation("{Controller}.{Action} GET called", nameof(GetMyPupilsController), nameof(Index));
 
         MyPupilsPresentationResponse response =
             await _myPupilsPresentationService.GetPupils(User.GetUserId(), query);
