@@ -50,16 +50,16 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         string userId,
         IEnumerable<string> selectedPupilUpnsOnPage)
     {
-        List<string> selectedPupils = selectedPupilUpnsOnPage.ToList();
+        List<string> selectedPupilsToDelete = selectedPupilUpnsOnPage?.ToList() ?? [];
 
         // Enrich SelectedPupils with all other selected pupils
-        selectedPupils.AddRange(
+        selectedPupilsToDelete.AddRange(
             await GetSelectedPupilUniquePupilNumbers(userId));
 
         await _deletePupilsUseCase.HandleRequestAsync(
             new DeletePupilsFromMyPupilsRequest(
                 UserId: userId,
-                DeletePupilUpns: selectedPupils.Distinct()));
+                DeletePupilUpns: selectedPupilsToDelete.Distinct()));
 
         _clearMyPupilsPupilSelectionsCommandHandler.Handle();
     }

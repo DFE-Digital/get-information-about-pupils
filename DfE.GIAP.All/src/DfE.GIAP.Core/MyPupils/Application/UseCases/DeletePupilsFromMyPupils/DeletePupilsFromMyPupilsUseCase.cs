@@ -33,16 +33,17 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 
         MyPupilsId id = new(userId);
 
-        MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+        MyPupilsAggregate? myPupilsAggregate = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
 
-        if (myPupils is null)
+        if (myPupilsAggregate is null)
         {
             return; // nothing to delete
         }
 
-        myPupils.DeletePupils(
-            _mapToUniquePupilNumbers.Map(request.DeletePupilUpns));
+        UniquePupilNumbers deletePupilUpns = _mapToUniquePupilNumbers.Map(request.DeletePupilUpns);
 
-        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupils);
+        myPupilsAggregate.DeletePupils(deletePupilUpns);
+
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupilsAggregate);
     }
 }
