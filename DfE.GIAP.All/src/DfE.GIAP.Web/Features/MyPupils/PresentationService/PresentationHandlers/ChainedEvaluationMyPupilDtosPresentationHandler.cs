@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 
@@ -27,9 +28,12 @@ public class ChainedEvaluationMyPupilDtosPresentationHandler : IMyPupilsPresenta
         return this;
     }
 
-    public MyPupilsPresentationPupilModels Handle(MyPupilsPresentationPupilModels myPupils, MyPupilsState state)
+    public MyPupilsPresentationPupilModels Handle(
+        MyPupilsPresentationPupilModels myPupils,
+        MyPupilsPresentationQueryModel query,
+        MyPupilsPupilSelectionState selectionState)
     {
-        MyPupilsPresentationPupilModels result = _current.Handle(myPupils, state);
-        return _next?.Handle(result, state) ?? result;
+        MyPupilsPresentationPupilModels result = _current.Handle(myPupils, query, selectionState);
+        return _next?.Handle(result, query, selectionState) ?? result;
     }
 }

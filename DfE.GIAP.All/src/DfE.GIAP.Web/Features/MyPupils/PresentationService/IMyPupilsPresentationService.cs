@@ -3,13 +3,13 @@
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
 public interface IMyPupilsPresentationService
 {
-    Task DeletePupils(
+    Task DeletePupilsAsync(
         string userId,
         IEnumerable<string> selectedPupilUpns);
 
-    Task<MyPupilsPresentationResponse> GetPupils(
+    Task<MyPupilsPresentationResponse> GetPupilsAsync(
         string userId,
-        MyPupilsQueryRequestDto query);
+        MyPupilsQueryRequestDto? query);
 
-    Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbers(string userId);
+    Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbersAsync(string userId);
 }

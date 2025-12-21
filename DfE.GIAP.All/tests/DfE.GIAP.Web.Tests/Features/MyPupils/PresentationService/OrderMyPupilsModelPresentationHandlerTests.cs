@@ -18,20 +18,21 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         // Arrange
         MyPupilsPresentationQueryModel presentationQueryModel = MyPupilsPresentationQueryModel.CreateDefault();
 
-        MyPupilsState state = MyPupilsState.Create(
-            presentationQueryModel,
-            MyPupilsPupilSelectionState.CreateDefault());
-
-        MyPupilsPresentationPupilModels pupils = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
+        MyPupilsPresentationPupilModels pupils = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 
         OrderMyPupilsModelPresentationHandler sut = new();
 
         // Act
-        MyPupilsPresentationPupilModels response = sut.Handle(pupils, state);
+        MyPupilsPresentationPupilModels response =
+            sut.Handle(
+                pupils,
+                presentationQueryModel,
+                MyPupilsPupilSelectionState.CreateDefault());
 
         // Assert
         Assert.NotNull(response);
         Assert.Equal(pupils, response);
+        // TODO expand to other properties
     }
 /*
     [Fact]

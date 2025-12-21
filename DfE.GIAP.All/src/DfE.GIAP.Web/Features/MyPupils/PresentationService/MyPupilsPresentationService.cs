@@ -17,7 +17,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
     private readonly IMyPupilsPresentationModelHandler _presentationHandler;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsStateProvider;
     private readonly IClearMyPupilsPupilSelectionsHandler _clearMyPupilsPupilSelectionsCommandHandler;
-    private readonly IMapper<MyPupilsModels, MyPupilsPresentationPupilModels> _mapper;
+    private readonly IMapper<MyPupilsModels, MyPupilsPresentationPupilModels> _mapPupilsToPresentablePupils;
 
     public MyPupilsPresentationService(
         IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsUseCase,
@@ -43,10 +43,10 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         _clearMyPupilsPupilSelectionsCommandHandler = clearMyPupilsPupilSelectionsCommandHandler;
         
         ArgumentNullException.ThrowIfNull(mapper);
-        _mapper = mapper;
+        _mapPupilsToPresentablePupils = mapper;
     }
 
-    public async Task DeletePupils(
+    public async Task DeletePupilsAsync(
         string userId,
         IEnumerable<string> selectedPupilUpnsOnPage)
     {
@@ -54,7 +54,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         // Enrich SelectedPupils with all other selected pupils
         selectedPupilsToDelete.AddRange(
-            await GetSelectedPupilUniquePupilNumbers(userId));
+            await GetSelectedPupilUniquePupilNumbersAsync(userId));
 
         await _deletePupilsUseCase.HandleRequestAsync(
             new DeletePupilsFromMyPupilsRequest(
@@ -64,11 +64,12 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         _clearMyPupilsPupilSelectionsCommandHandler.Handle();
     }
 
-    public async Task<MyPupilsPresentationResponse> GetPupils(
+    public async Task<MyPupilsPresentationResponse> GetPupilsAsync(
         string userId,
-        MyPupilsQueryRequestDto query)
+        MyPupilsQueryRequestDto? query)
     {
         UserId id = new(userId);
+        query ??= new();
 
         MyPupilsPupilSelectionState selectionState = _getMyPupilsStateProvider.GetPupilSelections();
 
@@ -80,8 +81,9 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         MyPupilsPresentationPupilModels handledPupilModels =
             _presentationHandler.Handle(
-                pupils: _mapper.Map(response.MyPupils),
-                state: new MyPupilsState(updatedPresentation, selectionState));
+                pupils: _mapPupilsToPresentablePupils.Map(response.MyPupils),
+                updatedPresentation,
+                selectionState);
 
         return new(
             handledPupilModels,
@@ -90,7 +92,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             totalPupilCount: response.MyPupils.Count);
     }
 
-    public async Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbers(string userId)
+    public async Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbersAsync(string userId)
     {
         MyPupilsPupilSelectionState state = _getMyPupilsStateProvider.GetPupilSelections();
 

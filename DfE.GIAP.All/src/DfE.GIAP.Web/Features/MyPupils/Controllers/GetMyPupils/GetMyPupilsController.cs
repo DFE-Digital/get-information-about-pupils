@@ -36,7 +36,7 @@ public class GetMyPupilsController : Controller
         _logger.LogInformation("{Controller}.{Action} GET called", nameof(GetMyPupilsController), nameof(Index));
 
         MyPupilsPresentationResponse response =
-            await _myPupilsPresentationService.GetPupils(
+            await _myPupilsPresentationService.GetPupilsAsync(
                 User.GetUserId(),
                 query);
 

@@ -64,7 +64,7 @@ public sealed class GetMyPupilsControllerTests
         // Arrange
         InMemoryLogger<GetMyPupilsController> loggerFake = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
 
-        MyPupilsPresentationPupilModels pupilsStub = MyPupilsPresentationModelTestDoubles.Generate(count: 10);
+        MyPupilsPresentationPupilModels pupilsStub = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 
         MyPupilsPresentationResponse presentationResponseStub = new(
             pupilsStub,
@@ -109,7 +109,7 @@ public sealed class GetMyPupilsControllerTests
 
         Mock.Get(serviceMock)
             .Verify((service)
-                => service.GetPupils(
+                => service.GetPupilsAsync(
                     context.User.GetUserId(), // TODO need to control ClaimsPrincipal in Stub
                         requestQueryDto), Times.Once);
 

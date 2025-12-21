@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 
@@ -15,22 +16,23 @@ public sealed class OrderMyPupilsModelPresentationHandler : IMyPupilsPresentatio
 
     public MyPupilsPresentationPupilModels Handle(
         MyPupilsPresentationPupilModels myPupils,
-        MyPupilsState state)
+        MyPupilsPresentationQueryModel query,
+        MyPupilsPupilSelectionState selectionState)
     {
-        if (string.IsNullOrEmpty(state.PresentationState.Sort.Field))
+        if (string.IsNullOrEmpty(query.Sort.Field))
         {
             return myPupils;
         }
 
-        if (!s_sortKeyToExpression.TryGetValue(state.PresentationState.Sort.Field.ToLowerInvariant(),
+        if (!s_sortKeyToExpression.TryGetValue(query.Sort.Field.ToLowerInvariant(),
                 out Expression<Func<MyPupilsPresentationPupilModel, IComparable>> expression)
                     || expression is null)
         {
-            throw new ArgumentException($"Unable to find sortable expression for {state.PresentationState.Sort.Field}");
+            throw new ArgumentException($"Unable to find sortable expression for {query.Sort.Field}");
         }
 
         IEnumerable<MyPupilsPresentationPupilModel> outputPupils =
-            state.PresentationState.Sort.Direction == SortDirection.Ascending ?
+            query.Sort.Direction == SortDirection.Ascending ?
                 myPupils.Values.AsQueryable().OrderBy(expression) :
                     myPupils.Values.AsQueryable().OrderByDescending(expression);
 

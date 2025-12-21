@@ -1,8 +1,11 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Handlers;
@@ -118,7 +121,7 @@ public sealed class MyPupilsPresentationServiceTests
 
     [Theory]
     [MemberData(nameof(DeletePupilsInput))]
-    public async Task DeletePupils_CallsUseCase_And_ClearsPupilSelections(
+    public async Task DeletePupilsAsync_CallsUseCase_And_ClearsPupilSelections(
         List<string>? requestSelectedPupils,
         MyPupilsPupilSelectionState selectedState,
         List<string> expectedDeletePupils)
@@ -146,7 +149,7 @@ public sealed class MyPupilsPresentationServiceTests
         );
 
         // Act
-        await sut.DeletePupils(userId, requestSelectedPupils);
+        await sut.DeletePupilsAsync(userId, requestSelectedPupils);
 
         getSelectionProviderMock.Verify(
             (provider) => provider.GetPupilSelections(), Times.Once);
@@ -161,6 +164,80 @@ public sealed class MyPupilsPresentationServiceTests
             (handler) => handler.Handle(), Times.Once);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("\n")]
+    [InlineData(" ")]
+    public async Task GetPupilsAsync_Throws_When_Request_UserId_Is_NullOrWhitespace(string? userId)
+    {
+        // Arrange
+        MyPupilsPresentationService sut = new(
+            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
+            getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
+            handler: new Mock<IMyPupilsPresentationModelHandler>().Object,
+            getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
+            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
+            mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
+        );
+
+        // Act
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.GetPupilsAsync(userId, It.IsAny<MyPupilsQueryRequestDto>()));
+    }
+
+
+
+    // QueryDto can come in as null
+    // TODO test calls that are made to dependencies.
+    [Fact]
+    public async Task Test1()
+    {
+        // Arrange
+        const string userId = "userId";
+
+        Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
+        
+        GetMyPupilsResponse response = new(MyPupilsModels.Create([]));
+        useCaseMock
+            .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
+            .ReturnsAsync(response);
+
+        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsProvider = new();
+
+        getPupilSelectionsProvider
+            .Setup(t => t.GetPupilSelections())
+            .Returns(MyPupilsPupilSelectionState.CreateDefault());
+
+        MyPupilsPresentationPupilModels outputPupils =
+            MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
+
+        Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapper =
+            MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: outputPupils);
+
+        Mock<IMyPupilsPresentationModelHandler> handlerMock = new();
+        handlerMock.Setup((t)
+            => t.Handle(
+                It.IsAny<MyPupilsPresentationPupilModels>(),
+                It.IsAny<MyPupilsPresentationQueryModel>(),
+                It.IsAny<MyPupilsPupilSelectionState>()))
+            .Returns(outputPupils);
+
+        MyPupilsPresentationService sut = new(
+            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
+            getMyPupilsUseCase: useCaseMock.Object,
+            handler: handlerMock.Object,
+            getMyPupilsStateProvider: getPupilSelectionsProvider.Object,
+            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
+            mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
+        );
+
+        // Act
+        MyPupilsQueryRequestDto queryDto = new();
+        await sut.GetPupilsAsync(userId, queryDto);
+
+        getPupilSelectionsProvider.Verify(
+            (provider) => provider.GetPupilSelections(), Times.Once);
+    }
 
     public static TheoryData<List<string>?, MyPupilsPupilSelectionState, List<string>> DeletePupilsInput
     {

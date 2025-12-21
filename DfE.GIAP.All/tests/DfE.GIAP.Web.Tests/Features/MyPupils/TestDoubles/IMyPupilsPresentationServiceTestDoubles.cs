@@ -11,7 +11,7 @@ internal static class IMyPupilsPresentationServiceTestDoubles
     {
         Mock<IMyPupilsPresentationService> mock = DefaultMock();
         mock.Setup(
-            (t) => t.GetPupils(
+            (t) => t.GetPupilsAsync(
                 It.IsAny<string>(),
                 It.IsAny<MyPupilsQueryRequestDto>()))
             .ReturnsAsync(stub);
@@ -23,7 +23,7 @@ internal static class IMyPupilsPresentationServiceTestDoubles
     {
         Mock<IMyPupilsPresentationService> mock = DefaultMock();
         mock.Setup(
-            (t) => t.GetSelectedPupilUniquePupilNumbers(
+            (t) => t.GetSelectedPupilUniquePupilNumbersAsync(
                 It.IsAny<string>()))
             .ReturnsAsync(stub);
 

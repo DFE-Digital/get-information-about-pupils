@@ -98,7 +98,7 @@ public class DeleteMyPupilsController : Controller
 
         string userId = User.GetUserId();
 
-        await _myPupilsPresentationService.DeletePupils(userId, SelectedPupils);
+        await _myPupilsPresentationService.DeletePupilsAsync(userId, SelectedPupils);
 
         _myPupilsLogSink.Add(
             MyPupilsMessage.Create(
