@@ -99,8 +99,8 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             SortedField = updatedPresentation.Sort.Field,
             IsAnyPupilsSelected = selectionState.IsAnyPupilSelected,
             TotalPages =
-                response.MyPupils.Count <= updatedPresentation.PageSize ? 1 :
-                    (int)Math.Ceiling(response.MyPupils.Count / (double)updatedPresentation.PageSize)
+                response.MyPupils == null || response.MyPupils.Count <= updatedPresentation.PageSize ? 1 :
+                        (int)Math.Ceiling(response.MyPupils.Count / (double)updatedPresentation.PageSize)
 
         };
     }
