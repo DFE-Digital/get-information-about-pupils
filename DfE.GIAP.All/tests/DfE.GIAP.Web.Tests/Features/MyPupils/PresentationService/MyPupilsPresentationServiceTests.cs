@@ -133,7 +133,6 @@ public sealed class MyPupilsPresentationServiceTests
         Mock<IClearMyPupilsPupilSelectionsHandler> clearPupilSelectionsHandlerMock = new();
 
         Mock<IGetMyPupilsPupilSelectionProvider> getSelectionProviderMock = new();
-
         getSelectionProviderMock
             .Setup(t => t.GetPupilSelections())
             .Returns(selectedState);
@@ -240,8 +239,8 @@ public sealed class MyPupilsPresentationServiceTests
             .ReturnsAsync(useCaseResponseStub);
 
         MyPupilsPupilSelectionState selectionStateStub = new();
-        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsProvider = new();
-        getPupilSelectionsProvider
+        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsMock = new();
+        getPupilSelectionsMock
             .Setup(t => t.GetPupilSelections())
             .Returns(selectionStateStub);
 
@@ -260,7 +259,7 @@ public sealed class MyPupilsPresentationServiceTests
         MyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
             handler: handlerMock.Object,
-            getMyPupilsStateProvider: getPupilSelectionsProvider.Object,
+            getMyPupilsStateProvider: getPupilSelectionsMock.Object,
             mapper: mapperMock.Object,
             deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object);
@@ -271,6 +270,25 @@ public sealed class MyPupilsPresentationServiceTests
         // Assert
         Assert.NotNull(response);
         Assert.Equal(expectedPages, response.TotalPages);
+
+        getPupilSelectionsMock.Verify(
+            (provider) => provider.GetPupilSelections(),
+                Times.Once);
+
+        useCaseMock.Verify(
+            (useCase) => useCase.HandleRequestAsync(It.Is<GetMyPupilsRequest>(request => request.UserId == userId)),
+                Times.Once);
+
+        mapperMock.Verify(
+            (mapper) => mapper.Map(It.IsAny<MyPupilsModels>()),
+                Times.Once);
+
+        handlerMock.Verify(
+            (handler) => handler.Handle(
+                It.IsAny<MyPupilsPresentationPupilModels>(),
+                It.IsAny<MyPupilsPresentationQueryModel>(),
+                It.IsAny<MyPupilsPupilSelectionState>()),
+                Times.Once);
     }
 
 
@@ -336,7 +354,7 @@ public sealed class MyPupilsPresentationServiceTests
                 Times.Once);
 
         useCaseMock.Verify(
-            (useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()),
+            (useCase) => useCase.HandleRequestAsync(It.Is<GetMyPupilsRequest>(request => request.UserId == userId)),
                 Times.Once);
 
         mapperMock.Verify(
@@ -365,10 +383,10 @@ public sealed class MyPupilsPresentationServiceTests
 
         MyPupilsPupilSelectionState selectionStateStub =
             MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
-                new Dictionary<List<string>, bool>()
-            {
-                { ["1"], true }
-            });
+                SelectionMode.None,
+                selected: ["1"],
+                deselected: []);
+
         Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsMock = new();
         getPupilSelectionsMock
             .Setup(t => t.GetPupilSelections())
@@ -408,7 +426,7 @@ public sealed class MyPupilsPresentationServiceTests
                 Times.Once);
 
         useCaseMock.Verify(
-            (useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()),
+            (useCase) => useCase.HandleRequestAsync(It.Is<GetMyPupilsRequest>(request => request.UserId == userId)),
                 Times.Once);
 
         mapperMock.Verify(
@@ -424,15 +442,95 @@ public sealed class MyPupilsPresentationServiceTests
     }
 
     [Fact]
-    public async Task GetSelectedPupilsAsync_Returns_AllPupils_When_SelectionMode_Is_All()
+    public async Task GetSelectedPupilsAsync_Returns_AllPupils_Except_Deselections_When_SelectionMode_Is_All()
     {
+        // Arrange
+        Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 
+        GetMyPupilsResponse useCaseResponse = new(MyPupilModelTestDoubles.Generate(count: 10));
+        useCaseMock
+            .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
+            .ReturnsAsync(useCaseResponse);
+
+
+        // Deselect a few pupils out of all pupils
+        List<string> deselectedPupils = useCaseResponse.MyPupils.Identifiers.TakeLast(2).ToList();
+        MyPupilsPupilSelectionState selectionStateStub =
+            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
+                mode: SelectionMode.All,
+                selected: useCaseResponse.MyPupils.Identifiers.ToList(),
+                deselected: deselectedPupils);
+
+
+        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsMock = new();
+        getPupilSelectionsMock
+            .Setup(t => t.GetPupilSelections())
+            .Returns(selectionStateStub);
+
+        MyPupilsPresentationService sut = new(
+            getMyPupilsUseCase: useCaseMock.Object,
+            getMyPupilsStateProvider: getPupilSelectionsMock.Object,
+            handler: new Mock<IMyPupilsPresentationModelHandler>().Object,
+            mapper: new Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>>().Object,
+            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
+            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object
+        );
+
+        // Act
+        const string userId = "userId";
+        IEnumerable<string> response = await sut.GetSelectedPupilsAsync(userId);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equivalent(response, useCaseResponse.MyPupils.Identifiers.Except(deselectedPupils));
+
+        getPupilSelectionsMock.Verify(
+            (provider) => provider.GetPupilSelections(),
+                Times.Once);
+
+        useCaseMock.Verify(
+            (useCase) => useCase.HandleRequestAsync(It.Is<GetMyPupilsRequest>(request => request.UserId == userId)),
+                Times.Once);
     }
 
     [Fact]
     public async Task GetSelectedPupilsAsync_Returns_ExplicitSelections_When_SelectionMode_Is_Not_All()
     {
+        // Arrange
+        List<string> explicitSelections = ["a", "b", "c"];
 
+        // TODO back behind TestDouble/Builder
+        MyPupilsPupilSelectionState selectionStateStub =
+            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
+                mode: SelectionMode.None,
+                selected: explicitSelections,
+                deselected: []);
+
+        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsMock = new();
+        getPupilSelectionsMock
+            .Setup(t => t.GetPupilSelections())
+            .Returns(selectionStateStub);
+
+        MyPupilsPresentationService sut = new(
+            getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
+            getMyPupilsStateProvider: getPupilSelectionsMock.Object,
+            handler: new Mock<IMyPupilsPresentationModelHandler>().Object,
+            mapper: new Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>>().Object,
+            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
+            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object
+        );
+
+        // Act
+        const string userId = "userId";
+        IEnumerable<string> response = await sut.GetSelectedPupilsAsync(userId);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equivalent(response, explicitSelections);
+
+        getPupilSelectionsMock.Verify(
+            (provider) => provider.GetPupilSelections(),
+                Times.Once);
     }
 
     public static TheoryData<MyPupilsQueryRequestDto?, string, string> GetMyPupilsInputs
@@ -518,19 +616,13 @@ public sealed class MyPupilsPresentationServiceTests
                 // selections are appended from request to state
                 {
                     ["1" ],
-                    MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(new()
-                    {
-                        { ["2"] , true }
-                    }),
+                    MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(SelectionMode.None, selected: ["2"], deselected: []),
                     ["1", "2"]
                 },
                 // selections are deduplicated
                 {
                     ["1" ],
-                    MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(new()
-                    {
-                        {  ["1", "2"] , true }
-                    }),
+                    MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(SelectionMode.None, selected: ["1", "2"], deselected: []),
                     ["1", "2"]
                 },
             };

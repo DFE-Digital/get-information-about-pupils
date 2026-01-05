@@ -7,7 +7,7 @@ public sealed class MyPupilsPupilSelectionState
     // In None mode, we keep explicit selections.
     private readonly HashSet<string> _explicitSelections = [];
 
-    // In All mode, we keep exceptions (deselected UPNs).
+    // In All mode, we keep deselected UPNs.
     private readonly HashSet<string> _deselectedUpnExceptions = [];
 
     public MyPupilsPupilSelectionState()
@@ -67,21 +67,6 @@ public sealed class MyPupilsPupilSelectionState
         else
         {
             _explicitSelections.Remove(upn);
-        }
-    }
-
-    public void UpsertPupilSelections(IEnumerable<string> upns, bool isSelected)
-    {
-        ArgumentNullException.ThrowIfNull(upns);
-        foreach (string upn in upns)
-        {
-            if (isSelected)
-            {
-                Select(upn);
-                continue;
-            }
-
-            Deselect(upn);
         }
     }
 

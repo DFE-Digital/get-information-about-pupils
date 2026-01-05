@@ -3,21 +3,27 @@
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 public static class MyPupilsPupilSelectionStateTestDoubles
 {
-    public static MyPupilsPupilSelectionState WithPupilsSelectionState(Dictionary<List<string>, bool> selectionStateMapping)
+    public static MyPupilsPupilSelectionState WithPupilsSelectionState(
+        SelectionMode mode,
+        List<string> selected,
+        List<string> deselected)
     {
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionState.CreateDefault();
-        selectionStateMapping.ToList().ForEach(mapping =>
-        {
-            state.UpsertPupilSelections(mapping.Key, mapping.Value);
-        });
-        return state;
-    }
 
-    public static MyPupilsPupilSelectionState WithAllPupilsSelected(IEnumerable<string> pupils)
-    {
-        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionState.CreateDefault();
-        state.UpsertPupilSelections(pupils, true);
-        state.SelectAll();
+        if(mode == SelectionMode.All)
+        {
+            state.SelectAll();
+        }
+
+        foreach (string item in selected)
+        {
+            state.Select(item);
+        }
+
+        foreach (string item in deselected)
+        {
+            state.Deselect(item);
+        }
         return state;
     }
 }

@@ -52,11 +52,9 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
 
         MyPupilsPupilSelectionState expectedSelectionState =
             MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
-            new()
-            {
-                { selectedPupils, true },
-                { upns.Skip(5).ToList(), false }
-            });
+                SelectionMode.None,
+                selected: selectedPupils,
+                deselected: upns.Skip(5).ToList());
 
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandler =
             ISessionQueryHandlerTestDoubles.MockFor(expectedSelectionState);

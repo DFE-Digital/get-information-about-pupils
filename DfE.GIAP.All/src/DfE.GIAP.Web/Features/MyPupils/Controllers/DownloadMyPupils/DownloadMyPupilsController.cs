@@ -190,7 +190,10 @@ public class DownloadMyPupilsController : Controller
 
         if (formSelectedPupils.Count > 0)
         {
-            selectionState.UpsertPupilSelections(formSelectedPupils, true);
+            foreach (string selectedPupil in formSelectedPupils)
+            {
+                selectionState.Select(selectedPupil);
+            }
             _selectionStateSessionCommandHandler.StoreInSession(selectionState);
         }
 
