@@ -195,7 +195,7 @@ public class DownloadMyPupilsController : Controller
         }
 
         List<string> allSelectedPupils =
-            (await _myPupilsPresentationService.GetSelectedPupilUniquePupilNumbersAsync(userId: User.GetUserId()))
+            (await _myPupilsPresentationService.GetSelectedPupilsAsync(userId: User.GetUserId()))
                 .ToList();
 
         if (allSelectedPupils.Count == 0)

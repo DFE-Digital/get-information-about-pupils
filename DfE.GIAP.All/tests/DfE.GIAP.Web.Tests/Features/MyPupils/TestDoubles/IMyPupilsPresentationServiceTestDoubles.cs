@@ -23,7 +23,7 @@ internal static class IMyPupilsPresentationServiceTestDoubles
     {
         Mock<IMyPupilsPresentationService> mock = DefaultMock();
         mock.Setup(
-            (t) => t.GetSelectedPupilUniquePupilNumbersAsync(
+            (t) => t.GetSelectedPupilsAsync(
                 It.IsAny<string>()))
             .ReturnsAsync(stub);
 

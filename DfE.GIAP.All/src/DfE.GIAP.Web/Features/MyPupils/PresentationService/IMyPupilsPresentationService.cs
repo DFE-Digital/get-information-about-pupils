@@ -11,5 +11,5 @@ public interface IMyPupilsPresentationService
         string userId,
         MyPupilsQueryRequestDto? query);
 
-    Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbersAsync(string userId);
+    Task<IEnumerable<string>> GetSelectedPupilsAsync(string userId);
 }

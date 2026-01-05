@@ -12,4 +12,6 @@ public class MyPupilsQueryRequestDto
 
     [FromQuery]
     public string SortDirection { get; set; } = string.Empty;
+
+    public int PageSize => 20;
 }

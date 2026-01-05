@@ -24,5 +24,9 @@ public static class MyPupilsPresentationQueyTestDoubles
 
 
     public static MyPupilsPresentationQueryModel Create(int page, string sortKey, string sortDirection)
-        => new(page, sortKey, sortDirection);
+        => new(
+            page,
+            pageSize: 20,
+            sortKey,
+            sortDirection);
 }

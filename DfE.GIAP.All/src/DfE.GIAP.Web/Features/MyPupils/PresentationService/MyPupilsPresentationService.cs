@@ -54,7 +54,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         // Enrich SelectedPupils with all other selected pupils
         selectedPupilsToDelete.AddRange(
-            await GetSelectedPupilUniquePupilNumbersAsync(userId));
+            await GetSelectedPupilsAsync(userId));
 
         await _deletePupilsUseCase.HandleRequestAsync(
             new DeletePupilsFromMyPupilsRequest(
@@ -78,7 +78,11 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             await _getMyPupilsUseCase.HandleRequestAsync(
                 new GetMyPupilsRequest(id.Value));
 
-        MyPupilsPresentationQueryModel updatedPresentation = new(query.PageNumber, query.SortField, query.SortDirection);
+        MyPupilsPresentationQueryModel updatedPresentation = new(
+            pageNumber: query.PageNumber,
+            pageSize: query.PageSize,
+            sortBy: query.SortField,
+            sortDirection: query.SortDirection);
 
         MyPupilsPresentationPupilModels mappedPupilModels =
             _mapPupilsToPresentablePupils.Map(response.MyPupils) ?? MyPupilsPresentationPupilModels.Create([]);
@@ -105,7 +109,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         };
     }
 
-    public async Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbersAsync(string userId)
+    public async Task<IEnumerable<string>> GetSelectedPupilsAsync(string userId)
     {
         MyPupilsPupilSelectionState state = _getMyPupilsStateProvider.GetPupilSelections();
 

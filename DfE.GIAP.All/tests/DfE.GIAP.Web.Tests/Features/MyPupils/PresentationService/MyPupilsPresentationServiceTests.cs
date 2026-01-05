@@ -227,35 +227,35 @@ public sealed class MyPupilsPresentationServiceTests
     [InlineData(1, 1)]
     [InlineData(100, 5)]
     [InlineData(101, 6)]
-    public async Task GetMyPupils_Returns_PageSize_On_TotalPupilCount(int totalPupilCount, int expectedPages)
+    public async Task GetMyPupils_Returns_PageSize_From_TotalPupilCount(int totalPupilCount, int expectedPages)
     {
         // Arrange
         const string userId = "userId";
 
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 
-        GetMyPupilsResponse useCaseResponse = new(MyPupilModelTestDoubles.Generate(totalPupilCount));
-
+        GetMyPupilsResponse useCaseResponseStub = new(MyPupilModelTestDoubles.Generate(totalPupilCount));
         useCaseMock
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
-            .ReturnsAsync(useCaseResponse);
+            .ReturnsAsync(useCaseResponseStub);
 
+        MyPupilsPupilSelectionState selectionStateStub = new();
         Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsProvider = new();
         getPupilSelectionsProvider
             .Setup(t => t.GetPupilSelections())
-            .Returns(It.IsAny<MyPupilsPupilSelectionState>());
+            .Returns(selectionStateStub);
 
-
+        MyPupilsPresentationPupilModels handlerOutputStub = MyPupilsPresentationPupilModels.Create([]);
         Mock<IMyPupilsPresentationModelHandler> handlerMock = new();
         handlerMock.Setup(
             (handler) => handler.Handle(
                 It.IsAny<MyPupilsPresentationPupilModels>(),
                 It.IsAny<MyPupilsPresentationQueryModel>(),
                 It.IsAny<MyPupilsPupilSelectionState>()))
-            .Returns(It.IsAny<MyPupilsPresentationPupilModels>());
+            .Returns(handlerOutputStub);
 
         Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
-            MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: It.IsAny<MyPupilsPresentationPupilModels>());
+            MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: handlerOutputStub);
 
         MyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
@@ -273,59 +273,65 @@ public sealed class MyPupilsPresentationServiceTests
         Assert.Equal(expectedPages, response.TotalPages);
     }
 
-    [Fact]
-    public async Task GetMyPupils_Returns_IfAnyPupilsSelected_From_SelectionState()
+
+    [Theory]
+    [MemberData(nameof(GetMyPupilsInputs))]
+    public async Task GetMyPupils_Returns_Pupils_With_QueryParameters_Applied(
+        MyPupilsQueryRequestDto? request,
+        string expectedSortField,
+        string expectedSortDirection)
     {
         // Arrange
         const string userId = "userId";
 
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 
+        GetMyPupilsResponse useCaseResponse = new(MyPupilsModels.Create([]));
         useCaseMock
-            .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
-            .ReturnsAsync(new GetMyPupilsResponse(It.IsAny<MyPupilsModels>()));
+            .Setup((useCase) => useCase.HandleRequestAsync(new GetMyPupilsRequest(userId)))
+            .ReturnsAsync(useCaseResponse);
 
-        MyPupilsPupilSelectionState selectionState =
-            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
-                new Dictionary<List<string>, bool>()
-            {
-                { ["1"], true }
-            });
-
-        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsProvider = new();
-        getPupilSelectionsProvider
+        MyPupilsPupilSelectionState pupilSelectionsStub = new();
+        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsMock = new();
+        getPupilSelectionsMock
             .Setup(t => t.GetPupilSelections())
-            .Returns(selectionState);
+            .Returns(pupilSelectionsStub);
 
-        MyPupilsPresentationPupilModels outputPupils = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
-
+        MyPupilsPresentationPupilModels outputPupilsStub = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
         Mock<IMyPupilsPresentationModelHandler> handlerMock = new();
         handlerMock.Setup(
             (handler) => handler.Handle(
                 It.IsAny<MyPupilsPresentationPupilModels>(),
                 It.IsAny<MyPupilsPresentationQueryModel>(),
                 It.IsAny<MyPupilsPupilSelectionState>()))
-            .Returns(outputPupils);
+            .Returns(outputPupilsStub);
 
         Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
-            MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: outputPupils);
+            MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: outputPupilsStub);
 
         MyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
             handler: handlerMock.Object,
-            getMyPupilsStateProvider: getPupilSelectionsProvider.Object,
+            getMyPupilsStateProvider: getPupilSelectionsMock.Object,
             mapper: mapperMock.Object,
             deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object
         );
 
         // Act
-        MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, It.IsAny<MyPupilsQueryRequestDto>());
+        MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, request);
 
+        // Assert
         Assert.NotNull(response);
-        Assert.True(response.IsAnyPupilsSelected);
+        Assert.Equal(response.SortedField, expectedSortField);
+        Assert.Equal(response.SortedDirection, expectedSortDirection);
 
-        getPupilSelectionsProvider.Verify(
+        Assert.Equal(outputPupilsStub, response.MyPupils);
+        Assert.Equal(1, response.PageNumber);
+        Assert.Equal(1, response.TotalPages);
+        Assert.False(response.IsAnyPupilsSelected);
+
+        getPupilSelectionsMock.Verify(
             (provider) => provider.GetPupilSelections(),
                 Times.Once);
 
@@ -345,36 +351,37 @@ public sealed class MyPupilsPresentationServiceTests
                 Times.Once);
     }
 
-    [Theory]
-    [MemberData(nameof(GetMyPupilsInputs))]
-    public async Task GetMyPupils_Returns_Pupils_With_QueryParameters_Applied(
-        MyPupilsQueryRequestDto? request,
-        string expectedSortField,
-        string expectedSortDirection)
+    [Fact]
+    public async Task GetMyPupils_Returns_IfAnyPupilsSelected_From_SelectionState()
     {
         // Arrange
         const string userId = "userId";
 
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 
-        GetMyPupilsResponse useCaseResponse = new(MyPupilsModels.Create([]));
         useCaseMock
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
-            .ReturnsAsync(useCaseResponse);
+            .ReturnsAsync(new GetMyPupilsResponse(It.IsAny<MyPupilsModels>()));
 
-        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsProvider = new();
-        getPupilSelectionsProvider
+        MyPupilsPupilSelectionState selectionStateStub =
+            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
+                new Dictionary<List<string>, bool>()
+            {
+                { ["1"], true }
+            });
+        Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsMock = new();
+        getPupilSelectionsMock
             .Setup(t => t.GetPupilSelections())
-            .Returns(It.IsAny<MyPupilsPupilSelectionState>());
+            .Returns(selectionStateStub);
 
         MyPupilsPresentationPupilModels outputPupils = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 
         Mock<IMyPupilsPresentationModelHandler> handlerMock = new();
         handlerMock.Setup(
             (handler) => handler.Handle(
-                It.IsAny<MyPupilsPresentationPupilModels>(),
-                It.IsAny<MyPupilsPresentationQueryModel>(),
-                It.IsAny<MyPupilsPupilSelectionState>()))
+                MyPupilsPresentationPupilModels.Empty(),
+                MyPupilsPresentationQueryModel.CreateDefault(),
+                MyPupilsPupilSelectionState.CreateDefault()))
             .Returns(outputPupils);
 
         Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
@@ -383,27 +390,20 @@ public sealed class MyPupilsPresentationServiceTests
         MyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
             handler: handlerMock.Object,
-            getMyPupilsStateProvider: getPupilSelectionsProvider.Object,
+            getMyPupilsStateProvider: getPupilSelectionsMock.Object,
             mapper: mapperMock.Object,
             deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object
         );
 
         // Act
-        MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, request);
+        MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, new MyPupilsQueryRequestDto());
 
-
+        // Assert
         Assert.NotNull(response);
-        Assert.Equal(response.SortedField, expectedSortField);
-        Assert.Equal(response.SortedDirection, expectedSortDirection);
+        Assert.True(response.IsAnyPupilsSelected);
 
-        const int defaultPageSize = 20;
-        Assert.Equal(outputPupils, response.MyPupils);
-        Assert.Equal(1, response.PageNumber);
-        Assert.Equal(response.TotalPages, Math.Ceiling((double)outputPupils.Count / defaultPageSize));
-        Assert.False(response.IsAnyPupilsSelected);
-
-        getPupilSelectionsProvider.Verify(
+        getPupilSelectionsMock.Verify(
             (provider) => provider.GetPupilSelections(),
                 Times.Once);
 
@@ -421,6 +421,18 @@ public sealed class MyPupilsPresentationServiceTests
                 It.IsAny<MyPupilsPresentationQueryModel>(),
                 It.IsAny<MyPupilsPupilSelectionState>()),
                 Times.Once);
+    }
+
+    [Fact]
+    public async Task GetSelectedPupilsAsync_Returns_AllPupils_When_SelectionMode_Is_All()
+    {
+
+    }
+
+    [Fact]
+    public async Task GetSelectedPupilsAsync_Returns_ExplicitSelections_When_SelectionMode_Is_Not_All()
+    {
+
     }
 
     public static TheoryData<MyPupilsQueryRequestDto?, string, string> GetMyPupilsInputs

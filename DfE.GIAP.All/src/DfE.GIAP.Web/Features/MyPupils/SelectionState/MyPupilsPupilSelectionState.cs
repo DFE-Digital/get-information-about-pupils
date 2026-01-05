@@ -1,6 +1,5 @@
 ﻿namespace DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
-// Note: SelectAll or DeselectAll states - may have a subsequent manual selection/deselection applied, so this state is applied at the point of SelectAll/Deselect", not infer all future SelectionState from it. i.e. a pupil can be manually deselected after SelectAll has been applied
 public sealed class MyPupilsPupilSelectionState
 {
     private SelectionMode _mode = SelectionMode.None;
@@ -101,6 +100,10 @@ public sealed class MyPupilsPupilSelectionState
     public IReadOnlyCollection<string> GetDeselectedExceptions()
         => _deselectedUpnExceptions.ToList().AsReadOnly();
 }
+
+// Note: SelectAll state - may have a subsequent manual selection/deselection applied, so "SelectAll" is applied at the point of SelectAll/Deselect" than
+// infer ALL selectionStates from this mode.
+// i.e. a pupil can be manually deselected after SelectAll has been applied
 
 public enum SelectionMode
 {
