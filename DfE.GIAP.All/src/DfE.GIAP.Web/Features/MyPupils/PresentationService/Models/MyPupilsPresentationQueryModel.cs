@@ -4,8 +4,10 @@ public record MyPupilsPresentationQueryModel
 {
     public MyPupilsPresentationQueryModel(int pageNumber, string sortBy, string sortDirection)
     {
-        Page = new(pageNumber);
-        Sort = new(sortBy, sortDirection);
+        Page = new PageNumber(pageNumber);
+        Sort = new SortOptions(
+            sortBy ?? string.Empty,
+            sortDirection ?? string.Empty);
     }
 
     public PageNumber Page { get; }

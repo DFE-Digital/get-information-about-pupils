@@ -4,5 +4,5 @@ public enum SortDirection
 {
     Ascending,
     Descending,
-    None
+    NoneOrUnknown
 }

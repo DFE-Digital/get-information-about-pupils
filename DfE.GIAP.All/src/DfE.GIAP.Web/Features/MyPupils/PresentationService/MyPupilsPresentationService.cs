@@ -81,8 +81,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         MyPupilsPresentationQueryModel updatedPresentation = new(query.PageNumber, query.SortField, query.SortDirection);
 
         MyPupilsPresentationPupilModels mappedPupilModels =
-            _mapPupilsToPresentablePupils.Map(response.MyPupils) ??
-                    MyPupilsPresentationPupilModels.Create([]);
+            _mapPupilsToPresentablePupils.Map(response.MyPupils) ?? MyPupilsPresentationPupilModels.Create([]);
 
         MyPupilsPresentationPupilModels handledPupilModels =
             _presentationHandler.Handle(mappedPupilModels, updatedPresentation, selectionState);
@@ -100,8 +99,9 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             SortedField = updatedPresentation.Sort.Field,
             IsAnyPupilsSelected = selectionState.IsAnyPupilSelected,
             TotalPages =
-                response.MyPupils.Count == 0 ? 1 :
+                response.MyPupils.Count <= updatedPresentation.PageSize ? 1 :
                     (int)Math.Ceiling(response.MyPupils.Count / (double)updatedPresentation.PageSize)
+
         };
     }
 

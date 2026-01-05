@@ -8,12 +8,12 @@ public record SortOptions
 
         Direction =
             string.IsNullOrWhiteSpace(sortDirection) ?
-                SortDirection.None :
+                SortDirection.NoneOrUnknown :
                     sortDirection.ToLowerInvariant() switch
                     {
                         "asc" => SortDirection.Ascending,
                         "desc" => SortDirection.Descending,
-                        _ => SortDirection.None
+                        _ => SortDirection.NoneOrUnknown
                     };
     }
 
