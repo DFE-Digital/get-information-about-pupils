@@ -185,22 +185,21 @@ public sealed class MyPupilsPresentationServiceTests
         await Assert.ThrowsAnyAsync<ArgumentException>(() => sut.GetPupilsAsync(userId, It.IsAny<MyPupilsQueryRequestDto>()));
     }
 
-
-
-    // QueryDto can come in as null
-    // TODO test calls that are made to dependencies.
-    [Fact]
-    public async Task Test1()
+    // TODO expand calls that are made to dependencies.
+    [Theory]
+    [MemberData(nameof(GetMyPupilsInputs))]
+    public async Task GetMyPupils_Returns_Pupils(MyPupilsQueryRequestDto? request)
     {
         // Arrange
         const string userId = "userId";
 
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
         
-        GetMyPupilsResponse response = new(MyPupilsModels.Create([]));
+        GetMyPupilsResponse useCaseResponse = new(MyPupilsModels.Create([]));
+
         useCaseMock
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
-            .ReturnsAsync(response);
+            .ReturnsAsync(useCaseResponse);
 
         Mock<IGetMyPupilsPupilSelectionProvider> getPupilSelectionsProvider = new();
 
@@ -211,12 +210,12 @@ public sealed class MyPupilsPresentationServiceTests
         MyPupilsPresentationPupilModels outputPupils =
             MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 
-        Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapper =
+        Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
             MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: outputPupils);
 
         Mock<IMyPupilsPresentationModelHandler> handlerMock = new();
-        handlerMock.Setup((t)
-            => t.Handle(
+        handlerMock.Setup(
+            (handler) => handler.Handle(
                 It.IsAny<MyPupilsPresentationPupilModels>(),
                 It.IsAny<MyPupilsPresentationQueryModel>(),
                 It.IsAny<MyPupilsPupilSelectionState>()))
@@ -228,15 +227,47 @@ public sealed class MyPupilsPresentationServiceTests
             handler: handlerMock.Object,
             getMyPupilsStateProvider: getPupilSelectionsProvider.Object,
             clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
-            mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
+            mapper: mapperMock.Object
         );
 
         // Act
-        MyPupilsQueryRequestDto queryDto = new();
-        await sut.GetPupilsAsync(userId, queryDto);
+        // TODO assert on response
+        MyPupilsPresentationResponse myPupilsPresentationResponse = await sut.GetPupilsAsync(userId, request);
 
         getPupilSelectionsProvider.Verify(
-            (provider) => provider.GetPupilSelections(), Times.Once);
+            (provider) => provider.GetPupilSelections(),
+                Times.Once);
+
+        useCaseMock.Verify(
+            (useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()),
+                Times.Once);
+
+        mapperMock.Verify(
+            (mapper) => mapper.Map(It.IsAny<MyPupilsModels>()),
+                Times.Once);
+
+        handlerMock.Verify(
+            (handler) => handler.Handle(
+                It.IsAny<MyPupilsPresentationPupilModels>(),
+                It.IsAny<MyPupilsPresentationQueryModel>(),
+                It.IsAny<MyPupilsPupilSelectionState>()),
+                Times.Once);
+    }
+
+    public static TheoryData<MyPupilsQueryRequestDto?> GetMyPupilsInputs
+    {
+        get
+        {
+            return new()
+            {
+                {
+                    null!
+                },
+                {
+                    new()
+                }
+            };
+        }
     }
 
     public static TheoryData<List<string>?, MyPupilsPupilSelectionState, List<string>> DeletePupilsInput

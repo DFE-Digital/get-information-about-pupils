@@ -71,7 +71,8 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
         UserId id = new(userId);
         query ??= new();
 
-        MyPupilsPupilSelectionState selectionState = _getMyPupilsStateProvider.GetPupilSelections();
+        MyPupilsPupilSelectionState selectionState = _getMyPupilsStateProvider.GetPupilSelections() ??
+            MyPupilsPupilSelectionState.CreateDefault();
 
         GetMyPupilsResponse response =
             await _getMyPupilsUseCase.HandleRequestAsync(
@@ -79,17 +80,29 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         MyPupilsPresentationQueryModel updatedPresentation = new(query.PageNumber, query.SortField, query.SortDirection);
 
-        MyPupilsPresentationPupilModels handledPupilModels =
-            _presentationHandler.Handle(
-                pupils: _mapPupilsToPresentablePupils.Map(response.MyPupils),
-                updatedPresentation,
-                selectionState);
+        MyPupilsPresentationPupilModels mappedPupilModels =
+            _mapPupilsToPresentablePupils.Map(response.MyPupils) ??
+                    MyPupilsPresentationPupilModels.Create([]);
 
-        return new(
-            handledPupilModels,
-            updatedPresentation,
-            selectionState,
-            totalPupilCount: response.MyPupils.Count);
+        MyPupilsPresentationPupilModels handledPupilModels =
+            _presentationHandler.Handle(mappedPupilModels, updatedPresentation, selectionState);
+
+        return new MyPupilsPresentationResponse()
+        {
+            MyPupils = handledPupilModels,
+            PageNumber = updatedPresentation.Page.Value,
+            SortedDirection = updatedPresentation.Sort.Direction switch
+            {
+                SortDirection.Ascending => "asc",
+                SortDirection.Descending => "desc",
+                _ => string.Empty
+            },
+            SortedField = updatedPresentation.Sort.Field,
+            IsAnyPupilsSelected = selectionState.IsAnyPupilSelected,
+            TotalPages =
+                response.MyPupils.Count == 0 ? 1 :
+                    (int)Math.Ceiling(response.MyPupils.Count / (double)updatedPresentation.PageSize)
+        };
     }
 
     public async Task<IEnumerable<string>> GetSelectedPupilUniquePupilNumbersAsync(string userId)

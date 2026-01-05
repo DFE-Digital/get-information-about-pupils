@@ -66,11 +66,13 @@ public sealed class GetMyPupilsControllerTests
 
         MyPupilsPresentationPupilModels pupilsStub = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 
-        MyPupilsPresentationResponse presentationResponseStub = new(
-            pupilsStub,
-            MyPupilsPresentationQueryModel.CreateDefault(),
-            MyPupilsPupilSelectionState.CreateDefault(),
-            100);
+        MyPupilsPresentationResponse presentationResponseStub = new()
+        {
+            MyPupils = pupilsStub,
+            PageNumber = 1,
+            TotalPages = 100,
+            IsAnyPupilsSelected = false,
+        };
 
         IMyPupilsPresentationService serviceMock =
             IMyPupilsPresentationServiceTestDoubles.MockForGetPupils(presentationResponseStub);
