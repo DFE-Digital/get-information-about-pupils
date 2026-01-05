@@ -17,7 +17,7 @@ public sealed class OrderMyPupilsModelPresentationHandler : IMyPupilsPresentatio
     public MyPupilsPresentationPupilModels Handle(
         MyPupilsPresentationPupilModels myPupils,
         MyPupilsPresentationQueryModel query,
-        MyPupilsPupilSelectionState selectionState)
+        MyPupilsPupilSelectionState _)
     {
         if (string.IsNullOrEmpty(query.Sort.Field))
         {

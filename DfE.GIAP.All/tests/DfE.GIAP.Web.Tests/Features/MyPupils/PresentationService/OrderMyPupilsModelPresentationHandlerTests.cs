@@ -34,48 +34,51 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         Assert.Equal(pupils, response);
         // TODO expand to other properties
     }
-/*
+
     [Fact]
     public void Handle_SortBy_UnknownKey_Throws_ArgumentException()
     {
         // Arrange
-        MyPupilsPresentationQueryModel state = MyPupilsPresentationQueyTestDoubles.Create(sortKey: "unknown-sortByKey");
+        MyPupilsPresentationQueryModel query = MyPupilsPresentationQueryModelTestDoubles.Create(sortKey: "unknown-sortByKey");
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
 
         // Act Assert
-        Action act = () => sut.Handle(It.IsAny<MyPupilsModels>(), state);
+        Action act = () => sut.Handle(It.IsAny<MyPupilsPresentationPupilModels>(), query, It.IsAny<MyPupilsPupilSelectionState>());
         Assert.Throws<ArgumentException>(act);
     }
 
+    
     [Theory]
-    [InlineData("forename", SortDirection.Ascending)]
-    [InlineData("forename", SortDirection.Descending)]
-    [InlineData("FORENAME", SortDirection.Ascending)]
-    [InlineData("foRENamE", SortDirection.Descending)]
-    public void Handle_SortBy_Forename_Returns_SortedPupils_By_Forename(string sortKey, SortDirection sortDirection)
+    [InlineData("forename", "asc")]
+    [InlineData("forename", "desc")]
+    [InlineData("FORENAME", "asc")]
+    [InlineData("foRENamE", "desc")]
+    public void Handle_SortBy_Forename_Returns_SortedPupils_By_Forename(string sortKey, string sortDirection)
     {
         // Arrange
-        MyPupilsPresentationQueryModel state = MyPupilsPresentationQueyTestDoubles.Create(sortKey, sortDirection);
+        MyPupilsPresentationQueryModel query = MyPupilsPresentationQueryModelTestDoubles.Create(sortKey, sortDirection);
 
-        MyPupilsModels pupils = MyPupilModelTestDoubles.Generate(count: 20);
+        MyPupilsPresentationPupilModels inputPupils = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 20);
 
 
         OrderMyPupilsModelPresentationHandler sut = new();
 
         // Act
-        MyPupilsModels response = sut.Handle(pupils, state);
+        MyPupilsPresentationPupilModels response = sut.Handle(inputPupils, query, It.IsAny<MyPupilsPupilSelectionState>());
 
         // Assert
-        IEnumerable<MyPupilsModel> expected =
-            sortDirection == SortDirection.Ascending ?
-                pupils.Values.OrderBy(t => t.Forename) :
-                pupils.Values.OrderByDescending(t => t.Forename);
+        IOrderedEnumerable<MyPupilsPresentationPupilModel> expected =
+            sortDirection == "asc" ?
+                inputPupils.Values.OrderBy(t => t.Forename) :
+                inputPupils.Values.OrderByDescending(t => t.Forename);
 
         Assert.Equal(expected, response.Values);
     }
 
+
+    /*
     [Theory]
     [InlineData("surname", SortDirection.Ascending)]
     [InlineData("surname", SortDirection.Descending)]

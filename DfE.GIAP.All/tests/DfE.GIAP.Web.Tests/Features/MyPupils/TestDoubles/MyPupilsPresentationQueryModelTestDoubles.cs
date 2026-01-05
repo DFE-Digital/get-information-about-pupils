@@ -2,7 +2,7 @@
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
-public static class MyPupilsPresentationQueyTestDoubles
+public static class MyPupilsPresentationQueryModelTestDoubles
 {
 
     public static MyPupilsPresentationQueryModel Create(string sortKey)
@@ -12,7 +12,7 @@ public static class MyPupilsPresentationQueyTestDoubles
 
     public static MyPupilsPresentationQueryModel Create(string sortKey, string sortDirection)
         => Create(
-            It.IsAny<int>(),
+            1,
             sortKey,
             sortDirection);
 
