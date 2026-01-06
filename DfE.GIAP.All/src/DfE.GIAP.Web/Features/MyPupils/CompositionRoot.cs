@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandlers;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
@@ -9,6 +10,7 @@ using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.ChainOfResponsibility;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
@@ -88,14 +90,29 @@ public static class CompositionRoot
                     sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
                     sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
             })
-            // Session handlers
+            // Query
             .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()
+            // Command
             .AddScoped<ISessionCommandHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionCommandHandler<MyPupilsPupilSelectionState>>();
 
         services
             .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
             .AddScoped<IClearMyPupilsPupilSelectionsHandler, ClearMyPupilsPupilSelectionsHandler>()
-            .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>();
+            .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>()
+            .AddScoped<IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>, EvaluationHandler<UpdateMyPupilsSelectionStateRequest>>()
+            .AddSingleton<SelectAllPupilsCommandHandler>()
+            .AddSingleton<DeselectAllPupilsCommandHandler>()
+            .AddSingleton<ManualSelectPupilsCommandHandler>()
+            .AddScoped<ICommandHandler<UpdateMyPupilsSelectionStateRequest>>((sp) =>
+            {
+                // TODO wrap builder for orchestration of handlers
+                ChainedCommandHandler<UpdateMyPupilsSelectionStateRequest> headHandler = new(current: sp.GetRequiredService<SelectAllPupilsCommandHandler>());
+
+                headHandler.ChainNext(sp.GetRequiredService<DeselectAllPupilsCommandHandler>());
+                headHandler.ChainNext(sp.GetRequiredService<ManualSelectPupilsCommandHandler>());
+
+                return headHandler; // Return HEAD
+            });
             
         return services;
     }
