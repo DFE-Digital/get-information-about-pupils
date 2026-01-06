@@ -10,6 +10,11 @@ public sealed class ApplySelectionToPupilPresentationHandler : IMyPupilsPresenta
         MyPupilsPresentationQueryModel query,
         MyPupilsPupilSelectionState selectionState)
     {
+        if(pupils is null)
+        {
+            return MyPupilsPresentationPupilModels.Create([]);
+        }
+
         foreach (MyPupilsPresentationPupilModel pupil in pupils.Values)
         {
             pupil.IsSelected = selectionState.IsPupilSelected(pupil.UniquePupilNumber);
