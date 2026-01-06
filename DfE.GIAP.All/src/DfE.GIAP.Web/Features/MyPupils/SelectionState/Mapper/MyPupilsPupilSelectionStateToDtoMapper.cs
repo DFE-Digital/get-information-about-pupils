@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper.DataTransferObjects;
 
 namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 
