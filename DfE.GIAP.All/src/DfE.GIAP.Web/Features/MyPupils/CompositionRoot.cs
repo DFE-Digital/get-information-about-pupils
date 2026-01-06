@@ -8,6 +8,7 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;

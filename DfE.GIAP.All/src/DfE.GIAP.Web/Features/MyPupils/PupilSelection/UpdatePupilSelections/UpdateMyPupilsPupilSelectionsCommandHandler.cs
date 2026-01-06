@@ -1,13 +1,16 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 using DfE.GIAP.Web.Session.Abstraction.Command;
 
-namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 
 public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilSelectionsCommandHandler
 {
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsStateQueryHandler;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _pupilSelectionStateCommandHandler;
+    private readonly IEvaluationHandler<MyPupilsPupilSelectionState> _stateHandler;
     public UpdateMyPupilsPupilSelectionsCommandHandler(
         IGetMyPupilsPupilSelectionProvider getMyPupilsStateQueryHandler,
         ISessionCommandHandler<MyPupilsPupilSelectionState> pupilSelectionStateCommandHandler)
@@ -25,8 +28,7 @@ public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilS
         MyPupilsPupilSelectionState selectionState = _getMyPupilsStateQueryHandler.GetPupilSelections();
         // Track a manual selection/deselection of pupils on the current page
 
-
-        // Update SelectionState
+        _stateHandler.Evaluate(selectionState);
         if (formDto.SelectAllState == MyPupilsFormSelectionModeRequestDto.SelectAll)
         {
             selectionState.SelectAll();
@@ -69,5 +71,47 @@ public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilS
         }
 
         _pupilSelectionStateCommandHandler.StoreInSession(selectionState);
+    }
+}
+
+public record UpdateMyPupilsSelectionStateRequest
+{
+    public UpdateMyPupilsSelectionStateRequest(MyPupilsFormStateRequestDto updateRequest, MyPupilsPupilSelectionState currentState)
+    {
+        ArgumentNullException.ThrowIfNull(updateRequest);
+        Request = updateRequest;
+
+        ArgumentNullException.ThrowIfNull(currentState);
+        State = currentState;
+    }
+
+    public MyPupilsFormStateRequestDto Request { get; init; }
+    public MyPupilsPupilSelectionState State { get; init; }
+}
+
+public interface IEvaluationHandler<TIn>
+{
+    void Evaluate(TIn input);
+}
+
+public interface IChainedHandler<TIn, TOut> : ICommandHandler<TIn>
+{
+    void ChainNext(ICommandHandler<TIn> handler);
+}
+
+public interface ICommandHandler<TIn>
+{
+    bool CanHandle(TIn input);
+    void Handle(TIn input);
+}
+
+internal sealed class SelectAllPupilsCommandHandler : ICommandHandler<UpdateMyPupilsSelectionStateRequest>
+{
+    public bool CanHandle(UpdateMyPupilsSelectionStateRequest input) => input.Request.SelectAllState == MyPupilsFormSelectionModeRequestDto.SelectAll;
+
+    public void Handle(UpdateMyPupilsSelectionStateRequest input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        input.State.SelectAll();
     }
 }
