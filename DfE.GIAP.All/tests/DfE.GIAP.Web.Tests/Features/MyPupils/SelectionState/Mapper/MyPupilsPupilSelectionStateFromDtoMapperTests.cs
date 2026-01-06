@@ -1,4 +1,4 @@
-﻿/*using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
@@ -18,6 +18,8 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         Assert.Throws<ArgumentNullException>(() => sut.Map(null!));
     }
 
+
+    /*
     [Fact]
     public void Map_Sets_SelectAll_State_And_Selection()
     {
@@ -98,5 +100,7 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         Assert.False(result.IsPupilSelected(pupils[2].Value));
         Assert.False(result.IsPupilSelected(pupils[3].Value));
     }
-}
+
 */
+}
+

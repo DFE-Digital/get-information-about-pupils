@@ -86,8 +86,7 @@ public sealed class MyPupilsPupilSelectionState
         => _deselectedUpnExceptions.ToList().AsReadOnly();
 }
 
-// Note: SelectAll state - may have a subsequent manual selection/deselection applied, so "SelectAll" is applied at the point of SelectAll/Deselect" than
-// infer ALL selectionStates from this mode.
+// Note: SelectAll state - may have a subsequent manual selection/deselection applied, so "SelectAll" is applied at the point of SelectAll/Deselect". It is NOT ALL SELECTIONS from this mode.
 // i.e. a pupil can be manually deselected after SelectAll has been applied
 
 public enum SelectionMode
