@@ -382,8 +382,8 @@ public sealed class MyPupilsPresentationServiceTests
             .ReturnsAsync(new GetMyPupilsResponse(It.IsAny<MyPupilsModels>()));
 
         MyPupilsPupilSelectionState selectionStateStub =
-            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
-                SelectionMode.None,
+            MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(
+                SelectionMode.Manual,
                 selected: ["1"],
                 deselected: []);
 
@@ -456,7 +456,7 @@ public sealed class MyPupilsPresentationServiceTests
         // Deselect a few pupils out of all pupils
         List<string> deselectedPupils = useCaseResponse.MyPupils.Identifiers.TakeLast(2).ToList();
         MyPupilsPupilSelectionState selectionStateStub =
-            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
+            MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(
                 mode: SelectionMode.All,
                 selected: useCaseResponse.MyPupils.Identifiers.ToList(),
                 deselected: deselectedPupils);
@@ -501,8 +501,8 @@ public sealed class MyPupilsPresentationServiceTests
 
         // TODO back behind TestDouble/Builder
         MyPupilsPupilSelectionState selectionStateStub =
-            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
-                mode: SelectionMode.None,
+            MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(
+                mode: SelectionMode.Manual,
                 selected: explicitSelections,
                 deselected: []);
 
@@ -616,13 +616,13 @@ public sealed class MyPupilsPresentationServiceTests
                 // selections are appended from request to state
                 {
                     ["1" ],
-                    MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(SelectionMode.None, selected: ["2"], deselected: []),
+                    MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(SelectionMode.Manual, selected: ["2"], deselected: []),
                     ["1", "2"]
                 },
                 // selections are deduplicated
                 {
                     ["1" ],
-                    MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(SelectionMode.None, selected: ["1", "2"], deselected: []),
+                    MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(SelectionMode.Manual, selected: ["1", "2"], deselected: []),
                     ["1", "2"]
                 },
             };

@@ -2,7 +2,7 @@
 
 public sealed class MyPupilsPupilSelectionState
 {
-    private SelectionMode _mode = SelectionMode.None;
+    private SelectionMode _mode = SelectionMode.Manual;
 
     // In None mode, we keep explicit selections.
     private readonly HashSet<string> _explicitSelections = [];
@@ -23,7 +23,7 @@ public sealed class MyPupilsPupilSelectionState
 
     public void ResetState()
     {
-        _mode = SelectionMode.None;
+        _mode = SelectionMode.Manual;
         _explicitSelections.Clear();
         _deselectedUpnExceptions.Clear();
     }
@@ -37,7 +37,7 @@ public sealed class MyPupilsPupilSelectionState
 
     public void DeselectAll()
     {
-        _mode = SelectionMode.None;
+        _mode = SelectionMode.Manual;
         _explicitSelections.Clear();
         _deselectedUpnExceptions.Clear();
     }
@@ -92,6 +92,6 @@ public sealed class MyPupilsPupilSelectionState
 
 public enum SelectionMode
 {
-    None, // Track explicit selections only.
+    Manual, // Track explicit selections only.
     All   // Everything selected by default; track deselection exceptions.
 }

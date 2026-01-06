@@ -26,7 +26,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
         // None mode: persist explicit selections only.
         return new MyPupilsPupilSelectionStateDto
         {
-            Mode = SelectionMode.None,
+            Mode = SelectionMode.Manual,
             ExplicitSelections = [.. source.GetExplicitSelections()],
             DeselectionExceptions = []
         };

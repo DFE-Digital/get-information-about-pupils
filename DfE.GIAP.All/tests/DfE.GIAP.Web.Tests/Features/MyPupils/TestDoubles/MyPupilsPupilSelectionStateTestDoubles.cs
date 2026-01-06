@@ -3,7 +3,10 @@
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 public static class MyPupilsPupilSelectionStateTestDoubles
 {
-    public static MyPupilsPupilSelectionState WithPupilsSelectionState(
+    public static MyPupilsPupilSelectionState WithSelectedPupils(
+        List<string> selected) => WithSelectedPupils(SelectionMode.Manual, selected, []);
+
+    public static MyPupilsPupilSelectionState WithSelectedPupils(
         SelectionMode mode,
         List<string> selected,
         List<string> deselected)

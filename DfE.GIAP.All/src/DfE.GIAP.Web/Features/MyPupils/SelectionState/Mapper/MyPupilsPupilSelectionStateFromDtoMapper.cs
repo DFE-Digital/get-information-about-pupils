@@ -26,7 +26,7 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapper
 
                 break;
 
-            case SelectionMode.None:
+            case SelectionMode.Manual:
             default:
 
                 // None mode: apply explicit selections only.

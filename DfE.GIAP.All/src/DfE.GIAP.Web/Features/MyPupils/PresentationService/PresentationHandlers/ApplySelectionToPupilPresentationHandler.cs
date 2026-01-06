@@ -7,7 +7,7 @@ public sealed class ApplySelectionToPupilPresentationHandler : IMyPupilsPresenta
 {
     public MyPupilsPresentationPupilModels Handle(
         MyPupilsPresentationPupilModels pupils,
-        MyPupilsPresentationQueryModel query,
+        MyPupilsPresentationQueryModel _,
         MyPupilsPupilSelectionState selectionState)
     {
         if(pupils is null)
@@ -17,8 +17,9 @@ public sealed class ApplySelectionToPupilPresentationHandler : IMyPupilsPresenta
 
         foreach (MyPupilsPresentationPupilModel pupil in pupils.Values)
         {
-            pupil.IsSelected = selectionState.IsPupilSelected(pupil.UniquePupilNumber);
+            pupil.IsSelected = selectionState?.IsPupilSelected(pupil.UniquePupilNumber) ?? false;
         }
+
         return pupils;
     }
 }

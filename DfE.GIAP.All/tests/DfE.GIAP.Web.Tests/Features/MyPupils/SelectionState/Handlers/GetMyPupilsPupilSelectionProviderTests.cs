@@ -51,8 +51,8 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
         List<string> selectedPupils = upns.Take(5).ToList();
 
         MyPupilsPupilSelectionState expectedSelectionState =
-            MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(
-                SelectionMode.None,
+            MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(
+                SelectionMode.Manual,
                 selected: selectedPupils,
                 deselected: upns.Skip(5).ToList());
 
