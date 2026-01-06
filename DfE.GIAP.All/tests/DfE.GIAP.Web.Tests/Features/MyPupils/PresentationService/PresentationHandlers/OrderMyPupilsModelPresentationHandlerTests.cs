@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.PresentationHandlers;
 
 public sealed class OrderMyPupilsModelPresentationHandlerTests
 {
@@ -47,7 +47,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         Assert.Throws<ArgumentException>(act);
     }
 
-    
+
     [Theory]
     [InlineData("forename", "asc")]
     [InlineData("forename", "desc")]
@@ -100,7 +100,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         Assert.Equal(expected, response.Values);
     }
 
-    
+
     [Theory]
     [InlineData("dob", "asc")]
     [InlineData("dob", "desc")]
@@ -127,7 +127,7 @@ public sealed class OrderMyPupilsModelPresentationHandlerTests
         Assert.Equal(expected, response.Values);
     }
 
-    
+
     [Theory]
     [InlineData("sex", "asc")]
     [InlineData("sex", "desc")]

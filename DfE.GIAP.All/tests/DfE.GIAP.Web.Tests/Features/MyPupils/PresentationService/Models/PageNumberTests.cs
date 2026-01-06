@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Models;
 public class PageNumberTests
 {
     [Theory]

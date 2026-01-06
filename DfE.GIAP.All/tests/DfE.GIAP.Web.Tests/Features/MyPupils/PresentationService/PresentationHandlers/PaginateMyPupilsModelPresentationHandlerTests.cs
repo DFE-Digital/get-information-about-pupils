@@ -6,11 +6,11 @@ using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.PresentationHandlers;
 public sealed class PaginateMyPupilsModelPresentationHandlerTests
 {
     private const int DEFAULT_PAGE_SIZE = 20;
-    
+
     [Fact]
     public void Handle_Returns_Empty_When_Pupils_Are_Empty()
     {
@@ -29,7 +29,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         Assert.Empty(response.Values);
     }
 
-    
+
     [Theory]
     [InlineData(10)]
     [InlineData(DEFAULT_PAGE_SIZE)]
@@ -50,7 +50,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         Assert.Equivalent(pupils, response);
     }
 
-    
+
     [Fact]
     public void Handle_Returns_PageOfPupils_When_PageNumber_Requested()
     {
@@ -68,7 +68,7 @@ public sealed class PaginateMyPupilsModelPresentationHandlerTests
         Assert.NotNull(response);
         Assert.Empty(response.Values);
     }
-    
+
     [Fact]
     public void Handle_Returns_PartialPage_Of_Pupils_When_PageNumber_Requested()
     {

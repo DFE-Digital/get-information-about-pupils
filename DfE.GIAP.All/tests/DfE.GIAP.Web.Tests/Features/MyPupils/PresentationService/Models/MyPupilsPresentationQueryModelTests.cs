@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Models;
 public sealed class MyPupilsPresentationQueryModelTests
 {
     [Fact]
