@@ -10,23 +10,11 @@ public sealed class MyPupilsPupilSelectionState
     // In All mode, we keep deselected UPNs.
     private readonly HashSet<string> _deselectedUpnExceptions = [];
 
-    public MyPupilsPupilSelectionState()
-    {
-        ResetState();
-    }
-
     public static MyPupilsPupilSelectionState CreateDefault() => new();
 
     public SelectionMode Mode => _mode;
 
     public bool IsAnyPupilSelected => _mode == SelectionMode.All || _explicitSelections.Count > 0;
-
-    public void ResetState()
-    {
-        _mode = SelectionMode.Manual;
-        _explicitSelections.Clear();
-        _deselectedUpnExceptions.Clear();
-    }
 
     public void SelectAll()
     {
