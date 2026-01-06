@@ -20,9 +20,9 @@ public sealed class PaginateMyPupilsModelPresentationHandler : IMyPupilsPresenta
         }
 
         List<MyPupilsPresentationPupilModel> pagedResults = myPupils.Values
-                .Skip(skip)
-                .Take(DefaultPageSize)
-                .ToList();
+            .Skip(skip)
+            .Take(DefaultPageSize)
+            .ToList();
 
         return MyPupilsPresentationPupilModels.Create(pagedResults);
     }

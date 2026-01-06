@@ -4,7 +4,6 @@ using Moq;
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 public static class MyPupilsPresentationQueryModelTestDoubles
 {
-
     public static MyPupilsPresentationQueryModel Create(string sortKey)
         => Create(
             sortKey,
