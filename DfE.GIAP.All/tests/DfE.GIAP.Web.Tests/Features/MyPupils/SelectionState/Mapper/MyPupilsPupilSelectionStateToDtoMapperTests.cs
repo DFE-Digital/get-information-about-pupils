@@ -1,9 +1,4 @@
-﻿/*using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
-using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.SelectionState.Mapper;
@@ -19,7 +14,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         Assert.Throws<ArgumentNullException>(() => sut.Map(null!));
     }
 
-    [Fact]
+/*    [Fact]
     public void Map_Returns_SelectAll_When_AllPupilsSelected()
     {
         // Arrange
@@ -89,6 +84,6 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         Assert.True(result.PupilUpnToSelectedMap[pupils[1]]);
         Assert.False(result.PupilUpnToSelectedMap[pupils[2]]);
         Assert.False(result.PupilUpnToSelectedMap[pupils[3]]);
-    }
+    }*/
 }
-*/
+

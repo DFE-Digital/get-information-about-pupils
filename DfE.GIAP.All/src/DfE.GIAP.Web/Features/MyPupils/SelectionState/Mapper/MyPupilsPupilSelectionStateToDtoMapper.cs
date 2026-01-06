@@ -11,19 +11,19 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
 
         ArgumentNullException.ThrowIfNull(source);
 
+        // In All mode, we only persist the exceptions.
+        // ExplicitSelections should be empty by design.
         if (source.Mode == SelectionMode.All)
         {
             return new MyPupilsPupilSelectionStateDto
             {
                 Mode = SelectionMode.All,
-                // In All mode, we only persist the exceptions.
-                // ExplicitSelections should be empty by design.
                 ExplicitSelections = [],
                 DeselectedExceptions = [.. source.GetDeselectedExceptions()]
             };
         }
 
-        // None mode: persist explicit selections only.
+        // Manual mode: persist explicit selections only.
         return new MyPupilsPupilSelectionStateDto
         {
             Mode = SelectionMode.Manual,
