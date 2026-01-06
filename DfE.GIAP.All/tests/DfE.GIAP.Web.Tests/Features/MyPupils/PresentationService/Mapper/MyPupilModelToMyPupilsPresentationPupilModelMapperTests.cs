@@ -1,17 +1,20 @@
-﻿using Xunit;
+﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
+using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Mapper;
 public sealed class MyPupilModelToMyPupilsPresentationPupilModelMapperTests
 {
 
     [Fact]
-    public void Test()
+    public void Handle_Throws_When_Input_Is_Null()
     {
         // Arrange
+        MyPupilModelToMyPupilsPresentationPupilModelMapper mapper = new();
 
-        // Act
-
-        // Assert
+        // Act Assert
+        Func<MyPupilsPresentationPupilModel> act = () => mapper.Map(null);
+        Assert.Throws<ArgumentNullException>(act);
     }
 
     /*    [Fact]
