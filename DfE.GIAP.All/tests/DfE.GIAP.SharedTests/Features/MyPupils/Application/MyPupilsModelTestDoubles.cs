@@ -6,7 +6,7 @@ using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.Features.MyPupils.Application;
-public static class MyPupilModelTestDoubles
+public static class MyPupilsModelTestDoubles
 {
     public static MyPupilsModels Generate(int count)
     {

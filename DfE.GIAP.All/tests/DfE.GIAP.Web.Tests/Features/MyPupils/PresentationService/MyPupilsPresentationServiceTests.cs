@@ -233,7 +233,7 @@ public sealed class MyPupilsPresentationServiceTests
 
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 
-        GetMyPupilsResponse useCaseResponseStub = new(MyPupilModelTestDoubles.Generate(totalPupilCount));
+        GetMyPupilsResponse useCaseResponseStub = new(MyPupilsModelTestDoubles.Generate(totalPupilCount));
         useCaseMock
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
             .ReturnsAsync(useCaseResponseStub);
@@ -447,7 +447,7 @@ public sealed class MyPupilsPresentationServiceTests
         // Arrange
         Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>> useCaseMock = new();
 
-        GetMyPupilsResponse useCaseResponse = new(MyPupilModelTestDoubles.Generate(count: 10));
+        GetMyPupilsResponse useCaseResponse = new(MyPupilsModelTestDoubles.Generate(count: 10));
         useCaseMock
             .Setup((useCase) => useCase.HandleRequestAsync(It.IsAny<GetMyPupilsRequest>()))
             .ReturnsAsync(useCaseResponse);

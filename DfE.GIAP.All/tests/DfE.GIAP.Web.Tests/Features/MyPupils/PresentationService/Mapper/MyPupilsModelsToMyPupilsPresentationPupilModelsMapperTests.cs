@@ -1,10 +1,10 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
-using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+using Moq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Mapper;
@@ -21,109 +21,67 @@ public sealed class MyPupilsModelsToMyPupilsPresentationPupilModelsMapperTests
         Assert.Throws<ArgumentNullException>(construct);
     }
 
-/*    [Fact]
-    public void Map_Throws_When_Input_Is_Null()
+    [Fact]
+    public void Map_Returns_Empty_When_Input_Is_Null()
     {
         // Arrange
-        MyPupilModelsToMyPupilsPresentationPupilModelMapper sut = new();
-        Action act = () => sut.Map(null);
+        Mock<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>> mapperMock
+            = MapperTestDoubles.MockFor<MyPupilsModel, MyPupilsPresentationPupilModel>();
 
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(act);
-    }*/
+        MyPupilModelsToMyPupilsPresentationPupilModelMapper mapper = new(mapperMock.Object);
 
-    /*    [Fact]
-        public void Map_Returns_EmptyList_When_Input_Is_EmptyList()
-        {
-            // Arrange
-            MyPupilsModels pupils = MyPupilsModels.Create(pupils: []);
+        // Act
+        MyPupilsPresentationPupilModels mapped =  mapper.Map(null!);
 
-            MyPupilModelsToMyPupilsPresentationPupilModelMapper sut = new();
+        // Assert
+        Assert.NotNull(mapped);
+        Assert.Empty(mapped.Values);
+    }
 
-            // Act
-            MyPupilsPresentationPupilModels response = sut.Map(pupils);
+    [Fact]
+    public void Map_Returns_Empty_When_Pupils_Is_Empty()
+    {
+        Mock<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>> mapperMock
+            = MapperTestDoubles.MockFor<MyPupilsModel, MyPupilsPresentationPupilModel>();
 
-            Assert.NotNull(response);
-            Assert.Empty(response.Values);
-            Assert.Equal(0, response.Count);
-        }
+        MyPupilModelsToMyPupilsPresentationPupilModelMapper mapper = new(mapperMock.Object);
 
-        [Fact]
-        public void Map_Maps_With_MappingApplied_For_PupilPremium()
-        {
-            // Arrange
-            MyPupilsModel createdPupilWithPupilPremium = MyPupilDtoBuilder.Create()
-                .WithPupilPremium(true)
-                .Build();
-
-            MyPupilsModel createdPupil = MyPupilDtoBuilder.Create()
-                .WithPupilPremium(false)
-                .Build();
-
-            MyPupilsModels inputPupils = MyPupilsModels.Create([createdPupilWithPupilPremium, createdPupil]);
-
-            MyPupilModelsToMyPupilsPresentationPupilModelMapper sut = new();
-
-            // Act
-            MyPupilsPresentationPupilModels response = sut.Map(inputPupils);
-
-            // Assert
-            Assert.NotNull(response);
-            Assert.NotNull(response.Values);
-            Assert.NotEmpty(response.Values);
-            Assert.Equal(2, response.Count);
-
-            List<MyPupilsPresentationPupilModel> responsePupils = response.Values.ToList();
-            AssertMappedPupil(createdPupilWithPupilPremium, responsePupils[0], expectPupilIsSelected: false);
-            AssertMappedPupil(createdPupil, responsePupils[1], expectPupilIsSelected: false);
-        }
-
-        [Fact]
-        public void Map_Maps_With_MappingApplied_For_IsPupilSelected()
-        {
-            // Arrange
-            MyPupilsModels createdPupils = MyPupilModelTestDoubles.Generate(count: 2);
+        // Act
+        MyPupilsPresentationPupilModels mapped =
+            mapper.Map(
+                MyPupilsModels.Create([]));
 
 
-            MyPupilModelToMyPupilsPresentationPupilModelMapper sut = new();
+        // Assert
+        Assert.NotNull(mapped);
+        Assert.Empty(mapped.Values);
 
-            Dictionary<List<string>, bool> selectionStateMapping = new()
-            {
-                { [createdPupils.Values[0].UniquePupilNumber], true},
-                { [createdPupils.Values[1].UniquePupilNumber], false}
-            };
+        mapperMock.Verify(mapper => mapper.Map(It.IsAny<MyPupilsModel>()), Times.Never);
+    }
 
-            MyPupilsPupilSelectionState selectionState =
-                MyPupilsPupilSelectionStateTestDoubles.WithPupilsSelectionState(selectionStateMapping);
+    [Fact]
+    public void Map_Calls_Mapper_When_Pupils_Exists()
+    {
+        const int pupilCount = 15;
+        Mock<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>> mapperMock =
+            MapperTestDoubles.MockFor<MyPupilsModel, MyPupilsPresentationPupilModel>();
 
-            // Act
-            MyPupilsPresentationPupilModels response = sut.Map(
-                new PupilsSelectionContext(createdPupils, selectionState));
+        // Return a stub from the mapped mock
+        mapperMock
+            .Setup((mapper) => mapper.Map(It.IsAny<MyPupilsModel>()))
+            .Returns(new MyPupilsPresentationPupilModel());
 
-            // Assert
-            Assert.NotNull(response);
-            Assert.NotNull(response.Values);
-            Assert.NotEmpty(response.Values);
-            Assert.Equal(2, response.Count);
+        MyPupilModelsToMyPupilsPresentationPupilModelMapper mapper = new(mapperMock.Object);
 
-            List<MyPupilsPresentationPupilModel> responsePupils = response.Values.ToList();
-            AssertMappedPupil(createdPupils.Values[0], responsePupils[0], expectPupilIsSelected: true);
-            AssertMappedPupil(createdPupils.Values[1], responsePupils[1], expectPupilIsSelected: false);
-        }
+        MyPupilsModels myPupils = MyPupilsModelTestDoubles.Generate(pupilCount);
 
-        private static void AssertMappedPupil(
-            MyPupilsModel input,
-            MyPupilsPresentationPupilModel output,
-            bool expectPupilIsSelected)
-        {
-            Assert.Equal(input.UniquePupilNumber, output.UniquePupilNumber);
-            Assert.Equal(input.Forename, output.Forename);
-            Assert.Equal(input.Surname, output.Surname);
-            Assert.Equal(input.DateOfBirth, output.DateOfBirth);
-            Assert.Equal(input.Sex, output.Sex);
-            Assert.Equal(input.LocalAuthorityCode.ToString(), output.LocalAuthorityCode);
-            Assert.Equal(input.IsPupilPremium ? "Yes" : "No", output.PupilPremiumLabel);
-            Assert.Equal(expectPupilIsSelected, output.IsSelected);
-        }
-    */
+        // Act
+        MyPupilsPresentationPupilModels mapped = mapper.Map(myPupils);
+
+
+        // Assert
+        Assert.NotNull(mapped);
+        Assert.Equal(pupilCount, mapped.Values.Count);
+        mapperMock.Verify(mapper => mapper.Map(It.IsAny<MyPupilsModel>()), Times.Exactly(pupilCount));
+    }
 }

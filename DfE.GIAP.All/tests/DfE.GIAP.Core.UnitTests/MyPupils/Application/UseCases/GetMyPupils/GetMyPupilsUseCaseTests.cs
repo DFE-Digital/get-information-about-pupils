@@ -31,7 +31,7 @@ public sealed class GetMyPupilsUseCaseTests
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
         Mock<IMapper<Pupil, MyPupilsModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
-        MyPupilsModels myPupilDtos = MyPupilModelTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
+        MyPupilsModels myPupilDtos = MyPupilsModelTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 
