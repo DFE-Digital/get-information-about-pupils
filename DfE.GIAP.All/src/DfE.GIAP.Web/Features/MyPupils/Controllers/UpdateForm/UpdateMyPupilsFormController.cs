@@ -14,7 +14,6 @@ public class UpdateMyPupilsFormController : Controller
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsStateCommandHandler;
 
-
     public UpdateMyPupilsFormController(
         ILogger<UpdateMyPupilsFormController> logger,
         IMyPupilsMessageSink myPupilsLogSink,
@@ -34,7 +33,7 @@ public class UpdateMyPupilsFormController : Controller
     // Prevent browser-caching from back button presenting stale state
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(MyPupilsFormStateRequestDto formDto, MyPupilsQueryRequestDto query)
+    public IActionResult Index(MyPupilsFormStateRequestDto formDto, MyPupilsQueryRequestDto query)
     {
         _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsFormController), nameof(Index));
 

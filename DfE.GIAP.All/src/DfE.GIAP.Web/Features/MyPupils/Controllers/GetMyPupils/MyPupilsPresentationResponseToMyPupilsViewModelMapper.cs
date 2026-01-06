@@ -5,12 +5,12 @@ using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 
-public sealed class MapMyPupilsPresentationResponseModelToViewModel : IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>
+public sealed class MyPupilsPresentationResponseToMyPupilsViewModelMapper : IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>
 {
     private readonly MyPupilsMessagingOptions _loggingOptions;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
 
-    public MapMyPupilsPresentationResponseModelToViewModel(
+    public MyPupilsPresentationResponseToMyPupilsViewModelMapper(
         IMyPupilsMessageSink myPupilsLogSink,
         IOptionsSnapshot<MyPupilsMessagingOptions> loggingOptions)
     {

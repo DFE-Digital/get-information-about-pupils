@@ -68,7 +68,7 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
         Assert.NotNull(response);
         Assert.Equal(expectedSelectionState.Mode, response.Mode);
         Assert.Equal(expectedSelectionState.IsAnyPupilSelected, response.IsAnyPupilSelected);
-        Assert.Equivalent(expectedSelectionState.GetExplicitSelections(), response.GetExplicitSelections());
+        Assert.Equivalent(expectedSelectionState.GetManualSelections(), response.GetManualSelections());
         Assert.Equivalent(expectedSelectionState.GetDeselectedExceptions(), response.GetDeselectedExceptions());
     }
 

@@ -79,7 +79,7 @@ public sealed class MyPupilsPupilSelectionState
             : _explicitSelections.Contains(upn);
     }
 
-    public IReadOnlyCollection<string> GetExplicitSelections()
+    public IReadOnlyCollection<string> GetManualSelections()
         => _explicitSelections.ToList().AsReadOnly();
 
     public IReadOnlyCollection<string> GetDeselectedExceptions()

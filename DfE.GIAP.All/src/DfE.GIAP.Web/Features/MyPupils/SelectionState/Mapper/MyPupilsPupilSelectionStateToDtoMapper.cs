@@ -19,7 +19,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
                 // In All mode, we only persist the exceptions.
                 // ExplicitSelections should be empty by design.
                 ExplicitSelections = [],
-                DeselectionExceptions = [.. source.GetDeselectedExceptions()]
+                DeselectedExceptions = [.. source.GetDeselectedExceptions()]
             };
         }
 
@@ -27,8 +27,8 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapper : IMapper<MyPupilsPup
         return new MyPupilsPupilSelectionStateDto
         {
             Mode = SelectionMode.Manual,
-            ExplicitSelections = [.. source.GetExplicitSelections()],
-            DeselectionExceptions = []
+            ExplicitSelections = [.. source.GetManualSelections()],
+            DeselectedExceptions = []
         };
 
 #pragma warning restore S3358 // Ternary operators should not be nested

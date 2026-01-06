@@ -9,27 +9,26 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapper
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        MyPupilsPupilSelectionState state = new();
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionState.CreateDefault();
 
         SelectionMode mode = dto.Mode;
 
         switch (mode)
         {
+            // Select All Mode: All selected EXCEPT explicit deselections
             case SelectionMode.All:
 
                 state.SelectAll();
-
-                foreach (string upn in dto.DeselectionExceptions?.Where(t => !string.IsNullOrWhiteSpace(t)) ?? [])
+                foreach (string upn in dto.DeselectedExceptions?.Where(t => !string.IsNullOrWhiteSpace(t)) ?? [])
                 {
                     state.Deselect(upn);
                 }
 
                 break;
 
+            // Manual mode: Explicit selections only.
             case SelectionMode.Manual:
             default:
-
-                // None mode: apply explicit selections only.
                 foreach (string upn in dto.ExplicitSelections?.Where(t => !string.IsNullOrWhiteSpace(t)) ?? [])
                 {
                     state.Select(upn);

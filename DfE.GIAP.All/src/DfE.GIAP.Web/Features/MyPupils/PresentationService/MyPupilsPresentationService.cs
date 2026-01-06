@@ -123,6 +123,6 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
                     state.GetDeselectedExceptions());
         }
 
-        return state.GetExplicitSelections();
+        return state.GetManualSelections();
     }
 }

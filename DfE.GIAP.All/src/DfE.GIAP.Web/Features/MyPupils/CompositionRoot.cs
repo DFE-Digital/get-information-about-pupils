@@ -43,7 +43,7 @@ public static class CompositionRoot
 
         // PresentationService
         services
-            .AddSingleton<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MapMyPupilsPresentationResponseModelToViewModel>()
+            .AddSingleton<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MyPupilsPresentationResponseToMyPupilsViewModelMapper>()
             .AddSingleton<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
             .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>, MyPupilModelToMyPupilsPresentationPupilModelMapper>()
             .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>();
