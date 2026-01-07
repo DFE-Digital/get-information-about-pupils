@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
+﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 using Moq;
@@ -12,9 +13,35 @@ public sealed class UpdateMyPupilsControllerTests
     {
         // Arrange
         Func<UpdateMyPupilsController> construct = () => new(
-            null,
+            null!,
             new Mock<IMyPupilsMessageSink>().Object,
             new Mock<IUpdateMyPupilsPupilSelectionsCommandHandler>().Object);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_MessageSink_Is_Null()
+    {
+        // Arrange
+        Func<UpdateMyPupilsController> construct = () => new(
+            LoggerTestDoubles.MockLogger<UpdateMyPupilsController>(),
+            null!,
+            new Mock<IUpdateMyPupilsPupilSelectionsCommandHandler>().Object);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_Handler_Is_Null()
+    {
+        // Arrange
+        Func<UpdateMyPupilsController> construct = () => new(
+            LoggerTestDoubles.MockLogger<UpdateMyPupilsController>(),
+            new Mock<IMyPupilsMessageSink>().Object,
+            null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
