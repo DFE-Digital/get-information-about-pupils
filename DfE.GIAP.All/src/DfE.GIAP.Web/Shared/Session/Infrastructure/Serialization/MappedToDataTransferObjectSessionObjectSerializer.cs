@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Session.Abstraction;
+using DfE.GIAP.Web.Shared.Session.Abstraction;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Web.Session.Infrastructure.Serialization;
+namespace DfE.GIAP.Web.Shared.Session.Infrastructure.Serialization;
 
 public class MappedToDataTransferObjectSessionObjectSerializer<TSessionObject, TDataTransferObject> : ISessionObjectSerializer<TSessionObject>
 {

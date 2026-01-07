@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Session.Abstraction.Query;
+﻿namespace DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 
 public record SessionQueryResponse<TValue>
 {

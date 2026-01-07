@@ -7,7 +7,7 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
-using DfE.GIAP.Web.Session.Abstraction.Command;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using DfE.GIAP.SharedTests.Common;
-using DfE.GIAP.Web.Session.Infrastructure.Serialization;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;

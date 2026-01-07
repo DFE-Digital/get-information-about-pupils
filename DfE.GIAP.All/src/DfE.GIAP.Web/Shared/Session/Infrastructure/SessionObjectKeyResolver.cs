@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Web.Session.Abstraction;
+﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
 
-namespace DfE.GIAP.Web.Session.Infrastructure;
+namespace DfE.GIAP.Web.Shared.Session.Infrastructure;
 
 public sealed class SessionObjectKeyResolver : ISessionObjectKeyResolver
 {

@@ -254,7 +254,6 @@ public class FELearnerTextSearchController : Controller
             ShowTABDownloadType = false
         };
 
-
         GetAvailableDatasetsForPupilsRequest request = new(
             DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
             SelectedPupils: [selectedPupil],

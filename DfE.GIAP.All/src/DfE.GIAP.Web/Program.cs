@@ -9,7 +9,6 @@ using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Users;
-using DfE.GIAP.Web.Session;
 using DfE.GIAP.Web.Features.MyPupils;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
@@ -25,6 +24,8 @@ using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels.Search;
 using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
 using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
+using DfE.GIAP.Web.Shared.Session;
+using DfE.GIAP.Web.Shared.TempData;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services
     .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
     .AddAspNetCoreSessionServices()
+    .AddTempData()
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()

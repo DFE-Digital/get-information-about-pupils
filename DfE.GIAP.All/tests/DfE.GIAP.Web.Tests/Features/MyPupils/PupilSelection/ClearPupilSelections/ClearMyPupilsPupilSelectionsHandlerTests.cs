@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
-using DfE.GIAP.Web.Session.Abstraction.Command;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Tests.TestDoubles.Session;
 using Moq;
 using Xunit;

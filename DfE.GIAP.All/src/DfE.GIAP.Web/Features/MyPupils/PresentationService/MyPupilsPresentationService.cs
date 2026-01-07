@@ -85,11 +85,11 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
             sortBy: query.SortField,
             sortDirection: query.SortDirection);
 
-        MyPupilsPresentationPupilModels mappedPupilModels =
-            _mapPupilsToPresentablePupils.Map(response.MyPupils) ?? MyPupilsPresentationPupilModels.Create([]);
-
         MyPupilsPresentationPupilModels handledPupilModels =
-            _presentationHandler.Handle(mappedPupilModels, updatedPresentation, selectionState);
+            _presentationHandler.Handle(
+                pupils: _mapPupilsToPresentablePupils.Map(response.MyPupils) ?? MyPupilsPresentationPupilModels.Create([]),
+                updatedPresentation,
+                selectionState);
 
         return new MyPupilsPresentationResponse()
         {

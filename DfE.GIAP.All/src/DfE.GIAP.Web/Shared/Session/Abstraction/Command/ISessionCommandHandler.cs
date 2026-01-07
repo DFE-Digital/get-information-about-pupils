@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Session.Abstraction.Command;
+﻿namespace DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 
 public interface ISessionCommandHandler<in TValue> where TValue : class
 {

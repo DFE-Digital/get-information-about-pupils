@@ -17,11 +17,11 @@ using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
-using DfE.GIAP.Web.Session.Abstraction;
-using DfE.GIAP.Web.Session.Abstraction.Command;
-using DfE.GIAP.Web.Session.Abstraction.Query;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
-using DfE.GIAP.Web.Session.Infrastructure.Serialization;
+using DfE.GIAP.Web.Shared.Session.Abstraction;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.Serialization;
 
 namespace DfE.GIAP.Web.Features.MyPupils;
 
@@ -35,7 +35,7 @@ public static class CompositionRoot
             .AddMyPupilsCore();
            
         services
-            .AddSessionStateHandlers()
+            .AddMyPupilsSelectionStateHandlers()
             .AddMyPupilsPresentationServices();
 
         return services;
@@ -55,7 +55,7 @@ public static class CompositionRoot
 
         // MessagingSink
         services
-            .AddScoped<IMyPupilsMessageSink, MyPupilsMessageSink>()
+            .AddScoped<IMyPupilsMessageSink, MyPupilsTempDataMessageSink>()
             .AddSingleton<IMapper<MyPupilsMessage, MyPupilsMessageDto>, MyPupilsMessageToMyPupilsMessageDtoMapper>()
             .AddSingleton<IMapper<MyPupilsMessageDto, MyPupilsMessage>, MyPupilsMessageDtoToMyPupilsMessageMapper>();
 
@@ -79,16 +79,19 @@ public static class CompositionRoot
         return services;
     }
 
-    private static IServiceCollection AddSessionStateHandlers(this IServiceCollection services)
+    private static IServiceCollection AddMyPupilsSelectionStateHandlers(this IServiceCollection services)
     {
-        services// Serailizers for State
+        // Serailizers for State
+        services
             .AddSingleton<MyPupilsPupilSelectionStateFromDtoMapper>()
             .AddSingleton<MyPupilsPupilSelectionStateToDtoMapper>()
             .AddSingleton<ISessionObjectSerializer<MyPupilsPupilSelectionState>>(sp =>
             {
-                return new MappedToDataTransferObjectSessionObjectSerializer<MyPupilsPupilSelectionState, MyPupilsPupilSelectionStateDto>(
-                    sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
-                    sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
+                return new MappedToDataTransferObjectSessionObjectSerializer<
+                    MyPupilsPupilSelectionState,
+                    MyPupilsPupilSelectionStateDto>(
+                        sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
+                        sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
             })
             // Query
             .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()

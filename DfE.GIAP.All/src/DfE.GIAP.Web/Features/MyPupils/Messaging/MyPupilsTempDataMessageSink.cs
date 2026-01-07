@@ -1,29 +1,28 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
+using DfE.GIAP.Web.Shared.TempData;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Messaging;
 #nullable enable
-// Note: temporary log sink to enable commands from Web (Update, Delete) actions to persist messages that survive a redirect that need to be consumed in GET paths for ViewModel properties as part of the PRG pattern
+// Note: temporary log sink to enable commands (Update, Delete) actions to persist messages that survive a redirect that need to be consumed in GET paths for ViewModel properties as part of the PRG pattern. e.g. IsDeleteSuccessful. 
 
 // TODO abstract IJsonSerialiser
-public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
+public sealed class MyPupilsTempDataMessageSink : IMyPupilsMessageSink
 {
     private const int MaxLogMessages = 25;
     private readonly IMapper<MyPupilsMessage, MyPupilsMessageDto> _mapToDto;
     private readonly IMapper<MyPupilsMessageDto, MyPupilsMessage> _mapFromDto;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ITempDataDictionaryFactory _tempDataFactory;
+    private readonly ITempDataDictionaryProvider _tempDataDictionaryProvider;
     private readonly MyPupilsMessagingOptions _options;
 
-    public MyPupilsMessageSink(
+    public MyPupilsTempDataMessageSink(
         IMapper<MyPupilsMessage, MyPupilsMessageDto> mapToDto,
         IMapper<MyPupilsMessageDto, MyPupilsMessage> mapFromDto,
-        IHttpContextAccessor httpContextAccessor,
-        ITempDataDictionaryFactory tempDataFactory,
-        IOptionsSnapshot<MyPupilsMessagingOptions> myPupilsLoggingOptions)
+        IOptions<MyPupilsMessagingOptions> myPupilsLoggingOptions,
+        ITempDataDictionaryProvider tempDataDictionaryProvider)
     {
         ArgumentNullException.ThrowIfNull(mapToDto);
         _mapToDto = mapToDto;
@@ -31,20 +30,17 @@ public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
         ArgumentNullException.ThrowIfNull(mapFromDto);
         _mapFromDto = mapFromDto;
 
-        ArgumentNullException.ThrowIfNull(httpContextAccessor);
-        _httpContextAccessor = httpContextAccessor;
-
-        ArgumentNullException.ThrowIfNull(tempDataFactory);
-        _tempDataFactory = tempDataFactory;
-
         ArgumentNullException.ThrowIfNull(myPupilsLoggingOptions);
         ArgumentNullException.ThrowIfNull(myPupilsLoggingOptions.Value);
         _options = myPupilsLoggingOptions.Value;
+
+        ArgumentNullException.ThrowIfNull(tempDataDictionaryProvider);
+        _tempDataDictionaryProvider = tempDataDictionaryProvider;
     }
 
     public IReadOnlyList<MyPupilsMessage> GetMessages()
     {
-        ITempDataDictionary tempData = GetTempData();
+        ITempDataDictionary tempData = _tempDataDictionaryProvider.GetTempData();
 
         object? raw = tempData[_options.MessagesKey]; // read & remove
 
@@ -78,7 +74,7 @@ public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
 
     private (ITempDataDictionary TempData, List<MyPupilsMessage> Messages) Peek()
     {
-        ITempDataDictionary tempData = GetTempData();
+        ITempDataDictionary tempData = _tempDataDictionaryProvider.GetTempData();
 
         object? peeked = tempData.Peek(_options.MessagesKey);
 
@@ -95,13 +91,6 @@ public sealed class MyPupilsMessageSink : IMyPupilsMessageSink
         }
 
         return (tempData, []);
-    }
-
-    private ITempDataDictionary GetTempData()
-    {
-        HttpContext? context = _httpContextAccessor.HttpContext;
-        ArgumentNullException.ThrowIfNull(context);
-        return _tempDataFactory.GetTempData(context);
     }
 }
 #nullable restore

@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Web.Session.Abstraction.Command;
-using DfE.GIAP.Web.Session.Abstraction;
+﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 
-namespace DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
+namespace DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
 
 public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHandler<TValue> where TValue : class
 {

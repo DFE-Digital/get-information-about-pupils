@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Session.Abstraction;
+﻿namespace DfE.GIAP.Web.Shared.Session.Abstraction;
 
 public interface ISessionObjectSerializer<TSessionObject>
 {

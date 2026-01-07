@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Session.Abstraction.Query;
+﻿using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.Session;
