@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
-public sealed class MyPupilsFormStateRequestDto
+public record MyPupilsFormStateRequestDto
 {
     // TODO consider CustomModelBinding to SelectAllState, which is what should be used in Controller to pass down OR Mapper
     [FromForm]

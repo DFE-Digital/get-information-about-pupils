@@ -36,7 +36,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Func<CosmosDbMyPupilsWriteOnlyRepository> construct = () => new(
-            logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
+            logger: LoggerTestDoubles.Fake<CosmosDbMyPupilsWriteOnlyRepository>(),
             cosmosDbCommandHandler: null!,
             mapToDto: MapperTestDoubles.Default<MyPupilsAggregate, MyPupilsDocumentDto>().Object);
 
@@ -49,7 +49,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
     {
         // Arrange
         Func<CosmosDbMyPupilsWriteOnlyRepository> construct = () => new(
-            logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
+            logger: LoggerTestDoubles.Fake<CosmosDbMyPupilsWriteOnlyRepository>(),
             cosmosDbCommandHandler: CosmosDbCommandHandlerTestDoubles.Default().Object,
             mapToDto: null!);
 
@@ -71,7 +71,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             MapperTestDoubles.MockFor<MyPupilsAggregate, MyPupilsDocumentDto>(stub: document);
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
-            logger: LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>(),
+            logger: LoggerTestDoubles.Fake<CosmosDbMyPupilsWriteOnlyRepository>(),
             cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             mapToDto: mapperMock.Object);
 
@@ -88,7 +88,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
         Mock<ICosmosDbCommandHandler> mockCosmosDbQueryHandler =
             CosmosDbCommandHandlerTestDoubles.MockForUpsertItemAsyncThrows<MyPupilsDocumentDto>(exception: CosmosExceptionTestDoubles.Default());
 
-        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsWriteOnlyRepository>();
 
         MyPupilsDocumentDto document = MyPupilsDocumentDtoTestDoubles.Default();
 
@@ -125,7 +125,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
 
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
 
-        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsWriteOnlyRepository>();
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(
             logger: inMemoryLogger,
@@ -167,7 +167,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
 
         Mock<ICosmosDbCommandHandler> commandHandlerDouble = CosmosDbCommandHandlerTestDoubles.Default();
 
-        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsWriteOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsWriteOnlyRepository> inMemoryLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsWriteOnlyRepository>();
 
         CosmosDbMyPupilsWriteOnlyRepository repository = new(inMemoryLogger, commandHandlerDouble.Object, mapper.Object);
 

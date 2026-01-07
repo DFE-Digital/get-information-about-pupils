@@ -35,7 +35,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange
         Func<GetMyPupilsController> construct = () => new(
-            LoggerTestDoubles.MockLogger<GetMyPupilsController>(),
+            LoggerTestDoubles.Fake<GetMyPupilsController>(),
             null!,
             MapperTestDoubles.Default<MyPupilsPresentationResponse, MyPupilsViewModel>().Object
         );
@@ -49,7 +49,7 @@ public sealed class GetMyPupilsControllerTests
     {
         // Arrange       
         Func<GetMyPupilsController> construct = () => new(
-            LoggerTestDoubles.MockLogger<GetMyPupilsController>(),
+            LoggerTestDoubles.Fake<GetMyPupilsController>(),
             IMyPupilsPresentationServiceTestDoubles.DefaultMock().Object,
             null
             );
@@ -62,7 +62,7 @@ public sealed class GetMyPupilsControllerTests
     public async Task Index_Returns_PupilViewModels()
     {
         // Arrange
-        InMemoryLogger<GetMyPupilsController> loggerFake = LoggerTestDoubles.MockLogger<GetMyPupilsController>();
+        InMemoryLogger<GetMyPupilsController> loggerFake = LoggerTestDoubles.Fake<GetMyPupilsController>();
 
         MyPupilsPresentationPupilModels pupilsStub = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 

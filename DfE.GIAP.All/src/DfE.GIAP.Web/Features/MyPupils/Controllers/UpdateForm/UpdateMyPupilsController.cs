@@ -52,16 +52,17 @@ public class UpdateMyPupilsController : Controller
         return RedirectToGetMyPupils(query);
     }
 
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto request)
+    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto? query)
     {
+        query ??= new();
         return RedirectToAction(
             actionName: "Index",
             controllerName: "GetMyPupils",
             new
             {
-                request.PageNumber,
-                request.SortField,
-                request.SortDirection
+                query.PageNumber,
+                query.SortField,
+                query.SortDirection
             });
     }
 }

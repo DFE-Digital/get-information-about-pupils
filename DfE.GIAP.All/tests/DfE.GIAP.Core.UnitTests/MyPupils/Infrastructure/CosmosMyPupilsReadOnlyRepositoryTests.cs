@@ -40,7 +40,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     public void Constructor_ThrowsArgumentNullException_When_QueryHandlerIsNull()
     {
         // Arrange
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
@@ -60,7 +60,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     public void Constructor_ThrowsArgumentNullException_When_Options_IsNull()
     {
         // Arrange
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
@@ -80,7 +80,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
     public void Constructor_ThrowsArgumentNullException_When_Mapper_IsNull()
     {
         // Arrange
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
@@ -104,7 +104,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw new Exception("test exception"));
 
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
@@ -130,7 +130,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
             CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDocumentDto>(
                 () => throw CosmosExceptionTestDoubles.WithStatusCode(HttpStatusCode.InternalServerError));
 
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
@@ -157,7 +157,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         Mock<ICosmosDbQueryHandler> mockCosmosDbQueryHandler =
             CosmosDbQueryHandlerTestDoubles.MockForTryReadById<MyPupilsDto>(() => null);
 
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         IOptions<MyPupilsOptions> options = OptionsTestDoubles.Default<MyPupilsOptions>();
 
@@ -193,7 +193,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 
         MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Create(myPupilsId, upns);
 
-        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.MockLogger<CosmosDbMyPupilsReadOnlyRepository>();
+        InMemoryLogger<CosmosDbMyPupilsReadOnlyRepository> mockLogger = LoggerTestDoubles.Fake<CosmosDbMyPupilsReadOnlyRepository>();
 
         MyPupilsDocumentDto myPupilsDocumentDto = MyPupilsDocumentDtoTestDoubles.Default();
 

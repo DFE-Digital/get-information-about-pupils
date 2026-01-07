@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers;
 
-public class MyPupilsQueryRequestDto
+public record MyPupilsQueryRequestDto
 {
     [FromQuery]
     public int PageNumber { get; set; } = 1;

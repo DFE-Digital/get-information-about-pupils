@@ -2,6 +2,7 @@
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -26,7 +27,7 @@ public sealed class UpdateMyPupilsControllerTests
     {
         // Arrange
         Func<UpdateMyPupilsController> construct = () => new(
-            LoggerTestDoubles.MockLogger<UpdateMyPupilsController>(),
+            LoggerTestDoubles.Fake<UpdateMyPupilsController>(),
             null!,
             new Mock<IUpdateMyPupilsPupilSelectionsCommandHandler>().Object);
 
@@ -39,11 +40,34 @@ public sealed class UpdateMyPupilsControllerTests
     {
         // Arrange
         Func<UpdateMyPupilsController> construct = () => new(
-            LoggerTestDoubles.MockLogger<UpdateMyPupilsController>(),
+            LoggerTestDoubles.Fake<UpdateMyPupilsController>(),
             new Mock<IMyPupilsMessageSink>().Object,
             null!);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Index_Adds_Error_When_ModelStateInvalid_And_Redirects_To_GetMyPupils()
+    {
+        // Arrange
+        InMemoryLogger<UpdateMyPupilsController> loggerFake = LoggerTestDoubles.Fake<UpdateMyPupilsController>();
+
+        Mock<IMyPupilsMessageSink> messageSinkMock = new();
+
+        Mock<IUpdateMyPupilsPupilSelectionsCommandHandler> handlerMock = new();
+
+        UpdateMyPupilsController sut = new(
+            loggerFake,
+            messageSinkMock.Object,
+            handlerMock.Object
+        );
+
+        // Act
+        IActionResult response = sut.Index(null, null);
+
+        // Assert
+        RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
     }
 }
