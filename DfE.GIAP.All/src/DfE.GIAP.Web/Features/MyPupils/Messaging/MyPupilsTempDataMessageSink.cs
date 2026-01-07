@@ -9,9 +9,29 @@ namespace DfE.GIAP.Web.Features.MyPupils.Messaging;
 #nullable enable
 // Note: temporary log sink to enable commands (Update, Delete) actions to persist messages that survive a redirect that need to be consumed in GET paths for ViewModel properties as part of the PRG pattern. e.g. IsDeleteSuccessful. 
 
-// TODO abstract IJsonSerialiser
-
 // TODO can we constrain to ensure that ONLY a specific type can be written, than loose type access around TempDataDictionary
+// TODO abstract and use Singleton; IJsonSerialiser. Tests can assert serialiser called with { "key":... } 
+public interface IJsonSerializer
+{
+    string Serialize(object value);
+    T Deserialize<T>(string json) where T : class;
+}
+
+public sealed class NewtonsoftJsonSerializer : IJsonSerializer
+{
+    public T Deserialize<T>(string json) where T : class
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
+
+        T? res = JsonConvert.DeserializeObject<T>(json) ??
+            throw new ArgumentException($"Unable to deserialise to type {typeof(T).Name} input {json}");
+
+        return res;
+    }
+
+    public string Serialize(object value) => JsonConvert.SerializeObject(value);
+}
+
 public sealed class MyPupilsTempDataMessageSink : IMyPupilsMessageSink
 {
     private const int MaxLogMessages = 25;
