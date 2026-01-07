@@ -1,9 +1,12 @@
 ﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
@@ -68,6 +71,69 @@ public sealed class UpdateMyPupilsControllerTests
         IActionResult response = sut.Index(null, null);
 
         // Assert
+        Assert.Equal("UpdateMyPupilsController.Index POST method called", loggerFake.Logs.Single());
+
         RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
+        Assert.Equal("Index", result.ActionName);
+        Assert.Equal("GetMyPupils", result.ControllerName);
+        Dictionary<string, object> routeValues = new()
+        {
+            { "PageNumber", 1 },
+            { "SortField", string.Empty },
+            { "SortDirection", string.Empty }
+        };
+        Assert.Equivalent(routeValues, result.RouteValues);
+
+        handlerMock.Verify(t => t.Handle(It.IsAny<MyPupilsFormStateRequestDto>()), Times.Never);
+    }
+
+    [Fact]
+    public void Index_Calls_Handler_And_Redirects_To_GetMyPupils()
+    {
+        // Arrange
+        InMemoryLogger<UpdateMyPupilsController> loggerFake = LoggerTestDoubles.Fake<UpdateMyPupilsController>();
+
+        Mock<IMyPupilsMessageSink> messageSinkMock = new();
+
+        Mock<IUpdateMyPupilsPupilSelectionsCommandHandler> handlerMock = new();
+
+        UpdateMyPupilsController sut = new(
+            loggerFake,
+            messageSinkMock.Object,
+            handlerMock.Object
+        );
+
+        // Act
+        MyPupilsQueryRequestDto query = new()
+        {
+            PageNumber = 2,
+            SortDirection = "asc",
+            SortField = "any_field"
+        };
+
+        MyPupilsFormStateRequestDto request = new();
+
+        IActionResult response = sut.Index(request, query);
+
+        // Assert
+        Assert.Equal("UpdateMyPupilsController.Index POST method called", loggerFake.Logs.Single());
+
+        RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
+        Assert.Equal("Index", result.ActionName);
+        Assert.Equal("GetMyPupils", result.ControllerName);
+        Dictionary<string, object> routeValues = new()
+        {
+            { "PageNumber", query.PageNumber },
+            { "SortField", query.SortField },
+            { "SortDirection", query.SortDirection }
+        };
+        Assert.Equivalent(routeValues, result.RouteValues);
+
+        handlerMock.Verify((handler)
+            => handler.Handle(
+                It.Is<MyPupilsFormStateRequestDto>(
+                    (req) => ReferenceEquals(request, req))), Times.Once);
+
+        messageSinkMock.Verify(t => t.AddMessage(It.IsAny<MyPupilsMessage>()), Times.Never);
     }
 }

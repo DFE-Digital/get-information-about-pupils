@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+﻿using System.ComponentModel.DataAnnotations;
+using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 using DfE.GIAP.Web.Helpers.Search;
@@ -37,7 +38,9 @@ public class UpdateMyPupilsController : Controller
     {
         _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsController), nameof(Index));
 
-        if (!ModelState.IsValid)
+        query ??= new();
+
+        if (formDto is null || !ModelState.IsValid)
         {
             _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
@@ -52,9 +55,8 @@ public class UpdateMyPupilsController : Controller
         return RedirectToGetMyPupils(query);
     }
 
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto? query)
+    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto query)
     {
-        query ??= new();
         return RedirectToAction(
             actionName: "Index",
             controllerName: "GetMyPupils",
