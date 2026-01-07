@@ -71,6 +71,4 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
         Assert.Equivalent(expectedSelectionState.GetManualSelections(), response.GetManualSelections());
         Assert.Equivalent(expectedSelectionState.GetDeselectedExceptions(), response.GetDeselectedExceptions());
     }
-
-    // TODO store mode as SelectAll, retrieves
 }

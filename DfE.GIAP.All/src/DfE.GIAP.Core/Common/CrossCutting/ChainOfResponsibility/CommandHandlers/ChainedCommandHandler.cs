@@ -42,6 +42,5 @@ public sealed class ChainedCommandHandler<TIn> : IChainedCommandHandler<TIn>
         
         // Explicit fail: nobody handled the input
         throw new InvalidOperationException($"No handler in the chain can handle input of type {typeof(TIn).Name}.");
-
     }
 }

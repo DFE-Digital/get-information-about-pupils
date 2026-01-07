@@ -8,14 +8,14 @@ using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
 [Route(Constants.Routes.MyPupilList.MyPupilsBase)]
-public class UpdateMyPupilsFormController : Controller
+public class UpdateMyPupilsController : Controller
 {
-    private readonly ILogger<UpdateMyPupilsFormController> _logger;
+    private readonly ILogger<UpdateMyPupilsController> _logger;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsStateCommandHandler;
 
-    public UpdateMyPupilsFormController(
-        ILogger<UpdateMyPupilsFormController> logger,
+    public UpdateMyPupilsController(
+        ILogger<UpdateMyPupilsController> logger,
         IMyPupilsMessageSink myPupilsLogSink,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsStateCommandHandler)
     {
@@ -35,7 +35,7 @@ public class UpdateMyPupilsFormController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Index(MyPupilsFormStateRequestDto formDto, MyPupilsQueryRequestDto query)
     {
-        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsFormController), nameof(Index));
+        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsController), nameof(Index));
 
         if (!ModelState.IsValid)
         {

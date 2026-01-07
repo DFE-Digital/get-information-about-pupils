@@ -18,15 +18,4 @@ internal static class IMyPupilsPresentationServiceTestDoubles
 
         return mock.Object;
     }
-
-    internal static IMyPupilsPresentationService MockForGetSelectedPupils(IEnumerable<string> stub)
-    {
-        Mock<IMyPupilsPresentationService> mock = DefaultMock();
-        mock.Setup(
-            (t) => t.GetSelectedPupilsAsync(
-                It.IsAny<string>()))
-            .ReturnsAsync(stub);
-
-        return mock.Object;
-    }
 }
