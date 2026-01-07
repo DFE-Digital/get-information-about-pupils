@@ -10,6 +10,8 @@ namespace DfE.GIAP.Web.Features.MyPupils.Messaging;
 // Note: temporary log sink to enable commands (Update, Delete) actions to persist messages that survive a redirect that need to be consumed in GET paths for ViewModel properties as part of the PRG pattern. e.g. IsDeleteSuccessful. 
 
 // TODO abstract IJsonSerialiser
+
+// TODO can we constrain to ensure that ONLY a specific type can be written, than loose type access around TempDataDictionary
 public sealed class MyPupilsTempDataMessageSink : IMyPupilsMessageSink
 {
     private const int MaxLogMessages = 25;
