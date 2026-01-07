@@ -42,9 +42,9 @@ public sealed class MyPupilsTempDataMessageSink : IMyPupilsMessageSink
     {
         ITempDataDictionary tempData = _tempDataDictionaryProvider.GetTempData();
 
-        object? raw = tempData[_options.MessagesKey]; // read & remove
+        object? value = tempData[_options.MessagesKey]; // read & remove
 
-        if (raw is not string json || string.IsNullOrWhiteSpace(json))
+        if (value is null || value is not string json || string.IsNullOrWhiteSpace(json))
         {
             return Array.Empty<MyPupilsMessage>();
         }

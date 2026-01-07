@@ -3,6 +3,8 @@ using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
 using DfE.GIAP.Web.Shared.TempData;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -77,5 +79,36 @@ public sealed class MyPupilsTempDataMessageSinkTests
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void GetMessages_Returns_Empty_When_ITempDataDictionary_Returns_Null_For_LookupKey()
+    {
+        // Arrange
+        IOptions<MyPupilsMessagingOptions> options =
+            OptionsTestDoubles.Default<MyPupilsMessagingOptions>();
+
+        Mock<ITempDataDictionary> tempDataMock = new();
+        tempDataMock.Setup(t => t[options.Value.MessagesKey]).Returns(null!);
+
+        Mock<ITempDataDictionaryProvider> providerMock = new();
+        providerMock.Setup(t => t.GetTempData()).Returns(tempDataMock.Object);
+
+        MyPupilsTempDataMessageSink sut = new(
+            MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
+            MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
+            options,
+            providerMock.Object);
+
+        // Act
+        IReadOnlyList<MyPupilsMessage> response = sut.GetMessages();
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Empty(response);
+
+        tempDataMock.Verify(tempData => tempData[options.Value.MessagesKey], Times.Once);
+
+        providerMock.Verify(provider => provider.GetTempData(), Times.Once);
     }
 }
