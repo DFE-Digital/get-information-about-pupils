@@ -10,7 +10,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Messaging;
 // Note: temporary log sink to enable commands (Update, Delete) actions to persist messages that survive a redirect that need to be consumed in GET paths for ViewModel properties as part of the PRG pattern. e.g. IsDeleteSuccessful. 
 
 // TODO can we constrain to ensure that ONLY a specific type can be written, than loose type access around TempDataDictionary
-// TODO abstract and use Singleton; IJsonSerialiser. Tests can assert serialiser called with { "key":... } 
+// TODO abstract and use Singleton; IJsonSerialiser. Tests can assert serialiser called with { } 
 public interface IJsonSerializer
 {
     string Serialize(object value);
@@ -78,23 +78,21 @@ public sealed class MyPupilsTempDataMessageSink : IMyPupilsMessageSink
             .AsReadOnly();
     }
 
-    public void Add(MyPupilsMessage message)
+    public void AddMessage(MyPupilsMessage message)
     {
-        (ITempDataDictionary tempData, List<MyPupilsMessage> existingLogs) = Peek();
+        (ITempDataDictionary tempData, List<MyPupilsMessageDto> current) = PeekMessages();
 
-        existingLogs.Add(message);
+        current.Add(_mapToDto.Map(message));
 
-        if (existingLogs.Count > MaxLogMessages)
-        {
-            existingLogs = existingLogs.Skip(existingLogs.Count - MaxLogMessages).ToList();
-        }
-
-        tempData[_options.MessagesKey] =
+        string serialisedMessages =
             JsonConvert.SerializeObject(
-                value: existingLogs.Select(_mapToDto.Map).ToList());
+                current.TakeLast(MaxLogMessages)
+                    .ToList());
+
+        tempData[_options.MessagesKey] = serialisedMessages;
     }
 
-    private (ITempDataDictionary TempData, List<MyPupilsMessage> Messages) Peek()
+    private (ITempDataDictionary TempData, List<MyPupilsMessageDto> Messages) PeekMessages()
     {
         ITempDataDictionary tempData = _tempDataDictionaryProvider.GetTempData();
 
@@ -109,7 +107,7 @@ public sealed class MyPupilsTempDataMessageSink : IMyPupilsMessageSink
         if (peeked is string json && !string.IsNullOrWhiteSpace(json))
         {
             List<MyPupilsMessageDto>? logs = JsonConvert.DeserializeObject<List<MyPupilsMessageDto>>(json);
-            return (tempData, (logs?.Select(_mapFromDto.Map) ?? []).ToList());
+            return (tempData, (logs ?? []).ToList());
         }
 
         return (tempData, []);

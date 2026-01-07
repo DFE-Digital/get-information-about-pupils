@@ -39,7 +39,7 @@ public class UpdateMyPupilsController : Controller
 
         if (!ModelState.IsValid)
         {
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
                     level: MessageLevel.Error,
                     message: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));

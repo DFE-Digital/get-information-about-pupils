@@ -3,5 +3,5 @@
 public interface IMyPupilsMessageSink
 {
     IReadOnlyList<MyPupilsMessage> GetMessages();
-    void Add(MyPupilsMessage log);
+    void AddMessage(MyPupilsMessage log);
 }

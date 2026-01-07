@@ -203,7 +203,7 @@ public class DownloadMyPupilsController : Controller
 
         if (allSelectedPupils.Count == 0)
         {
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
                     MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
@@ -213,7 +213,7 @@ public class DownloadMyPupilsController : Controller
 
         if (downloadType == DownloadType.CTF && allSelectedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
         {
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
                     MessageLevel.Error,
                     Messages.Downloads.Errors.UPNLimitExceeded));
@@ -239,7 +239,7 @@ public class DownloadMyPupilsController : Controller
                 return SearchDownloadHelper.DownloadFile(downloadFile);
             }
 
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
                     MessageLevel.Error,
                     Messages.Downloads.Errors.NoDataForSelectedPupils));
@@ -280,7 +280,7 @@ public class DownloadMyPupilsController : Controller
                 return SearchDownloadHelper.DownloadFile(downloadFile);
             }
 
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
                     MessageLevel.Error,
                     Messages.Downloads.Errors.NoDataForSelectedPupils));
@@ -293,7 +293,7 @@ public class DownloadMyPupilsController : Controller
             return await DownloadSelectedNationalPupilDatabaseData(string.Join(",", allSelectedPupils));
         }
 
-        _myPupilsLogSink.Add(
+        _myPupilsLogSink.AddMessage(
             new MyPupilsMessage(
                 MessageLevel.Error,
                 Messages.Downloads.Errors.UnknownDownloadType));

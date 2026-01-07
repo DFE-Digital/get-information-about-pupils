@@ -76,7 +76,7 @@ public class DeleteMyPupilsController : Controller
 
         if (!ModelState.IsValid)
         {
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 MyPupilsMessage.Create(
                     MessageLevel.Error,
                     "There has been a problem with your delete selections. Please try again."));
@@ -88,7 +88,7 @@ public class DeleteMyPupilsController : Controller
 
         if (SelectedPupils.Count == 0 && !selectionState.IsAnyPupilSelected)
         {
-            _myPupilsLogSink.Add(
+            _myPupilsLogSink.AddMessage(
                 MyPupilsMessage.Create(
                     MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
@@ -100,7 +100,7 @@ public class DeleteMyPupilsController : Controller
 
         await _myPupilsPresentationService.DeletePupilsAsync(userId, SelectedPupils);
 
-        _myPupilsLogSink.Add(
+        _myPupilsLogSink.AddMessage(
             MyPupilsMessage.Create(
                 id: _loggingOptions.DeleteSuccessfulKey,
                 MessageLevel.Info,
