@@ -5,8 +5,6 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -77,11 +75,9 @@ public sealed class GetMyPupilsControllerTests
         IMyPupilsPresentationService serviceMock =
             IMyPupilsPresentationServiceTestDoubles.MockForGetPupils(presentationResponseStub);
 
-        MyPupilsViewModel mappedResponseStub = new();
-
         Mock<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>> mapperMock =
             MapperTestDoubles.MockFor<MyPupilsPresentationResponse, MyPupilsViewModel>(
-                mappedResponseStub);
+                new MyPupilsViewModel());
 
         GetMyPupilsController sut = new(
             loggerFake,
@@ -97,17 +93,16 @@ public sealed class GetMyPupilsControllerTests
         IActionResult actionResult = await sut.Index(requestQueryDto);
 
         // Assert
-        const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
 
         ViewResult viewResult = Assert.IsType<ViewResult>(actionResult);
         Assert.NotNull(viewResult);
-        Assert.Equal(MyPupilsView, viewResult.ViewName);
+
+        Assert.Equal("~/Views/MyPupilList/Index.cshtml", viewResult.ViewName);
 
         MyPupilsViewModel viewModel = Assert.IsType<MyPupilsViewModel>(viewResult.Model);
         Assert.NotNull(viewModel);
 
-        string log = Assert.Single(loggerFake.Logs);
-        Assert.Equal("GetMyPupilsController.Index GET called", log);
+        Assert.Equal("GetMyPupilsController.Index GET called", loggerFake.Logs.Single());
 
         Mock.Get(serviceMock)
             .Verify((service)

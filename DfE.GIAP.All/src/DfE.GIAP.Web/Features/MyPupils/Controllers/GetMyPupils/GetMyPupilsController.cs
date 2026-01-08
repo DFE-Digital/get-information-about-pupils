@@ -27,7 +27,6 @@ public class GetMyPupilsController : Controller
         _mapToPupilsViewModel = mapToPupilsViewModel;
     }
 
-
     [HttpGet]
     // Prevent browser-caching e.g. back button presenting stale state
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]

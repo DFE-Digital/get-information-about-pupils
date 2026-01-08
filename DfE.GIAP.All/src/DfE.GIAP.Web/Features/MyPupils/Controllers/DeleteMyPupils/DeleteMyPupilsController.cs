@@ -1,13 +1,10 @@
-﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.Options;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
-using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
@@ -23,21 +20,17 @@ public class DeleteMyPupilsController : Controller
     private readonly ILogger<DeleteMyPupilsController> _logger;
     private readonly MyPupilsMessagingOptions _loggingOptions;
     private readonly MyPupilsOptions _options;
-    private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsFromMyPupilsUseCase;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsSelectionState;
-    private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IMyPupilsPresentationService _myPupilsPresentationService;
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
         IOptions<MyPupilsOptions> options,
-        IOptions<MyPupilsMessagingOptions> loggingOptions,
+        IOptions<MyPupilsMessagingOptions> messagingOptions,
         IMyPupilsMessageSink myPupilsMessageSink,
         IMyPupilsPresentationService myPupilsPresentationService,
-        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsUseCase,
-        IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider,
-        ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateCommandHandler)
+        IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -46,9 +39,9 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(options.Value);
         _options = options.Value;
 
-        ArgumentNullException.ThrowIfNull(loggingOptions);
-        ArgumentNullException.ThrowIfNull(loggingOptions.Value);
-        _loggingOptions = loggingOptions.Value;
+        ArgumentNullException.ThrowIfNull(messagingOptions);
+        ArgumentNullException.ThrowIfNull(messagingOptions.Value);
+        _loggingOptions = messagingOptions.Value;
 
         ArgumentNullException.ThrowIfNull(myPupilsMessageSink);
         _myPupilsLogSink = myPupilsMessageSink;
@@ -56,14 +49,8 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
         _myPupilsPresentationService = myPupilsPresentationService;
 
-        ArgumentNullException.ThrowIfNull(deletePupilsUseCase);
-        _deletePupilsFromMyPupilsUseCase = deletePupilsUseCase;
-
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
         _getMyPupilsSelectionState = getMyPupilsStateProvider;
-
-        ArgumentNullException.ThrowIfNull(selectionStateCommandHandler);
-        _selectionStateSessionCommandHandler = selectionStateCommandHandler;
     }
 
     [HttpPost]
