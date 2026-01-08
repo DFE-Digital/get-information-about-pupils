@@ -1,2 +1,2 @@
 *.sh text=auto eol=lf
-*.cs text eol=crlf
+*.cs text eol=lf
