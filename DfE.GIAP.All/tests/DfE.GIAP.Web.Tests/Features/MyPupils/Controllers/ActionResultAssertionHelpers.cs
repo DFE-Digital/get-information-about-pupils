@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
-internal static class ActionResultAssertionExtensions
+internal static class ActionResultAssertionHelpers
 {
     internal static void AssertRedirectToGetMyPupils(IActionResult controllerResponse, MyPupilsQueryRequestDto? query = null)
     {

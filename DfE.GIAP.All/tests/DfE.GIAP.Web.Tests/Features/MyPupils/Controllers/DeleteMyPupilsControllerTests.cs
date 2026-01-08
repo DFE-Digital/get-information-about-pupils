@@ -178,9 +178,7 @@ public sealed class DeleteMyPupilsControllerTests
 
         // Assert
         Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
-
-        Assert.NotNull(response);
-        ActionResultAssertionExtensions.AssertRedirectToGetMyPupils(response);
+        ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
         messageSinkMock.Verify(
             (messageSink) => messageSink.AddMessage(

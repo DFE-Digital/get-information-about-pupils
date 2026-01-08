@@ -6,6 +6,7 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using NSubstitute.Core;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
@@ -71,17 +72,7 @@ public sealed class UpdateMyPupilsControllerTests
 
         // Assert
         Assert.Equal("UpdateMyPupilsController.Index POST method called", loggerFake.Logs.Single());
-
-        RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
-        Assert.Equal("Index", result.ActionName);
-        Assert.Equal("GetMyPupils", result.ControllerName);
-        Dictionary<string, object> routeValues = new()
-        {
-            { "PageNumber", 1 },
-            { "SortField", string.Empty },
-            { "SortDirection", string.Empty }
-        };
-        Assert.Equivalent(routeValues, result.RouteValues);
+        ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
         handlerMock.Verify(t => t.Handle(It.IsAny<MyPupilsFormStateRequestDto>()), Times.Never);
     }
@@ -116,7 +107,7 @@ public sealed class UpdateMyPupilsControllerTests
 
         // Assert
         Assert.Equal("UpdateMyPupilsController.Index POST method called", loggerFake.Logs.Single());
-        ActionResultAssertionExtensions.AssertRedirectToGetMyPupils(response);
+        ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response, query);
 
         handlerMock.Verify((handler)
             => handler.Handle(
