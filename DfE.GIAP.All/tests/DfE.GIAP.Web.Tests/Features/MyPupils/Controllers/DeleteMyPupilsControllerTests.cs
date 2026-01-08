@@ -159,7 +159,6 @@ public sealed class DeleteMyPupilsControllerTests
         Assert.Throws<ArgumentNullException>(construct);
     }
 
-    
     [Fact]
     public async Task Delete_When_ModelState_Invalid_Adds_Error_And_Redirects_To_GetPupils()
     {

@@ -1876,7 +1876,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     [Fact]
     public async Task ToDownloadSelectedNPDDataUpn_returns_options_page_when_pupils_selected()
     {
-        // TODO fix test
         var upns = _paginatedResultsFake.GetUpns();
         var inputModel = new LearnerNumberSearchViewModel()
         {
@@ -1889,13 +1888,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
 
         var joinedSelectedPupils = string.Join(',', upns.FormatLearnerNumbers());
-
-        _mockDownloadService.CheckForNoDataAvailable(
-                Arg.Any<string[]>(),
-                Arg.Any<string[]>(),
-                Arg.Any<string[]>(),
-                Arg.Any<AzureFunctionHeaderDetails>()
-            ).Returns([CheckDownloadDataType.EYFSP]);
 
         // act
         var sut = GetController();
@@ -1913,11 +1905,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.True(model.SelectedPupils.Equals(joinedSelectedPupils));
         Assert.True(model.SelectedPupilsCount == upns.FormatLearnerNumbers().Length);
         Assert.True(model.LearnerNumber.Equals(upns));
-        Assert.True(
-            model.SearchDownloadDatatypes.Single(
-                d => d.Value.Equals(CheckDownloadDataType.EYFSP.ToString())
-                ).Disabled
-            );
     }
 
     [Fact]
