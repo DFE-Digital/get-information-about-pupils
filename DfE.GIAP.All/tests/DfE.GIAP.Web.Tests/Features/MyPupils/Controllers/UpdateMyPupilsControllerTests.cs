@@ -116,17 +116,7 @@ public sealed class UpdateMyPupilsControllerTests
 
         // Assert
         Assert.Equal("UpdateMyPupilsController.Index POST method called", loggerFake.Logs.Single());
-
-        RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
-        Assert.Equal("Index", result.ActionName);
-        Assert.Equal("GetMyPupils", result.ControllerName);
-        Dictionary<string, object> routeValues = new()
-        {
-            { "PageNumber", query.PageNumber },
-            { "SortField", query.SortField },
-            { "SortDirection", query.SortDirection }
-        };
-        Assert.Equivalent(routeValues, result.RouteValues);
+        ActionResultAssertionExtensions.AssertRedirectToGetMyPupils(response);
 
         handlerMock.Verify((handler)
             => handler.Handle(

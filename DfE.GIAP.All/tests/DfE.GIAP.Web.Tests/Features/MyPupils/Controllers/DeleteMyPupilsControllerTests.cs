@@ -180,17 +180,7 @@ public sealed class DeleteMyPupilsControllerTests
         Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
 
         Assert.NotNull(response);
-
-        RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
-        Assert.Equal("Index", result.ActionName);
-        Assert.Equal("GetMyPupils", result.ControllerName);
-        Dictionary<string, object> routeValues = new()
-        {
-            { "PageNumber", 1 },
-            { "SortField", string.Empty },
-            { "SortDirection", string.Empty }
-        };
-        Assert.Equivalent(routeValues, result.RouteValues);
+        ActionResultAssertionExtensions.AssertRedirectToGetMyPupils(response);
 
         messageSinkMock.Verify(
             (messageSink) => messageSink.AddMessage(
