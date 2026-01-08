@@ -49,9 +49,9 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
     public async Task DeletePupilsAsync(
         string userId,
-        IEnumerable<string> selectedPupilUpnsOnPage)
+        IEnumerable<string> selectedPupils)
     {
-        List<string> selectedPupilsToDelete = selectedPupilUpnsOnPage?.ToList() ?? [];
+        List<string> selectedPupilsToDelete = selectedPupils?.ToList() ?? [];
 
         // Enrich SelectedPupils with all other selected pupils
         selectedPupilsToDelete.AddRange(
