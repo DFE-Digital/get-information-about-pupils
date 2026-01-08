@@ -11,7 +11,7 @@ public class WireMockServerFixture : IAsyncLifetime
     {
         _options = new()
         {
-            ServerMode = WireMockServerMode.LocalProcess,
+            ServerMode = WireMockServerMode.Remote,
             Domain = "localhost",
             Port = 8443,
             EnableSecureConnection = true,
