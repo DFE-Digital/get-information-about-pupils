@@ -15,7 +15,7 @@ public sealed class ChainedCommandHandler<TIn> : IChainedCommandHandler<TIn>
     {
         ArgumentNullException.ThrowIfNull(next);
 
-        if(_next is null)
+        if (_next is null)
         {
             _next = new ChainedCommandHandler<TIn>(next);
             return;
@@ -34,12 +34,12 @@ public sealed class ChainedCommandHandler<TIn> : IChainedCommandHandler<TIn>
         }
 
         // Invoke next if it exists
-        if(_next is not null)
+        if (_next is not null)
         {
             _next.Handle(input);
             return;
         }
-        
+
         // Explicit fail: nobody handled the input
         throw new InvalidOperationException($"No handler in the chain can handle input of type {typeof(TIn).Name}.");
     }

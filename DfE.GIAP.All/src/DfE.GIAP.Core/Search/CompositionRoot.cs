@@ -88,7 +88,7 @@ public static class CompositionRoot
         services
             .AddOptions<SearchCriteria>()
             .Bind(configuration.GetSection(nameof(SearchCriteria)));
-            
+
         // Bind the SortField configuration options.
         services
             .Configure<SortFieldOptions>(

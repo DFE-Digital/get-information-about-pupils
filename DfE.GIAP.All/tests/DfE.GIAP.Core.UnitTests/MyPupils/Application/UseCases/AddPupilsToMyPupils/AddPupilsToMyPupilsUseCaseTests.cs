@@ -105,7 +105,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
         readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals(id.Value))), Times.Once);
         writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
-        List <UniquePupilNumber> expectedUniquePupilNumbers = [.. originalMyPupils, validUpn];
+        List<UniquePupilNumber> expectedUniquePupilNumbers = [.. originalMyPupils, validUpn];
 
         Assert.Equal(16, myPupilsAggregate.PupilCount);
         Assert.False(myPupilsAggregate.HasNoPupils);
@@ -147,7 +147,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         mapperMock.Verify(t => t.Map(It.Is<IEnumerable<string>>(ups => ups.SequenceEqual(addUpnValues))), Times.Once);
 
-        List<UniquePupilNumber> expectedUniquePupilNumbers = [.. originalMyPupils, ..addUpns];
+        List<UniquePupilNumber> expectedUniquePupilNumbers = [.. originalMyPupils, .. addUpns];
 
         Assert.Equal(originalMyPupils.Count + addUpns.Count, myPupilsAggregate.PupilCount);
         Assert.False(myPupilsAggregate.HasNoPupils);

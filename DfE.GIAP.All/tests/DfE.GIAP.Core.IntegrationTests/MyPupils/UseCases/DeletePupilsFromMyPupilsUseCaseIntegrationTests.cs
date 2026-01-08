@@ -123,7 +123,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         Assert.Equivalent(remainingUpnsAfterDelete, myPupilsDocument.MyPupils.Pupils.Select(t => t.UPN));
     }
 
-    
+
     [Fact]
     public async Task DeletePupilsFromMyPupils_DeletesPupilsInList_When_Some_Identifiers_Are_Part_Of_The_List()
     {
@@ -185,7 +185,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         Assert.Equal($"None of the DeletePupilUpns are part of User: {_testContext.MyPupilsId} MyPupils", ex.Message);
 
         // Assert
-        IEnumerable <MyPupilsDocumentDto> myPupilsDocument =
+        IEnumerable<MyPupilsDocumentDto> myPupilsDocument =
             await _cosmosDbFixture.InvokeAsync(
                 databaseName: _cosmosDbFixture.DatabaseName,
                 (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: MyPupilsContainerName));

@@ -77,7 +77,7 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsApplicationService>());
         Assert.NotNull(provider.GetService<IMapper<AzureIndexEntityWithPupilType, Pupil>>());
-        
+
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>>());

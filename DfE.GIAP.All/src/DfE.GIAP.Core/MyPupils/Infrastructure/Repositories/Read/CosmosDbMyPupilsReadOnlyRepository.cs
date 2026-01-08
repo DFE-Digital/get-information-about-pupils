@@ -27,7 +27,7 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
 
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
-        
+
         ArgumentNullException.ThrowIfNull(myPupilsOptions);
         ArgumentNullException.ThrowIfNull(myPupilsOptions.Value);
         _myPupilsOptions = myPupilsOptions.Value;

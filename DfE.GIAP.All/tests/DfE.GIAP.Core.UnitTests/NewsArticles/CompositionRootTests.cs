@@ -27,7 +27,7 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services =   
+        IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
                 .AddAspNetCoreRuntimeProvidedServices()
                 .AddFeaturesSharedServices()

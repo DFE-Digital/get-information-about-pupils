@@ -32,11 +32,11 @@ public sealed class PupilName : ValueObject<PupilName>
 
         string trimmedInput = input.Trim();
 
-        if(trimmedInput.Length == 1)
+        if (trimmedInput.Length == 1)
         {
             return char.ToUpperInvariant(trimmedInput[0]).ToString();
         }
 
-        return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);        
+        return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
     }
 }

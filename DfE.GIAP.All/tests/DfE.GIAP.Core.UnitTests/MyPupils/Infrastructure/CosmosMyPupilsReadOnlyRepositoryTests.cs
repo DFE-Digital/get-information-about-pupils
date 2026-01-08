@@ -219,7 +219,7 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         // Assert
         Assert.NotNull(response);
         Assert.Equivalent(response, myPupils);
-        
+
         cosmosDbQueryHandlerMock.Verify(
             (t) => t.TryReadItemByIdAsync<MyPupilsDocumentDto>(
                 myPupilsId.Value,
@@ -230,6 +230,6 @@ public sealed class CosmosMyPupilsReadOnlyRepositoryTests
         mapperMock.Verify(
             (mapper) => mapper.Map(
                 It.Is<IEnumerable<string>>(
-                    (ups)=> ups.SequenceEqual(existingPupilsOnDocument))), Times.Once);
+                    (ups) => ups.SequenceEqual(existingPupilsOnDocument))), Times.Once);
     }
 }
