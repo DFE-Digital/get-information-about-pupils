@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils; 
+namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public sealed class MyPupilDtoBuilder
 {
     private const string DATE_OF_BIRTH_FORMAT = "yyyy-MM-dd";
