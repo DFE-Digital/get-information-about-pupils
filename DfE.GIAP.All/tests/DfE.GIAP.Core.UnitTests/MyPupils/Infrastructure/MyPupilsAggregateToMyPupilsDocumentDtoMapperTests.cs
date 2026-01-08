@@ -35,6 +35,6 @@ public sealed class MyPupilsAggregateToMyPupilsDocumentDtoMapperTests
         Assert.Equal(aggregate.AggregateId.Value, response.id);
 
         IEnumerable<string> pupilUpns = aggregate.GetMyPupils().Select(t => t.Value);
-        Assert.Equivalent(pupilUpns, response.MyPupils.Pupils.Select(t => t.UPN));       
+        Assert.Equivalent(pupilUpns, response.MyPupils.Pupils.Select(t => t.UPN));
     }
 }
