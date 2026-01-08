@@ -10,9 +10,9 @@ using Microsoft.Azure.Cosmos;
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
-    public UpdateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public UpdateNewsArticleUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;

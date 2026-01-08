@@ -9,9 +9,9 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
 public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
-    public GetNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public GetNewsArticlesUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;

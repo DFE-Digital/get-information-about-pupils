@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Repositories;
+﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -15,8 +16,9 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
     {
         // Arrange
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
 
-        Func<AddPupilsToMyPupilsUseCase> construct = () => new(null!, writeRepoMock.Object);
+        Func<AddPupilsToMyPupilsUseCase> construct = () => new(null!, writeRepoMock.Object, mapperMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -27,12 +29,27 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
     {
         // Arrange
         Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
 
-        Func<AddPupilsToMyPupilsUseCase> construct = () => new(readRepoMock.Object, null!);
+        Func<AddPupilsToMyPupilsUseCase> construct = () => new(readRepoMock.Object, null!, mapperMock.Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
     }
+
+    [Fact]
+    public void Constructor_Throws_When_Mapper_Is_Null()
+    {
+        // Arrange
+        Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
+        Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
+
+        Func<AddPupilsToMyPupilsUseCase> construct = () => new(readRepoMock.Object, writeRepoMock.Object, null!);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
 
     [Fact]
     public async Task HandleAsync_Throws_When_Request_Is_Null()
@@ -40,8 +57,9 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
         // Arrange
         Mock<IMyPupilsWriteOnlyRepository> writeRepoMock = IMyPupilsWriteOnlyRepositoryTestDoubles.Default();
         Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.Default();
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock = MapperTestDoubles.Default<IEnumerable<string>, UniquePupilNumbers>();
 
-        AddPupilsToMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object);
+        AddPupilsToMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object, mapperMock.Object);
         Func<Task> act = async () => await sut.HandleRequestAsync(request: null!);
 
         // Act Assert
@@ -51,7 +69,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
     [Fact]
     public async Task HandleAsync_DoesNotSave_InvalidUpns()
     {
-        MyPupilsId id = new("id");
+        MyPupilsId id = MyPupilsIdTestDoubles.Default();
 
         List<UniquePupilNumber> originalMyPupils = UniquePupilNumberTestDoubles.Generate(count: 15);
 
@@ -61,21 +79,32 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupils(stub: myPupilsAggregate);
 
-        AddPupilsToMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object);
+        UniquePupilNumber validUpn = UniquePupilNumberTestDoubles.Generate();
+
+        List<string> someInvalidUpns = [
+            "Invalid1",
+            validUpn.Value,
+            "Invalid2"];
+
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock =
+            MapperTestDoubles.MockFor<IEnumerable<string>, UniquePupilNumbers>(
+                stub: UniquePupilNumbers.Create([validUpn]));
+
+        AddPupilsToMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object, mapperMock.Object);
 
         // Act
-        List<string> upnsWithInvalidUpns = ["Invalid1", UniquePupilNumberTestDoubles.Generate().Value, "Invalid2"];
 
         await sut.HandleRequestAsync(
             new AddPupilsToMyPupilsRequest(
                 userId: id.Value,
-                pupils: upnsWithInvalidUpns));
+                pupils: someInvalidUpns));
 
         // Assert
-        readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
+        mapperMock.Verify(t => t.Map(It.Is<IEnumerable<string>>(ups => ups.SequenceEqual(someInvalidUpns))), Times.Once);
+        readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals(id.Value))), Times.Once);
         writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
-        List<UniquePupilNumber> expectedUniquePupilNumbers = originalMyPupils.Concat([new UniquePupilNumber(upnsWithInvalidUpns[1])]).ToList();
+        List<UniquePupilNumber> expectedUniquePupilNumbers = [.. originalMyPupils, validUpn];
 
         Assert.Equal(16, myPupilsAggregate.PupilCount);
         Assert.False(myPupilsAggregate.HasNoPupils);
@@ -86,7 +115,7 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
     [MemberData(nameof(ValidUpns))]
     public async Task HandleAsync_AddsUpns_And_Saves(List<UniquePupilNumber> addUpns)
     {
-        MyPupilsId id = new("id");
+        MyPupilsId id = MyPupilsIdTestDoubles.Default();
 
         List<UniquePupilNumber> originalMyPupils = UniquePupilNumberTestDoubles.Generate(count: 5);
 
@@ -96,17 +125,28 @@ public sealed class AddPupilsToMyPupilsUseCaseTests
 
         Mock<IMyPupilsReadOnlyRepository> readRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupils(stub: myPupilsAggregate);
 
-        AddPupilsToMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object);
+        Mock<IMapper<IEnumerable<string>, UniquePupilNumbers>> mapperMock =
+            MapperTestDoubles.MockFor<IEnumerable<string>, UniquePupilNumbers>(
+                stub: UniquePupilNumbers.Create(addUpns));
+
+        AddPupilsToMyPupilsUseCase sut = new(readRepoMock.Object, writeRepoMock.Object, mapperMock.Object);
 
         // Act
+        List<string> addUpnValues = addUpns.Select(upn => upn.Value).ToList();
+
         await sut.HandleRequestAsync(
-            new AddPupilsToMyPupilsRequest(userId: id.Value, pupils: addUpns.Select(upn => upn.Value)));
+            new AddPupilsToMyPupilsRequest(
+                userId: id.Value,
+                pupils: addUpnValues));
 
         // Assert
-        readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals("id"))), Times.Once);
+        readRepoMock.Verify(t => t.GetMyPupils(It.Is<MyPupilsId>(t => t.Value.Equals(id.Value))), Times.Once);
+
         writeRepoMock.Verify(t => t.SaveMyPupilsAsync(It.IsAny<MyPupilsAggregate>()), Times.Once);
 
-        List<UniquePupilNumber> expectedUniquePupilNumbers = originalMyPupils.Concat(addUpns).ToList();
+        mapperMock.Verify(t => t.Map(It.Is<IEnumerable<string>>(ups => ups.SequenceEqual(addUpnValues))), Times.Once);
+
+        List<UniquePupilNumber> expectedUniquePupilNumbers = [.. originalMyPupils, .. addUpns];
 
         Assert.Equal(originalMyPupils.Count + addUpns.Count, myPupilsAggregate.PupilCount);
         Assert.False(myPupilsAggregate.HasNoPupils);

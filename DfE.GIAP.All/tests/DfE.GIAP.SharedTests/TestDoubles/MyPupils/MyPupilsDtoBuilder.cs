@@ -6,7 +6,7 @@ namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public sealed class MyPupilDtoBuilder
 {
     private const string DATE_OF_BIRTH_FORMAT = "yyyy-MM-dd";
-    private static readonly Faker<MyPupilModel> s_faker = MyPupilDtosTestDoubles.CreateGenerator();
+    private static readonly Faker<MyPupilsModel> s_faker = MyPupilsModelTestDoubles.CreateGenerator();
 
     private UniquePupilNumber? _uniquePupilNumber;
     private string? _forename;
@@ -42,11 +42,11 @@ public sealed class MyPupilDtoBuilder
 
     public static MyPupilDtoBuilder Create() => new();
 
-    public static MyPupilModel BuildDefault() => new MyPupilDtoBuilder().Build();
+    public static MyPupilsModel BuildDefault() => new MyPupilDtoBuilder().Build();
 
-    public MyPupilModel Build()
+    public MyPupilsModel Build()
     {
-        MyPupilModel defaulter = s_faker.Generate();
+        MyPupilsModel defaulter = s_faker.Generate();
 
         return new()
         {

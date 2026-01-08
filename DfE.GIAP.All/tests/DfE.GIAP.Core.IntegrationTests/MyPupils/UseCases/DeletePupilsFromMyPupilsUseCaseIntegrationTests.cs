@@ -14,10 +14,10 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
     private MyPupilsTestContext? _testContext;
-    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public DeletePupilsFromMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         _cosmosDbFixture = cosmosDbFixture;
     }
@@ -28,7 +28,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
-        services.AddMyPupilsDependencies();
+        services.AddMyPupilsCore();
 
         // Initialise fixture and pupils, store in context
         List<AzureNpdSearchResponseDto> npdSearchindexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);

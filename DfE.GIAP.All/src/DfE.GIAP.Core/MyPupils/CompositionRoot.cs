@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Search.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Options;
@@ -10,6 +11,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
@@ -19,7 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddMyPupilsDependencies(this IServiceCollection services)
+    public static IServiceCollection AddMyPupilsCore(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -33,10 +35,11 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsApplication(this IServiceCollection services)
     {
         services
+            .AddSingleton<IMapper<IEnumerable<string>, UniquePupilNumbers>, UniquePupilNumbersMapper>()
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>, AddPupilsToMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
-            .AddSingleton<IMapper<Pupil, MyPupilModel>, MapPupilToMyPupilModelMapper>()
+            .AddSingleton<IMapper<Pupil, MyPupilsModel>, PupilToMyPupilsModelMapper>()
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, AggregatePupilsForMyPupilsApplicationService>()
             .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, MapDecoratedSearchIndexDtoToPupilMapper>();
 

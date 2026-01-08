@@ -13,8 +13,6 @@ public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
         UniquePupilNumbers pupils,
         int maxPupilsLimit) : base(identifier)
     {
-        ArgumentNullException.ThrowIfNull(identifier);
-
         _pupils = pupils ?? UniquePupilNumbers.Empty();
 
         _maxPupilsLimit = maxPupilsLimit;
@@ -36,21 +34,21 @@ public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
             throw new MyPupilsLimitExceededException(_maxPupilsLimit);
         }
 
-        _pupils.Add(addPupilNumbers.GetUniquePupilNumbers());
+        _pupils.Add(addPupilNumbers);
     }
 
-    public void DeletePupils(UniquePupilNumbers deletePupilsNumbers)
+    public void DeletePupils(UniquePupilNumbers deletePupilUpns)
     {
-        if (deletePupilsNumbers is null || deletePupilsNumbers.Count == 0)
+        if (deletePupilUpns is null || deletePupilUpns.Count == 0)
         {
-            return; // TODO consider throw?
+            throw new ArgumentException("DeletePupilsUpns cannot be null or empty.");
         }
 
-        List<UniquePupilNumber> deleteUpns = deletePupilsNumbers.GetUniquePupilNumbers().ToList();
+        List<UniquePupilNumber> deleteUpns = [.. deletePupilUpns.GetUniquePupilNumbers()];
 
-        if (deleteUpns.All(deleteUpn => !_pupils.Contains(deleteUpn)))
+        if (!deleteUpns.Any(_pupils.Contains))
         {
-            throw new ArgumentException($"None of the deleted pupil identifiers are part of the User: {Identifier} MyPupils");
+            throw new ArgumentException($"None of the DeletePupilUpns are part of User: {Identifier.Value} MyPupils");
         }
 
         _pupils.Remove(deleteUpns);
