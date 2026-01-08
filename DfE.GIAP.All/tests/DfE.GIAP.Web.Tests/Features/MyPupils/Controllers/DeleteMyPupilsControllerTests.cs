@@ -3,16 +3,20 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeleteAllPupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
+using DfE.GIAP.Web.Tests.Controllers.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using NSubstitute.Core;
+using NuGet.Common;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
@@ -155,21 +159,44 @@ public sealed class DeleteMyPupilsControllerTests
     public async Task Delete_When_ModelState_Invalid_Adds_Error_And_Redirects_To_GetPupils()
     {
         // Arrange
+        InMemoryLogger<DeleteMyPupilsController> loggerFake = LoggerTestDoubles.Fake<DeleteMyPupilsController>();
+
+        Mock<IMyPupilsMessageSink> messageSinkMock = new(); 
+
         DeleteMyPupilsController sut = new(
-            logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
+            logger: loggerFake,
+            myPupilsMessageSink: messageSinkMock.Object,
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            myPupilsMessageSink: new Mock<IMyPupilsMessageSink>().Object,
             myPupilsPresentationService: new Mock<IMyPupilsPresentationService>().Object,
             getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
-        sut.ModelState.TryAddModelException("test-error", new Exception("test"));
+        sut.AddModelStateError();
 
         // Act
-        IActionResult response = await sut.Delete(null, null);
+        IActionResult response = await sut.Delete([], It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
-        Assert.NotNull(sut);
+        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+
+        Assert.NotNull(response);
+
+        RedirectToActionResult result = Assert.IsType<RedirectToActionResult>(response);
+        Assert.Equal("Index", result.ActionName);
+        Assert.Equal("GetMyPupils", result.ControllerName);
+        Dictionary<string, object> routeValues = new()
+        {
+            { "PageNumber", 1 },
+            { "SortField", string.Empty },
+            { "SortDirection", string.Empty }
+        };
+        Assert.Equivalent(routeValues, result.RouteValues);
+
+        messageSinkMock.Verify(
+            (messageSink) => messageSink.AddMessage(
+                It.Is<MyPupilsMessage>((message) =>
+                    message.Level == MessageLevel.Error &&
+                        message.Message == "There has been a problem with your delete selections. Please try again.")), Times.Once);
     }
 
 /*

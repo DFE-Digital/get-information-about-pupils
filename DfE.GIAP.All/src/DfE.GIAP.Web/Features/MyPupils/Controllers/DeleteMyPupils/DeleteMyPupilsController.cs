@@ -55,11 +55,14 @@ public class DeleteMyPupilsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete([FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto queryRequest)
+    public async Task<IActionResult> Delete(
+        [FromForm] List<string>? SelectedPupils,
+        MyPupilsQueryRequestDto? queryRequest)
     {
         _logger.LogInformation("{Controller}.{Action} POST method called", nameof(DeleteMyPupilsController), nameof(Delete));
 
         SelectedPupils ??= [];
+        queryRequest ??= new();
 
         if (!ModelState.IsValid)
         {

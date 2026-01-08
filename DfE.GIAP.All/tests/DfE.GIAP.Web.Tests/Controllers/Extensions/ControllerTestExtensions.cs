@@ -47,4 +47,16 @@ internal static class ControllerTestExtensions
         controller.TempData = tempData;
         return tempData;
     }
-}
+
+    internal static T AddModelStateError<T>(
+        this T controller,
+        Exception? exception = null,
+        string? message = null) where T : ControllerBase
+    {
+        controller.ModelState.TryAddModelException(
+            message ?? "test-error",
+            exception ?? new Exception("test"));
+
+        return controller;
+    }
+} 
