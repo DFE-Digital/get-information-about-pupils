@@ -7,7 +7,7 @@ public static class MyPupilsAggregateTestDoubles
 {
     private const int DEFAULT_LIMIT = 4000;
 
-    public static MyPupilsAggregate Default()
+    public static MyPupilsAggregate CreateWithSomePupils()
         => Create(
             MyPupilsIdTestDoubles.Default(),
             UniquePupilNumbers.Create(uniquePupilNumbers: UniquePupilNumberTestDoubles.Generate(count: 10)),

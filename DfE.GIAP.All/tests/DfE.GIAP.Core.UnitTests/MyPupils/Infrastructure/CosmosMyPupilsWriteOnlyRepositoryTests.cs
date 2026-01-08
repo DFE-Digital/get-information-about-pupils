@@ -75,7 +75,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             cosmosDbCommandHandler: mockCosmosDbQueryHandler.Object,
             mapToDto: mapperMock.Object);
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.CreateWithSomePupils();
 
         // Act Assert
         await Assert.ThrowsAsync<Exception>(() => repository.SaveMyPupilsAsync(myPupils));
@@ -102,7 +102,7 @@ public sealed class CosmosMyPupilsWriteOnlyRepositoryTests
             mapToDto: mapperMock.Object);
 
         // Act Assert
-        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.CreateWithSomePupils();
 
         await Assert.ThrowsAsync<CosmosException>(() => repository.SaveMyPupilsAsync(myPupils));
 

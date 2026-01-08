@@ -19,7 +19,7 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.CreateWithSomePupils();
 
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
