@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandlers;
 
-namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.ChainOfResponsibility;
+namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
 internal sealed class ManualSelectPupilsCommandHandler : ICommandHandler<UpdateMyPupilsSelectionStateRequest>
 {
