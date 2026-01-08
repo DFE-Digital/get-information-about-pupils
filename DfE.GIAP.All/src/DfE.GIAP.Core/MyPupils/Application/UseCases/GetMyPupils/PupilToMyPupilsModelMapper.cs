@@ -2,7 +2,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-internal sealed class PupilToMyPupilModelMapper : IMapper<Pupil, MyPupilsModel>
+internal sealed class PupilToMyPupilsModelMapper : IMapper<Pupil, MyPupilsModel>
 {
     public MyPupilsModel Map(Pupil pupil)
     {

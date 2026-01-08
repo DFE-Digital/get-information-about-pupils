@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 public record MyPupilsModel

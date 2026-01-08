@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
@@ -26,7 +26,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithLocalAuthorityCode(new LocalAuthorityCode(200))
             .Build();
 
-        PupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
         MyPupilsModel result = mapper.Map(pupil);
@@ -45,7 +45,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
     public void Map_ThrowsNull_If_Pupil_Is_Null()
     {
         Pupil? pupil = null;
-        PupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
         Func<MyPupilsModel> act = () => mapper.Map(pupil!);
@@ -62,7 +62,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithDateOfBirth(null!)
             .Build();
 
-        PupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
         MyPupilsModel result = mapper.Map(pupil);
@@ -79,7 +79,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithSex(null!)
             .Build();
 
-        PupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
         MyPupilsModel result = mapper.Map(pupil);
@@ -96,7 +96,7 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithPupilType(PupilType.NationalPupilDatabase)
             .Build();
 
-        PupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
         MyPupilsModel result = mapper.Map(pupil);
