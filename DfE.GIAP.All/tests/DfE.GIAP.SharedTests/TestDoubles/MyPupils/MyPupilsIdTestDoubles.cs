@@ -3,6 +3,6 @@
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 public static class MyPupilsIdTestDoubles
 {
-    public static MyPupilsId Default() => new(Guid.NewGuid().ToString());
-    public static MyPupilsId Create(string id) => new(id);
+    public static MyPupilsId Default() => new(userId: UserIdTestDoubles.Default());
+    public static MyPupilsId Create(string id) => new(UserIdTestDoubles.WithId(id));
 }

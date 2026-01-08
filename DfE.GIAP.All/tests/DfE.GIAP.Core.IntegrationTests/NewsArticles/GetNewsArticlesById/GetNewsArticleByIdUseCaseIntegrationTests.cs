@@ -7,9 +7,9 @@ using DfE.GIAP.SharedTests.TestDoubles;
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
-    public GetNewsArticleByIdUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public GetNewsArticleByIdUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;

@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace DfE.GIAP.Core.MyPupils;
 public static class CompositionRoot
 {
-    public static IServiceCollection AddMyPupilsDependencies(this IServiceCollection services)
+    public static IServiceCollection AddMyPupilsCore(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -36,7 +36,7 @@ public static class CompositionRoot
             .AddScoped<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>, GetMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>, AddPupilsToMyPupilsUseCase>()
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
-            .AddSingleton<IMapper<Pupil, MyPupilModel>, MapPupilToMyPupilModelMapper>()
+            .AddSingleton<IMapper<Pupil, MyPupilsModel>, PupilToMyPupilsModelMapper>()
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, AggregatePupilsForMyPupilsApplicationService>()
             .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, MapDecoratedSearchIndexDtoToPupilMapper>();
 

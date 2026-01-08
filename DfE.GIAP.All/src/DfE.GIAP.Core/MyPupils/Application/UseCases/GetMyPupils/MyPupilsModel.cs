@@ -1,21 +1,11 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-public sealed class MyPupilsModel
+﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+public record MyPupilsModel
 {
-    public MyPupilsModel(IEnumerable<MyPupilModel> pupilDtos)
-    {
-        Values =
-            (pupilDtos is null ? [] : pupilDtos)
-                .ToList()
-                .AsReadOnly();
-    }
-
-    public static MyPupilsModel Empty() => Create([]);
-    public static MyPupilsModel Create(IEnumerable<MyPupilModel> pupils) => new(pupils);
-
-    public IReadOnlyList<MyPupilModel> Values { get; }
-    public IReadOnlyList<string> Identifiers => Values.Select(t => t.UniquePupilNumber).ToList().AsReadOnly();
-    public int Count => Values.Count;
-    public bool IsEmpty() => !Values.Any();
+    public required string UniquePupilNumber { get; init; }
+    public required string Forename { get; init; }
+    public required string Surname { get; init; }
+    public required string DateOfBirth { get; init; }
+    public required string Sex { get; init; }
+    public required bool IsPupilPremium { get; init; }
+    public required int LocalAuthorityCode { get; init; }
 }

@@ -3,34 +3,34 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.MyPupils;
-public static class MyPupilDtosTestDoubles
+public static class MyPupilsModelTestDoubles
 {
-    public static MyPupilsModel Generate(int count)
+    public static MyPupilsModels Generate(int count)
     {
-        return MyPupilsModel.Create(
+        return MyPupilsModels.Create(
             pupils: CreateGenerator().Generate(count));
     }
 
-    public static MyPupilsModel GenerateWithUniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
+    public static MyPupilsModels GenerateWithUniquePupilNumbers(IEnumerable<UniquePupilNumber> uniquePupilNumbers)
     {
-        Faker<MyPupilModel> generator = CreateGenerator();
-        List<MyPupilModel> output = [];
+        Faker<MyPupilsModel> generator = CreateGenerator();
+        List<MyPupilsModel> output = [];
 
         uniquePupilNumbers.ToList().ForEach(upn =>
         {
-            MyPupilModel dto = MyPupilDtoBuilder.Create()
+            MyPupilsModel dto = MyPupilDtoBuilder.Create()
                 .WithUniquePupilNumber(upn)
                 .Build();
 
             output.Add(dto);
         });
 
-        return MyPupilsModel.Create(pupils: output);
+        return MyPupilsModels.Create(pupils: output);
     }
 
-    public static Faker<MyPupilModel> CreateGenerator()
+    public static Faker<MyPupilsModel> CreateGenerator()
     {
-        Faker<MyPupilModel> faker = new();
+        Faker<MyPupilsModel> faker = new();
         faker.StrictMode(true);
         faker.RuleFor(t => t.UniquePupilNumber, (f) => UniquePupilNumberTestDoubles.Generate().Value);
         faker.RuleFor(t => t.DateOfBirth, (f)

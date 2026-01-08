@@ -2,7 +2,7 @@
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 
 namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
-public sealed class CosmosDbFixture : BaseCosmosDbFixture
+public sealed class GiapCosmosDbFixture : BaseCosmosDbFixture
 {
     public string DatabaseName => "giapsearch";
     protected override CosmosDbOptions Options => new(

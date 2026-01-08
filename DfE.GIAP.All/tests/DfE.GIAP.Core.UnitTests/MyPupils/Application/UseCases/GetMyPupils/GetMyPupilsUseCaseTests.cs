@@ -18,7 +18,8 @@ public sealed class GetMyPupilsUseCaseTests
         // Arrange
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
-        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.Default();
+        MyPupilsAggregate myPupils = MyPupilsAggregateTestDoubles.CreateWithSomePupils();
+
         Mock<IMyPupilsReadOnlyRepository> readRepositoryMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
         List<Pupil> pupils =
@@ -28,8 +29,8 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> aggregateServiceMock = AggregatePupilsForMyPupilsServiceTestDoubles.MockFor(pupils);
 
-        Mock<IMapper<Pupil, MyPupilModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilModel>();
-        MyPupilsModel myPupilDtos = MyPupilDtosTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
+        Mock<IMapper<Pupil, MyPupilsModel>> mapperMock = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
+        MyPupilsModels myPupilDtos = MyPupilsModelTestDoubles.GenerateWithUniquePupilNumbers(pupils.Select(t => t.Identifier));
 
         mapperMock.MockMappingForMany(pupils, myPupilDtos.Values.ToList());
 
@@ -71,7 +72,7 @@ public sealed class GetMyPupilsUseCaseTests
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
-        Mock<IMapper<Pupil, MyPupilModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilModel>();
+        Mock<IMapper<Pupil, MyPupilsModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
 
         GetMyPupilsRequest request = new(myPupilsId.Value);
 
@@ -103,14 +104,15 @@ public sealed class GetMyPupilsUseCaseTests
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsAggregate myPupils =
+
             MyPupilsAggregateTestDoubles.Create(
-                UniquePupilNumbers.Create(uniquePupilNumbers: []));
+                UniquePupilNumbers.Empty());
 
         Mock<IMyPupilsReadOnlyRepository> userRepoMock = IMyPupilsReadOnlyRepositoryTestDoubles.MockForGetMyPupilsOrDefault(myPupils);
 
         Mock<IAggregatePupilsForMyPupilsApplicationService> mockAggregateService = AggregatePupilsForMyPupilsServiceTestDoubles.Default();
 
-        Mock<IMapper<Pupil, MyPupilModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilModel>();
+        Mock<IMapper<Pupil, MyPupilsModel>> mockMapper = MapperTestDoubles.Default<Pupil, MyPupilsModel>();
 
         GetMyPupilsRequest request = new(myPupilsId.Value);
 
