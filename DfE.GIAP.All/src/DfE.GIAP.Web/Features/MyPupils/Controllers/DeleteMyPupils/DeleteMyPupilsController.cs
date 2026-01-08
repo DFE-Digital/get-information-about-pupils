@@ -28,9 +28,9 @@ public class DeleteMyPupilsController : Controller
         ILogger<DeleteMyPupilsController> logger,
         IOptions<MyPupilsOptions> options,
         IOptions<MyPupilsMessagingOptions> messagingOptions,
-        IMyPupilsMessageSink myPupilsMessageSink,
-        IMyPupilsPresentationService myPupilsPresentationService,
-        IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider)
+        IMyPupilsMessageSink messageSink,
+        IMyPupilsPresentationService presentationService,
+        IGetMyPupilsPupilSelectionProvider pupilSelectionStateProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -43,14 +43,14 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(messagingOptions.Value);
         _loggingOptions = messagingOptions.Value;
 
-        ArgumentNullException.ThrowIfNull(myPupilsMessageSink);
-        _myPupilsLogSink = myPupilsMessageSink;
+        ArgumentNullException.ThrowIfNull(messageSink);
+        _myPupilsLogSink = messageSink;
 
-        ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
-        _myPupilsPresentationService = myPupilsPresentationService;
+        ArgumentNullException.ThrowIfNull(presentationService);
+        _myPupilsPresentationService = presentationService;
 
-        ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
-        _getMyPupilsSelectionState = getMyPupilsStateProvider;
+        ArgumentNullException.ThrowIfNull(pupilSelectionStateProvider);
+        _getMyPupilsSelectionState = pupilSelectionStateProvider;
     }
 
     [HttpPost]
