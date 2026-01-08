@@ -8,6 +8,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+
 public sealed class DeletePupilsFromMyPupilsUseCaseTests
 {
     [Fact]
