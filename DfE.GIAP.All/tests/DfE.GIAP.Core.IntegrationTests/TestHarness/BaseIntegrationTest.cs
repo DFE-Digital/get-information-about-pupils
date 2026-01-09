@@ -32,7 +32,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _serviceDescriptors
-            .AddSharedApplicationServices()
+            .AddAspNetCoreRuntimeProvidedServices()
             .AddFeaturesSharedServices();
 
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize

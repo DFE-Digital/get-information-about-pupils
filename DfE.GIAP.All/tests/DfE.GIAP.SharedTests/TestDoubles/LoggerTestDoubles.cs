@@ -6,7 +6,7 @@ namespace DfE.GIAP.SharedTests.TestDoubles;
 // TODO: Remove once phased out ILogger in favor of ILoggerService
 public static class LoggerTestDoubles
 {
-    public static InMemoryLogger<T> MockLogger<T>()
+    public static InMemoryLogger<T> Fake<T>()
     {
         InMemoryLogger<T> mockLogger = new();
         return mockLogger;
