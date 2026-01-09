@@ -1,5 +1,5 @@
 using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.Extensions;
+using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
@@ -32,8 +32,8 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _serviceDescriptors
-            .AddSharedApplicationServices()
-            .ConfigureAzureSearchClients();
+            .AddAspNetCoreRuntimeProvidedServices()
+            .AddFeaturesSharedServices();
 
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
 

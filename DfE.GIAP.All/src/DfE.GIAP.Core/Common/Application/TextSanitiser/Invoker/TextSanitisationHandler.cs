@@ -1,11 +1,11 @@
 ﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
-internal sealed class TextSanitisationInvoker : ITextSanitiserInvoker
+internal sealed class TextSanitiser : ITextSanitiser
 {
     private readonly List<ITextSanitiserHandler> _sanitisers;
 
-    public TextSanitisationInvoker(IEnumerable<ITextSanitiserHandler> sanitisers)
+    public TextSanitiser(IEnumerable<ITextSanitiserHandler> sanitisers)
     {
         _sanitisers = [];
         _sanitisers.AddRange(sanitisers ?? []);

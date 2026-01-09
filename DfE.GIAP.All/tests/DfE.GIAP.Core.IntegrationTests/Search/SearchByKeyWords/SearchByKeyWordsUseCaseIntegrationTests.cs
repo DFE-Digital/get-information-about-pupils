@@ -26,7 +26,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
     {
         IConfiguration searchConfiguration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
-                .WithSearchIndexOptions()
                 .WithAzureSearchOptions()
                 .WithAzureSearchConnectionOptions()
                 .WithSearchCriteriaOptions()

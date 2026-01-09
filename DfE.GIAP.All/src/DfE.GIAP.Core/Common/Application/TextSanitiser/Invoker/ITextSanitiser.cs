@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 
-public interface ITextSanitiserInvoker
+public interface ITextSanitiser
 {
     SanitisedTextResult Sanitise(string input);
 }
