@@ -25,38 +25,65 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
         PupilDatasetCollection datasets = await _pupilDatasetAggregator
             .AggregateAsync(request.DownloadType, request.SelectedPupils, request.SelectedDatasets);
 
-        Dictionary<string, Func<Stream, Task>> fileWriters = new();
-
-        void AddFile<T>(IEnumerable<T> records, string fileName)
-        {
-            if (records.Any())
-            {
-                fileWriters.Add(fileName, stream => _fileExporter.ExportAsync(records, request.FileFormat, stream));
-            }
-        }
-
-        string ext = request.FileFormat == FileFormat.Csv ? "csv" : "txt";
-        AddFile(datasets.PP, $"pp_results.{ext}");
-        AddFile(datasets.SEN, $"sen_results.{ext}");
-
-        // No data at all → return null
+        Dictionary<string, Func<Stream, Task>> fileWriters = BuildFileWriters(datasets, request);
         if (!fileWriters.Any())
             return default!;
 
-        // One dataset file → return it directly
         if (fileWriters.Count == 1)
+            return await BuildSingleFileResponse(fileWriters, request);
+
+        return await BuildZipResponse(fileWriters, request);
+    }
+
+
+    // -------------------------
+    // Helpers
+    // -------------------------
+    private Dictionary<string, Func<Stream, Task>> BuildFileWriters(
+        PupilDatasetCollection datasets,
+        DownloadPupilDataRequest request)
+    {
+        Dictionary<string, Func<Stream, Task>> writers = new Dictionary<string, Func<Stream, Task>>();
+        string ext = request.FileFormat == FileFormat.Csv ? "csv" : "txt";
+
+        void Add<T>(IEnumerable<T> records, string name)
         {
-            (string? fileName, Func<Stream, Task>? writer) = fileWriters.First();
-
-            using MemoryStream ms = new MemoryStream();
-            await writer(ms);
-
-            return new DownloadPupilDataResponse(ms.ToArray(), fileName!, "application/octet-stream");
+            if (records.Any())
+            {
+                writers.Add(name, stream =>
+                    _fileExporter.ExportAsync(records, request.FileFormat, stream));
+            }
         }
 
-        // Multiple dataset files → zip them
+        Add(datasets.PP, $"pp_results.{ext}");
+        Add(datasets.SEN, $"sen_results.{ext}");
+        // Add other datasets here as needed
+
+        return writers;
+    }
+
+    private async Task<DownloadPupilDataResponse> BuildSingleFileResponse(
+        Dictionary<string, Func<Stream, Task>> fileWriters,
+        DownloadPupilDataRequest request)
+    {
+        (string? fileName, Func<Stream, Task>? writer) = fileWriters.First();
+
+        using MemoryStream ms = new();
+        await writer(ms);
+
+        return new DownloadPupilDataResponse(
+            ms.ToArray(),
+            fileName,
+            GetContentType(request.FileFormat));
+    }
+
+    private async Task<DownloadPupilDataResponse> BuildZipResponse(
+        Dictionary<string, Func<Stream, Task>> fileWriters,
+        DownloadPupilDataRequest request)
+    {
         byte[] zipBytes = await _zipArchiveBuilder.CreateZipAsync(fileWriters);
-        string zipFileName = request.DownloadType switch
+
+        string zipName = request.DownloadType switch
         {
             DownloadType.NPD => "npd_results.zip",
             DownloadType.PupilPremium => "pp_results.zip",
@@ -64,6 +91,10 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
             _ => $"{request.DownloadType.ToString().ToLower()}_results.zip"
         };
 
-        return new DownloadPupilDataResponse(zipBytes, zipFileName, "application/zip");
+        return new DownloadPupilDataResponse(zipBytes, zipName, "application/zip");
     }
+
+    private static string GetContentType(FileFormat format) =>
+        format == FileFormat.Csv ? "text/csv" : "text/plain";
 }
+
