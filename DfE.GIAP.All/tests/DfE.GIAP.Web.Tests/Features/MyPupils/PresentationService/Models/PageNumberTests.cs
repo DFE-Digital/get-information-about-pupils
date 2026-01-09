@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.GetMyPupilsHandler.PresentationHandlers;
+﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.GetMyPupils;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Models;
 public class PageNumberTests
 {
     [Theory]
@@ -21,15 +21,5 @@ public class PageNumberTests
 
         // Assert
         Assert.Equal(3, page.Value);
-    }
-
-    [Fact]
-    public void Page_StaticMethod_ReturnsExpectedValue()
-    {
-        // Act
-        PageNumber page = PageNumber.Page(5);
-
-        // Assert
-        Assert.Equal(5, page.Value);
     }
 }
