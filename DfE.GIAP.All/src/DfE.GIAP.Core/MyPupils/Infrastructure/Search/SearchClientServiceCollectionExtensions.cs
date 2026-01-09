@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Search.Documents;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using DfE.GIAP.Core.Search.Infrastructure.Options;

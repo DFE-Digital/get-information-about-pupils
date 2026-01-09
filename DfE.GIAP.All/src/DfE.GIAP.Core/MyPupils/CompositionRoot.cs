@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
