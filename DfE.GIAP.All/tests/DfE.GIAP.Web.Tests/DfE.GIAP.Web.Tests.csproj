@@ -20,7 +20,4 @@
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
     <ProjectReference Include="..\..\src\DfE.GIAP.Web\DfE.GIAP.Web.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Features\MyPupils\GetMyPupils\" />
-  </ItemGroup>
 </Project>
