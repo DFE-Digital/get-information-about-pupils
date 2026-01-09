@@ -1,5 +1,3 @@
-using System.Threading;
-
 namespace DfE.GIAP.SharedTests.TestDoubles.Configuration;
 
 public static class ConfigurationTestDoubles
