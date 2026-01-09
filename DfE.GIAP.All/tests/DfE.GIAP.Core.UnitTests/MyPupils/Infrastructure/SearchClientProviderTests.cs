@@ -1,17 +1,17 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Search.Options;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+﻿using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.Search;
+namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
 public sealed class SearchClientProviderTests
 {
     [Fact]
     public void Constructor_ThrowsException_WhenNoSearchClientsRegistered()
     {
         // Arrange
-        IOptions<SearchIndexOptions> options = OptionsTestDoubles.Default<SearchIndexOptions>();
+        IOptions<AzureSearchOptions> options = OptionsTestDoubles.Default<AzureSearchOptions>();
 
         // Act Assert
         Func<SearchClientProvider> act = () => new SearchClientProvider([], options);
