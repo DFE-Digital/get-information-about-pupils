@@ -1,6 +1,5 @@
 ﻿using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
 using DfE.GIAP.Core.MyPupils.Application.Search.Provider;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
@@ -119,8 +118,7 @@ public sealed class TempAggregatePupilsForMyPupilsServiceTests
 
         List<UniquePupilNumber> requestUpns =
             npdResults.Concat(ppResults)
-                .Select(t => t.UPN)
-                .ToUniquePupilNumbers()
+                .Select(t => new UniquePupilNumber(t.UPN))
                 .ToList();
 
         UniquePupilNumbers uniquePupilNumbers = UniquePupilNumbers.Create(requestUpns);
