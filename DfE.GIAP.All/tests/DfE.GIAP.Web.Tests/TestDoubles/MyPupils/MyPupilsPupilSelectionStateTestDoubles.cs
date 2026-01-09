@@ -1,26 +1,32 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Web.Features.MyPupils.State.Selection;
+﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
 public static class MyPupilsPupilSelectionStateTestDoubles
 {
-    public static MyPupilsPupilSelectionState Default() => new();
+    public static MyPupilsPupilSelectionState WithSelectedPupils(
+        List<string> selected) => WithSelectedPupils(SelectionMode.Manual, selected, []);
 
-    public static MyPupilsPupilSelectionState WithPupilsSelectionState(Dictionary<List<string>, bool> selectionStateMapping)
+    public static MyPupilsPupilSelectionState WithSelectedPupils(
+        SelectionMode mode,
+        List<string> selected,
+        List<string> deselected)
     {
-        MyPupilsPupilSelectionState state = Default();
-        selectionStateMapping.ToList().ForEach(mapping =>
+        MyPupilsPupilSelectionState state = MyPupilsPupilSelectionState.CreateDefault();
+
+        if (mode == SelectionMode.All)
         {
-            state.UpsertPupilSelectionState(mapping.Key, mapping.Value);
-        });
-        return state;
-    }
+            state.SelectAll();
+        }
 
-    public static MyPupilsPupilSelectionState WithAllPupilsSelected(IEnumerable<string> pupils)
-    {
-        MyPupilsPupilSelectionState state = Default();
-        state.UpsertPupilSelectionState(pupils, true);
-        state.SelectAllPupils();
+        foreach (string item in selected)
+        {
+            state.Select(item);
+        }
+
+        foreach (string item in deselected)
+        {
+            state.Deselect(item);
+        }
         return state;
     }
 }
