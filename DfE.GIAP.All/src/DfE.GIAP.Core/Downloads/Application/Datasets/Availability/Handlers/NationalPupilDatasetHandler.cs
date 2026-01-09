@@ -23,7 +23,7 @@ public class NationalPupilDatasetHandler : IDatasetAvailabilityHandler
         HashSet<Dataset> datasets = new();
         IEnumerable<NationalPupil> pupils = await _nationalPupilDatabaseReadOnlyRepository.GetPupilsByIdsAsync(pupilIds);
 
-        if (pupils.Any(p => p.HasCensusAutumData))
+        if (pupils.Any(p => p.HasCensusAutumnData))
             datasets.Add(Dataset.Census_Autumn);
         if (pupils.Any(p => p.HasCensusSpringData))
             datasets.Add(Dataset.Census_Spring);
