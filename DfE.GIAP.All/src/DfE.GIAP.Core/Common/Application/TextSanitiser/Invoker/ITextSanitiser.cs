@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 

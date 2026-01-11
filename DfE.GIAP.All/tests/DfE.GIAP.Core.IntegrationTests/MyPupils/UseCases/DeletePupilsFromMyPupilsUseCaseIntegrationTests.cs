@@ -3,11 +3,13 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
+using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
+
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly GiapCosmosDbFixture _cosmosDbFixture;

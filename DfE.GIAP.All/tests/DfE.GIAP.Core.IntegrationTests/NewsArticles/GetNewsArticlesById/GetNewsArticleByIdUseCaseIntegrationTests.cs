@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticleById;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;

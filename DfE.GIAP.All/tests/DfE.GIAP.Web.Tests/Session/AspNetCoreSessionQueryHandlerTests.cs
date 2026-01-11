@@ -1,7 +1,6 @@
-﻿using DfE.GIAP.Web.Session.Abstraction;
-using DfE.GIAP.Web.Session.Abstraction.Query;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore.Query;
+﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
 using DfE.GIAP.Web.Tests.Session.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -74,7 +73,7 @@ public sealed class AspNetCoreSessionQueryHandlerTests
         AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, sessionObjectSerializerMock.Object);
 
         // Act
-        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.GetSessionObject();
+        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.Handle();
 
         // Assert
         Assert.Null(sessionQueryResponse.Value); // defaults
@@ -100,7 +99,7 @@ public sealed class AspNetCoreSessionQueryHandlerTests
         AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, serializer.Object);
 
         // Act
-        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.GetSessionObject();
+        SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.Handle();
 
         // Assert
         Assert.Equal(stubSessionObject, sessionQueryResponse.Value);

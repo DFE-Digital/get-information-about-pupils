@@ -26,7 +26,7 @@ public sealed class Pupil : Entity<UniquePupilNumber>
         LocalAuthorityCode = localAuthorityCode.Code;
     }
 
-    public string Forename => _name.FirstName;
+    public string Forename => _name.Forename;
     public string Surname => _name.Surname;
     public bool HasDateOfBirth => _dateOfBirth is not null;
     public string DateOfBirth => _dateOfBirth?.ToString() ?? string.Empty;

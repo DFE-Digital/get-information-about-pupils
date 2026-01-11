@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
-using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
 

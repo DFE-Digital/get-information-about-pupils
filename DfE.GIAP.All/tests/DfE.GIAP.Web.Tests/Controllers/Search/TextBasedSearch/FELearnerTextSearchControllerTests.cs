@@ -14,7 +14,6 @@ using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
@@ -39,6 +38,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
 public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
+
     private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
     private readonly ILogger<FELearnerTextSearchController> _mockLogger = Substitute.For<ILogger<FELearnerTextSearchController>>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
@@ -46,8 +46,12 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
+
+    private readonly TestSession _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
+    private readonly Mock<ISessionProvider> _mockSessionProvider = new();
+    private AzureAppSettings _mockAppSettings = new();
     private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
         Substitute.For<IUseCase<SearchRequest, SearchResponse>>();
     private readonly IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
@@ -58,13 +62,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly IMapper<(string, string), SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<(string, string), SortOrder>>();
 
-    private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
-    private readonly TestSession _mockSession = new TestSession();
-    private AzureAppSettings _mockAppSettings = new();
-
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
-
         _paginatedResultsFake = paginatedResultsFake;
         _searchFiltersFake = searchFiltersFake;
 

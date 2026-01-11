@@ -1,5 +1,4 @@
 ﻿namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
-
 public record MyPupilsPresentationResponse
 {
     public required MyPupilsPresentationPupilModels MyPupils { get; init; }

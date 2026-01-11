@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers;
 

@@ -14,7 +14,7 @@ public class PupilNameTests
         PupilName result = new(firstName, lastName);
 
         // Assert
-        Assert.Equal("John", result.FirstName);
+        Assert.Equal("John", result.Forename);
         Assert.Equal("Doe", result.Surname);
     }
 
@@ -31,7 +31,7 @@ public class PupilNameTests
         PupilName pupilName = new(firstName!, "Smith");
 
         // Assert
-        Assert.Equal(string.Empty, pupilName.FirstName);
+        Assert.Equal(string.Empty, pupilName.Forename);
         Assert.Equal("Smith", pupilName.Surname);
     }
 
@@ -47,7 +47,7 @@ public class PupilNameTests
         PupilName pupilName = new("John", surname!);
 
         // Assert
-        Assert.Equal("John", pupilName.FirstName);
+        Assert.Equal("John", pupilName.Forename);
         Assert.Equal(string.Empty, pupilName.Surname);
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Infrastructure;
 using DfE.GIAP.Web.Features.Auth.Infrastructure.DataTransferObjects;

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
+﻿using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
 using DfE.GIAP.Web.Tests.TestDoubles.Http;
 using Microsoft.AspNetCore.Http;
 using Moq;

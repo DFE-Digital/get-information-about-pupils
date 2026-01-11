@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 
 public interface IClearMyPupilsPupilSelectionsHandler
 {

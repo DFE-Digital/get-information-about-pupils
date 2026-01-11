@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Mapper;
+using DfE.GIAP.Core.MyPupils.Application.Mapper;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 

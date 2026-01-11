@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Extensions;

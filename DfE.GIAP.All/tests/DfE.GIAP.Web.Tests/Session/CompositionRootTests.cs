@@ -1,9 +1,7 @@
-﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Session;
-using DfE.GIAP.Web.Session.Abstraction;
-using DfE.GIAP.Web.Session.Abstraction.Command;
-using DfE.GIAP.Web.Session.Abstraction.Query;
-using DfE.GIAP.Web.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Shared.Session;
+using DfE.GIAP.Web.Shared.Session.Abstraction;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -24,11 +22,5 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<ISessionObjectKeyResolver>());
 
         Assert.NotNull(scope.ServiceProvider.GetService<IAspNetCoreSessionProvider>());
-
-        Assert.NotNull(scope.ServiceProvider.GetService<ISessionCommandHandler<SessionObjectReferenceType>>());
-        Assert.NotNull(scope.ServiceProvider.GetService<ISessionQueryHandler<SessionObjectReferenceType>>());
-        Assert.NotNull(scope.ServiceProvider.GetService<ISessionObjectSerializer<SessionObjectReferenceType>>());
     }
-
-    public record SessionObjectReferenceType { }
 }

@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
@@ -23,7 +24,9 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
-        services.AddNewsArticleDependencies();
+
+        services
+            .AddNewsArticleDependencies();
     }
 
     [Fact]

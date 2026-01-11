@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;

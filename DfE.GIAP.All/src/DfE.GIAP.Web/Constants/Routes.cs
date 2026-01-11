@@ -21,7 +21,6 @@ public static class Routes
         public const string Home = "/";
         public const string News = "news";
         public const string UserWithNoRole = "user-with-no-role";
-        public const string MyPupilList = "my-pupil-list";
         public const string PupilPremium = "pupil-premium";
         public const string Search = "search";
         public const string SimulateError = "simulate-error";
@@ -80,8 +79,8 @@ public static class Routes
 
     public static class MyPupilList
     {
-        public const string AddToMyPupilList = "AddToMyPupilList";
-        public const string RemoveSelected = "RemoveSelected";
+        public const string MyPupilsBase = "~/my-pupil-list";
+        public const string DeleteMyPupils = $"{MyPupilsBase}/Delete";
         public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
         public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
         public const string MyPupilListView = "~/Views/MyPupilList/Index.cshtml";

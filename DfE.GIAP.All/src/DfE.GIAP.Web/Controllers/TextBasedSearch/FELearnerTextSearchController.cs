@@ -2,6 +2,8 @@
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
@@ -251,7 +253,6 @@ public class FELearnerTextSearchController : Controller
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = false
         };
-
 
         GetAvailableDatasetsForPupilsRequest request = new(
             DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,

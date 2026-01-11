@@ -10,7 +10,7 @@ using DfE.GIAP.Core.Search.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;

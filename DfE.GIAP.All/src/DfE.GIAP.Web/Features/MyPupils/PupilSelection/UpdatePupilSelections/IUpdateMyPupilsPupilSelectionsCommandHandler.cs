@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
+﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
-namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
+namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 
 public interface IUpdateMyPupilsPupilSelectionsCommandHandler
 {

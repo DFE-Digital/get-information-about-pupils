@@ -12,7 +12,6 @@ using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Download.SecurityReport;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Config;
@@ -57,10 +56,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPaginatedSearchService, PaginatedSearchService>();
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
-        services.AddScoped<IMyPupilListService, MyPupilListService>();
         services.AddTransient<IEventLogging, EventLogging>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
-
         services.AddScoped<IApplicationLogEntryFactory<TracePayloadOptions, TracePayload>, TraceLogFactory>();
         services.AddScoped<IBusinessEventFactory, BusinessEventFactory>();
 

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
 

@@ -2,20 +2,21 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
-using DfE.GIAP.Web.Tests.TestDoubles.MyPupils;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService;
+
 public sealed class MyPupilsPresentationServiceTests
 {
     [Fact]

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandler;
-using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 

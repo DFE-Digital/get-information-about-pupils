@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using Azure.Search.Documents;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+
 public static class SearchClientServiceCollectionExtensions
 {
     public static IServiceCollection AddSearchClients(

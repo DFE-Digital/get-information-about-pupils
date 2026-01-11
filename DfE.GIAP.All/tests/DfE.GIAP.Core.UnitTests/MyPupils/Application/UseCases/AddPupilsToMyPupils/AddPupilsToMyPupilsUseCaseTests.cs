@@ -1,11 +1,12 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 

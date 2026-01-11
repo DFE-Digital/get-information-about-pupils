@@ -1,8 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper.DataTransferObjects;
 
-namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
-
+namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 public sealed class MyPupilsPupilSelectionStateFromDtoMapper
     : IMapper<MyPupilsPupilSelectionStateDto, MyPupilsPupilSelectionState>
 {

@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
-
 public interface IMyPupilsPresentationService
 {
     Task DeletePupilsAsync(

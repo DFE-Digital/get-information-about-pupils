@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
 using Moq;
@@ -31,7 +31,7 @@ public sealed class MyPupilsModelsToMyPupilsPresentationPupilModelsMapperTests
         MyPupilModelsToMyPupilsPresentationPupilModelMapper mapper = new(mapperMock.Object);
 
         // Act
-        MyPupilsPresentationPupilModels mapped = mapper.Map(null!);
+        MyPupilsPresentationPupilModels mapped =  mapper.Map(null!);
 
         // Assert
         Assert.NotNull(mapped);

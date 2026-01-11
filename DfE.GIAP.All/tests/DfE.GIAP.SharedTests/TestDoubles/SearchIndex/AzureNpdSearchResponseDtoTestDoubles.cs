@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using DfE.GIAP.SharedTests.Common;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 public static class AzureNpdSearchResponseDtoTestDoubles

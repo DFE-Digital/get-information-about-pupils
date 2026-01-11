@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Options;
 
 
