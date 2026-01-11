@@ -32,7 +32,7 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
 
         if (string.IsNullOrWhiteSpace(sessionObjectAccessKey) || !session.TryGetValue(sessionObjectAccessKey, out byte[] _))
         {
-            return SessionQueryResponse<TSessionObject>.NoValue();
+            return SessionQueryResponse<TSessionObject>.CreateWithNoValue();
         }
 
         string sessionValue = session.GetString(sessionObjectAccessKey);
