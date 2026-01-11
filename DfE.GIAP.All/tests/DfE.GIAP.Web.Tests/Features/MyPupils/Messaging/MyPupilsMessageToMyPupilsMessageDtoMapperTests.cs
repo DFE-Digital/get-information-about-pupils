@@ -7,7 +7,7 @@ namespace DfE.GIAP.Web.Tests.Features.MyPupils.Messaging;
 public sealed class MyPupilsMessageToMyPupilsMessageDtoMapperTests
 {
     [Fact]
-    public void Handle_Throws_When_Input_Is_Null()
+    public void Map_Throws_When_Input_Is_Null()
     {
         // Arrange
         MyPupilsMessageToMyPupilsMessageDtoMapper sut = new();
@@ -20,7 +20,7 @@ public sealed class MyPupilsMessageToMyPupilsMessageDtoMapperTests
     }
 
     [Fact]
-    public void Handle_Maps_MessageDto_To_Message()
+    public void Map_Maps_Message_To_MessageDto()
     {
         // Arrange
         MyPupilsMessage input = MyPupilsMessage.Create("id", MessageLevel.Debug, "Test message");
