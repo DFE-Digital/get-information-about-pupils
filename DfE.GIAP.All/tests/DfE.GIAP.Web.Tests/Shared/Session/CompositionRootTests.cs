@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Session;
+namespace DfE.GIAP.Web.Tests.Shared.Session;
 public sealed class CompositionRootTests
 {
     [Fact]

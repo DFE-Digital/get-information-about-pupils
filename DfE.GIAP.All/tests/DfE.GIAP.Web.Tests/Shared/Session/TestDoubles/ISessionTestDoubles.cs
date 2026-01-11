@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.Session.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 internal interface ISessionTestDoubles
 {
     internal static Mock<ISession> Default() => new();

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.Session.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 internal static class ISessionObjectKeyResolverTestDoubles
 {
     internal static Mock<ISessionObjectKeyResolver> Default() => new();

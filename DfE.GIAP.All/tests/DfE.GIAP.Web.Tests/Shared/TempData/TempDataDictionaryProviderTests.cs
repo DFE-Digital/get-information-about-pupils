@@ -1,11 +1,11 @@
 ﻿using DfE.GIAP.Web.Shared.TempData;
-using DfE.GIAP.Web.Tests.TestDoubles.Http;
+using DfE.GIAP.Web.Tests.Shared.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Shared;
+namespace DfE.GIAP.Web.Tests.Shared.TempData;
 
 public sealed class TempDataDictionaryProviderTests
 {

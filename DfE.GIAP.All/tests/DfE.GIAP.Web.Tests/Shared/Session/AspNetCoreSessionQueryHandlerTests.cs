@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
-using DfE.GIAP.Web.Tests.Session.TestDoubles;
+using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Session;
+namespace DfE.GIAP.Web.Tests.Shared.Session;
 public sealed class AspNetCoreSessionQueryHandlerTests
 {
     [Fact]
@@ -95,7 +95,7 @@ public sealed class AspNetCoreSessionQueryHandlerTests
 
         StubSessionObject stubSessionObject = new();
         Mock<ISessionObjectSerializer<StubSessionObject>> serializer = ISessionObjectSerializerTestDoubles.MockDeserialize(stubSessionObject);
-        
+
         AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, keyResolverMock.Object, serializer.Object);
 
         // Act

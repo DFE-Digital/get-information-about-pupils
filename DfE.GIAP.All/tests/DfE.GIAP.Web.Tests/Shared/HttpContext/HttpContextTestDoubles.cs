@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles.Http;
+namespace DfE.GIAP.Web.Tests.Shared.Http;
 internal static class HttpContextTestDoubles
 {
     internal static HttpContext Stub() => new DefaultHttpContext();

@@ -1,10 +1,10 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
-using DfE.GIAP.Web.Tests.TestDoubles.Http;
+using DfE.GIAP.Web.Tests.Shared.Http;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Session;
+namespace DfE.GIAP.Web.Tests.Shared.Session;
 public sealed class AspNetCoreSessionProviderTests
 {
     [Fact]

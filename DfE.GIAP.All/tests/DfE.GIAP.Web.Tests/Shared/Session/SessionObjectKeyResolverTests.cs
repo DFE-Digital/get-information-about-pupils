@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using DfE.GIAP.Web.Shared.Session.Infrastructure;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Session;
+namespace DfE.GIAP.Web.Tests.Shared.Session;
 public sealed class SessionObjectKeyResolverTests
 {
     [Theory]

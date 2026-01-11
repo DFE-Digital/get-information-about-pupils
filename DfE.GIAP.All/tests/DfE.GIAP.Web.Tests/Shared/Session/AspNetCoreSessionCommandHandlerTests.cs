@@ -1,12 +1,12 @@
 ﻿using System.Text;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
-using DfE.GIAP.Web.Tests.Session.TestDoubles;
+using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Session;
+namespace DfE.GIAP.Web.Tests.Shared.Session;
 public sealed class AspNetCoreSessionCommandHandlerTests
 {
     [Fact]

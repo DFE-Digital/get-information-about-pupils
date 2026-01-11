@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles.Session;
+namespace DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 
 internal static class ISessionQueryHandlerTestDoubles
 {
