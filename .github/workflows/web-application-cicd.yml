@@ -92,7 +92,7 @@ jobs:
           done
 
       - name: Upload unit test projects coverage reports
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: unit-test-coverage
           path: coverage-unit/
@@ -111,7 +111,7 @@ jobs:
         run: ls -hal ${{ github.workspace }}/publish
 
       - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: packaged_app_for_deployment
           path: publish
@@ -158,7 +158,7 @@ jobs:
             --exit-code-from integration-tests
 
       - name: Upload integration test coverage report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: integration-test-coverage
           path: coverage-integration/cobertura.xml
@@ -211,7 +211,7 @@ jobs:
             -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
 
       - name: Upload merged coverage report to SonarQube
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: merged-coverage-report
           path: merged-coverage-reports/SonarQube.xml
