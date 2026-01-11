@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper.DataTransferObjects;
+﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+
+namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
 
 
 public record MyPupilsPupilSelectionStateDto
