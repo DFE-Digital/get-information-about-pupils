@@ -7,20 +7,20 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +36,7 @@ public class FELearnerNumberController : Controller
     private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
     protected readonly ISelectionManager _selectionManager;
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadDatasetsUseCase;
 
     private readonly IUseCase<
         SearchRequest,
@@ -74,6 +75,7 @@ public class FELearnerNumberController : Controller
     public string InvalidUPNsConfirmationAction => "";
 
     public FELearnerNumberController(
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadDatasetUseCase,
         IUseCase<
             SearchRequest,
             SearchResponse> furtherEducationSearchUseCase,
@@ -91,6 +93,9 @@ public class FELearnerNumberController : Controller
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
+
+        ArgumentNullException.ThrowIfNull(downloadDatasetUseCase);
+        _downloadDatasetsUseCase = downloadDatasetUseCase;
 
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
@@ -191,50 +196,71 @@ public class FELearnerNumberController : Controller
     [HttpPost]
     public async Task<IActionResult> DownloadSelectedUlnDatabaseData(LearnerDownloadViewModel model)
     {
-        if (!string.IsNullOrEmpty(model.SelectedPupils))
+        if (string.IsNullOrWhiteSpace(model?.SelectedPupils))
+            return RedirectToAction(SearchAction, UniqueLearnerNumberLabels.SearchUlnControllerName);
+
+        // Validate file type
+        if (model.DownloadFileType == DownloadFileType.None)
         {
-            string[] selectedPupils = model.SelectedPupils.Split(',');
-
-            if (model.SelectedDownloadOptions == null)
-            {
-                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
-            }
-            else if (model.DownloadFileType != DownloadFileType.None)
-            {
-                ReturnFile downloadFile =
-                    await _downloadService.GetFECSVFile(
-                        selectedPupils,
-                        model.SelectedDownloadOptions,
-                        true,
-                        AzureFunctionHeaderDetails.Create(
-                            User.GetUserId(), User.GetSessionId()), ReturnRoute.UniqueLearnerNumber).ConfigureAwait(false);
-
-                if (downloadFile == null)
-                {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
-                }
-
-                if (downloadFile.Bytes != null)
-                {
-                    model.ErrorDetails = null;
-                    return SearchDownloadHelper.DownloadFile(downloadFile);
-                }
-                else
-                {
-                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-                }
-            }
-            else
-            {
-                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
-            }
-
+            model.ErrorDetails = Messages.Search.Errors.SelectFileType;
             TempData["ErrorDetails"] = model.ErrorDetails;
-
             return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
         }
-        return RedirectToAction(SearchAction, UniqueLearnerNumberLabels.SearchUlnControllerName);
+
+        // Validate selected datasets
+        if (model.SelectedDownloadOptions == null || !model.SelectedDownloadOptions.Any())
+        {
+            model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
+            TempData["ErrorDetails"] = model.ErrorDetails;
+            return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
+        }
+
+        // Parse requested datasets
+        List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+        foreach (string dataset in model.SelectedDownloadOptions)
+        {
+            if (Enum.TryParse<Core.Downloads.Application.Enums.Dataset>(dataset, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset ds))
+                selectedDatasets.Add(ds);
+        }
+
+        if (!selectedDatasets.Any())
+        {
+            model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
+            TempData["ErrorDetails"] = model.ErrorDetails;
+            return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
+        }
+
+        string[] selectedPupils = model.SelectedPupils.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        DownloadPupilDataRequest request = new(
+            SelectedPupils: selectedPupils,
+            SelectedDatasets: selectedDatasets,
+            DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+            FileFormat: FileFormat.Csv);
+
+        DownloadPupilDataResponse response;
+        try
+        {
+            response = await _downloadDatasetsUseCase.HandleRequestAsync(request);
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorDetails"] = model.ErrorDetails;
+            return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
+        }
+
+        // No content returned
+        if (response?.FileContents is null || response.FileContents.Length == 0)
+        {
+            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+            TempData["ErrorDetails"] = model.ErrorDetails;
+            return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
+        }
+
+        model.ErrorDetails = null;
+        return File(response.FileContents, response.ContentType, response.FileName);
     }
+
 
     [Route(UniqueLearnerNumberLabels.DownloadSelectedUlnData)]
     [HttpGet]
