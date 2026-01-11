@@ -21,7 +21,7 @@ public record MyPupilsViewModel
     public string PageHeading => "My pupil list";
     public string DownloadController => "DownloadMyPupils";
     public string DeleteMyPupilsController => "DeleteMyPupils";
-    public string UpdateFormController => "UpdateMyPupilsForm";
+    public string UpdateFormController => "UpdateMyPupils";
     public string UpdateFormAction => "Index";
     public string UniquePupilNumberLabel => "UPN";
 }
