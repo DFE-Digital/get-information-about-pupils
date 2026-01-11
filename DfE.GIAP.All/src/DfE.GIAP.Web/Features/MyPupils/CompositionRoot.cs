@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandler;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
@@ -103,14 +103,14 @@ public static class CompositionRoot
             .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
             .AddScoped<IClearMyPupilsPupilSelectionsHandler, ClearMyPupilsPupilSelectionsHandler>()
             .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>()
-            .AddScoped<IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>, EvaluationHandler<UpdateMyPupilsSelectionStateRequest>>()
+            .AddScoped<IEvaluator<UpdateMyPupilsSelectionStateRequest>, Evaluator<UpdateMyPupilsSelectionStateRequest>>()
             .AddSingleton<SelectAllPupilsCommandHandler>()
             .AddSingleton<DeselectAllPupilsCommandHandler>()
             .AddSingleton<ManualSelectPupilsCommandHandler>()
-            .AddScoped<ICommandHandler<UpdateMyPupilsSelectionStateRequest>>((sp) =>
+            .AddScoped<IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>>((sp) =>
             {
                 // TODO wrap builder for orchestration of handlers
-                ChainedCommandHandler<UpdateMyPupilsSelectionStateRequest> headHandler = new(current: sp.GetRequiredService<SelectAllPupilsCommandHandler>());
+                ChainedEvaluationHandler<UpdateMyPupilsSelectionStateRequest> headHandler = new(current: sp.GetRequiredService<SelectAllPupilsCommandHandler>());
 
                 headHandler.ChainNext(sp.GetRequiredService<DeselectAllPupilsCommandHandler>());
                 headHandler.ChainNext(sp.GetRequiredService<ManualSelectPupilsCommandHandler>());

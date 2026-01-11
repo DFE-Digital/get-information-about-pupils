@@ -1,9 +1,9 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandler;
-public sealed class ChainedCommandHandler<TIn> : IChainedCommandHandler<TIn>
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+public sealed class ChainedEvaluationHandler<TIn> : IChainedEvaluationHandler<TIn>
 {
-    private ICommandHandler<TIn> _current;
-    private ChainedCommandHandler<TIn>? _next;
-    public ChainedCommandHandler(ICommandHandler<TIn> current)
+    private IEvaluationHandler<TIn> _current;
+    private ChainedEvaluationHandler<TIn>? _next;
+    public ChainedEvaluationHandler(IEvaluationHandler<TIn> current)
     {
         ArgumentNullException.ThrowIfNull(current);
         _current = current;
@@ -11,13 +11,13 @@ public sealed class ChainedCommandHandler<TIn> : IChainedCommandHandler<TIn>
     }
 
     public bool CanHandle(TIn input) => _current.CanHandle(input);
-    public void ChainNext(ICommandHandler<TIn> next)
+    public void ChainNext(IEvaluationHandler<TIn> next)
     {
         ArgumentNullException.ThrowIfNull(next);
 
         if (_next is null)
         {
-            _next = new ChainedCommandHandler<TIn>(next);
+            _next = new ChainedEvaluationHandler<TIn>(next);
             return;
         }
 

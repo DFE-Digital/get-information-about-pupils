@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandler;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
-internal sealed class ManualSelectPupilsCommandHandler : ICommandHandler<UpdateMyPupilsSelectionStateRequest>
+internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {
     public bool CanHandle(UpdateMyPupilsSelectionStateRequest input) => true;
     public void Handle(UpdateMyPupilsSelectionStateRequest input)
