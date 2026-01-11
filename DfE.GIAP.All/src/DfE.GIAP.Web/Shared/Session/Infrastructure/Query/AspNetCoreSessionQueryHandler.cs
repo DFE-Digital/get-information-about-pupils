@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 
-namespace DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
+namespace DfE.GIAP.Web.Shared.Session.Infrastructure.Query;
 
 public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQueryHandler<TSessionObject> where TSessionObject : class
 {

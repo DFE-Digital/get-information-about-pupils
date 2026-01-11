@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
+﻿using DfE.GIAP.Web.Shared.Session.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Moq;
 

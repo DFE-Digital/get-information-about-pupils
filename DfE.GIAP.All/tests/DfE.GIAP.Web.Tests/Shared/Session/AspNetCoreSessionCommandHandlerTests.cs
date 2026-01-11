@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
-using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.Web.Shared.Session.Infrastructure;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.Command;
 using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;

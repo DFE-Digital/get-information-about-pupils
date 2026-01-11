@@ -20,7 +20,8 @@ using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
-using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.Command;
+using DfE.GIAP.Web.Shared.Session.Infrastructure.Query;
 using DfE.GIAP.Web.Shared.Session.Infrastructure.Serialization;
 
 namespace DfE.GIAP.Web.Features.MyPupils;

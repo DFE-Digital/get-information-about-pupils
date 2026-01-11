@@ -1,6 +1,5 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Infrastructure;
-using DfE.GIAP.Web.Shared.Session.Infrastructure.AspNetCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Web.Shared.Session;
