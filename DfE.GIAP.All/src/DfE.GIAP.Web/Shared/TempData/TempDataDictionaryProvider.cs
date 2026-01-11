@@ -11,7 +11,10 @@ public sealed class TempDataDictionaryProvider : ITempDataDictionaryProvider
         IHttpContextAccessor httpContextAccessor,
         ITempDataDictionaryFactory tempDataDictionaryFactory)
     {
+        ArgumentNullException.ThrowIfNull(httpContextAccessor);
         _httpContextAccessor = httpContextAccessor;
+
+        ArgumentNullException.ThrowIfNull(tempDataDictionaryFactory);
         _tempDataDictionaryFactory = tempDataDictionaryFactory;
     }
     public ITempDataDictionary GetTempData()
