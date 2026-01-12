@@ -70,41 +70,41 @@
                     </button>
                 </div>
             </div>
-        }
 
-        @{
             string selectAllButtonValue = Model.IsAnyPupilsSelected ? "false" : "true";
             string selectAllButtonText = Model.IsAnyPupilsSelected ? "Deselect all pupils" : "Select all pupils";
+
+            <div class="govuk-grid-row govuk-button-group">
+                <div class="govuk-grid-column-one-quarter">
+                    <button asp-controller="@Model.UpdateFormController"
+                            asp-action="@Model.UpdateFormAction"
+                            asp-route-pageNumber="@Model.PageNumber"
+                            asp-route-sortField="@Model.SortField"
+                            asp-route-sortDirection="@Model.SortDirection"
+                            class="govuk-button govuk-button--secondary"
+                            type="submit"
+                            name="SelectAll"
+                            value="@selectAllButtonValue">
+                        @selectAllButtonText
+                    </button>
+                </div>
+
+                <div class="govuk-grid-column-one-quarter">
+                    <button asp-controller="@Model.DeleteMyPupilsController"
+                            asp-action="Delete"
+                            asp-route-pageNumber="@Model.PageNumber"
+                            asp-route-sortField="@Model.SortField"
+                            asp-route-sortDirection="@Model.SortDirection"
+                            id="remove--selected--data--link"
+                            type="submit"
+                            class="govuk-button govuk-button--secondary">
+                        @ApplicationLabels.RemoveSelectedToMyPupilListLink
+                    </button>
+                </div>
+            </div>
         }
 
-        <div class="govuk-grid-row govuk-button-group">
-            <div class="govuk-grid-column-one-quarter">
-                <button asp-controller="@Model.UpdateFormController"
-                        asp-action="@Model.UpdateFormAction"
-                        asp-route-pageNumber="@Model.PageNumber"
-                        asp-route-sortField="@Model.SortField"
-                        asp-route-sortDirection="@Model.SortDirection"
-                        class="govuk-button govuk-button--secondary"
-                        type="submit"
-                        name="SelectAll"
-                        value="@selectAllButtonValue">
-                    @selectAllButtonText
-                </button>
-            </div>
 
-            <div class="govuk-grid-column-one-quarter">
-                <button asp-controller="@Model.DeleteMyPupilsController"
-                        asp-action="Delete"
-                        asp-route-pageNumber="@Model.PageNumber"
-                        asp-route-sortField="@Model.SortField"
-                        asp-route-sortDirection="@Model.SortDirection"
-                        id="remove--selected--data--link"
-                        type="submit"
-                        class="govuk-button govuk-button--secondary">
-                    @ApplicationLabels.RemoveSelectedToMyPupilListLink
-                </button>
-            </div>
-        </div>
 
         <div class="govuk-grid-row">
             @if (!@Model.HasPupils)
