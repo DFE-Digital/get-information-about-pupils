@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.Datasets;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
@@ -43,26 +44,27 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
         PupilDatasetCollection datasets,
         DownloadPupilDataRequest request)
     {
-        Dictionary<string, Func<Stream, Task>> writers = new Dictionary<string, Func<Stream, Task>>();
-        string ext = request.FileFormat == FileFormat.Csv ? "csv" : "txt";
+        Dictionary<string, Func<Stream, Task>> writers = [];
 
-        void Add<T>(IEnumerable<T> records, string name)
+        DatasetMetadata metadata = DatasetMetadata.For(request.DownloadType);
+        foreach (Dataset dataset in request.SelectedDatasets)
         {
-            if (records.Any())
-            {
-                writers.Add(name, stream =>
-                    _fileExporter.ExportAsync(records, request.FileFormat, stream));
-            }
-        }
+            if (!metadata.SupportedDatasets.Contains(dataset))
+                continue;
 
-        Add(datasets.PP, $"pp_results.{ext}");
-        Add(datasets.SEN, $"sen_results.{ext}");
-        // Add other datasets here as needed
+            List<object> records = metadata.GetRecords(dataset, datasets).ToList();
+            if (!records.Any())
+                continue;
+
+            string fileName = metadata.GetFileName(dataset, request.FileFormat);
+            writers.Add(fileName, stream =>
+                _fileExporter.ExportAsync(records, request.FileFormat, stream));
+        }
 
         return writers;
     }
 
-    private async Task<DownloadPupilDataResponse> BuildSingleFileResponse(
+    private static async Task<DownloadPupilDataResponse> BuildSingleFileResponse(
         Dictionary<string, Func<Stream, Task>> fileWriters,
         DownloadPupilDataRequest request)
     {

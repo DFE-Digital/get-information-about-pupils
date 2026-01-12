@@ -41,12 +41,4 @@ public static class AvailableDatasetsByDownloadType
             ? datasets
             : Array.Empty<Dataset>();
     }
-
-    /// <summary>
-    /// Checks if a specific dataset is supported for a given download type.
-    /// </summary>
-    public static bool IsSupported(DownloadType type, Dataset dataset)
-    {
-        return s_map.TryGetValue(type, out HashSet<Dataset>? datasets) && datasets.Contains(dataset);
-    }
 }
