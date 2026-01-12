@@ -19,16 +19,16 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @foreach (SchoolCensusDataViewModel item in Model.SchoolCensusData)
+        @foreach (SchoolCensusYearViewModel item in Model.SchoolCensusData)
         {
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header">@item.AcademicYear</th>
-                <td class="govuk-table__cell">@DisplayTick(item.AutumnCensus)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.SpringCensus)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.SummerCensus)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.PupilPremium)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.DisadvantagePremium16To18)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.Sen16To18)</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, SchoolCensusType.AutumnCensus))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, SchoolCensusType.SpringCensus))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, SchoolCensusType.SummerCensus))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, SchoolCensusType.PupilPremium))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, SchoolCensusType.DisadvantagePremium16To18))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, SchoolCensusType.Sen16To18))</td>
             </tr>
         }
     </tbody>
@@ -49,25 +49,33 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @foreach (AttainmentDataViewModel item in Model.AttainmentData)
+        @foreach (AttainmentYearViewModel item in Model.AttainmentData)
         {
             <tr class="govuk-table__row">
                 <th scope="row" class="govuk-table__header">@item.AcademicYear</th>
-                <td class="govuk-table__cell">@DisplayTick(item.KeyStage1)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.KeyStage2)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.KeyStage4)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.EYFSP)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.Phonics)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.PhonicsAutumnY2)</td>
-                <td class="govuk-table__cell">@DisplayTick(item.MTC)</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.KeyStage1))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.KeyStage2))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.KeyStage4))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.EYFSP))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.Phonics))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.PhonicsAutumnY2))</td>
+                <td class="govuk-table__cell">@DisplayTick(Has(item.Available, AttainmentType.MTC))</td>
             </tr>
         }
+
     </tbody>
 </table>
 
 @functions {
+
     private IHtmlContent DisplayTick(bool value)
     {
         return value ? new HtmlString("✓") : HtmlString.Empty;
     }
+
+    private bool Has<TEnum>(HashSet<TEnum> set, TEnum value) where TEnum : Enum
+    {
+        return set.Contains(value);
+    }
+
 }

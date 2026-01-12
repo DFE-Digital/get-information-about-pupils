@@ -28,7 +28,7 @@ public class ManageNewsArticlesController : Controller
     private readonly IUseCaseRequestOnly<DeleteNewsArticleRequest> _deleteNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<CreateNewsArticleRequest> _createNewsArticleUseCase;
     private readonly IUseCaseRequestOnly<UpdateNewsArticleRequest> _updateNewsArticleUseCase;
-    private readonly ITextSanitiserInvoker _textSanitiserInvoker;
+    private readonly ITextSanitiser _textSanitiserInvoker;
 
     public ManageNewsArticlesController(
         IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse> getNewsArticleByIdUseCase,
@@ -36,7 +36,7 @@ public class ManageNewsArticlesController : Controller
         IUseCaseRequestOnly<DeleteNewsArticleRequest> deleteNewsArticleUseCase,
         IUseCaseRequestOnly<CreateNewsArticleRequest> createNewsArticleUseCase,
         IUseCaseRequestOnly<UpdateNewsArticleRequest> updateNewsArticleUseCase,
-        ITextSanitiserInvoker textSanitiserInvoker)
+        ITextSanitiser textSanitiserInvoker)
     {
         ArgumentNullException.ThrowIfNull(getNewsArticleByIdUseCase);
         _getNewsArticleByIdUseCase = getNewsArticleByIdUseCase;
