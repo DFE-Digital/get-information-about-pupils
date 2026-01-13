@@ -6,13 +6,14 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
@@ -21,7 +22,6 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -80,6 +80,7 @@ public class FELearnerTextSearchController : Controller
 
     private readonly ISessionProvider _sessionProvider;
     private readonly IDownloadService _downloadService;
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
     private readonly ILogger<FELearnerTextSearchController> _logger;
@@ -122,6 +123,7 @@ public class FELearnerTextSearchController : Controller
         IDownloadService downloadService,
         IEventLogger eventLogger,
         IOptions<AzureAppSettings> azureAppSettings,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
@@ -157,6 +159,9 @@ public class FELearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
+        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
+        _downloadPupilDataUseCase = downloadPupilDataUseCase;
+
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
     }
@@ -291,47 +296,61 @@ public class FELearnerTextSearchController : Controller
     [HttpPost]
     public async Task<IActionResult> DownloadFurtherEducationFile(LearnerDownloadViewModel model)
     {
-        if (!string.IsNullOrEmpty(model.LearnerNumber))
+
+        if (string.IsNullOrEmpty(model.LearnerNumber))
         {
-            var selectedPupils = model.LearnerNumber.Split(',');
+            return RedirectToAction(Global.FELearnerTextSearchAction, Global.FELearnerTextSearchController);
+        }
 
-            if (model.SelectedDownloadOptions == null)
+        string[] selectedPupils = model.LearnerNumber.Split(',');
+
+        if (model.SelectedDownloadOptions is null)
+        {
+            model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
+        }
+        else if (model.DownloadFileType is DownloadFileType.None)
+        {
+            model.ErrorDetails = Messages.Search.Errors.SelectFileType;
+        }
+        else
+        {
+            List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+            foreach (string dataset in model.SelectedDownloadOptions)
             {
-                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
+                if (Enum.TryParse(dataset, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset ds))
+                    selectedDatasets.Add(ds);
             }
-            else if (model.DownloadFileType != DownloadFileType.None)
+
+            DownloadPupilDataRequest request = new DownloadPupilDataRequest(
+                        SelectedPupils: selectedPupils,
+                        SelectedDatasets: selectedDatasets,
+                        DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+                        FileFormat: FileFormat.Csv
+                    );
+
+
+            DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
+            if (response is null)
             {
-                var downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
+                return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+            }
 
-                if (downloadFile == null)
-                {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
-                }
-
-                if (downloadFile.Bytes != null)
-                {
-                    model.ErrorDetails = null;
-                    return SearchDownloadHelper.DownloadFile(downloadFile);
-                }
-                else
-                {
-                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-                }
+            if (response.FileContents is not null && response.FileContents.Length > 0)
+            {
+                model.ErrorDetails = null;
+                return File(response.FileContents, response.ContentType, response.FileName);
             }
             else
             {
-                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
+                model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
             }
-
-            TempData["ErrorDetails"] = model.ErrorDetails;
-
-            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
-                model.TextSearchViewModel.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
-
-            return await DownloadSelectedFurtherEducationData(model.SelectedPupils, model.TextSearchViewModel?.SearchText);
         }
 
-        return RedirectToAction(Global.FELearnerTextSearchAction, Global.FELearnerTextSearchController);
+        TempData["ErrorDetails"] = model.ErrorDetails;
+        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            model.TextSearchViewModel.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+
+        return await DownloadSelectedFurtherEducationData(model.SelectedPupils, model.TextSearchViewModel?.SearchText);
     }
 
     [Route(Routes.FurtherEducation.DownloadNonUlnRequest)]
@@ -810,7 +829,7 @@ public class FELearnerTextSearchController : Controller
             {
                 currentFilters.Remove(item);
             }
-            
+
             var sexFiltersActive = currentFilters.Find(x => x.FilterType == FilterType.Sex);
             if (sexFiltersActive != null && model.SelectedSexValues == null && currentFilters.Count() >= 1)
             {
@@ -951,7 +970,7 @@ public class FELearnerTextSearchController : Controller
 
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
-        model.PageHeading = PageHeading; 
+        model.PageHeading = PageHeading;
         model.ShowLocalAuthority = ShowLocalAuthority;
         return model;
     }

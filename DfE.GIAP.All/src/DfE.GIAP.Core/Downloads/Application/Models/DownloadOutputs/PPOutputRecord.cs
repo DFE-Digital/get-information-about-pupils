@@ -11,5 +11,4 @@ public class PPOutputRecord
     public string? NCYear { get; set; } = string.Empty;
     public string? Pupil_Premium_FTE { get; set; } = string.Empty;
     public string? ACAD_YEAR { get; set; } = string.Empty;
-
 }

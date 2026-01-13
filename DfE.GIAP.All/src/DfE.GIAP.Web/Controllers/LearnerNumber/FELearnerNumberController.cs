@@ -33,14 +33,10 @@ namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 public class FELearnerNumberController : Controller
 {
     private readonly ILogger<FELearnerNumberController> _logger;
-    private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
     protected readonly ISelectionManager _selectionManager;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadDatasetsUseCase;
-
-    private readonly IUseCase<
-        SearchRequest,
-        SearchResponse> _furtherEducationSearchUseCase;
+    private readonly IUseCase<SearchRequest, SearchResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         LearnerNumericSearchMappingContext,
@@ -105,9 +101,6 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -219,7 +212,7 @@ public class FELearnerNumberController : Controller
         List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
         foreach (string dataset in model.SelectedDownloadOptions)
         {
-            if (Enum.TryParse<Core.Downloads.Application.Enums.Dataset>(dataset, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset ds))
+            if (Enum.TryParse(dataset, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset ds))
                 selectedDatasets.Add(ds);
         }
 
