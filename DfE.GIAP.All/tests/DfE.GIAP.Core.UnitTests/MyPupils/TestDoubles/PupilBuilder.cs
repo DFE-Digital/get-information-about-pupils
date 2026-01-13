@@ -48,7 +48,7 @@ internal sealed class PupilBuilder
         return this;
     }
 
-    internal PupilBuilder WithLocalAuthorityCode(LocalAuthorityCode localAuthorityCode)
+    internal PupilBuilder WithLocalAuthorityCode(LocalAuthorityCode? localAuthorityCode)
     {
         _localAuthorityCode = localAuthorityCode;
         return this;
@@ -60,15 +60,13 @@ internal sealed class PupilBuilder
             _firstName ?? "Default first name",
             _surname ?? "Default surname");
 
-        LocalAuthorityCode localAuthorityCode = _localAuthorityCode ?? new(100);
-
         return new Pupil(
             identifier: _upn,
             pupilType: _pupilType ?? PupilType.NationalPupilDatabase,
             name: name,
             dateOfBirth: _dateOfBirth,
             sex: _sex,
-            localAuthorityCode: localAuthorityCode);
+            localAuthorityCode: _localAuthorityCode);
     }
     internal static PupilBuilder CreateBuilder(
         UniquePupilNumber upn)

@@ -117,8 +117,6 @@ public static class ConfigurationTestDoubles
         return builder;
     }
 
-    private sealed class ContainerOptions(string ContainerName, string PartitionKey);
-
     public static IConfigurationBuilder WithDsiOptions(this IConfigurationBuilder builder)
     {
         Dictionary<string, string?> dsiStubConfig = new()

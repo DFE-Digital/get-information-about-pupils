@@ -16,7 +16,7 @@ internal sealed class MyPupilModelToMyPupilsPresentationPupilModelMapper : IMapp
             DateOfBirth = input.DateOfBirth,
             PupilPremiumLabel = input.IsPupilPremium ? "Yes" : "No",
             Sex = input.Sex,
-            LocalAuthorityCode = input.LocalAuthorityCode.ToString()
+            LocalAuthorityCode = input.LocalAuthorityCode?.ToString() ?? string.Empty
         };
     }
 }

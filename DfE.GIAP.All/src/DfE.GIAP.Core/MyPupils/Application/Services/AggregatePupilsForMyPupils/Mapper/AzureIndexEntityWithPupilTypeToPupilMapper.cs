@@ -5,12 +5,17 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 internal sealed class AzureIndexEntityWithPupilTypeToPupilMapper : IMapper<AzureIndexEntityWithPupilType, Pupil>
 {
-    public Pupil Map(AzureIndexEntityWithPupilType input) =>
-        new(
+    public Pupil Map(AzureIndexEntityWithPupilType input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+
+        return new(
             identifier: new UniquePupilNumber(input.SearchIndexDto.UPN),
             pupilType: input.PupilType,
             name: new(input.SearchIndexDto.Forename, input.SearchIndexDto.Surname),
             dateOfBirth: input.SearchIndexDto.DOB,
             sex: new Sex(input.SearchIndexDto.Sex),
-            localAuthorityCode: new LocalAuthorityCode(int.Parse(input.SearchIndexDto.LocalAuthority)));
+            localAuthorityCode: int.TryParse(input.SearchIndexDto.LocalAuthority, out int code) ? new LocalAuthorityCode(code) : null
+        );
+    }
 }

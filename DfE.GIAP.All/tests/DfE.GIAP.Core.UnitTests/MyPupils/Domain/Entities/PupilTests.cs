@@ -141,10 +141,26 @@ public sealed class PupilTests
             .Build();
 
         // Act
-        int result = pupil.LocalAuthorityCode;
+        int? result = pupil.LocalAuthorityCode;
 
         // Assert
         Assert.Equal(100, result);
+    }
+
+    [Fact]
+    public void LocalAuthorityCode_ReturnsEmpty_WhenLocalAuthorityIsNull()
+    {
+        // Arrange
+        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
+
+
+        Pupil pupil = PupilBuilder.CreateBuilder(upn)
+            .WithLocalAuthorityCode(null!)
+        // Act
+            .Build();
+
+        // Assert
+        Assert.Null(pupil.LocalAuthorityCode);
     }
 
     [Fact]

@@ -9,5 +9,5 @@ public record MyPupilsModel
     public required string DateOfBirth { get; init; }
     public required string Sex { get; init; }
     public required bool IsPupilPremium { get; init; }
-    public required int LocalAuthorityCode { get; init; }
+    public required int? LocalAuthorityCode { get; init; }
 }
