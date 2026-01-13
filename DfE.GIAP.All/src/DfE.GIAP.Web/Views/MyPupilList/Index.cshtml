@@ -120,6 +120,37 @@
                         <span>@noPupilsMessage</span>
                     </strong>
                 </div>
+                <ul class="pagination-list">
+                    <!-- [Previous] -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-list-previous">
+                            <button asp-controller="@Model.UpdateFormController"
+                                    asp-action="@Model.UpdateFormAction"
+                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                    asp-route-sortField="@Model.SortField"
+                                    asp-route-sortDirection="@Model.SortDirection"
+                                    id="page-previous"
+                                    type="submit">
+                                &#60;&#60; Previous
+                            </button>
+                        </li>
+                        <!-- [1] -->
+                        <li class="page-list-first">
+                            <button asp-controller="@Model.UpdateFormController"
+                                    asp-action="@Model.UpdateFormAction"
+                                    asp-route-pageNumber="1"
+                                    asp-route-sortField="@Model.SortField"
+                                    asp-route-sortDirection="@Model.SortDirection"
+                                    id="page-first"
+                                    type="submit">
+                                1
+                            </button>
+                        </li>
+                        <!-- [current] -->
+                        <li>@Model.PageNumber</li>
+                    }
+                </ul>
             }
             else
             {
