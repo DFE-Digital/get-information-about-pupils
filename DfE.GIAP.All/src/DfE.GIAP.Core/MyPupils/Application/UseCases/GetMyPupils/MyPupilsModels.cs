@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 public sealed class MyPupilsModels
 {
     public MyPupilsModels(IEnumerable<MyPupilsModel> pupilDtos)

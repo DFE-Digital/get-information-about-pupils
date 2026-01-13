@@ -6,12 +6,11 @@ using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
-
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {
     private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsUseCase;
@@ -43,7 +42,7 @@ public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 
         ArgumentNullException.ThrowIfNull(clearMyPupilsPupilSelectionsCommandHandler);
         _clearMyPupilsPupilSelectionsCommandHandler = clearMyPupilsPupilSelectionsCommandHandler;
-
+        
         ArgumentNullException.ThrowIfNull(mapper);
         _mapPupilsToPresentablePupils = mapper;
     }

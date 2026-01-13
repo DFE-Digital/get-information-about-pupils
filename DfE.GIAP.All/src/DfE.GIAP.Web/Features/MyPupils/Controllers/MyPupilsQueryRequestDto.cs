@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers;
 
 public record MyPupilsQueryRequestDto
 {
     [FromQuery]
-    [Range(2, int.MaxValue, ErrorMessage = "PageNumber must be 2 or greater.")]
+    [Range(1, int.MaxValue, ErrorMessage = "PageNumber must be 1 or greater.")]
     public int PageNumber { get; set; } = 1;
 
     [FromQuery]

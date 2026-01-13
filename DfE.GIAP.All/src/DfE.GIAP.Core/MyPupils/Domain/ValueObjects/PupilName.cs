@@ -10,17 +10,16 @@ public sealed class PupilName : ValueObject<PupilName>
         // TODO should we enforce these must exist? or just normalise
         //ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
         //ArgumentException.ThrowIfNullOrWhiteSpace(lastName); 
-        FirstName = Normalise(firstName);
+        Forename = Normalise(firstName);
         Surname = Normalise(lastName);
     }
 
-    public string FirstName { get; }
+    public string Forename { get; }
     public string Surname { get; }
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return FirstName;
-
+        yield return Forename;
         yield return Surname;
     }
 
@@ -33,11 +32,11 @@ public sealed class PupilName : ValueObject<PupilName>
 
         string trimmedInput = input.Trim();
 
-        if (trimmedInput.Length > 1)
+        if (trimmedInput.Length == 1)
         {
-            return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
+            return char.ToUpperInvariant(trimmedInput[0]).ToString();
         }
 
-        return char.ToUpperInvariant(trimmedInput[0]).ToString();
+        return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1);
     }
 }

@@ -1,5 +1,7 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.SharedTests.TestDoubles;
+﻿using Bogus.Bson;
+using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
 using DfE.GIAP.Web.Shared.TempData;
@@ -7,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Messaging;

@@ -1,5 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection;
-
+namespace DfE.GIAP.Web.Features.MyPupils.SelectionState;
 
 public sealed class MyPupilsPupilSelectionState
 {

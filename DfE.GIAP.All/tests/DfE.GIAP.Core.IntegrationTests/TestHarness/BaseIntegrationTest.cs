@@ -1,6 +1,5 @@
-using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.Runtime;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 

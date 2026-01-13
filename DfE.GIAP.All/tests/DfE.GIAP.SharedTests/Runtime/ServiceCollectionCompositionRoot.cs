@@ -1,10 +1,10 @@
-﻿using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.Configuration;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.SharedTests.Runtime;
+
 public static class ServiceCollectionCompositionRoot
 {
     // These are provided by the runtime; Logging, Configuration etc. Resolving types will fail without these as they are dependant on them
