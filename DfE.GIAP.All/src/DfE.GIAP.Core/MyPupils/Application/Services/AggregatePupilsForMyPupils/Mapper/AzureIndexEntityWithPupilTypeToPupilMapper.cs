@@ -12,7 +12,7 @@ internal sealed class AzureIndexEntityWithPupilTypeToPupilMapper : IMapper<Azure
         return new(
             identifier: new UniquePupilNumber(input.SearchIndexDto.UPN),
             pupilType: input.PupilType,
-            name: new(input.SearchIndexDto.Forename, input.SearchIndexDto.Surname),
+            name: new PupilName(input.SearchIndexDto.Forename, input.SearchIndexDto.Surname),
             dateOfBirth: input.SearchIndexDto.DOB,
             sex: new Sex(input.SearchIndexDto.Sex),
             localAuthorityCode: int.TryParse(input.SearchIndexDto.LocalAuthority, out int code) ? new LocalAuthorityCode(code) : null
