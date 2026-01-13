@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
-using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
+﻿using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 
 namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 

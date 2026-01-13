@@ -49,10 +49,10 @@ public static class CompositionRoot
 
         // PresentationService
         services
-            .AddSingleton<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MyPupilsPresentationResponseToMyPupilsViewModelMapper>()
             .AddSingleton<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
             .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>, MyPupilModelToMyPupilsPresentationPupilModelMapper>()
-            .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>();
+            .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>()
+            .AddScoped<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MyPupilsPresentationResponseToMyPupilsViewModelMapper>();
 
         // MessagingSink
         services
