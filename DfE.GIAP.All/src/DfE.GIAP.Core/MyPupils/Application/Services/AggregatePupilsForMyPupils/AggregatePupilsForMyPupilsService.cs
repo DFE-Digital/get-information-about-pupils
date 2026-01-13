@@ -50,11 +50,18 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             allResults.AddRange(ppResults);
         }
 
-        // Deduplicate
         List<Pupil> distinctResults = allResults
-            .DistinctBy(x => x.SearchIndexDto.UPN)
+            // Deduplicate
+            .GroupBy(p => p.SearchIndexDto.UPN)
+            // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
+            .Select(g =>
+                g.OrderByDescending(x => x.PupilType == PupilType.PupilPremium)
+                 .First())
+            // Explicit display order: NPD first, then PP
+            .OrderBy(p => p.PupilType == PupilType.PupilPremium ? 1 : 0)
             .Select(_mapper.Map)
             .ToList();
+
 
         return distinctResults;
     }
