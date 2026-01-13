@@ -3,6 +3,7 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
+using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
@@ -18,6 +19,7 @@ using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
@@ -66,6 +68,8 @@ public sealed class CompositionRootTests
 
         // Assert
         Assert.NotNull(provider);
+
+        Assert.NotNull(provider.GetService<IOptions<MyPupilsOptions>>());
 
         Assert.NotNull(provider.GetService<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>());
         Assert.NotNull(provider.GetService<IMapper<Pupil, MyPupilsModel>>());
