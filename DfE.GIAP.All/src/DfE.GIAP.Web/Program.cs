@@ -26,6 +26,7 @@ using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchR
 using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
 using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
+using DfE.GIAP.Web.Shared.Serializer;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +41,8 @@ builder.Services
     .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
     .AddAspNetCoreSessionServices()
-    .AddTempData()
+    .AddTempDataProvider()
+    .AddJsonSerializer()
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
