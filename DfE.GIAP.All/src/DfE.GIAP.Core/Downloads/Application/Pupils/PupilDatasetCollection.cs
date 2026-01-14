@@ -13,6 +13,7 @@ public class PupilDatasetCollection
     //public List<KS4Output> KS4 { get; set; } = new();
     //public List<PhonicsOutput> Phonics { get; set; } = new();
     //public List<MTCOutput> MTC { get; set; } = new();
-    public List<PPOutputRecord> PP { get; set; } = new();
-    public List<SENOutputRecord> SEN { get; set; } = new();
+    public List<PupilPremiumOutputRecord> PupilPremium { get; set; } = new();
+    public List<FurtherEducationPPOutputRecord> FurtherEducationPP { get; set; } = new();
+    public List<FurtherEducationSENOutputRecord> SEN { get; set; } = new();
 }

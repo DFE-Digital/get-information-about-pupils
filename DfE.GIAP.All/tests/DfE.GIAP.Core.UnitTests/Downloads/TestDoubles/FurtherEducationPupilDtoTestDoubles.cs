@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
@@ -31,7 +32,7 @@ public static class FurtherEducationPupilDtoTestDoubles
 
     private static Faker<FurtherEducationPupilDto> CreateGenerator()
     {
-        Faker<PupilPremiumEntryDto> pupilPremiumFaker = new Faker<PupilPremiumEntryDto>()
+        Faker<FurtherEducationPupilPremiumEntryDto> pupilPremiumFaker = new Faker<FurtherEducationPupilPremiumEntryDto>()
             .StrictMode(true)
             .RuleFor(p => p.NationalCurriculumYear, f => f.Random.Int(1, 13).ToString())
             .RuleFor(p => p.FullTimeEquivalent, f => f.Random.Double(0.5, 1.0).ToString("0.0"))

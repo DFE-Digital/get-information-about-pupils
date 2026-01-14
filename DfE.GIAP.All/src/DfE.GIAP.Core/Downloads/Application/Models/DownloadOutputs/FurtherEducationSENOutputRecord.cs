@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class SENOutputRecord
+public class FurtherEducationSENOutputRecord
 {
     public string? ULN { get; set; } = string.Empty;
     public string? Surname { get; set; } = string.Empty;

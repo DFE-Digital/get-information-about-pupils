@@ -3,10 +3,13 @@ using Newtonsoft.Json;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 
-public class FurtherEducationPupilDto
+public class PupilPremiumPupilDto
 {
-    [JsonProperty("ULN")]
-    public string? UniqueLearnerNumber { get; set; }
+    [JsonProperty("UPN")]
+    public string? UniquePupilNumber { get; set; }
+
+    [JsonProperty("URN")]
+    public string? UniqueReferenceNumber { get; set; }
 
     [JsonProperty("Forename")]
     public string? Forename { get; set; }
@@ -14,8 +17,8 @@ public class FurtherEducationPupilDto
     [JsonProperty("Surname")]
     public string? Surname { get; set; }
 
-    [JsonProperty("Gender")]
-    public string? Gender { get; set; }
+    [JsonProperty("Sex")]
+    public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
     public DateTime DOB { get; set; }
@@ -24,8 +27,5 @@ public class FurtherEducationPupilDto
     public string? ConcatenatedName { get; set; }
 
     [JsonProperty("Pupil_Premium")]
-    public List<FurtherEducationPupilPremiumEntryDto> PupilPremium { get; set; } = new();
-
-    [JsonProperty("SEN")]
-    public List<SpecialEducationalNeedsEntryDto> specialEducationalNeeds { get; set; } = new();
+    public List<PupilPremiumEntryDto> PupilPremium { get; set; } = new();
 }

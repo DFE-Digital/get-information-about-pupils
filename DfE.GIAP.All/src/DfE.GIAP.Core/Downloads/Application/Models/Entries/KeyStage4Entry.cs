@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Models;
+﻿namespace DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 public class KeyStage4Entry
 {

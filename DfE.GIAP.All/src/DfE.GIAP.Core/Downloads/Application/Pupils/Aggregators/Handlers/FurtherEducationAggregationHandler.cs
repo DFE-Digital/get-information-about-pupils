@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
+using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 
 namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
@@ -12,12 +13,12 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
         => downloadType == DownloadType.FurtherEducation;
 
     private readonly IFurtherEducationReadOnlyRepository _feReadRepository;
+
     public FurtherEducationAggregationHandler(IFurtherEducationReadOnlyRepository feReadRepository)
     {
         ArgumentNullException.ThrowIfNull(feReadRepository);
         _feReadRepository = feReadRepository;
     }
-
 
 
     public async Task<PupilDatasetCollection> AggregateAsync(
@@ -54,24 +55,24 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
 
     private static void AddPupilPremiumRecord(PupilDatasetCollection collection, FurtherEducationPupil fe)
     {
-        PupilPremiumEntry? pp = fe.PupilPremium?.FirstOrDefault();
-        collection.PP.Add(new PPOutputRecord
+        FurtherEducationPupilPremiumEntry? ppEntry = fe.PupilPremium?.FirstOrDefault();
+        collection.FurtherEducationPP.Add(new FurtherEducationPPOutputRecord
         {
             ULN = fe.UniqueLearnerNumber,
             Forename = fe.Forename,
             Surname = fe.Surname,
             Gender = fe.Gender,
             DOB = fe.DOB.ToShortDateString(),
-            ACAD_YEAR = pp?.AcademicYear,
-            NCYear = pp?.NationalCurriculumYear,
-            Pupil_Premium_FTE = pp?.FullTimeEquivalent,
+            ACAD_YEAR = ppEntry?.AcademicYear,
+            NCYear = ppEntry?.NationalCurriculumYear,
+            Pupil_Premium_FTE = ppEntry?.FullTimeEquivalent,
         });
     }
 
     private static void AddSenRecord(PupilDatasetCollection collection, FurtherEducationPupil fe)
     {
         SpecialEducationalNeedsEntry? sen = fe.specialEducationalNeeds?.FirstOrDefault();
-        collection.SEN.Add(new SENOutputRecord
+        collection.SEN.Add(new FurtherEducationSENOutputRecord
         {
             ULN = fe.UniqueLearnerNumber,
             Forename = fe.Forename,
@@ -83,26 +84,4 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
             SEN_Provision = sen?.Provision,
         });
     }
-}
-
-public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationHandler
-{
-    public bool CanHandle(DownloadType downloadType)
-        => downloadType == DownloadType.NPD;
-
-    public Task<PupilDatasetCollection> AggregateAsync(
-        IEnumerable<string> pupilIds,
-        IEnumerable<Dataset> selectedDatasets,
-        CancellationToken cancellationToken = default) => throw new NotImplementedException();
-}
-
-public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
-{
-    public bool CanHandle(DownloadType downloadType)
-        => downloadType == DownloadType.PupilPremium;
-
-    public Task<PupilDatasetCollection> AggregateAsync(
-        IEnumerable<string> pupilIds,
-        IEnumerable<Dataset> selectedDatasets,
-        CancellationToken cancellationToken = default) => throw new NotImplementedException();
 }

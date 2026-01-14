@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 
-public class CensusSummerEntryDto
+public class CensusAutumnEntryDto
 {
     public string? PupilMatchingRef { get; set; }
 
@@ -57,26 +57,14 @@ public class CensusSummerEntryDto
     [JsonProperty("DOB")]
     public string? DOB { get; set; }
 
-    [JsonProperty("Ethnicity")]
-    public string? Ethnicity { get; set; }
-
     [JsonProperty("FSMeligible")]
     public string? FreeSchoolMealEligible { get; set; }
 
     [JsonProperty("FSM_Protected")]
     public string? FreeSchoolMealProtected { get; set; }
 
-    [JsonProperty("EVERFSM_6")]
-    public string? EVERFSM_6 { get; set; }
-
-    [JsonProperty("EVERFSM_6_P")]
-    public string? EVERFSM_6_P { get; set; }
-
     [JsonProperty("Language")]
     public string? Language { get; set; }
-
-    [JsonProperty("ServiceChild")]
-    public string? ServiceChild { get; set; }
 
     [JsonProperty("HoursAtSetting")]
     public string? HoursAtSetting { get; set; }
@@ -116,4 +104,10 @@ public class CensusSummerEntryDto
 
     [JsonProperty("DAFIndicator")]
     public int DisabilityAccessFundIndicator { get; set; }
+
+    [JsonProperty("TLevelNonqualHrs")]
+    public string? TLevelNonqualHrs { get; set; }
+
+    [JsonProperty("TLevelQualHrs")]
+    public string? TLevelQualHrs { get; set; }
 }

@@ -1,6 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Models;
+﻿namespace DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
-public class CensusAutumnEntry
+public class CensusSpringEntry
 {
     public string? PupilMatchingRef { get; set; }
     public string? AcademicYear { get; set; }
@@ -19,9 +19,12 @@ public class CensusAutumnEntry
     public string? FormerSurname { get; set; }
     public string? Gender { get; set; }
     public string? Sex { get; set; }
-    public string? DOB { get; set; }
+    public DateTime DOB { get; set; }
+    public string? Ethnicity { get; set; }
     public string? FreeSchoolMealEligible { get; set; }
     public string? FreeSchoolMealProtected { get; set; }
+    public string? EVERFSM_6 { get; set; }
+    public string? EVERFSM_6_P { get; set; }
     public string? Language { get; set; }
     public string? HoursAtSetting { get; set; }
     public string? FundedHours { get; set; }
@@ -33,9 +36,12 @@ public class CensusAutumnEntry
     public string? SecondarySpecialEducationalNeedsType { get; set; }
     public string? IncomeDeprivationAffectingChildrenIndexScore { get; set; }
     public string? IncomeDeprivationAffectingChildrenIndexRating { get; set; }
+    public string? EYPPR { get; set; }
+    public string? EYPPBF { get; set; }
     public string? ExtendedHours { get; set; }
     public string? ExpandedHours { get; set; }
     public int DisabilityAccessFundIndicator { get; set; }
-    public string? TLevelNonqualHrs { get; set; }
-    public string? TLevelQualHrs { get; set; }
+    public string? Funding_Basis_ECO { get; set; }
+    public string? Funding_Basis_HSD { get; set; }
+    public string? Funding_Basis_LAA { get; set; }
 }

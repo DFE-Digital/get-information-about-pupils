@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
@@ -27,7 +28,7 @@ internal class FurtherEducationPupilDtoToEntityMapper : IMapper<FurtherEducation
             Gender = input.Gender,
             DOB = input.DOB,
             ConcatenatedName = input.ConcatenatedName,
-            PupilPremium = input.PupilPremium?.Select(dto => new PupilPremiumEntry
+            PupilPremium = input.PupilPremium?.Select(dto => new FurtherEducationPupilPremiumEntry
             {
                 NationalCurriculumYear = dto.NationalCurriculumYear,
                 FullTimeEquivalent = dto.FullTimeEquivalent,

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 
 public class SpecialEducationalNeedsEntryDto
 {

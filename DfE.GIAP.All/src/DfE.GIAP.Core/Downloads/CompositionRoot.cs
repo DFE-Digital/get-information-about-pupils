@@ -107,6 +107,7 @@ public static class CompositionRoot
     {
         services.AddScoped<IMapper<FurtherEducationPupilDto, FurtherEducationPupil>, FurtherEducationPupilDtoToEntityMapper>();
         services.AddScoped<IMapper<NationalPupilDto, NationalPupil>, NationalPupilDtoToEntityMapper>();
+        services.AddScoped<IMapper<PupilPremiumPupilDto, PupilPremiumPupil>, PupilPremiumDtoToEntityMapper>();
 
         return services;
     }

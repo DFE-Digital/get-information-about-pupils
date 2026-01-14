@@ -48,7 +48,7 @@ public class DatasetMetadata
                 new DatasetMetadataRecord
                 {
                     Dataset = Dataset.PP,
-                    Accessor = c => c.PP,
+                    Accessor = c => c.FurtherEducationPP,
                     BaseFileName = "pp_results"
                 }
             },

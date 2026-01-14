@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 
-public class PupilPremiumEntryDto
+public class FurtherEducationPupilPremiumEntryDto
 {
     [JsonProperty("NCYear")]
     public string? NationalCurriculumYear { get; set; }
