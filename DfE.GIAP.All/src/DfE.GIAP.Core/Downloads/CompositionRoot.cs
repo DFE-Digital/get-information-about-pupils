@@ -54,8 +54,8 @@ public static class CompositionRoot
         services.AddScoped<IPupilDatasetAggregationHandler, NationalPupilDatabaseAggregationHandler>();
         services.AddScoped<IPupilDatasetAggregationHandler, PupilPremiumAggregationHandler>();
 
-        return services
-            .RegisterApplicationDatasetEvaluatorsAndHandlers();
+        return services;
+
     }
 
     private static IServiceCollection RegisterApplicationDatasetEvaluatorsAndHandlers(this IServiceCollection services)
