@@ -35,8 +35,7 @@ public sealed class LearnerNumericSearchResponseToViewModelMapper :
                 .Select(_furtherEducationLearnerToViewModelMapper.Map)
                 .ToList() ?? [];
 
-        // Apply PageSize limit
-        input.Model.Learners = learners.Take(input.Model.PageSize);
+        input.Model.Learners = learners;
 
         // Populate meta-data fields for pagination and UI messaging.
         input.Model.Total = input.Response.TotalNumberOfResults;

@@ -1,7 +1,5 @@
-﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.Extensions;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application.Models;
 
@@ -10,33 +8,42 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IMyPupilsWriteOnlyRepository _myPupilsWriteOnlyRepository;
+    private readonly IMapper<IEnumerable<string>, UniquePupilNumbers> _mapToUniquePupilNumbers;
 
     public DeletePupilsFromMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
-        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository)
+        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository,
+        IMapper<IEnumerable<string>, UniquePupilNumbers> mapToUniquePupilNumbers)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
 
         ArgumentNullException.ThrowIfNull(myPupilsWriteOnlyRepository);
         _myPupilsWriteOnlyRepository = myPupilsWriteOnlyRepository;
+
+        ArgumentNullException.ThrowIfNull(mapToUniquePupilNumbers);
+        _mapToUniquePupilNumbers = mapToUniquePupilNumbers;
     }
 
     public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
     {
-        MyPupilsId id = new(request.UserId);
+        ArgumentNullException.ThrowIfNull(request);
 
-        MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+        UserId userId = new(request.UserId);
 
-        if (myPupils is null)
+        MyPupilsId id = new(userId);
+
+        MyPupilsAggregate? myPupilsAggregate = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+
+        if (myPupilsAggregate is null)
         {
             return; // nothing to delete
         }
 
-        myPupils.DeletePupils(
-            UniquePupilNumbers.Create(
-                uniquePupilNumbers: request.DeletePupilUpns.ToUniquePupilNumbers()));
+        UniquePupilNumbers deletePupilUpns = _mapToUniquePupilNumbers.Map(request.DeletePupilUpns);
 
-        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupils);
+        myPupilsAggregate.DeletePupils(deletePupilUpns);
+
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupilsAggregate);
     }
 }

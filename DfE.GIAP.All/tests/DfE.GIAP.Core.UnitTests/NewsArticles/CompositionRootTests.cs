@@ -1,13 +1,13 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.DeleteNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 using CompositionRoot = DfE.GIAP.Core.NewsArticles.CompositionRoot;
 
@@ -27,14 +27,16 @@ public sealed class CompositionRootTests
     public void Registers_CompositionRoot_CanResolve_Services()
     {
         // Arrange
-        IServiceCollection services = ServiceCollectionTestDoubles.Default().AddSharedApplicationServices();
+        IServiceCollection services =
+            ServiceCollectionTestDoubles.Default()
+                .AddAspNetCoreRuntimeProvidedServices()
+                .AddFeaturesSharedServices()
+                .AddNewsArticleDependencies();
 
         // Act
-        IServiceCollection registeredServices = CompositionRoot.AddNewsArticleDependencies(services);
-        IServiceProvider provider = registeredServices.BuildServiceProvider();
+        IServiceProvider provider = services.BuildServiceProvider();
 
         // Assert
-        Assert.NotNull(registeredServices);
         Assert.NotNull(provider);
 
         Assert.NotNull(provider.GetService<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>());
@@ -46,7 +48,5 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IMapper<NewsArticleDto, NewsArticle>>());
         Assert.NotNull(provider.GetService<INewsArticleReadOnlyRepository>());
         Assert.NotNull(provider.GetService<INewsArticleWriteOnlyRepository>());
-
-        Assert.NotNull(provider.GetService<ITextSanitiserInvoker>());
     }
 }

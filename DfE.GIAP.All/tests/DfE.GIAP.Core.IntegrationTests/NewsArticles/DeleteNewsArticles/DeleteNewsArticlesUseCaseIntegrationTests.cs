@@ -7,9 +7,9 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
 
 public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
-    public DeleteNewsArticlesUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public DeleteNewsArticlesUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;

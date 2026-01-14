@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Features.Logging;
+using DfE.GIAP.Web.Tests.Shared.Http;
 using DfE.GIAP.Web.Tests.TestDoubles;
-using DfE.GIAP.Web.Tests.TestDoubles.Http;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;

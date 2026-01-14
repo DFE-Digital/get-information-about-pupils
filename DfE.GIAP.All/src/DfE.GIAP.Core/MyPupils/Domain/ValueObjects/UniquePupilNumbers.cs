@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class UniquePupilNumbers
 {
     private readonly HashSet<UniquePupilNumber> _uniquePupilNumbers;
@@ -29,13 +29,33 @@ public sealed class UniquePupilNumbers
     {
         ArgumentNullException.ThrowIfNull(upns);
         List<UniquePupilNumber> addUpns = upns.Distinct().ToList();
-        addUpns.ToList().ForEach(t => _uniquePupilNumbers.Add(t));
+
+        foreach (UniquePupilNumber upn in addUpns)
+        {
+            _uniquePupilNumbers.Add(upn);
+        }
+    }
+
+    public void Add(UniquePupilNumbers uniquePupilNumbers)
+    {
+        ArgumentNullException.ThrowIfNull(uniquePupilNumbers);
+        Add(uniquePupilNumbers.GetUniquePupilNumbers());
     }
 
     public void Remove(IEnumerable<UniquePupilNumber> upns)
     {
         ArgumentNullException.ThrowIfNull(upns);
-        upns.ToList().ForEach(t => _uniquePupilNumbers.Remove(t));
+
+        foreach (UniquePupilNumber upn in upns)
+        {
+            _uniquePupilNumbers.Remove(upn);
+        }
+    }
+
+    public void Remove(UniquePupilNumbers uniquePupilNumbers)
+    {
+        ArgumentNullException.ThrowIfNull(uniquePupilNumbers);
+        Remove(uniquePupilNumbers.GetUniquePupilNumbers());
     }
 
     public void Clear() => _uniquePupilNumbers.Clear();

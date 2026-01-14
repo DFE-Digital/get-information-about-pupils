@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
-using DfE.GIAP.SharedTests;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Runtime;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.UnitTests.Common.TextSanitiser;
@@ -12,7 +12,7 @@ public sealed class CompositionRootTests
     {
         // Arrange
         IServiceCollection services = ServiceCollectionTestDoubles.Default()
-            .AddSharedApplicationServices()
+            .AddAspNetCoreRuntimeProvidedServices()
             .AddFeaturesSharedDependencies();
 
         // Act
@@ -20,6 +20,6 @@ public sealed class CompositionRootTests
 
         // Assert
         Assert.NotNull(provider);
-        Assert.NotNull(provider.GetService<ITextSanitiserInvoker>());
+        Assert.NotNull(provider.GetService<ITextSanitiser>());
     }
 }
