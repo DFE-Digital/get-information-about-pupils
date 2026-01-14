@@ -1,6 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-// Example typed output models used by handlers
 public class PPOutputRecord
 {
     public string? ULN { get; set; } = string.Empty;

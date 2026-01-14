@@ -1,12 +1,7 @@
 ﻿using System.IO.Compression;
+using DfE.GIAP.Core.Downloads.Application.FileExports;
 
-namespace DfE.GIAP.Core.Downloads.Application;
-
-public interface IZipArchiveBuilder
-{
-    Task<byte[]> CreateZipAsync(Dictionary<string, Func<Stream, Task>> fileWriters);
-}
-
+namespace DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 
 public class ZipArchiveBuilder : IZipArchiveBuilder
 {

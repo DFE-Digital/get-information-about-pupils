@@ -1,12 +1,8 @@
 ﻿using System.Reflection;
 using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.FileExports;
 
-namespace DfE.GIAP.Core.Downloads.Application;
-
-public interface IDelimitedFileExporter
-{
-    Task ExportAsync<T>(IEnumerable<T> records, FileFormat format, Stream output);
-}
+namespace DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 
 public class DelimitedFileExporter : IDelimitedFileExporter
 {
