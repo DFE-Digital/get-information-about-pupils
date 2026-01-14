@@ -3,9 +3,11 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -24,7 +26,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
-
+    
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.PPNonUpnSearchFiltersSessionKey;
@@ -43,7 +45,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string DobFilterUrl => Routes.PupilPremium.NonUpnDobFilter;
     public override string ForenameFilterUrl => Routes.PupilPremium.NonUpnForenameFilter;
     public override string MiddlenameFilterUrl => Routes.PupilPremium.NonUpnMiddlenameFilter;
-    public override string GenderFilterUrl => Routes.PupilPremium.NonUpnGenderFilter;
 
     public override string SexFilterUrl => Routes.PupilPremium.NonUpnSexFilter;
     public override string FormAction => Routes.PupilPremium.NonUPN;
@@ -54,12 +55,11 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string SearchLearnerNumberController => Routes.Application.Search;
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
-    public override int MyPupilListLimit => _appSettings.NonUpnPPMyPupilListLimit;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
     public override string LearnerTextSearchController => Global.PPNonUpnController;
     public override string LearnerTextSearchAction => SearchAction;
     public override string LearnerNumberAction => Global.PPAction;
-    public override bool ShowGender => _appSettings.PpUseGender;
+    
     public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
@@ -72,11 +72,11 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ILogger<PPLearnerTextSearchController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
-        IDownloadService downloadService)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings, sessionProvider)
+        IDownloadService downloadService,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -145,13 +145,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
     {
         return await ForenameSearchFilter(model, forenameFilter);
-    }
-
-    [Route(Routes.PupilPremium.NonUpnGenderFilter)]
-    [HttpPost]
-    public async Task<IActionResult> GenderFilter(LearnerTextSearchViewModel model)
-    {
-        return await GenderSearchFilter(model);
     }
 
     [Route(Routes.PupilPremium.NonUpnSexFilter)]

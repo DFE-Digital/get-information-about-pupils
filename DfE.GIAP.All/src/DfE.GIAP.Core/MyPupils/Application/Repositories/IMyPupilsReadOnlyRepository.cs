@@ -1,7 +1,9 @@
-﻿using DfE.GIAP.Core.Users.Application.Models;
+using DfE.GIAP.Core.MyPupils.Domain;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Repositories;
 public interface IMyPupilsReadOnlyRepository
 {
-    Task<MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default);
+    Task<MyPupilsAggregate> GetMyPupils(MyPupilsId id);
+    Task<MyPupilsAggregate?> GetMyPupilsOrDefaultAsync(MyPupilsId id);
 }

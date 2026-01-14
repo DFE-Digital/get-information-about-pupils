@@ -9,6 +9,7 @@ using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Users;
+using DfE.GIAP.Web.Features.MyPupils;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
@@ -23,6 +24,8 @@ using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels.Search;
 using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
 using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
+using DfE.GIAP.Web.Shared.Session;
+using DfE.GIAP.Web.Shared.TempData;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -36,11 +39,14 @@ ConfigurationManager configuration = builder.Configuration;
 builder.Services
     .AddAppSettings(configuration)
     .AddFeaturesSharedDependencies()
+    .AddAspNetCoreSessionServices()
+    .AddTempData()
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
     .AddDownloadDependencies()
-    .AddAuthDependencies(configuration);
+    .AddAuthDependencies(configuration)
+    .AddMyPupils();
 
 builder.Services
     .AddSearchDependencies(configuration)
@@ -85,7 +91,7 @@ builder.Services.AddSingleton<IFilterHandlerRegistry>(_ =>
         { "SurnameLC", new NameFilterHandler("SurnameLC") },
         { "ForenameLC", new NameFilterHandler("ForenameLC") },
         { "DOB", new DobFilterHandler() },
-        { "Gender", new GenderFilterHandler("Gender") }
+        { "Sex", new GenderFilterHandler("Sex") }
     };
 
     return new FilterHandlerRegistry(handlers);

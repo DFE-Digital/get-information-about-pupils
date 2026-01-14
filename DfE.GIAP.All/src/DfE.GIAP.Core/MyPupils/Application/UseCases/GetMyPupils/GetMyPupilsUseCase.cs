@@ -1,23 +1,22 @@
-﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Services.AggregatePupilsForMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.Users.Application;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IAggregatePupilsForMyPupilsApplicationService _aggregatePupilsForMyPupilsApplicationService;
-    private readonly IMapper<Pupil, MyPupilDto> _mapPupilToPupilDtoMapper;
+    private readonly IMapper<Pupil, MyPupilsModel> _mapPupilToPupilDtoMapper;
 
     public GetMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
         IAggregatePupilsForMyPupilsApplicationService aggregatePupilsForMyPupilsApplicationService,
-        IMapper<Pupil, MyPupilDto> mapPupilToPupilDtoMapper)
+        IMapper<Pupil, MyPupilsModel> mapPupilToPupilDtoMapper)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
@@ -31,20 +30,30 @@ internal sealed class GetMyPupilsUseCase : IUseCase<GetMyPupilsRequest, GetMyPup
 
     public async Task<GetMyPupilsResponse> HandleRequestAsync(GetMyPupilsRequest request)
     {
-        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(request.UserId);
+        UserId userId = new(request.UserId);
 
-        if (myPupils is null || myPupils.Pupils.IsEmpty)
+        MyPupilsId id = new(userId);
+
+        MyPupilsAggregate? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+
+        if (myPupils is null || myPupils.HasNoPupils)
         {
-            MyPupilDtos emptyPupils = MyPupilDtos.Create(pupils: []);
-            return new GetMyPupilsResponse(emptyPupils);
+            return
+                new GetMyPupilsResponse(
+                    MyPupilsModels.Create(
+                        pupils: []));
         }
 
-        MyPupilDtos aggregatedPupilDtos =
-            MyPupilDtos.Create(
-                pupils: (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupils.Pupils))
-                            .Select(_mapPupilToPupilDtoMapper.Map)
-                                .ToList());
+        UniquePupilNumbers myPupilUniquePupilNumbers =
+            UniquePupilNumbers.Create(
+                myPupils.GetMyPupils());
 
-        return new GetMyPupilsResponse(aggregatedPupilDtos);
+        List<MyPupilsModel> myPupilsDtos =
+            (await _aggregatePupilsForMyPupilsApplicationService.GetPupilsAsync(myPupilUniquePupilNumbers))
+                .Select(_mapPupilToPupilDtoMapper.Map)
+                .ToList();
+
+        return new GetMyPupilsResponse(
+            MyPupils: MyPupilsModels.Create(myPupilsDtos));
     }
 }

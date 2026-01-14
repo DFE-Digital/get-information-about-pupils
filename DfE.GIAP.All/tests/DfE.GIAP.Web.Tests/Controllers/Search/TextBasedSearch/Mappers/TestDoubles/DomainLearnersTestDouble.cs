@@ -53,6 +53,6 @@ public static class DomainLearnersTestDouble
             Forename = forename,
             Surname = surname,
             DOB = dob,
-            Gender = gender.ToString()
+            Sex = gender.ToString()
         };
 }

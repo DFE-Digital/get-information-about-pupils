@@ -6,7 +6,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
-using DfE.GIAP.SharedTests.TestDoubles.Configuration;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
@@ -26,7 +26,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
     {
         IConfiguration searchConfiguration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
-                .WithSearchIndexOptions()
                 .WithAzureSearchOptions()
                 .WithAzureSearchConnectionOptions()
                 .WithSearchCriteriaOptions()

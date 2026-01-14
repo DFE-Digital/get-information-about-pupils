@@ -1,223 +1,387 @@
-﻿@model MyPupilListViewModel
+﻿@using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils
+@model MyPupilsViewModel
+
 @{
     ViewData["Title"] = Model.PageHeading;
 }
 
-@if (Model.Removed)
+@if (Model.IsDeleteSuccessful)
+
 {
     <div class="govuk-inset-text">Selected have been removed from 'My pupil list'</div>
 }
 
 <div class="govuk-width-container">
-    <h1 class="govuk-heading-xl" id="search-type--text">
+    <h1 class="govuk-heading-xl" id="mypupils-heading">
         @Model.PageHeading
     </h1>
 
-    <partial name="_MyPupilListNoPupilSelectedError.cshtml" model="@Model" />
-
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
+    @if (!string.IsNullOrEmpty(Model.Error))
     {
         <div class="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
             <span id="results--heading-errormessage" class="govuk-error-message">
                 <span class="govuk-visually-hidden">Error:</span>
-                @Model.ErrorDetails
+                @Model.Error
             </span>
         </div>
     }
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
-    {
-        <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
-    }
 
-    <form asp-action="@Model.SearchAction" method="POST">
-        <input id="toggleSelectAll" type="hidden" name="ToggleSelectAll" value="@Model.ToggleSelectAll.ToString()" />
-        <input id="@Model.Upn" name="Upn" type="hidden" value="@Model.Upn">
-        
-        @if (Model.Learners != null && Model.Invalid.Any())
+    <form asp-controller="@Model.UpdateFormController" asp-action="@Model.UpdateFormAction" method="POST">
+
+        @foreach (string pupilUpn in Model.CurrentPageOfPupils.Values.Select(x => x.UniquePupilNumber))
         {
-            <div class="govuk-warning-text">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <span class="govuk-warning-text__assistive">Warning</span>
-                    <span>
-                        One or more UPN(s) are invalid. Only valid UPN(s) will be shown.
-                    </span>
-                </strong>
-            </div>
+            <input type="hidden" name="CurrentPupils" value="@pupilUpn" />
+        }
 
-            <noscript>
-                @if (Model.ShowErrors)
-                {
-                    <button class="govuk-button govuk-button--secondary" type="submit" name="ShowErrors" value="false">Show valid UPNs</button>
-                }
-                else
-                {
-                    <button class="govuk-button govuk-button--secondary" type="submit" name="ShowErrors" value="true">Show invalid UPNs</button>
-                }
-            </noscript>
-
-            <div id="toggleCheckbox" class="govuk-checkboxes govuk-!-padding-bottom-5 hide-for-non-js">
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" id="toggleErrors" name="toggleErrors" type="checkbox" data-val="true" value="true">
-                    <label for="toggleErrors" class="govuk-label govuk-checkboxes__label">
-                        <span id="errors-show">Show invalid UPNs</span>
-                    </label>
+        @if (Model.HasPupils)
+        {
+            <div class="govuk-grid-row download-block">
+                <div class="govuk-grid-column-one-quarter download-block">
+                    <button asp-controller="@Model.DownloadController"
+                            asp-action="ToDownloadCommonTransferFileData"
+                            asp-route-pageNumber="@Model.PageNumber"
+                            asp-route-sortField="@Model.SortField"
+                            asp-route-sortDirection="@Model.SortDirection"
+                            id="search--download--as--CTF--link"
+                            name="downloadASCTF"
+                            value="selected"
+                            type="submit"
+                            class="govuk-list webapp-button-as-link">
+                        @ApplicationLabels.DownloadSelectedAsCtfLink
+                    </button>
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    <button asp-controller="@Model.DownloadController"
+                            asp-action="ToDownloadSelectedNPDDataUPN"
+                            id="download--selected--npd--data--link"
+                            type="submit"
+                            class="govuk-list webapp-button-as-link">
+                        @ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink
+                    </button>
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    <button asp-controller="@Model.DownloadController"
+                            asp-action="ToDownloadSelectedPupilPremiumDataUPN"
+                            id="download--selected--pp--data--link"
+                            type="submit"
+                            class="govuk-list webapp-button-as-link">
+                        @ApplicationLabels.DownloadSelectedPupilPremiumDataLink
+                    </button>
                 </div>
             </div>
 
-            <div class="webapp-results"></div>
-        }
-        @if (!Model.ShowErrors && Model.Learners != null && Model.Learners.Any())
-        {
-            <partial name="~/Views/MyPupilList/_MyPupilListDownloadLinks.cshtml" model="Model" />
+            string selectAllButtonValue = Model.IsAnyPupilsSelected ? "false" : "true";
+            string selectAllButtonText = Model.IsAnyPupilsSelected ? "Deselect all pupils" : "Select all pupils";
 
-            <div class="download-block">
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        @if (!Model.ToggleSelectAll)
-                        {
-                            <span>Please be aware that by pressing Select all pupils may take time to process</span>
-                        }
-                        else
-                        {
-                            <span>Please be aware that by pressing Deselect all pupils may take time to process</span>
-                        }
-                    </strong>
+            <div class="govuk-grid-row govuk-button-group">
+                <div class="govuk-grid-column-one-quarter">
+                    <button asp-controller="@Model.UpdateFormController"
+                            asp-action="@Model.UpdateFormAction"
+                            asp-route-pageNumber="@Model.PageNumber"
+                            asp-route-sortField="@Model.SortField"
+                            asp-route-sortDirection="@Model.SortDirection"
+                            class="govuk-button govuk-button--secondary"
+                            type="submit"
+                            name="SelectAll"
+                            value="@selectAllButtonValue">
+                        @selectAllButtonText
+                    </button>
                 </div>
-                @if (Model.ToggleSelectAll)
-                {
-                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</button>
-                }
-                else
-                {
-                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@Model.SortField" asp-route-sortDirection="@Model.SortDirection" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</button>
-                }
-            </div>
-        }
 
-        @if (Model.Invalid.Any())
-        {
-            <div class="error-table hide-for-non-js @(Model.ShowErrors ? "display-results" : "")">
-                <div id="pupil--list--table">
-                    <div class="giap--pupil-list">
-                        <p class="govuk-body">Please check the pupils UPNs that are incorrect and <a class="govuk-link" id="invalidupns--contact--link" href="@Global.ContactLinkURL" target="_blank">contact the DfE</a> to report this data discrepancy.</p>
-                        
-                        <table class="govuk-table">
-                            <thead class="govuk-table__head">
-                                <tr class="govuk-table__row">
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-select--chkbox">
-                                        <span class="govuk-visually-hidden">checkboxes</span>
-                                    </th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-firstname--text">First</th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-middlename--text">Middle</th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-surname--text">Surname</th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-upn--text">UPN</th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-dob--text">Date of birth</th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-gender--text">Gender</th>
-                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
-                                    @if (Model.ShowLocalAuthority)
-                                    {
-                                        <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-gender--text">LA</th>
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody class="govuk-table__body">
-                                @foreach (var learner in Model.Invalid)
-                                {
-                                    <tr class="govuk-table__row">
-                                        @if (learner.LearnerNumberId != null)
-                                        {
-                                            <td class="govuk-table__cell">
-                                                <div class="govuk-checkboxes">
-                                                <div class="govuk-checkboxes__item">
-                                                    <input class="govuk-checkboxes__input webapp-checkboxes-searchresults" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumberId" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumberId" checked="@learner.Selected">
-                                                    <label class="govuk-label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumberId">
-                                                        <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
-                                                    </label>
-                                                </div>
-                                                </div>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td class="govuk-table__cell">
-                                                <div class="govuk-checkboxes">
-                                                <div class="govuk-checkboxes__item">
-                                                    <input class="govuk-checkboxes__input webapp-checkboxes-searchresults" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumber" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumber" checked="@learner.Selected">
-                                                    <label class="govuk-label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumber">
-                                                        <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
-                                                    </label>
-                                                </div>
-                                                </div>
-                                            </td>
-                                        }
-                                        <td class="govuk-table__cell" id="search--search-pupils-data-firstname--text1">
-                                            @learner.Forename
-                                        </td>
-                                        <td class="govuk-table__cell" id="search--search-pupils-data-middlename--text1">
-                                            @learner.Middlenames
-                                        </td>
-                                        <td class="govuk-table__cell" id="search--search-pupils-data-surname--text1">
-                                            @learner.Surname
-                                        </td>
-                                        <td class="govuk-table__cell" id="search--search-pupils-data-upn--text1">
-                                            @learner.LearnerNumber
-                                        </td>
-                                        <td class="govuk-table__cell" id="search--search-pupils-data-dob--text1">
-                                            @learner.DOB?.ToString("dd/MM/yyyy")
-                                        </td>
-                                        <td class="govuk-table__cell" id="search--search-pupils-data-gender--text1">
-                                            @learner.Gender
-                                        </td>
-                                        <td class="govuk-table__cell" id="search--search-pupils-heading-pupilpremium--text1">
-                                            @learner.PupilPremium
-                                        </td>
-                                        @if (Model.ShowLocalAuthority)
-                                        {
-                                            <td class="govuk-table__cell" id="search--search-pupils-data-gender--text1">
-                                                @learner.LocalAuthority
-                                            </td>
-                                        }
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="govuk-grid-column-one-quarter">
+                    <button asp-controller="@Model.DeleteMyPupilsController"
+                            asp-action="Delete"
+                            asp-route-pageNumber="@Model.PageNumber"
+                            asp-route-sortField="@Model.SortField"
+                            asp-route-sortDirection="@Model.SortDirection"
+                            id="remove--selected--data--link"
+                            type="submit"
+                            class="govuk-button govuk-button--secondary">
+                        @ApplicationLabels.RemoveSelectedToMyPupilListLink
+                    </button>
                 </div>
             </div>
         }
+
+
+
         <div class="govuk-grid-row">
-            @if (Model.NoPupil)
+            @if (!@Model.HasPupils)
             {
+                string noPupilsMessage = Model.PageNumber == 1 ?
+                ApplicationLabels.SearchMyPupilListNoPupilFound :
+                ApplicationLabels.MyPupilListNoMorePupils;
+
                 <div id="results--detail-warningmessage" class="govuk-warning-text">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        <span>@ApplicationLabels.SearchMyPupilListNoPupilFound</span>
+                        <span>@noPupilsMessage</span>
                     </strong>
                 </div>
+                <ul class="pagination-list">
+                    <!-- [Previous] -->
+                    @if (Model.PageNumber > 1)
+                    {
+                        <li class="page-list-previous">
+                            <button asp-controller="@Model.UpdateFormController"
+                                    asp-action="@Model.UpdateFormAction"
+                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                    asp-route-sortField="@Model.SortField"
+                                    asp-route-sortDirection="@Model.SortDirection"
+                                    id="page-previous"
+                                    type="submit">
+                                &#60;&#60; Previous
+                            </button>
+                        </li>
+                        <!-- [1] -->
+                        <li class="page-list-first">
+                            <button asp-controller="@Model.UpdateFormController"
+                                    asp-action="@Model.UpdateFormAction"
+                                    asp-route-pageNumber="1"
+                                    asp-route-sortField="@Model.SortField"
+                                    asp-route-sortDirection="@Model.SortDirection"
+                                    id="page-first"
+                                    type="submit">
+                                1
+                            </button>
+                        </li>
+                        <!-- [current] -->
+                        <li>@Model.PageNumber</li>
+                    }
+                </ul>
             }
             else
             {
-                <div class="result-table @(Model.ShowErrors ? "hide-for-non-js" : "")">
-                    @(await Component.InvokeAsync("PaginatedResult", new
-                    {
-                        learners = Model.Learners,
-                        pageLearnerNumbers = Model.PageLearnerNumbers,
-                        learnerNumberLabel = Model.LearnerNumberLabel,
-                        allowMultipleSelection = true,
-                        pageNumber = Model.PageNumber,
-                        pageSize = Model.PageSize,
-                        total = Model.Total,
-                        controllerAction = Model.SearchAction,
-                        showPP = true,
-                        showLocalAuthority = Model.ShowLocalAuthority,
-                        activeSortField = Model.SortField,
-                        activeSortDirection = Model.SortDirection
-                    }))
+                <div class="result-table">
+                    <div id="pupil--list--table">
+                        <div class="giap--pupil-list">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-fieldset__legend govuk-visually-hidden">Do you want to select</legend>
+                                <table class="govuk-table">
+                                    <thead class="govuk-table__head">
+                                        <tr class="govuk-table__row">
+                                            <th scope="col"
+                                                class="govuk-table__header"
+                                                id="search--search-pupils-heading-select--chkbox">
+                                                <span class="govuk-visually-hidden">checkboxes</span>
+                                            </th>
+                                            <th scope="col"
+                                                class="govuk-table__header"
+                                                id="search--search-pupils-heading-firstname--text"
+                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)">
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-route-sortField="@AzureSearchFields.Forename"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-firstname--button">
+                                                    First
+                                                </button>
+                                            </th>
+                                            <th scope="col"
+                                                class="govuk-table__header"
+                                                id="search--search-pupils-heading-surname--text"
+                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)">
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-route-sortField="@AzureSearchFields.Surname"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-surname--button">
+                                                    Surname
+                                                </button>
+                                            </th>
+                                            <th scope="col"
+                                                class="govuk-table__header"
+                                                id="search--search-pupils-heading-learner-number--text">@(Model.UniquePupilNumberLabel)</th>
+                                            <th scope="col"
+                                                class="govuk-table__header"
+                                                id="search--search-pupils-heading-dob--text"
+                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)">
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-route-sortField="@AzureSearchFields.DOB"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-dob--button">
+                                                    Date of birth
+                                                </button>
+                                            </th>
+                                            <th scope="col"
+                                                class="govuk-table__header"
+                                                id="search--search-pupils-heading-sex--text"
+                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)">
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@Model.PageNumber"
+                                                        asp-route-sortField="@AzureSearchFields.Sex"
+                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
+                                                        id="search--sort-sex--button">
+                                                    Sex
+                                                </button>
+                                            </th>
+                                            <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
+                                            <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-local-authority--text">LA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="govuk-table__body">
+                                        @foreach (var pupil in Model.CurrentPageOfPupils.Values)
+                                        {
+                                            <tr class="govuk-table__row">
+                                                <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
+                                                    <div class="govuk-checkboxes__item">
+                                                        <input class="govuk-checkboxes__input"
+                                                               id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber"
+                                                               name="SelectedPupils"
+                                                               type="checkbox"
+                                                               value="@pupil.UniquePupilNumber"
+                                                        @(pupil.IsSelected ? "checked" : string.Empty) />
+
+                                                        <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
+                                                            <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                                <td class="govuk-table__cell search--search-pupils-data-firstname--text">
+                                                    @pupil.Forename
+                                                </td>
+
+                                                <td class="govuk-table__cell search--search-pupils-data-surname--text">
+                                                    @pupil.Surname
+                                                </td>
+                                                <td class="govuk-table__cell search--search-pupils-data-learner-number--text">
+                                                    @pupil.UniquePupilNumber
+                                                </td>
+                                                <td class="govuk-table__cell search--dob--cell search--search-pupils-data-dob--text">
+                                                    @pupil.DateOfBirth
+                                                </td>
+                                                <td class="govuk-table__cell search--search-pupils-data-sex--text">
+                                                    @pupil.Sex
+                                                </td>
+
+                                                <td class="govuk-table__cell search--search-pupils-pupilpremium--text">
+                                                    @pupil.PupilPremiumLabel
+                                                </td>
+
+                                                <td class="govuk-table__cell search--search-pupils-data-local-authority--text">
+                                                    @pupil.LocalAuthorityCode
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </fieldset>
+                            <div>
+                                <ul class="pagination-list">
+                                    <!-- Previous page number -->
+                                    @if (Model.PageNumber > 1)
+                                    {
+                                        <li class="page-list-previous">
+                                            <button asp-controller="@Model.UpdateFormController"
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-previous"
+                                                    type="submit">
+                                                &#60;&#60; Previous
+                                            </button>
+                                        </li>
+                                        <li class="page-list-first">
+                                            <button asp-controller="@Model.UpdateFormController"
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="1"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-first"
+                                                    type="submit">
+                                                1
+                                            </button>
+                                        </li>
+                                    }
+
+                                    @if (Model.PageNumber > 3)
+                                    {
+                                    <li class="page-list-number-separator">...</li>
+                                    }
+
+                                    @if(Model.PageNumber > 2)
+                                    {
+                                        <li class="page-list-previous">
+                                            <button asp-controller="@Model.UpdateFormController"
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-previous"
+                                                    type="submit">
+                                                @(Model.PageNumber - 1)
+                                            </button>
+                                        </li>
+                                    }
+
+                                    <!-- Current page number -->
+                                    <li>@Model.PageNumber</li>
+
+                                    <!-- Next page number -->
+                                    @if (Model.MorePagesAvailable)
+                                    {
+                                        <!-- Last page number available should either be
+                                        {current} {next} ... {lastPage}
+                                        {current} {next} {lastPage}
+                                        -->
+
+                                        <!-- Always display next page -->
+                                        <li class="page-list-next">
+                                            <button asp-controller="@Model.UpdateFormController"
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-next-number"
+                                                    type="submit">
+                                                @(Model.PageNumber + 1)
+                                            </button>
+                                        </li>
+
+                                        <!-- If more than 2 pages remaining add separator -->
+                                        @if (Model.LastPageNumber > Model.PageNumber + 2)
+                                        {
+                                            <li class="page-list-number-separator">...</li>
+                                        }
+                                        <!-- If last page number is not the next page number then display -->
+                                        @if (Model.LastPageNumber > Model.PageNumber + 1)
+                                        {
+                                            <li class="page-list-last">
+                                                <button asp-controller="@Model.UpdateFormController"
+                                                        asp-action="@Model.UpdateFormAction"
+                                                        asp-route-pageNumber="@(Model.LastPageNumber)"
+                                                        asp-route-sortField="@Model.SortField"
+                                                        asp-route-sortDirection="@Model.SortDirection"
+                                                        id="page-last"
+                                                        type="submit">
+                                                    @(Model.LastPageNumber)
+                                                </button>
+                                            </li>
+                                        }
+                                        <li class="page-list-next">
+                                            <button asp-controller="@Model.UpdateFormController"
+                                                    asp-action="@Model.UpdateFormAction"
+                                                    asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                                    asp-route-sortField="@Model.SortField"
+                                                    asp-route-sortDirection="@Model.SortDirection"
+                                                    id="page-next"
+                                                    type="submit">
+                                                Next &#62;&#62;
+                                            </button>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
         </div>

@@ -7,7 +7,7 @@ using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacterist
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers;
 
-public class LearnerToViewModelMapperTests
+public sealed class LearnerToViewModelMapperTests
 {
     private readonly LearnerToViewModelMapper _mapper = new();
 
@@ -28,7 +28,7 @@ public class LearnerToViewModelMapperTests
                 firstname: "Alice",
                 surname: "Smith",
                 birthDate: new DateTime(2000, 1, 15),
-                gender: LearnerCharacteristics.Gender.Female);
+                sex: LearnerCharacteristics.Gender.Female);
 
         // act
         Domain.Search.Learner.Learner result = _mapper.Map(applicationModellearner);
@@ -38,7 +38,7 @@ public class LearnerToViewModelMapperTests
         Assert.Equal("1234567890", result.LearnerNumber);
         Assert.Equal("Alice", result.Forename);
         Assert.Equal("Smith", result.Surname);
-        Assert.Equal("F", result.Gender);
+        Assert.Equal("F", result.Sex);
         Assert.Equal(new DateTime(2000, 1, 15), result.DOB);
     }
 
@@ -51,7 +51,7 @@ public class LearnerToViewModelMapperTests
         // act
         object? result =
             typeof(LearnerToViewModelMapper)
-                .GetMethod("MapGenderDescription", BindingFlags.NonPublic | BindingFlags.Static)!
+                .GetMethod("MapSexDescription", BindingFlags.NonPublic | BindingFlags.Static)!
                 .Invoke(null, [gender]);
 
         // assert

@@ -49,7 +49,7 @@
         }
         @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
         {
-            <partial name="~/Views/Search/MyPupilList/_AddToMyPupilListError.cshtml" />
+            <partial name="~/Views/MyPupilList/_AddToMyPupilListError.cshtml" />
         }
         @if (Model.Learners.Count() > 0)
         {
@@ -84,7 +84,6 @@
             total = Model.Total,
             controllerAction = Model.LearnerTextSearchAction,
             showPP = false,
-            showGender = Model.ShowGender,
             showLocalAuthority = Model.ShowLocalAuthority,
             activeSortField = Model.SortField,
             activeSortDirection = Model.SortDirection

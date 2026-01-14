@@ -2,369 +2,393 @@
 
 namespace DfE.GIAP.Web.Views.Shared.Components.ReleaseTimetable;
 
-public class SchoolCensusDataViewModel
+public enum SchoolCensusType
 {
-    public required string AcademicYear { get; set; }
-    public required bool AutumnCensus { get; set; }
-    public required bool SpringCensus { get; set; }
-    public required bool SummerCensus { get; set; }
-    public required bool PupilPremium { get; set; }
-    public required bool DisadvantagePremium16To18 { get; set; }
-    public required bool Sen16To18 { get; set; }
+    AutumnCensus,
+    SpringCensus,
+    SummerCensus,
+    PupilPremium,
+    DisadvantagePremium16To18,
+    Sen16To18
 }
 
-public class AttainmentDataViewModel
+public enum AttainmentType
+{
+    KeyStage1,
+    KeyStage2,
+    KeyStage4,
+    EYFSP,
+    Phonics,
+    PhonicsAutumnY2,
+    MTC
+}
+
+
+public class SchoolCensusYearViewModel
 {
     public required string AcademicYear { get; set; }
-    public required bool KeyStage1 { get; set; }
-    public required bool KeyStage2 { get; set; }
-    public required bool KeyStage4 { get; set; }
-    public required bool EYFSP { get; set; }
-    public required bool Phonics { get; set; }
-    public required bool PhonicsAutumnY2 { get; set; }
-    public required bool MTC { get; set; }
+    public HashSet<SchoolCensusType> Available { get; set; } = new();
+}
+
+public class AttainmentYearViewModel
+{
+    public required string AcademicYear { get; set; }
+    public HashSet<AttainmentType> Available { get; set; } = new();
 }
 
 public class ReleaseTimetableViewModel
 {
-    public required List<SchoolCensusDataViewModel> SchoolCensusData { get; set; }
-    public required List<AttainmentDataViewModel> AttainmentData { get; set; }
+    public required List<SchoolCensusYearViewModel> SchoolCensusData { get; set; }
+    public required List<AttainmentYearViewModel> AttainmentData { get; set; }
 }
-
 
 
 public class ReleaseTimetableViewComponent : ViewComponent
 {
     public const string Name = "ReleaseTimetable";
+
     public IViewComponentResult Invoke()
     {
         ReleaseTimetableViewModel model = new()
         {
-            SchoolCensusData = new List<SchoolCensusDataViewModel>
-            {
-                new SchoolCensusDataViewModel
+            SchoolCensusData =
+            [
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2025-26",
-                    AutumnCensus = false,
-                    SpringCensus = false,
-                    SummerCensus = false,
-                    PupilPremium = true,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.PupilPremium
+                        // Autumn, Spring, Summer, Disadvantage, SEN are false in source
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2024-25",
-                    AutumnCensus = true,
-                    SpringCensus = false,
-                    SummerCensus = false,
-                    PupilPremium = true,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus,
+                        SchoolCensusType.PupilPremium,
+                        SchoolCensusType.DisadvantagePremium16To18,
+                        SchoolCensusType.Sen16To18
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2023-24",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = true,
-                    DisadvantagePremium16To18 = true,
-                    Sen16To18 = true
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus,
+                        SchoolCensusType.PupilPremium,
+                        SchoolCensusType.DisadvantagePremium16To18,
+                        SchoolCensusType.Sen16To18
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2022-23",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = true,
-                    DisadvantagePremium16To18 = true,
-                    Sen16To18 = true
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus,
+                        SchoolCensusType.PupilPremium,
+                        SchoolCensusType.DisadvantagePremium16To18,
+                        SchoolCensusType.Sen16To18
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2021-22",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = true,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus,
+                        SchoolCensusType.PupilPremium
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2020-21",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = true,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus,
+                        SchoolCensusType.PupilPremium
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2019-20",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = false,
-                    PupilPremium = false,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2018-19",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = false,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2017-18",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = false,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2016-17",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = false,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus
+                    }
                 },
-                new SchoolCensusDataViewModel
+                new SchoolCensusYearViewModel
                 {
                     AcademicYear = "2015-16",
-                    AutumnCensus = true,
-                    SpringCensus = true,
-                    SummerCensus = true,
-                    PupilPremium = false,
-                    DisadvantagePremium16To18 = false,
-                    Sen16To18 = false
+                    Available = new()
+                    {
+                        SchoolCensusType.AutumnCensus,
+                        SchoolCensusType.SpringCensus,
+                        SchoolCensusType.SummerCensus
+                    }
                 },
-            },
-            AttainmentData = new List<AttainmentDataViewModel>
-            {
-                new AttainmentDataViewModel
+            ],
+
+            AttainmentData =
+            [
+                new AttainmentYearViewModel
+                {
+                    AcademicYear = "2024-25",
+                    Available = new()
+                    {
+                        AttainmentType.EYFSP,
+                        AttainmentType.MTC,
+                        AttainmentType.KeyStage2
+                    }
+                },
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2023-24",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = false,
-                    PhonicsAutumnY2 = true,
-                    MTC = true
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics,
+                        AttainmentType.PhonicsAutumnY2,
+                        AttainmentType.MTC
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2022-23",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = false,
-                    PhonicsAutumnY2 = true,
-                    MTC = true
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.PhonicsAutumnY2,
+                        AttainmentType.MTC
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2021-22",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = true,
-                    MTC = true
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics,
+                        AttainmentType.PhonicsAutumnY2,
+                        AttainmentType.MTC
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2020-21",
-                    KeyStage1 = false,
-                    KeyStage2 = false,
-                    KeyStage4 = true,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage4
+                    }
                 },
-                 new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2019-20",
-                    KeyStage1 = false,
-                    KeyStage2 = false,
-                    KeyStage4 = true,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage4
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2018-19",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2017-18",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2016-17",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2015-16",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2014-15",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = true,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.KeyStage4,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2013-14",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2012-13",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = true,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.EYFSP,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2011-12",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = true,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2,
+                        AttainmentType.Phonics
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2010-11",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2009-10",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2008-09",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2
+                    }
                 },
-                 new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2007-08",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2006-07",
-                    KeyStage1 = true,
-                    KeyStage2 = true,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1,
+                        AttainmentType.KeyStage2
+                    }
                 },
-                new AttainmentDataViewModel
+                new AttainmentYearViewModel
                 {
                     AcademicYear = "2005-06",
-                    KeyStage1 = true,
-                    KeyStage2 = false,
-                    KeyStage4 = false,
-                    EYFSP = false,
-                    Phonics = false,
-                    PhonicsAutumnY2 = false,
-                    MTC = false
+                    Available = new()
+                    {
+                        AttainmentType.KeyStage1
+                    }
                 },
-            }
+            ]
         };
 
         return View(model);

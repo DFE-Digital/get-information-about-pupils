@@ -24,7 +24,7 @@ public class ManageNewsArticlesControllerTests
     private readonly Mock<IUseCaseRequestOnly<DeleteNewsArticleRequest>> _deleteMock = new();
     private readonly Mock<IUseCaseRequestOnly<CreateNewsArticleRequest>> _createMock = new();
     private readonly Mock<IUseCaseRequestOnly<UpdateNewsArticleRequest>> _updateMock = new();
-    private readonly Mock<ITextSanitiserInvoker> _sanitiserMock = new();
+    private readonly Mock<ITextSanitiser> _sanitiserMock = new();
 
     private ManageNewsArticlesController CreateController()
     {

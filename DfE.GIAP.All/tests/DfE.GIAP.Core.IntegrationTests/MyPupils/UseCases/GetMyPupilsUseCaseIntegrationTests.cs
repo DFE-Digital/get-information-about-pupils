@@ -1,29 +1,32 @@
-
+using System.Configuration;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Request;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.Response;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application.Models;
-using DfE.GIAP.SharedTests.Extensions;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
+using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
+using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.MyPupils;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
+using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
     private readonly WireMockServerFixture _searchIndexFixture;
+    private const string MyPupilsContainerName = "mypupils";
 
-    public GetMyPupilsUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
+    public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;
@@ -38,9 +41,22 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
+        IConfiguration indexConfiguration =
+            ConfigurationTestDoubles.DefaultConfigurationBuilder()
+                .WithAzureSearchOptions()
+                .WithAzureSearchConnectionOptions()
+                .Build();
+
         services
-            .AddMyPupilsDependencies()
-            .ConfigureAzureSearchClients();
+            .AddOptions<AzureSearchOptions>()
+            .Bind(indexConfiguration.GetSection(nameof(AzureSearchOptions)));
+
+        services
+            .AddOptions<AzureSearchConnectionOptions>()
+            .Bind(indexConfiguration.GetSection(nameof(AzureSearchConnectionOptions)));
+
+        services
+            .AddMyPupilsCore();
     }
 
     [Fact]
@@ -59,10 +75,14 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
 
         AzureSearchPostDto npdResponse =
-            stubbedResponses.GetResponseByKey("npd").GetResponseBody<AzureSearchPostDto>()!;
+            stubbedResponses
+                .GetResponseByKey("npd")
+                .GetResponseBody<AzureSearchPostDto>()!;
 
         AzureSearchPostDto pupilPremiumResponse =
-            stubbedResponses.GetResponseByKey("pupil-premium").GetResponseBody<AzureSearchPostDto>()!;
+            stubbedResponses
+                .GetResponseByKey("pupil-premium")
+                .GetResponseBody<AzureSearchPostDto>()!;
 
         List<UniquePupilNumber> allPupilUpns = npdResponse.value!
             .Select(t => t.UPN)
@@ -70,16 +90,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             .Select(t => new UniquePupilNumber(t))
             .ToList();
 
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsDocumentDto myPupilsDocument = MyPupilsDocumentDtoTestDoubles.Create(
-            userId,
+            myPupilsId,
             upns: UniquePupilNumbers.Create(allPupilUpns));
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
-            (client) => client.WriteItemAsync(
-                containerName: "mypupils", value: myPupilsDocument));
+            (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, myPupilsDocument));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -87,7 +106,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId));
+                new GetMyPupilsRequest(myPupilsId.Value));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
@@ -96,14 +115,14 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
-        List<MyPupilDto> expectedPupils =
+        List<MyPupilsModel> expectedPupils =
             npdResponse.value!
                 .Concat(pupilPremiumResponse.value!)
                 .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!).ToList();
 
-        foreach (MyPupilDto expectedPupil in expectedPupils)
+        foreach (MyPupilsModel expectedPupil in expectedPupils)
         {
-            MyPupilDto? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
+            MyPupilsModel? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
 
             Assert.NotNull(actual);
             Assert.Equal(expectedPupil.Forename, actual.Forename);
@@ -112,7 +131,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
 
-            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => new UniquePupilNumber(t!.UPN).Equals(expectedPupil.UniquePupilNumber));
+            bool isPupilPremium = pupilPremiumResponse.value!.Any(t => t!.UPN == expectedPupil.UniquePupilNumber);
             Assert.Equal(isPupilPremium, actual!.IsPupilPremium);
         }
     }
@@ -121,16 +140,16 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
-        UserId userId = UserIdTestDoubles.Default();
+        MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsDocumentDto document =
             MyPupilsDocumentDtoTestDoubles.Create(
-                userId,
+                myPupilsId,
                 upns: UniquePupilNumbers.Create(uniquePupilNumbers: []));
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
-            (client) => client.WriteItemAsync(containerName: "mypupils", document));
+            (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, document));
 
         // Act
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> sut =
@@ -138,7 +157,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         GetMyPupilsResponse getMyPupilsResponse =
             await sut.HandleRequestAsync(
-                new GetMyPupilsRequest(userId));
+                new GetMyPupilsRequest(myPupilsId.Value));
 
         // Assert
         Assert.NotNull(getMyPupilsResponse);
@@ -146,9 +165,9 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.Empty(getMyPupilsResponse.MyPupils.Values);
     }
 
-    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureNpdSearchResponseDto, MyPupilDto>
+    private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureNpdSearchResponseDto, MyPupilsModel>
     {
-        public MyPupilDto Map(AzureNpdSearchResponseDto input)
+        public MyPupilsModel Map(AzureNpdSearchResponseDto input)
         {
             return new()
             {

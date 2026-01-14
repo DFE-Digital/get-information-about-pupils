@@ -62,6 +62,7 @@ public static class Messages
             public const string NoPupilSelected = "No pupil was selected to download";
             public const string NoLearnerSelected = "No learner was selected to download";
             public const string NoDataForOrganisationDownload = "No data exists for the report you have selected";
+            public const string UnknownDownloadType = "An unknown download data type was provided";
         }
     }
 }

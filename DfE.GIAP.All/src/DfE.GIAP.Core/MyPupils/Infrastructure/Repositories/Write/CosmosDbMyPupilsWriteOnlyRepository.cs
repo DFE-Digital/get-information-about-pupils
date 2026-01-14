@@ -1,9 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application.Models;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
@@ -12,12 +10,12 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
 {
     private readonly ILogger<CosmosDbMyPupilsWriteOnlyRepository> _logger;
     private readonly ICosmosDbCommandHandler _cosmosDbCommandHandler;
-    private readonly IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto> _mapToDto;
+    private readonly IMapper<MyPupilsAggregate, MyPupilsDocumentDto> _mapToDto;
 
     public CosmosDbMyPupilsWriteOnlyRepository(
         ILogger<CosmosDbMyPupilsWriteOnlyRepository> logger,
         ICosmosDbCommandHandler cosmosDbCommandHandler,
-        IMapper<MyPupilsDocumentDtoMappable, MyPupilsDocumentDto> mapToDto)
+        IMapper<MyPupilsAggregate, MyPupilsDocumentDto> mapToDto)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -29,23 +27,22 @@ internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRe
         _mapToDto = mapToDto;
     }
 
-    public async Task SaveMyPupilsAsync(UserId userId, UniquePupilNumbers updatedMyPupils)
+    public async Task SaveMyPupilsAsync(MyPupilsAggregate myPupils)
     {
         try
         {
-            ArgumentNullException.ThrowIfNull(userId);
+            ArgumentNullException.ThrowIfNull(myPupils);
 
-            MyPupilsDocumentDto updatedDocument = _mapToDto.Map(
-                new MyPupilsDocumentDtoMappable(userId, updatedMyPupils));
+            MyPupilsDocumentDto updatedDocument = _mapToDto.Map(myPupils);
 
             await _cosmosDbCommandHandler.UpsertItemAsync(
                 item: updatedDocument,
                 containerKey: "mypupils",
-                partitionKeyValue: userId.Value);
+                partitionKeyValue: updatedDocument.id);
         }
         catch (CosmosException)
         {
-            _logger.LogCritical("{method} Error in saving MyPupilsAsync for user: {userId}", nameof(SaveMyPupilsAsync), userId.Value);
+            _logger.LogCritical("{method} Error in saving MyPupilsAsync for id: {id}", nameof(SaveMyPupilsAsync), myPupils.AggregateId.Value);
             throw;
         }
     }

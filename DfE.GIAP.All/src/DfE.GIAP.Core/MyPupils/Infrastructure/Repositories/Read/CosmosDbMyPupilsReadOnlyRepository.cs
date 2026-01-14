@@ -1,11 +1,10 @@
-﻿using System.Net;
-using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.Common.CrossCutting;
+﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
+using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Users.Application.Models;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 
@@ -14,12 +13,14 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
     private const string ContainerName = "mypupils";
     private readonly ILogger<CosmosDbMyPupilsReadOnlyRepository> _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils> _myPupilsDtoToMyPupils;
+    private readonly MyPupilsOptions _myPupilsOptions;
+    private readonly IMapper<IEnumerable<string>, UniquePupilNumbers> _mapToUniquePupilNumbers;
 
     public CosmosDbMyPupilsReadOnlyRepository(
         ILogger<CosmosDbMyPupilsReadOnlyRepository> logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<MyPupilsDocumentDto, Application.Repositories.MyPupils> mapper)
+        IOptions<MyPupilsOptions> myPupilsOptions,
+        IMapper<IEnumerable<string>, UniquePupilNumbers> mapToUniquePupilNumbers)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -27,33 +28,55 @@ internal sealed class CosmosDbMyPupilsReadOnlyRepository : IMyPupilsReadOnlyRepo
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
         _cosmosDbQueryHandler = cosmosDbQueryHandler;
 
-        ArgumentNullException.ThrowIfNull(mapper);
-        _myPupilsDtoToMyPupils = mapper;
+        ArgumentNullException.ThrowIfNull(myPupilsOptions);
+        ArgumentNullException.ThrowIfNull(myPupilsOptions.Value);
+        _myPupilsOptions = myPupilsOptions.Value;
+
+        ArgumentNullException.ThrowIfNull(mapToUniquePupilNumbers);
+        _mapToUniquePupilNumbers = mapToUniquePupilNumbers;
     }
 
-    public async Task<Application.Repositories.MyPupils?> GetMyPupilsOrDefaultAsync(UserId userId, CancellationToken ctx = default)
+    public async Task<MyPupilsAggregate?> GetMyPupilsOrDefaultAsync(MyPupilsId id)
     {
+        ArgumentNullException.ThrowIfNull(id);
+
         try
         {
-            MyPupilsDocumentDto? userDto =
+            MyPupilsDocumentDto? myPupilsDocumentDto =
                 await _cosmosDbQueryHandler.TryReadItemByIdAsync<MyPupilsDocumentDto>(
-                    id: userId.Value,
+                    id: id.Value,
                     containerKey: ContainerName,
-                    partitionKeyValue: userId.Value,
-                    ctx);
+                    partitionKeyValue: id.Value);
 
-            if (userDto is null)
+            if (myPupilsDocumentDto is null)
             {
-                _logger.LogInformation("Could not find MyPupils for User id {UserId}", userId.Value);
+                _logger.LogInformation("Could not find MyPupils for User id {UserId}", id.Value);
                 return null;
             }
 
-            return _myPupilsDtoToMyPupils.Map(userDto);
+            UniquePupilNumbers myPupils =
+                _mapToUniquePupilNumbers.Map(
+                    myPupilsDocumentDto.MyPupils.Pupils.Select(t => t.UPN));
+
+            return new MyPupilsAggregate(
+                id,
+                myPupils,
+                _myPupilsOptions.PupilsLimit);
         }
         catch (CosmosException ex)
         {
             _logger.LogCritical(ex, $"CosmosException in {nameof(GetMyPupilsOrDefaultAsync)}.");
-            throw;
+            return null;
         }
+    }
+
+    public async Task<MyPupilsAggregate> GetMyPupils(MyPupilsId id)
+    {
+        MyPupilsAggregate? myPupils = await GetMyPupilsOrDefaultAsync(id);
+
+        return myPupils ?? new MyPupilsAggregate(
+                id,
+                UniquePupilNumbers.Create([]),
+                _myPupilsOptions.PupilsLimit);
     }
 }

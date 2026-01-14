@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
@@ -7,9 +7,9 @@ using DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
 public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
-    public CreateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public CreateNewsArticleUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;

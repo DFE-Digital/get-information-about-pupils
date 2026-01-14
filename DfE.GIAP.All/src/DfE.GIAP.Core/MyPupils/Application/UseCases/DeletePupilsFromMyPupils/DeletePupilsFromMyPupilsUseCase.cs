@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application.Models;
@@ -8,45 +8,42 @@ internal sealed class DeletePupilsFromMyPupilsUseCase : IUseCaseRequestOnly<Dele
 {
     private readonly IMyPupilsReadOnlyRepository _myPupilsReadOnlyRepository;
     private readonly IMyPupilsWriteOnlyRepository _myPupilsWriteOnlyRepository;
+    private readonly IMapper<IEnumerable<string>, UniquePupilNumbers> _mapToUniquePupilNumbers;
 
     public DeletePupilsFromMyPupilsUseCase(
         IMyPupilsReadOnlyRepository myPupilsReadOnlyRepository,
-        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository)
+        IMyPupilsWriteOnlyRepository myPupilsWriteOnlyRepository,
+        IMapper<IEnumerable<string>, UniquePupilNumbers> mapToUniquePupilNumbers)
     {
         ArgumentNullException.ThrowIfNull(myPupilsReadOnlyRepository);
         _myPupilsReadOnlyRepository = myPupilsReadOnlyRepository;
 
         ArgumentNullException.ThrowIfNull(myPupilsWriteOnlyRepository);
         _myPupilsWriteOnlyRepository = myPupilsWriteOnlyRepository;
+
+        ArgumentNullException.ThrowIfNull(mapToUniquePupilNumbers);
+        _mapToUniquePupilNumbers = mapToUniquePupilNumbers;
     }
 
     public async Task HandleRequestAsync(DeletePupilsFromMyPupilsRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
+
         UserId userId = new(request.UserId);
 
-        if (request.DeleteAll)
+        MyPupilsId id = new(userId);
+
+        MyPupilsAggregate? myPupilsAggregate = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(id);
+
+        if (myPupilsAggregate is null)
         {
-            await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(userId, UniquePupilNumbers.Create(uniquePupilNumbers: []));
-            return;
+            return; // nothing to delete
         }
 
-        Repositories.MyPupils? myPupils = await _myPupilsReadOnlyRepository.GetMyPupilsOrDefaultAsync(userId);
+        UniquePupilNumbers deletePupilUpns = _mapToUniquePupilNumbers.Map(request.DeletePupilUpns);
 
-        IEnumerable<UniquePupilNumber> userMyPupilUpnsBeforeDelete = myPupils!.Pupils.GetUniquePupilNumbers();
+        myPupilsAggregate.DeletePupils(deletePupilUpns);
 
-        if (request.DeletePupilUpns.All(deleteUpn => !userMyPupilUpnsBeforeDelete.Contains(deleteUpn)))
-        {
-            throw new ArgumentException($"None of the pupil identifiers {string.Join(',', request.DeletePupilUpns)} are part of the User {userId.Value} MyPupils");
-        }
-
-        List<UniquePupilNumber> updatedMyPupilsAfterDelete =
-            userMyPupilUpnsBeforeDelete
-                .Where(upn => !request.DeletePupilUpns.Contains(upn))
-                .ToList();
-
-        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(
-            userId,
-            UniquePupilNumbers.Create(updatedMyPupilsAfterDelete));
+        await _myPupilsWriteOnlyRepository.SaveMyPupilsAsync(myPupilsAggregate);
     }
 }

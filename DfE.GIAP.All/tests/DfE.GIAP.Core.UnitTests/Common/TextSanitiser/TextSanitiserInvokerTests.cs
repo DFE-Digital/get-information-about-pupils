@@ -11,7 +11,7 @@ public sealed class TextSanitiserInvokerTests
     [InlineData(null)]
     public void Sanitise_With_NullOrEmpty_DoesNotThrow(string? input)
     {
-        TextSanitisationInvoker handler = new(null!);
+        Core.Common.Application.TextSanitiser.Invoker.TextSanitiser handler = new(null!);
 
         SanitisedTextResult output = handler.Sanitise(input!);
 
@@ -23,7 +23,7 @@ public sealed class TextSanitiserInvokerTests
     {
         // Arrange
         const string result = "<script onClick=evil()>Hello</script>";
-        TextSanitisationInvoker handler = new(null!);
+        Core.Common.Application.TextSanitiser.Invoker.TextSanitiser handler = new(null!);
 
         // Act
         SanitisedTextResult output = handler.Sanitise(result);
@@ -38,7 +38,7 @@ public sealed class TextSanitiserInvokerTests
         // Arrange
         FakeTextToUpperCaseSanitiser upperCaseSanitiser = new();
         FakeRemoveCharacterSanitiser removeCharacterSanitiser = new('L');
-        TextSanitisationInvoker handler = new(sanitisers: [upperCaseSanitiser, removeCharacterSanitiser]);
+        Core.Common.Application.TextSanitiser.Invoker.TextSanitiser handler = new(sanitisers: [upperCaseSanitiser, removeCharacterSanitiser]);
 
         // Act
         SanitisedTextResult result = handler.Sanitise("hello");

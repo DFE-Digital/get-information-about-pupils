@@ -21,25 +21,18 @@ namespace DfE.GIAP.Web.Helpers.PaginatedResultView
         /// <returns></returns>
         public static string DetermineAriaSort(string sortField, string activeSortField, string activeSortDirection)
         {
-            if (String.IsNullOrEmpty(sortField))
+            ArgumentException.ThrowIfNullOrEmpty(sortField);
+
+            if (!sortField.Equals(activeSortField, StringComparison.Ordinal))
             {
-                throw new ArgumentNullException("sortField must have a value");
+                return AriaSortNone;
             }
 
-            if (sortField.Equals(activeSortField))
-            {
-                if (String.IsNullOrEmpty(activeSortDirection))
-                {
-                    throw new ArgumentNullException("activeSortDirection cannot be empty when an active sort is applied");
-                }
+            ArgumentException.ThrowIfNullOrEmpty(activeSortDirection);
 
-                if (activeSortDirection.Equals(AzureSearchSortDirections.Ascending))
-                {
-                    return AriaSortAscending;
-                }
-                else return AriaSortDescending;                
-            }
-            else return AriaSortNone;
+            return activeSortDirection.Equals(AzureSearchSortDirections.Ascending) ?
+                AriaSortAscending :
+                    AriaSortDescending;
         }
 
         /// <summary>
@@ -51,25 +44,17 @@ namespace DfE.GIAP.Web.Helpers.PaginatedResultView
         /// <returns></returns>
         public static string DetermineSortDirection(string sortField, string activeSortField, string activeSortDirection)
         {
-            if (String.IsNullOrEmpty(sortField))
-            {
-                throw new ArgumentNullException("sortField must have a value");
-            }
+            ArgumentException.ThrowIfNullOrEmpty(sortField);
 
-            if (sortField.Equals(activeSortField))
+            if (!sortField.Equals(activeSortField))
             {
-                if (String.IsNullOrEmpty(activeSortDirection))
-                {
-                    throw new ArgumentNullException("activeSortDirection cannot be empty when an active sort is applied");
-                }
-
-                if (activeSortDirection.Equals(AzureSearchSortDirections.Ascending))
-                {
-                    return AzureSearchSortDirections.Descending;
-                }
-                else return AzureSearchSortDirections.Ascending;
+                return AzureSearchSortDirections.Ascending;
             }
-            else return AzureSearchSortDirections.Ascending;
+            ArgumentException.ThrowIfNullOrEmpty(activeSortDirection);
+
+            return activeSortDirection.Equals(AzureSearchSortDirections.Ascending) ?
+                AzureSearchSortDirections.Descending :
+                    AzureSearchSortDirections.Ascending;
         }
     }
 }

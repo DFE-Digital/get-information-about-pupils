@@ -5,10 +5,17 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Service.Download;
+using DfE.GIAP.Service.Search;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -30,7 +37,6 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
-using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -1886,6 +1892,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession }
         };
         context.HttpContext.Request.Query = Substitute.For<IQueryCollection>();
+        Mock<IEventLogger> mockEventLogger = new();
 
         List<AvailableDatasetResult> availableDatasetResults = new()
             {
@@ -1914,6 +1921,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockDownloadService,
             _mockSelectionManager,
             _mockAppOptions,
+            mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object)
         {
             ControllerContext = context
