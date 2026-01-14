@@ -3,9 +3,11 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -24,7 +26,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
-
+    
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.PPNonUpnSearchFiltersSessionKey;
@@ -53,7 +55,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string SearchLearnerNumberController => Routes.Application.Search;
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
-    public override int MyPupilListLimit => _appSettings.NonUpnPPMyPupilListLimit;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
     public override string LearnerTextSearchController => Global.PPNonUpnController;
     public override string LearnerTextSearchAction => SearchAction;
@@ -71,11 +72,11 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ILogger<PPLearnerTextSearchController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
-        IDownloadService downloadService)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings, sessionProvider)
+        IDownloadService downloadService,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;

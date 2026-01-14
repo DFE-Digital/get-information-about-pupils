@@ -1,7 +1,8 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
@@ -25,10 +26,10 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithLocalAuthorityCode(new LocalAuthorityCode(200))
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(uniquePupilNumber.Value, result.UniquePupilNumber);
@@ -44,10 +45,10 @@ public sealed class MapPupilToMyPupilModelMapperTests
     public void Map_ThrowsNull_If_Pupil_Is_Null()
     {
         Pupil? pupil = null;
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
-        Func<MyPupilModel> act = () => mapper.Map(pupil!);
+        Func<MyPupilsModel> act = () => mapper.Map(pupil!);
 
         // Assert
         Assert.Throws<ArgumentNullException>(act);
@@ -61,10 +62,10 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithDateOfBirth(null!)
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.DateOfBirth);
@@ -78,10 +79,10 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithSex(null!)
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.Equal(string.Empty, result.Sex);
@@ -95,10 +96,10 @@ public sealed class MapPupilToMyPupilModelMapperTests
             .WithPupilType(PupilType.NationalPupilDatabase)
             .Build();
 
-        MapPupilToMyPupilModelMapper mapper = new();
+        PupilToMyPupilsModelMapper mapper = new();
 
         // Act
-        MyPupilModel result = mapper.Map(pupil);
+        MyPupilsModel result = mapper.Map(pupil);
 
         // Assert
         Assert.False(result.IsPupilPremium);

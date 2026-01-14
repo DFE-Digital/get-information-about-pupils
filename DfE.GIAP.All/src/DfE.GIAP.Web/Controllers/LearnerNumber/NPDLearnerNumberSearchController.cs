@@ -3,12 +3,12 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -55,18 +55,23 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _ctfService = ctfService ??
-            throw new ArgumentNullException(nameof(ctfService));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(ctfService);
+        _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);

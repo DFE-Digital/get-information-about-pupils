@@ -1,4 +1,4 @@
-﻿using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
+using DfE.Data.ComponentLibrary.Infrastructure.Persistence.CosmosDb;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.Common.CrossCutting.Logging;
@@ -11,11 +11,13 @@ public static class CompositionRoot
     public static IServiceCollection AddFeaturesSharedDependencies(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-        services.AddCosmosDbDependencies();
-        services.TryAddEnumerable(new ServiceDescriptor(typeof(IEnumerable<ITextSanitiserHandler>), Array.Empty<ITextSanitiserHandler>()));
-        services.AddSingleton<ITextSanitiserInvoker, TextSanitisationInvoker>();
 
-        services.AddCrossCuttingLoggingDependencies();
+        services
+            .AddCosmosDbDependencies()
+            .AddCrossCuttingLoggingDependencies();
+
+        services.TryAddEnumerable(new ServiceDescriptor(typeof(IEnumerable<ITextSanitiserHandler>), Array.Empty<ITextSanitiserHandler>()));
+        services.TryAddSingleton<ITextSanitiser, TextSanitiser>();
 
         return services;
     }

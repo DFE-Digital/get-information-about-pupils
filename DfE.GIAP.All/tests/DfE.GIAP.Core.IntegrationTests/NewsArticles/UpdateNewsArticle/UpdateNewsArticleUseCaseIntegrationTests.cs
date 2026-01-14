@@ -1,18 +1,19 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly CosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
-    public UpdateNewsArticleUseCaseIntegrationTests(CosmosDbFixture cosmosDbFixture)
+    public UpdateNewsArticleUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;
@@ -23,7 +24,9 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.ClearDatabaseAsync());
-        services.AddNewsArticleDependencies();
+
+        services
+            .AddNewsArticleDependencies();
     }
 
     [Fact]

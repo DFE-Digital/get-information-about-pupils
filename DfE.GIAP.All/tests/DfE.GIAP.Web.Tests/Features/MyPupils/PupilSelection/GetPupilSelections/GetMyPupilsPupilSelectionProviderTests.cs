@@ -1,0 +1,74 @@
+﻿using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
+using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
+using Moq;
+using Xunit;
+
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.GetPupilSelections;
+
+public sealed class GetMyPupilsPupilSelectionProviderTests
+{
+    [Fact]
+    public void Constructor_Throws_When_PresentationStateHandler_Is_Null()
+    {
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new GetMyPupilsPupilSelectionProvider(null));
+    }
+
+    [Fact]
+    public void GetState_ReturnsDefaultStates_WhenSessionResponsesAreEmpty()
+    {
+        // Arrange
+        SessionQueryResponse<MyPupilsPupilSelectionState> selectionState =
+            SessionQueryResponse<MyPupilsPupilSelectionState>.CreateWithNoValue();
+
+        Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandlerMock =
+            ISessionQueryHandlerTestDoubles.MockFor(selectionState);
+
+        GetMyPupilsPupilSelectionProvider sut = new(selectionStateHandlerMock.Object);
+
+        // Act
+        MyPupilsPupilSelectionState result = sut.GetPupilSelections();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equivalent(MyPupilsPupilSelectionState.CreateDefault(), result);
+    }
+
+    [Fact]
+    public void GetState_ReturnsStatesFromSession_WhenAvailable()
+    {
+        // Arrange
+        List<string> upns =
+            UniquePupilNumberTestDoubles.Generate(count: 10)
+                .Select(t => t.Value)
+                .ToList();
+
+        List<string> selectedPupils = upns.Take(5).ToList();
+
+        MyPupilsPupilSelectionState expectedSelectionState =
+            MyPupilsPupilSelectionStateTestDoubles.WithSelectedPupils(
+                SelectionMode.Manual,
+                selected: selectedPupils,
+                deselected: upns.Skip(5).ToList());
+
+        Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandler =
+            ISessionQueryHandlerTestDoubles.MockFor(expectedSelectionState);
+
+        GetMyPupilsPupilSelectionProvider sut = new(selectionStateHandler.Object);
+
+        // Act
+        MyPupilsPupilSelectionState response = sut.GetPupilSelections();
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(expectedSelectionState.Mode, response.Mode);
+        Assert.Equal(expectedSelectionState.IsAnyPupilSelected, response.IsAnyPupilSelected);
+        Assert.Equivalent(expectedSelectionState.GetManualSelections(), response.GetManualSelections());
+        Assert.Equivalent(expectedSelectionState.GetDeselectedExceptions(), response.GetDeselectedExceptions());
+    }
+}
