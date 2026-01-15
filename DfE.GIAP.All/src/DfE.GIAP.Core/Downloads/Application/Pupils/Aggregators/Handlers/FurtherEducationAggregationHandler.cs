@@ -39,7 +39,7 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
             {
                 switch (dataset)
                 {
-                    case Dataset.PP when fe.HasPupilPremiumData:
+                    case Dataset.FE_PP when fe.HasPupilPremiumData:
                         AddPupilPremiumRecord(collection, fe);
                         break;
                     case Dataset.SEN when fe.HasSpecialEducationalNeedsData:
@@ -61,7 +61,7 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
             ULN = fe.UniqueLearnerNumber,
             Forename = fe.Forename,
             Surname = fe.Surname,
-            Gender = fe.Gender,
+            Sex = fe.Sex,
             DOB = fe.DOB.ToShortDateString(),
             ACAD_YEAR = ppEntry?.AcademicYear,
             NCYear = ppEntry?.NationalCurriculumYear,
@@ -77,11 +77,11 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
             ULN = fe.UniqueLearnerNumber,
             Forename = fe.Forename,
             Surname = fe.Surname,
-            Gender = fe.Gender,
+            Sex = fe.Sex,
             DOB = fe.DOB.ToShortDateString(),
             NCYear = sen?.NationalCurriculumYear,
-            Acad_Year = sen?.AcademicYear,
-            SEN_Provision = sen?.Provision,
+            ACAD_YEAR = sen?.AcademicYear,
+            SEN_PROVISION = sen?.Provision,
         });
     }
 }

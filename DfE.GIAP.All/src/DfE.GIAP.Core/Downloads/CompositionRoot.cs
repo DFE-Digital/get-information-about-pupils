@@ -73,11 +73,12 @@ public static class CompositionRoot
                 [Dataset.KS4] = DatasetAccessPolicies.KS4(),
                 [Dataset.Phonics] = DatasetAccessPolicies.Phonics(),
                 [Dataset.MTC] = DatasetAccessPolicies.Mtc(),
-                [Dataset.PP] = DatasetAccessPolicies.PupilPremium(),
-                [Dataset.SEN] = DatasetAccessPolicies.SpecialEducationNeeds(),
                 [Dataset.Census_Autumn] = DatasetAccessPolicies.CensusAutumn(),
                 [Dataset.Census_Spring] = DatasetAccessPolicies.CensusSpring(),
-                [Dataset.Census_Summer] = DatasetAccessPolicies.CensusSummer()
+                [Dataset.Census_Summer] = DatasetAccessPolicies.CensusSummer(),
+                [Dataset.PP] = DatasetAccessPolicies.PupilPremium(),
+                [Dataset.SEN] = DatasetAccessPolicies.SpecialEducationNeeds(),
+                [Dataset.FE_PP] = DatasetAccessPolicies.FEPupilPremium()
             };
 
             return new DatasetAccessPolicyEvaluator(policies);
@@ -99,6 +100,7 @@ public static class CompositionRoot
     {
         services.AddScoped<IFurtherEducationReadOnlyRepository, CosmosDbFurtherEducationReadOnlyRepository>();
         services.AddScoped<INationalPupilReadOnlyRepository, CosmosDbNationalPupilReadOnlyRepository>();
+        services.AddScoped<IPupilPremiumReadOnlyRepository, CosmosDbPupilPremiumReadOnlyRepository>();
 
         return services;
     }

@@ -35,7 +35,7 @@ public sealed class FurtherEducationPupilDtoToEntityMapperTests
         Assert.Equal(inputDto.UniqueLearnerNumber, result.UniqueLearnerNumber);
         Assert.Equal(inputDto.Forename, result.Forename);
         Assert.Equal(inputDto.Surname, result.Surname);
-        Assert.Equal(inputDto.Gender, result.Gender);
+        Assert.Equal(inputDto.Sex, result.Gender);
         Assert.Equal(inputDto.DOB, result.DOB);
         Assert.Equal(inputDto.ConcatenatedName, result.ConcatenatedName);
 

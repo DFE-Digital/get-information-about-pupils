@@ -10,7 +10,6 @@ public class KeyStage4Entry
     public string? DOB { get; set; }
     public string? YEARGRP { get; set; }
     public string? ACTYRGRP { get; set; }
-    public string? GENDER { get; set; }
     public string? SEX { get; set; }
     public string? IDACI { get; set; }
     public string? LA { get; set; }

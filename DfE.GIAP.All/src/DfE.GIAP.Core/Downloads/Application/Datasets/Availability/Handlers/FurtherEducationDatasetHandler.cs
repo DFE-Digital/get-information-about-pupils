@@ -24,7 +24,7 @@ public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
         IEnumerable<FurtherEducationPupil> pupils = await _furtherEducationReadOnlyRepository.GetPupilsByIdsAsync(pupilIds);
 
         if (pupils.Any(p => p.HasPupilPremiumData))
-            datasets.Add(Dataset.PP);
+            datasets.Add(Dataset.FE_PP);
         if (pupils.Any(p => p.HasSpecialEducationalNeedsData))
             datasets.Add(Dataset.SEN);
 

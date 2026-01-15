@@ -1,6 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Models.Entries;
+﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class KeyStage2Entry
+public class KS2Output
 {
     public string? ACADYR { get; set; }
     public string? PupilMatchingRef { get; set; }
@@ -40,39 +40,6 @@ public class KeyStage2Entry
     public string? LARESTA { get; set; }
     public string? NATRESTA { get; set; }
     public string? NATMTDRESTA { get; set; }
-    public string? EXAMYEAR_EN { get; set; }
-    public string? READLEVTA { get; set; }
-    public string? WRITLEVTA { get; set; }
-    public string? ENGTIER { get; set; }
-    public string? ENGWRITMRK { get; set; }
-    public string? READLEV { get; set; }
-    public string? ENGTOTMRK { get; set; }
-    public string? ENGWRITLEV { get; set; }
-    public string? ENGLEVTA { get; set; }
-    public string? ENGLEV { get; set; }
-    public string? MATTIER { get; set; }
-    public string? MATTESTAMRK { get; set; }
-    public string? MATTESTBMRK { get; set; }
-    public string? MATARTHMRK { get; set; }
-    public string? MATTOTMRK { get; set; }
-    public string? MATLEV { get; set; }
-    public string? MATLEVTA { get; set; }
-    public string? SCILEVTA { get; set; }
-    public string? GPSLEV { get; set; }
-    public string? GPS_T2MARK { get; set; }
-    public string? GPS_T3MARK { get; set; }
-    public string? GPS_TESTMARK { get; set; }
-    public string? PSENG { get; set; }
-    public string? PSREAD { get; set; }
-    public string? PSWRITE { get; set; }
-    public string? PSSPEAK { get; set; }
-    public string? PSLISTEN { get; set; }
-    public string? PSMATHS { get; set; }
-    public string? PSNUM { get; set; }
-    public string? PSUSING { get; set; }
-    public string? PSSHAPE { get; set; }
-    public string? PSSCIENCE { get; set; }
-    public string? KS2APSFG { get; set; }
     public string? READOUTCOME { get; set; }
     public string? MATOUTCOME { get; set; }
     public string? GPSOUTCOME { get; set; }
@@ -81,10 +48,10 @@ public class KeyStage2Entry
     public string? MATSCORE { get; set; }
     public string? MATSCORE_noSpeccon { get; set; }
     public string? GPSSCORE { get; set; }
-    public string? GPSSCORE_noSpeccon { get; set; }
     public string? READSPECCON { get; set; }
     public string? MATSPECCON { get; set; }
     public string? GPSSPECCON { get; set; }
+    public string? GPSSCORE_noSpeccon { get; set; }
     public string? WRITTAOUTCOME { get; set; }
     public string? SCITAOUTCOME { get; set; }
     public string? MATTAOUTCOME { get; set; }
@@ -108,7 +75,7 @@ public class KeyStage2Entry
     public string? VALMATTA { get; set; }
     public string? VALSCITA { get; set; }
     public string? VALGPS { get; set; }
-    public string? READEXP { get; set; } 
+    public string? READEXP { get; set; }
     public string? MATEXP { get; set; }
     public string? GPSEXP { get; set; }
     public string? READHIGH { get; set; }
@@ -127,46 +94,32 @@ public class KeyStage2Entry
     public string? MATMRK { get; set; }
     public string? WRITTAEXP { get; set; }
     public string? SCITAEXP { get; set; }
-    public string? MATTAEXP { get; set; }
-    public string? READTAEXP { get; set; }
     public string? WRITTADEPTH { get; set; }
     public string? WRITTAWTS { get; set; }
     public string? WRITTABEXP { get; set; }
     public string? SCITABEXP { get; set; }
-    public string? MATTABEXP { get; set; }
-    public string? READTABEXP { get; set; }
     public string? WRITTAAD { get; set; }
     public string? SCITAAD { get; set; }
-    public string? MATTAAD { get; set; }
-    public string? READTAAD { get; set; }
     public string? ELIGRWM { get; set; }
     public string? VALRWM { get; set; }
     public string? RWMEXP { get; set; }
     public string? RWMHIGH { get; set; }
-    public string? KS1AVERAGE { get; set; }
     public string? INREADPROG { get; set; }
     public string? INWRITPROG { get; set; }
     public string? INMATPROG { get; set; }
-    public string? KS1AVERAGE_GRP { get; set; }
     public string? KS1AVERAGE_GRP_P { get; set; }
     public string? KS2READSCORE { get; set; }
     public string? KS2WRITSCORE { get; set; }
     public string? KS2MATSCORE { get; set; }
-    public string? KS2READPRED { get; set; }
-    public string? KS2WRITPRED { get; set; }
-    public string? KS2MATPRED { get; set; }
-    public string? KS2READPRED_P { get; set; }
-    public string? KS2WRITPRED_P { get; set; }
-    public string? KS2MATPRED_P { get; set; }
-    public string? READPROGSCORE { get; set; }
-    public string? WRITPROGSCORE { get; set; }
-    public string? MATPROGSCORE { get; set; }
-    public string? READPROGSCORE_P { get; set; }
-    public string? WRITPROGSCORE_P { get; set; }
-    public string? MATPROGSCORE_P { get; set; }
-    public string? READPROGSCORE_P_ADJUSTED { get; set; }
-    public string? WRITPROGSCORE_P_ADJUSTED { get; set; }
-    public string? MATPROGSCORE_P_ADJUSTED { get; set; }
+    public string? KS2READPRED_EM { get; set; }
+    public string? KS2WRITPRED_EM { get; set; }
+    public string? KS2MATPRED_EM { get; set; }
+    public string? READPROGSCORE_EM { get; set; }
+    public string? WRITPROGSCORE_EM { get; set; }
+    public string? MATPROGSCORE_EM { get; set; }
+    public string? READPROGSCORE_EM_ADJUSTED { get; set; }
+    public string? WRITPROGSCORE_EM_ADJUSTED { get; set; }
+    public string? MATPROGSCORE_EM_ADJUSTED { get; set; }
     public string? KS1READPS { get; set; }
     public string? KS1WRITPS { get; set; }
     public string? KS1MATPS { get; set; }
@@ -181,15 +134,6 @@ public class KeyStage2Entry
     public string? FSM6 { get; set; }
     public string? FSM6_P { get; set; }
     public string? NEWMOBILE { get; set; }
-    public string? KS2READPRED_EM { get; set; }
-    public string? KS2WRITPRED_EM { get; set; }
-    public string? KS2MATPRED_EM { get; set; }
-    public string? READPROGSCORE_EM { get; set; }
-    public string? WRITPROGSCORE_EM { get; set; }
-    public string? MATPROGSCORE_EM { get; set; }
-    public string? READPROGSCORE_EM_ADJUSTED { get; set; }
-    public string? WRITPROGSCORE_EM_ADJUSTED { get; set; }
-    public string? MATPROGSCORE_EM_ADJUSTED { get; set; }
     public string? READEXP_noSpeccon { get; set; }
     public string? MATEXP_noSpeccon { get; set; }
     public string? GPSEXP_noSpeccon { get; set; }

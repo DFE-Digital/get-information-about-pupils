@@ -44,10 +44,10 @@ public class DatasetMetadata
         new()
         {
             {
-                Dataset.PP,
+                Dataset.FE_PP,
                 new DatasetMetadataRecord
                 {
-                    Dataset = Dataset.PP,
+                    Dataset = Dataset.FE_PP,
                     Accessor = c => c.FurtherEducationPP,
                     BaseFileName = "pp_results"
                 }
@@ -61,87 +61,96 @@ public class DatasetMetadata
                     BaseFileName = "sen_results"
                 }
             },
-            //{
-            //    Dataset.KS1,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.KS1,
-            //        Accessor = c => c.KS1,
-            //        BaseFileName = "ks1_results"
-            //    }
-            //},
-            //{
-            //    Dataset.KS2,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.KS2,
-            //        Accessor = c => c.KS2,
-            //        BaseFileName = "ks2_results"
-            //    }
-            //},
-            //{
-            //    Dataset.KS4,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.KS4,
-            //        Accessor = c => c.KS4,
-            //        BaseFileName = "ks4_results"
-            //    }
-            //},
-            //{
-            //    Dataset.Census_Autumn,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.Census_Autumn,
-            //        Accessor = c => c.CensusAutumn,
-            //        BaseFileName = "census_autumn_results"
-            //    }
-            //},
-            //{
-            //    Dataset.Census_Spring,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.Census_Spring,
-            //        Accessor = c => c.CensusSpring,
-            //        BaseFileName = "census_spring_results"
-            //    }
-            //},
-            //{
-            //    Dataset.Census_Summer,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.Census_Summer,
-            //        Accessor = c => c.CensusSummer,
-            //        BaseFileName = "census_summer_results"
-            //    }
-            //},
-            //{
-            //    Dataset.EYFSP,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.EYFSP,
-            //        Accessor = c => c.EYFSP,
-            //        BaseFileName = "eyfsp_results"
-            //    }
-            //},
-            //{
-            //    Dataset.Phonics,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.Phonics,
-            //        Accessor = c => c.Phonics,
-            //        BaseFileName = "phonics_results"
-            //    }
-            //},
-            //{
-            //    Dataset.MTC,
-            //    new DatasetMetadataRecord
-            //    {
-            //        Dataset = Dataset.MTC,
-            //        Accessor = c => c.MTC,
-            //        BaseFileName = "mtc_results"
-            //    }
-            //}
+            {
+                Dataset.PP,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.PP,
+                    Accessor = c => c.PupilPremium,
+                    BaseFileName = "pp_search_results"
+                }
+            },
+            {
+                Dataset.KS1,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.KS1,
+                    Accessor = c => c.KS1,
+                    BaseFileName = "ks1_results"
+                }
+            },
+            {
+                Dataset.KS2,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.KS2,
+                    Accessor = c => c.KS2,
+                    BaseFileName = "ks2_results"
+                }
+            },
+            {
+                Dataset.KS4,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.KS4,
+                    Accessor = c => c.KS4,
+                    BaseFileName = "ks4_results"
+                }
+            },
+            {
+                Dataset.Census_Autumn,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.Census_Autumn,
+                    Accessor = c => c.CensusAutumn,
+                    BaseFileName = "census_autumn_results"
+                }
+            },
+            {
+                Dataset.Census_Spring,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.Census_Spring,
+                    Accessor = c => c.CensusSpring,
+                    BaseFileName = "census_spring_results"
+                }
+            },
+            {
+                Dataset.Census_Summer,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.Census_Summer,
+                    Accessor = c => c.CensusSummer,
+                    BaseFileName = "census_summer_results"
+                }
+            },
+            {
+                Dataset.EYFSP,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.EYFSP,
+                    Accessor = c => c.EYFSP,
+                    BaseFileName = "eyfsp_results"
+                }
+            },
+            {
+                Dataset.Phonics,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.Phonics,
+                    Accessor = c => c.Phonics,
+                    BaseFileName = "phonics_results"
+                }
+            },
+            {
+                Dataset.MTC,
+                new DatasetMetadataRecord
+                {
+                    Dataset = Dataset.MTC,
+                    Accessor = c => c.MTC,
+                    BaseFileName = "mtc_results"
+                }
+            }
         };
 }
 

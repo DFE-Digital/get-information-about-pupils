@@ -19,9 +19,6 @@ public class MtcEntryDto
     [JsonProperty("Forename")]
     public string? Forename { get; set; }
 
-    [JsonProperty("Gender")]
-    public string? Gender { get; set; }
-
     [JsonProperty("Sex")]
     public string? Sex { get; set; }
 

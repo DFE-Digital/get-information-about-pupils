@@ -11,7 +11,7 @@ public static class AvailableDatasetsByDownloadType
     {
         [DownloadType.FurtherEducation] = new()
         {
-            Dataset.PP,
+            Dataset.FE_PP,
             Dataset.SEN
         },
         [DownloadType.PupilPremium] = new()

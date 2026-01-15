@@ -14,8 +14,8 @@ public class FurtherEducationPupilDto
     [JsonProperty("Surname")]
     public string? Surname { get; set; }
 
-    [JsonProperty("Gender")]
-    public string? Gender { get; set; }
+    [JsonProperty("Sex")]
+    public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
     public DateTime DOB { get; set; }

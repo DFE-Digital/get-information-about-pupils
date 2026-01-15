@@ -31,9 +31,6 @@ public class KeyStage2EntryDto
     [JsonProperty("YEARGRP")]
     public string? YEARGRP { get; set; }
 
-    [JsonProperty("GENDER")]
-    public string? GENDER { get; set; }
-
     [JsonProperty("SEX")]
     public string? SEX { get; set; }
 

@@ -28,10 +28,6 @@ public class KeyStage4EntryDto
     [JsonProperty("KS4_ACTYRGRP")]
     public string? ACTYRGRP { get; set; }
 
-    //ToDo: look to see if we can clean out the unused items
-    [JsonProperty("KS4_GENDER")]
-    public string? GENDER { get; set; }
-
     [JsonProperty("KS4_SEX")]
     public string? SEX { get; set; }
 

@@ -25,7 +25,7 @@ internal class FurtherEducationPupilDtoToEntityMapper : IMapper<FurtherEducation
             UniqueLearnerNumber = input.UniqueLearnerNumber,
             Forename = input.Forename,
             Surname = input.Surname,
-            Gender = input.Gender,
+            Sex = input.Sex,
             DOB = input.DOB,
             ConcatenatedName = input.ConcatenatedName,
             PupilPremium = input.PupilPremium?.Select(dto => new FurtherEducationPupilPremiumEntry
