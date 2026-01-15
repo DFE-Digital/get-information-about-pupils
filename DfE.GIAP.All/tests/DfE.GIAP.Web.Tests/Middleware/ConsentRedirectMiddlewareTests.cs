@@ -90,7 +90,7 @@ public class ConsentRedirectMiddlewareTests
     {
         ClaimsPrincipal userPrincipal = new(new ClaimsIdentity(new Claim[0], isAuthenticated ? "fake" : null));
         HttpContext context = new DefaultHttpContext();
-        context.Session = new TestSession();
+        context.Session = new SessionFake();
         context.User = userPrincipal;
         return context;
     }

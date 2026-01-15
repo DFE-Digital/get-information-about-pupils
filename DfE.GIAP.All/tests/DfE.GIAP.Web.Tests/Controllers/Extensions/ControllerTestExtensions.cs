@@ -16,7 +16,7 @@ internal static class ControllerTestExtensions
         DefaultHttpContext httpContext = new()
         {
             User = claimsPrincipal,
-            Session = new TestSession()
+            Session = new SessionFake()
         };
 
         ControllerContext controllerContext = new()

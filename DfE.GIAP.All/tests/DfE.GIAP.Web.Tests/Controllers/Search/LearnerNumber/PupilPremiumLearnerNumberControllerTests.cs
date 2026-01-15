@@ -39,7 +39,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
     private AzureAppSettings _mockAppSettings = new();
-    private readonly TestSession _mockSession = new();
+    private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
     public PupilPremiumLearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)

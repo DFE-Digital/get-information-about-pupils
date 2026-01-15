@@ -47,7 +47,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
 
-    private readonly TestSession _mockSession = new();
+    private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();

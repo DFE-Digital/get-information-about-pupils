@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 
-public class TestSession : ISession
+public class SessionFake : ISession
 {
 
-    public TestSession()
+    public SessionFake()
     {
         Values = [];
     }

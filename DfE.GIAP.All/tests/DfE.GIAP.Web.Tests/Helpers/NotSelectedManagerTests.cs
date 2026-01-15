@@ -13,7 +13,7 @@ namespace DfE.GIAP.Web.Tests.Helpers
 {
     public class NotSelectedManagerTests
     {
-        private readonly TestSession _testSession = new TestSession();
+        private readonly SessionFake _testSession = new SessionFake();
 
         [Fact]
         public void AddAll_adds_all()
