@@ -5,7 +5,7 @@ using DfE.GIAP.Web.Providers.Cookie;
 
 namespace DfE.GIAP.Web.Tests.Providers;
 
-public class CookieProviderTests
+public sealed class CookieProviderTests
 {
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
     private readonly Mock<HttpContext> _httpContextMock;
@@ -43,7 +43,7 @@ public class CookieProviderTests
     public void Get_ReturnsNull_WhenCookieDoesNotExist()
     {
         string key = "missing";
-        _requestCookiesMock.Setup(c => c[key]).Returns((string)null);
+        _requestCookiesMock.Setup(c => c[key]).Returns<string>(null!);
 
         string result = _cookieProvider.Get(key);
 
@@ -53,7 +53,7 @@ public class CookieProviderTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Get_ThrowsArgumentNullException_WhenKeyIsNullOrEmpty(string key)
+    public void Get_ThrowsArgumentNullException_WhenKeyIsNullOrEmpty(string? key)
     {
         Assert.Throws<ArgumentNullException>(() => _cookieProvider.Get(key));
     }
@@ -64,7 +64,7 @@ public class CookieProviderTests
         string key = "exists";
         _requestCookiesMock.Setup(c => c.ContainsKey(key)).Returns(true);
 
-        var result = _cookieProvider.Contains(key);
+        bool result = _cookieProvider.Contains(key);
 
         Assert.True(result);
     }
@@ -75,7 +75,7 @@ public class CookieProviderTests
         string key = "notfound";
         _requestCookiesMock.Setup(c => c.ContainsKey(key)).Returns(false);
 
-        var result = _cookieProvider.Contains(key);
+        bool result = _cookieProvider.Contains(key);
 
         Assert.False(result);
     }
@@ -83,7 +83,7 @@ public class CookieProviderTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Contains_ThrowsArgumentNullException_WhenKeyIsNullOrEmpty(string key)
+    public void Contains_ThrowsArgumentNullException_WhenKeyIsNullOrEmpty(string? key)
     {
         Assert.Throws<ArgumentNullException>(() => _cookieProvider.Contains(key));
     }
@@ -102,7 +102,7 @@ public class CookieProviderTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Delete_ThrowsArgumentNullException_WhenKeyIsNullOrEmpty(string key)
+    public void Delete_ThrowsArgumentNullException_WhenKeyIsNullOrEmpty(string? key)
     {
         Assert.Throws<ArgumentNullException>(() => _cookieProvider.Delete(key));
     }
@@ -112,7 +112,7 @@ public class CookieProviderTests
     {
         string key = "set";
         string value = "val";
-        CookieOptions capturedOptions = null;
+        CookieOptions? capturedOptions = null;
 
         _responseCookiesMock
             .Setup(c => c.Append(key, value, It.IsAny<CookieOptions>()))
@@ -131,7 +131,7 @@ public class CookieProviderTests
     {
         string key = "set";
         string value = "val";
-        CookieOptions capturedOptions = null;
+        CookieOptions? capturedOptions = null;
 
         _responseCookiesMock
             .Setup(c => c.Append(key, value, It.IsAny<CookieOptions>()))
@@ -140,7 +140,7 @@ public class CookieProviderTests
         _cookieProvider.Set(key, value, expireTime: 1);
 
         Assert.NotNull(capturedOptions);
-        Assert.True((capturedOptions.Expires - DateTime.Now).Value.TotalMinutes <= 20.1);
+        Assert.True((capturedOptions.Expires! - DateTime.Now).Value.TotalMinutes <= 20.1);
     }
 
     [Theory]
@@ -148,7 +148,7 @@ public class CookieProviderTests
     [InlineData("key", null)]
     [InlineData("", "value")]
     [InlineData("key", "")]
-    public void Set_ThrowsArgumentNullException_WhenKeyOrValueIsNullOrEmpty(string key, string value)
+    public void Set_ThrowsArgumentNullException_WhenKeyOrValueIsNullOrEmpty(string? key, string? value)
     {
         Assert.Throws<ArgumentNullException>(() => _cookieProvider.Set(key, value));
     }
@@ -158,7 +158,7 @@ public class CookieProviderTests
     {
         string key = "essential";
         string value = "val";
-        CookieOptions capturedOptions = null;
+        CookieOptions? capturedOptions = null;
 
         _responseCookiesMock
             .Setup(c => c.Append(key, value, It.IsAny<CookieOptions>()))
@@ -173,14 +173,14 @@ public class CookieProviderTests
     [Fact]
     public void ClearCookies_DeletesAllCookies()
     {
-        var keys = new List<string> { "a", "b", "c" };
+        List<string> keys = ["a", "b", "c"];
         _requestCookiesMock.Setup(c => c.Keys).Returns(keys);
 
         _responseCookiesMock.Setup(c => c.Delete(It.IsAny<string>()));
 
         _cookieProvider.ClearCookies();
 
-        foreach (var key in keys)
+        foreach (string key in keys)
         {
             _responseCookiesMock.Verify(c => c.Delete(key), Times.Once);
         }
