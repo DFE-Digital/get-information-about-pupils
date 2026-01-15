@@ -27,6 +27,8 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
+using DfE.GIAP.Web.Shared.Serializer;
+using System.Security.Claims;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -437,6 +439,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.True(model.Learners.Count() == 3);
     }
 
+
     [Fact]
     public async Task NationalPupilDatabase_shows_not_found_UPNs_on_search_if_they_do_not_exist()
     {
@@ -585,7 +588,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal("123\nA203202811068", model.LearnerNumberIds);
         Assert.True(model.Learners.SequenceEqual(expectedLearners));
     }
-    
+
     [Fact]
     public async Task NationalPupilDatabase_preserves_sort_settings_when_navigated_to()
     {
@@ -2185,7 +2188,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
     private NPDLearnerNumberSearchController GetController(int commonTransferFileUPNLimit = 4000)
     {
-        var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {
@@ -2210,6 +2213,21 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
             .ReturnsAsync(response);
 
+        // TODO verify serializer called, but will require pulling all of this sut creation out
+        Mock<IJsonSerializer> jsonSerializerMock = new();
+        List<string>? notFoundLearners = ["E938218618008" ];
+
+        jsonSerializerMock
+            .Setup(t => t.Serialize(It.IsAny<object>()))
+            .Returns(string.Empty);
+        jsonSerializerMock
+            .Setup(t => t.TryDeserialize(It.IsAny<string>(), out It.Ref<List<string>?>.IsAny))
+            .Returns((string _, out List<string>? value) =>
+            {
+                value = notFoundLearners;
+                return true;
+            });
+
         return new NPDLearnerNumberSearchController(
             _mockLogger,
             _mockCtfService,
@@ -2218,7 +2236,8 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _mockSelectionManager,
             _mockAppOptions,
             _addPupilsUseCaseMock,
-            mockGetAvailableDatasetsForPupilsUseCase.Object
+            mockGetAvailableDatasetsForPupilsUseCase.Object,
+            jsonSerializerMock.Object
             )
         {
             ControllerContext = new ControllerContext()

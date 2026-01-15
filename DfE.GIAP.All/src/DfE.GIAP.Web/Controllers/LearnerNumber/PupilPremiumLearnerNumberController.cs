@@ -12,6 +12,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -46,8 +47,9 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
         IPaginatedSearchService paginatedSearch,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseVase)
-        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseVase)
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
+        IJsonSerializer jsonSerializer)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
