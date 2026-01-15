@@ -43,7 +43,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
     private AzureAppSettings _mockAppSettings = new();
 
-    private readonly TestSession _mockSession = new();
+    private readonly SessionFake _mockSession = new();
 
     private readonly PaginatedResultsFake _paginatedResultsFake;
 

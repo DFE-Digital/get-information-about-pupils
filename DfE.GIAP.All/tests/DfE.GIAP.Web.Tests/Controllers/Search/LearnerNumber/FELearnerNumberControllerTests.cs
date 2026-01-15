@@ -51,7 +51,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     private AzureAppSettings _mockAppSettings = new();
     private readonly IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
         Substitute.For<IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
-    private readonly TestSession _mockSession = new();
+    private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)

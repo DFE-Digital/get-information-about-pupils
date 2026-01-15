@@ -40,7 +40,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new();
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
-    private readonly TestSession _mockSession = new();
+    private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
 
