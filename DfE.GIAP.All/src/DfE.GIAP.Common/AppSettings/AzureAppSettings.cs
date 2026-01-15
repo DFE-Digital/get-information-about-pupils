@@ -12,7 +12,6 @@ public class AzureAppSettings
     public int MaximumNonUPNResults { get; set; }
     public int MaximumUPNsPerSearch { get; set; }
     public int MaximumULNsPerSearch { get; set; }
-    public int NonUpnNPDMyPupilListLimit { get; set; }
 
     //Azure Function Urls
     public string CreateOrUpdateUserProfileUrl { get; set; }

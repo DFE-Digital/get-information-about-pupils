@@ -1719,7 +1719,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         Assert.Equal(controller.SearchLearnerNumberAction, model.LearnerNumberAction);
     }
 
-    private NPDLearnerTextSearchController GetController(int maxMPLLimit = 4000)
+    private NPDLearnerTextSearchController GetController()
     {
         ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
 
@@ -1728,7 +1728,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             MaximumUPNsPerSearch = 4000,
             CommonTransferFileUPNLimit = 4000,
             DownloadOptionsCheckLimit = 500,
-            NonUpnNPDMyPupilListLimit = maxMPLLimit,
             MaximumNonUPNResults = 100
         };
 
