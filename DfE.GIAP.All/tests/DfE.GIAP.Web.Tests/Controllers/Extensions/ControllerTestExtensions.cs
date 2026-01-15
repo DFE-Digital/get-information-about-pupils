@@ -11,7 +11,7 @@ internal static class ControllerTestExtensions
     internal static HttpContext StubHttpContext<T>(this T controller) where T : ControllerBase
     {
         // TODO may want control of this principal on the context?
-        ClaimsPrincipal claimsPrincipal = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal claimsPrincipal = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
 
         DefaultHttpContext httpContext = new()
         {

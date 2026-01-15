@@ -1,209 +1,208 @@
 ﻿using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using System.Security.Claims;
 
-namespace DfE.GIAP.Web.Tests.TestDoubles
+namespace DfE.GIAP.Web.Tests.TestDoubles;
+
+public static class UserClaimsPrincipalFake
 {
-    public class UserClaimsPrincipalFake
+    public static ClaimsPrincipal GetUserClaimsPrincipal()
     {
-        public ClaimsPrincipal GetUserClaimsPrincipal()
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "discoverytest842@gmail.com"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Test Org"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId,"001"),
-                new Claim(AuthClaimTypes.OrganisationEstablishmentTypeId, "00"),
-                new Claim(AuthClaimTypes.OrganisationHighAge, "13"),
-                new Claim(AuthClaimTypes.OrganisationLowAge, "2"),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432")
-            }, "mock"));
+            new(ClaimTypes.Email, "discoverytest842@gmail.com"),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new("custom-claim", "example claim value"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Test Org"),
+            new(AuthClaimTypes.OrganisationCategoryId,"001"),
+            new(AuthClaimTypes.OrganisationEstablishmentTypeId, "00"),
+            new(AuthClaimTypes.OrganisationHighAge, "13"),
+            new(AuthClaimTypes.OrganisationLowAge, "2"),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432")
+        }, "mock"));
 
-            return user;
-        }
+        return user;
+    }
 
-        public ClaimsPrincipal GetLAApproverClaimsPrincipal()
+    public static ClaimsPrincipal GetLAApproverClaimsPrincipal()
+    {
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "discoverytest842+LAApprover@gmail.com"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Test Org"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId,"002"),
-                new Claim(AuthClaimTypes.OrganisationHighAge, "20"),
-                new Claim(AuthClaimTypes.OrganisationLowAge, "2"),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-                new Claim(ClaimTypes.Role,"GIAPApprover")
-            }, "mock"));
+            new(ClaimTypes.Email, "discoverytest842+LAApprover@gmail.com"),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Test Org"),
+            new(AuthClaimTypes.OrganisationCategoryId,"002"),
+            new(AuthClaimTypes.OrganisationHighAge, "20"),
+            new(AuthClaimTypes.OrganisationLowAge, "2"),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
+            new(ClaimTypes.Role,"GIAPApprover")
+        }, "mock"));
 
-            return user;
-        }
+        return user;
+    }
 
-        public ClaimsPrincipal GetSATApproverClaimsPrincipal()
+    public static ClaimsPrincipal GetSATApproverClaimsPrincipal()
+    {
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "discoverytest842+SATApprover@gmail.com"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Test Org"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId,"013"),
-                new Claim(AuthClaimTypes.OrganisationHighAge, "20"),
-                new Claim(AuthClaimTypes.OrganisationLowAge, "2"),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-                new Claim(ClaimTypes.Role,"GIAPApprover")
-            }, "mock"));
+            new(ClaimTypes.Email, "discoverytest842+SATApprover@gmail.com"),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new("custom-claim", "example claim value"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Test Org"),
+            new(AuthClaimTypes.OrganisationCategoryId,"013"),
+            new(AuthClaimTypes.OrganisationHighAge, "20"),
+            new(AuthClaimTypes.OrganisationLowAge, "2"),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
+            new(ClaimTypes.Role,"GIAPApprover")
+        }, "mock"));
 
-            return user;
-        }
+        return user;
+    }
 
-        public ClaimsPrincipal GetAdminUserClaimsPrincipal()
+    public static ClaimsPrincipal GetAdminUserClaimsPrincipal()
+    {
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email,"discoverytest842+ADMIN@gmail.com"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Department for Education"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId,"789"),
-                new Claim(AuthClaimTypes.OrganisationHighAge, "20"),
-                new Claim(AuthClaimTypes.OrganisationLowAge, "2"),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-                new Claim(ClaimTypes.Role,"GIAPAdmin")
-            }, "mock"));
+            new(ClaimTypes.Email,"discoverytest842+ADMIN@gmail.com"),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new("custom-claim", "example claim value"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Department for Education"),
+            new(AuthClaimTypes.OrganisationCategoryId,"789"),
+            new(AuthClaimTypes.OrganisationHighAge, "20"),
+            new(AuthClaimTypes.OrganisationLowAge, "2"),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
+            new(ClaimTypes.Role,"GIAPAdmin")
+        }, "mock"));
 
-            return user;
-        }
+        return user;
+    }
 
-        public ClaimsPrincipal GetFEApproverClaimsPrincipal()
+    public static ClaimsPrincipal GetFEApproverClaimsPrincipal()
+    {
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email,"discoverytest842+FEApprover@gmail.com"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Test Org"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId, "001"),
-                new Claim(AuthClaimTypes.OrganisationEstablishmentTypeId, "18"),
-                new Claim(AuthClaimTypes.OrganisationHighAge, "20"),
-                new Claim(AuthClaimTypes.OrganisationLowAge, "2"),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-                new Claim(ClaimTypes.Role,"GIAPApprover")
-            }, "mock"));
+            new(ClaimTypes.Email,"discoverytest842+FEApprover@gmail.com"),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Test Org"),
+            new(AuthClaimTypes.OrganisationCategoryId, "001"),
+            new(AuthClaimTypes.OrganisationEstablishmentTypeId, "18"),
+            new(AuthClaimTypes.OrganisationHighAge, "20"),
+            new(AuthClaimTypes.OrganisationLowAge, "2"),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
+            new(ClaimTypes.Role,"GIAPApprover")
+        }, "mock"));
 
-            return user;
-        }
+        return user;
+    }
 
-        public ClaimsPrincipal GetLAUserClaimsPrincipal()
+    public static ClaimsPrincipal GetLAUserClaimsPrincipal()
+    {
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email,"discoverytest842+LAApprover@gmail.com"),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Test Org"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId, "002"),
-                new Claim(AuthClaimTypes.OrganisationEstablishmentTypeId, "18"),
-                new Claim(AuthClaimTypes.OrganisationHighAge, "20"),
-                new Claim(AuthClaimTypes.OrganisationLowAge, "2"),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-                new Claim(ClaimTypes.Role,"GIAPApprover")
-            }, "mock"));
+            new(ClaimTypes.Email,"discoverytest842+LAApprover@gmail.com"),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Test Org"),
+            new(AuthClaimTypes.OrganisationCategoryId, "002"),
+            new(AuthClaimTypes.OrganisationEstablishmentTypeId, "18"),
+            new(AuthClaimTypes.OrganisationHighAge, "20"),
+            new(AuthClaimTypes.OrganisationLowAge, "2"),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
+            new(ClaimTypes.Role,"GIAPApprover")
+        }, "mock"));
 
-            return user;
-        }
+        return user;
+    }
 
-        public ClaimsPrincipal GetSpecificUserClaimsPrincipal(
-            string organisationCategoryId,
-            string organisationEstablishmentType,
-            string role,
-            int organisationLowAge,
-            int organisationHighAge,
-            string email = "testy.mctester@somewhere.net")
+    public static ClaimsPrincipal GetSpecificUserClaimsPrincipal(
+        string organisationCategoryId,
+        string organisationEstablishmentType,
+        string role,
+        int organisationLowAge,
+        int organisationHighAge,
+        string email = "testy.mctester@somewhere.net")
+    {
+        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-                new Claim(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-                new Claim(ClaimTypes.Email,"test@yahoo.com"),
-                new Claim(ClaimTypes.GivenName,"Abc"),
-                new Claim(ClaimTypes.Surname,"xyz"),
-                new Claim(AuthClaimTypes.OrganisationId, "123"),
-                new Claim(AuthClaimTypes.OrganisationName, "Test Org"),
-                new Claim(AuthClaimTypes.OrganisationCategoryId, organisationCategoryId),
-                new Claim(AuthClaimTypes.OrganisationEstablishmentTypeId, organisationEstablishmentType),
-                new Claim(AuthClaimTypes.OrganisationHighAge, organisationHighAge.ToString()),
-                new Claim(AuthClaimTypes.OrganisationLowAge, organisationLowAge.ToString()),
-                new Claim(AuthClaimTypes.EstablishmentNumber,"89"),
-                new Claim(AuthClaimTypes.LocalAuthorityNumber,"98"),
-                new Claim(AuthClaimTypes.UniqueReferenceNumber,"121"),
-                new Claim(AuthClaimTypes.UniqueIdentifier,"007"),
-                new Claim(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-                new Claim(ClaimTypes.Role, role)
-            }, "mock"));
+            new(ClaimTypes.Email, email),
+            new(ClaimTypes.NameIdentifier, "1"),
+            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
+            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
+            new(ClaimTypes.Email,"test@yahoo.com"),
+            new(ClaimTypes.GivenName,"Abc"),
+            new(ClaimTypes.Surname,"xyz"),
+            new(AuthClaimTypes.OrganisationId, "123"),
+            new(AuthClaimTypes.OrganisationName, "Test Org"),
+            new(AuthClaimTypes.OrganisationCategoryId, organisationCategoryId),
+            new(AuthClaimTypes.OrganisationEstablishmentTypeId, organisationEstablishmentType),
+            new(AuthClaimTypes.OrganisationHighAge, organisationHighAge.ToString()),
+            new(AuthClaimTypes.OrganisationLowAge, organisationLowAge.ToString()),
+            new(AuthClaimTypes.EstablishmentNumber,"89"),
+            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
+            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
+            new(AuthClaimTypes.UniqueIdentifier,"007"),
+            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
+            new(ClaimTypes.Role, role)
+        }, "mock"));
 
-            return user;
-        }
+        return user;
     }
 }

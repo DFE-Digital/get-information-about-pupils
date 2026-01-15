@@ -14,7 +14,7 @@ namespace DfE.GIAP.Web.Tests.Controllers;
 
 [Trait("Category", "Authentication Controller Unit Tests")]
 
-public sealed class AuthenticationControllerTests : IClassFixture<UserClaimsPrincipalFake>
+public sealed class AuthenticationControllerTests
 {
     private readonly Mock<IOptions<DsiOptions>> _mockAzureAppSettings = new();
 
@@ -69,7 +69,7 @@ public sealed class AuthenticationControllerTests : IClassFixture<UserClaimsPrin
     public void AuthenticationController_LoginDSI_Redirect_If_Authenticated()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new() { HttpContext = new DefaultHttpContext() { User = user, Session = new SessionFake() } };
         AuthenticationController controller = GetAuthenticationController();
         controller.ControllerContext = context;
@@ -88,7 +88,7 @@ public sealed class AuthenticationControllerTests : IClassFixture<UserClaimsPrin
     public async Task AuthenticationController_SignoutDSI_And_Redirect()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
         Mock<IAuthenticationService> authServiceMock = new();
         authServiceMock

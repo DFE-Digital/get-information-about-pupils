@@ -2188,7 +2188,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
     private NPDLearnerNumberSearchController GetController(int commonTransferFileUPNLimit = 4000)
     {
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {

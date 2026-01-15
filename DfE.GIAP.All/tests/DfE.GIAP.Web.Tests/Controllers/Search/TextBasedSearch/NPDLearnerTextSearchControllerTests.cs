@@ -210,7 +210,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         // Arrange
         NPDLearnerTextSearchController sut = GetController();
         //override default user to make admin so Ids are not masked, not testing rbac rules for this test
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
 
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1721,7 +1721,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
     private NPDLearnerTextSearchController GetController()
     {
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {
