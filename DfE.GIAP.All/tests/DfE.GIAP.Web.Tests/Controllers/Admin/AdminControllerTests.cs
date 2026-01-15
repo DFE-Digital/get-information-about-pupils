@@ -1,28 +1,28 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Domain.Models.SecurityReports;
 using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Controllers.Admin;
+using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
+using DfE.GIAP.Web.ViewModels.Admin;
 using DfE.GIAP.Web.ViewModels.Admin.SecurityReports;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Moq;
 using NSubstitute;
-using DfE.GIAP.Common.Enums;
 using Xunit;
-using DfE.GIAP.Web.ViewModels.Admin;
-using DfE.GIAP.Domain.Models.SecurityReports;
-using DfE.GIAP.Web.Providers.Session;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Security.Claims;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin;
 
 [Trait("Category", "Admin Controller Unit Tests")]
-public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
+public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 {
     private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ISecurityService _securityService = Substitute.For<ISecurityService>();
@@ -225,10 +225,10 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        AdminViewModel viewModel = viewResult.Model as AdminViewModel;
+        AdminViewModel? viewModel = viewResult.Model as AdminViewModel;
         Assert.NotNull(viewModel);
         Assert.Equal("../Admin/Index", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoAdminSelection"].Errors);
+        Assert.Single(controller.ViewData.ModelState["NoAdminSelection"]!.Errors);
     }
 
     [Fact]
@@ -302,7 +302,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         Assert.Equal("../Admin/SecurityReports/SchoolCollegeDownloadOptions", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelection"].Errors);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelection"]!.Errors);
     }
 
     [Fact]
@@ -413,7 +413,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchool", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelected"].Errors);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelected"]!.Errors);
     }
 
     [Fact]
@@ -441,7 +441,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelected"].Errors);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationSelected"]!.Errors);
     }
 
     [Fact]
@@ -470,7 +470,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         Assert.NotNull(viewResult);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
         Assert.False(controller.ViewData.ModelState.IsValid);
-        ModelError modelError = Assert.Single(controller.ViewData.ModelState["NoEstablishmentSelected"].Errors);
+        ModelError modelError = Assert.Single(controller.ViewData.ModelState["NoEstablishmentSelected"]!.Errors);
         Assert.Equal(SecurityReportsConstants.NoEstablishmentSelected, modelError.ErrorMessage);
     }
 
@@ -502,7 +502,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
         Assert.Equal(model.SelectedReportType, controller.ViewBag.SelectedReportType);
         Assert.Equal(model.SelectedOrganisationCode, controller.ViewBag.SelectedOrganisationCode);
-        ModelError error = Assert.Single(controller.ViewData.ModelState["NoEstablishmentSelected"].Errors);
+        ModelError error = Assert.Single(controller.ViewData.ModelState["NoEstablishmentSelected"]!.Errors);
         Assert.Equal(SecurityReportsConstants.NoEstablishmentSelected, error.ErrorMessage);
     }
 
@@ -556,7 +556,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        SecurityReportsBySchoolViewModel? viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewModel);
         Assert.True(viewModel.ProcessDownload);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
@@ -613,7 +613,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        SecurityReportsBySchoolViewModel? viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewModel);
         Assert.True(viewModel.ProcessDownload);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
@@ -670,7 +670,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        SecurityReportsBySchoolViewModel? viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewModel);
         Assert.True(viewModel.ProcessDownload);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
@@ -728,7 +728,7 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        SecurityReportsBySchoolViewModel? viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewModel);
         Assert.True(viewModel.ProcessDownload);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
@@ -784,8 +784,8 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewResult);
+        SecurityReportsBySchoolViewModel? viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewModel);
         Assert.True(viewModel.ProcessDownload);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolEstablishmentSelection", viewResult.ViewName);
@@ -1289,11 +1289,11 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        SecurityReportsBySchoolViewModel viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
+        SecurityReportsBySchoolViewModel? viewModel = viewResult.Model as SecurityReportsBySchoolViewModel;
         Assert.NotNull(viewResult);
         Assert.NotNull(viewModel);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsBySchoolConfirmation", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoConfirmationSelection"].Errors);
+        Assert.Single(controller.ViewData.ModelState["NoConfirmationSelection"]!.Errors);
     }
 
     [Fact]
@@ -1387,10 +1387,10 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         };
 
         // Act
-        FileContentResult result = await controller.SecurityReportsForYourOrganisation(model) as FileContentResult;
+        FileContentResult? result = await controller.SecurityReportsForYourOrganisation(model) as FileContentResult;
 
         // Assert
-        Assert.IsType<FileContentResult>(result);
+        Assert.NotNull(result);
         Assert.Equal(expected.Bytes.Length, result.FileContents.Length);
     }
 
@@ -1435,10 +1435,10 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        SecurityReportsForYourOrganisationViewModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
+        SecurityReportsForYourOrganisationViewModel? viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
         Assert.NotNull(viewModel);
         Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoOrganisationalReportSelected"].Errors);
+        Assert.Single(controller.ViewData.ModelState["NoOrganisationalReportSelected"]!.Errors);
     }
 
     [Fact]
@@ -1476,14 +1476,13 @@ public class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
         };
 
         // Act
-        ViewResult result = await controller.SecurityReportsForYourOrganisation(model) as ViewResult;
+        ViewResult? result = await controller.SecurityReportsForYourOrganisation(model) as ViewResult;
 
         // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        SecurityReportsForYourOrganisationViewModel viewModel = viewResult.Model as SecurityReportsForYourOrganisationViewModel;
+        Assert.NotNull(result);
+        SecurityReportsForYourOrganisationViewModel? viewModel = result.Model as SecurityReportsForYourOrganisationViewModel;
         Assert.NotNull(viewModel);
-        Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", viewResult.ViewName);
-        Assert.Single(controller.ViewData.ModelState["NoDataForOrganisationalDownloadExists"].Errors);
+        Assert.Equal("../Admin/SecurityReports/SecurityReportsForYourOrganisation", result.ViewName);
+        Assert.Single(controller.ViewData.ModelState["NoDataForOrganisationalDownloadExists"]!.Errors);
     }
 }
