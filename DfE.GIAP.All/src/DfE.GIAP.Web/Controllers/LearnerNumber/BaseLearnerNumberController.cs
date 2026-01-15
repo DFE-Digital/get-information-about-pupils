@@ -347,7 +347,7 @@ public abstract class BaseLearnerNumberController : Controller
             HashSet<string> learnerNumberSet = result.GetLearnerNumbers();
             model.LearnerNumberIds = string.Join("\n", learnerNumberIdSet);
 
-            IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet).Except(learnerNumberSet);
+            IEnumerable<string> missing = combinedIdLearnerNumberArray?.Except(learnerNumberIdSet).Except(learnerNumberSet) ?? [];
 
             HttpContext.Session.SetString(
                 MISSING_LEARNER_NUMBERS_KEY, _jsonSerializer.Serialize(missing));
