@@ -27,6 +27,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
+using DfE.GIAP.Web.Shared.Serializer;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -2218,7 +2219,9 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _mockSelectionManager,
             _mockAppOptions,
             _addPupilsUseCaseMock,
-            mockGetAvailableDatasetsForPupilsUseCase.Object
+            mockGetAvailableDatasetsForPupilsUseCase.Object,
+            // TODO test serializer called?
+            new Mock<IJsonSerializer>().Object
             )
         {
             ControllerContext = new ControllerContext()

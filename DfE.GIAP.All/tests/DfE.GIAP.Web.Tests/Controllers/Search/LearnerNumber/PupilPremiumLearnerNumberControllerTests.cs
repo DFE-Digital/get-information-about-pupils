@@ -14,6 +14,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -1841,7 +1842,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             _mockPaginatedService,
             _mockSelectionManager,
             _mockAppOptions,
-            _addPupilsUseCaseMock)
+            _addPupilsUseCaseMock,
+            // TODO very serializer called?
+            new Mock<IJsonSerializer>().Object)
         {
             ControllerContext = new ControllerContext()
             {
