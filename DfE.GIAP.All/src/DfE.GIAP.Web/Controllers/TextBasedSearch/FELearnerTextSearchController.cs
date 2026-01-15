@@ -48,7 +48,6 @@ public class FELearnerTextSearchController : Controller
     public string DownloadLinksPartial => Global.FENonUlnDownloadLinksView;
     public string SearchLearnerNumberAction => Routes.FurtherEducation.LearnerNumberSearch;
     public string RedirectUrlFormAction => Global.FELearnerTextSearchAction;
-    public string LearnerTextDatabaseAction => Global.FELearnerTextSearchAction;
     public string LearnerTextDatabaseName => Global.FELearnerTextSearchAction;
     public string RedirectFrom => Routes.FurtherEducation.LearnerTextSearch;
 
@@ -64,13 +63,9 @@ public class FELearnerTextSearchController : Controller
     public string SearchView => Global.NonUpnSearchView;
 
     public string SearchLearnerNumberController => Routes.Application.Search;
-    public int MyPupilListLimit => _appSettings.NonUpnNPDMyPupilListLimit; //Not valid for FE so arbitrarily set to default non UPN limit
     public string SearchAction => Global.FELearnerTextSearchAction;
     public string SearchController => Global.FELearnerTextSearchController;
     public ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
-    public string LearnerTextSearchController => Global.FELearnerTextSearchController;
-    public string LearnerTextSearchAction => Global.FELearnerTextSearchAction;
-    public string LearnerNumberAction => Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
 
     public bool ShowLocalAuthority => false;
     public string InvalidUPNsConfirmationAction => "";

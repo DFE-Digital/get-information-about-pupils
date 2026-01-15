@@ -1520,7 +1520,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         {
             MaximumUPNsPerSearch = 4000,
             DownloadOptionsCheckLimit = 500,
-            NonUpnPPMyPupilListLimit = maxMPLLimit,
             MaximumNonUPNResults = 100
         };
 
