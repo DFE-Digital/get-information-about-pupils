@@ -1828,7 +1828,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
     private PupilPremiumLearnerNumberController GetController()
     {
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {

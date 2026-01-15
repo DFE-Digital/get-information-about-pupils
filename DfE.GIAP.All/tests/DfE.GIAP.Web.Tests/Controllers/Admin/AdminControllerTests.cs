@@ -22,9 +22,8 @@ using Xunit;
 namespace DfE.GIAP.Web.Tests.Controllers.Admin;
 
 [Trait("Category", "Admin Controller Unit Tests")]
-public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake>
+public sealed class AdminControllerTests
 {
-    private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly ISecurityService _securityService = Substitute.For<ISecurityService>();
     private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
 
@@ -36,11 +35,6 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
 
     private readonly IDownloadSecurityReportDetailedSearchesService _downloadSecurityReportDetailedSearchesService =
         Substitute.For<IDownloadSecurityReportDetailedSearchesService>();
-
-    public AdminControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
-    {
-        _userClaimsPrincipalFake = userClaimsPrincipalFake;
-    }
 
     private AdminController GetAdminController()
     {
@@ -55,7 +49,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_AdminViewLoadsSuccessfully()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -76,7 +70,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_DashboardOptions_Returns_ManageDocuments_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -102,7 +96,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_DashboardOptions_Returns_SecurityReportsByUpnUln_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -128,7 +122,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_DashboardOptions_Returns_SecurityReportsForYourOrganisation_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -154,7 +148,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_DashboardOptions_Returns_DownloadSecurityReportsBySchool_Admin_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -180,7 +174,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_DashboardOptions_Returns_DownloadSecurityReportsBySchool_NonAdmin_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -206,7 +200,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_DashboardOptions_Returns_ValidationMessage_If_No_Selection_Made()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -235,7 +229,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SchoolCollegeDownloadOptionsAdminGet_Renders_Correct_View()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -256,7 +250,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SchoolCollegeDownloadOptions_SecurityReportsBySchool_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -282,7 +276,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SchoolCollegeDownloadOptions_Returns_Validation_Message_If_No_Selection_Made()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -309,7 +303,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsBySchoolGet_Renders_Correct_View()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -330,7 +324,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsBySchoolEstablishmentSelectionGet_Renders_Correct_View()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -351,7 +345,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SecurityReportsBySchoolConfirmationGet_Renders_Correct_View()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -372,7 +366,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SecurityReportsForYourOrganisationGet_Renders_Correct_View()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -393,7 +387,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsBySchoolPost_Adds_ModelError_If_Neither_LA_or_AT_Selected()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -420,7 +414,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchoolPost_Adds_ModelError_If_Neither_LA_or_AT_Selected_And_No_Establishment()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -448,7 +442,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchoolPost_Adds_ModelError_If_Both_LA_and_AT_Selected_And_No_Establishment()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -478,7 +472,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchoolPost_Sets_Correct_Model_Properties_If_No_Establishment()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -510,7 +504,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchoolPost_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
         ControllerContext context = new()
@@ -566,7 +560,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadLoginDetailsSecurityReportsBySchool_By_UniqueReferenceNumber_Post_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -623,7 +617,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchool_By_SATApprover_Post_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -681,7 +675,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchool_DetailedSearches_By_UniqueReferenceNumber_Post_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -738,7 +732,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_DownloadSecurityReportsBySchool_DetailedSearches_By_SATApprover_Post_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
 
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
@@ -795,7 +789,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -840,7 +834,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_SAT_Approver()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetSATApproverClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -898,7 +892,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_LA_Approver()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetLAApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetLAApproverClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -955,7 +949,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_FE_Approver()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -1012,7 +1006,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_Correct_Data_For_Organisation_User()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -1070,7 +1064,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_LoginDetails_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -1117,7 +1111,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_NoContent_if_no_data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -1155,7 +1149,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_GetSecurityReport_Returns_NoContent_if_report_type_invalid()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -1193,7 +1187,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Establishment_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -1219,7 +1213,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_School_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -1245,7 +1239,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Dashboard_Redirect_To_Action()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -1271,7 +1265,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public void AdminController_SecurityReportsBySchoolConfirmationPost_Returns_Validation_Message_If_No_Option_Selected()
     {
         // Arrange
-        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         ControllerContext context = new()
         {
             HttpContext = new DefaultHttpContext() { User = user }
@@ -1300,7 +1294,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("0");
         ControllerContext context = new()
@@ -1349,7 +1343,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsForYourOrganisation_LoginDetails_Post_Returns_Correct_Data()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("1");
         ControllerContext context = new()
@@ -1398,7 +1392,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Validation_Message_If_DocumentID_Is_Null()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
 
@@ -1445,7 +1439,7 @@ public sealed class AdminControllerTests : IClassFixture<UserClaimsPrincipalFake
     public async Task AdminController_SecurityReportsForYourOrganisation_DetailedSearches_Post_Returns_Validation_Message_If_DocumentID_Is_Invalid()
     {
         // Arrange
-        ClaimsPrincipal user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         Mock<ISession> mockSession = new();
         mockSession.Setup(x => x.Id).Returns("12345");
         ControllerContext context = new()

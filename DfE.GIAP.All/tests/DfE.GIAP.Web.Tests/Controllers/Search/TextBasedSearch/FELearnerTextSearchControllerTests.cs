@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Models.Common;
@@ -1442,7 +1443,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
     private FELearnerTextSearchController GetController()
     {
-        var user = new UserClaimsPrincipalFake().GetFEApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {

@@ -37,6 +37,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
+using System.Security.Claims;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -113,7 +114,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         var result = await sut.PupilUlnSearch(null);
 
         // assert
@@ -142,7 +143,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetSpecificUserClaimsPrincipal(
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
              DsiKeys.OrganisationCategory.Establishment,
              DsiKeys.EstablishmentType.CommunitySchool, //not relevant for this test
              AuthRoles.Approver,
@@ -176,7 +177,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         var result = await sut.PupilUlnSearch(null);
 
         // assert
@@ -1876,7 +1877,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
     private FELearnerNumberController GetController()
     {
-        var user = new UserClaimsPrincipalFake().GetFEApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {
