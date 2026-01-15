@@ -4,9 +4,9 @@ using Moq;
 namespace DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 internal static class ISessionObjectSerializerTestDoubles
 {
-    internal static Mock<ISessionObjectSerializer<TSessionObject>> Default<TSessionObject>() => new();
+    internal static Mock<ISessionObjectSerializer<TSessionObject>> Default<TSessionObject>() where TSessionObject : class => new();
 
-    internal static Mock<ISessionObjectSerializer<TSessionObject>> MockDeserialize<TSessionObject>(TSessionObject stubSessionObject)
+    internal static Mock<ISessionObjectSerializer<TSessionObject>> MockDeserialize<TSessionObject>(TSessionObject stubSessionObject) where TSessionObject : class
     {
         Mock<ISessionObjectSerializer<TSessionObject>> mockSerializer = Default<TSessionObject>();
 
@@ -18,7 +18,7 @@ internal static class ISessionObjectSerializerTestDoubles
         return mockSerializer;
     }
 
-    internal static Mock<ISessionObjectSerializer<TSessionObject>> MockSerialize<TSessionObject>(string stubSerialisedValue)
+    internal static Mock<ISessionObjectSerializer<TSessionObject>> MockSerialize<TSessionObject>(string stubSerialisedValue) where TSessionObject : class
     {
         Mock<ISessionObjectSerializer<TSessionObject>> mockSerializer = Default<TSessionObject>();
 

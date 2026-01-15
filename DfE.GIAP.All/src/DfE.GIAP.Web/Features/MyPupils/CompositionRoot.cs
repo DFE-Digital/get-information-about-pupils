@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
@@ -92,7 +93,8 @@ public static class CompositionRoot
                     MyPupilsPupilSelectionState,
                     MyPupilsPupilSelectionStateDto>(
                         sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
-                        sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
+                        sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>(),
+                        sp.GetRequiredService<IJsonSerializer>());
             })
             // Query
             .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()
