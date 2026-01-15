@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -13,7 +14,9 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
+using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -1825,7 +1828,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
     private PupilPremiumLearnerNumberController GetController()
     {
-        var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        ClaimsPrincipal user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {
@@ -1835,13 +1838,29 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockAppOptions.Value.Returns(_mockAppSettings);
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
+        // TODO verify serializer called, but will require pulling all of this sut creation out
+        Mock<IJsonSerializer> jsonSerializerMock = new();
+        List<string>? notFoundLearners = ["E938218618008"];
+
+        jsonSerializerMock
+            .Setup((t) => t.Serialize(It.IsAny<object>()))
+            .Returns(string.Empty);
+        jsonSerializerMock
+            .Setup(t => t.TryDeserialize(It.IsAny<string>(), out It.Ref<List<string>?>.IsAny))
+            .Returns((string _, out List<string>? value) =>
+            {
+                value = notFoundLearners;
+                return true;
+            });
+
         return new PupilPremiumLearnerNumberController(
             _mockLogger,
             _mockDownloadService,
             _mockPaginatedService,
             _mockSelectionManager,
             _mockAppOptions,
-            _addPupilsUseCaseMock)
+            _addPupilsUseCaseMock, 
+            jsonSerializerMock.Object)
         {
             ControllerContext = new ControllerContext()
             {
