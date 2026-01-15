@@ -50,8 +50,6 @@ public abstract class BaseLearnerNumberController : Controller
     public abstract string SearchSessionKey { get; }
     public abstract string SearchSessionSortField { get; }
     public abstract string SearchSessionSortDirection { get; }
-
-    public abstract int MyPupilListLimit { get; }
     public abstract bool ShowLocalAuthority { get; }
 
     public abstract bool ShowMiddleNames { get; }
