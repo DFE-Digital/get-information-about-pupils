@@ -35,41 +35,17 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 [Route(Routes.Application.Search)]
 public class FELearnerTextSearchController : Controller
 {
+    private const bool ShowMiddleNames = false;
     public const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
+    public const string PageHeading = ApplicationLabels.SearchFEWithoutUlnPageHeading;
 
-    public string PageHeading => ApplicationLabels.SearchFEWithoutUlnPageHeading;
     public string SearchSessionKey => Global.FENonUlnSearchSessionKey;
     public string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
     public string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
     public string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
-    public string DownloadLinksPartial => Global.FENonUlnDownloadLinksView;
-    public string SearchLearnerNumberAction => Routes.FurtherEducation.LearnerNumberSearch;
-    public string RedirectUrlFormAction => Global.FELearnerTextSearchAction;
-    public string LearnerTextDatabaseName => Global.FELearnerTextSearchAction;
-    public string RedirectFrom => Routes.FurtherEducation.LearnerTextSearch;
 
-    public string SurnameFilterUrl => Routes.FurtherEducation.NonULNSurnameFilter;
-    public string DobFilterUrl => Routes.FurtherEducation.NonULNDobFilter;
-    public string ForenameFilterUrl => Routes.FurtherEducation.NonULNForenameFilter;
-    public string MiddlenameFilterUrl => "";
-    public string SexFilterUrl => Routes.FurtherEducation.NonULNSexFilter;
-
-    public string FormAction => Routes.FurtherEducation.LearnerTextSearch;
-    public string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.FurtherEducation.LearnerTextSearch}";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
-    public string SearchView => Global.NonUpnSearchView;
-
-    public string SearchLearnerNumberController => Routes.Application.Search;
-    public string SearchAction => Global.FELearnerTextSearchAction;
-    public string SearchController => Global.FELearnerTextSearchController;
-    public ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
-
-    public string InvalidUPNsConfirmationAction => "";
     public string LearnerNumberLabel => Global.FELearnerNumberLabel;
-    public bool ShowMiddleNames => false;
-
-    public string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
 
     private readonly ISessionProvider _sessionProvider;
@@ -151,6 +127,7 @@ public class FELearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
+
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
     }
@@ -435,7 +412,7 @@ public class FELearnerTextSearchController : Controller
                 model.SortDirection);
         }
 
-        model.ReturnRoute = ReturnRoute;
+        model.ReturnRoute = ReturnRoute.NonUniqueLearnerNumber;
 
         PopulatePageText(model);
         PopulateNavigation(model);
@@ -449,7 +426,7 @@ public class FELearnerTextSearchController : Controller
             _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
         }
 
-        return View(SearchView, model);
+        return View(Global.NonUpnSearchView, model);
     }
 
 
@@ -544,7 +521,7 @@ public class FELearnerTextSearchController : Controller
             model.SearchFilters.CustomFilterText.Surname = SecurityHelper.SanitizeText(surnameFilter);
         }
 
-        if (String.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Surname))
+        if (string.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Surname))
         {
             ModelState.AddModelError("NoSurnameFilter", Messages.Search.Errors.FilterEmpty);
             model.FilterErrors.SurnameError = true;
@@ -563,7 +540,7 @@ public class FELearnerTextSearchController : Controller
             model.SearchFilters.CustomFilterText.Middlename = SecurityHelper.SanitizeText(middlenameFilter);
         }
 
-        if (String.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Middlename))
+        if (string.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Middlename))
         {
             ModelState.AddModelError("NoMiddlenameFilter", Messages.Search.Errors.FilterEmpty);
             model.FilterErrors.MiddlenameError = true;
@@ -582,7 +559,7 @@ public class FELearnerTextSearchController : Controller
             model.SearchFilters.CustomFilterText.Forename = SecurityHelper.SanitizeText(forenameFilter);
         }
 
-        if (String.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Forename))
+        if (string.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Forename))
         {
             ModelState.AddModelError("NoForenameFilter", Messages.Search.Errors.FilterEmpty);
             model.FilterErrors.ForenameError = true;
@@ -662,16 +639,16 @@ public class FELearnerTextSearchController : Controller
         Dictionary<string, bool> flags = ConvertFiltersToFlags(currentFilters);
         _eventLogger.LogSearch(SearchIdentifierType.ULN, isCustomSearch, flags);
 
-        model.LearnerTextDatabaseName = LearnerTextDatabaseName;
+        SetLearnerTextAction(model);
         model.ShowMiddleNames = ShowMiddleNames;
 
-        model = SetSearchFiltersUrls(model);
+        SetSearchFiltersUrls(model);
 
         if (ModelState.IsValid)
         {
             model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
             model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
-            model.DownloadSelectedLink = DownloadSelectedLink;
+            model.DownloadSelectedLink = ApplicationLabels.DownloadSelectedFurtherEducationLink;
 
             if (currentFilters.Count > 0)
             {
@@ -720,7 +697,7 @@ public class FELearnerTextSearchController : Controller
         return flags;
     }
 
-    private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
+    private static List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
        string surnameFilter, string middlenameFilter, string forenameFilter, string searchByRemove)
     {
         List<CurrentFilterDetail> currentFilters =
@@ -744,7 +721,7 @@ public class FELearnerTextSearchController : Controller
         return currentFilters.ToList();
     }
 
-    private List<CurrentFilterDetail> CheckTextFilters(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters,
+    private static List<CurrentFilterDetail> CheckTextFilters(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters,
       string surnameFilter, string middlenameFilter, string forenameFilter)
     {
         if (forenameFilter != null)
@@ -779,7 +756,7 @@ public class FELearnerTextSearchController : Controller
         return currentFilters;
     }
 
-    private void AddNameFilter(ref List<CurrentFilterDetail> currentFilters, FilterType filterType, string filterValue)
+    private static void AddNameFilter(ref List<CurrentFilterDetail> currentFilters, FilterType filterType, string filterValue)
     {
         if (!currentFilters.Any(x => x.FilterType == filterType && x.FilterName.Equals(filterValue)))
         {
@@ -818,20 +795,18 @@ public class FELearnerTextSearchController : Controller
         return currentFilters;
     }
 
-    private LearnerTextSearchViewModel SetSearchFiltersUrls(LearnerTextSearchViewModel model)
+    private static void SetSearchFiltersUrls(LearnerTextSearchViewModel model)
     {
-        model.RedirectUrls.SurnameFilterURL = SurnameFilterUrl;
-        model.RedirectUrls.FormAction = FormAction;
-        model.RedirectUrls.RemoveAction = RemoveActionUrl;
-        model.RedirectUrls.DobFilterUrl = DobFilterUrl;
-        model.RedirectUrls.ForenameFilterUrl = ForenameFilterUrl;
-        model.RedirectUrls.MiddlenameFilterUrl = MiddlenameFilterUrl;
-        model.RedirectUrls.SexFilterUrl = SexFilterUrl;
-
-        return model;
+        model.RedirectUrls.SurnameFilterURL = Routes.FurtherEducation.NonULNSurnameFilter;
+        model.RedirectUrls.FormAction = Routes.FurtherEducation.LearnerTextSearch;
+        model.RedirectUrls.RemoveAction = $"/{Routes.Application.Search}/{Routes.FurtherEducation.LearnerTextSearch}";
+        SetDateOfBirthFilterUrl(model);
+        model.RedirectUrls.ForenameFilterUrl = Routes.FurtherEducation.NonULNForenameFilter;
+        model.RedirectUrls.MiddlenameFilterUrl = string.Empty;
+        model.RedirectUrls.SexFilterUrl = Routes.FurtherEducation.NonULNSexFilter;
     }
 
-    private List<CurrentFilterDetail> CheckSexFilter(
+    private static List<CurrentFilterDetail> CheckSexFilter(
         LearnerTextSearchViewModel model,
         List<CurrentFilterDetail> currentFilters)
     {
@@ -942,33 +917,43 @@ public class FELearnerTextSearchController : Controller
         _sessionProvider.RemoveSessionValue(SortFieldKey);
     }
 
-    protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
+    private LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading; 
         model.ShowLocalAuthority = false;
         return model;
     }
 
-    protected LearnerTextSearchViewModel PopulateNavigation(LearnerTextSearchViewModel model)
+    private LearnerTextSearchViewModel PopulateNavigation(LearnerTextSearchViewModel model)
     {
-        model.LearnerTextSearchController = SearchController;
-        model.LearnerTextSearchAction = SearchAction;
+        model.LearnerTextSearchController = Global.FELearnerTextSearchController;
+        model.LearnerTextSearchAction = Global.FELearnerTextSearchAction;
 
-        model.LearnerNumberController = SearchLearnerNumberController;
-        model.LearnerNumberAction = SearchLearnerNumberAction;
-        model.RedirectUrls.FormAction = RedirectUrlFormAction;
+        model.LearnerNumberController = Routes.Application.Search;
+        model.LearnerNumberAction = Routes.FurtherEducation.LearnerNumberSearch;
+        model.RedirectUrls.FormAction = Global.FELearnerTextSearchAction;
 
-        model.LearnerTextDatabaseName = LearnerTextDatabaseName;
-        model.RedirectUrls.DobFilterUrl = DobFilterUrl;
-        model.RedirectFrom = RedirectFrom;
-        model.DownloadLinksPartial = DownloadLinksPartial;
+        SetLearnerTextAction(model);
+        SetDateOfBirthFilterUrl(model);
+        model.RedirectFrom = Routes.FurtherEducation.LearnerTextSearch;
+        model.DownloadLinksPartial = Global.FENonUlnDownloadLinksView;
 
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
+        model.InvalidUPNsConfirmationAction = string.Empty;
 
         return model;
     }
 
-    protected virtual void SetSelections(string selected)
+    private static void SetDateOfBirthFilterUrl(LearnerTextSearchViewModel model)
+    {
+        model.RedirectUrls.DobFilterUrl = Routes.FurtherEducation.NonULNDobFilter;
+    }
+
+    private static void SetLearnerTextAction(LearnerTextSearchViewModel model)
+    {
+        model.LearnerTextDatabaseName = Global.FELearnerTextSearchAction;
+    }
+
+    private void SetSelections(string selected)
     {
         if (!string.IsNullOrEmpty(selected))
         {
@@ -977,10 +962,7 @@ public class FELearnerTextSearchController : Controller
         }
     }
 
-    protected string GetSelected()
-    {
-        return _selectionManager.GetSelectedFromSession();
-    }
+    private string GetSelected() => _selectionManager.GetSelectedFromSession();
 
     #endregion
 }
