@@ -49,7 +49,7 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterApplicationAggregatorsAndHandlers(this IServiceCollection services)
     {
-        services.AddScoped<IPupilDatasetAggregator, PupilDatasetAggregationOrchestrator>();
+        services.AddScoped<IPupilDatasetAggregatorFactory, PupilDatasetAggregationHandlerFactory>();
         services.AddScoped<IPupilDatasetAggregationHandler, FurtherEducationAggregationHandler>();
         services.AddScoped<IPupilDatasetAggregationHandler, NationalPupilDatabaseAggregationHandler>();
         services.AddScoped<IPupilDatasetAggregationHandler, PupilPremiumAggregationHandler>();

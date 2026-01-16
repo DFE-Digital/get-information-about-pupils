@@ -27,9 +27,10 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
         IEnumerable<PupilPremiumPupil> pupils = await _ppReadRepository.GetPupilsByIdsAsync(pupilIds);
         PupilDatasetCollection collection = new();
 
-        foreach (PupilPremiumPupil pp in pupils)
+        foreach (PupilPremiumPupil pupil in pupils)
         {
-            AddPupilPremiumRecord(collection, pp);
+            if (selectedDatasets.Contains(Dataset.PP) && pupil.HasPupilPremiumData)
+                AddPupilPremiumRecord(collection, pupil);
         }
 
         return collection;

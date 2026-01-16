@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Downloads.Application.Datasets;
+using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Pupils;
@@ -9,23 +10,23 @@ namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 
 public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>
 {
-    private readonly IPupilDatasetAggregator _pupilDatasetAggregator;
+    private readonly IPupilDatasetAggregatorFactory _pupilDatasetAggregatorFactory;
     private readonly IDelimitedFileExporter _fileExporter;
     private readonly IZipArchiveBuilder _zipArchiveBuilder;
 
     public DownloadPupilDataUseCase(
-        IPupilDatasetAggregator downloadDatasetAggregator,
+        IPupilDatasetAggregatorFactory downloadDatasetAggregator,
         IDelimitedFileExporter fileExporter,
         IZipArchiveBuilder zipArchiveBuilder)
     {
-        _pupilDatasetAggregator = downloadDatasetAggregator;
+        _pupilDatasetAggregatorFactory = downloadDatasetAggregator;
         _fileExporter = fileExporter;
         _zipArchiveBuilder = zipArchiveBuilder;
     }
 
     public async Task<DownloadPupilDataResponse> HandleRequestAsync(DownloadPupilDataRequest request)
     {
-        PupilDatasetCollection datasets = await _pupilDatasetAggregator
+        PupilDatasetCollection datasets = await _pupilDatasetAggregatorFactory
             .AggregateAsync(request.DownloadType, request.SelectedPupils, request.SelectedDatasets);
 
         Dictionary<string, Func<Stream, Task>> fileStreams = BuildFiles(datasets, request);
@@ -46,21 +47,18 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
         PupilDatasetCollection datasets,
         DownloadPupilDataRequest request)
     {
-        Dictionary<string, Func<Stream, Task>> writers = [];
-
-        DatasetMetadata metadata = DatasetMetadata.For(request.DownloadType);
+        Dictionary<string, Func<Stream, Task>> writers = new();
         foreach (Dataset dataset in request.SelectedDatasets)
         {
-            if (!metadata.SupportedDatasets.Contains(dataset))
-                continue;
-
-            List<object> records = metadata.GetRecords(dataset, datasets).ToList();
+            List<object> records = datasets.GetRecords(dataset).ToList();
             if (!records.Any())
                 continue;
 
-            string fileName = metadata.GetFileName(dataset, request.FileFormat);
-            writers.Add(fileName, stream =>
-                _fileExporter.ExportAsync(records, request.FileFormat, stream));
+            string baseName = GetBaseFileName(dataset);
+            string ext = request.FileFormat == FileFormat.Csv ? "csv" : "txt";
+            string fileName = $"{baseName}.{ext}";
+
+            writers.Add(fileName, stream => _fileExporter.ExportAsync(records, request.FileFormat, stream));
         }
 
         return writers;
@@ -100,5 +98,24 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
 
     private static string GetContentType(FileFormat format) =>
         format == FileFormat.Csv ? "text/csv" : "text/plain";
+
+    private static string GetBaseFileName(Dataset dataset) =>
+        dataset switch
+        {
+            Dataset.FE_PP => "pp_results",
+            Dataset.SEN => "sen_results",
+            Dataset.PP => "pp_search_results",
+            Dataset.KS1 => "ks1_results",
+            Dataset.KS2 => "ks2_results",
+            Dataset.KS4 => "ks4_results",
+            Dataset.Census_Autumn => "census_autumn_results",
+            Dataset.Census_Spring => "census_spring_results",
+            Dataset.Census_Summer => "census_summer_results",
+            Dataset.EYFSP => "eyfsp_results",
+            Dataset.Phonics => "phonics_results",
+            Dataset.MTC => "mtc_results",
+            _ => "results"
+        };
+
 }
 

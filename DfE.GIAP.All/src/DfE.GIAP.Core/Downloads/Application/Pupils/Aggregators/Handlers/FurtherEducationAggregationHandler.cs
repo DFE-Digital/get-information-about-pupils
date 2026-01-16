@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets;
-using DfE.GIAP.Core.Downloads.Application.Enums;
+﻿using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
@@ -26,32 +25,19 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
             IEnumerable<Dataset> selectedDatasets,
             CancellationToken cancellationToken = default)
     {
-
-        DatasetMetadata metadata = DatasetMetadata.For(DownloadType.FurtherEducation);
-        IEnumerable<Dataset> datasetsToProcess = selectedDatasets.Intersect(metadata.SupportedDatasets);
-
-        IEnumerable<FurtherEducationPupil> pupils = await _feReadRepository.GetPupilsByIdsAsync(pupilIds);
         PupilDatasetCollection collection = new();
+        IEnumerable<FurtherEducationPupil> pupils = await _feReadRepository.GetPupilsByIdsAsync(pupilIds);
 
-        foreach (FurtherEducationPupil fe in pupils)
+        foreach (FurtherEducationPupil pupil in pupils)
         {
-            foreach (Dataset dataset in datasetsToProcess)
-            {
-                switch (dataset)
-                {
-                    case Dataset.FE_PP when fe.HasPupilPremiumData:
-                        AddPupilPremiumRecord(collection, fe);
-                        break;
-                    case Dataset.SEN when fe.HasSpecialEducationalNeedsData:
-                        AddSenRecord(collection, fe);
-                        break;
-                }
-            }
+            if (selectedDatasets.Contains(Dataset.FE_PP) && pupil.HasPupilPremiumData)
+                AddPupilPremiumRecord(collection, pupil);
+            if (selectedDatasets.Contains(Dataset.SEN) && pupil.HasSpecialEducationalNeedsData)
+                AddSenRecord(collection, pupil);
         }
 
         return collection;
     }
-
 
     private static void AddPupilPremiumRecord(PupilDatasetCollection collection, FurtherEducationPupil fe)
     {

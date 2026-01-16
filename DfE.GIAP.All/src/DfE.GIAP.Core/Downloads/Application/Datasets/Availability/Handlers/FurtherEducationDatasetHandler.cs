@@ -17,9 +17,6 @@ public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
 
     public async Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
     {
-        IReadOnlyCollection<Dataset> relevantDatasets = AvailableDatasetsByDownloadType
-            .GetSupportedDatasets(SupportedDownloadType);
-
         HashSet<Dataset> datasets = new();
         IEnumerable<FurtherEducationPupil> pupils = await _furtherEducationReadOnlyRepository.GetPupilsByIdsAsync(pupilIds);
 

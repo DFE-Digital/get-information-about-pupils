@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators;
 
-public interface IPupilDatasetAggregator
+public interface IPupilDatasetAggregatorFactory
 {
     Task<PupilDatasetCollection> AggregateAsync(
         DownloadType downloadType,

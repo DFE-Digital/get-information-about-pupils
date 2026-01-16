@@ -12,4 +12,6 @@ public class PupilPremiumPupil
     public DateTime DOB { get; set; }
     public string? ConcatenatedName { get; set; }
     public List<PupilPremiumEntry> PupilPremium { get; set; } = new();
+
+    public bool HasPupilPremiumData => PupilPremium?.Any() ?? false;
 }

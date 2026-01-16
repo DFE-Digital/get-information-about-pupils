@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
 /// </summary>
 public static class AvailableDatasetsByDownloadType
 {
-    private static readonly Dictionary<DownloadType, HashSet<Dataset>> s_map = new()
+    private static readonly Dictionary<DownloadType, HashSet<Dataset>> _map = new()
     {
         [DownloadType.FurtherEducation] = new()
         {
@@ -37,7 +37,7 @@ public static class AvailableDatasetsByDownloadType
     /// </summary>
     public static IReadOnlyCollection<Dataset> GetSupportedDatasets(DownloadType type)
     {
-        return s_map.TryGetValue(type, out HashSet<Dataset>? datasets)
+        return _map.TryGetValue(type, out HashSet<Dataset>? datasets)
             ? datasets
             : Array.Empty<Dataset>();
     }
