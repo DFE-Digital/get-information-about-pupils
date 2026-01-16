@@ -500,6 +500,7 @@ public abstract class BaseLearnerNumberController : Controller
     {
         model.PageHeading = PageHeading;
         model.LearnerNumberLabel = LearnerNumberLabel;
+        model.ShowLocalAuthority = true;
         return model;
     }
 
