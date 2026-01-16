@@ -217,6 +217,21 @@ public class FELearnerNumberController : Controller
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
 
+                string loggingBatchId = Guid.NewGuid().ToString();
+                foreach (string dataset in model.SelectedDownloadOptions)
+                {
+                    // TODO: Temp quick solution
+                    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                    {
+                        _eventLogger.LogDownload(
+                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            DownloadFileFormat.CSV,
+                            DownloadEventType.FE,
+                            loggingBatchId,
+                            datasetEnum);
+                    }
+                }
+
                 if (response is null)
                 {
                     return RedirectToAction(Routes.Application.Error, Routes.Application.Home);

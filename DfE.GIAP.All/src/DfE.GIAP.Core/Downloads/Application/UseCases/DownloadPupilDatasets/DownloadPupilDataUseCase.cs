@@ -1,6 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Downloads.Application.Datasets;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Pupils;
