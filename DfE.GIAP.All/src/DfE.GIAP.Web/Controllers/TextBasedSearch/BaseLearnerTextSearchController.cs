@@ -1029,6 +1029,8 @@ public abstract class BaseLearnerTextSearchController : Controller
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading;
+        model.ShowMiddleNames = true;
+        model.ShowLocalAuthority = true;
         return model;
     }
 
