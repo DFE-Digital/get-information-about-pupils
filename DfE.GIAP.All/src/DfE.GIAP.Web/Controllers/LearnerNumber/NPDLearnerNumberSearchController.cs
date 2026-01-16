@@ -3,12 +3,12 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -19,6 +19,7 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using DfE.GIAP.Web.Shared.Serializer;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
@@ -40,12 +41,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override string SearchSessionKey => "SearchNPD_SearchText";
     public override string SearchSessionSortField => "SearchNPD_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchNPD_SearchTextSortDirection";
-    public override int MyPupilListLimit => _appSettings.UpnNPDMyPupilListLimit;
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
-    public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
-
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 
@@ -55,18 +51,24 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
+        IJsonSerializer jsonSerializer)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _ctfService = ctfService ??
-            throw new ArgumentNullException(nameof(ctfService));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(ctfService);
+        _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);

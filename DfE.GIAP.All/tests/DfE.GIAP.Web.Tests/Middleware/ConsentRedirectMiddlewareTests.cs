@@ -18,7 +18,7 @@ public class ConsentRedirectMiddlewareTests
         // Arrange
         HttpContext context = CreateContext(true);
         ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
-        sessionProvider.GetSessionValue(SessionKeys.ConsentGivenKey).Returns((string)null);
+        sessionProvider.GetSessionValue(SessionKeys.ConsentGivenKey).Returns((string)null!);
         ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
@@ -86,12 +86,14 @@ public class ConsentRedirectMiddlewareTests
         Assert.DoesNotContain(Routes.Application.Consent, context.Response.Headers["location"].ToString());
     }
 
-    private HttpContext CreateContext(bool isAuthenticated)
+    private static HttpContext CreateContext(bool isAuthenticated)
     {
-        ClaimsPrincipal userPrincipal = new(new ClaimsIdentity(new Claim[0], isAuthenticated ? "fake" : null));
-        HttpContext context = new DefaultHttpContext();
-        context.Session = new TestSession();
-        context.User = userPrincipal;
+        ClaimsPrincipal userPrincipal = new(new ClaimsIdentity(Array.Empty<Claim>(), isAuthenticated ? "fake" : null));
+        DefaultHttpContext context = new()
+        {
+            Session = new SessionFake(),
+            User = userPrincipal
+        };
         return context;
     }
 

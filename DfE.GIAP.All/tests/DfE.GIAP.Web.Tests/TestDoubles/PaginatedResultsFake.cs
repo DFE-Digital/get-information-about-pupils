@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
 using Xunit;
 
@@ -207,26 +206,6 @@ public class PaginatedResultsFake
     public string GetUpnsWithNotFound() => "A203102209083\r\nA203202811068\r\nE938218618008\r\n";
     public string GetUlns() => "6424316654\r\n7621706219\r\n";
     public string GetUlnsWithInvalid() => "6424316654\r\n7621706219\r\n123\r\n";
-
-    public IEnumerable<MyPupilListItem> GetUpnInMPL()
-    {
-        List<MyPupilListItem> formattedMPLItems = [];
-        foreach (string? item in GetUpn().FormatLearnerNumbers())
-        {
-            formattedMPLItems.Add(new MyPupilListItem(item, false));
-        }
-        return formattedMPLItems;
-    }
-
-    public IEnumerable<MyPupilListItem> GetUpnsInMPL()
-    {
-        List<MyPupilListItem> formattedMPLItems = [];
-        foreach (string? item in GetUpns().FormatLearnerNumbers())
-        {
-            formattedMPLItems.Add(new MyPupilListItem(item, false));
-        }
-        return formattedMPLItems;
-    }
 
     public string TotalSearchResultsSessionKey => "totalSearch";
     public string TotalSearchResultsSessionValue => "20";

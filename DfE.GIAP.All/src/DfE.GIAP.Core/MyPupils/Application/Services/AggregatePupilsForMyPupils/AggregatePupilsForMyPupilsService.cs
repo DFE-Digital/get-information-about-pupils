@@ -1,14 +1,14 @@
-﻿using Azure.Search.Documents;
+using Azure.Search.Documents;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
+// TODO this COULD be replaced with a CosmosDb implementation to avoid what it previously used - AzureSearch
 internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
-    private const int DefaultPageSize = 20; // the maximum pupils returned for any query
     private readonly ISearchClientProvider _searchClientProvider;
     private readonly IMapper<AzureIndexEntityWithPupilType, Pupil> _mapper;
 
@@ -21,7 +21,6 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
         _searchClientProvider = searchClientProvider;
         _mapper = mapper;
     }
-
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(UniquePupilNumbers uniquePupilNumbers)
     {
@@ -51,11 +50,18 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             allResults.AddRange(ppResults);
         }
 
-        // Deduplicate
         List<Pupil> distinctResults = allResults
-            .DistinctBy(x => x.SearchIndexDto.UPN)
+            // Deduplicate
+            .GroupBy(p => p.SearchIndexDto.UPN)
+            // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
+            .Select(g =>
+                g.OrderByDescending(x => x.PupilType == PupilType.PupilPremium)
+                 .First())
+            // Explicit display order: NPD first, then PP
+            .OrderBy(p => p.PupilType == PupilType.PupilPremium ? 1 : 0)
             .Select(_mapper.Map)
             .ToList();
+
 
         return distinctResults;
     }
@@ -71,7 +77,6 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
         SearchOptions options = new()
         {
-            Size = DefaultPageSize,
             Filter = filter
         };
 
@@ -83,8 +88,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
         options.Select.Add("DOB");
         options.Select.Add("LocalAuthority");
         options.Select.Add("id");
-
-        // options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
+        //options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
 
         return options;
     }

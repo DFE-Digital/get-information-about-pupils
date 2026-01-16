@@ -56,7 +56,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin.SecurityReports
         public async Task SecurityReportByPupilStudentRecordController_DownloadSecurityReportByUpnUln_Successfully_downloads_CSV_file_when_valid_UPN_entered()
         {
             // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+            var user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
             var azureAppSettings = new AzureAppSettings() { IsSessionIdStoredInCookie = false };
             var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
             fakeAppSettings.SetupGet(x => x.Value).Returns(azureAppSettings);
@@ -94,7 +94,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin.SecurityReports
         public async Task SecurityReportByPupilStudentRecordController_DownloadSecurityReportByUpnUln_Successfully_downloads_CSV_file_when_valid_ULN_entered()
         {
             // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+            var user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
             var azureAppSettings = new AzureAppSettings() { IsSessionIdStoredInCookie = false };
             var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
             fakeAppSettings.SetupGet(x => x.Value).Returns(azureAppSettings);
@@ -132,7 +132,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin.SecurityReports
         public async Task SecurityReportByPupilStudentRecordController_DownloadSecurityReportByUpnUln_Adds_ModelError_If_No_UPN_Or_ULN_Entered()
         {
             // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+            var user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
             var azureAppSettings = new AzureAppSettings() { IsSessionIdStoredInCookie = false };
             var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
             fakeAppSettings.SetupGet(x => x.Value).Returns(azureAppSettings);
@@ -158,7 +158,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Admin.SecurityReports
         public async Task SecurityReportByPupilStudentRecordController_DownloadSecurityReportByUpnUln_Adds_ModelError_If_No_Results_Found()
         {
             // Arrange
-            var user = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+            var user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
             var azureAppSettings = new AzureAppSettings() { IsSessionIdStoredInCookie = false };
             var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
             fakeAppSettings.SetupGet(x => x.Value).Returns(azureAppSettings);

@@ -545,7 +545,7 @@ public class SearchDownloadHelperTests
                 false => isMAT ? DsiKeys.OrganisationCategory.MultiAcademyTrust : DsiKeys.OrganisationCategory.Establishment
             };
 
-            var user = new UserClaimsPrincipalFake().GetSpecificUserClaimsPrincipal(
+            var user = UserClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
                 organisationId,
                 DsiKeys.EstablishmentType.CommunitySchool, // irrelevant for this test..
                 role,

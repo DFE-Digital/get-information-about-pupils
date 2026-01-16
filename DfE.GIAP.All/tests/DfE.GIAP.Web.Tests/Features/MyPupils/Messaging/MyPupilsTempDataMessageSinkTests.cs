@@ -1,12 +1,15 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.TempData;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Moq;
 using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Messaging;
@@ -32,6 +35,7 @@ public sealed class MyPupilsTempDataMessageSinkTests
             },
         ]
     ";
+    private List<MyPupilsMessageDto> CreateExpectedMessageDtos(string json) => JsonConvert.DeserializeObject<List<MyPupilsMessageDto>>(json)!;
 
     [Fact]
     public void Constructor_Throws_When_ToDataTransferObjectMapper_Null()
@@ -41,7 +45,8 @@ public sealed class MyPupilsTempDataMessageSinkTests
             null!,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            new Mock<ITempDataDictionaryProvider>().Object);
+            new Mock<ITempDataDictionaryProvider>().Object,
+            new Mock<IJsonSerializer>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -55,7 +60,8 @@ public sealed class MyPupilsTempDataMessageSinkTests
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
             null!,
             OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            new Mock<ITempDataDictionaryProvider>().Object);
+            new Mock<ITempDataDictionaryProvider>().Object,
+            new Mock<IJsonSerializer>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -69,7 +75,8 @@ public sealed class MyPupilsTempDataMessageSinkTests
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             null!,
-            new Mock<ITempDataDictionaryProvider>().Object);
+            new Mock<ITempDataDictionaryProvider>().Object,
+            new Mock<IJsonSerializer>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -83,7 +90,8 @@ public sealed class MyPupilsTempDataMessageSinkTests
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             OptionsTestDoubles.MockNullOptions<MyPupilsMessagingOptions>(),
-            new Mock<ITempDataDictionaryProvider>().Object);
+            new Mock<ITempDataDictionaryProvider>().Object,
+            new Mock<IJsonSerializer>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -97,6 +105,22 @@ public sealed class MyPupilsTempDataMessageSinkTests
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
+            null!,
+            new Mock<IJsonSerializer>().Object);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constructor_Throws_When_JsonSerializer_Null()
+    {
+        // Arrange
+        Func<MyPupilsTempDataMessageSink> construct = () => new(
+            MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
+            MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
+            OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
+            new Mock<ITempDataDictionaryProvider>().Object,
             null!);
 
         // Act Assert
@@ -117,11 +141,14 @@ public sealed class MyPupilsTempDataMessageSinkTests
         Mock<ITempDataDictionaryProvider> providerMock = new();
         providerMock.Setup(t => t.GetTempData()).Returns(tempDataMock.Object);
 
+        Mock<IJsonSerializer> jsonSerializer = new();
+
         MyPupilsTempDataMessageSink sut = new(
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             options,
-            providerMock.Object);
+            providerMock.Object,
+            jsonSerializer.Object);
 
         // Act
         IReadOnlyList<MyPupilsMessage> response = sut.GetMessages();
@@ -133,6 +160,8 @@ public sealed class MyPupilsTempDataMessageSinkTests
         tempDataMock.Verify(tempData => tempData[options.Value.MessagesKey], Times.Once);
 
         providerMock.Verify(provider => provider.GetTempData(), Times.Once);
+
+        jsonSerializer.Verify(serializer => serializer.Deserialize<List<MyPupilsMessageDto>>(It.IsAny<string>()), Times.Never);
     }
 
     public static TheoryData<object> GetMessagesObjectInTempDataInputs
@@ -170,11 +199,27 @@ public sealed class MyPupilsTempDataMessageSinkTests
             .Setup(t => t.Map(It.IsAny<MyPupilsMessageDto>()))
             .Returns<MyPupilsMessageDto>(dto => new MyPupilsMessage(dto.Id, dto.MessageLevel, dto.Message));
 
+        List<MyPupilsMessageDto>? messageDtoStubs = CreateExpectedMessageDtos(MESSAGES_SERIALISED_STUB);
+
+        Mock<IJsonSerializer> jsonSerializerMock = new();
+        List<MyPupilsMessageDto>? capturedMessageDtos = [];
+
+        jsonSerializerMock
+            .Setup(s => s.TryDeserialize(It.IsAny<string>(), out messageDtoStubs))
+            .Callback((string _, out List<MyPupilsMessageDto>? outArg) =>
+            {
+                // Capture what serializer was called with
+                outArg = messageDtoStubs;
+                capturedMessageDtos = outArg;
+            })
+            .Returns(true);
+
         MyPupilsTempDataMessageSink sut = new(
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>().Object,
             mapperFromDtoMock.Object,
             options,
-            providerMock.Object);
+            providerMock.Object,
+            jsonSerializerMock.Object);
 
         // Act
         IReadOnlyList<MyPupilsMessage> response = sut.GetMessages();
@@ -189,12 +234,21 @@ public sealed class MyPupilsTempDataMessageSinkTests
         Assert.NotNull(response);
         Assert.Equivalent(expectedMessages, response);
 
-        mapperFromDtoMock.Verify(
-            mapper => mapper.Map(It.IsAny<MyPupilsMessageDto>()), Times.Exactly(3));
-
         tempDataMock.Verify(tempData => tempData[options.Value.MessagesKey], Times.Once);
 
         providerMock.Verify(provider => provider.GetTempData(), Times.Once);
+
+        mapperFromDtoMock.Verify(
+            mapper => mapper.Map(It.IsAny<MyPupilsMessageDto>()), Times.Exactly(3));
+
+        jsonSerializerMock.Verify(
+            s => s.TryDeserialize<List<MyPupilsMessageDto>>(
+                It.Is<string>(t => t == MESSAGES_SERIALISED_STUB),
+                out It.Ref<List<MyPupilsMessageDto>?>.IsAny),
+            Times.Once);
+
+        Assert.Same(messageDtoStubs, capturedMessageDtos);
+
     }
 
     [Theory]
@@ -205,9 +259,11 @@ public sealed class MyPupilsTempDataMessageSinkTests
         IOptions<MyPupilsMessagingOptions> options =
             OptionsTestDoubles.Default<MyPupilsMessagingOptions>();
 
-        Mock<ITempDataDictionary> tempDataMock = new();
+        const string serialisedMessagesJsonStub = @"Test json";
         string? capturedJson = null;
 
+        Mock<ITempDataDictionary> tempDataMock = new();
+        
         tempDataMock.Setup(
             (tempData) =>
                 tempData.Peek(options.Value.MessagesKey)).Returns(stored);
@@ -235,11 +291,19 @@ public sealed class MyPupilsTempDataMessageSinkTests
                     MessageLevel = message.Level
                 });
 
+        Mock<IJsonSerializer> jsonSerializer = new();
+        object? capturedSerializeObject = null;
+        jsonSerializer
+            .Setup((serialiser) => serialiser.Serialize(It.IsAny<object>()))
+            .Callback((object arg) => capturedSerializeObject = arg)
+            .Returns(serialisedMessagesJsonStub);
+
         MyPupilsTempDataMessageSink sut = new(
             mapperMock.Object,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             options,
-            providerMock.Object);
+            providerMock.Object,
+            jsonSerializer.Object);
 
         // Act
         MyPupilsMessage messageStub = new(MessageLevel.Debug, "test");
@@ -250,16 +314,22 @@ public sealed class MyPupilsTempDataMessageSinkTests
         // Assert
         Assert.False(string.IsNullOrWhiteSpace(capturedJson));
 
-        List<MyPupilsMessageDto>? messages =
-            JsonConvert.DeserializeObject<List<MyPupilsMessageDto>>(capturedJson!);
-
-        Assert.NotNull(messages);
-        Assert.Single(messages!);
-        Assert.Equal(MessageLevel.Debug, messages![0].MessageLevel);
-        Assert.Equal("test", messages![0].Message);
-
         providerMock.Verify(provider => provider.GetTempData(), Times.Once);
+
         mapperMock.Verify(t => t.Map(It.Is<MyPupilsMessage>(message => message.Equals(messageStub))), Times.Once);
+
+        // nothing to deserialise as empty
+        jsonSerializer.Verify(serializer => serializer.Deserialize<List<MyPupilsMessageDto>>(It.IsAny<string>()), Times.Never);
+
+        MyPupilsMessageDto actualMessage =
+            Assert.IsType<IEnumerable<MyPupilsMessageDto>>(capturedSerializeObject, exactMatch: false)
+                .Single();
+
+        Assert.Equal(messageStub.Id, actualMessage.Id);
+        Assert.Equal(messageStub.Level, actualMessage.MessageLevel);
+        Assert.Equal(messageStub.Message, actualMessage.Message);
+
+        tempDataMock.VerifySet(tempData => tempData[options.Value.MessagesKey] = serialisedMessagesJsonStub);
     }
 
     [Fact]
@@ -271,12 +341,10 @@ public sealed class MyPupilsTempDataMessageSinkTests
 
         Mock<ITempDataDictionary> tempDataMock = new();
         string? capturedJson = null;
-
         tempDataMock.Setup(
             (tempData) =>
                 tempData.Peek(options.Value.MessagesKey))
                     .Returns(MESSAGES_SERIALISED_STUB);
-
         tempDataMock
             .SetupSet(tempData => tempData[options.Value.MessagesKey] = It.IsAny<object>())
             .Callback<string, object>((key, value) =>
@@ -287,10 +355,10 @@ public sealed class MyPupilsTempDataMessageSinkTests
         Mock<ITempDataDictionaryProvider> providerMock = new();
         providerMock.Setup(t => t.GetTempData()).Returns(tempDataMock.Object);
 
-        Mock<IMapper<MyPupilsMessage, MyPupilsMessageDto>> toDtoMapper =
+        Mock<IMapper<MyPupilsMessage, MyPupilsMessageDto>> mapperMock =
             MapperTestDoubles.Default<MyPupilsMessage, MyPupilsMessageDto>();
 
-        toDtoMapper
+        mapperMock
             .Setup(t => t.Map(It.IsAny<MyPupilsMessage>()))
             .Returns<MyPupilsMessage>(
                 (message) => new MyPupilsMessageDto()
@@ -300,20 +368,68 @@ public sealed class MyPupilsTempDataMessageSinkTests
                     MessageLevel = message.Level
                 });
 
+        Mock<IJsonSerializer> jsonSerializerMock = new();
+
+        const string serialisedMessagesJsonStub = @"Test json";
+        
+        object? capturedSerializedMessages = null;
+        jsonSerializerMock
+            .Setup((serialiser) => serialiser.Serialize(It.IsAny<object>()))
+            .Callback((object arg) => capturedSerializedMessages = arg)
+            .Returns(serialisedMessagesJsonStub);
+
+
+        List<MyPupilsMessageDto>? existingMessages = CreateExpectedMessageDtos(MESSAGES_SERIALISED_STUB);
+        List<MyPupilsMessageDto>? capturedExistingMessages = null;
+        jsonSerializerMock
+            .Setup(s => s.TryDeserialize(It.IsAny<string>(), out capturedExistingMessages))
+            .Callback((string _, out List<MyPupilsMessageDto>? outArg) =>
+            {
+                // Capture what serializer was called with
+                outArg = existingMessages;
+                capturedExistingMessages = outArg;
+            })
+            .Returns(true);
+
         MyPupilsTempDataMessageSink sut = new(
-            toDtoMapper.Object,
+            mapperMock.Object,
             MapperTestDoubles.Default<MyPupilsMessageDto, MyPupilsMessage>().Object,
             options,
-            providerMock.Object);
+            providerMock.Object,
+            jsonSerializerMock.Object);
 
         // Act
         MyPupilsMessage addMessageStub = MyPupilsMessage.Create("id", MessageLevel.Debug, "test");
         sut.AddMessage(addMessageStub);
 
         // Assert
+        providerMock.Verify(provider => provider.GetTempData(), Times.Once);
 
-        List<MyPupilsMessageDto> expectedMessages = [
-            ..JsonConvert.DeserializeObject<List<MyPupilsMessageDto>>(MESSAGES_SERIALISED_STUB),
+        tempDataMock.Verify(tempData => tempData.Peek(options.Value.MessagesKey), Times.Once);
+
+        mapperMock.Verify(
+            (mapper) => mapper.Map(
+                It.Is<MyPupilsMessage>(
+                    (message) => message.Equals(addMessageStub))), Times.Once);
+
+        jsonSerializerMock.Verify(
+            s => s.TryDeserialize(
+                It.Is<string>(t => t == MESSAGES_SERIALISED_STUB),
+                out It.Ref<List<MyPupilsMessageDto>?>.IsAny),
+            Times.Once);
+
+        jsonSerializerMock.Verify((serializer) => serializer.Serialize(It.IsAny<object>()), Times.Once);
+
+        jsonSerializerMock.Verify(
+            s => s.TryDeserialize(
+                It.Is<string>(t => t == MESSAGES_SERIALISED_STUB),
+                out It.Ref<List<MyPupilsMessageDto>?>.IsAny),
+            Times.Once);
+
+        Assert.Equivalent(existingMessages, Assert.IsType<IEnumerable<MyPupilsMessageDto>>(capturedExistingMessages, exactMatch: false).ToList());
+
+        List<MyPupilsMessageDto> expectedToSerialiseMessages = [
+           ..existingMessages,
             new()
             {
                 Id = addMessageStub.Id,
@@ -321,17 +437,9 @@ public sealed class MyPupilsTempDataMessageSinkTests
                 Message = addMessageStub.Message
             },
         ];
+        Assert.Equivalent(expectedToSerialiseMessages, capturedSerializedMessages);
 
-        Assert.False(string.IsNullOrWhiteSpace(capturedJson));
-
-        List<MyPupilsMessageDto>? messages =
-            JsonConvert.DeserializeObject<List<MyPupilsMessageDto>>(capturedJson!);
-
-        Assert.NotNull(messages);
-        Assert.Equivalent(expectedMessages, messages);
-
-        providerMock.Verify(provider => provider.GetTempData(), Times.Once);
-        toDtoMapper.Verify(t => t.Map(It.Is<MyPupilsMessage>(message => message.Equals(addMessageStub))), Times.Once);
+        tempDataMock.VerifySet(tempData => tempData[options.Value.MessagesKey] = serialisedMessagesJsonStub);
     }
 
     public static TheoryData<object> AddMessageObjectsInTempDataInputs

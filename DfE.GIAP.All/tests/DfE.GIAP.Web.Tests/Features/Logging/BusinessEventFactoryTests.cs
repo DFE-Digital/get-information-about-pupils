@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Features.Logging;
+using DfE.GIAP.Web.Tests.Shared.Http;
 using DfE.GIAP.Web.Tests.TestDoubles;
-using DfE.GIAP.Web.Tests.TestDoubles.Http;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
@@ -44,7 +44,7 @@ public class BusinessEventFactoryTests
     public void CreateSearch_Returns_Model_With_PassedInData()
     {
         // Arrange
-        HttpContext httpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal());
+        HttpContext httpContext = HttpContextTestDoubles.WithUser(UserClaimsPrincipalFake.GetLAUserClaimsPrincipal());
         _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
 
         Dictionary<string, bool> filterFlags = new() { { "flag1", true } };
@@ -61,7 +61,7 @@ public class BusinessEventFactoryTests
     public void CreateDownload_Returns_Model_With_PassedInData()
     {
         // Arrange
-        HttpContext httpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal());
+        HttpContext httpContext = HttpContextTestDoubles.WithUser(UserClaimsPrincipalFake.GetLAUserClaimsPrincipal());
         _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
 
         Dataset dataset = Dataset.KS1;

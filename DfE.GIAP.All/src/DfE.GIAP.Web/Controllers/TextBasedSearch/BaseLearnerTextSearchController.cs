@@ -1,13 +1,17 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Text.Json;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Models.MPL;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -18,9 +22,6 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Text.Json;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 
@@ -29,12 +30,11 @@ public abstract class BaseLearnerTextSearchController : Controller
 {
     public const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
-    private readonly IMyPupilListService _mplService;
+    private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     protected readonly AzureAppSettings _appSettings;
 
     public abstract string PageHeading { get; }
@@ -60,24 +60,21 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string SexFilterUrl { get; }
     public abstract string DownloadLinksPartial { get; }
     public abstract AzureSearchIndexType IndexType { get; }
-    public abstract int MyPupilListLimit { get; }
     public abstract ReturnRoute ReturnRoute { get; }
     public abstract string LearnerTextSearchController { get; }
     public abstract string LearnerTextSearchAction { get; }
     public abstract string LearnerNumberAction { get; }
-    public abstract bool ShowLocalAuthority { get; }
     public abstract string InvalidUPNsConfirmationAction { get; }
     public abstract string LearnerNumberLabel { get; }
-    public abstract bool ShowMiddleNames { get; }
     public abstract string DownloadSelectedLink { get; }
 
 
     public BaseLearnerTextSearchController(ILogger<BaseLearnerTextSearchController> logger,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ITextSearchSelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        ISessionProvider sessionProvider)
+        ISessionProvider sessionProvider,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -90,13 +87,13 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
-
-        ArgumentNullException.ThrowIfNull(mplService);
-        _mplService = mplService;
-
+        
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
+        _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
     }
 
 
@@ -109,11 +106,9 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
 
-        model.ShowMiddleNames = ShowMiddleNames;
-
         if (returnToSearch ?? false)
         {
-            if(_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
             {
                 model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
             }
@@ -201,15 +196,13 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
 
-        model.ShowMiddleNames = ShowMiddleNames;
-
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
-        
+
         if (model.SearchFilters != null)
         {
             _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
         }
-        
+
         return View(SearchView, model);
     }
 
@@ -224,7 +217,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         {
             model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
         }
-        
+
         return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
     }
 
@@ -464,7 +457,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         return await InvalidUPNs(model);
     }
 
-
     [NonAction]
     public async Task<IActionResult> AddToMyPupilList(LearnerTextSearchViewModel model)
     {
@@ -474,9 +466,9 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         SetSelections(model.SelectedPupil);
 
-        string selected = GetSelected();
+        string selectedUpn = GetSelected();
 
-        if (string.IsNullOrEmpty(selected))
+        if (string.IsNullOrEmpty(selectedUpn))
         {
             model.NoPupil = true;
             model.NoPupilSelected = true;
@@ -484,37 +476,36 @@ public abstract class BaseLearnerTextSearchController : Controller
             return await ReturnToSearch(model);
         }
 
-        var learnerList = await _mplService.GetMyPupilListLearnerNumbers(User.GetUserId());
+        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
+        {
+            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
+        }
 
-        if (learnerList.Count() + 1 > MyPupilListLimit)
+        if (!ValidationHelper.IsValidUpn(selectedUpn)) // TODO can we surface invalid UPNs?
+        {
+            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
+            {
+                LearnerNumber = selectedUpn
+            });
+        }
+
+        try
+        {
+            string userId = User.GetUserId();
+            AddPupilsToMyPupilsRequest addRequest = new(
+                userId: userId,
+                pupils: [selectedUpn]);
+
+            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
+        }
+
+        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
         {
             model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-        }
-        else
-        {
-            if (PupilHelper.CheckIfStarredPupil(selected))
-            {
-                selected = RbacHelper.DecodeUpn(selected);
-            }
-
-            if (!ValidationHelper.IsValidUpn(selected))
-            {
-                var invalidViewModel = new InvalidLearnerNumberSearchViewModel()
-                {
-                    LearnerNumber = selected
-                };
-
-                return await InvalidUPNs(invalidViewModel);
-            }
-
-            var learnerListUpdate = learnerList.ToList();
-            learnerListUpdate.Add(new MyPupilListItem(selected, true));
-            learnerList = learnerListUpdate;
-
-            await _mplService.UpdateMyPupilList(learnerList, User.GetUserId(), AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()));
-            model.ItemAddedToMyPupilList = true;
+            return await ReturnToSearch(model);
         }
 
+        model.ItemAddedToMyPupilList = true;
         return await ReturnToSearch(model);
     }
 
@@ -548,7 +539,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
-        model.ShowMiddleNames = this.ShowMiddleNames;
 
         model = SetSearchFiltersUrls(model);
 
@@ -1039,7 +1029,8 @@ public abstract class BaseLearnerTextSearchController : Controller
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading;
-        model.ShowLocalAuthority = ShowLocalAuthority;
+        model.ShowMiddleNames = true;
+        model.ShowLocalAuthority = true;
         return model;
     }
 

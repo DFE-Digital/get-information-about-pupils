@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Models.Common;
@@ -14,7 +15,6 @@ using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
@@ -39,6 +39,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
 public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
+
     private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
     private readonly ILogger<FELearnerTextSearchController> _mockLogger = Substitute.For<ILogger<FELearnerTextSearchController>>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
@@ -46,8 +47,12 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
+
+    private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
+    private readonly Mock<ISessionProvider> _mockSessionProvider = new();
+    private AzureAppSettings _mockAppSettings = new();
     private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
         Substitute.For<IUseCase<SearchRequest, SearchResponse>>();
     private readonly IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
@@ -58,13 +63,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly IMapper<(string, string), SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<(string, string), SortOrder>>();
 
-    private readonly IMyPupilListService _mockMplService = Substitute.For<IMyPupilListService>();
-    private readonly TestSession _mockSession = new TestSession();
-    private AzureAppSettings _mockAppSettings = new();
-
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
-
         _paginatedResultsFake = paginatedResultsFake;
         _searchFiltersFake = searchFiltersFake;
 
@@ -128,7 +128,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.FurtherEducationNonUlnSearch(false);
 
@@ -229,7 +229,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
             .Returns(searchViewModel.SearchFilters);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.FurtherEducationNonUlnSearch(true);
 
@@ -308,7 +308,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -334,7 +334,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -358,7 +358,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -382,7 +382,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -406,7 +406,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -430,7 +430,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -454,7 +454,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -478,7 +478,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -518,7 +518,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         FELearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.SurnameFilter(searchViewModel, surnameFilter);
 
@@ -603,7 +603,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         FELearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.SexFilter(searchViewModel);
 
@@ -645,7 +645,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         FELearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.SexFilter(searchViewModel);
 
@@ -685,7 +685,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         FELearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.SexFilter(searchViewModel);
 
@@ -778,7 +778,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _sessionProvider.GetSessionValueOrDefault<SearchFilters>(Arg.Is(sut.SearchFiltersSessionKey))
             .Returns(searchViewModel.SearchFilters);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result =
             await sut.FurtherEducationNonUlnSearch(
@@ -843,7 +843,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _sessionProvider.ContainsSessionKey(Arg.Is(sut.SortFieldKey)).Returns(true);
         _sessionProvider.GetSessionValue(Arg.Is(sut.SortFieldKey)).Returns(sortField);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result =
             await sut.FurtherEducationNonUlnSearch(
@@ -911,7 +911,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _sessionProvider.ContainsSessionKey(Arg.Is(sut.SortFieldKey)).Returns(true);
         _sessionProvider.GetSessionValue(Arg.Is(sut.SortFieldKey)).Returns(sortField);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.FurtherEducationNonUlnSearch(true);
 
@@ -971,7 +971,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         sut.ControllerContext.HttpContext.Request.Query = Substitute.For<IQueryCollection>();
         sut.ControllerContext.HttpContext.Request.Query.ContainsKey("reset").Returns(true);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.FurtherEducationNonUlnSearch(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
 
@@ -1013,7 +1013,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockSession.SetString(sut.SortDirectionKey, "asc");
         _mockSession.SetString(sut.SortFieldKey, "Forename");
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result =
             await sut.FurtherEducationNonUlnSearch(
@@ -1084,7 +1084,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         var sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.DobFilter(searchViewModel);
 
@@ -1158,7 +1158,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // act
         FELearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.ToDownloadSelectedFEDataULN(searchViewModel);
 
@@ -1374,7 +1374,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _sessionProvider.SetSessionValue(sut.SortDirectionKey, "asc");
         _sessionProvider.SetSessionValue(sut.SortFieldKey, "Forename");
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        SetupPaginatedSearch(AzureSearchIndexType.FurtherEducation, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         var result = await sut.SurnameFilter(searchViewModel, surnameFilter);
 
@@ -1431,19 +1431,19 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
     private void AssertAbstractValues(FELearnerTextSearchController controller, LearnerTextSearchViewModel model)
     {
-        Assert.Equal(controller.PageHeading, model.PageHeading);
-        Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
-        Assert.Equal(controller.InvalidUPNsConfirmationAction, model.InvalidUPNsConfirmationAction);
-        Assert.Equal(controller.SearchController, model.LearnerTextSearchController);
-        Assert.Equal(controller.SearchAction, model.LearnerTextSearchAction);
-        Assert.Equal(controller.SearchLearnerNumberController, model.LearnerNumberController);
-        Assert.Equal(controller.SearchLearnerNumberAction, model.LearnerNumberAction);
+        Assert.Equal(ApplicationLabels.SearchFEWithoutUlnPageHeading, model.PageHeading);
+        Assert.Equal(Global.FENonUlnDownloadLinksView, model.DownloadLinksPartial);
+        Assert.Equal(string.Empty, model.InvalidUPNsConfirmationAction);
+        Assert.Equal(Global.FELearnerTextSearchController, model.LearnerTextSearchController);
+        Assert.Equal(Global.FELearnerTextSearchAction, model.LearnerTextSearchAction);
+        Assert.Equal(Routes.Application.Search, model.LearnerNumberController);
+        Assert.Equal(Routes.FurtherEducation.LearnerNumberSearch, model.LearnerNumberAction);
     }
 
 
     private FELearnerTextSearchController GetController()
     {
-        var user = new UserClaimsPrincipalFake().GetFEApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {

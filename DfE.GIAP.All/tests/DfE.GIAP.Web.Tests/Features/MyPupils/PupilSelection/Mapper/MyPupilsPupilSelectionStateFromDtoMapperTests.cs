@@ -1,9 +1,9 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
+﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.Mapper;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.SelectionState.Mapper;
 public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
 {
     [Fact]
@@ -112,3 +112,4 @@ public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
         Assert.True(response.IsAnyPupilSelected);
     }
 }
+

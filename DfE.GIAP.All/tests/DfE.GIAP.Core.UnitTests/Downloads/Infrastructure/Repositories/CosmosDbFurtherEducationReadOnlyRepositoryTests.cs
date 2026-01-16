@@ -5,7 +5,8 @@ using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Infrastructure.Repositories;
 

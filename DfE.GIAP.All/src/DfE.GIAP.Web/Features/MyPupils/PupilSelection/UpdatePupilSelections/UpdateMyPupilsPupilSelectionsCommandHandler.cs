@@ -1,7 +1,9 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandler;
-using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
-using DfE.GIAP.Web.Session.Abstraction.Command;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 
@@ -9,11 +11,11 @@ public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilS
 {
     private readonly IGetMyPupilsPupilSelectionProvider _getPupilSelectionsProvider;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _pupilSelectionStateCommandHandler;
-    private readonly IEvaluationHandler<UpdateMyPupilsSelectionStateRequest> _evaluator;
+    private readonly IEvaluator<UpdateMyPupilsSelectionStateRequest> _evaluator;
     public UpdateMyPupilsPupilSelectionsCommandHandler(
         IGetMyPupilsPupilSelectionProvider getPupilSelectionsProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> pupilSelectionStateCommandHandler,
-        IEvaluationHandler<UpdateMyPupilsSelectionStateRequest> evaluator)
+        IEvaluator<UpdateMyPupilsSelectionStateRequest> evaluator)
     {
         ArgumentNullException.ThrowIfNull(getPupilSelectionsProvider);
         _getPupilSelectionsProvider = getPupilSelectionsProvider;
@@ -34,3 +36,4 @@ public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilS
         _pupilSelectionStateCommandHandler.StoreInSession(updateRequest.State);
     }
 }
+

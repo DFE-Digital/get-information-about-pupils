@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 
 namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 [CollectionDefinition(Name)]

@@ -5,6 +5,11 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Service.Download;
+using DfE.GIAP.Service.Search;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
@@ -32,6 +37,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
+using System.Security.Claims;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -46,7 +52,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     private AzureAppSettings _mockAppSettings = new();
     private readonly IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
         Substitute.For<IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
-    private readonly TestSession _mockSession = new();
+    private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
@@ -108,7 +114,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetAdminUserClaimsPrincipal();
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
         var result = await sut.PupilUlnSearch(null);
 
         // assert
@@ -137,7 +143,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetSpecificUserClaimsPrincipal(
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
              DsiKeys.OrganisationCategory.Establishment,
              DsiKeys.EstablishmentType.CommunitySchool, //not relevant for this test
              AuthRoles.Approver,
@@ -171,7 +177,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // act
         var sut = GetController();
-        sut.ControllerContext.HttpContext.User = new UserClaimsPrincipalFake().GetUserClaimsPrincipal();
+        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         var result = await sut.PupilUlnSearch(null);
 
         // assert
@@ -1864,14 +1870,14 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(controller.PageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
         Assert.Equal(controller.SearchAction, model.SearchAction);
-        Assert.Equal(controller.FullTextLearnerSearchController, model.FullTextLearnerSearchController);
-        Assert.Equal(controller.FullTextLearnerSearchAction, model.FullTextLearnerSearchAction);
-        Assert.Equal(controller.ShowLocalAuthority, model.ShowLocalAuthority);
+        Assert.Equal(Global.FELearnerTextSearchController, model.FullTextLearnerSearchController);
+        Assert.Equal(Global.FELearnerTextSearchAction, model.FullTextLearnerSearchAction);
+        Assert.False(model.ShowLocalAuthority);
     }
 
     private FELearnerNumberController GetController()
     {
-        var user = new UserClaimsPrincipalFake().GetFEApproverClaimsPrincipal();
+        ClaimsPrincipal user = UserClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
 
         _mockAppSettings = new AzureAppSettings()
         {

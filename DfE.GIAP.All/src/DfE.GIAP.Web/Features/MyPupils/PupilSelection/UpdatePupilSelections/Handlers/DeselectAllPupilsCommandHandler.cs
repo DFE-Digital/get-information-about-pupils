@@ -1,9 +1,9 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.CommandHandler;
-using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
-internal sealed class DeselectAllPupilsCommandHandler : ICommandHandler<UpdateMyPupilsSelectionStateRequest>
+internal sealed class DeselectAllPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {
     public bool CanHandle(UpdateMyPupilsSelectionStateRequest input)
         => input.UpdateRequest.SelectAllState == MyPupilsFormSelectionModeRequestDto.DeselectAll;

@@ -14,7 +14,7 @@ public class MyPupilModelsToMyPupilsPresentationPupilModelMapper : IMapper<MyPup
     }
     public MyPupilsPresentationPupilModels Map(MyPupilsModels input)
     {
-        if (input is null)
+        if(input is null)
         {
             return MyPupilsPresentationPupilModels.Create([]);
         }
@@ -22,5 +22,5 @@ public class MyPupilModelsToMyPupilsPresentationPupilModelMapper : IMapper<MyPup
         return
             MyPupilsPresentationPupilModels.Create(
                 pupils: input.Values.Select(_mapper.Map));
-    }
+    } 
 }

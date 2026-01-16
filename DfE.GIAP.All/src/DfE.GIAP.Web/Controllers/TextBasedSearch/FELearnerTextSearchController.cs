@@ -951,7 +951,7 @@ public class FELearnerTextSearchController : Controller
 
     private LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
-        model.PageHeading = PageHeading;
+        model.PageHeading = PageHeading; 
         model.ShowLocalAuthority = false;
         return model;
     }

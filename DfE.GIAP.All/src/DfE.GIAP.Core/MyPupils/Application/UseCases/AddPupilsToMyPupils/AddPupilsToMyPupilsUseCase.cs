@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application.Models;

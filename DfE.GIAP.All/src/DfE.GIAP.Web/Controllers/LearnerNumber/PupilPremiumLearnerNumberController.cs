@@ -2,15 +2,17 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.MPL;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -34,25 +36,23 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override string SearchSessionKey => "SearchPPUPN_SearchText";
     public override string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
-    public override int MyPupilListLimit => _appSettings.UpnPPMyPupilListLimit;
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
-    public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
 
     public PupilPremiumLearnerNumberController(ILogger<PupilPremiumLearnerNumberController> logger,
         IDownloadService downloadService,
         IPaginatedSearchService paginatedSearch,
-        IMyPupilListService mplService,
         ISelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings)
-        : base(logger, paginatedSearch, mplService, selectionManager, azureAppSettings)
+        IOptions<AzureAppSettings> azureAppSettings,
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
+        IJsonSerializer jsonSerializer)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
-        _logger = logger ??
-            throw new ArgumentNullException(nameof(logger));
-        _downloadService = downloadService ??
-            throw new ArgumentNullException(nameof(downloadService));
+        ArgumentNullException.ThrowIfNull(logger);
+        _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(downloadService);
+        _downloadService = downloadService;
         _appSettings = azureAppSettings.Value;
     }
 

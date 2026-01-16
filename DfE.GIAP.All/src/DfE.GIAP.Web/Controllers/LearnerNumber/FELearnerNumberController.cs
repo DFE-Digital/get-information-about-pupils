@@ -109,7 +109,7 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
-
+        
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
 
