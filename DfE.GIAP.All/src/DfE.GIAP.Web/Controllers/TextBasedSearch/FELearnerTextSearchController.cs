@@ -36,17 +36,15 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
 public class FELearnerTextSearchController : Controller
 {
     private const bool ShowMiddleNames = false;
-    public const int PAGESIZE = 20;
+    private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-    public const string PageHeading = ApplicationLabels.SearchFEWithoutUlnPageHeading;
+    private const string PageHeading = ApplicationLabels.SearchFEWithoutUlnPageHeading;
+    private const string LearnerNumberLabel = Global.FELearnerNumberLabel;
 
     public string SearchSessionKey => Global.FENonUlnSearchSessionKey;
     public string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
     public string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
     public string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
-
-    public string LearnerNumberLabel => Global.FELearnerNumberLabel;
-
 
     private readonly ISessionProvider _sessionProvider;
     private readonly IDownloadService _downloadService;
@@ -263,7 +261,7 @@ public class FELearnerTextSearchController : Controller
     {
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
-            var selectedPupils = model.LearnerNumber.Split(',');
+            string[] selectedPupils = model.LearnerNumber.Split(',');
 
             if (model.SelectedDownloadOptions == null)
             {
@@ -271,7 +269,7 @@ public class FELearnerTextSearchController : Controller
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                var downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
+                ReturnFile downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
 
                 if (downloadFile == null)
                 {
@@ -310,7 +308,7 @@ public class FELearnerTextSearchController : Controller
     {
         SetSelections(model.SelectedPupil);
 
-        var selectedPupil = GetSelected();
+        string selectedPupil = GetSelected();
 
         if (string.IsNullOrEmpty(selectedPupil))
         {
@@ -433,9 +431,9 @@ public class FELearnerTextSearchController : Controller
     [NonAction]
     public async Task<IActionResult> DobSearchFilter(LearnerTextSearchViewModel model)
     {
-        var day = model.SearchFilters.CustomFilterText.DobDay;
-        var month = model.SearchFilters.CustomFilterText.DobMonth;
-        var year = model.SearchFilters.CustomFilterText.DobYear;
+        int day = model.SearchFilters.CustomFilterText.DobDay;
+        int month = model.SearchFilters.CustomFilterText.DobMonth;
+        int year = model.SearchFilters.CustomFilterText.DobYear;
 
         ModelState.Clear();
 
@@ -485,7 +483,7 @@ public class FELearnerTextSearchController : Controller
 
         if (!model.FilterErrors.DobError && (year < 0 || year > 0))
         {
-            var yearLimit = DateTime.Now.Year - 3;
+            int yearLimit = DateTime.Now.Year - 3;
             if (year > yearLimit)
             {
                 ModelState.AddModelError("YearLimitHigh", Messages.Search.Errors.DobInvalid);
@@ -775,17 +773,17 @@ public class FELearnerTextSearchController : Controller
     {
         if (!string.IsNullOrEmpty(searchByRemove))
         {
-            var item = currentFilters.Find(x => x.FilterName == searchByRemove);
+            CurrentFilterDetail item = currentFilters.Find(x => x.FilterName == searchByRemove);
             if (item != null)
             {
                 currentFilters.Remove(item);
             }
-            
-            var sexFiltersActive = currentFilters.Find(x => x.FilterType == FilterType.Sex);
+
+            CurrentFilterDetail sexFiltersActive = currentFilters.Find(x => x.FilterType == FilterType.Sex);
             if (sexFiltersActive != null && model.SelectedSexValues == null && currentFilters.Count() >= 1)
             {
                 List<string> currentSelectedSexList = new List<string>();
-                foreach (var filter in currentFilters)
+                foreach (CurrentFilterDetail filter in currentFilters)
                 {
                     currentSelectedSexList.Add(filter.FilterName.Substring(0, 1));
                 }
