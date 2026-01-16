@@ -28,21 +28,21 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
         PupilDatasetCollection datasets = await _pupilDatasetAggregator
             .AggregateAsync(request.DownloadType, request.SelectedPupils, request.SelectedDatasets);
 
-        Dictionary<string, Func<Stream, Task>> fileWriters = BuildFileWriters(datasets, request);
-        if (!fileWriters.Any())
-            return default!;
+        Dictionary<string, Func<Stream, Task>> fileStreams = BuildFiles(datasets, request);
+        if (!fileStreams.Any())
+            return new DownloadPupilDataResponse();
 
-        if (fileWriters.Count == 1)
-            return await BuildSingleFileResponse(fileWriters, request);
+        if (fileStreams.Count == 1)
+            return await BuildSingleFileResponse(fileStreams, request);
 
-        return await BuildZipResponse(fileWriters, request);
+        return await BuildZipResponse(fileStreams, request);
     }
 
 
     // -------------------------
     // Helpers
     // -------------------------
-    private Dictionary<string, Func<Stream, Task>> BuildFileWriters(
+    private Dictionary<string, Func<Stream, Task>> BuildFiles(
         PupilDatasetCollection datasets,
         DownloadPupilDataRequest request)
     {

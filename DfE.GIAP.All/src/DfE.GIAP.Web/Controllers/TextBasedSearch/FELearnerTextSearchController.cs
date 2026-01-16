@@ -123,8 +123,9 @@ public class FELearnerTextSearchController : Controller
         IDownloadService downloadService,
         IEventLogger eventLogger,
         IOptions<AzureAppSettings> azureAppSettings,
-        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
+
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;

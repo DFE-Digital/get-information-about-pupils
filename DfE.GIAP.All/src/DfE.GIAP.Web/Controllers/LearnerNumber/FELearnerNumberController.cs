@@ -81,7 +81,6 @@ public class FELearnerNumberController : Controller
         IMapper<
             (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
         ILogger<FELearnerNumberController> logger,
-        IDownloadService downloadService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
