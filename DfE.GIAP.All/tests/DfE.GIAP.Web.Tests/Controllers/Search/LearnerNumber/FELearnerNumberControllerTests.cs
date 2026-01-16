@@ -1870,9 +1870,9 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(controller.PageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
         Assert.Equal(controller.SearchAction, model.SearchAction);
-        Assert.Equal(controller.FullTextLearnerSearchController, model.FullTextLearnerSearchController);
-        Assert.Equal(controller.FullTextLearnerSearchAction, model.FullTextLearnerSearchAction);
-        Assert.Equal(controller.ShowLocalAuthority, model.ShowLocalAuthority);
+        Assert.Equal(Global.FELearnerTextSearchController, model.FullTextLearnerSearchController);
+        Assert.Equal(Global.FELearnerTextSearchAction, model.FullTextLearnerSearchAction);
+        Assert.False(model.ShowLocalAuthority);
     }
 
     private FELearnerNumberController GetController()

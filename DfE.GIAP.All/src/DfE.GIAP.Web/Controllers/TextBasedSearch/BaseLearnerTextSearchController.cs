@@ -30,7 +30,6 @@ public abstract class BaseLearnerTextSearchController : Controller
 {
     public const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
@@ -65,10 +64,8 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string LearnerTextSearchController { get; }
     public abstract string LearnerTextSearchAction { get; }
     public abstract string LearnerNumberAction { get; }
-    public abstract bool ShowLocalAuthority { get; }
     public abstract string InvalidUPNsConfirmationAction { get; }
     public abstract string LearnerNumberLabel { get; }
-    public abstract bool ShowMiddleNames { get; }
     public abstract string DownloadSelectedLink { get; }
 
 
@@ -108,8 +105,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
-
-        model.ShowMiddleNames = ShowMiddleNames;
 
         if (returnToSearch ?? false)
         {
@@ -200,8 +195,6 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         PopulatePageText(model);
         PopulateNavigation(model);
-
-        model.ShowMiddleNames = ShowMiddleNames;
 
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
 
@@ -546,7 +539,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
-        model.ShowMiddleNames = this.ShowMiddleNames;
 
         model = SetSearchFiltersUrls(model);
 
@@ -1037,7 +1029,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading;
-        model.ShowLocalAuthority = ShowLocalAuthority;
         return model;
     }
 

@@ -2,8 +2,6 @@
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
@@ -67,7 +65,6 @@ public class FELearnerTextSearchController : Controller
     public string SearchController => Global.FELearnerTextSearchController;
     public ReturnRoute ReturnRoute => ReturnRoute.NonUniqueLearnerNumber;
 
-    public bool ShowLocalAuthority => false;
     public string InvalidUPNsConfirmationAction => "";
     public string LearnerNumberLabel => Global.FELearnerNumberLabel;
     public bool ShowMiddleNames => false;
@@ -948,7 +945,7 @@ public class FELearnerTextSearchController : Controller
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading; 
-        model.ShowLocalAuthority = ShowLocalAuthority;
+        model.ShowLocalAuthority = false;
         return model;
     }
 

@@ -8,7 +8,6 @@ namespace DfE.GIAP.Web.ViewModels.Search;
 [ExcludeFromCodeCoverage]
 public class LearnerNumberSearchViewModel
 {
-    public string PageTitle { get; set; }
     public string PageHeading { get; set; }
 
     public string SearchAction { get; set; }
@@ -16,10 +15,9 @@ public class LearnerNumberSearchViewModel
     public string FullTextLearnerSearchController { get; set; }
     public string FullTextLearnerSearchAction { get; set; }
 
-
-    public bool ShowMiddleNames { get; set; }
+    public bool ShowMiddleNames { get; set; } = true;
+    public bool ShowLocalAuthority { get; set; } = true;
     public string DownloadLinksPartial { get; set; }
-    public bool ShowLocalAuthority { get; set; }
 
     public string LearnerNumberLabel { get; set; }
     public static int MaximumLearnerNumbersPerSearch { get; set; }
@@ -39,7 +37,6 @@ public class LearnerNumberSearchViewModel
     public bool ToggleSelectAll { get; set; } = true;
     public bool ShowErrors { get; set; }
     public bool NoPupil { get; set; }
-    public string SelectedInvalidUPNOption { get; set; }
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
     public string SortField { get; set; }

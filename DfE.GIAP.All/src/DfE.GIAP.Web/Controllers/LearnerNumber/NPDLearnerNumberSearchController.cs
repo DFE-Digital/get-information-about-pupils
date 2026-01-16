@@ -41,11 +41,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override string SearchSessionKey => "SearchNPD_SearchText";
     public override string SearchSessionSortField => "SearchNPD_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchNPD_SearchTextSortDirection";
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
-    public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
-
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 

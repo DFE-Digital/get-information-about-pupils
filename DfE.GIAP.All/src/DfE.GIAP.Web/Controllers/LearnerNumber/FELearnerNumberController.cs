@@ -53,25 +53,17 @@ public class FELearnerNumberController : Controller
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 
     private readonly IEventLogger _eventLogger;
-
+    private readonly bool _showMiddleNames = false;
     public const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
     public string PageHeading => UniqueLearnerNumberLabels.SearchPupilUpnPageHeading;
     public string SearchAction => "PupilUlnSearch";
-    public string FullTextLearnerSearchController => Global.FELearnerTextSearchController;
-    public string FullTextLearnerSearchAction => Global.FELearnerTextSearchAction;
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchFurtherEducationDownloadLinks.cshtml";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
     public string SearchSessionKey => "SearchULN_SearchText";
     public string SearchSessionSortField => "SearchULN_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchULN_SearchTextSortDirection";
-    public bool ShowLocalAuthority => false;
-    public bool ShowMiddleNames => false;
-    public string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
-    public string LearnerNumberLabel => Global.FELearnerNumberLabel;
-    public string InvalidUPNsConfirmationAction => "";
 
     public FELearnerNumberController(
         IUseCase<
@@ -309,7 +301,7 @@ public class FELearnerNumberController : Controller
         ClearSortingDataFromSession();
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
-        model.ShowMiddleNames = ShowMiddleNames;
+        model.ShowMiddleNames = _showMiddleNames;
 
         SetModelApplicationLabels(model);
 
@@ -359,7 +351,7 @@ public class FELearnerNumberController : Controller
         bool notPaged = hasQueryItem && !calledByController;
         bool allSelected = false;
 
-        model.ShowMiddleNames = ShowMiddleNames;
+        model.ShowMiddleNames = _showMiddleNames;
 
         model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
 
@@ -414,7 +406,7 @@ public class FELearnerNumberController : Controller
     private void SetModelApplicationLabels(LearnerNumberSearchViewModel model)
     {
         model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
-        model.DownloadSelectedLink = DownloadSelectedLink;
+        model.DownloadSelectedLink = ApplicationLabels.DownloadSelectedFurtherEducationLink;
         model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
     }
 
@@ -637,8 +629,8 @@ public class FELearnerNumberController : Controller
     protected LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
     {
         model.PageHeading = PageHeading;
-        model.LearnerNumberLabel = LearnerNumberLabel;
-        model.ShowLocalAuthority = ShowLocalAuthority;
+        model.LearnerNumberLabel = Global.FELearnerNumberLabel;
+        model.ShowLocalAuthority = false;
 
         return model;
     }
@@ -646,10 +638,10 @@ public class FELearnerNumberController : Controller
     protected LearnerNumberSearchViewModel PopulateNavigation(LearnerNumberSearchViewModel model)
     {
         model.DownloadLinksPartial = DownloadLinksPartial;
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
+        model.InvalidUPNsConfirmationAction = string.Empty;
         model.SearchAction = SearchAction;
-        model.FullTextLearnerSearchController = FullTextLearnerSearchController;
-        model.FullTextLearnerSearchAction = FullTextLearnerSearchAction;
+        model.FullTextLearnerSearchController = Global.FELearnerTextSearchController;
+        model.FullTextLearnerSearchAction = Global.FELearnerTextSearchAction;
         return model;
     }
 
