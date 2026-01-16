@@ -38,7 +38,7 @@ public class LearnerTextSearchViewModel
     public int Offset => PageNumber * PageSize;
     public bool ShowLocalAuthority { get; set; }
 
-    public bool ShowMiddleNames { get; set; }
+    public bool ShowMiddleNames { get; set; } = true;
     public string LearnerNumberLabel { get; set; }
 
     [Required(ErrorMessage = "Enter a first name and/or surname")]

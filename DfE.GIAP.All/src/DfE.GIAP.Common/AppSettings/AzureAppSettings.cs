@@ -42,6 +42,4 @@ public class AzureAppSettings
     public int CommonTransferFileUPNLimit { get; set; }
     public int DownloadOptionsCheckLimit { get; set; }
 
-    // flag indicating that we should show the LA number
-    public bool UseLAColumn { get; set; }
 }

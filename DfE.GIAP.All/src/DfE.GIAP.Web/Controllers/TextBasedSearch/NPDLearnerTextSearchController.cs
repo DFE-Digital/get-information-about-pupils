@@ -65,10 +65,8 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerTextSearchController => Global.NPDTextSearchController;
     public override string LearnerTextSearchAction => SearchAction;
     public override string LearnerNumberAction => Global.NPDAction;
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override string InvalidUPNsConfirmationAction => Global.NPDNonUpnInvalidUPNsConfirmation;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
-    public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;

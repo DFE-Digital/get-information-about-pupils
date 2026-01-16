@@ -60,10 +60,8 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string LearnerTextSearchAction => SearchAction;
     public override string LearnerNumberAction => Global.PPAction;
     
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
     public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
     public override string LearnerNumberLabel => Global.LearnerNumberLabel;
-    public override bool ShowMiddleNames => true;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 

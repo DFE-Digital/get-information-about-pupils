@@ -52,12 +52,9 @@ public abstract class BaseLearnerNumberController : Controller
     public abstract string SearchSessionKey { get; }
     public abstract string SearchSessionSortField { get; }
     public abstract string SearchSessionSortDirection { get; }
-    public abstract bool ShowLocalAuthority { get; }
-
-    public abstract bool ShowMiddleNames { get; }
     public abstract string DownloadSelectedLink { get; }
 
-    public abstract string LearnerNumberLabel { get; }
+    public string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     #endregion Abstract Properties
 
@@ -93,19 +90,17 @@ public abstract class BaseLearnerNumberController : Controller
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
-        var model = new LearnerNumberSearchViewModel();
+        LearnerNumberSearchViewModel model = new();
 
         PopulatePageText(model);
         PopulateNavigation(model);
-        PopulateSorting(model, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection));
+        PopulateSorting(model, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection));
         ClearSortingDataFromSession();
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
-
         SetModelApplicationLabels(model);
 
-        if (returnToSearch ?? false && this.HttpContext.Session.Keys.Contains(SearchSessionKey))
+        if (returnToSearch ?? false && HttpContext.Session.Keys.Contains(SearchSessionKey))
         {
             ModelState.Clear();
             model.LearnerNumber = this.HttpContext.Session.GetString(SearchSessionKey);
@@ -143,8 +138,6 @@ public abstract class BaseLearnerNumberController : Controller
         }
         var notPaged = hasQueryItem && !calledByController;
         var allSelected = false;
-
-        model.ShowMiddleNames = this.ShowMiddleNames;
 
         model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
 
@@ -507,8 +500,6 @@ public abstract class BaseLearnerNumberController : Controller
     {
         model.PageHeading = PageHeading;
         model.LearnerNumberLabel = LearnerNumberLabel;
-        model.ShowLocalAuthority = ShowLocalAuthority;
-
         return model;
     }
 

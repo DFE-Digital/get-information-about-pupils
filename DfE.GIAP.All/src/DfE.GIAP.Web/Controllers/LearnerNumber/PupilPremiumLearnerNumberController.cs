@@ -36,10 +36,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override string SearchSessionKey => "SearchPPUPN_SearchText";
     public override string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
-    public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
 
     public PupilPremiumLearnerNumberController(ILogger<PupilPremiumLearnerNumberController> logger,
