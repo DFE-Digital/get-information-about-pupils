@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 
 namespace DfE.GIAP.Web.Providers.Session;
-
+#nullable enable
 public class SessionProvider : ISessionProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

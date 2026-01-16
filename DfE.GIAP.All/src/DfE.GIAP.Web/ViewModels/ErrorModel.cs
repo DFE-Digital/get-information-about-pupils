@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DfE.GIAP.Web.ViewModels;
-
+#nullable enable
 [ExcludeFromCodeCoverage]
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class ErrorModel : PageModel

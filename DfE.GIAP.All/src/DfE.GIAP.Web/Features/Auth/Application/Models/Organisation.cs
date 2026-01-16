@@ -1,5 +1,6 @@
 ﻿namespace DfE.GIAP.Web.Features.Auth.Application.Models;
 
+#nullable enable
 /// <summary>
 /// Organisation details returned from the identity provider.
 /// </summary>

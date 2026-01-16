@@ -16,7 +16,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DfE.GIAP.Web.Features.Auth;
-
+#nullable enable
 public static class CompositionRoot
 {
     public static IServiceCollection AddAuthDependencies(this IServiceCollection services, IConfiguration config)

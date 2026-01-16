@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Features.Auth.Infrastructure.Mappers;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
-
+#nullable enable
 public class DfeHttpSignInApiClient : IDfeSignInApiClient
 {
     private readonly HttpClient _httpClient;

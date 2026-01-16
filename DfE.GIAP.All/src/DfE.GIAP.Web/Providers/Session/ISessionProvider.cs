@@ -1,5 +1,5 @@
 ﻿namespace DfE.GIAP.Web.Providers.Session;
-
+#nullable enable
 public interface ISessionProvider
 {
     void SetSessionValue(string key, string value);

@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Web.Features.Auth.Application.Models;
 
+#nullable enable
 namespace DfE.GIAP.Web.Features.Auth.Application;
 
 public interface IDfeSignInApiClient

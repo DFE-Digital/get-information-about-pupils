@@ -11,6 +11,7 @@ using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
 using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService;
+#nullable enable
 public sealed class MyPupilsPresentationService : IMyPupilsPresentationService
 {
     private readonly IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> _deletePupilsUseCase;

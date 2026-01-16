@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
-
+#nullable enable
 public class DfeClaimsEnricher : IClaimsEnricher
 {
     private readonly IDfeSignInApiClient _apiClient;

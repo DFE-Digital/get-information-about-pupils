@@ -1,5 +1,5 @@
 ﻿namespace DfE.GIAP.Web.Shared.Serializer;
-
+#nullable enable
 public interface IJsonSerializer
 {
     string Serialize(object value);

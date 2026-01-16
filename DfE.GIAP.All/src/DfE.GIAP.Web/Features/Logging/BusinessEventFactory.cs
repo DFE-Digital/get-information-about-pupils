@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Extensions;
 
 namespace DfE.GIAP.Web.Features.Logging;
-
+#nullable enable
 public class BusinessEventFactory : IBusinessEventFactory
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

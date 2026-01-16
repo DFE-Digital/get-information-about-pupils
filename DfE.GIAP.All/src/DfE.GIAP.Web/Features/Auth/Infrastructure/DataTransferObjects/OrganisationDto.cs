@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure.DataTransferObjects;
-
+#nullable enable
 public class OrganisationDto
 {
     [JsonProperty("id")]
