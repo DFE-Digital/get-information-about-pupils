@@ -15,8 +15,8 @@ public class LearnerNumberSearchViewModel
     public string FullTextLearnerSearchController { get; set; }
     public string FullTextLearnerSearchAction { get; set; }
 
-    public bool ShowMiddleNames { get; set; } = true;
-    public bool ShowLocalAuthority { get; set; } = true;
+    public bool ShowMiddleNames { get; set; }
+    public bool ShowLocalAuthority { get; set; }
     public string DownloadLinksPartial { get; set; }
 
     public string LearnerNumberLabel { get; set; }
