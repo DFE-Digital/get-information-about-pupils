@@ -73,7 +73,7 @@ public sealed class DefaultSessionObjectSerializerTests
     private class SessionObjectStub
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public static SessionObjectStub Create() => new()
         {

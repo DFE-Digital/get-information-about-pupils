@@ -20,7 +20,7 @@ public class SearchDownloadHelperTests
     public void AddDownloadDataTypes_correctly_handles_rbac(DownloadDataTypeTestData test)
     {
         // Arrange
-        var model = new LearnerDownloadViewModel();
+        LearnerDownloadViewModel model = new LearnerDownloadViewModel();
 
         // Act
         SearchDownloadHelper.AddDownloadDataTypes(model, test.User, test.LowAge, test.HighAge, test.IsLA, test.User.IsOrganisationAllAges());
@@ -33,15 +33,15 @@ public class SearchDownloadHelperTests
     public void DownloadFile_returns_FileContentResult_for_non_zip()
     {
         // Arrange
-        var downloadFile = new ReturnFile()
+        ReturnFile downloadFile = new ReturnFile()
         {
             FileType = "plain",
-            Bytes = new byte[0],
+            Bytes = [],
             FileName = "test.txt"
         };
 
         // Act
-        var result = SearchDownloadHelper.DownloadFile(downloadFile);
+        IActionResult result = SearchDownloadHelper.DownloadFile(downloadFile);
 
         // Assert
         Assert.IsType<FileContentResult>(result);
@@ -51,18 +51,18 @@ public class SearchDownloadHelperTests
     public void DisableDownloadDataTypes_correctly_disables_types()
     {
         // arrange
-        var model =
+        LearnerDownloadViewModel model =
             new LearnerDownloadViewModel
             {
                 SearchDownloadDatatypes =
-                    new List<SearchDownloadDataType> {
+                    [
                         SearchDownloadDataTypeBuilder.Create()
                             .WithName("Key Stage 1")
                             .WithValue("KS1").Build()
-                    }
+                    ]
             };
 
-        var notAvailable = new List<DownloadDataType>() { DownloadDataType.KS1 };
+        List<DownloadDataType> notAvailable = [DownloadDataType.KS1];
 
         // act
         SearchDownloadHelper.DisableDownloadDataTypes(model, notAvailable);
@@ -73,7 +73,7 @@ public class SearchDownloadHelperTests
 
     internal class SearchDownloadDataTypeListBuilder
     {
-        private Dictionary<string, SearchDownloadDataType> _searchDownloadDataTypeDictionary;
+        private Dictionary<string, SearchDownloadDataType>? _searchDownloadDataTypeDictionary;
 
         public static SearchDownloadDataTypeListBuilder Create() => new SearchDownloadDataTypeListBuilder();
 
@@ -93,7 +93,7 @@ public class SearchDownloadHelperTests
             return this;
         }
 
-        public List<SearchDownloadDataType> Build() => _searchDownloadDataTypeDictionary.Values.ToList();
+        public List<SearchDownloadDataType> Build() => _searchDownloadDataTypeDictionary?.Values.ToList() ?? [];
 
         private readonly Dictionary<string, SearchDownloadDataType> defaultSearchDownloadDataTypeDictionary =
             new Dictionary<string, SearchDownloadDataType> {
@@ -130,11 +130,11 @@ public class SearchDownloadHelperTests
 
     internal class SearchDownloadDataTypeBuilder
     {
-        private string _name;
-        private string _value;
+        private string? _name;
+        private string? _value;
         private bool _canDownload = true;
 
-        public static SearchDownloadDataTypeBuilder Create() => new SearchDownloadDataTypeBuilder();
+        public static SearchDownloadDataTypeBuilder Create() => new();
 
         public SearchDownloadDataTypeBuilder WithName(string name)
         {
@@ -155,7 +155,7 @@ public class SearchDownloadHelperTests
         }
 
         public SearchDownloadDataType Build() =>
-            new SearchDownloadDataType()
+            new()
             {
                 Name = _name,
                 Value = _value,
@@ -164,122 +164,89 @@ public class SearchDownloadHelperTests
             };
     }
 
-    #region expected administrator, LA & all ages download data types
-
-    private static readonly List<SearchDownloadDataType> expectedAdminDataTypes =
+    
+    private static readonly List<SearchDownloadDataType> _expectedAdminDataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    #endregion expected administrator, LA & all ages download data types
-
-    #region expected LA download data types
-
-    private static readonly List<SearchDownloadDataType> expectedLADataTypes =
+    
+    private static readonly List<SearchDownloadDataType> _expectedLADataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    #endregion expected LA download data types
-
-    #region expected MAT all ages download data types
-
-    private static readonly List<SearchDownloadDataType> expectedMATAllAgesDataTypes =
+    
+    private static readonly List<SearchDownloadDataType> _expectedMATAllAgesDataTypes =
        SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    #endregion expected MAT all ages download data types
-
-    #region 2-5 download data types
-
-    private static readonly List<SearchDownloadDataType> expected2to5DataTypes =
+    
+    private static readonly List<SearchDownloadDataType> _expected2to5DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .WithCannotDownloadForDataTypes(
-                new List<string> {
+                [
                     SearchDownloadDataTypeListBuilder.KeyStage1DataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage2DataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage4DataTypeKey
-                })
+                ])
             .Build();
 
-    #endregion 2-5 download data types
-
-    #region 2-11 download data types
-
-    private static readonly List<SearchDownloadDataType> expected2to11DataTypes =
+    private static readonly List<SearchDownloadDataType> _expected2to11DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .WithCannotDownloadForDataTypes(
-                new List<string> {
-                    SearchDownloadDataTypeListBuilder.KeyStage4DataTypeKey })
+                [
+                    SearchDownloadDataTypeListBuilder.KeyStage4DataTypeKey ])
             .Build();
 
-    #endregion 2-11 download data types
-
-    #region 2-25 download data types
-
-    private static readonly List<SearchDownloadDataType> expected2to25DataTypes =
+    private static readonly List<SearchDownloadDataType> _expected2to25DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    #endregion 2-25 download data types
-
-    #region 11-25 download data types
-
-    private static readonly List<SearchDownloadDataType> expected11to25DataTypes =
+    private static readonly List<SearchDownloadDataType> _expected11to25DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .WithCannotDownloadForDataTypes(
-                new List<string> {
+                [
                     SearchDownloadDataTypeListBuilder.EYFSPDataTypeKey,
                     SearchDownloadDataTypeListBuilder.PhonicsDataTypeKey
-                })
+                ])
             .Build();
 
-    #endregion 11-25 download data types
-
-    #region 16-25 download data types
-
-    private static readonly List<SearchDownloadDataType> expected16to25DataTypes =
+    private static readonly List<SearchDownloadDataType> _expected16to25DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .WithCannotDownloadForDataTypes(
-                new List<string> {
+                [
                     SearchDownloadDataTypeListBuilder.EYFSPDataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage1DataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage2DataTypeKey,
                     SearchDownloadDataTypeListBuilder.PhonicsDataTypeKey,
                     SearchDownloadDataTypeListBuilder.MtcDataTypeKey
-                })
+                ])
             .Build();
 
-    #endregion 16-25 download data types
-
-    #region 18-25 download data types
-
-    private static readonly List<SearchDownloadDataType> expected18to25DataTypes =
+    private static readonly List<SearchDownloadDataType> _expected18to25DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .WithCannotDownloadForDataTypes(
-                new List<string> {
+                [
                     SearchDownloadDataTypeListBuilder.EYFSPDataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage1DataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage2DataTypeKey,
                     SearchDownloadDataTypeListBuilder.KeyStage4DataTypeKey,
                     SearchDownloadDataTypeListBuilder.PhonicsDataTypeKey,
                     SearchDownloadDataTypeListBuilder.MtcDataTypeKey
-                })
+                ])
             .Build();
 
-    #endregion 18-25 download data types
-
-    #region FE download data types
-
-    private static readonly List<SearchDownloadDataType> expectedFEDataTypes =
-        new List<SearchDownloadDataType>(){
+    
+    private static readonly List<SearchDownloadDataType> _expectedFEDataTypes =
+        [
             SearchDownloadDataTypeBuilder.Create()
                 .WithName("Pupil Premium")
                 .WithValue("PP")
@@ -288,9 +255,9 @@ public class SearchDownloadHelperTests
                 .WithName("Special Educational Needs")
                 .WithValue("SEN")
                 .Build()
-        };
+        ];
 
-    private static List<SearchDownloadDataType> expectedNotFEDataTypes = new List<SearchDownloadDataType>(){
+    private static List<SearchDownloadDataType> _expectedNotFEDataTypes = [
             SearchDownloadDataTypeBuilder.Create()
                 .WithName("Pupil Premium")
                 .WithValue("PP")
@@ -301,9 +268,7 @@ public class SearchDownloadHelperTests
                 .WithValue("SEN")
                 .WithCannotDownload()
                 .Build()
-        };
-
-    #endregion FE download data types
+        ];
 
     internal class DownloadDataTypeTestDataBuilder
     {
@@ -368,109 +333,109 @@ public class SearchDownloadHelperTests
 
     public static IEnumerable<object[]> GetSearchDownloadDataTypeData()
     {
-        var allData = new List<object[]>
-        {
-           new object[] {
+        List<object[]> allData =
+        [
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(20)
                 .WithIsAdmin(true)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expectedAdminDataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expectedAdminDataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(20)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(true)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expectedLADataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expectedLADataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(0)
                 .WithUpperAgeBoundary(0)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(true)
-                .BuildWithExpectedDataTypes(expectedMATAllAgesDataTypes)
-           },
+                .BuildWithExpectedDataTypes(_expectedMATAllAgesDataTypes)
+           ],
            //MAT user with age range
-           new object[] {
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(5)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(true)
-                .BuildWithExpectedDataTypes(expected2to5DataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expected2to5DataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(5)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expected2to5DataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expected2to5DataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(11)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expected2to11DataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expected2to11DataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(25)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expected2to25DataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expected2to25DataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(11)
                 .WithUpperAgeBoundary(25)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expected11to25DataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expected11to25DataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(16)
                 .WithUpperAgeBoundary(25)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expected16to25DataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expected16to25DataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(18)
                 .WithUpperAgeBoundary(25)
                 .WithIsAdmin(false)
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
-                .BuildWithExpectedDataTypes(expected18to25DataTypes)
-           }
-        };
+                .BuildWithExpectedDataTypes(_expected18to25DataTypes)
+           ]
+        ];
 
         return allData;
     }
 
     public static IEnumerable<object[]> GetFESearchDownloadDataTypeData()
     {
-        var allData = new List<object[]>
-        {
-           new object[] {
+        List<object[]> allData =
+        [
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(13)
@@ -478,9 +443,9 @@ public class SearchDownloadHelperTests
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
                 .WithIsDfe(false)
-                .BuildWithExpectedDataTypes(expectedNotFEDataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expectedNotFEDataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(14)
                 .WithUpperAgeBoundary(25)
@@ -488,9 +453,9 @@ public class SearchDownloadHelperTests
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
                 .WithIsDfe(false)
-                .BuildWithExpectedDataTypes(expectedFEDataTypes)
-           },
-           new object[] {
+                .BuildWithExpectedDataTypes(_expectedFEDataTypes)
+           ],
+           [
                DownloadDataTypeTestDataBuilder.Create()
                 .WithLowerAgeBoundary(2)
                 .WithUpperAgeBoundary(12)
@@ -498,8 +463,8 @@ public class SearchDownloadHelperTests
                 .WithIsLocalAuthority(false)
                 .WithIsMAT(false)
                 .WithIsDfe(false)
-                .BuildWithExpectedDataTypes(expectedFEDataTypes)
-           }/*,
+                .BuildWithExpectedDataTypes(_expectedFEDataTypes)
+           ]/*,
            new object[]
            {
                DownloadDataTypeTestDataBuilder.Create()
@@ -509,7 +474,7 @@ public class SearchDownloadHelperTests
                    .WithIsDfe(true)
                    .BuildWithExpectedDataTypes(expectedFEDataTypes)
            }*/
-        };
+        ];
 
         return allData;
     }
@@ -522,8 +487,7 @@ public class SearchDownloadHelperTests
         public bool IsLA { get; set; }
         public bool IsDfe { get; set; }
         public ClaimsPrincipal User { get; set; }
-        public Controller Controller { get; set; }
-        public List<SearchDownloadDataType> ExpectedDataTypes { get; set; } = new List<SearchDownloadDataType>();
+        public List<SearchDownloadDataType> ExpectedDataTypes { get; set; } = [];
 
         public DownloadDataTypeTestData(int lowAge, int highAge, bool isAdmin, bool isLA, bool isMAT, bool isDfe)
         {
@@ -533,19 +497,19 @@ public class SearchDownloadHelperTests
             IsLA = isLA;
             IsDfe = isDfe;
 
-            var role = isAdmin switch
+            string role = isAdmin switch
             {
                 true => AuthRoles.Admin,
                 false => AuthRoles.Approver
             };
 
-            var organisationId = isLA switch
+            string organisationId = isLA switch
             {
                 true => DsiKeys.OrganisationCategory.LocalAuthority,
                 false => isMAT ? DsiKeys.OrganisationCategory.MultiAcademyTrust : DsiKeys.OrganisationCategory.Establishment
             };
 
-            var user = UserClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
+            ClaimsPrincipal user = UserClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
                 organisationId,
                 DsiKeys.EstablishmentType.CommunitySchool, // irrelevant for this test..
                 role,

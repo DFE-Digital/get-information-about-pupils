@@ -1,93 +1,86 @@
-﻿using DfE.GIAP.Web.Helpers.SelectionManager;
+﻿using System.Text;
+using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Helpers
+namespace DfE.GIAP.Web.Tests.Helpers;
+
+public sealed class NotSelectedManagerTests
 {
-    public class NotSelectedManagerTests
+    private readonly SessionFake _testSession = new();
+
+    [Fact]
+    public void AddAll_adds_all()
     {
-        private readonly SessionFake _testSession = new SessionFake();
+        // arrange
+        HashSet<string> pages = ["1", "2"];
+        _testSession.SetString(NotSelectedManager.NotSelectedKey, JsonConvert.SerializeObject(pages));
 
-        [Fact]
-        public void AddAll_adds_all()
-        {
-            // arrange
-            var pages = new HashSet<string>() { "1", "2" };
-            _testSession.SetString(NotSelectedManager.NotSelectedKey, JsonConvert.SerializeObject(pages));
+        // act
+        NotSelectedManager manager = GetManager();
+        manager.AddAll(pages);
 
-            // act
-            var manager = GetManager();
-            manager.AddAll(pages);
+        // assert
+        Assert.Empty(JsonConvert.DeserializeObject<HashSet<string>>(
+                _testSession.GetString(NotSelectedManager.NotSelectedKey)!)!);
+    }
 
-            // assert
-            Assert.True(
-                JsonConvert.DeserializeObject<HashSet<string>>(
-                    _testSession.GetString(NotSelectedManager.NotSelectedKey)).Count == 0);
-        }
+    [Fact]
+    public void RemoveAll_removes_all()
+    {
+        // arrange
+        HashSet<string> pages = ["1", "2"];
 
-        [Fact]
-        public void RemoveAll_removes_all()
-        {
-            // arrange
-            var pages = new HashSet<string>() { "1", "2" };
+        // act
+        NotSelectedManager manager = GetManager();
+        manager.RemoveAll(pages);
 
-            // act
-            var manager = GetManager();
-            manager.RemoveAll(pages);
+        // assert
+        Assert.Equal(2, JsonConvert.DeserializeObject<HashSet<string>>(
+                _testSession.GetString(NotSelectedManager.NotSelectedKey)!)!.Count);
+    }
 
-            // assert
-            Assert.True(
-                JsonConvert.DeserializeObject<HashSet<string>>(
-                    _testSession.GetString(NotSelectedManager.NotSelectedKey)).Count == 2);
-        }
+    [Fact]
+    public void Clear_clears()
+    {
+        // arrange
+        HashSet<string> pages = ["1", "2"];
 
-        [Fact]
-        public void Clear_clears()
-        {
-            // arrange
-            var pages = new HashSet<string>() { "1", "2" };
+        // act
+        NotSelectedManager manager = GetManager();
+        manager.AddAll(pages);
+        manager.Clear();
 
-            // act
-            var manager = GetManager();
-            manager.AddAll(pages);
-            manager.Clear();
+        // assert
+        Assert.True(!_testSession.Keys.Contains(NotSelectedManager.NotSelectedKey));
+    }
 
-            // assert
-            Assert.True(!_testSession.Keys.Contains(NotSelectedManager.NotSelectedKey));
-        }
+    [Fact]
+    public void GetSelected_gets_selected()
+    {
+        // arrange
+        HashSet<string> pages = ["1", "2"];
+        _testSession.SetString(NotSelectedManager.NotSelectedKey, JsonConvert.SerializeObject(pages));
 
-        [Fact]
-        public void GetSelected_gets_selected()
-        {
-            // arrange
-            var pages = new HashSet<string>() { "1", "2" };
-            _testSession.SetString(NotSelectedManager.NotSelectedKey, JsonConvert.SerializeObject(pages));
+        // act
+        NotSelectedManager manager = GetManager();
+        manager.AddAll(pages);
 
-            // act
-            var manager = GetManager();
-            manager.AddAll(pages);
+        // assert
+        Assert.Empty(JsonConvert.DeserializeObject<HashSet<string>>(
+                _testSession.GetString(NotSelectedManager.NotSelectedKey)!)!);
+    }
 
-            // assert
-            Assert.True(
-                JsonConvert.DeserializeObject<HashSet<string>>(
-                    _testSession.GetString(NotSelectedManager.NotSelectedKey)).Count == 0);
-        }
+    private NotSelectedManager GetManager()
+    {
 
-        private NotSelectedManager GetManager()
-        {
+        DefaultHttpContext testContext = new() { Session = _testSession };
+        IHttpContextAccessor mockContextAccessor = Substitute.For<IHttpContextAccessor>();
+        mockContextAccessor.HttpContext.Returns(testContext);
 
-            var testContext = new DefaultHttpContext() { Session = _testSession };
-            var mockContextAccessor = Substitute.For<IHttpContextAccessor>();
-            mockContextAccessor.HttpContext.Returns(testContext);
-
-            return new NotSelectedManager(mockContextAccessor);
-        }
+        return new NotSelectedManager(mockContextAccessor);
     }
 }
