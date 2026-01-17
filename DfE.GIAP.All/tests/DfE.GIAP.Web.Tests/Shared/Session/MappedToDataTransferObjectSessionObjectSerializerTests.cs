@@ -146,9 +146,9 @@ public sealed class MappedToDataTransferObjectSessionObjectSerializerTests
 
     public sealed class DtoStub
     {
-        public string Id { get; set; }
-        public string CreatedAt { get; set; }
-        public NestedDtoStub Metadata { get; set; }
+        public string? Id { get; set; }
+        public string? CreatedAt { get; set; }
+        public NestedDtoStub? Metadata { get; set; }
 
         public static DtoStub CreateDefault() => new()
         {
@@ -163,8 +163,8 @@ public sealed class MappedToDataTransferObjectSessionObjectSerializerTests
 
         public sealed class NestedDtoStub
         {
-            public string Source { get; set; }
-            public int Version { get; set; }
+            public string? Source { get; set; }
+            public int? Version { get; set; }
         }
     }
 
