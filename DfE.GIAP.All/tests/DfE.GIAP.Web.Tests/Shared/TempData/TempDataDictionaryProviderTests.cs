@@ -39,12 +39,11 @@ public sealed class TempDataDictionaryProviderTests
     public void GetTempData_Throws_When_HttpContext_Is_Null()
     {
         // Arrange
-        Mock<IHttpContextAccessor> httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext)null);
+        Mock<IHttpContextAccessor> httpContextAccessorMock = new();
+        httpContextAccessorMock.Setup(x => x.HttpContext).Returns<HttpContext>(null!);
 
-        Mock<ITempDataDictionaryFactory> tempDataDictionaryFactoryMock = new Mock<ITempDataDictionaryFactory>();
-
-        TempDataDictionaryProvider sut = new TempDataDictionaryProvider(
+        Mock<ITempDataDictionaryFactory> tempDataDictionaryFactoryMock = new();
+        TempDataDictionaryProvider sut = new(
             httpContextAccessorMock.Object,
             tempDataDictionaryFactoryMock.Object);
 
