@@ -47,7 +47,7 @@ public class SessionProviderTests
 
         _sessionMock.Setup(s => s.TryGetValue(key, out bytes)).Returns(true);
 
-        string result = _sessionProvider.GetSessionValue(key);
+        string? result = _sessionProvider.GetSessionValue(key);
 
         Assert.Equal(value, result);
     }
@@ -87,7 +87,7 @@ public class SessionProviderTests
     [Fact]
     public void ClearSession_RemovesAllKeys()
     {
-        List<string> keys = new List<string> { "Key1", "Key2" };
+        List<string> keys = new() { "Key1", "Key2" };
         _sessionMock.Setup(s => s.Keys).Returns(keys);
 
         _sessionProvider.ClearSession();
@@ -112,8 +112,8 @@ public class SessionProviderTests
     [Fact]
     public void Throws_When_HttpContext_Is_Null()
     {
-        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext)null);
-        SessionProvider provider = new SessionProvider(_httpContextAccessorMock.Object);
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns<HttpContext>(null!);
+        SessionProvider provider = new(_httpContextAccessorMock.Object);
 
         Assert.Throws<InvalidOperationException>(() => provider.GetSessionValue("key"));
     }
@@ -121,8 +121,8 @@ public class SessionProviderTests
     [Fact]
     public void Throws_When_Session_Is_Null()
     {
-        _httpContext.Session = null;
-        var provider = new SessionProvider(_httpContextAccessorMock.Object);
+        _httpContext.Session = null!;
+        SessionProvider provider = new(_httpContextAccessorMock.Object);
 
         Assert.Throws<InvalidOperationException>(() => provider.SetSessionValue("key", "val"));
     }
@@ -131,7 +131,7 @@ public class SessionProviderTests
     public void SetSessionObject_SerializesAndStoresJson_UsingSet()
     {
         string key = "obj";
-        TestObject obj = new TestObject { Name = "John", Age = 30 };
+        TestObject obj = new() { Name = "John", Age = 30 };
         string json = JsonSerializer.Serialize(obj);
         byte[] expectedBytes = Encoding.UTF8.GetBytes(json);
 
@@ -146,13 +146,13 @@ public class SessionProviderTests
     public void GetSessionObject_DeserializesStoredJson()
     {
         string key = "obj";
-        TestObject obj = new TestObject { Name = "Jane", Age = 25 };
+        TestObject obj = new() { Name = "Jane", Age = 25 };
         string json = JsonSerializer.Serialize(obj);
         byte[]? bytes = Encoding.UTF8.GetBytes(json);
 
         _sessionMock.Setup(s => s.TryGetValue(key, out bytes)).Returns(true);
 
-        TestObject result = _sessionProvider.GetSessionValueOrDefault<TestObject>(key);
+        TestObject? result = _sessionProvider.GetSessionValueOrDefault<TestObject>(key);
 
         Assert.Equal(obj, result);
     }
@@ -161,24 +161,19 @@ public class SessionProviderTests
     public void GetSessionObject_ReturnsDefault_WhenKeyNotFound()
     {
         string key = "missing";
-        byte[] outBytes = null;
+        byte[]? outBytes = null;
 
         _sessionMock.Setup(s => s.TryGetValue(key, out outBytes)).Returns(false);
 
-        TestObject result = _sessionProvider.GetSessionValueOrDefault<TestObject>(key);
+        TestObject? result = _sessionProvider.GetSessionValueOrDefault<TestObject>(key);
 
         Assert.Null(result);
     }
 
 
-    private class TestObject
+    private record TestObject
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int Age { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is TestObject other && Name == other.Name && Age == other.Age;
-        }
     }
 }
