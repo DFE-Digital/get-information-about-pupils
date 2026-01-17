@@ -37,7 +37,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string DownloadLinksPartial => Global.PPNonUpnDownloadLinksView;
     public override string SearchLearnerNumberAction => Routes.PupilPremium.PupilPremiumDatabase;
     public override string RedirectUrlFormAction => Global.PPNonUpnAction;
-    public override string LearnerTextDatabaseAction => Global.PPNonUpnAction;
     public override string LearnerTextDatabaseName => Global.PPLearnerTextSearchDatabaseName;
     public override string RedirectFrom => Routes.PupilPremium.NonUPN;
 
@@ -50,18 +49,11 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string FormAction => Routes.PupilPremium.NonUPN;
     public override string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.PupilPremium.NonUPN}";
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
-    public override string SearchView => Global.NonUpnSearchView;
-
-    public override string SearchLearnerNumberController => Routes.Application.Search;
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
-    public override string LearnerTextSearchController => Global.PPNonUpnController;
-    public override string LearnerTextSearchAction => SearchAction;
-    public override string LearnerNumberAction => Global.PPAction;
     
     public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 

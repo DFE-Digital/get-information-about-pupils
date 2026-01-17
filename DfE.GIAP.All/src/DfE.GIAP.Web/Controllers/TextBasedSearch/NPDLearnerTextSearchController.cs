@@ -41,7 +41,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
     public override string SearchLearnerNumberAction => Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber;
     public override string RedirectUrlFormAction => Global.NPDNonUpnAction;
-    public override string LearnerTextDatabaseAction => Global.NPDNonUpnAction;
     public override string LearnerTextDatabaseName => Global.NPDLearnerTextSearchDatabaseName;
     public override string RedirectFrom => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
 
@@ -54,19 +53,11 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override string FormAction => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
     public override string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN}";
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.NPD;
-    public override string SearchView => Global.NonUpnSearchView;
-
-
-    public override string SearchLearnerNumberController => Routes.Application.Search;
 
     public override string SearchAction => Global.NPDNonUpnAction;
     public override string SearchController => Global.NPDTextSearchController;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonNationalPupilDatabase;
-    public override string LearnerTextSearchController => Global.NPDTextSearchController;
-    public override string LearnerTextSearchAction => SearchAction;
-    public override string LearnerNumberAction => Global.NPDAction;
     public override string InvalidUPNsConfirmationAction => Global.NPDNonUpnInvalidUPNsConfirmation;
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
