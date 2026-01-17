@@ -30,7 +30,7 @@ using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
-public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
+public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
     private readonly ILogger<NPDLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<NPDLearnerTextSearchController>>();
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
@@ -53,19 +53,17 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     [Fact]
     public async Task NonUpnNationalPupilDatabase_returns_empty_page_when_first_navigated_to()
     {
-        // Act
+        // Arrange
         NPDLearnerTextSearchController sut = GetController();
+
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(null);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         _mockSelectionManager.Received().Clear();
         AssertAbstractValues(sut, model);
         Assert.True(string.IsNullOrEmpty(model.SearchText));
@@ -88,16 +86,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         IActionResult result = await sut.NonUpnNationalPupilDatabase(false);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
-
         Assert.True(string.IsNullOrEmpty(model.SearchText));
         Assert.False(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
     }
@@ -125,24 +118,19 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             (t) => t.GetSessionValueOrDefault<SearchFilters>(
                 NpdSearchFiltersSessionKey)).Returns(
                     searchViewModel.SearchFilters).Verifiable();
-        // Act
-
 
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
@@ -154,29 +142,25 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         // Arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        string surnameFilter = null;
-        string middlenameFilter = null;
-        string forenameFilter = null;
-        string searchByRemove = null;
+        string? surnameFilter = null;
+        string? middlenameFilter = null;
+        string? forenameFilter = null;
+        string? searchByRemove = null;
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, null, null, searchByRemove);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
@@ -186,10 +170,9 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     public async Task NonUpnNationalPupilDatabase_does_not_call_GetPage_if_model_state_not_valid()
     {
         // Arrange
-
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
+        // Act
         await sut.NonUpnNationalPupilDatabase(new LearnerTextSearchViewModel(), string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
 
         // Assert
@@ -248,14 +231,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, response);
 
         // Act
-
         IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
 
         // Assert
-
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-
         Assert.True(model.Learners.SequenceEqual(expectedLearners));
     }
 
@@ -268,17 +248,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -295,21 +276,20 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(0, 0, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
 
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.True(searchViewModel.FilterErrors.DobErrorEmpty);
         Assert.True(searchViewModel.FilterErrors.DobError);
-
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
     }
 
@@ -321,11 +301,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(1, 0, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
@@ -344,17 +324,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(1, 1, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.DobErrorDayMonthOnly);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -367,17 +346,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(99, 1, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.DayOutOfRange);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -390,17 +368,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(0, 1, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.DobErrorMonthOnly);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -413,17 +390,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(1, 0, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.DobErrorNoMonth);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -436,17 +412,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(1, 99, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.MonthOutOfRange);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -459,17 +434,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(1, 2, 9999);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.YearLimitHigh);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -482,17 +456,16 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         SearchFilters searchFilter = SetDobFilters(1, 2, 1970);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-
         Assert.True(searchViewModel.FilterErrors.YearLimitLow);
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
@@ -505,17 +478,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string surnameFilter = "Surname";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.SurnameFilter(searchViewModel, surnameFilter);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -530,17 +504,17 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string middlenameFilter = "Middle";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.MiddlenameFilter(searchViewModel, middlenameFilter);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -554,17 +528,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string forenameFilter = "Forename";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.ForenameFilter(searchViewModel, forenameFilter);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -579,19 +554,20 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null, [sexFilter]);
+        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), [sexFilter]);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.SexFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -607,17 +583,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null);
         searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{ ""FilterName"":""Female"",""FilterType"":6}]";
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.SexFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -632,17 +609,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null);
         searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{""FilterName"":""Female"",""FilterType"":6}, {""FilterName"":""Male"",""FilterType"":6}]";
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.SexFilter(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -660,7 +638,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-        
+
         // Act
         NPDLearnerTextSearchController sut = GetController();
 
@@ -670,11 +648,10 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-        Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
 
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
         Assert.True(model.ItemAddedToMyPupilList);
     }
 
@@ -685,7 +662,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        
+
         // Act
         NPDLearnerTextSearchController sut = GetController();
 
@@ -695,9 +672,9 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.True(model.NoPupil);
         Assert.True(model.NoPupilSelected);
     }
@@ -711,20 +688,20 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-        
-        // Act
+
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
 
+        // Act
         IActionResult result = await sut.NonUpnAddToMyPupilList(searchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
+
+        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
     }
 
 
@@ -737,19 +714,17 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = Substitute.For<ITempDataDictionary>();
+
+        // Act
         IActionResult result = await sut.ToDownloadSelectedNPDDataNonUPN(searchViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel model = viewResult.Model as LearnerDownloadViewModel;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
         Assert.Equal(model.SelectedPupils, upn);
         Assert.Equal(1, model.SelectedPupilsCount);
     }
@@ -788,11 +763,10 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
         TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = tempData;
 
+        // Act
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
 
         // Assert
@@ -808,7 +782,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 #pragma warning disable CA1861 // Avoid constant arrays as arguments
     [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, Messages.Downloads.Errors.NoDataForSelectedPupils)]
 #pragma warning restore CA1861 // Avoid constant arrays as arguments
-    public async Task DownloadSelectedNationalPupilDatabaseData_returns_correct_validation_error_message(DownloadFileType downloadFileType, string[] selectedDownloadOptions, byte[] fileBytes, string errorMessage)
+    public async Task DownloadSelectedNationalPupilDatabaseData_returns_correct_validation_error_message(DownloadFileType downloadFileType, string[]? selectedDownloadOptions, byte[]? fileBytes, string errorMessage)
     {
         // Arrange
         string upn = _paginatedResultsFake.GetUpn();
@@ -841,18 +815,17 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = tempData;
 
+        // Act
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
 
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel model = viewResult.Model as LearnerDownloadViewModel;
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
         Assert.Equal(errorMessage, model.ErrorDetails);
     }
 
@@ -890,10 +863,10 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = tempData;
 
+        // Act
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
 
         // Assert
@@ -934,10 +907,10 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = tempData;
 
+        // Act
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
 
         // Assert
@@ -953,21 +926,20 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         sut.TempData = Substitute.For<ITempDataDictionary>();
+
+        // Act
         IActionResult result = await sut.ToDownloadSelectedNPDDataNonUPN(searchViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
         Assert.True(model.NoPupil);
         Assert.True(model.NoPupilSelected);
     }
@@ -989,13 +961,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         IActionResult result = await sut.ToDownloadSelectedNPDDataNonUPN(searchViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
         Assert.Equal(DownloadType.NPD, starredPupilViewModel.DownloadType);
         Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
 
@@ -1056,13 +1026,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
         Assert.True(model.NoPupil);
         Assert.True(model.NoPupilSelected);
     }
@@ -1085,13 +1053,11 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
         Assert.Equal(DownloadType.CTF, starredPupilViewModel.DownloadType);
         Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
     }
@@ -1120,21 +1086,19 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             Bytes = null
         });
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
     }
 
     [Fact]
@@ -1147,19 +1111,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             ConfirmationGiven = false
         };
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
+
+        // Act
 
         IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
+
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
         Assert.Equal(_paginatedResultsFake.GetBase64EncodedUpn(), starredPupilViewModel.SelectedPupil);
     }
 
@@ -1189,9 +1152,9 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
            Bytes = []
        });
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
+        // Act
         IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
 
         // Assert
@@ -1227,20 +1190,17 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = tempData;
 
+        // Act
         IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel model = viewResult.Model as LearnerDownloadViewModel;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
         Assert.Equal(_paginatedResultsFake.GetBase64EncodedUpn(), model.SelectedPupils);
         Assert.Equal(1, model.SelectedPupilsCount);
     }
@@ -1269,22 +1229,18 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
                 NpdSearchFiltersSessionKey)).Returns(
                     searchViewModel.SearchFilters).Verifiable();
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.DownloadCancellationReturn(new StarredPupilConfirmationViewModel());
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
@@ -1300,19 +1256,19 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             LearnerNumber = upn
         };
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
 
+        // Act
         IActionResult result = await sut.NonUpnInvalidUPNs(invalidLearnerNumberSearchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
+
+        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.True(vm.Learners.SequenceEqual(_paginatedResultsFake.GetInvalidLearners().Learners));
     }
 
@@ -1328,19 +1284,19 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         IEnumerable<Learner> expectedLearners = _paginatedResultsFake.GetInvalidLearners().Learners.Concat(_paginatedResultsFake.GetValidLearners().Learners);
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnInvalidUPNs(invalidLearnerNumberSearchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
+
+        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.True(vm.Learners.SequenceEqual(expectedLearners));
     }
 
@@ -1364,9 +1320,9 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
+
+        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.True(vm.Learners.SequenceEqual(_paginatedResultsFake.GetInvalidLearners().Learners));
     }
 
@@ -1381,9 +1337,9 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             SelectedInvalidUPNOption = Global.InvalidUPNConfirmation_MyPupilList
         };
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
+        // Act
         IActionResult result = await sut.NonUpnInvalidUPNsConfirmation(invalidLearnerNumberSearchViewModel);
 
         // Assert
@@ -1403,9 +1359,9 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             SelectedInvalidUPNOption = Global.InvalidUPNConfirmation_ReturnToSearch
         };
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
+        // Act
         IActionResult result = await sut.NonUpnInvalidUPNsConfirmation(invalidLearnerNumberSearchViewModel);
 
         // Assert
@@ -1424,7 +1380,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
             SelectedInvalidUPNOption = string.Empty
         };
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
@@ -1432,14 +1387,15 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         MockModelState(invalidLearnerNumberSearchViewModel, sut);
 
+        // Act
         IActionResult result = await sut.NonUpnInvalidUPNsConfirmation(invalidLearnerNumberSearchViewModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
-        Assert.Single(sut.ViewData.ModelState["NoContinueSelection"].Errors);
+
+        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
+        Assert.Single(sut.ViewData.ModelState["NoContinueSelection"]!.Errors);
     }
 
     [Theory]
@@ -1450,29 +1406,25 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         // Arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        string surnameFilter = null;
-        string middlenameFilter = null;
-        string forenameFilter = null;
-        string searchByRemove = null;
+        string? surnameFilter = null;
+        string? middlenameFilter = null;
+        string? forenameFilter = null;
+        string? searchByRemove = null;
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, sortField, sortDirection);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
         Assert.Equal(sortField, model.SortField);
@@ -1485,15 +1437,14 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         // Arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        string surnameFilter = null;
-        string middlenameFilter = null;
-        string forenameFilter = null;
-        string searchByRemove = null;
+        string? surnameFilter = null;
+        string? middlenameFilter = null;
+        string? forenameFilter = null;
+        string? searchByRemove = null;
 
         string sortField = "Forename";
         string sortDirection = "asc";
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
@@ -1503,16 +1454,14 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
@@ -1547,7 +1496,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
                 NpdSearchFiltersSessionKey)).Returns(
                     searchViewModel.SearchFilters).Verifiable();
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         _mockSession.SetString(sut.SortDirectionKey, sortDirection);
@@ -1555,17 +1503,14 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
         Assert.Equal(sortField, model.SortField);
@@ -1578,14 +1523,13 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         // Arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        string surnameFilter = null;
-        string middlenameFilter = null;
-        string forenameFilter = null;
-        string searchByRemove = null;
+        string? surnameFilter = null;
+        string? middlenameFilter = null;
+        string? forenameFilter = null;
+        string? searchByRemove = null;
         string sortField = "Forename";
         string sortDirection = "asc";
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
@@ -1598,17 +1542,14 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
 
         // Assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
-
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(searchText, model.SearchText);
         Assert.Null(model.SortField);
@@ -1623,7 +1564,6 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         string surnameFilter = "Surname";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        // Act
         NPDLearnerTextSearchController sut = GetController();
 
         _mockSession.SetString(sut.SortDirectionKey, "asc");
@@ -1631,12 +1571,12 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.SurnameFilter(searchViewModel, surnameFilter);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
 
         Assert.Null(model.SortField);
         Assert.Null(model.SortDirection);
@@ -1648,32 +1588,32 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         // Arrange
         const string searchText = "John Smith";
         const string surnameFilter = "";
-        const string middlenameFilter = null;
-        const string forenameFilter = null;
+        const string? middlenameFilter = null;
+        const string? forenameFilter = null;
         const string searchByRemove = "Male";
 
         LearnerTextSearchViewModel searchViewModel =
             SetupLearnerTextSearchViewModel(
-                searchText, _searchFiltersFake.GetSearchFilters(), selectedGenderValues: ["M"]);
+                searchText, _searchFiltersFake.GetSearchFilters());
 
         ITempDataDictionary mockTempDataDictionary = Substitute.For<ITempDataDictionary>();
         mockTempDataDictionary.Add("PersistedSelectedGenderFilters", searchByRemove);
         NPDLearnerTextSearchController sut = GetController();
         sut.TempData = mockTempDataDictionary;
 
-        // Act
         _mockSession.SetString(sut.SortDirectionKey, "asc");
         _mockSession.SetString(sut.SortFieldKey, "Forename");
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
+        // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, "", "");
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.NotNull(viewResult);
-        LearnerTextSearchViewModel model = viewResult.Model as LearnerTextSearchViewModel;
 
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.True(string.IsNullOrEmpty(model.SortField));
         Assert.True(string.IsNullOrEmpty(model.SortDirection));
     }
@@ -1681,8 +1621,7 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
     private static LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(
         string searchText,
         SearchFilters searchFilters,
-        string[] selectedGenderValues = null,
-        string[] selectedSexValues = null)
+        string[]? selectedSexValues = null)
     {
         return new()
         {
@@ -1736,11 +1675,10 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
-        List<AvailableDatasetResult> availableDatasetResults = new()
-            {
+        List<AvailableDatasetResult> availableDatasetResults = [
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
-            };
+            ];
         GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
 
         Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
@@ -1770,12 +1708,12 @@ public class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResult
 
     private static void MockModelState<TModel, TController>(TModel model, TController controller) where TController : ControllerBase
     {
-        ValidationContext validationContext = new(model, null, null);
+        ValidationContext validationContext = new(model!, null, null);
         List<ValidationResult> validationResults = [];
-        Validator.TryValidateObject(model, validationContext, validationResults, true);
+        Validator.TryValidateObject(model!, validationContext, validationResults, true);
         foreach (ValidationResult validationResult in validationResults)
         {
-            controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage);
+            controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage!);
         }
     }
 
