@@ -33,61 +33,6 @@ public static class UserClaimsPrincipalFake
         return user;
     }
 
-    public static ClaimsPrincipal GetLAApproverClaimsPrincipal()
-    {
-        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
-        {
-            new(ClaimTypes.Email, "discoverytest842+LAApprover@gmail.com"),
-            new(ClaimTypes.NameIdentifier, "1"),
-            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-            new(ClaimTypes.Email,"test@yahoo.com"),
-            new(ClaimTypes.GivenName,"Abc"),
-            new(ClaimTypes.Surname,"xyz"),
-            new(AuthClaimTypes.OrganisationId, "123"),
-            new(AuthClaimTypes.OrganisationName, "Test Org"),
-            new(AuthClaimTypes.OrganisationCategoryId,"002"),
-            new(AuthClaimTypes.OrganisationHighAge, "20"),
-            new(AuthClaimTypes.OrganisationLowAge, "2"),
-            new(AuthClaimTypes.EstablishmentNumber,"89"),
-            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
-            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
-            new(AuthClaimTypes.UniqueIdentifier,"007"),
-            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-            new(ClaimTypes.Role,"GIAPApprover")
-        }, "mock"));
-
-        return user;
-    }
-
-    public static ClaimsPrincipal GetSATApproverClaimsPrincipal()
-    {
-        ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]
-        {
-            new(ClaimTypes.Email, "discoverytest842+SATApprover@gmail.com"),
-            new(ClaimTypes.NameIdentifier, "1"),
-            new("custom-claim", "example claim value"),
-            new(AuthClaimTypes.UserId, "00000000-0000-0000-0000-000000000000"),
-            new(AuthClaimTypes.SessionId, "8cd6f4a2-85d7-4001-b53c-d7bb40b0ab67"),
-            new(ClaimTypes.Email,"test@yahoo.com"),
-            new(ClaimTypes.GivenName,"Abc"),
-            new(ClaimTypes.Surname,"xyz"),
-            new(AuthClaimTypes.OrganisationId, "123"),
-            new(AuthClaimTypes.OrganisationName, "Test Org"),
-            new(AuthClaimTypes.OrganisationCategoryId,"013"),
-            new(AuthClaimTypes.OrganisationHighAge, "20"),
-            new(AuthClaimTypes.OrganisationLowAge, "2"),
-            new(AuthClaimTypes.EstablishmentNumber,"89"),
-            new(AuthClaimTypes.LocalAuthorityNumber,"98"),
-            new(AuthClaimTypes.UniqueReferenceNumber,"121"),
-            new(AuthClaimTypes.UniqueIdentifier,"007"),
-            new(AuthClaimTypes.UKProviderReferenceNumber, "23432"),
-            new(ClaimTypes.Role,"GIAPApprover")
-        }, "mock"));
-
-        return user;
-    }
-
     public static ClaimsPrincipal GetAdminUserClaimsPrincipal()
     {
         ClaimsPrincipal user = new(new ClaimsIdentity(new Claim[]

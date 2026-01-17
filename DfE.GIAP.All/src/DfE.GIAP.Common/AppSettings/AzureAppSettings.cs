@@ -18,19 +18,8 @@ public class AzureAppSettings
     public string DownloadPupilsByUPNsCSVUrl { get; set; }
     public string DownloadPupilPremiumByUPNFforCSVUrl { get; set; }
     public string DownloadCommonTransferFileUrl { get; set; }
-    public string DownloadSecurityReportByUpnUrl { get; set; }
-    public string DownloadSecurityReportByUlnUrl { get; set; }
-    public string DownloadSecurityReportLoginDetailsUrl { get; set; }
-    public string DownloadSecurityReportDetailedSearchesUrl { get; set; }
-    public string GetAcademiesURL { get; set; }
     public string GetUserProfileUrl { get; set; }
     public string LoggingEventUrl { get; set; }
-
-    //Security reports
-    public string QueryLAGetAllUrl { get; set; }
-    public string QueryLAByCodeUrl { get; set; }
-    public string GetAllFurtherEducationURL { get; set; }
-    public string GetFurtherEducationByCodeURL { get; set; }
 
     //Further Education
     public string DownloadPupilsByULNsUrl { get; set; }
