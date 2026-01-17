@@ -269,7 +269,7 @@ public class FELearnerTextSearchController : Controller
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                ReturnFile downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
+                ReturnFile downloadFile = await _downloadService.GetFECSVFile(selectedPupils, model.SelectedDownloadOptions, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonUniqueLearnerNumber).ConfigureAwait(false);
 
                 if (downloadFile == null)
                 {

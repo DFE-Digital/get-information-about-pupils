@@ -135,8 +135,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
             IsSAT = User.IsOrganisationSingleAcademyTrust()
         };
 
-        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(selectedPupils.ToArray(), searchViewModel.LearnerNumber.FormatLearnerNumbers(),
-            true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.PupilPremium, userOrganisation).ConfigureAwait(false);
+        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(selectedPupils.ToArray(), searchViewModel.LearnerNumber.FormatLearnerNumbers(), AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.PupilPremium, userOrganisation).ConfigureAwait(false);
 
         if (downloadFile == null)
         {

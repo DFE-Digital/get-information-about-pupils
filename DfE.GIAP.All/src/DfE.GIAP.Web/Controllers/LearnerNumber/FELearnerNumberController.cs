@@ -198,7 +198,6 @@ public class FELearnerNumberController : Controller
                     await _downloadService.GetFECSVFile(
                         selectedPupils,
                         model.SelectedDownloadOptions,
-                        true,
                         AzureFunctionHeaderDetails.Create(
                             User.GetUserId(), User.GetSessionId()), ReturnRoute.UniqueLearnerNumber).ConfigureAwait(false);
 

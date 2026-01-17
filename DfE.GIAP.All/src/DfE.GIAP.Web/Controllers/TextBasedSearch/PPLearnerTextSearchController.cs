@@ -2,10 +2,8 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
@@ -164,10 +162,10 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
             IsSAT = User.IsOrganisationSingleAcademyTrust()
         };
 
-        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
+        var selectedPupil = model.SelectedPupils;
         var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
 
-        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(new string[] { selectedPupil }, sortOrder, model.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven,
+        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(new string[] { selectedPupil }, sortOrder,
                                                                         AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonPupilPremium, userOrganisation).ConfigureAwait(false);
 
         if (downloadFile == null)
@@ -202,14 +200,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
             return await ReturnToSearch(model);
         }
 
-        if (PupilHelper.CheckIfStarredPupil(selectedPupil) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
-        {
-            PopulateConfirmationNavigation(model.StarredPupilConfirmationViewModel);
-            model.StarredPupilConfirmationViewModel.SelectedPupil = selectedPupil;
-            return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
-        }
-
-        var searchDownloadViewModel = new LearnerDownloadViewModel
+        LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupil,
             LearnerNumber = selectedPupil,
@@ -221,48 +212,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
         return await DownloadPupilPremiumFile(searchDownloadViewModel);
     }
-
-    [Route(Routes.PupilPremium.DownloadNonUPNConfirmationReturn)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel model)
-    {
-        model.ConfirmationError = !model.ConfirmationGiven;
-        PopulateConfirmationNavigation(model);
-
-        if (model.ConfirmationGiven)
-        {
-            var searchDownloadViewModel = new LearnerDownloadViewModel
-            {
-                SelectedPupils = model.SelectedPupil,
-                LearnerNumber = model.SelectedPupil,
-                ErrorDetails = "No Confirmation Given for Starred Pupil",
-                SelectedPupilsCount = 1,
-                DownloadFileType = DownloadFileType.CSV,
-                ShowTABDownloadType = false
-            };
-
-            return await DownloadPupilPremiumFile(searchDownloadViewModel);
-        }
-
-        return ConfirmationForStarredPupil(model);
-    }
-
-    [Route(Routes.PupilPremium.DownloadCancellationReturn)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadCancellationReturn(StarredPupilConfirmationViewModel model)
-    {
-        return await Search(true);
-    }
-
-    private void PopulateConfirmationNavigation(StarredPupilConfirmationViewModel model)
-    {
-        model.DownloadType = DownloadType.PupilPremium;
-        model.ConfirmationReturnController = SearchController;
-        model.ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction;
-        model.CancelReturnController = SearchController;
-        model.CancelReturnAction = Global.PPDownloadCancellationReturnAction;
-    }
-
 
     [HttpPost]
     [Route(Routes.PPNonUpnInvalidUPNs)]

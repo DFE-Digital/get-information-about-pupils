@@ -739,12 +739,10 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true
         };
-        downloadViewModel.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven = true;
 
         _mockDownloadService.GetPupilPremiumCSVFile(
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           true,
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>(),
            Arg.Any<UserOrganisation>())
@@ -777,12 +775,10 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true
         };
-        downloadViewModel.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven = true;
-
+        
         _mockDownloadService.GetPupilPremiumCSVFile(
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           true,
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>(),
            Arg.Any<UserOrganisation>())
@@ -803,84 +799,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     }
 
     [Fact]
-    public async Task DownloadFileConfirmationReturn_downloads_file_when_confirmation_given()
-    {
-        // arrange
-        StarredPupilConfirmationViewModel StarredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetUpn(),
-            DownloadType = DownloadType.PupilPremium,
-            ConfirmationGiven = true,
-            ConfirmationError = false,
-            ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
-            CancelReturnAction = Global.PPDownloadCancellationReturnAction,
-            LearnerNumbers = _paginatedResultsFake.GetUpn()
-        };
-
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>(),
-           Arg.Any<UserOrganisation>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = []
-           });
-
-        PPLearnerTextSearchController sut = GetController();
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
-    [Fact]
-    public async Task DownloadFileConfirmationReturn_redirects_to_ConfirmationForStarredPupil_when_no_confirmation_given()
-    {
-        // arrange
-        StarredPupilConfirmationViewModel StarredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetUpn(),
-            DownloadType = DownloadType.PupilPremium,
-            ConfirmationGiven = false,
-            ConfirmationError = true,
-            ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
-            CancelReturnAction = Global.PPDownloadCancellationReturnAction,
-            LearnerNumbers = _paginatedResultsFake.GetUpn()
-        };
-
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>(),
-           Arg.Any<UserOrganisation>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = []
-           });
-
-        PPLearnerTextSearchController sut = GetController();
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel);
-
-        // assert
-        Assert.IsType<ViewResult>(result);
-    }
-
-    [Fact]
     public async Task DownloadPupilPremiumFile_redirects_to_error_when_no_data_available()
     {
         // arrange
@@ -897,7 +815,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetPupilPremiumCSVFile(
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           Arg.Any<bool>(),
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>())
            .Returns(new ReturnFile()
@@ -943,31 +860,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.True(model.NoPupilSelected);
     }
 
-    [Fact]
-    public async Task ToDownloadSelectedPupilPremiumDataUPN_returns_starred_pupil_confirmation_if_starred_pupil_selected()
-    {
-        // arrange
-        string upn = _paginatedResultsFake.GetBase64EncodedUpn();
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-
-        PPLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.ToDownloadSelectedPupilPremiumDataUPN(searchViewModel);
-
-        // assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
-    }
-
     [Theory]
     [InlineData(DownloadFileType.None, new byte[0])]
     [InlineData(DownloadFileType.CSV, new byte[0])]
@@ -990,7 +882,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetPupilPremiumCSVFile(
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           Arg.Any<bool>(),
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>())
            .Returns(new ReturnFile()
@@ -1013,73 +904,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         // arrange
         Assert.IsType<RedirectToActionResult>(result);
-    }
-
-    [Fact]
-    public async Task DownloadCancellationReturn_redirects_to_search()
-    {
-        // arrange
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-
-        const string PupilPremiumSearchTextSessionKey = "SearchPPNonUPN_SearchText";
-        const string PupilPremiumSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters"; 
-
-        _mockSessionProvider.Setup(
-            (t) => t.ContainsSessionKey(PupilPremiumSearchTextSessionKey)).Returns(true).Verifiable();
-
-        _mockSessionProvider.Setup(
-            (t) => t.ContainsSessionKey(PupilPremiumSearchFiltersSessionKey)).Returns(true).Verifiable();
-
-        _mockSessionProvider.Setup(
-            (t) => t.GetSessionValue(PupilPremiumSearchTextSessionKey)).Returns(searchText).Verifiable();
-
-        _mockSessionProvider.Setup(
-            (t) => t.GetSessionValueOrDefault<SearchFilters>(
-                PupilPremiumSearchFiltersSessionKey)).Returns(
-                    searchViewModel.SearchFilters).Verifiable();
-
-        PPLearnerTextSearchController sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.DownloadCancellationReturn(new StarredPupilConfirmationViewModel());
-
-        // assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        AssertAbstractValues(sut, model);
-        Assert.Equal(searchText, model.SearchText);
-        Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
-    }
-
-    [Fact]
-    public async Task DownloadCancellationReturn_redirects_to_search_sets_download_links()
-    {
-        // arrange
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-
-        PPLearnerTextSearchController sut = GetController();
-        _mockSession.SetString(sut.SearchSessionKey, searchText);
-        _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.DownloadCancellationReturn(new StarredPupilConfirmationViewModel());
-
-        // assert            
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        Assert.Equal(ApplicationLabels.DownloadSelectedPupilPremiumDataLink, model.DownloadSelectedLink);
-        Assert.Equal(ApplicationLabels.AddSelectedToMyPupilListLink, model.AddSelectedToMyPupilListLink);
-
     }
 
     [Fact]

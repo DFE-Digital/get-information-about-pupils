@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Web.Constants;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -7,26 +6,6 @@ namespace DfE.GIAP.Web.Helpers.Search;
 
 public static class PupilHelper
 {
-
-    public static bool CheckIfStarredPupil(string selectedPupil) =>
-        selectedPupil?.Contains(Global.EncodedSuffixMarker) ?? false;
-
-
-    public static bool CheckIfStarredPupil(string[] selectedPupils)
-    {
-        if (selectedPupils is null || selectedPupils.Length < 1)
-            return false;
-
-        foreach (var item in selectedPupils.ToList())
-        {
-            if (item.Contains(Global.EncodedSuffixMarker))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public static string GenerateValidationMessageUpnSearch(ModelStateDictionary modelState)
     {

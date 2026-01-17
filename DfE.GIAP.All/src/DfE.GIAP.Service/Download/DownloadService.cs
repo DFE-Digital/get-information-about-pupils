@@ -28,13 +28,12 @@ public class DownloadService : IDownloadService
     public async Task<ReturnFile> GetCSVFile(string[] selectedPupils,
                                              string[] sortOrder,
                                              string[] selectedDownloadOptions,
-                                             bool confirmationGiven,
                                              AzureFunctionHeaderDetails azureFunctionHeaderDetails,
                                              ReturnRoute returnRoute)
     {
         var getCSVFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
 
-        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "csv" };
+        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, FileType = "csv" };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         string loggingBatchId = Guid.NewGuid().ToString();
@@ -57,13 +56,12 @@ public class DownloadService : IDownloadService
 
     public async Task<ReturnFile> GetFECSVFile(string[] selectedPupils,
                                      string[] selectedDownloadOptions,
-                                     bool confirmationGiven,
                                      AzureFunctionHeaderDetails azureFunctionHeaderDetails,
                                      ReturnRoute returnRoute)
     {
         var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
 
-        var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven };
+        var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions };
         var response = await _apiProcessorService.PostAsync<DownloadUlnRequest, ReturnFile>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         string loggingBatchId = Guid.NewGuid().ToString();
@@ -87,13 +85,12 @@ public class DownloadService : IDownloadService
     public async Task<ReturnFile> GetTABFile(string[] selectedPupils,
                                              string[] sortOrder,
                                              string[] selectedDownloadOptions,
-                                             bool confirmationGiven,
                                              AzureFunctionHeaderDetails azureFunctionHeaderDetails,
                                              ReturnRoute returnRoute)
     {
         var getTABFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
 
-        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "tab" };
+        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, FileType = "tab" };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getTABFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         string loggingBatchId = Guid.NewGuid().ToString();
@@ -126,14 +123,13 @@ public class DownloadService : IDownloadService
 
     public async Task<ReturnFile> GetPupilPremiumCSVFile(string[] selectedPupils,
                                                          string[] sortOrder,
-                                                         bool confirmationGiven,
                                                          AzureFunctionHeaderDetails azureFunctionHeaderDetails,
                                                          ReturnRoute returnRoute,
                                                          UserOrganisation userOrganisation = null)
     {
         var getFile = _azureAppSettings.DownloadPupilPremiumByUPNFforCSVUrl;
 
-        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation, ConfirmationGiven = confirmationGiven };
+        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         string loggingBatchId = Guid.NewGuid().ToString();

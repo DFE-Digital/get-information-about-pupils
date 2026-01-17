@@ -68,6 +68,4 @@ public class LearnerTextSearchViewModel
     public string SortField { get; set; }
     public bool ShowOverLimitMessage { get; set; }
     public bool ShowHiddenUPNWarningMessage { get; set; }
-    public bool ShowStarredPupilConfirmation { get; set; }
-    public StarredPupilConfirmationViewModel StarredPupilConfirmationViewModel { get; set; } = new StarredPupilConfirmationViewModel();
 }

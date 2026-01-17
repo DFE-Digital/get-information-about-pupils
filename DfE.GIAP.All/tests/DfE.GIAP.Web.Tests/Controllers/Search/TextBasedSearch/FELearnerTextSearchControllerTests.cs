@@ -692,7 +692,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1067,7 +1066,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1150,7 +1148,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1197,7 +1194,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1242,7 +1238,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetFECSVFile(
             ["inexistentLearner"],
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1286,7 +1281,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()

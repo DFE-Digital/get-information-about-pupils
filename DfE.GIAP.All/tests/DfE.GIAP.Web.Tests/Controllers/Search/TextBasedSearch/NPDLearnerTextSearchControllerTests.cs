@@ -750,7 +750,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           Arg.Any<bool>(),
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>())
            .Returns(new ReturnFile()
@@ -801,7 +800,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           Arg.Any<bool>(),
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>())
            .Returns(new ReturnFile()
@@ -849,7 +847,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           Arg.Any<bool>(),
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>())
            .Returns(new ReturnFile()
@@ -893,7 +890,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
            Arg.Any<string[]>(),
-           Arg.Any<bool>(),
            Arg.Any<AzureFunctionHeaderDetails>(),
            Arg.Any<ReturnRoute>())
            .Returns(new ReturnFile()
@@ -944,33 +940,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         Assert.True(model.NoPupilSelected);
     }
 
-    [Fact]
-    public async Task ToDownloadSelectedNPDDataNonUPN_returns_starred_pupil_confirmation_if_starred_pupil_selected()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetBase64EncodedUpn();
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-
-        // Act
-        NPDLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        IActionResult result = await sut.ToDownloadSelectedNPDDataNonUPN(searchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(DownloadType.NPD, starredPupilViewModel.DownloadType);
-        Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
-
-    }
-
     [Theory]
     [InlineData("A203102209083")]
     [InlineData("QTIwMzEwMjIwOTA4Mw==-GIAP")]
@@ -979,10 +948,7 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         // Arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        searchViewModel.StarredPupilConfirmationViewModel = new StarredPupilConfirmationViewModel()
-        {
-            ConfirmationGiven = true
-        };
+        
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
         _mockCtfService.GetCommonTransferFile(
@@ -1035,33 +1001,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         Assert.True(model.NoPupilSelected);
     }
 
-
-    [Fact]
-    public async Task DownloadNpdCommonTransferFileData_returns_starred_pupil_confirmation_if_starred_pupil_selected()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetBase64EncodedUpn();
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-
-        // Act
-        NPDLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(DownloadType.CTF, starredPupilViewModel.DownloadType);
-        Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
-    }
-
     [Fact]
     public async Task DownloadNpdCommonTransferFileData_returns_to_search_page_if_download_null()
     {
@@ -1099,151 +1038,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
-    }
-
-    [Fact]
-    public async Task DownloadFileConfirmationReturn_returns_starred_pupil_confirmation_if_confirmation_not_provided()
-    {
-        // Arrange
-        StarredPupilConfirmationViewModel starredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
-            ConfirmationGiven = false
-        };
-
-        NPDLearnerTextSearchController sut = GetController();
-
-        // Act
-
-        IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(_paginatedResultsFake.GetBase64EncodedUpn(), starredPupilViewModel.SelectedPupil);
-    }
-
-    [Fact]
-    public async Task DownloadFileConfirmationReturn_returns_CTF_file_if_confirmation_provided()
-    {
-        // Arrange
-        StarredPupilConfirmationViewModel starredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
-            ConfirmationGiven = true,
-            DownloadType = DownloadType.CTF
-        };
-
-        _mockCtfService.GetCommonTransferFile(
-       Arg.Any<string[]>(),
-       Arg.Any<string[]>(),
-       Arg.Any<string>(),
-       Arg.Any<string>(),
-       Arg.Any<bool>(),
-       Arg.Any<AzureFunctionHeaderDetails>(),
-       Arg.Any<ReturnRoute>()
-       ).Returns(new ReturnFile()
-       {
-           FileName = "test",
-           FileType = FileType.ZipFile,
-           Bytes = []
-       });
-
-        NPDLearnerTextSearchController sut = GetController();
-
-        // Act
-        IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
-
-        // Assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
-    [Fact]
-    public async Task DownloadFileConfirmationReturn_returns_NPD_file_if_confirmation_provided()
-    {
-        // Arrange
-        StarredPupilConfirmationViewModel starredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
-            ConfirmationGiven = true,
-            DownloadType = DownloadType.NPD
-        };
-
-        _mockDownloadService.GetCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = FileType.ZipFile,
-               Bytes = []
-           });
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerTextSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        // Act
-        IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
-
-        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        Assert.Equal(_paginatedResultsFake.GetBase64EncodedUpn(), model.SelectedPupils);
-        Assert.Equal(1, model.SelectedPupilsCount);
-    }
-
-    [Fact]
-    public async Task DownloadCancellationReturn_returns_to_search()
-    {
-        // Arrange
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-
-        const string NpdSearchTextSessionKey = "SearchNonUPN_SearchText";
-        const string NpdSearchFiltersSessionKey = "SearchNonUPN_SearchFilters";
-
-        _mockSessionProvider.Setup(
-            (t) => t.ContainsSessionKey(NpdSearchTextSessionKey)).Returns(true).Verifiable();
-
-        _mockSessionProvider.Setup(
-            (t) => t.ContainsSessionKey(NpdSearchFiltersSessionKey)).Returns(true).Verifiable();
-
-        _mockSessionProvider.Setup(
-            (t) => t.GetSessionValue(NpdSearchTextSessionKey)).Returns(searchText).Verifiable();
-
-        _mockSessionProvider.Setup(
-            (t) => t.GetSessionValueOrDefault<SearchFilters>(
-                NpdSearchFiltersSessionKey)).Returns(
-                    searchViewModel.SearchFilters).Verifiable();
-
-        NPDLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // Act
-        IActionResult result = await sut.DownloadCancellationReturn(new StarredPupilConfirmationViewModel());
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        AssertAbstractValues(sut, model);
-        Assert.Equal(searchText, model.SearchText);
-        Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
     }
 
     [Fact]

@@ -1468,7 +1468,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile());
@@ -1536,7 +1535,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         _mockDownloadService.GetFECSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()

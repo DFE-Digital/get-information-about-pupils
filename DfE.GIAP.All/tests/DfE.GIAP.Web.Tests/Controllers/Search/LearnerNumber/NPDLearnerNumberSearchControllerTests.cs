@@ -1716,7 +1716,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile());
@@ -1784,7 +1783,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1805,7 +1803,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>());
     }
@@ -1835,7 +1832,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>())
             .Returns(new ReturnFile()
@@ -1856,7 +1852,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>());
     }

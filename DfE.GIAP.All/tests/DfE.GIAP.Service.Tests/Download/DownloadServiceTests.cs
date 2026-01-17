@@ -51,7 +51,7 @@ public class DownloadServiceTests
         var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
-        var actual = await downloadService.GetCSVFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+        var actual = await downloadService.GetCSVFile(upns, upns, dataTypes, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);
@@ -68,7 +68,6 @@ public class DownloadServiceTests
         // Arrange
         var upns = new string[] { "testupn1", "testupn2" };
         var dataTypes = new string[] { "KS1", "KS2" };
-        bool confirmationGiven = true;
         var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "12345", SessionId = "67890" };
         var expected = new ReturnFile()
         {
@@ -96,7 +95,7 @@ public class DownloadServiceTests
         var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
-        var actual = await downloadService.GetTABFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+        var actual = await downloadService.GetTABFile(upns, upns, dataTypes, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);
@@ -112,7 +111,6 @@ public class DownloadServiceTests
     {
         // Arrange
         var upns = new string[] { "testupn1", "testupn2" };
-        bool confirmationGiven = true;
         var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "12345", SessionId = "67890" };
         var expected = new ReturnFile()
         {
@@ -139,7 +137,7 @@ public class DownloadServiceTests
         var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
-        var actual = await downloadService.GetPupilPremiumCSVFile(upns, upns, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.PupilPremium);
+        var actual = await downloadService.GetPupilPremiumCSVFile(upns, upns, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.PupilPremium);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);
