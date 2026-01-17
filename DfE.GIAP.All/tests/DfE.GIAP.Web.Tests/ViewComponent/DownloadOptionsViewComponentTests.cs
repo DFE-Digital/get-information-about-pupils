@@ -3,35 +3,31 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using static DfE.GIAP.Web.ViewComponents.DownloadOptionsViewComponent;
 
-namespace DfE.GIAP.Web.Tests.ViewComponent
+namespace DfE.GIAP.Web.Tests.ViewComponent;
+
+public sealed class DownloadOptionsViewComponentTests
 {
-    public class DownloadOptionsViewComponentTests
+    [Fact]
+    public void Invoke_creates_correct_view_model()
     {
-        [Fact]
-        public void Invoke_creates_correct_view_model()
-        {
-            // arrange
-            var downloadDataTypes = new List<SearchDownloadDataType>();
-            var downloadFileType = DownloadFileType.CSV;
-            var showTABDownloadType = true;
+        // arrange
+        List<SearchDownloadDataType> downloadDataTypes = new List<SearchDownloadDataType>();
+        DownloadFileType downloadFileType = DownloadFileType.CSV;
+        bool showTABDownloadType = true;
 
-            // act
-            var result = new DownloadOptionsViewComponent().Invoke(downloadDataTypes, downloadFileType, showTABDownloadType);
+        // act
+        IViewComponentResult result = new DownloadOptionsViewComponent().Invoke(downloadDataTypes, downloadFileType, showTABDownloadType);
 
-            // assert
-            Assert.IsType<ViewViewComponentResult>(result);
-            var viewComponentResult = result as ViewViewComponentResult;
-            Assert.IsType<DownloadOptionsModel>(viewComponentResult.ViewData.Model);
-            var model = viewComponentResult.ViewData.Model as DownloadOptionsModel;
-            Assert.Equal(downloadDataTypes, model.DownloadTypes);
-            Assert.Equal(downloadFileType, model.DownloadFileType);
-            Assert.Equal(showTABDownloadType, model.ShowTABDownloadType);
-        }
+        // assert
+        ViewViewComponentResult viewComponentResult = Assert.IsType<ViewViewComponentResult>(result);
+        Assert.NotNull(viewComponentResult.ViewData);
+
+        DownloadOptionsModel model = Assert.IsType<DownloadOptionsModel>(viewComponentResult.ViewData.Model);
+        Assert.Equal(downloadDataTypes, model.DownloadTypes);
+        Assert.Equal(downloadFileType, model.DownloadFileType);
+        Assert.Equal(showTABDownloadType, model.ShowTABDownloadType);
     }
 }
