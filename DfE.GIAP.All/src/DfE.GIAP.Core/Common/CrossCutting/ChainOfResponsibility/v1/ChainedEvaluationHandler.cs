@@ -1,7 +1,7 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v1;
 public sealed class ChainedEvaluationHandler<TIn> : IChainedEvaluationHandler<TIn>
 {
-    private IEvaluationHandler<TIn> _current;
+    private readonly IEvaluationHandler<TIn> _current;
     private ChainedEvaluationHandler<TIn>? _next;
     public ChainedEvaluationHandler(IEvaluationHandler<TIn> current)
     {

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v1;
 public sealed class Evaluator<TIn> : IEvaluator<TIn>
 {
     private readonly IEvaluationHandler<TIn> _handler;
