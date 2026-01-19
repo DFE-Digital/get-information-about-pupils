@@ -6,8 +6,10 @@ using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
+using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
@@ -35,6 +37,7 @@ public static class CompositionRoot
         return services
             .RegisterApplicationDatasetEvaluatorsAndHandlers()
             .RegisterApplicationAggregatorsAndHandlers()
+            .RegisterApplicationMappers()
             .RegisteApplicationUseCases();
     }
 
@@ -56,6 +59,24 @@ public static class CompositionRoot
 
         return services;
 
+    }
+
+    private static IServiceCollection RegisterApplicationMappers(this IServiceCollection services)
+    {
+        services.AddScoped<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>, PupilPremiumPupilToPupilPremiumOutputRecordMapper>();
+        services.AddScoped<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>, FurtherEducationPupilToPpOutputRecordMapper>();
+        services.AddScoped<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>, FurtherEducationPupilToSenOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, CensusAutumnOutput>, NationalPupilToCensusAutumnOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, CensusSummerOutput>, NationalPupilToCensusSummerOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, CensusSpringOutput>, NationalPupilToCensusSpringOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, EYFSPOutput>, NationalPupilToEyfspOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, KS1Output>, NationalPupilToKs1OutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, KS2Output>, NationalPupilToKs2OutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, KS4Output>, NationalPupilToKs4OutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, MTCOutput>, NationalPupilToMtcOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, PhonicsOutput>, NationalPupilToPhonicsOutputRecordMapper>();
+
+        return services;
     }
 
     private static IServiceCollection RegisterApplicationDatasetEvaluatorsAndHandlers(this IServiceCollection services)
