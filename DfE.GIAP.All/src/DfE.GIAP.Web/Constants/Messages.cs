@@ -7,14 +7,11 @@ public static class Messages
         public static class Errors
         {
             public const string NoAdminSelection = "You have not selected an admin option";
-            public const string NoOrganisationSelection = "You have not selected an organisation option";
-            public const string NoConfirmationSelection = "You have not selected a confirmation option";
             public const string NoContinueSelection = "Please select an option";
             public const string MyPupilListLimitExceeded = "You have reached the limit for my pupil list, please contact the Department for Education to increase this";
             public const string TitleLength = "Title must be must be 64 characters or fewer";
             public const string TitleRequired = "Title must be entered";
             public const string BodyRequired = "Body must be entered";
-            public const string SecurityReportRequired = "A report must be selected";
             public const string NoPupilsSelected = "You have not selected any pupils";
         }
     }
@@ -57,11 +54,9 @@ public static class Messages
         public static class Errors
         {
             public const string UPNLimitExceeded = "A CTF download can only have up to 500 pupils. You have selected more than 500 pupils, remove some pupils and try again";
-            public const string NoDataForDownload = "No results found";
             public const string NoDataForSelectedPupils = "No pupil data of the requested type exists for the selected pupils";
             public const string NoPupilSelected = "No pupil was selected to download";
             public const string NoLearnerSelected = "No learner was selected to download";
-            public const string NoDataForOrganisationDownload = "No data exists for the report you have selected";
             public const string UnknownDownloadType = "An unknown download data type was provided";
         }
     }

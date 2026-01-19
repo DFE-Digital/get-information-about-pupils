@@ -56,27 +56,17 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_returns_empty_page_when_first_navigated_to()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
+        NPDLearnerNumberSearchController sut = GetController();
 
         // act
-        NPDLearnerNumberSearchController sut = GetController();
         IActionResult result = await sut.NationalPupilDatabase(null);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         _mockSelectionManager.Received().Clear();
-
         AssertAbstractValues(sut, model);
     }
 
@@ -84,31 +74,21 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_returns_search_page_when_returned_to()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, _paginatedResultsFake.GetUpns());
         Assert.Equal(0, model.PageNumber);
@@ -119,23 +99,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_returns_a_page_of_results_when_searched()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -144,17 +117,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -165,18 +136,12 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_returns_another_page_of_results_when_navigated_to()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            PageLearnerNumbers = String.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
@@ -191,14 +156,10 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(1, model.PageNumber);
@@ -209,20 +170,14 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_select_all_works()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectAllNoJsChecked = "true",
-            SelectedPupil = new List<string>() { "A203102209083" },
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = ["A203102209083"],
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
@@ -231,23 +186,19 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         model.Learners.AssertSelected(true);
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
@@ -262,44 +213,34 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_deselect_all_works()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectAllNoJsChecked = "false",
-            SelectedPupil = new List<string>() { "A203102209083" }
+            SelectedPupil = ["A203102209083"]
         };
 
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(true);
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model); 
         AssertAbstractValues(sut, model);
         model.Learners.AssertSelected(false);
         _mockSelectionManager.DidNotReceive().AddAll(Arg.Any<string[]>());
@@ -314,44 +255,34 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_changes_selection_on_page_if_selections_are_different()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = new List<string>() { "A203102209083" },
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = ["A203102209083"],
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>() { "A203102209083" });
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(["A203102209083"]);
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "", true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         _mockSelectionManager.Received().AddAll(
             Arg.Is<IEnumerable<string>>(l => l.SequenceEqual(new List<string> { "A203102209083" })));
@@ -365,30 +296,19 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_shows_error_if_no_UPNs_inputted()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
-        string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new();
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
         sut.ModelState.AddModelError("test", "<span style='display:none'>1</span>");
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(Messages.Search.Errors.EnterUPNs, model.SearchBoxErrorMessage);
     }
@@ -397,23 +317,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_shows_invalid_UPNs_on_search_if_they_exist()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpnsWithInvalid();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = upns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -423,20 +336,17 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         SetupPaginatedSearch(sut.IndexType, _paginatedResultsFake.GetInvalidLearners());
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
-        Assert.True(model.Invalid.Count == 1);
-        Assert.True(model.Learners.Count() == 3);
+        Assert.Single(model.Invalid);
+        Assert.Equal(3, model.Learners.Count());
     }
 
 
@@ -444,65 +354,49 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_shows_not_found_UPNs_on_search_if_they_do_not_exist()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpnsWithNotFound();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = upns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", false);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        
         AssertAbstractValues(sut, model);
-        Assert.True(model.NotFound.Count == 1);
-        Assert.True(model.Learners.Count() == 2);
+        Assert.Single(model.NotFound);
+        Assert.Equal(2, model.Learners.Count());
     }
 
     [Fact]
     public async Task NationalPupilDatabase_shows_duplicate_UPNs_on_search_if_they_exist()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpnsWithDuplicates();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = upns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -511,41 +405,32 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
-        Assert.True(model.Duplicates.Count == 1);
-        Assert.True(model.Learners.Count() == 2);
+        Assert.Single(model.Duplicates);
+        Assert.Equal(2, model.Learners.Count());
     }
 
     [Fact]
     public async Task NationalPupilDatabase_populates_LearnerNumberIds_with_Id_when_UPN_0()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         PaginatedResponse response = new()
         {
-            Learners = new List<Learner>()
-                    {
+            Learners =
+                    [
                         new()
                         {
                             Id = "123",
@@ -556,11 +441,11 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
                             Id = "456",
                             LearnerNumber = "A203202811068",
                         }
-                    },
+                    ],
             Count = 2
         };
-        List<Learner> expectedLearners = new()
-                    {
+        List<Learner> expectedLearners =
+                    [
                         new Learner()
                         {
                            Id = "123",
@@ -573,11 +458,10 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
                             LearnerNumber = "A203202811068",
                             LearnerNumberId = "A203202811068",
                         }
-                    };
+                    ];
         SetupPaginatedSearch(sut.IndexType, response);
 
         // act
-
         IActionResult result = await sut.NationalPupilDatabase(true);
 
         // assert
@@ -593,24 +477,17 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_preserves_sort_settings_when_navigated_to()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            PageLearnerNumbers = String.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -618,17 +495,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Forename";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, sortField, sortDirection);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(1, model.PageNumber);
@@ -642,20 +517,14 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task PupilUlnSearch_preserves_sort_settings_when_select_all_chosen()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectAllNoJsChecked = "true",
-            SelectedPupil = new List<string>() { "A203102209083" },
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = ["A203102209083"],
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
@@ -664,7 +533,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -672,17 +540,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Forename";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, sortField, sortDirection);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         model.Learners.AssertSelected(true);
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
@@ -691,7 +557,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
-
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -700,28 +565,21 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task PupilUlnSearch_preserves_sort_settings_if_deselect_all_chosen()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectAllNoJsChecked = "false",
-            SelectedPupil = new List<string>() { "A203102209083" }
+            SelectedPupil = ["A203102209083"]
         };
 
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(true);
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -729,17 +587,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Forename";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, sortField, sortDirection);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         model.Learners.AssertSelected(false);
         _mockSelectionManager.DidNotReceive().AddAll(Arg.Any<string[]>());
@@ -757,15 +613,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_preserves_sort_settings_in_session_if_returnToSearch_true()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
-
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -775,17 +623,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         string sortDirection = "asc";
         _mockSession.SetString(sut.SearchSessionSortField, sortField);
         _mockSession.SetString(sut.SearchSessionSortDirection, sortDirection);
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, _paginatedResultsFake.GetUpns());
         Assert.Equal(0, model.PageNumber);
@@ -799,23 +645,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_forename_asc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -826,17 +665,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Forename";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -850,23 +687,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_forename_desc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -877,17 +707,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Forename";
         string sortDirection = "desc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -901,23 +729,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_middlenames_asc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -928,17 +749,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "MiddleNames";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -952,23 +771,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_middlenames_desc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -979,22 +791,19 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "MiddleNames";
         string sortDirection = "desc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
-
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -1003,23 +812,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_surname_asc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1030,17 +832,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Surname";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -1054,23 +854,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_surname_desc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1081,17 +874,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Surname";
         string sortDirection = "desc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -1105,23 +896,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_sex_asc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1132,22 +916,19 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Sex";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);        
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
-
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -1156,23 +937,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_gender_desc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1183,22 +957,20 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Sex";
         string sortDirection = "desc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
-
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -1207,23 +979,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_dob_asc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1234,22 +999,20 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Dob";
         string sortDirection = "asc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
-
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -1258,23 +1021,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task NationalPupilDatabase_updates_model_with_sorting_dob_desc_correctly()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1285,22 +1041,19 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         string sortField = "Dob";
         string sortDirection = "desc";
+
+        // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, sortField, sortDirection, true);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
-
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -1308,6 +1061,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     [Fact]
     public async Task NPDInvalidUpns_shows_invalid_upn_page_upns_only()
     {
+        // arrange
         string upns = _paginatedResultsFake.GetUpnsWithInvalid();
         InvalidLearnerNumberSearchViewModel inputModel = new()
         {
@@ -1316,24 +1070,21 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
 
+        // act
         IActionResult result = await sut.NPDInvalidUPNs(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
 
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        InvalidLearnerNumberSearchViewModel? model = viewResult.Model as InvalidLearnerNumberSearchViewModel;
-        Assert.True(model.Learners.Count() == 3);
+        InvalidLearnerNumberSearchViewModel model = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
+        Assert.Equal(3, model.Learners.Count());
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetInvalidLearners().Learners));
     }
 
@@ -1349,24 +1100,21 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, _paginatedResultsFake.GetValidLearners());
 
+        // act
         IActionResult result = await sut.NPDInvalidUPNs(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);        
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
 
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        InvalidLearnerNumberSearchViewModel? model = viewResult.Model as InvalidLearnerNumberSearchViewModel;
-        Assert.True(model.Learners.Count() == 5);
+        InvalidLearnerNumberSearchViewModel? model = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
+        Assert.Equal(5, model.Learners.Count());
         Assert.True(model.Learners.SequenceEqual(expectedLearners));
     }
 
@@ -1381,45 +1129,39 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, new PaginatedResponse());
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, _paginatedResultsFake.GetInvalidLearners());
 
+        // act
         IActionResult result = await sut.NPDInvalidUPNs(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
 
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        InvalidLearnerNumberSearchViewModel? model = viewResult.Model as InvalidLearnerNumberSearchViewModel;
-        Assert.True(model.Learners.Count() == 3);
+        InvalidLearnerNumberSearchViewModel model = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
+        Assert.Equal(3, model.Learners.Count());
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetInvalidLearners().Learners));
     }
 
     [Fact]
     public async Task NPDInvalidUpnsConfirmation_goes_to_MPL_if_asked()
     {
-        string upns = _paginatedResultsFake.GetUpnsWithInvalid();
         InvalidLearnerNumberSearchViewModel inputModel = new()
         {
             SelectedInvalidUPNOption = Global.InvalidUPNConfirmation_MyPupilList
         };
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
+        // act
         IActionResult result = await sut.NPDInvalidUPNsConfirmation(inputModel);
 
         // assert
-        Assert.IsType<RedirectToActionResult>(result);
-        RedirectToActionResult? redirectResult = result as RedirectToActionResult;
-
+        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(Global.MyPupilListAction, redirectResult.ActionName);
         Assert.Equal(Global.MyPupilListControllerName, redirectResult.ControllerName);
     }
@@ -1427,21 +1169,18 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     [Fact]
     public async Task NPDInvalidUpnsConfirmation_goes_back_to_search_if_asked()
     {
-        string upns = _paginatedResultsFake.GetUpnsWithInvalid();
         InvalidLearnerNumberSearchViewModel inputModel = new()
         {
             SelectedInvalidUPNOption = Global.InvalidUPNConfirmation_ReturnToSearch
         };
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
+        // act
         IActionResult result = await sut.NPDInvalidUPNsConfirmation(inputModel);
 
         // assert
-        Assert.IsType<RedirectToActionResult>(result);
-        RedirectToActionResult? redirectResult = result as RedirectToActionResult;
-
+        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(redirectResult.ActionName, sut.SearchAction);
     }
 
@@ -1456,7 +1195,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1479,12 +1217,11 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
           Arg.Any<AzureFunctionHeaderDetails>())
           .Returns(new PaginatedResponse());
 
+        // 
         IActionResult result = await sut.NPDInvalidUPNsConfirmation(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
         Assert.False(sut.ModelState.IsValid);
     }
@@ -1505,7 +1242,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             .GetSelected(Arg.Any<string[]>())
             .Returns(upns.FormatLearnerNumbers().ToHashSet());
 
-        // Act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(
@@ -1518,11 +1254,13 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // Act
         IActionResult result = await sut.NPDAddToMyPupilList(inputModel);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
+
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
@@ -1541,7 +1279,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         NPDLearnerNumberSearchController sut = GetController();
 
@@ -1559,6 +1297,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
+
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.True(model.NoPupil);
@@ -1591,7 +1330,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        InvalidLearnerNumberSearchViewModel model = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
+        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
         Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
     }
 
@@ -1640,7 +1379,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task DownloadCommonTransferFileData_returns_data()
     {
         // arrange
-
         _mockCtfService.GetCommonTransferFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
@@ -1653,7 +1391,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             {
                 FileName = "test",
                 FileType = FileType.ZipFile,
-                Bytes = new byte[0]
+                Bytes = []
             });
 
         string upns = _paginatedResultsFake.GetUpns();
@@ -1661,7 +1399,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         {
             LearnerNumberIds = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
@@ -1679,23 +1417,16 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task DownloadCommonTransferFileData_returns_search_page_with_error_if_no_pupil_selected()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpnsWithInvalid();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1704,18 +1435,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
         Assert.True(model.NoPupil);
         Assert.True(model.NoPupilSelected);
     }
@@ -1723,18 +1451,12 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     [Fact]
     public async Task DownloadCommonTransferFileData_returns_to_search_page_if_download_null()
     {
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
@@ -1754,7 +1476,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
              Bytes = null
          });
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1763,18 +1484,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
         Assert.Equal(Messages.Downloads.Errors.NoDataForSelectedPupils, model.ErrorDetails);
     }
 
@@ -1782,12 +1500,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task DownloadCommonTransferFileData_exceeding_commonTransferFileUPNLimit_returns_to_search_page_with_errorDetails()
     {
         // arrange
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
         _mockCtfService.GetCommonTransferFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
@@ -1800,7 +1512,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             {
                 FileName = "test",
                 FileType = FileType.ZipFile,
-                Bytes = new byte[0]
+                Bytes = []
             });
 
         string upns = _paginatedResultsFake.GetUpns();
@@ -1820,38 +1532,28 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
+
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
         Assert.Contains(Messages.Downloads.Errors.UPNLimitExceeded, model.ErrorDetails);
     }
 
     [Fact]
     public async Task ToDownloadSelectedNPDDataUpn_returns_to_search_page_with_error_if_no_pupil_selected()
     {
-        CommonResponseBody newsPubCommonResponse = new()
-        {
-            Id = "0",
-            Body = "test"
-        };
-
-
+        // arrange
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
@@ -1860,18 +1562,15 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _paginatedResultsFake.TotalSearchResultsSessionValue);
         SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
+        // act
         IActionResult result = await sut.ToDownloadSelectedNPDDataUPN(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        LearnerNumberSearchViewModel? model = viewResult.Model as LearnerNumberSearchViewModel;
-
-        AssertAbstractValues(sut, model);
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        AssertAbstractValues(sut, model);
         Assert.True(model.NoPupil);
         Assert.True(model.NoPupilSelected);
     }
@@ -1885,28 +1584,26 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             LearnerNumberIds = upns,
             LearnerNumber = upns,
             SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = String.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
 
         string joinedSelectedPupils = string.Join(',', upns.FormatLearnerNumbers());
 
-        // act
         NPDLearnerNumberSearchController sut = GetController();
         sut.TempData = Substitute.For<ITempDataDictionary>();
+
+        // act
         IActionResult result = await sut.ToDownloadSelectedNPDDataUPN(inputModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel? model = viewResult.Model as LearnerDownloadViewModel;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.DownloadNPDOptionsView, viewResult.ViewName);
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
         Assert.Equal(model.SelectedPupils, joinedSelectedPupils);
-        Assert.True(model.SelectedPupilsCount == upns.FormatLearnerNumbers().Length);
+        Assert.Equal(upns.FormatLearnerNumbers().Length, model.SelectedPupilsCount);
         Assert.Equal(model.LearnerNumber, upns);
     }
 
@@ -1923,8 +1620,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
 
         // assert
-        Assert.IsType<RedirectToActionResult>(result);
-        RedirectToActionResult? redirectResult = result as RedirectToActionResult;
+        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(Global.NPDLearnerNumberSearchAction, redirectResult.ActionName);
         Assert.Equal(Global.NPDLearnerNumberSearchController, redirectResult.ControllerName);
     }
@@ -1933,7 +1629,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task DownloadSelectedNationalPupilDatabaseData_returns_to_options_page_if_no_type_selected()
     {
         string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = String.Join(',', upns);
+        string joinedSelectedPupils = string.Join(',', upns);
 
         LearnerDownloadViewModel inputDownloadModel = new()
         {
@@ -1952,29 +1648,26 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel? model = viewResult.Model as LearnerDownloadViewModel;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.DownloadNPDOptionsView, viewResult.ViewName);
-        Assert.Equal(model.SelectedPupils, joinedSelectedPupils);
-        Assert.True(model.SelectedPupilsCount == upns.Length);
-        Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Search.Errors.SelectOneOrMoreDataTypes));
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
+        Assert.Equal(joinedSelectedPupils, model.SelectedPupils);
+        Assert.Equal(upns.Length, model.SelectedPupilsCount);
+        Assert.Equal(Messages.Search.Errors.SelectOneOrMoreDataTypes, sut.TempData["ErrorDetails"]);
     }
 
     [Fact]
     public async Task DownloadSelectedNationalPupilDatabaseData_returns_to_options_page_if_no_download_type_selected()
     {
         string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = String.Join(',', upns);
+        string joinedSelectedPupils = string.Join(',', upns);
 
         LearnerDownloadViewModel inputDownloadModel = new()
         {
             SelectedPupils = joinedSelectedPupils,
             SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = new string[0],
+            SelectedDownloadOptions = [],
             DownloadFileType = DownloadFileType.None
         };
 
@@ -1989,15 +1682,12 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel? model = viewResult.Model as LearnerDownloadViewModel;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.DownloadNPDOptionsView, viewResult.ViewName);
-        Assert.Equal(model.SelectedPupils, joinedSelectedPupils);
-        Assert.True(model.SelectedPupilsCount == upns.Length);
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
+        Assert.Equal(joinedSelectedPupils, model.SelectedPupils);
+        Assert.Equal(upns.Length, model.SelectedPupilsCount);
         Assert.Equal(Messages.Search.Errors.SelectFileType, sut.TempData["ErrorDetails"]);
     }
 
@@ -2005,13 +1695,13 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task DownloadSelectedNationalPupilDatabaseData_returns_to_options_page_if_no_download_data_exists()
     {
         string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = String.Join(',', upns);
+        string joinedSelectedPupils = string.Join(',', upns);
 
         LearnerDownloadViewModel inputDownloadModel = new()
         {
             SelectedPupils = joinedSelectedPupils,
             SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = new string[0],
+            SelectedDownloadOptions = [],
             DownloadFileType = DownloadFileType.CSV
         };
 
@@ -2035,29 +1725,26 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
 
         // assert
-        Assert.IsType<ViewResult>(result);
-        ViewResult? viewResult = result as ViewResult;
-
-        Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        LearnerDownloadViewModel? model = viewResult.Model as LearnerDownloadViewModel;
-
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.DownloadNPDOptionsView, viewResult.ViewName);
+
+        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
         Assert.Equal(model.SelectedPupils, joinedSelectedPupils);
-        Assert.True(model.SelectedPupilsCount == upns.Length);
-        Assert.True(sut.TempData["ErrorDetails"].Equals(Messages.Downloads.Errors.NoDataForSelectedPupils));
+        Assert.Equal(upns.Length, model.SelectedPupilsCount);
+        Assert.Equal(Messages.Downloads.Errors.NoDataForSelectedPupils, sut.TempData["ErrorDetails"]);
     }
 
     [Fact]
     public async Task DownloadSelectedNationalPupilDatabaseData_redirects_to_error_page_if_download_null()
     {
         string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = String.Join(',', upns);
+        string joinedSelectedPupils = string.Join(',', upns);
 
         LearnerDownloadViewModel inputDownloadModel = new()
         {
             SelectedPupils = joinedSelectedPupils,
             SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = new string[0],
+            SelectedDownloadOptions = [],
             DownloadFileType = DownloadFileType.CSV
         };
 
@@ -2067,9 +1754,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
 
         // assert
-        Assert.IsType<RedirectToActionResult>(result);
-        RedirectToActionResult? redirectResult = result as RedirectToActionResult;
-
+        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal(Routes.Application.Error, redirectResult.ActionName);
         Assert.Equal(Routes.Application.Home, redirectResult.ControllerName);
     }
@@ -2078,13 +1763,13 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
     public async Task DownloadSelectedNationalPupilDatabaseData_with_csv_type_returns_csv_data()
     {
         string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = String.Join(',', upns);
+        string joinedSelectedPupils = string.Join(',', upns);
 
         LearnerDownloadViewModel inputDownloadModel = new()
         {
             SelectedPupils = joinedSelectedPupils,
             SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = new string[0],
+            SelectedDownloadOptions = [],
             DownloadFileType = DownloadFileType.CSV
         };
 
@@ -2106,7 +1791,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             {
                 FileName = "test_csv",
                 FileType = FileType.ZipFile,
-                Bytes = new byte[0]
+                Bytes = []
             });
 
         // act
@@ -2122,20 +1807,20 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>()).ConfigureAwait(false);
+            Arg.Any<ReturnRoute>());
     }
 
     [Fact]
     public async Task DownloadSelectedNationalPupilDatabaseData_with_tab_type_returns_tab_data()
     {
         string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = String.Join(',', upns);
+        string joinedSelectedPupils = string.Join(',', upns);
 
         LearnerDownloadViewModel inputDownloadModel = new()
         {
             SelectedPupils = joinedSelectedPupils,
             SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = new string[0],
+            SelectedDownloadOptions = [],
             DownloadFileType = DownloadFileType.TAB
         };
 
@@ -2157,7 +1842,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             {
                 FileName = "test_tab",
                 FileType = FileType.ZipFile,
-                Bytes = new byte[0]
+                Bytes = []
             });
 
         // act
@@ -2173,10 +1858,10 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             Arg.Any<string[]>(),
             Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>()).ConfigureAwait(false);
+            Arg.Any<ReturnRoute>());
     }
 
-    private void AssertAbstractValues(NPDLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
+    private static void AssertAbstractValues(NPDLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
     {
         Assert.Equal(controller.PageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
@@ -2202,11 +1887,11 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
 
-        List<AvailableDatasetResult> availableDatasetResults = new()
-            {
+        List<AvailableDatasetResult> availableDatasetResults =
+            [
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
-            };
+            ];
         GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
 
         Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
