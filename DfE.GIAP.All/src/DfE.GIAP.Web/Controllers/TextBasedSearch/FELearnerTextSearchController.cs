@@ -305,11 +305,6 @@ public class FELearnerTextSearchController : Controller
                     }
                 }
 
-                if (response is null)
-                {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
-                }
-
                 if (response.FileContents is not null)
                 {
                     model.ErrorDetails = null;
