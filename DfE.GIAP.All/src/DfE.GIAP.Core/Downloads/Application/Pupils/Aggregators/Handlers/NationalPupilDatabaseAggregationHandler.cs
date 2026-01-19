@@ -1,19 +1,55 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 
 namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
 
 public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationHandler
 {
-    public bool CanHandle(DownloadType downloadType)
-        => downloadType == DownloadType.NPD;
-
+    public DownloadType SupportedDownloadType => DownloadType.NPD;
     private readonly INationalPupilReadOnlyRepository _npdReadRepository;
-    public NationalPupilDatabaseAggregationHandler(INationalPupilReadOnlyRepository npdReadRepository)
+    private readonly IMapper<NationalPupil, CensusAutumnOutput> _autumnMapper;
+    private readonly IMapper<NationalPupil, CensusSummerOutput> _summerMapper;
+    private readonly IMapper<NationalPupil, CensusSpringOutput> _springMapper;
+    private readonly IMapper<NationalPupil, KS1Output> _ks1Mapper;
+    private readonly IMapper<NationalPupil, KS2Output> _ks2Mapper;
+    private readonly IMapper<NationalPupil, KS4Output> _ks4Mapper;
+    private readonly IMapper<NationalPupil, MTCOutput> _mtcMapper;
+    private readonly IMapper<NationalPupil, PhonicsOutput> _phonicsMapper;
+    private readonly IMapper<NationalPupil, EYFSPOutput> _eyfspMapper;
+    public NationalPupilDatabaseAggregationHandler(
+        INationalPupilReadOnlyRepository npdReadRepository,
+        IMapper<NationalPupil, CensusAutumnOutput> autumnMapper,
+        IMapper<NationalPupil, CensusSummerOutput> summerMapper,
+        IMapper<NationalPupil, CensusSpringOutput> springMapper,
+        IMapper<NationalPupil, KS1Output> ks1Mapper,
+        IMapper<NationalPupil, KS2Output> ks2Mapper,
+        IMapper<NationalPupil, KS4Output> ks4Mapper,
+        IMapper<NationalPupil, MTCOutput> mtcMapper,
+        IMapper<NationalPupil, PhonicsOutput> phonicsMapper,
+        IMapper<NationalPupil, EYFSPOutput> eyfspMapper)
     {
         ArgumentNullException.ThrowIfNull(npdReadRepository);
+        ArgumentNullException.ThrowIfNull(autumnMapper);
+        ArgumentNullException.ThrowIfNull(summerMapper);
+        ArgumentNullException.ThrowIfNull(springMapper);
+        ArgumentNullException.ThrowIfNull(ks1Mapper);
+        ArgumentNullException.ThrowIfNull(ks2Mapper);
+        ArgumentNullException.ThrowIfNull(ks4Mapper);
+        ArgumentNullException.ThrowIfNull(mtcMapper);
+        ArgumentNullException.ThrowIfNull(phonicsMapper);
+        ArgumentNullException.ThrowIfNull(eyfspMapper);
         _npdReadRepository = npdReadRepository;
+        _autumnMapper = autumnMapper;
+        _summerMapper = summerMapper;
+        _springMapper = springMapper;
+        _ks1Mapper = ks1Mapper;
+        _ks2Mapper = ks2Mapper;
+        _ks4Mapper = ks4Mapper;
+        _mtcMapper = mtcMapper;
+        _phonicsMapper = phonicsMapper;
+        _eyfspMapper = eyfspMapper;
     }
 
     public async Task<PupilDatasetCollection> AggregateAsync(
@@ -27,71 +63,25 @@ public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationH
         foreach (NationalPupil pupil in pupils)
         {
             if (selectedDatasets.Contains(Dataset.Census_Autumn) && pupil.HasCensusAutumnData)
-                AddCensusAutumnRecord(collection, pupil);
+                collection.CensusAutumn.Add(_autumnMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.Census_Summer) && pupil.HasCensusSummerData)
-                AddCensusSummerRecord(collection, pupil);
+                collection.CensusSummer.Add(_summerMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.Census_Spring) && pupil.HasCensusSpringData)
-                AddCensusSpringRecord(collection, pupil);
+                collection.CensusSpring.Add(_springMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.KS1) && pupil.HasKeyStage1Data)
-                AddKS1Record(collection, pupil);
+                collection.KS1.Add(_ks1Mapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.KS2) && pupil.HasKeyStage2Data)
-                AddKS2Record(collection, pupil);
+                collection.KS2.Add(_ks2Mapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.KS4) && pupil.HasKeyStage4Data)
-                AddKS4Record(collection, pupil);
+                collection.KS4.Add(_ks4Mapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.MTC) && pupil.HasMtcData)
-                AddMTCRecord(collection, pupil);
+                collection.MTC.Add(_mtcMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.Phonics) && pupil.HasPhonicsData)
-                AddPhonicsRecord(collection, pupil);
+                collection.Phonics.Add(_phonicsMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.EYFSP) && pupil.HasEYFSPData)
-                AddEYFSPRecord(collection, pupil);
-
+                collection.EYFSP.Add(_eyfspMapper.Map(pupil));
         }
 
         return collection;
-    }
-
-    private static void AddCensusAutumnRecord(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddCensusSummerRecord(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddCensusSpringRecord(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddKS1Record(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddKS2Record(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddKS4Record(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddMTCRecord(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddPhonicsRecord(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
-    }
-
-    private static void AddEYFSPRecord(PupilDatasetCollection collection, NationalPupil pp)
-    {
-
     }
 }

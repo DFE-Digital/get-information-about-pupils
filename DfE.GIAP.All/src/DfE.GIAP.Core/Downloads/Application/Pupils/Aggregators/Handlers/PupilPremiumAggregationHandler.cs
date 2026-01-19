@@ -1,22 +1,25 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 
 namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
 
 public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
 {
-    public bool CanHandle(DownloadType downloadType)
-        => downloadType == DownloadType.PupilPremium;
+    public DownloadType SupportedDownloadType => DownloadType.PupilPremium;
 
     private readonly IPupilPremiumReadOnlyRepository _ppReadRepository;
+    private readonly IMapper<PupilPremiumPupil, PupilPremiumOutputRecord> _ppMapper;
 
-    public PupilPremiumAggregationHandler(IPupilPremiumReadOnlyRepository pupilPremiumReadRepository)
+    public PupilPremiumAggregationHandler(
+        IPupilPremiumReadOnlyRepository pupilPremiumReadRepository,
+        IMapper<PupilPremiumPupil, PupilPremiumOutputRecord> ppMapper)
     {
         ArgumentNullException.ThrowIfNull(pupilPremiumReadRepository);
+        ArgumentNullException.ThrowIfNull(ppMapper);
         _ppReadRepository = pupilPremiumReadRepository;
+        _ppMapper = ppMapper;
     }
 
     public async Task<PupilDatasetCollection> AggregateAsync(
@@ -30,33 +33,9 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
         foreach (PupilPremiumPupil pupil in pupils)
         {
             if (selectedDatasets.Contains(Dataset.PP) && pupil.HasPupilPremiumData)
-                AddPupilPremiumRecord(collection, pupil);
+                collection.PupilPremium.Add(_ppMapper.Map(pupil));
         }
 
         return collection;
-    }
-
-
-    private static void AddPupilPremiumRecord(PupilDatasetCollection collection, PupilPremiumPupil pp)
-    {
-        PupilPremiumEntry? ppEntry = pp.PupilPremium?.FirstOrDefault();
-        collection.PupilPremium.Add(new PupilPremiumOutputRecord
-        {
-            UniquePupilNumber = pp.UniquePupilNumber,
-            Surname = pp.Surname,
-            Forename = pp.Forename,
-            Sex = pp.Sex,
-            DOB = pp.DOB.ToShortDateString(),
-            NCYear = ppEntry?.NCYear,
-            DeprivationPupilPremium = ppEntry?.DeprivationPupilPremium,
-            ServiceChildPremium = ppEntry?.ServiceChildPremium,
-            AdoptedfromCarePremium = ppEntry?.AdoptedfromCarePremium,
-            LookedAfterPremium = ppEntry?.LookedAfterPremium,
-            PupilPremiumFTE = ppEntry?.PupilPremiumFTE,
-            PupilPremiumCashAmount = ppEntry?.PupilPremiumCashAmount,
-            PupilPremiumFYStartDate = ppEntry?.PupilPremiumFYStartDate,
-            PupilPremiumFYEndDate = ppEntry?.PupilPremiumFYEndDate,
-            LastFSM = ppEntry?.LastFSM
-        });
     }
 }

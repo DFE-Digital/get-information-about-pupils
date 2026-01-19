@@ -38,6 +38,8 @@ using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
 using System.Security.Claims;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
+using DfE.GIAP.Core.Downloads.Application.Enums;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -1897,14 +1899,18 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         List<AvailableDatasetResult> availableDatasetResults = new()
             {
-                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.PP, HasData: true, CanDownload: true),
+                new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.FE_PP, HasData: true, CanDownload: true),
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.SEN, HasData: true, CanDownload: true)
             };
-        GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
-
+        GetAvailableDatasetsForPupilsResponse getAvailableDatasetsResponse = new(availableDatasetResults);
         Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
-            .ReturnsAsync(response);
+            .ReturnsAsync(getAvailableDatasetsResponse);
+
+        DownloadPupilDataResponse downloadPupilDataResponse = new();
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(downloadPupilDataResponse);
 
         IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
 
@@ -1923,7 +1929,8 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockSelectionManager,
             _mockAppOptions,
             mockEventLogger.Object,
-            mockGetAvailableDatasetsForPupilsUseCase.Object)
+            mockGetAvailableDatasetsForPupilsUseCase.Object,
+            mockDownloadPupilDataUseCase.Object)
         {
             ControllerContext = context
         };

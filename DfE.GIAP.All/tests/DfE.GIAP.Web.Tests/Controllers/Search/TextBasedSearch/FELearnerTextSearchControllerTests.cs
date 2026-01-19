@@ -6,6 +6,7 @@ using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -1468,6 +1469,11 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
             .ReturnsAsync(response);
 
+        DownloadPupilDataResponse downloadPupilDataResponse = new();
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(downloadPupilDataResponse);
+
         return new FELearnerTextSearchController(
             _sessionProvider,
             _mockUseCase,
@@ -1481,7 +1487,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             _mockDownloadService,
             mockEventLogger.Object,
             _mockAppOptions,
-            mockGetAvailableDatasetsForPupilsUseCase.Object)
+            mockGetAvailableDatasetsForPupilsUseCase.Object,
+            mockDownloadPupilDataUseCase.Object)
         {
             ControllerContext = new ControllerContext()
             {
