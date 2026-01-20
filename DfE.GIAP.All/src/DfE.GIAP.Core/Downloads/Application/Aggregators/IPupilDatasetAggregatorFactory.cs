@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Enums;
 
-namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators;
 
 public interface IPupilDatasetAggregatorFactory
 {

@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
-namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers.Mappers;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
 public class PupilPremiumPupilToPupilPremiumOutputRecordMapper : IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>
 {

@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Enums;
-using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
+﻿using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
+using DfE.GIAP.Core.Downloads.Application.Enums;
 
-namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators;
 
 public class PupilDatasetAggregationHandlerFactory : IPupilDatasetAggregatorFactory
 {

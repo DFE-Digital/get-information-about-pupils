@@ -1,8 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
-using DfE.GIAP.Core.Downloads.Application.Pupils;
-using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators;
 
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 

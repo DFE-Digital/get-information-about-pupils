@@ -1,9 +1,10 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Enums;
+﻿using DfE.GIAP.Core.Downloads.Application.Aggregators;
+using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 
-namespace DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 
 public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandler
 {

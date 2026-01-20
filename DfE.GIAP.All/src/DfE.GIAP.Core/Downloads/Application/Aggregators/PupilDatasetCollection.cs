@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-namespace DfE.GIAP.Core.Downloads.Application.Pupils;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators;
 
 public class PupilDatasetCollection
 {

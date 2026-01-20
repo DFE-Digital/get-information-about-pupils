@@ -1,4 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Downloads.Application.Aggregators;
+using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
+using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
@@ -7,9 +10,6 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators;
-using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers;
-using DfE.GIAP.Core.Downloads.Application.Pupils.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
