@@ -5,7 +5,7 @@ public class PupilPremiumEntry
     public string? UniquePupilNumber { get; set; }
     public string? Surname { get; set; }
     public string? Forename { get; set; }
-    public char? Sex { get; set; }
+    public string? Sex { get; set; }
     public string? DateOfBirth { get; set; }
     public string? NCYear { get; set; }
     public int DeprivationPupilPremium { get; set; }

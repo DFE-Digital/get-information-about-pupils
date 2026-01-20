@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
-namespace DfE.GIAP.Core.UnitTests.Downloads.Infrastructure.Repositories;
+namespace DfE.GIAP.Core.UnitTests.Downloads.Infrastructure.Repositories.Mappers;
 
 public sealed class NationalPupilDtoToEntityMapperTests
 {

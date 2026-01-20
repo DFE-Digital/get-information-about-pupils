@@ -13,11 +13,8 @@ public class PupilPremiumEntryDto
     [JsonProperty("Forename")]
     public string? Forename { get; set; }
 
-    [JsonProperty("Gender")]
-    public char? Gender { get; set; }
-
     [JsonProperty("Sex")]
-    public char? Sex { get; set; }
+    public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
     public string? DateOfBirth { get; set; }
