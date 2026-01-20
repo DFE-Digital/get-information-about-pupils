@@ -18,9 +18,26 @@ public sealed class FurtherEducationAggregationHandlerTests
     private FurtherEducationAggregationHandler CreateHandler() =>
         new(_repo.Object, _ppMapper.Object, _senMapper.Object);
 
-    // ------------------------------------------------------------
-    // PP Behaviour
-    // ------------------------------------------------------------
+    [Fact]
+    public void Constructor_Throws_WhenRepositoryIsNull()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new FurtherEducationAggregationHandler(null!, _ppMapper.Object, _senMapper.Object));
+    }
+
+    [Fact]
+    public void Constructor_Throws_WhenPpMapperIsNull()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new FurtherEducationAggregationHandler(_repo.Object, null!, _senMapper.Object));
+    }
+
+    [Fact]
+    public void Constructor_Throws_WhenSenMapperIsNull()
+    {
+        Assert.Throws<ArgumentNullException>(() =>
+            new FurtherEducationAggregationHandler(_repo.Object, _ppMapper.Object, null!));
+    }
 
     [Fact]
     public async Task AggregateAsync_AddsPP_WhenDatasetSelected_AndPupilHasPPData()
