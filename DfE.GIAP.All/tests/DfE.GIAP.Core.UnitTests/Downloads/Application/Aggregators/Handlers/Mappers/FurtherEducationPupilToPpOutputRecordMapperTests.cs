@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
+using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers.Mappers;
 
@@ -25,25 +26,17 @@ public sealed class FurtherEducationPupilToPpOutputRecordMapperTests
     {
         // Arrange
         FurtherEducationPupilToPpOutputRecordMapper mapper = new();
-        FurtherEducationPupil pupil = new()
-        {
-            UniqueLearnerNumber = "1234567890",
-            Forename = "Alice",
-            Surname = "Smith",
-            Sex = "F",
-            DOB = new DateTime(2005, 3, 15),
-            PupilPremium = []
-        };
+        FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create();
 
         // Act
         FurtherEducationPPOutputRecord result = mapper.Map(pupil);
 
         // Assert
-        Assert.Equal("1234567890", result.ULN);
-        Assert.Equal("Alice", result.Forename);
-        Assert.Equal("Smith", result.Surname);
-        Assert.Equal("F", result.Sex);
-        Assert.Equal("15/03/2005", result.DOB); // ToShortDateString()
+        Assert.Equal(pupil.UniqueLearnerNumber, result.ULN);
+        Assert.Equal(pupil.Forename, result.Forename);
+        Assert.Equal(pupil.Surname, result.Surname);
+        Assert.Equal(pupil.Sex, result.Sex);
+        Assert.Equal(pupil.DOB.ToShortDateString(), result.DOB); // ToShortDateString()
     }
 
     [Fact]
@@ -51,26 +44,16 @@ public sealed class FurtherEducationPupilToPpOutputRecordMapperTests
     {
         // Arrange
         FurtherEducationPupilToPpOutputRecordMapper mapper = new();
-
-        FurtherEducationPupilPremiumEntry ppEntry = new()
-        {
-            AcademicYear = "2023/2024",
-            NationalCurriculumYear = "Y12",
-            FullTimeEquivalent = "0.8"
-        };
-
-        FurtherEducationPupil pupil = new()
-        {
-            PupilPremium = [ppEntry]
-        };
+        FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(
+            includePupilPremium: true);
 
         // Act
         FurtherEducationPPOutputRecord result = mapper.Map(pupil);
 
         // Assert
-        Assert.Equal("2023/2024", result.ACAD_YEAR);
-        Assert.Equal("Y12", result.NCYear);
-        Assert.Equal("0.8", result.Pupil_Premium_FTE);
+        Assert.Equal(pupil.PupilPremium![0].AcademicYear, result.ACAD_YEAR);
+        Assert.Equal(pupil.PupilPremium![0].NationalCurriculumYear, result.NCYear);
+        Assert.Equal(pupil.PupilPremium![0].FullTimeEquivalent, result.Pupil_Premium_FTE);
     }
 
     [Fact]
@@ -78,10 +61,7 @@ public sealed class FurtherEducationPupilToPpOutputRecordMapperTests
     {
         // Arrange
         FurtherEducationPupilToPpOutputRecordMapper mapper = new();
-        FurtherEducationPupil pupil = new()
-        {
-            PupilPremium = [] // empty list
-        };
+        FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create();
 
         // Act
         FurtherEducationPPOutputRecord result = mapper.Map(pupil);
@@ -97,10 +77,7 @@ public sealed class FurtherEducationPupilToPpOutputRecordMapperTests
     {
         // Arrange
         FurtherEducationPupilToPpOutputRecordMapper mapper = new();
-        FurtherEducationPupil pupil = new()
-        {
-            PupilPremium = null
-        };
+        FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create();
 
         // Act
         FurtherEducationPPOutputRecord result = mapper.Map(pupil);
