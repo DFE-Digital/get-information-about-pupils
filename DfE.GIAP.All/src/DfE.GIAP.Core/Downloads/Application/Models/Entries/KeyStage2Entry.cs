@@ -108,7 +108,7 @@ public class KeyStage2Entry
     public string? VALMATTA { get; set; }
     public string? VALSCITA { get; set; }
     public string? VALGPS { get; set; }
-    public string? READEXP { get; set; } 
+    public string? READEXP { get; set; }
     public string? MATEXP { get; set; }
     public string? GPSEXP { get; set; }
     public string? READHIGH { get; set; }
