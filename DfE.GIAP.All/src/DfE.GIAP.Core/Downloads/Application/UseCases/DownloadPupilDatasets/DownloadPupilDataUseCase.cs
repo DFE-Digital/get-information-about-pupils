@@ -16,6 +16,9 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
         IDelimitedFileExporter fileExporter,
         IZipArchiveBuilder zipArchiveBuilder)
     {
+        ArgumentNullException.ThrowIfNull(downloadDatasetAggregator);
+        ArgumentNullException.ThrowIfNull(fileExporter);
+        ArgumentNullException.ThrowIfNull(zipArchiveBuilder);
         _pupilDatasetAggregatorFactory = downloadDatasetAggregator;
         _fileExporter = fileExporter;
         _zipArchiveBuilder = zipArchiveBuilder;
