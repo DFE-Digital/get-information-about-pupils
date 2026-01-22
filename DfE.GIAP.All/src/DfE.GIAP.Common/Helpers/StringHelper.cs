@@ -1,8 +1,5 @@
-﻿using DfE.GIAP.Common.Helpers.Rbac;
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 
 namespace DfE.GIAP.Common.Helpers
@@ -27,12 +24,11 @@ namespace DfE.GIAP.Common.Helpers
         public static string ToDecryptedSearchText(this string upns)
         {
             if (string.IsNullOrEmpty(upns)) return null;
-            var upnArray = upns.Replace("\r", string.Empty)
+            string[] upnArray = upns.Replace("\r", string.Empty)
                                .Trim()
                                .Split("\n")
                                .ToArray();
-            var unencryptedUpnArray = RbacHelper.DecryptUpnCollection(upnArray);
-            var upnString = string.Join(',', unencryptedUpnArray);
+            var upnString = string.Join(',', upnArray);
             return upnString;
         }
 

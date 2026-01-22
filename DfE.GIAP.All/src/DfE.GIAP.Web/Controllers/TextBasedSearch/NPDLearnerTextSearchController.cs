@@ -2,11 +2,10 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -189,14 +188,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
             return await ReturnToSearch(model);
         }
 
-        if (PupilHelper.CheckIfStarredPupil(selectedPupil) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
-        {
-            PopulateConfirmationNavigation(model.StarredPupilConfirmationViewModel);
-            model.StarredPupilConfirmationViewModel.DownloadType = DownloadType.CTF;
-            model.StarredPupilConfirmationViewModel.SelectedPupil = selectedPupil;
-            return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
-        }
-
         model.SelectedPupil = selectedPupil;
 
         return await DownloadNpdCommonTransferFileData(model);
@@ -204,7 +195,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
     private async Task<IActionResult> DownloadNpdCommonTransferFileData(LearnerTextSearchViewModel model)
     {
-        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
+        var selectedPupil = model.SelectedPupil;
 
         var downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
                                                                 new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },
@@ -226,40 +217,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
         return await ReturnToSearch(model);
     }
 
-    [Route(Routes.NationalPupilDatabase.DownloadNonUPNConfirmationReturn)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel model)
-    {
-        model.ConfirmationError = !model.ConfirmationGiven;
-        PopulateConfirmationNavigation(model);
-
-        if (model.ConfirmationGiven)
-        {
-            switch (model.DownloadType)
-            {
-                case DownloadType.CTF: return await DownloadNpdCommonTransferFileData(new LearnerTextSearchViewModel() { SelectedPupil = model.SelectedPupil });
-                case DownloadType.NPD: return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupil, this.HttpContext.Session.Keys.Contains(SearchSessionKey) ? this.HttpContext.Session.GetString(SearchSessionKey) : string.Empty);
-            }
-        }
-
-        return ConfirmationForStarredPupil(model);
-    }
-
-    [Route(Routes.NationalPupilDatabase.DownloadCancellationReturn)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadCancellationReturn(StarredPupilConfirmationViewModel model)
-    {
-        return await Search(true);
-    }
-
-    private void PopulateConfirmationNavigation(StarredPupilConfirmationViewModel model)
-    {
-        model.ConfirmationReturnController = SearchController;
-        model.ConfirmationReturnAction = Global.NPDDownloadConfirmationReturnAction;
-        model.CancelReturnController = SearchController;
-        model.CancelReturnAction = Global.NPDDownloadCancellationReturnAction;
-    }
-
     [Route(Routes.NationalPupilDatabase.LearnerTextDataDownloadRequest)]
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedNPDDataNonUPN(LearnerTextSearchViewModel model)
@@ -274,14 +231,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
             model.NoPupil = true;
             model.NoPupilSelected = true;
             return await ReturnToSearch(model);
-        }
-
-        if (PupilHelper.CheckIfStarredPupil(selectedPupil) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
-        {
-            PopulateConfirmationNavigation(model.StarredPupilConfirmationViewModel);
-            model.StarredPupilConfirmationViewModel.DownloadType = DownloadType.NPD;
-            model.StarredPupilConfirmationViewModel.SelectedPupil = selectedPupil;
-            return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
         }
 
         return await DownloadSelectedNationalPupilDatabaseData(selectedPupil, model.SearchText);
@@ -338,7 +287,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     {
         if (!String.IsNullOrEmpty(model.SelectedPupils))
         {
-            var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
+            var selectedPupil = model.SelectedPupils;
             var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
 
             if (model.SelectedDownloadOptions == null)
@@ -348,8 +297,8 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
             else if (model.DownloadFileType != DownloadFileType.None)
             {
                 var downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
-                    await _downloadService.GetCSVFile(new string[] { selectedPupil }, sortOrder, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
-                    await _downloadService.GetTABFile(new string[] { selectedPupil }, sortOrder, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
+                    await _downloadService.GetCSVFile(new string[] { selectedPupil }, sortOrder, model.SelectedDownloadOptions, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
+                    await _downloadService.GetTABFile(new string[] { selectedPupil }, sortOrder, model.SelectedDownloadOptions, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
 
                 if (downloadFile == null)
                 {

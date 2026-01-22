@@ -148,8 +148,8 @@ public class DownloadMyPupilsController : Controller
             else if (model.DownloadFileType != DownloadFileType.None)
             {
                 ReturnFile downloadFile = model.DownloadFileType == DownloadFileType.CSV
-                    ? await _downloadService.GetCSVFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase)
-                    : await _downloadService.GetTABFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase);
+                    ? await _downloadService.GetCSVFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase)
+                    : await _downloadService.GetTABFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase);
 
                 if (downloadFile == null)
                 {
@@ -261,7 +261,6 @@ public class DownloadMyPupilsController : Controller
             ReturnFile downloadFile = await _downloadService.GetPupilPremiumCSVFile(
                 allSelectedPupils.ToArray(),
                 allSelectedPupils.ToArray(),
-                true,
                 AzureFunctionHeaderDetails.Create(
                     userId,
                     User.GetSessionId()),

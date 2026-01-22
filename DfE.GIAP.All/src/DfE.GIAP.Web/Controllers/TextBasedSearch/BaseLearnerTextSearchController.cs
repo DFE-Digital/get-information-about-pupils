@@ -5,7 +5,6 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -472,10 +471,6 @@ public abstract class BaseLearnerTextSearchController : Controller
             return await ReturnToSearch(model);
         }
 
-        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
-        {
-            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
-        }
 
         if (!ValidationHelper.IsValidUpn(selectedUpn)) // TODO can we surface invalid UPNs?
         {
@@ -503,24 +498,6 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         model.ItemAddedToMyPupilList = true;
         return await ReturnToSearch(model);
-    }
-
-    [NonAction]
-    public IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
-    {
-        LearnerTextSearchViewModel searchViewModel = new LearnerTextSearchViewModel()
-        {
-            SearchText = this.HttpContext.Session.Keys.Contains(SearchSessionKey) ? this.HttpContext.Session.GetString(SearchSessionKey) : string.Empty,
-            LearnerTextSearchController = SearchController,
-            LearnerTextSearchAction = SearchAction,
-            ShowStarredPupilConfirmation = true,
-            StarredPupilConfirmationViewModel = model,
-            LearnerNumberLabel = LearnerNumberLabel
-        };
-        PopulateNavigation(searchViewModel);
-        SetSortOptions(searchViewModel);
-        PopulatePageText(searchViewModel);
-        return View(SearchView, searchViewModel);
     }
 
     protected async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
@@ -612,10 +589,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         SetLearnerNumberId(model);
 
         bool isAdmin = User.IsAdmin();
-        if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-        {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-        }
 
         string selected = GetSelected();
 
@@ -671,11 +644,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         int highAge = User.GetOrganisationHighAge();
 
         bool isAdmin = User.IsAdmin();
-        if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-        {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-        }
-
         return model;
     }
 

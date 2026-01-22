@@ -1438,7 +1438,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockDownloadService.GetPupilPremiumCSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>(),
             Arg.Any<UserOrganisation>()
@@ -1537,7 +1536,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockDownloadService.GetPupilPremiumCSVFile(
             Arg.Any<string[]>(),
             Arg.Any<string[]>(),
-            Arg.Any<bool>(),
             Arg.Any<AzureFunctionHeaderDetails>(),
             Arg.Any<ReturnRoute>(),
             Arg.Any<UserOrganisation>()

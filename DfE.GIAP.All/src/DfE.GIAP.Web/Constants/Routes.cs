@@ -65,8 +65,6 @@ public static class Routes
     {
         public const string MyPupilsBase = "~/my-pupil-list";
         public const string DeleteMyPupils = $"{MyPupilsBase}/Delete";
-        public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
-        public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
         public const string MyPupilListView = "~/Views/MyPupilList/Index.cshtml";
         public const string MyPupilListViewConfirmation = "~/Views/MyPupilList/PupilListConfirmation.cshtml";
     }
@@ -82,8 +80,6 @@ public static class Routes
         public const string LearnerTextDownloadOptions = "non-upn-download";
         public const string LearnerTextDownloadFile = "download-file-non-upn";
         public const string DownloadCTFData = "npd-non-upn-download-ctf";
-        public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
-        public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
         public const string NonUpnDobFilter = "/search/npd-nonupn/dob-filter";
         public const string NonUpnSexFilter = "/search/npd-nonupn/sex-filter";
         public const string NonUpnForenameFilter = "/search/npd-nonupn/forename-filter";
@@ -107,8 +103,6 @@ public static class Routes
         public const string LearnerTextDownloadRequest = "download-pp-nonupn";
         public const string DownloadPupilPremiumFile = "pp-download-file";
         public const string NonUpnPupilPremiumDatabaseReturn = "NonUpnPupilPremiumDatabaseReturn";
-        public const string DownloadNonUPNConfirmationReturn = "pp-nonupn-starred-pupil-confirmation";
-        public const string DownloadCancellationReturn = "pp-nonupn-starred-pupil-cancellation";
     }
 
     public static class FurtherEducation

@@ -10,6 +10,5 @@ namespace DfE.GIAP.Domain.Models.Common
         public string[] ULNs { get; set; }
         [JsonProperty("DataTypes")]
         public string[] DataTypes { get; set; }
-        public bool ConfirmationGiven { get; set; }
     }
 }
