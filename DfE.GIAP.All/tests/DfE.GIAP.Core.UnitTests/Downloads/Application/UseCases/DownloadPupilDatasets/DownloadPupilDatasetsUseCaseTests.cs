@@ -1,11 +1,8 @@
 ﻿using System.Text;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
-using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
-using Moq;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.UseCases.DownloadPupilDatasets;
 
@@ -141,10 +138,10 @@ public sealed class DownloadPupilDataUseCaseTests
         Mock<IZipArchiveBuilder> zipBuilder = new();
 
         DownloadPupilDataRequest request = new(
-          SelectedPupils: ["A"],
-          SelectedDatasets: [Dataset.FE_PP, Dataset.SEN],
-          DownloadType: DownloadType.FurtherEducation,
-          FileFormat: FileFormat.Csv);
+            SelectedPupils: ["A"],
+            SelectedDatasets: [Dataset.FE_PP, Dataset.SEN],
+            DownloadType: DownloadType.FurtherEducation,
+            FileFormat: FileFormat.Csv);
 
         PupilDatasetCollection datasets = new();
         datasets.FurtherEducationPP.Add(new()
@@ -187,10 +184,10 @@ public sealed class DownloadPupilDataUseCaseTests
         Mock<IZipArchiveBuilder> zipBuilder = new();
 
         DownloadPupilDataRequest request = new(
-         SelectedPupils: ["A"],
-         SelectedDatasets: [Dataset.PP],
-         DownloadType: DownloadType.PupilPremium,
-         FileFormat: FileFormat.Csv);
+            SelectedPupils: ["A"],
+            SelectedDatasets: [Dataset.PP],
+            DownloadType: DownloadType.PupilPremium,
+            FileFormat: FileFormat.Csv);
 
         factory.Setup(f => f.AggregateAsync(
                 request.DownloadType,
