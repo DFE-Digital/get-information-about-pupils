@@ -1,0 +1,50 @@
+﻿@model ContentIndexViewModel
+
+@{
+    ViewData["Title"] = "Content management";
+
+    var hasError = ViewData.ModelState.ContainsKey(nameof(Model.SelectedOption))
+                   && ViewData.ModelState[nameof(Model.SelectedOption)].Errors.Any();
+}
+
+<div class="govuk-width-container">
+    <h1 class="govuk-heading-xl">Content management</h1>
+
+    <form asp-action="Index" method="post">
+
+        <div class="govuk-form-group @(hasError ? "govuk-form-group--error" : "")">
+
+            <label class="govuk-label" for="SelectedOption">
+                Select an option
+            </label>
+
+            <div id="SelectedOption-hint" class="govuk-hint">
+                Choose the type of content you want to manage
+            </div>
+
+            @if (hasError)
+            {
+                <p id="SelectedOption-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span>
+                    @ViewData.ModelState[nameof(Model.SelectedOption)].Errors.First().ErrorMessage
+                </p>
+            }
+
+            <select asp-for="SelectedOption"
+                    asp-items="@(new SelectList(Model.Options, "Value", "DisplayName"))"
+                    class="govuk-select @(hasError ? "govuk-select--error" : "")"
+                    id="SelectedOption"
+                    aria-describedby="SelectedOption-hint @(hasError ? "SelectedOption-error" : "")">
+            </select>
+        </div>
+
+        <button type="submit" class="govuk-button" data-module="govuk-button">
+            Continue
+        </button>
+
+    </form>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</div>

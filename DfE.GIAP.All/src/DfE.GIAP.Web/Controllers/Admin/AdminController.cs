@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Controllers.Admin;
 
-[Authorize(Policy = Policy.RequireAdminApproverAccess)]
+[Authorize(Policy = Policy.RequiresAdminApproverAccess)]
 public class AdminController : Controller
 {
     private const string AdminIndexViewPath = "../Admin/Index";
