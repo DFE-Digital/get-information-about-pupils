@@ -1,24 +1,41 @@
 ﻿using System.Collections;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Handlers;
 
 namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Composition;
 // TODO equality between chains?
-public sealed class HandlerChain<T> : IHandlerChain<T>
+public sealed class HandlerChain<TContext, THandler> : IHandlerChain<TContext, THandler>
+    where THandler : IEvaluationHandlerV2<TContext>
 {
-    private readonly T[] _items;
-
-    public HandlerChain(IEnumerable<T> items)
+    public HandlerChain(IEnumerable<THandler> handlers)
     {
-        ArgumentNullException.ThrowIfNull(items);
-        _items = items.ToArray();
-        if (_items.Length == 0)
+        ArgumentNullException.ThrowIfNull(handlers);
+
+        if (!handlers.Any())
         {
-            throw new ArgumentException("Handler chain cannot be empty");
+            throw new ArgumentException("No handlers registered");
         }
+
+        Handlers = handlers.ToList().AsReadOnly();
     }
-    public T this[int index] => _items[index];
 
-    public int Count => _items.Length;
+    public IReadOnlyList<THandler> Handlers { get; }
+}
 
-    public IEnumerator<T> GetEnumerator() => _items.AsEnumerable().GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
+
+public sealed class HandlerChain<TContext, TOutput, THandler> : IHandlerChain<TContext, TOutput, THandler>
+    where THandler : IEvaluationHandlerV2<TContext, TOutput>
+{
+    public HandlerChain(IEnumerable<THandler> handlers)
+    {
+        ArgumentNullException.ThrowIfNull(handlers);
+
+        if (!handlers.Any())
+        {
+            throw new ArgumentException("No handlers registered");
+        }
+
+        Handlers = handlers.ToList().AsReadOnly();
+    }
+
+    public IReadOnlyList<THandler> Handlers { get; }
 }

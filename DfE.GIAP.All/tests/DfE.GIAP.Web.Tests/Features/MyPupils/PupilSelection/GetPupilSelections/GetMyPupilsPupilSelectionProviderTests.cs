@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;

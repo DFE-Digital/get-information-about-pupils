@@ -8,9 +8,9 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -28,8 +28,8 @@ public class DownloadMyPupilsController : Controller
     private readonly AzureAppSettings _appSettings;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
-    private readonly IMyPupilsPresentationService _myPupilsPresentationService;
-    private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsStateProvider;
+    private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
+    private readonly IGetMyPupilsPupilSelectionProvider getPupilSelectionStateProvider;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _selectionStateSessionCommandHandler;
 
     public DownloadMyPupilsController(
@@ -38,7 +38,7 @@ public class DownloadMyPupilsController : Controller
         IMyPupilsMessageSink myPupilsLogSink,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
-        IMyPupilsPresentationService myPupilsPresentationService,
+        IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
         ISessionCommandHandler<MyPupilsPupilSelectionState> selectionStateSessionCommandHandler,
         IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider)
     {
@@ -58,14 +58,14 @@ public class DownloadMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
 
-        ArgumentNullException.ThrowIfNull(myPupilsPresentationService);
-        _myPupilsPresentationService = myPupilsPresentationService;
+        ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
+        _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
 
         ArgumentNullException.ThrowIfNull(selectionStateSessionCommandHandler);
         _selectionStateSessionCommandHandler = selectionStateSessionCommandHandler;
 
         ArgumentNullException.ThrowIfNull(getMyPupilsStateProvider);
-        _getMyPupilsStateProvider = getMyPupilsStateProvider;
+        getPupilSelectionStateProvider = getMyPupilsStateProvider;
     }
 
     [HttpPost]
@@ -186,7 +186,11 @@ public class DownloadMyPupilsController : Controller
     {
         string userId = User.GetUserId();
 
-        MyPupilsPupilSelectionState selectionState = _getMyPupilsStateProvider.GetPupilSelections();
+        MyPupilsPupilSelectionState selectionState = getPupilSelectionStateProvider.GetPupilSelections();
+
+        List<string> allSelectedPupils =
+            (await _getSelectedPupilsPresentationHandler.GetSelectedPupilsAsync(userId: User.GetUserId()))
+                .ToList();
 
         if (formSelectedPupils.Count > 0)
         {
@@ -196,10 +200,6 @@ public class DownloadMyPupilsController : Controller
             }
             _selectionStateSessionCommandHandler.StoreInSession(selectionState);
         }
-
-        List<string> allSelectedPupils =
-            (await _myPupilsPresentationService.GetSelectedPupilsAsync(userId: User.GetUserId()))
-                .ToList();
 
         if (allSelectedPupils.Count == 0)
         {

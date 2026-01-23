@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
+﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.Mapper.DataTransferObjects;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.SelectionState.Mapper;

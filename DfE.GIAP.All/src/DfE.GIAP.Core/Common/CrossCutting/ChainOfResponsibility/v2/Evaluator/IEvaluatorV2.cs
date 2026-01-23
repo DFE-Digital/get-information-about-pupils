@@ -3,10 +3,10 @@
 namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
 public interface IEvaluatorV2<TIn>
 {
-    ValueTask EvaluateAsync(TIn input, EvaluationOptions options, CancellationToken ctx = default);
+    ValueTask EvaluateAsync(TIn input, EvaluationOptions? options = null, CancellationToken ctx = default);
 }
 
 public interface IEvaluatorV2<TIn, TOut>
 {
-    ValueTask<TOut> EvaluateAsync(TIn input, EvaluationOptions options, CancellationToken ctx = default);
+    ValueTask<TOut> EvaluateAsync(TIn input, EvaluationOptions? options = null, CancellationToken ctx = default);
 }

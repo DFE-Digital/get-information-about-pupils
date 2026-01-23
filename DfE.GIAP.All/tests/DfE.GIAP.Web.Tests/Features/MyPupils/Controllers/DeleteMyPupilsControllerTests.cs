@@ -3,9 +3,10 @@ using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 using DfE.GIAP.Web.Tests.Controllers.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Act Assert
@@ -42,7 +43,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: null!,
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Act Assert
@@ -60,7 +61,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: nullValueOptions,
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Act Assert
@@ -76,7 +77,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: null!,
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Act Assert
@@ -94,7 +95,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: nullValueOptions,
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Assert
@@ -110,7 +111,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: null!,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Act Assert
@@ -126,7 +127,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: null!,
+            deleteService: null!,
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         // Act Assert
@@ -142,7 +143,7 @@ public sealed class DeleteMyPupilsControllerTests
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            presentationService: new Mock<IMyPupilsPresentationService>().Object,
+            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
             pupilSelectionStateProvider: null!);
 
         // Act Assert
@@ -157,12 +158,12 @@ public sealed class DeleteMyPupilsControllerTests
 
         Mock<IMyPupilsMessageSink> messageSinkMock = new();
 
-        Mock<IMyPupilsPresentationService> presentationServiceMock = new();
+        Mock<IDeleteMyPupilsPresentationService> deleteServiceMock = new();
 
         DeleteMyPupilsController sut = new(
             logger: loggerFake,
             messageSink: messageSinkMock.Object,
-            presentationService: presentationServiceMock.Object,
+            deleteService: deleteServiceMock.Object,
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
@@ -182,7 +183,7 @@ public sealed class DeleteMyPupilsControllerTests
                     message.Level == MessageLevel.Error &&
                         message.Message == "There has been a problem with your delete selections. Please try again.")), Times.Once);
 
-        presentationServiceMock.Verify((service)
+        deleteServiceMock.Verify((service)
             => service.DeletePupilsAsync(It.IsAny<string>(), It.IsAny<IEnumerable<string>>()), Times.Never);
     }
 
@@ -193,7 +194,7 @@ public sealed class DeleteMyPupilsControllerTests
         InMemoryLogger<DeleteMyPupilsController> loggerFake = LoggerTestDoubles.Fake<DeleteMyPupilsController>();
 
         Mock<IMyPupilsMessageSink> messageSinkMock = new();
-        Mock<IMyPupilsPresentationService> presentationServiceMock = new();
+        Mock<IDeleteMyPupilsPresentationService> deleteServiceMock = new();
 
         MyPupilsPupilSelectionState stateStub = MyPupilsPupilSelectionState.CreateDefault();
 
@@ -205,7 +206,7 @@ public sealed class DeleteMyPupilsControllerTests
             DeleteMyPupilsController sut = new(
             logger: loggerFake,
             messageSink: messageSinkMock.Object,
-            presentationService: presentationServiceMock.Object,
+            deleteService: deleteServiceMock.Object,
             pupilSelectionStateProvider: providerMock.Object,
             options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
@@ -228,7 +229,7 @@ public sealed class DeleteMyPupilsControllerTests
                     message.Level == MessageLevel.Error &&
                         message.Message == "You have not selected any pupils")), Times.Once);
 
-        presentationServiceMock.Verify((service)
+        deleteServiceMock.Verify((service)
             => service.DeletePupilsAsync(It.IsAny<string>(), It.IsAny<IEnumerable<string>>()), Times.Never);
     }
 
@@ -240,7 +241,7 @@ public sealed class DeleteMyPupilsControllerTests
         InMemoryLogger<DeleteMyPupilsController> loggerFake = LoggerTestDoubles.Fake<DeleteMyPupilsController>();
 
         Mock<IMyPupilsMessageSink> messageSinkMock = new();
-        Mock<IMyPupilsPresentationService> presentationServiceMock = new();
+        Mock<IDeleteMyPupilsPresentationService> deleteServiceMock = new();
 
         MyPupilsPupilSelectionState stateStub = MyPupilsPupilSelectionState.CreateDefault();
 
@@ -252,7 +253,7 @@ public sealed class DeleteMyPupilsControllerTests
         DeleteMyPupilsController sut = new(
         logger: loggerFake,
         messageSink: messageSinkMock.Object,
-        presentationService: presentationServiceMock.Object,
+        deleteService: deleteServiceMock.Object,
         pupilSelectionStateProvider: providerMock.Object,
         options: OptionsTestDoubles.Default<MyPupilsOptions>(),
         messagingOptions: messagingOptionsStub);
@@ -285,7 +286,7 @@ public sealed class DeleteMyPupilsControllerTests
                         message.Level == MessageLevel.Info &&
                             message.Message == $"Selected MyPupils were deleted from user: {userIdStub}.")), Times.Once);
 
-        presentationServiceMock.Verify((service)
+        deleteServiceMock.Verify((service)
             => service.DeletePupilsAsync(
                 It.Is<string>(userId => userId == userIdStub),
                 It.Is<IEnumerable<string>>(t => t.SequenceEqual(selectedPupils))), Times.Once);

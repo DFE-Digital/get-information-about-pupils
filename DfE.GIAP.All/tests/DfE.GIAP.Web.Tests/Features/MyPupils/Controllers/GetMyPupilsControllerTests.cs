@@ -4,7 +4,7 @@ using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +72,7 @@ public sealed class GetMyPupilsControllerTests
             IsAnyPupilsSelected = false,
         };
 
-        IMyPupilsPresentationService serviceMock =
+        IGetMyPupilsPresentationService serviceMock =
             IMyPupilsPresentationServiceTestDoubles.MockForGetPupils(presentationResponseStub);
 
         Mock<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>> mapperMock =

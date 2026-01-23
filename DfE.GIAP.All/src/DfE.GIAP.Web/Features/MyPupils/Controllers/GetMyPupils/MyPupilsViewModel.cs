@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+﻿using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 
