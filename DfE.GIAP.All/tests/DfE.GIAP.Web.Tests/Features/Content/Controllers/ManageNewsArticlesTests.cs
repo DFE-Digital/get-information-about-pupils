@@ -16,7 +16,8 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Admin.ManageNewsArticles;
+namespace DfE.GIAP.Web.Tests.Features.Content.Controllers;
+
 public class ManageNewsArticlesControllerTests
 {
     private readonly Mock<IUseCase<GetNewsArticleByIdRequest, GetNewsArticleByIdResponse>> _getByIdMock = new();
@@ -94,7 +95,7 @@ public class ManageNewsArticlesControllerTests
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/ManageNewsArticles", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/ManageNewsArticles", viewResult.ViewName);
 
         ManageNewsArticlesViewModel model = Assert.IsType<ManageNewsArticlesViewModel>(viewResult.Model);
         Assert.Equal(string.Empty, model.SelectedNewsId);
@@ -102,7 +103,7 @@ public class ManageNewsArticlesControllerTests
         Assert.Equal(2, model.NewsArticleList.Count());
         Assert.NotNull(model.BackButton);
         Assert.True(model.BackButton.IsBackButtonEnabled);
-        Assert.Equal("Admin", model.BackButton.PreviousController);
+        Assert.Equal("content", model.BackButton.PreviousController);
         Assert.Equal("Index", model.BackButton.PreviousAction);
     }
 
@@ -114,7 +115,7 @@ public class ManageNewsArticlesControllerTests
         IActionResult result = controller.CreateNewsArticle();
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/CreateNewsArticle", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/CreateNewsArticle", viewResult.ViewName);
         Assert.IsType<CreateNewsArticleViewModel>(viewResult.Model);
     }
 
@@ -129,7 +130,7 @@ public class ManageNewsArticlesControllerTests
         IActionResult result = await controller.CreateNewsArticle(model);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/CreateNewsArticle", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/CreateNewsArticle", viewResult.ViewName);
         Assert.Equal(model, viewResult.Model);
     }
 
@@ -153,7 +154,7 @@ public class ManageNewsArticlesControllerTests
         _createMock.Verify(x => x.HandleRequestAsync(It.IsAny<CreateNewsArticleRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
         Assert.IsType<ConfirmationViewModel>(viewResult.Model);
     }
 
@@ -168,7 +169,7 @@ public class ManageNewsArticlesControllerTests
         _deleteMock.Verify(x => x.HandleRequestAsync(It.IsAny<DeleteNewsArticleRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
     }
 
     [Fact]
@@ -182,7 +183,7 @@ public class ManageNewsArticlesControllerTests
         IActionResult result = await controller.UpdateNewsArticle(model);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/EditNewsArticle", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/EditNewsArticle", viewResult.ViewName);
         Assert.Equal(model, viewResult.Model);
     }
 
@@ -209,7 +210,7 @@ public class ManageNewsArticlesControllerTests
         _updateMock.Verify(x => x.HandleRequestAsync(It.IsAny<UpdateNewsArticleRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
     }
 
     [Fact]
@@ -261,7 +262,7 @@ public class ManageNewsArticlesControllerTests
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/EditNewsArticle", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/EditNewsArticle", viewResult.ViewName);
 
         EditNewsArticleViewModel model = Assert.IsType<EditNewsArticleViewModel>(viewResult.Model);
         Assert.Equal(newsId, model.SelectedNewsId);
@@ -329,7 +330,7 @@ public class ManageNewsArticlesControllerTests
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/EditNewsArticle", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/EditNewsArticle", viewResult.ViewName);
         Assert.Equal(model, viewResult.Model);
     }
 
@@ -360,7 +361,7 @@ public class ManageNewsArticlesControllerTests
         _updateMock.Verify(x => x.HandleRequestAsync(It.IsAny<UpdateNewsArticleRequest>()), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal("../Admin/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
+        Assert.Equal("../Content/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
         ConfirmationViewModel confirmation = Assert.IsType<ConfirmationViewModel>(viewResult.Model);
         Assert.Equal(Messages.NewsArticle.Success.UpdateTitle, confirmation.Title);
         Assert.Equal(Messages.NewsArticle.Success.UpdateBody, confirmation.Body);
