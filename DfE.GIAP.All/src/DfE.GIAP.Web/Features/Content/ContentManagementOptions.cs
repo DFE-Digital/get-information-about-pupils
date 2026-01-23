@@ -2,7 +2,5 @@
 
 public enum ContentManagementOption
 {
-    ManageNews,
-    ManageStaticPages,
-    ManageReleaseTimetable
+    ManageNews
 }

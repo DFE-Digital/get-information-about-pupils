@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DfE.GIAP.Web.Features.Content;
+namespace DfE.GIAP.Web.Features.Content.Models;
 
 public class ContentIndexViewModel
 {

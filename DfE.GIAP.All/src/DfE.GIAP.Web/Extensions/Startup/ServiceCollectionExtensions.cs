@@ -99,13 +99,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddAuthorizationBuilder()
             .AddPolicy(Policy.RequiresManageContentAccess, policy =>
-                policy.RequireRole(AuthRoles.Admin))
-            .AddPolicy(Policy.RequiresAdminAccess, policy =>
-                policy.RequireRole(AuthRoles.Admin))
-            .AddPolicy(Policy.RequiresApproverAccess, policy =>
-                policy.RequireRole(AuthRoles.Approver))
-            .AddPolicy(Policy.RequiresAdminApproverAccess, policy =>
-                policy.RequireRole(AuthRoles.Admin, AuthRoles.Approver));
+                policy.RequireRole(AuthRoles.Admin));
 
         services.AddControllersWithViews(config =>
         {

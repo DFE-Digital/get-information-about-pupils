@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace DfE.GIAP.Web.Controllers.Admin.ManageNewsArticles;
+namespace DfE.GIAP.Web.Features.Content.Controllers;
 
 [Route(Routes.Application.Content)]
 [Authorize(policy: Policy.RequiresManageContentAccess)]
@@ -73,7 +73,7 @@ public class ManageNewsArticlesController : Controller
             })
             .ToList();
 
-        return View("../Admin/ManageNewsArticles/ManageNewsArticles", new ManageNewsArticlesViewModel()
+        return View("../Content/ManageNewsArticles/ManageNewsArticles", new ManageNewsArticlesViewModel()
         {
             SelectedNewsId = string.Empty,
             NewsArticleList = new SelectList(newsList, nameof(Document.DocumentId), nameof(Document.DocumentName)),
@@ -97,7 +97,7 @@ public class ManageNewsArticlesController : Controller
     [Route(Routes.ManageNewsArticles.CreateNewsArticle)]
     public IActionResult CreateNewsArticle()
     {
-        return View("../Admin/ManageNewsArticles/CreateNewsArticle", new CreateNewsArticleViewModel
+        return View("../Content/ManageNewsArticles/CreateNewsArticle", new CreateNewsArticleViewModel
         {
             BackButton = new(
                 isBackButtonEnabled: true,
@@ -112,7 +112,7 @@ public class ManageNewsArticlesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("../Admin/ManageNewsArticles/CreateNewsArticle", viewModel);
+            return View("../Content/ManageNewsArticles/CreateNewsArticle", viewModel);
         }
 
         NewsArticleViewModel userInputs = viewModel.NewsArticle;
@@ -124,7 +124,7 @@ public class ManageNewsArticlesController : Controller
 
         await _createNewsArticleUseCase.HandleRequestAsync(request);
 
-        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
+        return View("../Content/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
         {
             Title = Messages.NewsArticle.Success.CreateTitle,
             Body = Messages.NewsArticle.Success.CreateBody,
@@ -140,7 +140,7 @@ public class ManageNewsArticlesController : Controller
         DeleteNewsArticleRequest deleteRequest = new(NewsArticleIdentifier.From(articleId));
         await _deleteNewsArticleUseCase.HandleRequestAsync(deleteRequest);
 
-        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
+        return View("../Content/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
         {
             Title = Messages.NewsArticle.Success.DeleteTitle,
             Body = Messages.NewsArticle.Success.DeleteBody,
@@ -164,7 +164,7 @@ public class ManageNewsArticlesController : Controller
 
         ArgumentNullException.ThrowIfNull(response.NewsArticle);
 
-        return View("../Admin/ManageNewsArticles/EditNewsArticle", new EditNewsArticleViewModel()
+        return View("../Content/ManageNewsArticles/EditNewsArticle", new EditNewsArticleViewModel()
         {
             SelectedNewsId = selectedNewsId,
             NewsArticle = new NewsArticleViewModel
@@ -192,7 +192,7 @@ public class ManageNewsArticlesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("../Admin/ManageNewsArticles/EditNewsArticle", viewModel);
+            return View("../Content/ManageNewsArticles/EditNewsArticle", viewModel);
         }
 
         UpdateNewsArticlesRequestProperties updateProperties = new(id: viewModel.NewsArticle.Id)
@@ -206,7 +206,7 @@ public class ManageNewsArticlesController : Controller
         await _updateNewsArticleUseCase.HandleRequestAsync(
             new UpdateNewsArticleRequest(updateProperties));
 
-        return View("../Admin/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
+        return View("../Content/ManageNewsArticles/NewsArticleConfirmation", new ConfirmationViewModel
         {
             Title = Messages.NewsArticle.Success.UpdateTitle,
             Body = Messages.NewsArticle.Success.UpdateBody,

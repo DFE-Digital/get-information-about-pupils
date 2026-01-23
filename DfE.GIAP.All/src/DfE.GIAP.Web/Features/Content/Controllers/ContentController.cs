@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Content.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
