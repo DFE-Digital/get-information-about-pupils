@@ -7,13 +7,10 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -128,7 +125,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
             searchViewModel.PageLearnerNumbers.Split(','),
             searchViewModel.SelectedPupil);
 
-        var selectedPupils = GetSelected(searchViewModel.LearnerNumberIds.FormatLearnerNumbers());
+        HashSet<string> selectedPupils = GetSelected(searchViewModel.LearnerNumberIds.FormatLearnerNumbers());
 
         if (selectedPupils.Count == 0)
         {
@@ -136,15 +133,6 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
             searchViewModel.NoPupilSelected = true;
             return await PupilPremium(searchViewModel, searchViewModel.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
         }
-
-        var userOrganisation = new UserOrganisation
-        {
-            IsAdmin = User.IsAdmin(),
-            IsEstablishment = User.IsOrganisationEstablishment(),
-            IsLa = User.IsOrganisationLocalAuthority(),
-            IsMAT = User.IsOrganisationMultiAcademyTrust(),
-            IsSAT = User.IsOrganisationSingleAcademyTrust()
-        };
 
         DownloadPupilDataRequest request = new(
                    SelectedPupils: selectedPupils,
