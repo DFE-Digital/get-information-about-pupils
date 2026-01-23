@@ -5,6 +5,7 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -673,43 +674,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.Null(model.SelectedSexValues);
     }
 
-    [Fact]
-    public async Task DownloadSelectedFEDataULN_returns_data_when_SearchSessionKey_is_present()
-    {
-        // arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new LearnerDownloadViewModel
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = ["csv"]
-        };
-
-        _mockDownloadService.GetFECSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        FELearnerTextSearchController sut = GetController();
-
-        // act
-        IActionResult result = await sut.DownloadFurtherEducationFile(downloadViewModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
 
     [Theory]
     [InlineData("Forename", "asc")]
@@ -1048,43 +1012,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.True(searchViewModel.FilterErrors.DobError);
     }
 
-    [Fact]
-    public async Task DownloadSelectedFEDataULN_returns_data()
-    {
-        // arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new LearnerDownloadViewModel
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = ["csv"]
-        };
-
-        _mockDownloadService.GetFECSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        // act
-        FELearnerTextSearchController sut = GetController();
-
-        IActionResult result = await sut.DownloadFurtherEducationFile(downloadViewModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
 
     [Fact]
     public async Task ToDownloadSelectedFEDataULN_returns_search_page_with_error_if_no_pupil_selected()
@@ -1222,49 +1149,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
 
         LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-    }
-    [Fact]
-    public async Task DownloadSelectedFEDataULN_redirects_to_error_when_downloadFile_isNull()
-    {
-        // arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new LearnerDownloadViewModel
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = ["csv"]
-        };
-
-        _mockDownloadService.GetFECSVFile(
-            ["inexistentLearner"],
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile()
-            {
-                FileName = null,
-                FileType = null,
-                Bytes = null
-            });
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new TempDataDictionaryFactory(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        FELearnerTextSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        // act
-        IActionResult result = await sut.DownloadFurtherEducationFile(downloadViewModel);
-
-        // assert
-        Assert.IsType<RedirectToActionResult>(result);
-
     }
 
     [Fact]
@@ -1411,6 +1295,11 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
             .ReturnsAsync(response);
 
+        DownloadPupilDataResponse downloadPupilDataResponse = new();
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(downloadPupilDataResponse);
+
         return new FELearnerTextSearchController(
             _sessionProvider,
             _mockUseCase,
@@ -1424,7 +1313,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             _mockDownloadService,
             mockEventLogger.Object,
             _mockAppOptions,
-            mockGetAvailableDatasetsForPupilsUseCase.Object)
+            mockGetAvailableDatasetsForPupilsUseCase.Object,
+            mockDownloadPupilDataUseCase.Object)
         {
             ControllerContext = new ControllerContext()
             {

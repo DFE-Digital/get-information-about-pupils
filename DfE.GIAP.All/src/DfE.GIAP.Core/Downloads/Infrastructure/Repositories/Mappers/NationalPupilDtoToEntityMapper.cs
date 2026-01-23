@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
@@ -320,7 +320,6 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 FORENAMES = dto.FORENAMES,
                 DOB = dto.DOB,
                 YEARGRP = dto.YEARGRP,
-                GENDER = dto.GENDER,
                 SEX = dto.SEX,
                 LA = dto.LA,
                 LA_9Code = dto.LA_9Code,
@@ -530,7 +529,6 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 DOB = dto.DOB,
                 YEARGRP = dto.YEARGRP,
                 ACTYRGRP = dto.ACTYRGRP,
-                GENDER = dto.GENDER,
                 SEX = dto.SEX,
                 IDACI = dto.IDACI,
                 LA = dto.LA,
@@ -1002,7 +1000,6 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 UPN = dto.UPN,
                 Surname = dto.Surname,
                 Forename = dto.Forename,
-                Gender = dto.Gender,
                 Sex = dto.Sex,
                 DOB = dto.DOB,
                 LA = dto.LA,

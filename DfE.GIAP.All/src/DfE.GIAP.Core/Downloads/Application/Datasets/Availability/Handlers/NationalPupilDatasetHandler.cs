@@ -17,13 +17,10 @@ public class NationalPupilDatasetHandler : IDatasetAvailabilityHandler
 
     public async Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
     {
-        IReadOnlyCollection<Dataset> relevantDatasets = AvailableDatasetsByDownloadType
-           .GetSupportedDatasets(SupportedDownloadType);
-
         HashSet<Dataset> datasets = new();
         IEnumerable<NationalPupil> pupils = await _nationalPupilDatabaseReadOnlyRepository.GetPupilsByIdsAsync(pupilIds);
 
-        if (pupils.Any(p => p.HasCensusAutumData))
+        if (pupils.Any(p => p.HasCensusAutumnData))
             datasets.Add(Dataset.Census_Autumn);
         if (pupils.Any(p => p.HasCensusSpringData))
             datasets.Add(Dataset.Census_Spring);
