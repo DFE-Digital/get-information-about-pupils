@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 

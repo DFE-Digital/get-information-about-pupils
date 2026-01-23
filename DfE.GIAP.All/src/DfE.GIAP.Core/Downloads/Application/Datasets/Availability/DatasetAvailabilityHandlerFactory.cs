@@ -9,7 +9,7 @@ public class DatasetAvailabilityHandlerFactory : IDatasetAvailabilityHandlerFact
 
     public DatasetAvailabilityHandlerFactory(IEnumerable<IDatasetAvailabilityHandler> checkers)
     {
-        // Build a dictionary from the available checkers
+        // Build a dictionary from the available handlers
         _handlers = checkers.ToDictionary(
             checker => checker.SupportedDownloadType,
             checker => checker);

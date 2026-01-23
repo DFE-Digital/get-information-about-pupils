@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
@@ -31,7 +32,7 @@ public static class FurtherEducationPupilDtoTestDoubles
 
     private static Faker<FurtherEducationPupilDto> CreateGenerator()
     {
-        Faker<PupilPremiumEntryDto> pupilPremiumFaker = new Faker<PupilPremiumEntryDto>()
+        Faker<FurtherEducationPupilPremiumEntryDto> pupilPremiumFaker = new Faker<FurtherEducationPupilPremiumEntryDto>()
             .StrictMode(true)
             .RuleFor(p => p.NationalCurriculumYear, f => f.Random.Int(1, 13).ToString())
             .RuleFor(p => p.FullTimeEquivalent, f => f.Random.Double(0.5, 1.0).ToString("0.0"))
@@ -48,7 +49,7 @@ public static class FurtherEducationPupilDtoTestDoubles
             .RuleFor(p => p.UniqueLearnerNumber, f => f.Random.Replace("##########"))
             .RuleFor(p => p.Forename, f => f.Name.FirstName())
             .RuleFor(p => p.Surname, f => f.Name.LastName())
-            .RuleFor(p => p.Gender, f => f.PickRandom("Male", "Female", "Other"))
+            .RuleFor(p => p.Sex, f => f.PickRandom("Male", "Female", "Other"))
             .RuleFor(p => p.DOB, f => f.Date.Past(18, DateTime.Today.AddYears(-16)))
             .RuleFor(p => p.ConcatenatedName, (f, p) => $"{p.Surname}, {p.Forename}")
             .RuleFor(p => p.PupilPremium, f => pupilPremiumFaker.Generate(f.Random.Int(1, 3)))

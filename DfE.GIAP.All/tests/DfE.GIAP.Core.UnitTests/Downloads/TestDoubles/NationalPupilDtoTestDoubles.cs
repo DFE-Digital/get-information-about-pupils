@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
