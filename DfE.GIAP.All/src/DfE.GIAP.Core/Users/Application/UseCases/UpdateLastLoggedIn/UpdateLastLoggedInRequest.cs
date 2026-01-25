@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 
-namespace DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+namespace DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLoggedIn;
 
 /// <summary>
 /// Represents a request to update the last logged-in timestamp for a specific user.

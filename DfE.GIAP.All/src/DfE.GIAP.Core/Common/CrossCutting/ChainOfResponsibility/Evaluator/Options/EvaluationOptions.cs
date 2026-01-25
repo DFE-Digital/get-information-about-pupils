@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator.Options;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator.Options;
 public sealed class EvaluationOptions
 {
     // Should we ever Represent executing SPECIFIC handlers in the chain...?

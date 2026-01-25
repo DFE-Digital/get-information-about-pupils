@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Adapters;

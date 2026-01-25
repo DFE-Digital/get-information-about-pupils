@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator;
 using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
@@ -9,11 +9,11 @@ public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilS
 {
     private readonly IGetMyPupilsPupilSelectionProvider _getPupilSelectionsProvider;
     private readonly ISessionCommandHandler<MyPupilsPupilSelectionState> _pupilSelectionStateCommandHandler;
-    private readonly IEvaluatorV2<UpdateMyPupilsSelectionStateRequest> _evaluator;
+    private readonly IEvaluator<UpdateMyPupilsSelectionStateRequest> _evaluator;
     public UpdateMyPupilsPupilSelectionsCommandHandler(
         IGetMyPupilsPupilSelectionProvider getPupilSelectionsProvider,
         ISessionCommandHandler<MyPupilsPupilSelectionState> pupilSelectionStateCommandHandler,
-        IEvaluatorV2<UpdateMyPupilsSelectionStateRequest> evaluator)
+        IEvaluator<UpdateMyPupilsSelectionStateRequest> evaluator)
     {
         ArgumentNullException.ThrowIfNull(getPupilSelectionsProvider);
         _getPupilSelectionsProvider = getPupilSelectionsProvider;

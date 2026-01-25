@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Handlers;
+﻿namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Handlers;
 
 // TODO consider Elapsed..
 // TODO consider Metadata Dictionary<string, object?>

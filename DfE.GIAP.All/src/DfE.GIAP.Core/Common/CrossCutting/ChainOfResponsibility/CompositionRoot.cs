@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2;
+namespace DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
 public static class CompositionRoot
 {
 

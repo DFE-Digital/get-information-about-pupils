@@ -1,10 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v1;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Handlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Handlers;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
-internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandlerV2<UpdateMyPupilsSelectionStateRequest>
+internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {
     public ValueTask<HandlerResult> HandleAsync(UpdateMyPupilsSelectionStateRequest input, CancellationToken ctx = default)
     {

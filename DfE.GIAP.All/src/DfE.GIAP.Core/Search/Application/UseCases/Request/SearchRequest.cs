@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.Request;

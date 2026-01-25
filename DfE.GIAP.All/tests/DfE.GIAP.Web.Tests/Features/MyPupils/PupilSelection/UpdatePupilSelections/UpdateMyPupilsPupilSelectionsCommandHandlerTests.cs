@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator.Options;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator.Options;
 using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
@@ -20,7 +20,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
             () => new(
                 null!,
                 ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
-                new Mock<IEvaluatorV2<UpdateMyPupilsSelectionStateRequest>>().Object);
+                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -34,7 +34,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
             () => new(
                 new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
                 null!,
-                new Mock<IEvaluatorV2<UpdateMyPupilsSelectionStateRequest>>().Object);
+                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object);
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -62,7 +62,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateCommandHandler =
             ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
 
-        Mock<IEvaluatorV2<UpdateMyPupilsSelectionStateRequest>> evaluationHandlerMock = new();
+        Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>> evaluationHandlerMock = new();
 
         UpdateMyPupilsPupilSelectionsCommandHandler sut = new(
             providerMock.Object,
@@ -88,7 +88,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateCommandHandler =
             ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
 
-        Mock<IEvaluatorV2<UpdateMyPupilsSelectionStateRequest>> evaluatorMock = new();
+        Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>> evaluatorMock = new();
 
         // Arrange
         UpdateMyPupilsPupilSelectionsCommandHandler sut = new(

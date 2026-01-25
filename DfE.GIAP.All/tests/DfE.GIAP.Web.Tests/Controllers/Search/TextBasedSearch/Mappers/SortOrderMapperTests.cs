@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using Microsoft.Extensions.Options;
 using Xunit;

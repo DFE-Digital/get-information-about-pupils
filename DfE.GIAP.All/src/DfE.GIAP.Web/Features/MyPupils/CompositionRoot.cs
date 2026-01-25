@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Composition;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Handlers;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Chain;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Handlers;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
@@ -95,7 +95,7 @@ public static class CompositionRoot
             .AddScoped<IClearMyPupilsPupilSelectionsHandler, ClearMyPupilsPupilSelectionsHandler>()
             .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>()
 
-            .AddScoped<IEvaluatorV2<UpdateMyPupilsSelectionStateRequest>, EvaluatorV2<UpdateMyPupilsSelectionStateRequest>>()
+            .AddScoped<IEvaluator<UpdateMyPupilsSelectionStateRequest>, Evaluator<UpdateMyPupilsSelectionStateRequest>>()
             .AddSingleton<SelectAllPupilsCommandHandler>()
             .AddSingleton<DeselectAllPupilsCommandHandler>()
             .AddSingleton<ManualSelectPupilsCommandHandler>()
@@ -104,10 +104,10 @@ public static class CompositionRoot
             {
                 HandlerChainBuilder<
                     UpdateMyPupilsSelectionStateRequest,
-                    IEvaluationHandlerV2<UpdateMyPupilsSelectionStateRequest>> handlerChainBuilder =
+                    IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>> handlerChainBuilder =
                         HandlerChainBuilder<
                             UpdateMyPupilsSelectionStateRequest,
-                            IEvaluationHandlerV2<UpdateMyPupilsSelectionStateRequest>>
+                            IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>>
                                 .Create();
 
                 handlerChainBuilder
