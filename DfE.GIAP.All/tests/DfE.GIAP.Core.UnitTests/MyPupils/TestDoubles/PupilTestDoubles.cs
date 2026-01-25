@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
@@ -42,7 +43,7 @@ public static class PupilTestDoubles
                 string surname = faker.Name.LastName();
                 PupilName name = new(forename, surname);
 
-                DateTime? dob = faker.Date.Past(yearsToGoBack: 18);
+                DateTime dob = faker.Date.Past(yearsToGoBack: 18, DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(5));
 
                 Sex sex = faker.PickRandom(Sex.Male, Sex.Female, Sex.Unknown);
 
