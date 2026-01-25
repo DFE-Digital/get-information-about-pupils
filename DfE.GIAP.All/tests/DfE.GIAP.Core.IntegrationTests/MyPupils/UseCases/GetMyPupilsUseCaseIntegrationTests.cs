@@ -114,9 +114,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
         List<MyPupilsModel> expectedPupils =
-            npdResponse.value!
-                .Concat(pupilPremiumResponse.value!)
-                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!).ToList();
+            pupilPremiumResponse.value!
+                .Concat(npdResponse.value!)
+                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!)
+                .Take(20)
+                .ToList();
 
         foreach (MyPupilsModel expectedPupil in expectedPupils)
         {
