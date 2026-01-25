@@ -1,15 +1,11 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.ClearPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 public sealed class GetMyPupilsPresentationService : IGetMyPupilsPresentationService
@@ -19,11 +15,8 @@ public sealed class GetMyPupilsPresentationService : IGetMyPupilsPresentationSer
     private readonly IMapper<MyPupilsModels, MyPupilsPresentationPupilModels> _mapPupilsToPresentablePupils;
 
     public GetMyPupilsPresentationService(
-        IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest> deletePupilsUseCase,
         IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> getMyPupilsUseCase,
-        IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels> evaluator,
         IGetMyPupilsPupilSelectionProvider getMyPupilsStateProvider,
-        IClearMyPupilsPupilSelectionsHandler clearMyPupilsPupilSelectionsCommandHandler,
         IMapper<MyPupilsModels, MyPupilsPresentationPupilModels> mapper)
     {
         ArgumentNullException.ThrowIfNull(getMyPupilsUseCase);
@@ -46,15 +39,16 @@ public sealed class GetMyPupilsPresentationService : IGetMyPupilsPresentationSer
         MyPupilsPupilSelectionState selectionState =
             _getMyPupilsStateProvider.GetPupilSelections() ?? MyPupilsPupilSelectionState.CreateDefault();
 
+        MyPupilsQueryModel updatedQueryModel = new(
+            pageNumber: query.PageNumber,
+            size: query.PageSize,
+            orderBy: (query.SortField, query.SortDirection));
+
         GetMyPupilsResponse response =
             await _getMyPupilsUseCase.HandleRequestAsync(
-                new GetMyPupilsRequest(id.Value));
-
-        MyPupilsPresentationQueryModel updatedPresentation = new(
-            pageNumber: query.PageNumber,
-            pageSize: query.PageSize,
-            sortBy: query.SortField,
-            sortDirection: query.SortDirection);
+                new GetMyPupilsRequest(
+                    userId: id.Value,
+                    updatedQueryModel));
 
         MyPupilsPresentationPupilModels mappedPupils =
             _mapPupilsToPresentablePupils.Map(response.MyPupils) ?? MyPupilsPresentationPupilModels.Create([]);
@@ -68,22 +62,15 @@ public sealed class GetMyPupilsPresentationService : IGetMyPupilsPresentationSer
         return new MyPupilsPresentationResponse()
         {
             MyPupils = mappedPupils,
-            PageNumber = updatedPresentation.Page.Value,
-            SortedDirection = updatedPresentation.Sort.Direction switch
+            PageNumber = updatedQueryModel.PaginateOptions.Page.Value,
+            SortedDirection = updatedQueryModel.Order.Direction switch
             {
-                SortDirection.Ascending => "asc",
-                SortDirection.Descending => "desc",
+                OrderDirection.Ascending => "asc",
+                OrderDirection.Descending => "desc",
                 _ => string.Empty
             },
-            SortedField = updatedPresentation.Sort.Field,
+            SortedField = updatedQueryModel.Order.Field,
             IsAnyPupilsSelected = selectionState.IsAnyPupilSelected,
-            TotalPages = CalulateTotalPages(response.MyPupils, updatedPresentation.PageSize)
         };
     }
-
-    private static int CalulateTotalPages(MyPupilsModels pupils, int pageSize) =>
-        (pupils == null) ||
-            pupils.Count <= pageSize ?
-                1 :
-                    (int)Math.Ceiling(pupils.Count / (double)pageSize);
 }

@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.ClearPupilSelections;
+﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 using Moq;

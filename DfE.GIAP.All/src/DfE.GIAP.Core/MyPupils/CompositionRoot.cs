@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
@@ -44,6 +45,8 @@ public static class CompositionRoot
             .AddScoped<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>, DeletePupilsFromMyPupilsUseCase>()
             // AggregatePupilsService
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, AggregatePupilsForMyPupilsApplicationService>()
+            .AddSingleton<IOrderPupilsHandler, OrderPupilsHandler>()
+            .AddSingleton<IPaginatePupilsHandler, PaginatePupilsHandler>()
             .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, AzureIndexEntityWithPupilTypeToPupilMapper>();
 
         return services;

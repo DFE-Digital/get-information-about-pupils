@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
 using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator.Options;
 using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 using Moq;

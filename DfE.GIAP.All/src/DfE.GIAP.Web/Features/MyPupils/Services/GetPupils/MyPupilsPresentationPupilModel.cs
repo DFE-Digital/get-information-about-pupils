@@ -12,8 +12,4 @@ public record MyPupilsPresentationPupilModel
     public string Sex { get; init; }
     public string LocalAuthorityCode { get; init; }
     public bool IsSelected { get; internal set; }
-    public DateTime ParseDateOfBirth()
-        => DateTime.TryParse(DateOfBirth, new CultureInfo("en-GB"), out DateTime result) ?
-                result :
-                    DateTime.MinValue;
 }

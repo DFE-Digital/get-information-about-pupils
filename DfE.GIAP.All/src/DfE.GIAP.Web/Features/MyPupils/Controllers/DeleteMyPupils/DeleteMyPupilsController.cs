@@ -2,8 +2,8 @@
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

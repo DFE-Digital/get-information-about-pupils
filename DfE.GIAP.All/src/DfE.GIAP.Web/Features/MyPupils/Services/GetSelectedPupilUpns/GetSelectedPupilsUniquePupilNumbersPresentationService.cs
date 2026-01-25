@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
 

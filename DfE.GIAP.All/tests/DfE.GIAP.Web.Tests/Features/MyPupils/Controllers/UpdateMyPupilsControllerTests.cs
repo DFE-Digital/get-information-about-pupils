@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;

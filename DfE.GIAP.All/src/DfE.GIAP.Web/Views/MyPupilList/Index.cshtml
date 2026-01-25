@@ -345,27 +345,6 @@
                                                 @(Model.PageNumber + 1)
                                             </button>
                                         </li>
-
-                                        <!-- If more than 2 pages remaining add separator -->
-                                        @if (Model.LastPageNumber > Model.PageNumber + 2)
-                                        {
-                                            <li class="page-list-number-separator">...</li>
-                                        }
-                                        <!-- If last page number is not the next page number then display -->
-                                        @if (Model.LastPageNumber > Model.PageNumber + 1)
-                                        {
-                                            <li class="page-list-last">
-                                                <button asp-controller="@Model.UpdateFormController"
-                                                        asp-action="@Model.UpdateFormAction"
-                                                        asp-route-pageNumber="@(Model.LastPageNumber)"
-                                                        asp-route-sortField="@Model.SortField"
-                                                        asp-route-sortDirection="@Model.SortDirection"
-                                                        id="page-last"
-                                                        type="submit">
-                                                    @(Model.LastPageNumber)
-                                                </button>
-                                            </li>
-                                        }
                                         <li class="page-list-next">
                                             <button asp-controller="@Model.UpdateFormController"
                                                     asp-action="@Model.UpdateFormAction"

@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
+using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects.Entries;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects.Entries;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Infrastructure.Repositories.Mappers;

@@ -68,7 +68,6 @@ public sealed class GetMyPupilsControllerTests
         {
             MyPupils = pupilsStub,
             PageNumber = 1,
-            TotalPages = 100,
             IsAnyPupilsSelected = false,
         };
 

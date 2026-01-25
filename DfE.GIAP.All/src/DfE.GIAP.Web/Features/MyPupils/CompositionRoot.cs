@@ -11,14 +11,13 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.DeletePupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.ClearPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.Mapper.DataTransferObjects;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.UpdatePupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.UpdatePupilSelections.Handlers;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
 using DfE.GIAP.Web.Shared.Serializer;
@@ -67,31 +66,6 @@ public static class CompositionRoot
             .AddScoped<IMyPupilsMessageSink, MyPupilsTempDataMessageSink>()
             .AddSingleton<IMapper<MyPupilsMessage, MyPupilsMessageDto>, MyPupilsMessageToMyPupilsMessageDtoMapper>()
             .AddSingleton<IMapper<MyPupilsMessageDto, MyPupilsMessage>, MyPupilsMessageDtoToMyPupilsMessageMapper>();
-
-        services
-            .AddSingleton<OrderMyPupilsModelPresentationHandler>()
-            .AddSingleton<PaginateMyPupilsModelPresentationHandler>()
-
-            .AddSingleton<
-                IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>,
-                EvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>()
-            .AddSingleton((serviceProvider) =>
-            {
-                HandlerChainBuilder<
-                    MyPupilsPresentationHandlerRequest,
-                    MyPupilsPresentationPupilModels,
-                        IEvaluationHandlerV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>> handlerChainBuilder =
-                            HandlerChainBuilder<
-                                MyPupilsPresentationHandlerRequest,
-                                MyPupilsPresentationPupilModels,
-                                IEvaluationHandlerV2 <MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>.Create();
-
-                handlerChainBuilder
-                    .ChainNext(serviceProvider.GetRequiredService<OrderMyPupilsModelPresentationHandler>())
-                    .ChainNext(serviceProvider.GetRequiredService<PaginateMyPupilsModelPresentationHandler>());
-
-                return handlerChainBuilder.Build();
-            });
 
         return services;
     }

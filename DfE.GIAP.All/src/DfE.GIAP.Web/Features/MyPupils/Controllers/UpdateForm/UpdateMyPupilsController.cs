@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;

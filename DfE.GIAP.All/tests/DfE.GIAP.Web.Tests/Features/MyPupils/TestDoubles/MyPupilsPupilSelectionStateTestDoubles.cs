@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
+﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 public static class MyPupilsPupilSelectionStateTestDoubles

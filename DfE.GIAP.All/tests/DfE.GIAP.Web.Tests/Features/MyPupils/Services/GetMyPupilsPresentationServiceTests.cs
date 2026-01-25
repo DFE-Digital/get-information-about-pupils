@@ -1,18 +1,13 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.v2.Evaluator.Options;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.Models;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.ClearPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Operations.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
@@ -22,49 +17,12 @@ namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services;
 public sealed class GetMyPupilsPresentationServiceTests
 {
     [Fact]
-    public void Constructor_Throws_When_DeletePupilsUseCase_Is_Null()
-    {
-        // Arrange
-        Func<GetMyPupilsPresentationService> construct = () => new(
-            deletePupilsUseCase: null!,
-            getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
-            evaluator: new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
-            getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
-            mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
-        );
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
     public void Constructor_Throws_When_GetMyPupilsUseCase_Is_Null()
     {
         // Arrange
         Func<GetMyPupilsPresentationService> construct = () => new(
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             getMyPupilsUseCase: null!,
-            evaluator: new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
             getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
-            mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
-        );
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_PresentationHandler_Is_Null()
-    {
-        // Arrange
-        Func<GetMyPupilsPresentationService> construct = () => new(
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
-            getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
-            evaluator: null!,
-            getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
             mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
         );
 
@@ -77,28 +35,8 @@ public sealed class GetMyPupilsPresentationServiceTests
     {
         // Arrange
         Func<GetMyPupilsPresentationService> construct = () => new(
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
-            evaluator: new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
             getMyPupilsStateProvider: null!,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
-            mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
-        );
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_ClearSelectionsHandler_Is_Null()
-    {
-        // Arrange
-        Func<GetMyPupilsPresentationService> construct = () => new(
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
-            getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
-            evaluator: new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
-            getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: null!,
             mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
         );
 
@@ -111,11 +49,8 @@ public sealed class GetMyPupilsPresentationServiceTests
     {
         // Arrange
         Func<GetMyPupilsPresentationService> construct = () => new(
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
-            evaluator: new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
             getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
             mapper: null!
         );
 
@@ -132,11 +67,8 @@ public sealed class GetMyPupilsPresentationServiceTests
     {
         // Arrange
         GetMyPupilsPresentationService sut = new(
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
             getMyPupilsUseCase: new Mock<IUseCase<GetMyPupilsRequest, GetMyPupilsResponse>>().Object,
-            new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
             getMyPupilsStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object,
             mapper: MapperTestDoubles.Default<MyPupilsModels, MyPupilsPresentationPupilModels>().Object
         );
 
@@ -164,11 +96,8 @@ public sealed class GetMyPupilsPresentationServiceTests
 
         GetMyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
-            evaluator: new Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>>().Object,
             getMyPupilsStateProvider: getPupilSelectionsProvider.Object,
-            mapper: new Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>>().Object,
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object);
+            mapper: new Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>>().Object);
 
         MyPupilsQueryRequestDto request = new()
         {
@@ -205,36 +134,19 @@ public sealed class GetMyPupilsPresentationServiceTests
 
         MyPupilsPresentationPupilModels handlerOutputStub = MyPupilsPresentationPupilModels.Create([]);
 
-        Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>> evaluatorMock = new();
-
-        MyPupilsPresentationHandlerRequest request = new(
-            It.IsAny<MyPupilsPresentationPupilModels>(),
-            It.IsAny<MyPupilsPresentationQueryModel>(),
-            It.IsAny<MyPupilsPupilSelectionState>());
-
-        evaluatorMock.Setup(
-            (evaluator) => evaluator.EvaluateAsync(
-                request,
-                It.IsAny<EvaluationOptions>(),
-                It.IsAny<CancellationToken>())).ReturnsAsync(handlerOutputStub);
-
         Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
             MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: handlerOutputStub);
 
         GetMyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
-            evaluator: evaluatorMock.Object,
             getMyPupilsStateProvider: getPupilSelectionsMock.Object,
-            mapper: mapperMock.Object,
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object);
+            mapper: mapperMock.Object);
 
         // Act
         MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
         Assert.NotNull(response);
-        Assert.Equal(expectedPages, response.TotalPages);
 
         getPupilSelectionsMock.Verify(
             (provider) => provider.GetPupilSelections(),
@@ -247,12 +159,6 @@ public sealed class GetMyPupilsPresentationServiceTests
         mapperMock.Verify(
             (mapper) => mapper.Map(It.IsAny<MyPupilsModels>()),
                 Times.Once);
-
-        evaluatorMock.Verify(
-            (evaluator) => evaluator.EvaluateAsync(
-                    It.IsAny<MyPupilsPresentationHandlerRequest>(),
-                    It.IsAny<EvaluationOptions>(),
-                    It.IsAny<CancellationToken>()), Times.Once);
     }
 
 
@@ -270,7 +176,9 @@ public sealed class GetMyPupilsPresentationServiceTests
 
         GetMyPupilsResponse useCaseResponse = new(MyPupilsModels.Create([]));
         useCaseMock
-            .Setup((useCase) => useCase.HandleRequestAsync(new GetMyPupilsRequest(userId)))
+            .Setup((useCase) =>
+                useCase.HandleRequestAsync(
+                    It.Is<GetMyPupilsRequest>(req => req.UserId == userId)))
             .ReturnsAsync(useCaseResponse);
 
         MyPupilsPupilSelectionState pupilSelectionsStub = new();
@@ -285,24 +193,10 @@ public sealed class GetMyPupilsPresentationServiceTests
         Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
             MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: outputPupilsStub);
 
-        Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>> evaluatorMock = new();
-
-        evaluatorMock.Setup(
-            (evaluator) => evaluator.EvaluateAsync(
-                It.IsAny<MyPupilsPresentationHandlerRequest>(),
-                It.IsAny<EvaluationOptions>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(outputPupilsStub);
-
-
         GetMyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
-            evaluator: evaluatorMock.Object,
             getMyPupilsStateProvider: getPupilSelectionsMock.Object,
-            mapper: mapperMock.Object,
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object
-        );
+            mapper: mapperMock.Object);
 
         // Act
         MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, request);
@@ -314,7 +208,6 @@ public sealed class GetMyPupilsPresentationServiceTests
 
         Assert.Equal(outputPupilsStub, response.MyPupils);
         Assert.Equal(1, response.PageNumber);
-        Assert.Equal(1, response.TotalPages);
         Assert.False(response.IsAnyPupilsSelected);
 
         getPupilSelectionsMock.Verify(
@@ -328,12 +221,6 @@ public sealed class GetMyPupilsPresentationServiceTests
         mapperMock.Verify(
             (mapper) => mapper.Map(It.IsAny<MyPupilsModels>()),
                 Times.Once);
-
-        evaluatorMock.Verify(
-            (evaluator) => evaluator.EvaluateAsync(
-                    It.IsAny<MyPupilsPresentationHandlerRequest>(),
-                    It.IsAny<EvaluationOptions>(),
-                    It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -361,33 +248,13 @@ public sealed class GetMyPupilsPresentationServiceTests
 
         MyPupilsPresentationPupilModels outputPupilsStub = MyPupilsPresentationPupilModelsTestDoubles.Generate(count: 10);
 
-        Mock<IEvaluatorV2<MyPupilsPresentationHandlerRequest, MyPupilsPresentationPupilModels>> evaluatorMock = new();
-
-        MyPupilsPresentationHandlerRequest request = new(
-            MyPupilsPresentationPupilModels.Empty(),
-            MyPupilsPresentationQueryModel.CreateDefault(),
-            MyPupilsPupilSelectionState.CreateDefault());
-
-        evaluatorMock.Setup(
-                    (evaluator) => evaluator.EvaluateAsync(
-                        It.IsAny<MyPupilsPresentationHandlerRequest>(),
-                        It.IsAny<EvaluationOptions>(),
-                        It.IsAny<CancellationToken>()))
-                    .ReturnsAsync(outputPupilsStub);
-
-
-
         Mock<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>> mapperMock =
             MapperTestDoubles.MockFor<MyPupilsModels, MyPupilsPresentationPupilModels>(stub: outputPupilsStub);
 
         GetMyPupilsPresentationService sut = new(
             getMyPupilsUseCase: useCaseMock.Object,
-            evaluator: evaluatorMock.Object,
             getMyPupilsStateProvider: getPupilSelectionsMock.Object,
-            mapper: mapperMock.Object,
-            deletePupilsUseCase: new Mock<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>().Object,
-            clearMyPupilsPupilSelectionsCommandHandler: new Mock<IClearMyPupilsPupilSelectionsHandler>().Object
-        );
+            mapper: mapperMock.Object);
 
         // Act
         MyPupilsPresentationResponse response = await sut.GetPupilsAsync(userId, new MyPupilsQueryRequestDto());
@@ -407,12 +274,6 @@ public sealed class GetMyPupilsPresentationServiceTests
         mapperMock.Verify(
             (mapper) => mapper.Map(It.IsAny<MyPupilsModels>()),
                 Times.Once);
-
-        evaluatorMock.Verify(
-            (evaluator) => evaluator.EvaluateAsync(
-                    It.IsAny<MyPupilsPresentationHandlerRequest>(),
-                    It.IsAny<EvaluationOptions>(),
-                    It.IsAny<CancellationToken>()), Times.Once);
     }
 
     public static TheoryData<MyPupilsQueryRequestDto?, string, string> GetMyPupilsInputs
