@@ -25,8 +25,6 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     private readonly WireMockServerFixture _searchIndexFixture;
     private const string MyPupilsContainerName = "mypupils";
 
-    // TODO NEED TO SEED COSMOSDB PUPIL-NOSKILL CONTAINER AND REPLACE INDEX CALL
-
     public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
     {
         ArgumentNullException.ThrowIfNull(cosmosDbFixture);
