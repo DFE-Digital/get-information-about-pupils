@@ -29,12 +29,12 @@ public sealed class Pupil : Entity<UniquePupilNumber>
     public string Forename => _name.Forename;
     public string Surname => _name.Surname;
     public DateTime? TryParseDateOfBirth()
-    {   
+    {
         return _dateOfBirth is null ?
             null :
                 Convert.ToDateTime(_dateOfBirth);
     }
-            
+
     public int? LocalAuthorityCode { get; }
     public string Sex => _sex?.ToString() ?? string.Empty;
     public bool IsOfPupilType(PupilType pupilType) => _pupilType.Equals(pupilType);

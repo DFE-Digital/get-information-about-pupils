@@ -46,7 +46,7 @@ public class CosmosDbPupilPremiumDownloadDatasetReadOnlyRepository : IPupilPremi
             _logger.LogTrace(
                level: LogLevel.Critical,
                message: $"CosmosException in {nameof(GetPupilsByIdsAsync)}",
-               exception: ex,                                                             
+               exception: ex,
                category: "Downloads - PP",
                source: nameof(GetPupilsByIdsAsync));
             return [];

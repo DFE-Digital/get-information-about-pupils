@@ -25,7 +25,7 @@ internal sealed class PaginatePupilsHandler : IPaginatePupilsHandler
         // Page 2 = (size * 1) = Size -> Size*2
         int skip = options.Size * (options.Page.Value - 1);
 
-        if(skip >= pupils.Count())
+        if (skip >= pupils.Count())
         {
             return pupils;
         }

@@ -74,12 +74,12 @@ public readonly record struct Sex : IEquatable<Sex>
         {
             return UnknownCode;
         }
-            
+
         if (input.Length == 1)
         {
             return NormalizeChar(input[0]);
         }
-            
+
         // parsing
         string v = input.Trim().ToLowerInvariant();
         return v switch

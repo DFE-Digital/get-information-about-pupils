@@ -22,11 +22,11 @@ internal class ExecuteAllHandlersStrategy<TIn, TOut> : IExecutionStrategy<TIn, T
         HandlerResult<TOut> output = default!;
         foreach (IEvaluationHandlerV2<TIn, TOut> handler in chain.Handlers)
         {
-              output = await handler.HandleAsync(input, token);
+            output = await handler.HandleAsync(input, token);
             // Ignore whether the output fails
         }
 
-        if(output.Result is null)
+        if (output.Result is null)
         {
             throw new ArgumentException("Final handler did not provide a response");
         }

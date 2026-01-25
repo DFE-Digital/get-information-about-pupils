@@ -11,9 +11,9 @@ public sealed class ChainOfResponsibilityStrategy<TIn> : IExecutionStrategy<TIn>
     {
         foreach (IEvaluationHandlerV2<TIn> item in chain.Handlers)
         {
-            HandlerResult result =  await item.HandleAsync(input, ctx);
+            HandlerResult result = await item.HandleAsync(input, ctx);
 
-            if(result.Status.Equals(HandlerResultStatus.Success))
+            if (result.Status.Equals(HandlerResultStatus.Success))
             {
                 return;
             }

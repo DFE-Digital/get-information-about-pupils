@@ -32,7 +32,7 @@ public static class PupilTestDoubles
 
     private static Faker<Pupil> CreateGenerator()
     {
-        
+
         return new Faker<Pupil>()
             .CustomInstantiator((faker) =>
             {

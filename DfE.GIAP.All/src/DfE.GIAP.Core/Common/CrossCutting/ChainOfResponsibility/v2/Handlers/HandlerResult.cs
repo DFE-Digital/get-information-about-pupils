@@ -11,7 +11,7 @@ public record HandlerResult
     }
 
     public HandlerResultStatus Status { get; }
-    public Exception? Exception { get; }   
+    public Exception? Exception { get; }
 }
 
 public record HandlerResult<TOut> : HandlerResult

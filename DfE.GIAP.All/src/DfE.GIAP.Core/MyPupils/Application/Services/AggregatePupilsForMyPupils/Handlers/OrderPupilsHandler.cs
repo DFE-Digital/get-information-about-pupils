@@ -5,7 +5,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
 internal sealed class OrderPupilsHandler : IOrderPupilsHandler
 {
-     private static readonly Dictionary<string, Expression<Func<Pupil, IComparable>>> _sortKeyToExpression = new()
+    private static readonly Dictionary<string, Expression<Func<Pupil, IComparable>>> _sortKeyToExpression = new()
     {
         { "forename", (t) => t.Forename },
         { "surname", (t) => t.Surname },
@@ -15,7 +15,7 @@ internal sealed class OrderPupilsHandler : IOrderPupilsHandler
 
     public IEnumerable<Pupil> Order(IEnumerable<Pupil> pupils, OrderOptions options)
     {
-        if(pupils is null)
+        if (pupils is null)
         {
             return [];
         }
