@@ -120,6 +120,7 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 - DSI (DfE sign-in)
 - [Azure CosmosDb library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
 - [Azure AISearch library](https://github.com/DFE-Digital/infrastructure-cognitive-search)
+- [DfE CleanArchitecture Application, Domain and CrossCutting libraries](https://github.com/DFE-Digital/cleanarch-crosscutting)
 
 ### Settings
 
