@@ -1,5 +1,4 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;

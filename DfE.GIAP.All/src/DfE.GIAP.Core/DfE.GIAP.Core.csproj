@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>DfE.GIAP.Core</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,6 +7,9 @@
   <ItemGroup>
     <PackageReference Include="Azure.Search.Documents" Version="11.7.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
+    <PackageReference Include="DfE.CleanArchitecture.Common.Application" Version="0.0.1-5" />
+    <PackageReference Include="DfE.CleanArchitecture.Common.CrossCutting" Version="0.0.1-5" />
+    <PackageReference Include="DfE.CleanArchitecture.Common.Domain" Version="0.0.1-5" />
     <PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="2.0.0-0" />
     <PackageReference Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" Version="1.0.2-87" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />

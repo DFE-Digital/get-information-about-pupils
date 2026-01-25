@@ -1,8 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Chain;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Handlers;
-using DfE.GIAP.Core.MyPupils;
+﻿using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
