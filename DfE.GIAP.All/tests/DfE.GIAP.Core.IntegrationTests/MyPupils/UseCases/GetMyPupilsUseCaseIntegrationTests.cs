@@ -109,7 +109,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Assert
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.MyPupils);
-        Assert.Equal(35, getMyPupilsResponse.MyPupils.Count);
+        Assert.Equal(20, getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
