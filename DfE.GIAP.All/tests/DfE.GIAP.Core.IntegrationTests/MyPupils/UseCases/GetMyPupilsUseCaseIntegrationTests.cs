@@ -109,14 +109,16 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Assert
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.MyPupils);
-        Assert.Equal(35, getMyPupilsResponse.MyPupils.Count);
+        Assert.Equal(20, getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
         List<MyPupilsModel> expectedPupils =
-            npdResponse.value!
-                .Concat(pupilPremiumResponse.value!)
-                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!).ToList();
+            pupilPremiumResponse.value!
+                .Concat(npdResponse.value!)
+                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!)
+                .Take(20)
+                .ToList();
 
         foreach (MyPupilsModel expectedPupil in expectedPupils)
         {
