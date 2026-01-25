@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Search.Application.Models.Search;
+﻿namespace DfE.GIAP.Core.Search.Application.Models.Sort;
 
 /// <summary>
 /// Represents a validated field name used for sorting in Azure AI Search queries.
@@ -32,7 +32,7 @@ public sealed class SortField
     /// </exception>
     public SortField(string sortField, IReadOnlyList<string> validSortFields)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(sortField);
+        ArgumentException.ThrowIfNullOrEmpty(sortField);
 
         if (validSortFields == null || validSortFields.Count == 0)
         {

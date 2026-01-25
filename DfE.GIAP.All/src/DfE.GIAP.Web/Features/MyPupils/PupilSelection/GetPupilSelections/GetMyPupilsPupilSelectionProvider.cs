@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 
-namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 
 internal sealed class GetMyPupilsPupilSelectionProvider : IGetMyPupilsPupilSelectionProvider
 {

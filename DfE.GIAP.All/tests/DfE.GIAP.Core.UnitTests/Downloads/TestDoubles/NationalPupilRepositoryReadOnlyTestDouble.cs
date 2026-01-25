@@ -5,10 +5,10 @@ namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 public sealed class NationalPupilRepositoryReadOnlyTestDouble
 {
-    public static INationalPupilReadOnlyRepository WithPupils(IEnumerable<NationalPupil> pupils) =>
+    public static INationalPupilDownloadDatasetReadOnlyRepository WithPupils(IEnumerable<NationalPupil> pupils) =>
        new StubRepository(pupils);
 
-    private sealed class StubRepository : INationalPupilReadOnlyRepository
+    private sealed class StubRepository : INationalPupilDownloadDatasetReadOnlyRepository
     {
         private readonly IEnumerable<NationalPupil> _pupils;
 

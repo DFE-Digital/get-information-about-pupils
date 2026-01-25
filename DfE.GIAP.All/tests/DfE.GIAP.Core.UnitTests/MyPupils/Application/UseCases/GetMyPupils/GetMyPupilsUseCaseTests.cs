@@ -2,6 +2,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
@@ -56,7 +57,9 @@ public sealed class GetMyPupilsUseCaseTests
         aggregateServiceMock.Verify(
             t => t.GetPupilsAsync(
                 It.Is<UniquePupilNumbers>(
-                    (upns) => upns.GetUniquePupilNumbers().SequenceEqual(myPupils.GetMyPupils()))),
+                    (upns) => upns.GetUniquePupilNumbers().SequenceEqual(myPupils.GetMyPupils())),
+                It.IsAny<MyPupilsQueryModel>(),
+                It.IsAny<CancellationToken>()),
             Times.Once);
 
         mapperMock.Verify(
@@ -93,7 +96,10 @@ public sealed class GetMyPupilsUseCaseTests
             repo.GetMyPupilsOrDefaultAsync(myPupilsId), Times.Once);
 
         mockAggregateService.Verify(
-            t => t.GetPupilsAsync(It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
+            t => t.GetPupilsAsync(
+                It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any()),
+                It.IsAny<MyPupilsQueryModel>(),
+                It.IsAny<CancellationToken>()), Times.Never);
 
         mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
     }
@@ -135,7 +141,9 @@ public sealed class GetMyPupilsUseCaseTests
 
         mockAggregateService.Verify(
             t => t.GetPupilsAsync(
-                It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any())), Times.Never);
+                It.Is<UniquePupilNumbers>(t => !t.GetUniquePupilNumbers().Any()),
+                It.IsAny<MyPupilsQueryModel>(),
+                It.IsAny<CancellationToken>()), Times.Never);
 
         mockMapper.Verify(t => t.Map(It.IsAny<Pupil>()), Times.Never);
     }

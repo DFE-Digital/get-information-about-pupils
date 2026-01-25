@@ -27,6 +27,7 @@ using Learner = DfE.GIAP.Core.Search.Application.Models.Learner.Learner;
 using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
 using DfE.GIAP.Web.Shared.Serializer;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

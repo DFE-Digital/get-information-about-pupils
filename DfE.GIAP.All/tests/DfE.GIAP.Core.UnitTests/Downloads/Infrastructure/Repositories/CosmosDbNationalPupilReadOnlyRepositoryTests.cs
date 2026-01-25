@@ -1,8 +1,8 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.SharedTests.Common;
@@ -27,7 +27,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CosmosDbNationalPupilReadOnlyRepository(
+        Assert.Throws<ArgumentNullException>(() => new CosmosDbNationalPupilDownloadDatasetReadOnlyRepository(
             logger: null!,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object));
@@ -40,7 +40,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
         Mock<IMapper<NationalPupilDto, NationalPupil>> mockMapper = MapperTestDoubles.Default<NationalPupilDto, NationalPupil>();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CosmosDbNationalPupilReadOnlyRepository(
+        Assert.Throws<ArgumentNullException>(() => new CosmosDbNationalPupilDownloadDatasetReadOnlyRepository(
             logger: _mockLogger,
             cosmosDbQueryHandler: null!,
             dtoToEntityMapper: mockMapper.Object));
@@ -53,7 +53,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => new CosmosDbNationalPupilReadOnlyRepository(
+        Assert.Throws<ArgumentNullException>(() => new CosmosDbNationalPupilDownloadDatasetReadOnlyRepository(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: null!));
@@ -70,7 +70,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(cosmosExceptionGenerator);
         Mock<IMapper<NationalPupilDto, NationalPupil>> mockMapper = MapperTestDoubles.Default<NationalPupilDto, NationalPupil>();
 
-        CosmosDbNationalPupilReadOnlyRepository sut = new(
+        CosmosDbNationalPupilDownloadDatasetReadOnlyRepository sut = new(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object);
@@ -92,7 +92,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.Default();
         Mock<IMapper<NationalPupilDto, NationalPupil>> mockMapper = MapperTestDoubles.Default<NationalPupilDto, NationalPupil>();
 
-        CosmosDbNationalPupilReadOnlyRepository sut = new(
+        CosmosDbNationalPupilDownloadDatasetReadOnlyRepository sut = new(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object);
@@ -114,7 +114,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
 
         Mock<IMapper<NationalPupilDto, NationalPupil>> mockMapper = MapperTestDoubles.Default<NationalPupilDto, NationalPupil>();
 
-        CosmosDbNationalPupilReadOnlyRepository sut = new(
+        CosmosDbNationalPupilDownloadDatasetReadOnlyRepository sut = new(
             logger: _mockLogger,
             cosmosDbQueryHandler: mockQueryHandler.Object,
             dtoToEntityMapper: mockMapper.Object);
@@ -135,7 +135,7 @@ public sealed class CosmosDbNationalPupilReadOnlyRepositoryTests
         Mock<ICosmosDbQueryHandler> mockQueryHandler = CosmosDbQueryHandlerTestDoubles.MockForReadMany(() => furtherEducationPupilStub);
         Mock<IMapper<NationalPupilDto, NationalPupil>> mockMapper = MapperTestDoubles.MockFor<NationalPupilDto, NationalPupil>(It.IsAny<NationalPupil>());
 
-        CosmosDbNationalPupilReadOnlyRepository sut = new(
+        CosmosDbNationalPupilDownloadDatasetReadOnlyRepository sut = new(
                     logger: _mockLogger,
                     cosmosDbQueryHandler: mockQueryHandler.Object,
                     dtoToEntityMapper: mockMapper.Object);

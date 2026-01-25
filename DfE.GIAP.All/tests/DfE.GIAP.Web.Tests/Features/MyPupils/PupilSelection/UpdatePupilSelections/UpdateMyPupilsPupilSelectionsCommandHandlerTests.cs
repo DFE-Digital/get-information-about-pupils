@@ -1,8 +1,9 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
+﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator;
+using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Evaluator.Options;
 using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 using Moq;
@@ -54,7 +55,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
     }
 
     [Fact]
-    public void Handle_Throws_When_Request_Is_Null()
+    public async Task Handle_Throws_When_Request_Is_Null()
     {
         Mock<IGetMyPupilsPupilSelectionProvider> providerMock = new();
 
@@ -69,13 +70,13 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
             evaluationHandlerMock.Object);
 
         // Act Assert
-        Action act = () => sut.Handle(null!);
+        Func<Task> act = () => sut.Handle(null!);
 
-        Assert.Throws<ArgumentNullException>(act);
+        await Assert.ThrowsAsync<ArgumentNullException>(act);
     }
 
     [Fact]
-    public void Handle_Calls_Evaluator_And_Calls_SessionHandler()
+    public async Task Handle_Calls_Evaluator_And_Calls_SessionHandler()
     {
         MyPupilsPupilSelectionState defaultState = MyPupilsPupilSelectionState.CreateDefault();
 
@@ -87,26 +88,28 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
         Mock<ISessionCommandHandler<MyPupilsPupilSelectionState>> selectionStateCommandHandler =
             ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>();
 
-        Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>> evaluationHandlerMock = new();
+        Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>> evaluatorMock = new();
 
         // Arrange
         UpdateMyPupilsPupilSelectionsCommandHandler sut = new(
                 providerMock.Object,
                 selectionStateCommandHandler.Object,
-                evaluationHandlerMock.Object);
+                evaluatorMock.Object);
 
         MyPupilsFormStateRequestDto request = new();
 
         // Act
-        sut.Handle(request);
+        await sut.Handle(request);
 
         // Assert
         providerMock.Verify(t => t.GetPupilSelections(), Times.Once);
 
-        evaluationHandlerMock.Verify((handler)
-            => handler.Evaluate(
+        evaluatorMock.Verify((handler)
+            => handler.EvaluateAsync(
                 It.Is<UpdateMyPupilsSelectionStateRequest>(
-                    (req) => ReferenceEquals(request, req.UpdateRequest) && ReferenceEquals(defaultState, req.State))),
+                    (req) => ReferenceEquals(request, req.UpdateRequest) && ReferenceEquals(defaultState, req.State)),
+                It.IsAny<EvaluationOptions>(),
+                It.IsAny<CancellationToken>()),
                 Times.Once);
 
         selectionStateCommandHandler.Verify(handler =>

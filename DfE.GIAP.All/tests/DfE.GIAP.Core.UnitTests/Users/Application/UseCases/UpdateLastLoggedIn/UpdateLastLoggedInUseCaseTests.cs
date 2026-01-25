@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
-using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLoggedIn;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Application.UseCases.UpdateLastLoggedIn;

@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
@@ -15,7 +16,6 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -120,8 +120,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         services.AddScoped<IFurtherEducationReadOnlyRepository, CosmosDbFurtherEducationReadOnlyRepository>();
-        services.AddScoped<INationalPupilReadOnlyRepository, CosmosDbNationalPupilReadOnlyRepository>();
-        services.AddScoped<IPupilPremiumReadOnlyRepository, CosmosDbPupilPremiumReadOnlyRepository>();
+        services.AddScoped<INationalPupilDownloadDatasetReadOnlyRepository, CosmosDbNationalPupilDownloadDatasetReadOnlyRepository>();
+        services.AddScoped<IPupilPremiumDownloadDatasetReadOnlyRepository, CosmosDbPupilPremiumDownloadDatasetReadOnlyRepository>();
 
         return services;
     }

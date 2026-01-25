@@ -1,15 +1,15 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 internal static class IMyPupilsPresentationServiceTestDoubles
 {
-    internal static Mock<IMyPupilsPresentationService> DefaultMock() => new();
+    internal static Mock<IGetMyPupilsPresentationService> DefaultMock() => new();
 
-    internal static IMyPupilsPresentationService MockForGetPupils(MyPupilsPresentationResponse? stub)
+    internal static IGetMyPupilsPresentationService MockForGetPupils(MyPupilsPresentationResponse? stub)
     {
-        Mock<IMyPupilsPresentationService> mock = DefaultMock();
+        Mock<IGetMyPupilsPresentationService> mock = DefaultMock();
         mock.Setup(
             (t) => t.GetPupilsAsync(
                 It.IsAny<string>(),

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 using FluentAssertions;

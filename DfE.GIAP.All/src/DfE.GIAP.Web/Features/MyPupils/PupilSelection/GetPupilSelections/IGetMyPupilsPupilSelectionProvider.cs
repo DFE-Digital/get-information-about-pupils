@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 
 public interface IGetMyPupilsPupilSelectionProvider
 {

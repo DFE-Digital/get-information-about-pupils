@@ -4,9 +4,9 @@ using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
 using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
-using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLoggedIn;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
-using DfE.GIAP.Core.Users.Infrastructure.Repositories.Dtos;
+using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 
