@@ -74,13 +74,13 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
                 groupedByUpn.OrderByDescending(x => x.PupilType == PupilType.PupilPremium).First())
             .Select(_dtoToEntityMapper.Map);
 
-        // Return all results is no filtering or querying to be applied
-        if(query is null)
+        // If no query, return ALL results
+        if (query is null)
         {
             return distinctResults;
         }
 
-        // Else Order, then paginate
+        // Order, then paginate
         return
             _paginatePupilsHandler.PaginatePupils(
                 _orderPupilsHandler.Order(distinctResults, query.Order), query.PaginateOptions);

@@ -136,10 +136,14 @@ public abstract class BaseLearnerNumberController : Controller
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");
         }
-        var notPaged = hasQueryItem && !calledByController;
-        var allSelected = false;
 
-        model.SearchBoxErrorMessage = ModelState.IsValid is false ? PupilHelper.GenerateValidationMessageUpnSearch(ModelState) : null;
+        bool notPaged = hasQueryItem && !calledByController;
+        bool allSelected = false;
+
+        model.SearchBoxErrorMessage =
+            ModelState.IsValid is false ?
+                PupilHelper.GenerateValidationMessageUpnSearch(ModelState) :
+                    null;
 
         model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
 
