@@ -7,6 +7,6 @@ public interface IAggregatePupilsForMyPupilsApplicationService
 {
     Task<IEnumerable<Pupil>> GetPupilsAsync(
         UniquePupilNumbers uniquePupilNumbers,
-        MyPupilsQueryModel query,
+        MyPupilsQueryModel? query,
         CancellationToken ctx = default);
 }

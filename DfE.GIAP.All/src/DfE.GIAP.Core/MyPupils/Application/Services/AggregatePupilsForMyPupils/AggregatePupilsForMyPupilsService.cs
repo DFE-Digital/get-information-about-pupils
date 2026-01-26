@@ -37,7 +37,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(
         UniquePupilNumbers uniquePupilNumbers,
-        MyPupilsQueryModel query,
+        MyPupilsQueryModel? query = null,
         CancellationToken ctx = default)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count, UpnQueryLimit);
@@ -73,6 +73,12 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             .Select(groupedByUpn =>
                 groupedByUpn.OrderByDescending(x => x.PupilType == PupilType.PupilPremium).First())
             .Select(_dtoToEntityMapper.Map);
+
+        // If no query, return ALL results
+        if(query is null)
+        {
+            return distinctResults;
+        }
 
         // Order, then paginate
         return
