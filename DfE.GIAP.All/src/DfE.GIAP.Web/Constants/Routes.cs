@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Web.Constants;
+
 public static class Routes
 {
     public const string DownloadSelectedNationalPupilDatabaseData = "download";
@@ -15,7 +16,7 @@ public static class Routes
 
     public static class Application
     {
-        public const string Admin = "admin";
+        public const string Content = "content";
         public const string Consent = "/consent";
         public const string Error = "error";
         public const string Home = "/";

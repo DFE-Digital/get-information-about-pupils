@@ -98,8 +98,8 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddAuthConfiguration(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy(Policy.RequireAdminApproverAccess, policy =>
-                policy.RequireRole(AuthRoles.Admin, AuthRoles.Approver));
+            .AddPolicy(Policy.RequiresManageContentAccess, policy =>
+                policy.RequireRole(AuthRoles.Admin));
 
         services.AddControllersWithViews(config =>
         {
