@@ -9,11 +9,11 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
 {
     public DownloadType SupportedDownloadType => DownloadType.PupilPremium;
 
-    private readonly IPupilPremiumDownloadDatasetReadOnlyRepository _ppReadRepository;
+    private readonly IPupilPremiumReadOnlyRepository _ppReadRepository;
     private readonly IMapper<PupilPremiumPupil, PupilPremiumOutputRecord> _ppMapper;
 
     public PupilPremiumAggregationHandler(
-        IPupilPremiumDownloadDatasetReadOnlyRepository pupilPremiumReadRepository,
+        IPupilPremiumReadOnlyRepository pupilPremiumReadRepository,
         IMapper<PupilPremiumPupil, PupilPremiumOutputRecord> ppMapper)
     {
         ArgumentNullException.ThrowIfNull(pupilPremiumReadRepository);

@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Downloads.Application.Aggregators;
+﻿using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;

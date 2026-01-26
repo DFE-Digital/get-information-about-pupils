@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Core.Downloads.Application.Repositories;
 
-public interface IPupilPremiumDownloadDatasetReadOnlyRepository
+public interface IPupilPremiumReadOnlyRepository
 {
     Task<IEnumerable<PupilPremiumPupil>> GetPupilsByIdsAsync(IEnumerable<string> pupilIds);
 }
