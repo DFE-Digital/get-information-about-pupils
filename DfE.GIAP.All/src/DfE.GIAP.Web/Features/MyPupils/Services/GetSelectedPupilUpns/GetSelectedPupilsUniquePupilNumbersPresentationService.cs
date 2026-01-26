@@ -29,7 +29,7 @@ public sealed class GetSelectedPupilsUniquePupilNumbersPresentationService : IGe
         {
             GetMyPupilsResponse response =
                 await _getMyPupilsUseCase.HandleRequestAsync(
-                    new GetMyPupilsRequest(userId));
+                    new GetMyPupilsRequest(userId, query: null));
 
             return response.MyPupils.Identifiers.Except(
                     state.GetDeselectedExceptions());
