@@ -4,6 +4,8 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
@@ -450,7 +452,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-        
+
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
@@ -505,7 +507,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
 
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model); 
+        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
         Assert.Equal(model.SearchFilters.CurrentFiltersAppliedString, searchViewModel.SearchFilters.CurrentFiltersAppliedString);
         Assert.Equal(model.SearchFilters.CustomFilterText.Forename, searchViewModel.SearchFilters.CustomFilterText.Forename);
@@ -727,44 +729,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     }
 
     [Fact]
-    public async Task DownloadPupilPremiumFile_downloads_file()
-    {
-        // arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new()
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true
-        };
-        downloadViewModel.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven = true;
-
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           true,
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>(),
-           Arg.Any<UserOrganisation>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = []
-           });
-
-        PPLearnerTextSearchController sut = GetController();
-
-        // act
-        IActionResult result = await sut.DownloadPupilPremiumFile(downloadViewModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
-    [Fact]
     public async Task DownloadPupilPremiumFile_redirects_to_error_when_there_are_no_files_to_download()
     {
         // arrange
@@ -803,52 +767,13 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     }
 
     [Fact]
-    public async Task DownloadFileConfirmationReturn_downloads_file_when_confirmation_given()
-    {
-        // arrange
-        StarredPupilConfirmationViewModel StarredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetUpn(),
-            DownloadType = DownloadType.PupilPremium,
-            ConfirmationGiven = true,
-            ConfirmationError = false,
-            ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
-            CancelReturnAction = Global.PPDownloadCancellationReturnAction,
-            LearnerNumbers = _paginatedResultsFake.GetUpn()
-        };
-
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>(),
-           Arg.Any<UserOrganisation>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = []
-           });
-
-        PPLearnerTextSearchController sut = GetController();
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
-    [Fact]
     public async Task DownloadFileConfirmationReturn_redirects_to_ConfirmationForStarredPupil_when_no_confirmation_given()
     {
         // arrange
         StarredPupilConfirmationViewModel StarredPupilConfirmationViewModel = new()
         {
             SelectedPupil = _paginatedResultsFake.GetUpn(),
-            DownloadType = DownloadType.PupilPremium,
+            DownloadType = Common.Enums.DownloadType.PupilPremium,
             ConfirmationGiven = false,
             ConfirmationError = true,
             ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
@@ -1023,7 +948,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         const string PupilPremiumSearchTextSessionKey = "SearchPPNonUPN_SearchText";
-        const string PupilPremiumSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters"; 
+        const string PupilPremiumSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters";
 
         _mockSessionProvider.Setup(
             (t) => t.ContainsSessionKey(PupilPremiumSearchTextSessionKey)).Returns(true).Verifiable();
@@ -1450,7 +1375,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         Assert.True(string.IsNullOrEmpty(model.SortField));
         Assert.True(string.IsNullOrEmpty(model.SortDirection));
@@ -1513,6 +1438,12 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
+        DownloadPupilDataResponse downloadPupilDataResponse = new();
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(downloadPupilDataResponse);
+        Mock<IEventLogger> mockEventLogger = new();
+
         return new PPLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
@@ -1520,7 +1451,9 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
              _mockSelectionManager,
              _mockSessionProvider.Object,
              _mockDownloadService,
-             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object)
+             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
+             mockDownloadPupilDataUseCase.Object,
+             mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {
