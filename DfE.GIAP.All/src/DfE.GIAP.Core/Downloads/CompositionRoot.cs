@@ -120,8 +120,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterInfrastructureRepositories(this IServiceCollection services)
     {
         services.AddScoped<IFurtherEducationReadOnlyRepository, CosmosDbFurtherEducationReadOnlyRepository>();
-        services.AddScoped<INationalPupilDownloadDatasetReadOnlyRepository, CosmosDbNationalPupilDownloadDatasetReadOnlyRepository>();
-        services.AddScoped<IPupilPremiumDownloadDatasetReadOnlyRepository, CosmosDbPupilPremiumDownloadDatasetReadOnlyRepository>();
+        services.AddScoped<INationalPupilReadOnlyRepository, CosmosDbNationalPupilReadOnlyRepository>();
+        services.AddScoped<IPupilPremiumReadOnlyRepository, CosmosDbPupilPremiumReadOnlyRepository>();
 
         return services;
     }

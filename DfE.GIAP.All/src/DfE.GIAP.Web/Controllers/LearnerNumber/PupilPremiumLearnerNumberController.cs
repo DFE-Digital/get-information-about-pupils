@@ -3,14 +3,14 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -37,7 +37,8 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
-
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
+    private readonly IEventLogger _eventLogger;
 
     public PupilPremiumLearnerNumberController(ILogger<PupilPremiumLearnerNumberController> logger,
         IDownloadService downloadService,
@@ -45,7 +46,9 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
-        IJsonSerializer jsonSerializer)
+        IJsonSerializer jsonSerializer,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+        IEventLogger eventLogger)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -54,6 +57,11 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
+        _downloadPupilDataUseCase = downloadPupilDataUseCase;
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
 
@@ -117,7 +125,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
             searchViewModel.PageLearnerNumbers.Split(','),
             searchViewModel.SelectedPupil);
 
-        var selectedPupils = GetSelected(searchViewModel.LearnerNumberIds.FormatLearnerNumbers());
+        HashSet<string> selectedPupils = GetSelected(searchViewModel.LearnerNumberIds.FormatLearnerNumbers());
 
         if (selectedPupils.Count == 0)
         {
@@ -126,26 +134,23 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
             return await PupilPremium(searchViewModel, searchViewModel.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
         }
 
-        var userOrganisation = new UserOrganisation
-        {
-            IsAdmin = User.IsAdmin(),
-            IsEstablishment = User.IsOrganisationEstablishment(),
-            IsLa = User.IsOrganisationLocalAuthority(),
-            IsMAT = User.IsOrganisationMultiAcademyTrust(),
-            IsSAT = User.IsOrganisationSingleAcademyTrust()
-        };
+        DownloadPupilDataRequest request = new(
+                   SelectedPupils: selectedPupils,
+                   SelectedDatasets: [Core.Downloads.Application.Enums.Dataset.PP],
+                   DownloadType: Core.Downloads.Application.Enums.DownloadType.PupilPremium,
+                   FileFormat: FileFormat.Csv);
 
-        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(selectedPupils.ToArray(), searchViewModel.LearnerNumber.FormatLearnerNumbers(),
-            true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.PupilPremium, userOrganisation).ConfigureAwait(false);
+        DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
 
-        if (downloadFile == null)
-        {
-            return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
-        }
+        _eventLogger.LogDownload(
+            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            DownloadFileFormat.CSV,
+            DownloadEventType.PP);
 
-        if (downloadFile.Bytes != null)
+        if (response.FileContents is not null)
         {
-            return SearchDownloadHelper.DownloadFile(downloadFile);
+            searchViewModel.ErrorDetails = null;
+            return File(response.FileContents, response.ContentType, response.FileName);
         }
         else
         {

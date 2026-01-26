@@ -4,6 +4,8 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
@@ -1432,43 +1434,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     }
 
     [Fact]
-    public async Task DownloadSelectedPupilPremiumData_returns_data()
-    {
-        // arrange
-        _mockDownloadService.GetPupilPremiumCSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>(),
-            Arg.Any<UserOrganisation>()
-            ).Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = new byte[0]
-            });
-
-        string upns = _paginatedResultsFake.GetUpns();
-        LearnerNumberSearchViewModel inputModel = new()
-        {
-            LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
-        };
-
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
-
-        // act
-        PupilPremiumLearnerNumberController sut = GetController();
-
-        IActionResult result = await sut.ToDownloadSelectedPupilPremiumDataUPN(inputModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
-    [Fact]
     public async Task DownloadSelectedPupilPremiumData_returns_search_page_with_error_if_no_pupil_selected()
     {
         // arrange
@@ -1503,31 +1468,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         Assert.True(model.NoPupil);
         Assert.True(model.NoPupilSelected);
-    }
-
-    [Fact]
-    public async Task DownloadSelectedPupilPremiumData_redirects_to_error_page_if_download_null()
-    {
-        string upns = _paginatedResultsFake.GetUpns();
-        LearnerNumberSearchViewModel inputModel = new()
-        {
-            LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
-        };
-
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet<string>());
-
-        PupilPremiumLearnerNumberController sut = GetController();
-
-        // act
-        IActionResult result = await sut.ToDownloadSelectedPupilPremiumDataUPN(inputModel);
-
-        // assert
-        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-
-        Assert.Equal(Routes.Application.Error, redirectResult.ActionName);
-        Assert.Equal(Routes.Application.Home, redirectResult.ControllerName);
     }
 
     [Fact]
@@ -1612,14 +1552,22 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
                 return true;
             });
 
+        DownloadPupilDataResponse downloadPupilDataResponse = new();
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(downloadPupilDataResponse);
+        Mock<IEventLogger> mockEventLogger = new();
+
         return new PupilPremiumLearnerNumberController(
             _mockLogger,
             _mockDownloadService,
             _mockPaginatedService,
             _mockSelectionManager,
             _mockAppOptions,
-            _addPupilsUseCaseMock, 
-            jsonSerializerMock.Object)
+            _addPupilsUseCaseMock,
+            jsonSerializerMock.Object,
+            mockDownloadPupilDataUseCase.Object,
+            mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {

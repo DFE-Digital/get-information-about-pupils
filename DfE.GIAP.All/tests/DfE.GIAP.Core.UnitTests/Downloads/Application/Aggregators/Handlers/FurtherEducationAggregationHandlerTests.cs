@@ -12,8 +12,6 @@ namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers;
 
 public sealed class FurtherEducationAggregationHandlerTests
 {
-    private readonly Mock<IFurtherEducationReadOnlyRepository> _repo = new();
-
     [Fact]
     public void Constructor_Throws_WhenRepositoryIsNull()
     {
@@ -29,26 +27,48 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public void Constructor_Throws_WhenPpMapperIsNull()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
             MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationSENOutputRecord>();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new FurtherEducationAggregationHandler(_repo.Object, null!, mockSenMapper.Object));
+            new FurtherEducationAggregationHandler(mockRepository.Object, null!, mockSenMapper.Object));
     }
 
     [Fact]
     public void Constructor_Throws_WhenSenMapperIsNull()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new FurtherEducationAggregationHandler(_repo.Object, mockPpMapper.Object, null!));
+            new FurtherEducationAggregationHandler(mockRepository.Object, mockPpMapper.Object, null!));
+    }
+
+    [Fact]
+    public void SupportedDownloadType_ReturnsFurtherEducation()
+    {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
+        Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
+            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
+        Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
+            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationSENOutputRecord>();
+
+        FurtherEducationAggregationHandler handler = new(
+            mockRepository.Object,
+            ppMapper: mockPpMapper.Object,
+            senMapper: mockSenMapper.Object);
+
+        DownloadType result = handler.SupportedDownloadType;
+
+        Assert.Equal(DownloadType.FurtherEducation, result);
     }
 
     [Fact]
     public async Task AggregateAsync_AddsPP_WhenDatasetSelected_AndPupilHasPPData()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
             MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
@@ -57,13 +77,13 @@ public sealed class FurtherEducationAggregationHandlerTests
         FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(includePupilPremium: true);
         FurtherEducationPPOutputRecord mapped = new();
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         mockPpMapper.Setup(m => m.Map(pupil)).Returns(mapped);
 
         FurtherEducationAggregationHandler handler = new(
-            _repo.Object,
+            mockRepository.Object,
             ppMapper: mockPpMapper.Object,
             senMapper: mockSenMapper.Object);
 
@@ -78,6 +98,7 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public async Task AggregateAsync_DoesNotAddPP_WhenPupilHasNoPPData()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
@@ -85,11 +106,11 @@ public sealed class FurtherEducationAggregationHandlerTests
 
         FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(includePupilPremium: false);
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         FurtherEducationAggregationHandler handler = new(
-            feReadRepository: _repo.Object,
+            feReadRepository: mockRepository.Object,
             ppMapper: mockPpMapper.Object,
             senMapper: mockSenMapper.Object);
 
@@ -104,6 +125,7 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public async Task AggregateAsync_DoesNotAddPP_WhenDatasetNotSelected()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
             MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
@@ -111,11 +133,11 @@ public sealed class FurtherEducationAggregationHandlerTests
 
         FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(includePupilPremium: true);
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         FurtherEducationAggregationHandler handler = new(
-           feReadRepository: _repo.Object,
+           feReadRepository: mockRepository.Object,
            ppMapper: mockPpMapper.Object,
            senMapper: mockSenMapper.Object);
 
@@ -131,6 +153,7 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public async Task AggregateAsync_AddsSEN_WhenDatasetSelected_AndPupilHasSENData()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
             MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
@@ -139,13 +162,13 @@ public sealed class FurtherEducationAggregationHandlerTests
         FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(includeSen: true);
         FurtherEducationSENOutputRecord mapped = new();
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         mockSenMapper.Setup(m => m.Map(pupil)).Returns(mapped);
 
         FurtherEducationAggregationHandler handler = new(
-            feReadRepository: _repo.Object,
+            feReadRepository: mockRepository.Object,
             ppMapper: mockPpMapper.Object,
             senMapper: mockSenMapper.Object);
 
@@ -160,6 +183,7 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public async Task AggregateAsync_DoesNotAddSEN_WhenPupilHasNoSENData()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
@@ -167,11 +191,11 @@ public sealed class FurtherEducationAggregationHandlerTests
 
         FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(includeSen: false);
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         FurtherEducationAggregationHandler handler = new(
-            feReadRepository: _repo.Object,
+            feReadRepository: mockRepository.Object,
             ppMapper: mockPpMapper.Object,
             senMapper: mockSenMapper.Object);
 
@@ -186,17 +210,18 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public async Task AggregateAsync_DoesNotAddSEN_WhenDatasetNotSelected()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
             MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationSENOutputRecord>();
         FurtherEducationPupil pupil = FurtherEducationPupilTestDoubles.Create(includeSen: true);
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         FurtherEducationAggregationHandler handler = new(
-            feReadRepository: _repo.Object,
+            feReadRepository: mockRepository.Object,
             ppMapper: mockPpMapper.Object,
             senMapper: mockSenMapper.Object);
 
@@ -212,6 +237,7 @@ public sealed class FurtherEducationAggregationHandlerTests
     [Fact]
     public async Task AggregateAsync_AddsBothPPAndSEN_WhenBothDatasetsSelected()
     {
+        Mock<IFurtherEducationReadOnlyRepository> mockRepository = new();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>> mockPpMapper =
            MapperTestDoubles.Default<FurtherEducationPupil, FurtherEducationPPOutputRecord>();
         Mock<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>> mockSenMapper =
@@ -223,14 +249,14 @@ public sealed class FurtherEducationAggregationHandlerTests
         FurtherEducationPPOutputRecord ppMapped = new();
         FurtherEducationSENOutputRecord senMapped = new();
 
-        _repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
              .ReturnsAsync(new[] { pupil });
 
         mockPpMapper.Setup(m => m.Map(pupil)).Returns(ppMapped);
         mockSenMapper.Setup(m => m.Map(pupil)).Returns(senMapped);
 
         FurtherEducationAggregationHandler handler = new(
-            feReadRepository: _repo.Object,
+            feReadRepository: mockRepository.Object,
             ppMapper: mockPpMapper.Object,
             senMapper: mockSenMapper.Object);
 

@@ -16,7 +16,7 @@ public sealed class NationalPupilDatasetHandlerTests
             NationalPupilTestDoubles.Create(),
         };
 
-        INationalPupilDownloadDatasetReadOnlyRepository repository = NationalPupilRepositoryReadOnlyTestDouble.WithPupils(pupils);
+        INationalPupilReadOnlyRepository repository = NationalPupilRepositoryReadOnlyTestDouble.WithPupils(pupils);
         NationalPupilDatasetHandler handler = new(repository);
 
         IEnumerable<Dataset> result = await handler
