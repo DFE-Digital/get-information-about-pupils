@@ -165,14 +165,4 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     {
         return await PupilPremium(model, model.PageNumber, model.SortField, model.SortDirection, true);
     }
-
-    protected override bool ValidateLearnerNumber(string learnerNumber)
-    {
-        return ValidationHelper.IsValidUpn(learnerNumber);
-    }
-
-    protected override string GenerateValidationMessage()
-    {
-        return PupilHelper.GenerateValidationMessageUpnSearch(ModelState);
-    }
 }
