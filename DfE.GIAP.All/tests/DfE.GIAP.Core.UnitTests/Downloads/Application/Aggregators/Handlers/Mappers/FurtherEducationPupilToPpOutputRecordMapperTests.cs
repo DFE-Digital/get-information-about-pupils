@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers.Mappers;
