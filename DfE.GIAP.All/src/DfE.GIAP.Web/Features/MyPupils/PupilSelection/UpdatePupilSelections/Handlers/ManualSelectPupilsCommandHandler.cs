@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility.Handlers;
-
-namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
 internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {

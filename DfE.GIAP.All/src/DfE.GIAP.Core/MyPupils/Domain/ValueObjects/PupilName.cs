@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-
-namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class PupilName : ValueObject<PupilName>
 {
     // TODO double barrelled names should we expect normalised in data?

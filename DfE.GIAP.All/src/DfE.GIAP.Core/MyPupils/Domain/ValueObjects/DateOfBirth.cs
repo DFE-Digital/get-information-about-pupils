@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using DfE.GIAP.Core.Common.Domain;
-
-namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class DateOfBirth : ValueObject<DateOfBirth>
 {
     // TODO leap years

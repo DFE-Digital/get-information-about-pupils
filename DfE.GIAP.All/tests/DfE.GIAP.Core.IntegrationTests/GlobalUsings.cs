@@ -1,4 +1,10 @@
-﻿global using DfE.GIAP.Core.Common.Application;
+﻿global using DfE.CleanArchitecture.Common.Application;
+global using DfE.CleanArchitecture.Common.CrossCutting.ChainOfResponsibility.Chain;
+global using DfE.CleanArchitecture.Common.CrossCutting.ChainOfResponsibility.Evaluator;
+global using DfE.CleanArchitecture.Common.CrossCutting.ChainOfResponsibility.Handlers;
+global using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
+global using DfE.CleanArchitecture.Common.Domain;
+global using DfE.GIAP.Core.Common.Application;
 global using DfE.GIAP.Core.NewsArticles;
 global using DfE.GIAP.Core.NewsArticles.Application.Models;
 global using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
