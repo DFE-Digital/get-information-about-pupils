@@ -10,6 +10,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
@@ -24,6 +25,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
+    private readonly IDownloadPupilPremiumDataForPupilsService _downloadPupilPremiumDataForPupils;
 
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
@@ -54,8 +56,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
-    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-    private readonly IEventLogger _eventLogger;
 
     public PPLearnerTextSearchController(
         ILogger<PPLearnerTextSearchController> logger,
@@ -65,8 +65,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ISessionProvider sessionProvider,
         IDownloadService downloadService,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
-        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        IEventLogger eventLogger)
+        IDownloadPupilPremiumDataForPupilsService downloadPupilPremiumDataForPupils)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -75,11 +74,8 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
 
-        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
-        _downloadPupilDataUseCase = downloadPupilDataUseCase;
-
-        ArgumentNullException.ThrowIfNull(eventLogger);
-        _eventLogger = eventLogger;
+        ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupils);
+        _downloadPupilPremiumDataForPupils = downloadPupilPremiumDataForPupils;
     }
 
 
@@ -160,32 +156,21 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
     [Route(Routes.PupilPremium.DownloadPupilPremiumFile)]
     [HttpPost]
-    public async Task<IActionResult> DownloadPupilPremiumFile(LearnerDownloadViewModel model)
+    public async Task<IActionResult> DownloadPupilPremiumFile(LearnerDownloadViewModel model, CancellationToken ctx = default)
     {
         string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
 
-        DownloadPupilDataRequest request = new(
-                  SelectedPupils: [selectedPupil],
-                  SelectedDatasets: [Core.Downloads.Application.Enums.Dataset.PP],
-                  DownloadType: Core.Downloads.Application.Enums.DownloadType.PupilPremium,
-                  FileFormat: FileFormat.Csv);
+        DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
+            pupilUpns: [selectedPupil],
+            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            ctx);
 
-        DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
-
-        _eventLogger.LogDownload(
-            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
-            DownloadFileFormat.CSV,
-            DownloadEventType.PP);
-
-        if (response.FileContents is not null)
+        if (result.HasData)
         {
-            model.ErrorDetails = null;
-            return File(response.FileContents, response.ContentType, response.FileName);
+            return result.GetResult();
         }
-        else
-        {
-            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        }
+
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         return RedirectToAction(Global.PPNonUpnAction, Global.PPNonUpnController);
     }
 

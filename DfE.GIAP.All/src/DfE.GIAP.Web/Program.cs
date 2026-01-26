@@ -28,6 +28,7 @@ using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Web.Features.Downloads.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
     .AddDownloadDependencies()
+    .AddScoped<IDownloadPupilPremiumDataForPupilsService, DownloadPupilPremiumDataForPupilsService>()
     .AddAuthDependencies(configuration)
     .AddMyPupils();
 

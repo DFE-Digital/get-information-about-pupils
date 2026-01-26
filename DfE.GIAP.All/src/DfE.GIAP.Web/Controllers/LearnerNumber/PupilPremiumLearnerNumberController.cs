@@ -2,15 +2,10 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
-using DfE.GIAP.Core.Downloads.Application.Enums;
-using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Helpers.Search;
+using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -23,8 +18,7 @@ namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
 {
     private readonly ILogger<PupilPremiumLearnerNumberController> _logger;
-    private readonly IDownloadService _downloadService;
-    private readonly AzureAppSettings _appSettings;
+    private readonly IDownloadPupilPremiumDataForPupilsService _downloadPupilPremiumDataForPupilsService;
 
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
     public override string SearchAction => "PupilPremium";
@@ -37,31 +31,22 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
-    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-    private readonly IEventLogger _eventLogger;
 
-    public PupilPremiumLearnerNumberController(ILogger<PupilPremiumLearnerNumberController> logger,
-        IDownloadService downloadService,
+    public PupilPremiumLearnerNumberController(
+        ILogger<PupilPremiumLearnerNumberController> logger,
         IPaginatedSearchService paginatedSearch,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IJsonSerializer jsonSerializer,
-        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        IEventLogger eventLogger)
+        IDownloadPupilPremiumDataForPupilsService downloadPupilPremiumDataForPupilsService)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
 
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
-        _appSettings = azureAppSettings.Value;
-
-        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
-        _downloadPupilDataUseCase = downloadPupilDataUseCase;
-        ArgumentNullException.ThrowIfNull(eventLogger);
-        _eventLogger = eventLogger;
+        ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
+        _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
     }
 
 
@@ -119,7 +104,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
 
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
     [HttpPost]
-    public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(LearnerNumberSearchViewModel searchViewModel)
+    public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(LearnerNumberSearchViewModel searchViewModel, CancellationToken ctx = default)
     {
         SetSelections(
             searchViewModel.PageLearnerNumbers.Split(','),
@@ -131,48 +116,39 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
         {
             searchViewModel.NoPupil = true;
             searchViewModel.NoPupilSelected = true;
-            return await PupilPremium(searchViewModel, searchViewModel.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
+
+            return await PupilPremium(
+                searchViewModel,
+                searchViewModel.PageNumber,
+                HttpContext.Session.GetString(SearchSessionSortField),
+                HttpContext.Session.GetString(SearchSessionSortDirection),
+                true);
         }
 
-        DownloadPupilDataRequest request = new(
-                   SelectedPupils: selectedPupils,
-                   SelectedDatasets: [Core.Downloads.Application.Enums.Dataset.PP],
-                   DownloadType: Core.Downloads.Application.Enums.DownloadType.PupilPremium,
-                   FileFormat: FileFormat.Csv);
+        DownloadPupilPremiumFilesResponse result =
+            await _downloadPupilPremiumDataForPupilsService.DownloadAsync(
+                pupilUpns: selectedPupils,
+                downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                ctx);
 
-        DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
-
-        _eventLogger.LogDownload(
-            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
-            DownloadFileFormat.CSV,
-            DownloadEventType.PP);
-
-        if (response.FileContents is not null)
+        if (result.HasData)
         {
-            searchViewModel.ErrorDetails = null;
-            return File(response.FileContents, response.ContentType, response.FileName);
-        }
-        else
-        {
-            searchViewModel.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+            return result.GetResult();
         }
 
-        return await PupilPremium(searchViewModel, searchViewModel.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
+        searchViewModel.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+
+        return await PupilPremium(
+            searchViewModel,
+            searchViewModel.PageNumber,
+            HttpContext.Session.GetString(SearchSessionSortField),
+            HttpContext.Session.GetString(SearchSessionSortDirection),
+            true);
     }
 
 
     protected override async Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model)
     {
         return await PupilPremium(model, model.PageNumber, model.SortField, model.SortDirection, true);
-    }
-
-    protected override bool ValidateLearnerNumber(string learnerNumber)
-    {
-        return ValidationHelper.IsValidUpn(learnerNumber);
-    }
-
-    protected override string GenerateValidationMessage()
-    {
-        return PupilHelper.GenerateValidationMessageUpnSearch(ModelState);
     }
 }

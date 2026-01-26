@@ -14,6 +14,7 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
+using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -1438,12 +1439,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
-        DownloadPupilDataResponse downloadPupilDataResponse = new();
-        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
-        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
-            .ReturnsAsync(downloadPupilDataResponse);
-        Mock<IEventLogger> mockEventLogger = new();
-
         return new PPLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
@@ -1452,8 +1447,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
              _mockSessionProvider.Object,
              _mockDownloadService,
              new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
-             mockDownloadPupilDataUseCase.Object,
-             mockEventLogger.Object)
+             new Mock<IDownloadPupilPremiumDataForPupilsService>().Object)
         {
             ControllerContext = new ControllerContext()
             {

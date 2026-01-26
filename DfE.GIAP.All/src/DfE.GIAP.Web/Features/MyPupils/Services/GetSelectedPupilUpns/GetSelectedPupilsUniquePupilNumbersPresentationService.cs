@@ -27,9 +27,10 @@ public sealed class GetSelectedPupilsUniquePupilNumbersPresentationService : IGe
 
         if (state.Mode == SelectionMode.All)
         {
+            // Return ALL pupil results back
             GetMyPupilsResponse response =
                 await _getMyPupilsUseCase.HandleRequestAsync(
-                    new GetMyPupilsRequest(userId));
+                    new GetMyPupilsRequest(userId, query: null));
 
             return response.MyPupils.Identifiers.Except(
                     state.GetDeselectedExceptions());

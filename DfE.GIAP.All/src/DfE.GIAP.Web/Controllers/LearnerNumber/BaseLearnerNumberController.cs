@@ -11,6 +11,7 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -138,7 +139,7 @@ public abstract class BaseLearnerNumberController : Controller
         var notPaged = hasQueryItem && !calledByController;
         var allSelected = false;
 
-        model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
+        model.SearchBoxErrorMessage = ModelState.IsValid is false ? PupilHelper.GenerateValidationMessageUpnSearch(ModelState) : null;
 
         model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
 
@@ -372,7 +373,7 @@ public abstract class BaseLearnerNumberController : Controller
         {
             foreach (string learnerNumber in potentialErrorLearnerNumbers)
             {
-                bool isValid = ValidateLearnerNumber(learnerNumber);
+                bool isValid = ValidationHelper.IsValidUpn(learnerNumber);
 
                 if (!isValid)
                 {
@@ -490,10 +491,6 @@ public abstract class BaseLearnerNumberController : Controller
     }
 
     protected abstract Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model);
-
-    protected abstract bool ValidateLearnerNumber(string learnerNumber);
-
-    protected abstract string GenerateValidationMessage();
 
     protected LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
     {
