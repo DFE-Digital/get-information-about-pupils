@@ -22,7 +22,7 @@ public sealed class FurtherEducationDatasetHandlerTests
         IEnumerable<Dataset> result = await sut
             .GetAvailableDatasetsAsync(new[] { "abc" });
 
-        Assert.Contains(Dataset.PP, result);
+        Assert.Contains(Dataset.FE_PP, result);
         Assert.DoesNotContain(Dataset.SEN, result);
     }
 
@@ -59,7 +59,7 @@ public sealed class FurtherEducationDatasetHandlerTests
         IEnumerable<Dataset> result = await handler
             .GetAvailableDatasetsAsync(new[] { "abc", "def" });
 
-        Assert.Contains(Dataset.PP, result);
+        Assert.Contains(Dataset.FE_PP, result);
         Assert.Contains(Dataset.SEN, result);
     }
 

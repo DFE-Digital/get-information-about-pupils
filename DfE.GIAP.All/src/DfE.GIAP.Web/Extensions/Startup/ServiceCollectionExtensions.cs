@@ -11,9 +11,7 @@ using DfE.GIAP.Service.ApplicationInsightsTelemetry;
 using DfE.GIAP.Service.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.Download.SecurityReport;
 using DfE.GIAP.Service.Search;
-using DfE.GIAP.Service.Security;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
@@ -48,11 +46,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ICommonService, CommonService>();
         services.AddScoped<IDownloadService, DownloadService>();
-        services.AddSingleton<ISecurityService, SecurityService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
-        services.AddScoped<IDownloadSecurityReportByUpnUlnService, DownloadSecurityReportByUpnUlnService>();
-        services.AddScoped<IDownloadSecurityReportLoginDetailsService, DownloadSecurityReportLoginDetailsService>();
-        services.AddScoped<IDownloadSecurityReportDetailedSearchesService, DownloadSecurityReportDetailedSearchesService>();
         services.AddScoped<IPaginatedSearchService, PaginatedSearchService>();
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
@@ -104,8 +98,8 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddAuthConfiguration(this IServiceCollection services)
     {
         services.AddAuthorizationBuilder()
-            .AddPolicy(Policy.RequireAdminApproverAccess, policy =>
-                policy.RequireRole(AuthRoles.Admin, AuthRoles.Approver));
+            .AddPolicy(Policy.RequiresManageContentAccess, policy =>
+                policy.RequireRole(AuthRoles.Admin));
 
         services.AddControllersWithViews(config =>
         {

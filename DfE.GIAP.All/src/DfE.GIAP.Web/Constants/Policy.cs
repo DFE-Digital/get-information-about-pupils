@@ -2,6 +2,6 @@
 
 public static class Policy
 {
-    public const string RequireAdminApproverAccess = "RequireAdminApproverAccess";
+    public const string RequiresManageContentAccess = "RequiresManageContentAccess";
 }
 

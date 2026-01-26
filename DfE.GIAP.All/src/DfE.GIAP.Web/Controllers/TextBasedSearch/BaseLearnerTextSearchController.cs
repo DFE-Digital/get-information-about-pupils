@@ -30,7 +30,6 @@ public abstract class BaseLearnerTextSearchController : Controller
 {
     public const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-
     private readonly ILogger<BaseLearnerTextSearchController> _logger;
     private readonly IPaginatedSearchService _paginatedSearch;
     private readonly ITextSearchSelectionManager _selectionManager;
@@ -45,15 +44,14 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string SortFieldKey { get; }
     public abstract string SearchAction { get; }
     public abstract string SearchController { get; }
-    public abstract string SearchLearnerNumberController { get; }
+    public string SearchLearnerNumberController => Routes.Application.Search;
     public abstract string SearchLearnerNumberAction { get; }
     public abstract string RedirectUrlFormAction { get; }
-    public abstract string LearnerTextDatabaseAction { get; }
     public abstract string RedirectFrom { get; }
     public abstract string LearnerTextDatabaseName { get; }
     public abstract string FormAction { get; }
     public abstract string RemoveActionUrl { get; }
-    public abstract string SearchView { get; }
+    public string SearchView => Global.NonUpnSearchView;
     public abstract string DobFilterUrl { get; }
     public abstract string ForenameFilterUrl { get; }
     public abstract string MiddlenameFilterUrl { get; }
@@ -62,13 +60,8 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string DownloadLinksPartial { get; }
     public abstract AzureSearchIndexType IndexType { get; }
     public abstract ReturnRoute ReturnRoute { get; }
-    public abstract string LearnerTextSearchController { get; }
-    public abstract string LearnerTextSearchAction { get; }
-    public abstract string LearnerNumberAction { get; }
-    public abstract bool ShowLocalAuthority { get; }
     public abstract string InvalidUPNsConfirmationAction { get; }
-    public abstract string LearnerNumberLabel { get; }
-    public abstract bool ShowMiddleNames { get; }
+    public string LearnerNumberLabel => Global.LearnerNumberLabel;
     public abstract string DownloadSelectedLink { get; }
 
 
@@ -108,8 +101,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
-
-        model.ShowMiddleNames = ShowMiddleNames;
 
         if (returnToSearch ?? false)
         {
@@ -154,7 +145,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         GetPersistedSexFiltersForViewModel(model);
         model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
         model.LearnerNumberLabel = LearnerNumberLabel;
-        var notPaged = hasQueryItem || calledByController;
+        bool notPaged = hasQueryItem || calledByController;
 
         if (notPaged && !model.NoPupilSelected)
         {
@@ -201,8 +192,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         PopulatePageText(model);
         PopulateNavigation(model);
 
-        model.ShowMiddleNames = ShowMiddleNames;
-
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
 
         if (model.SearchFilters != null)
@@ -232,9 +221,9 @@ public abstract class BaseLearnerTextSearchController : Controller
     [NonAction]
     public async Task<IActionResult> DobSearchFilter(LearnerTextSearchViewModel model)
     {
-        var day = model.SearchFilters.CustomFilterText.DobDay;
-        var month = model.SearchFilters.CustomFilterText.DobMonth;
-        var year = model.SearchFilters.CustomFilterText.DobYear;
+        int day = model.SearchFilters.CustomFilterText.DobDay;
+        int month = model.SearchFilters.CustomFilterText.DobMonth;
+        int year = model.SearchFilters.CustomFilterText.DobYear;
 
         ModelState.Clear();
 
@@ -284,7 +273,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (!model.FilterErrors.DobError && (year < 0 || year > 0))
         {
-            var yearLimit = DateTime.Now.Year - 3;
+            int yearLimit = DateTime.Now.Year - 3;
             if (year > yearLimit)
             {
                 ModelState.AddModelError("YearLimitHigh", Messages.Search.Errors.DobInvalid);
@@ -386,7 +375,7 @@ public abstract class BaseLearnerTextSearchController : Controller
     protected void GetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model)
     {
-        var sexFilters =
+        string[] sexFilters =
             TempData.GetPersistedObject<string[]>(
                 PersistedSelectedSexFiltersKey,
                 keepTempDataBetweenRequests: true);
@@ -519,7 +508,7 @@ public abstract class BaseLearnerTextSearchController : Controller
     [NonAction]
     public IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
     {
-        var searchViewModel = new LearnerTextSearchViewModel()
+        LearnerTextSearchViewModel searchViewModel = new LearnerTextSearchViewModel()
         {
             SearchText = this.HttpContext.Session.Keys.Contains(SearchSessionKey) ? this.HttpContext.Session.GetString(SearchSessionKey) : string.Empty,
             LearnerTextSearchController = SearchController,
@@ -546,7 +535,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
-        model.ShowMiddleNames = this.ShowMiddleNames;
 
         model = SetSearchFiltersUrls(model);
 
@@ -568,14 +556,14 @@ public abstract class BaseLearnerTextSearchController : Controller
             }
         }
 
-        var hasCustomFilters = (model.SearchFilters.CustomFilterText.Surname != null ||
+        bool hasCustomFilters = (model.SearchFilters.CustomFilterText.Surname != null ||
             model.SearchFilters.CustomFilterText.Forename != null ||
             model.SearchFilters.CustomFilterText.Middlename != null ||
             model.SearchFilters.CustomFilterText.DobDay != 0 ||
             model.SearchFilters.CustomFilterText.DobMonth != 0 ||
             model.SearchFilters.CustomFilterText.DobYear != 0) ? true : false;
 
-        var first = hasCustomFilters || model.PageNumber != 0 ? false : true;
+        bool first = hasCustomFilters || model.PageNumber != 0 ? false : true;
         model = await GetPupilsByNameForSearchBuilder(
             model,
             IndexType,
@@ -597,7 +585,7 @@ public abstract class BaseLearnerTextSearchController : Controller
         string sortField = "",
         string sortDirection = "")
     {
-        var requestFilters = GenerateRequestModel(model, currentFilters);
+        Dictionary<string, string[]> requestFilters = GenerateRequestModel(model, currentFilters);
         PaginatedResponse result = await _paginatedSearch.GetPage(
             model.SearchText,
             requestFilters,
@@ -612,8 +600,8 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         ParseSex(ref result);
 
-        var lowAge = User.GetOrganisationLowAge();
-        var highAge = User.GetOrganisationHighAge();
+        int lowAge = User.GetOrganisationLowAge();
+        int highAge = User.GetOrganisationHighAge();
 
         model.Learners = result.Learners;
         model.Count = (int)result.Count;
@@ -623,17 +611,17 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         SetLearnerNumberId(model);
 
-        var isAdmin = User.IsAdmin();
+        bool isAdmin = User.IsAdmin();
         if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
         {
             model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
         }
 
-        var selected = GetSelected();
+        string selected = GetSelected();
 
         if (!string.IsNullOrEmpty(selected))
         {
-            foreach (var learner in model.Learners)
+            foreach (Learner learner in model.Learners)
             {
                 if (!string.IsNullOrEmpty(learner.LearnerNumberId))
                 {
@@ -653,9 +641,9 @@ public abstract class BaseLearnerTextSearchController : Controller
 
     private async Task<InvalidLearnerNumberSearchViewModel> GetInvalidPupil(InvalidLearnerNumberSearchViewModel model, AzureSearchIndexType indexType)
     {
-        var searchInput = model.LearnerNumber.ToDecryptedSearchText();
+        string searchInput = model.LearnerNumber.ToDecryptedSearchText();
 
-        var result = await _paginatedSearch.GetPage(
+        PaginatedResponse result = await _paginatedSearch.GetPage(
           searchInput,
             null,
             1,
@@ -667,7 +655,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         model.Learners = result.Learners ?? new List<Learner>();
 
-        var nonUPNResult = await _paginatedSearch.GetPage(
+        PaginatedResponse nonUPNResult = await _paginatedSearch.GetPage(
         searchInput,
         null,
         1,
@@ -679,10 +667,10 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         model.Learners = model.Learners.Union(nonUPNResult.Learners);
         model.Learners.ToList().ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        var lowAge = User.GetOrganisationLowAge();
-        var highAge = User.GetOrganisationHighAge();
+        int lowAge = User.GetOrganisationLowAge();
+        int highAge = User.GetOrganisationHighAge();
 
-        var isAdmin = User.IsAdmin();
+        bool isAdmin = User.IsAdmin();
         if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
         {
             model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
@@ -693,7 +681,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
     private Dictionary<string, string[]> GenerateRequestModel(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters)
     {
-        var requestFilters = new Dictionary<string, string[]>();
+        Dictionary<string, string[]> requestFilters = new Dictionary<string, string[]>();
         List<string> surnameList = new List<string>();
         List<string> middlenameList = new List<string>();
         List<string> forenameList = new List<string>();
@@ -701,7 +689,7 @@ public abstract class BaseLearnerTextSearchController : Controller
 
         if (currentFilters != null)
         {
-            foreach (var filter in currentFilters)
+            foreach (CurrentFilterDetail filter in currentFilters)
             {
                 if (filter.FilterType == FilterType.Surname)
                 {
@@ -1037,7 +1025,8 @@ public abstract class BaseLearnerTextSearchController : Controller
     protected LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading;
-        model.ShowLocalAuthority = ShowLocalAuthority;
+        model.ShowMiddleNames = true;
+        model.ShowLocalAuthority = true;
         return model;
     }
 

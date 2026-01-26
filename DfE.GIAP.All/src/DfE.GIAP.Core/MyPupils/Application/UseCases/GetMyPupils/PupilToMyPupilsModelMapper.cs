@@ -10,7 +10,7 @@ internal sealed class PupilToMyPupilsModelMapper : IMapper<Pupil, MyPupilsModel>
         return new()
         {
             UniquePupilNumber = pupil.Identifier.Value,
-            DateOfBirth = pupil.DateOfBirth?.ToString() ?? string.Empty,
+            DateOfBirth = pupil.TryParseDateOfBirth()?.ToString("yyyy-MM-dd") ?? string.Empty,
             Forename = pupil.Forename,
             Surname = pupil.Surname,
             Sex = pupil.Sex,

@@ -1,5 +1,6 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
+using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects.Entries;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 

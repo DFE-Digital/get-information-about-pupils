@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
@@ -9,12 +9,12 @@ namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 public class GetMyPupilsController : Controller
 {
     private readonly ILogger<GetMyPupilsController> _logger;
-    private readonly IMyPupilsPresentationService _myPupilsPresentationService;
+    private readonly IGetMyPupilsPresentationService _myPupilsPresentationService;
     private readonly IMapper<MyPupilsPresentationResponse, MyPupilsViewModel> _mapToPupilsViewModel;
 
     public GetMyPupilsController(
         ILogger<GetMyPupilsController> logger,
-        IMyPupilsPresentationService myPupilsPresentationService,
+        IGetMyPupilsPresentationService myPupilsPresentationService,
         IMapper<MyPupilsPresentationResponse, MyPupilsViewModel> mapToPupilsViewModel)
     {
         ArgumentNullException.ThrowIfNull(logger);

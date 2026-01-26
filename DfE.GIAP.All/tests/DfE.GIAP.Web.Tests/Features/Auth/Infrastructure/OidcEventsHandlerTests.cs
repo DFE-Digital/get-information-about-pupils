@@ -49,6 +49,7 @@ public class OidcEventsHandlerTests
         await sut.OnTokenValidated(context);
 
         // Assert
+        Assert.NotNull(context.Properties);
         Assert.True(context.Properties.IsPersistent);
         Assert.NotNull(context.Properties.ExpiresUtc);
         mockHandler.Verify(h => h.HandleAsync(It.Is<TokenAuthorisationContext>(c => c.Principal == principal)), Times.Once);

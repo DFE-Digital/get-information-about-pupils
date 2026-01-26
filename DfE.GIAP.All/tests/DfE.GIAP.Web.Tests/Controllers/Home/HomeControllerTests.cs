@@ -13,25 +13,19 @@ using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Home;
 
-public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
+public sealed class HomeControllerTests
 {
-    private readonly UserClaimsPrincipalFake _userClaimsPrincipalFake;
     private readonly IExceptionHandlerPathFeature _exceptionPathFeature = Substitute.For<IExceptionHandlerPathFeature>();
-
-    public HomeControllerTests(UserClaimsPrincipalFake userClaimsPrincipalFake)
-    {
-        _userClaimsPrincipalFake = userClaimsPrincipalFake;
-    }
 
 
     [Fact]
     public void Error404_returns_view()
     {
         // Arrange
-        var controller = GetHomeController();
+        HomeController controller = GetHomeController();
 
         // Act
-        var result = controller.Error404();
+        IActionResult result = controller.Error404();
 
         // Assert
         Assert.IsType<ViewResult>(result);
@@ -41,10 +35,10 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
     public void Error_returns_view()
     {
         // Arrange
-        var controller = GetHomeController();
+        HomeController controller = GetHomeController();
 
         // Act
-        var result = controller.Error(500);
+        IActionResult result = controller.Error(500);
 
         // Assert
         Assert.IsType<ViewResult>(result);
@@ -54,10 +48,10 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
     public void UserWithNoRole_returns_view()
     {
         // Arrange
-        var controller = GetHomeController();
+        HomeController controller = GetHomeController();
 
         // Act
-        var result = controller.UserWithNoRole();
+        IActionResult result = controller.UserWithNoRole();
 
         // Assert
         Assert.IsType<ViewResult>(result);
@@ -67,17 +61,19 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
     public void Exception_page_doesnt_show_error_in_production()
     {
         // Arrange
-        var controller = GetHomeController();
+        HomeController controller = GetHomeController();
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Production");
 
         // Act
-        var result = controller.Exception();
+        IActionResult result = controller.Exception();
 
         // Assert
         Assert.IsType<ViewResult>(result);
-        var viewResult = result as ViewResult;
+        ViewResult? viewResult = result as ViewResult;
+        Assert.NotNull(viewResult);
         Assert.IsType<ErrorModel>(viewResult.Model);
-        var viewModel = viewResult.Model as ErrorModel;
+        ErrorModel? viewModel = viewResult.Model as ErrorModel;
+        Assert.NotNull(viewModel);
         Assert.False(viewModel.ShowError);
     }
 
@@ -85,13 +81,13 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
     public void HomeController_IndexPost_Should_Redirect_To_NPD_Search_If_User_Is_Not_An_FE_User()
     {
         // Arrange
-        var controller = GetHomeController();
+        HomeController controller = GetHomeController();
 
         // Act
-        var result = controller.IndexPost();
+        IActionResult result = controller.IndexPost();
 
         // Assert
-        var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
+        RedirectToActionResult viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
         Assert.Equal(Global.NPDAction, viewResult.ActionName);
         Assert.Equal(Global.NPDLearnerNumberSearchController, viewResult.ControllerName);
     }
@@ -100,13 +96,13 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
     public void HomeController_IndexPost_Should_Redirect_To_FE_Search_If_User_Is_An_FE_User()
     {
         // Arrange
-        var controller = GetHomeController(true);
+        HomeController controller = GetHomeController(true);
 
         // Act
-        var result = controller.IndexPost();
+        IActionResult result = controller.IndexPost();
 
         // Assert
-        var viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
+        RedirectToActionResult viewResult = Assert.IsAssignableFrom<RedirectToActionResult>(result);
         Assert.Equal(Global.FELearnerNumberSearchAction, viewResult.ActionName);
         Assert.Equal(Global.FELearnerNumberSearchController, viewResult.ControllerName);
     }
@@ -117,7 +113,7 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
 
         if (feUser)
         {
-            user = _userClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
+            user = UserClaimsPrincipalFake.GetSpecificUserClaimsPrincipal(
                 DsiKeys.OrganisationCategory.Establishment,
                 DsiKeys.EstablishmentType.FurtherEducation,
                 AuthRoles.Approver,
@@ -126,13 +122,13 @@ public class HomeControllerTests : IClassFixture<UserClaimsPrincipalFake>
         }
         else
         {
-            user = _userClaimsPrincipalFake.GetUserClaimsPrincipal();
+            user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
         }
 
         _exceptionPathFeature.Error.Returns(new Exception("test"));
         _exceptionPathFeature.Path.Returns("/");
 
-        var controllerContext = new ControllerContext();
+        ControllerContext controllerContext = new ControllerContext();
         controllerContext.HttpContext = new DefaultHttpContext();
 
         controllerContext.HttpContext.Features.Set(_exceptionPathFeature);

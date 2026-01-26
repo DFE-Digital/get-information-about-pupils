@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLoggedIn;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Infrastructure;
 

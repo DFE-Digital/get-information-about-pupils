@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
-using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Logging;
@@ -78,7 +77,7 @@ public class TraceLogFactoryTests
             .Setup(s => s.GetSessionValueOrDefault<string>(SessionKeys.CorrelationId))
             .Returns("corr-1");
 
-        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext)null);
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns<HttpContext>(null!);
 
         TracePayloadOptions options = new TracePayloadOptions
         {

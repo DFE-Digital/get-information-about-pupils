@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;

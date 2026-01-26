@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
 
-namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
+namespace DfE.GIAP.Core.UnitTests.Search.TestHarness;
 
 /// <summary>
 /// Provides a test harness for constructing <see cref="IConfiguration"/> instances

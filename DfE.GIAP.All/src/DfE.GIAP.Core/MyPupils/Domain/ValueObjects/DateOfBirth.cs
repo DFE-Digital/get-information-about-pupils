@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-
-namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class DateOfBirth : ValueObject<DateOfBirth>
 {
     // TODO leap years
@@ -14,6 +12,7 @@ public sealed class DateOfBirth : ValueObject<DateOfBirth>
         {
             throw new ArgumentException("Date of birth cannot be in the future.");
         }
+
         _value = value;
     }
 
@@ -43,5 +42,5 @@ public sealed class DateOfBirth : ValueObject<DateOfBirth>
         yield return _value!;
     }
 
-    public static implicit operator DateTime?(DateOfBirth dob) => dob._value;
+    public static implicit operator DateTime(DateOfBirth dob) => dob._value;
 }

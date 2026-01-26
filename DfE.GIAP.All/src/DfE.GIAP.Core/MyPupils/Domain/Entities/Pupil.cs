@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Entities;
 public sealed class Pupil : Entity<UniquePupilNumber>
@@ -28,8 +27,13 @@ public sealed class Pupil : Entity<UniquePupilNumber>
 
     public string Forename => _name.Forename;
     public string Surname => _name.Surname;
-    public bool HasDateOfBirth => _dateOfBirth is not null;
-    public string DateOfBirth => _dateOfBirth?.ToString() ?? string.Empty;
+    public DateTime? TryParseDateOfBirth()
+    {
+        return _dateOfBirth is null ?
+            null :
+                Convert.ToDateTime(_dateOfBirth);
+    }
+
     public int? LocalAuthorityCode { get; }
     public string Sex => _sex?.ToString() ?? string.Empty;
     public bool IsOfPupilType(PupilType pupilType) => _pupilType.Equals(pupilType);
@@ -37,7 +41,7 @@ public sealed class Pupil : Entity<UniquePupilNumber>
     {
         calculatedAge = null;
 
-        if (!HasDateOfBirth)
+        if (_dateOfBirth is null)
         {
             return false;
         }

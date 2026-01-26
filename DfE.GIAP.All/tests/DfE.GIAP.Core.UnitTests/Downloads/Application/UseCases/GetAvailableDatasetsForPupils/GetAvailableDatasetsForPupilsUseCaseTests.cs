@@ -34,7 +34,7 @@ public sealed class GetAvailableDatasetsForPupilsUseCaseTests
 
         IDatasetAvailabilityHandler handler = DatasetAvailabilityHandlerTestDouble.Create(
             DownloadType.FurtherEducation,
-            new[] { Dataset.PP, Dataset.SEN });
+            new[] { Dataset.FE_PP, Dataset.SEN });
 
         IDatasetAvailabilityHandlerFactory factory = DatasetAvailabilityHandlerFactoryTestDouble.WithHandler(
             DownloadType.FurtherEducation,
@@ -59,7 +59,7 @@ public sealed class GetAvailableDatasetsForPupilsUseCaseTests
         IAuthorisationContext context = AuthorisationContextTestDouble.Create();
         IDatasetAvailabilityHandler handler = DatasetAvailabilityHandlerTestDouble.Create(
             DownloadType.FurtherEducation,
-            new[] { Dataset.PP });
+            new[] { Dataset.FE_PP });
 
         IDatasetAvailabilityHandlerFactory factory = DatasetAvailabilityHandlerFactoryTestDouble.WithHandler(
             DownloadType.FurtherEducation,
@@ -72,7 +72,7 @@ public sealed class GetAvailableDatasetsForPupilsUseCaseTests
 
         GetAvailableDatasetsForPupilsResponse response = await sut.HandleRequestAsync(request);
 
-        AvailableDatasetResult result = response.AvailableDatasets.Single(r => r.Dataset == Dataset.PP);
+        AvailableDatasetResult result = response.AvailableDatasets.Single(r => r.Dataset == Dataset.FE_PP);
         Assert.True(result.HasData);
         Assert.False(result.CanDownload);
     }
@@ -109,21 +109,21 @@ public sealed class GetAvailableDatasetsForPupilsUseCaseTests
         IAuthorisationContext context = AuthorisationContextTestDouble.Create();
         IDatasetAvailabilityHandler handler = DatasetAvailabilityHandlerTestDouble.Create(
             DownloadType.FurtherEducation,
-            new[] { Dataset.PP, Dataset.SEN });
+            new[] { Dataset.FE_PP, Dataset.SEN });
 
         IDatasetAvailabilityHandlerFactory factory = DatasetAvailabilityHandlerFactoryTestDouble.WithHandler(
             DownloadType.FurtherEducation,
             handler);
 
         IDatasetAccessEvaluator evaluator = DatasetAccessEvaluatorTestDouble.WithRule(
-            (ctx, dataset) => dataset == Dataset.PP);
+            (ctx, dataset) => dataset == Dataset.FE_PP);
 
         GetAvailableDatasetsForPupilsRequest request = new(DownloadType.FurtherEducation, new[] { "abc" }, context);
         GetAvailableDatasetsForPupilsUseCase sut = new(factory, evaluator);
 
         GetAvailableDatasetsForPupilsResponse response = await sut.HandleRequestAsync(request);
 
-        AvailableDatasetResult pp = response.AvailableDatasets.Single(r => r.Dataset == Dataset.PP);
+        AvailableDatasetResult pp = response.AvailableDatasets.Single(r => r.Dataset == Dataset.FE_PP);
         AvailableDatasetResult sen = response.AvailableDatasets.Single(r => r.Dataset == Dataset.SEN);
 
         Assert.True(pp.HasData);

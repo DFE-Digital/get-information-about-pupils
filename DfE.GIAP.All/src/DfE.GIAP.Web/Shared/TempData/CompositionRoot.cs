@@ -2,7 +2,7 @@
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddTempData(this IServiceCollection services)
+    public static IServiceCollection AddTempDataProvider(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
         services.AddScoped<ITempDataDictionaryProvider, TempDataDictionaryProvider>();

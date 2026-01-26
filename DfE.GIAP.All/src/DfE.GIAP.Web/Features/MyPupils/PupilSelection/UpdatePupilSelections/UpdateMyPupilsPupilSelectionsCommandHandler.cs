@@ -1,8 +1,5 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
@@ -27,11 +24,11 @@ public class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPupilsPupilS
         _evaluator = evaluator;
     }
 
-    public void Handle(MyPupilsFormStateRequestDto formDto)
+    public async Task Handle(MyPupilsFormStateRequestDto formDto)
     {
         UpdateMyPupilsSelectionStateRequest updateRequest = new(formDto, _getPupilSelectionsProvider.GetPupilSelections());
 
-        _evaluator.Evaluate(updateRequest);
+        await _evaluator.EvaluateAsync(updateRequest);
 
         _pupilSelectionStateCommandHandler.StoreInSession(updateRequest.State);
     }

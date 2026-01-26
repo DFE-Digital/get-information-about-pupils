@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestHarness;
+namespace DfE.GIAP.Core.UnitTests.Search.TestHarness;
 
 /// <summary>
 /// Provides a test harness for composing a fully configured <see cref="IServiceProvider"/>
@@ -29,7 +29,7 @@ public sealed class CompositionRootServiceProvider
         IServiceCollection services = new ServiceCollection();
 
         // Inject the test configuration as a singleton
-        services.AddSingleton<IConfiguration>(configuration);
+        services.AddSingleton(configuration);
 
         // Register core search dependencies via extension method
         services.AddSearchDependencies(configuration);
