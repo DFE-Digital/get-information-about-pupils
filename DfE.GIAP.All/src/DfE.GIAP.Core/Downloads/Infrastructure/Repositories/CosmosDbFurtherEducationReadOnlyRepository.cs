@@ -1,9 +1,8 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
+using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories;

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Helpers.Search;
 using Microsoft.AspNetCore.Mvc;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
@@ -13,7 +13,7 @@ public class UpdateMyPupilsController : Controller
 {
     private readonly ILogger<UpdateMyPupilsController> _logger;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
-    private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsStateCommandHandler;
+    private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsSelectionsCommandHandler;
 
     public UpdateMyPupilsController(
         ILogger<UpdateMyPupilsController> logger,
@@ -27,7 +27,7 @@ public class UpdateMyPupilsController : Controller
         _myPupilsLogSink = myPupilsLogSink;
 
         ArgumentNullException.ThrowIfNull(updateMyPupilsStateCommandHandler);
-        _updateMyPupilsStateCommandHandler = updateMyPupilsStateCommandHandler;
+        _updateMyPupilsSelectionsCommandHandler = updateMyPupilsStateCommandHandler;
     }
 
     [HttpPost]
@@ -50,7 +50,7 @@ public class UpdateMyPupilsController : Controller
             return RedirectToGetMyPupils(query);
         }
 
-        _updateMyPupilsStateCommandHandler.Handle(formDto);
+        _updateMyPupilsSelectionsCommandHandler.Handle(formDto);
 
         return RedirectToGetMyPupils(query);
     }

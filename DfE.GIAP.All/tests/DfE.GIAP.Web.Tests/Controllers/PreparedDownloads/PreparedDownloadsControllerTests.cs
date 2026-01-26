@@ -48,7 +48,7 @@ public class PreparedDownloadsControllerTests
             mockEventLogger.Object);
         controller.ControllerContext = new ControllerContext
         {
-            HttpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal())
+            HttpContext = HttpContextTestDoubles.WithUser(UserClaimsPrincipalFake.GetLAUserClaimsPrincipal())
         };
 
         // Act
@@ -89,7 +89,7 @@ public class PreparedDownloadsControllerTests
 
         controller.ControllerContext = new ControllerContext
         {
-            HttpContext = HttpContextTestDoubles.WithUser(new UserClaimsPrincipalFake().GetLAUserClaimsPrincipal())
+            HttpContext = HttpContextTestDoubles.WithUser(UserClaimsPrincipalFake.GetLAUserClaimsPrincipal())
         };
 
         // Act

@@ -2,9 +2,9 @@
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
@@ -22,14 +22,14 @@ public class DeleteMyPupilsController : Controller
     private readonly MyPupilsOptions _options;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsSelectionState;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
-    private readonly IMyPupilsPresentationService _myPupilsPresentationService;
+    private readonly IDeleteMyPupilsPresentationService _deleteService;
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
         IOptions<MyPupilsOptions> options,
         IOptions<MyPupilsMessagingOptions> messagingOptions,
         IMyPupilsMessageSink messageSink,
-        IMyPupilsPresentationService presentationService,
+        IDeleteMyPupilsPresentationService deleteService,
         IGetMyPupilsPupilSelectionProvider pupilSelectionStateProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -46,8 +46,8 @@ public class DeleteMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(messageSink);
         _myPupilsLogSink = messageSink;
 
-        ArgumentNullException.ThrowIfNull(presentationService);
-        _myPupilsPresentationService = presentationService;
+        ArgumentNullException.ThrowIfNull(deleteService);
+        _deleteService = deleteService;
 
         ArgumentNullException.ThrowIfNull(pupilSelectionStateProvider);
         _getMyPupilsSelectionState = pupilSelectionStateProvider;
@@ -88,7 +88,7 @@ public class DeleteMyPupilsController : Controller
 
         string userId = User.GetUserId();
 
-        await _myPupilsPresentationService.DeletePupilsAsync(userId, SelectedPupils);
+        await _deleteService.DeletePupilsAsync(userId, SelectedPupils);
 
         _myPupilsLogSink.AddMessage(
             MyPupilsMessage.Create(

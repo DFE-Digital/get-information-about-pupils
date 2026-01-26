@@ -59,7 +59,7 @@ public class SessionCorrelationIdContextMiddlewareTests
         // Arrange
         _sessionProviderMock
             .Setup(sp => sp.GetSessionValueOrDefault<string>(SessionKeys.CorrelationId))
-            .Returns((string)null);
+            .Returns<string?>(null!);
 
         SessionCorrelationIdMiddleware middleware = CreateMiddleware();
 

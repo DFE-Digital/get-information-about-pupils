@@ -7,22 +7,20 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -53,27 +51,20 @@ public class FELearnerNumberController : Controller
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
 
     private readonly IEventLogger _eventLogger;
-
+    private readonly bool _showMiddleNames = false;
     public const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
     public string PageHeading => UniqueLearnerNumberLabels.SearchPupilUpnPageHeading;
     public string SearchAction => "PupilUlnSearch";
-    public string FullTextLearnerSearchController => Global.FELearnerTextSearchController;
-    public string FullTextLearnerSearchAction => Global.FELearnerTextSearchAction;
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchFurtherEducationDownloadLinks.cshtml";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.FurtherEducation;
     public string SearchSessionKey => "SearchULN_SearchText";
     public string SearchSessionSortField => "SearchULN_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchULN_SearchTextSortDirection";
-    public bool ShowLocalAuthority => false;
-    public bool ShowMiddleNames => false;
-    public string DownloadSelectedLink => ApplicationLabels.DownloadSelectedFurtherEducationLink;
-    public string LearnerNumberLabel => Global.FELearnerNumberLabel;
-    public string InvalidUPNsConfirmationAction => "";
 
     public FELearnerNumberController(
         IUseCase<
@@ -89,7 +80,8 @@ public class FELearnerNumberController : Controller
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
-        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
@@ -115,9 +107,12 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
-        
+
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
+        _downloadPupilDataUseCase = downloadPupilDataUseCase;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -202,25 +197,43 @@ public class FELearnerNumberController : Controller
             {
                 model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
             }
-            else if (model.DownloadFileType != DownloadFileType.None)
+            else if (model.DownloadFileType is not DownloadFileType.None)
             {
-                ReturnFile downloadFile =
-                    await _downloadService.GetFECSVFile(
-                        selectedPupils,
-                        model.SelectedDownloadOptions,
-                        true,
-                        AzureFunctionHeaderDetails.Create(
-                            User.GetUserId(), User.GetSessionId()), ReturnRoute.UniqueLearnerNumber).ConfigureAwait(false);
-
-                if (downloadFile == null)
+                // Parse requested datasets
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+                foreach (string datasetString in model.SelectedDownloadOptions)
                 {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+                    if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
+                        selectedDatasets.Add(dataset);
                 }
 
-                if (downloadFile.Bytes != null)
+                DownloadPupilDataRequest request = new(
+                    SelectedPupils: selectedPupils,
+                    SelectedDatasets: selectedDatasets,
+                    DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+                    FileFormat: FileFormat.Csv);
+
+                DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
+
+                string loggingBatchId = Guid.NewGuid().ToString();
+                foreach (string dataset in model.SelectedDownloadOptions)
+                {
+                    // TODO: Temp quick solution
+                    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                    {
+                        _eventLogger.LogDownload(
+                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            DownloadFileFormat.CSV,
+                            DownloadEventType.FE,
+                            loggingBatchId,
+                            datasetEnum);
+                    }
+                }
+
+                if (response.FileContents is not null)
                 {
                     model.ErrorDetails = null;
-                    return SearchDownloadHelper.DownloadFile(downloadFile);
+                    return File(response.FileContents, response.ContentType, response.FileName);
                 }
                 else
                 {
@@ -311,7 +324,7 @@ public class FELearnerNumberController : Controller
         ClearSortingDataFromSession();
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
-        model.ShowMiddleNames = ShowMiddleNames;
+        model.ShowMiddleNames = _showMiddleNames;
 
         SetModelApplicationLabels(model);
 
@@ -361,7 +374,7 @@ public class FELearnerNumberController : Controller
         bool notPaged = hasQueryItem && !calledByController;
         bool allSelected = false;
 
-        model.ShowMiddleNames = ShowMiddleNames;
+        model.ShowMiddleNames = _showMiddleNames;
 
         model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
 
@@ -416,7 +429,7 @@ public class FELearnerNumberController : Controller
     private void SetModelApplicationLabels(LearnerNumberSearchViewModel model)
     {
         model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
-        model.DownloadSelectedLink = DownloadSelectedLink;
+        model.DownloadSelectedLink = ApplicationLabels.DownloadSelectedFurtherEducationLink;
         model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
     }
 
@@ -639,8 +652,8 @@ public class FELearnerNumberController : Controller
     protected LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
     {
         model.PageHeading = PageHeading;
-        model.LearnerNumberLabel = LearnerNumberLabel;
-        model.ShowLocalAuthority = ShowLocalAuthority;
+        model.LearnerNumberLabel = Global.FELearnerNumberLabel;
+        model.ShowLocalAuthority = false;
 
         return model;
     }
@@ -648,10 +661,10 @@ public class FELearnerNumberController : Controller
     protected LearnerNumberSearchViewModel PopulateNavigation(LearnerNumberSearchViewModel model)
     {
         model.DownloadLinksPartial = DownloadLinksPartial;
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
+        model.InvalidUPNsConfirmationAction = string.Empty;
         model.SearchAction = SearchAction;
-        model.FullTextLearnerSearchController = FullTextLearnerSearchController;
-        model.FullTextLearnerSearchAction = FullTextLearnerSearchAction;
+        model.FullTextLearnerSearchController = Global.FELearnerTextSearchController;
+        model.FullTextLearnerSearchAction = Global.FELearnerTextSearchAction;
         return model;
     }
 

@@ -1,18 +1,17 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -26,7 +25,8 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
-    
+    private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupils;
+
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
     public override string SearchFiltersSessionKey => Global.PPNonUpnSearchFiltersSessionKey;
@@ -37,7 +37,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string DownloadLinksPartial => Global.PPNonUpnDownloadLinksView;
     public override string SearchLearnerNumberAction => Routes.PupilPremium.PupilPremiumDatabase;
     public override string RedirectUrlFormAction => Global.PPNonUpnAction;
-    public override string LearnerTextDatabaseAction => Global.PPNonUpnAction;
     public override string LearnerTextDatabaseName => Global.PPLearnerTextSearchDatabaseName;
     public override string RedirectFrom => Routes.PupilPremium.NonUPN;
 
@@ -50,23 +49,13 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string FormAction => Routes.PupilPremium.NonUPN;
     public override string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.PupilPremium.NonUPN}";
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
-    public override string SearchView => Global.NonUpnSearchView;
-
-    public override string SearchLearnerNumberController => Routes.Application.Search;
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
-    public override string LearnerTextSearchController => Global.PPNonUpnController;
-    public override string LearnerTextSearchAction => SearchAction;
-    public override string LearnerNumberAction => Global.PPAction;
-    
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
+
     public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
-    public override bool ShowMiddleNames => true;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
-
 
     public PPLearnerTextSearchController(
         ILogger<PPLearnerTextSearchController> logger,
@@ -75,7 +64,8 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IDownloadService downloadService,
-        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
+        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -83,6 +73,9 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupils);
+        _downloadPupilPremiumDataForPupils = downloadPupilPremiumDataForPupils;
     }
 
 
@@ -163,37 +156,21 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
     [Route(Routes.PupilPremium.DownloadPupilPremiumFile)]
     [HttpPost]
-    public async Task<IActionResult> DownloadPupilPremiumFile(LearnerDownloadViewModel model)
+    public async Task<IActionResult> DownloadPupilPremiumFile(LearnerDownloadViewModel model, CancellationToken ctx = default)
     {
-        var userOrganisation = new UserOrganisation
+        string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
+
+        DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
+            pupilUpns: [selectedPupil],
+            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            ctx);
+
+        if (result.HasData)
         {
-            IsAdmin = User.IsAdmin(),
-            IsEstablishment = User.IsOrganisationEstablishment(),
-            IsLa = User.IsOrganisationLocalAuthority(),
-            IsMAT = User.IsOrganisationMultiAcademyTrust(),
-            IsSAT = User.IsOrganisationSingleAcademyTrust()
-        };
-
-        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
-        var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
-
-        var downloadFile = await _downloadService.GetPupilPremiumCSVFile(new string[] { selectedPupil }, sortOrder, model.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven,
-                                                                        AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NonPupilPremium, userOrganisation).ConfigureAwait(false);
-
-        if (downloadFile == null)
-        {
-            return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+            return result.GetResult();
         }
 
-        if (downloadFile.Bytes != null)
-        {
-            model.ErrorDetails = null;
-            return SearchDownloadHelper.DownloadFile(downloadFile);
-        }
-        else
-        {
-            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        }
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
         return RedirectToAction(Global.PPNonUpnAction, Global.PPNonUpnController);
     }
 
@@ -266,7 +243,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
     private void PopulateConfirmationNavigation(StarredPupilConfirmationViewModel model)
     {
-        model.DownloadType = DownloadType.PupilPremium;
+        model.DownloadType = Common.Enums.DownloadType.PupilPremium;
         model.ConfirmationReturnController = SearchController;
         model.ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction;
         model.CancelReturnController = SearchController;

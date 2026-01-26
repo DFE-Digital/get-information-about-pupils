@@ -1,5 +1,7 @@
 using Azure.Search.Documents;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
@@ -10,19 +12,33 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 {
     private const int UpnQueryLimit = 4000; // TODO pulled from FA
     private readonly ISearchClientProvider _searchClientProvider;
-    private readonly IMapper<AzureIndexEntityWithPupilType, Pupil> _mapper;
+    private readonly IMapper<AzureIndexEntityWithPupilType, Pupil> _dtoToEntityMapper;
+    private readonly IOrderPupilsHandler _orderPupilsHandler;
+    private readonly IPaginatePupilsHandler _paginatePupilsHandler;
 
     public AggregatePupilsForMyPupilsApplicationService(
         ISearchClientProvider searchClientProvider,
-        IMapper<AzureIndexEntityWithPupilType, Pupil> mapper)
+        IMapper<AzureIndexEntityWithPupilType, Pupil> dtoToEntityMapper,
+        IOrderPupilsHandler orderPupilsHandler,
+        IPaginatePupilsHandler paginatePupilsHandler)
     {
-        ArgumentNullException.ThrowIfNull(mapper);
         ArgumentNullException.ThrowIfNull(searchClientProvider);
         _searchClientProvider = searchClientProvider;
-        _mapper = mapper;
+
+        ArgumentNullException.ThrowIfNull(dtoToEntityMapper);
+        _dtoToEntityMapper = dtoToEntityMapper;
+
+        ArgumentNullException.ThrowIfNull(orderPupilsHandler);
+        _orderPupilsHandler = orderPupilsHandler;
+
+        ArgumentNullException.ThrowIfNull(paginatePupilsHandler);
+        _paginatePupilsHandler = paginatePupilsHandler;
     }
 
-    public async Task<IEnumerable<Pupil>> GetPupilsAsync(UniquePupilNumbers uniquePupilNumbers)
+    public async Task<IEnumerable<Pupil>> GetPupilsAsync(
+        UniquePupilNumbers uniquePupilNumbers,
+        MyPupilsQueryModel? query = null,
+        CancellationToken ctx = default)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(uniquePupilNumbers.Count, UpnQueryLimit);
 
@@ -50,20 +66,24 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             allResults.AddRange(ppResults);
         }
 
-        List<Pupil> distinctResults = allResults
+        IEnumerable<Pupil> distinctResults = allResults
             // Deduplicate
             .GroupBy(p => p.SearchIndexDto.UPN)
             // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
-            .Select(g =>
-                g.OrderByDescending(x => x.PupilType == PupilType.PupilPremium)
-                 .First())
-            // Explicit display order: NPD first, then PP
-            .OrderBy(p => p.PupilType == PupilType.PupilPremium ? 1 : 0)
-            .Select(_mapper.Map)
-            .ToList();
+            .Select(groupedByUpn =>
+                groupedByUpn.OrderByDescending(x => x.PupilType == PupilType.PupilPremium).First())
+            .Select(_dtoToEntityMapper.Map);
 
+        // If no query, return ALL results
+        if (query is null)
+        {
+            return distinctResults;
+        }
 
-        return distinctResults;
+        // Order, then paginate
+        return
+            _paginatePupilsHandler.PaginatePupils(
+                _orderPupilsHandler.Order(distinctResults, query.Order), query.PaginateOptions);
     }
 
 

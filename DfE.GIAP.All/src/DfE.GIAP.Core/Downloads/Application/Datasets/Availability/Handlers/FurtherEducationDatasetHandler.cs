@@ -17,14 +17,11 @@ public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
 
     public async Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds)
     {
-        IReadOnlyCollection<Dataset> relevantDatasets = AvailableDatasetsByDownloadType
-            .GetSupportedDatasets(SupportedDownloadType);
-
         HashSet<Dataset> datasets = new();
         IEnumerable<FurtherEducationPupil> pupils = await _furtherEducationReadOnlyRepository.GetPupilsByIdsAsync(pupilIds);
 
         if (pupils.Any(p => p.HasPupilPremiumData))
-            datasets.Add(Dataset.PP);
+            datasets.Add(Dataset.FE_PP);
         if (pupils.Any(p => p.HasSpecialEducationalNeedsData))
             datasets.Add(Dataset.SEN);
 

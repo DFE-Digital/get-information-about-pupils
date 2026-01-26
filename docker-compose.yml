@@ -10,7 +10,7 @@ services:
       - WIREMOCK_KEYSTORE_STOREPASSWORD=${WIREMOCK_KEYSTORE_STOREPASSWORD}
       - WIREMOCK_KEYSTORE_KEYPASSWORD=${WIREMOCK_KEYSTORE_KEYPASSWORD}
   cosmosdb:
-    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest@sha256:f3aaae0166781c2e7994987fb6e5eb30ec2e6ab128835c94c41d11844c4575b8
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest@sha256:591621968db553b27872e74fcd1730755c5ced00cfe3b4ba180649bd8f43eeb3
     ports:
       - 8081:8081
       - 10250-10255:10250-10255

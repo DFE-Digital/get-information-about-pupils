@@ -19,6 +19,7 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using DfE.GIAP.Web.Shared.Serializer;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
@@ -40,12 +41,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override string SearchSessionKey => "SearchNPD_SearchText";
     public override string SearchSessionSortField => "SearchNPD_SearchTextSortField";
     public override string SearchSessionSortDirection => "SearchNPD_SearchTextSortDirection";
-    public override int MyPupilListLimit => _appSettings.UpnNPDMyPupilListLimit;
-    public override bool ShowLocalAuthority => _appSettings.UseLAColumn;
-    public override bool ShowMiddleNames => true;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
-
-    public override string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 
@@ -58,8 +54,9 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
-        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
-        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase)
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
+        IJsonSerializer jsonSerializer)
+        : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -297,15 +294,5 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     protected override async Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model)
     {
         return await NationalPupilDatabase(model, model.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
-    }
-
-    protected override bool ValidateLearnerNumber(string learnerNumber)
-    {
-        return ValidationHelper.IsValidUpn(learnerNumber);
-    }
-
-    protected override string GenerateValidationMessage()
-    {
-        return PupilHelper.GenerateValidationMessageUpnSearch(ModelState);
     }
 }

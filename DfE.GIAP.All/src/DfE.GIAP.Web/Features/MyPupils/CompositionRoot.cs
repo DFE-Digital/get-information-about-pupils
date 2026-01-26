@@ -1,22 +1,22 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-using DfE.GIAP.Core.MyPupils;
+﻿using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.PresentationHandlers;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.DeletePupils;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.ClearSelections;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.GetPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.SelectionState.UpdatePupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
@@ -51,31 +51,17 @@ public static class CompositionRoot
         services
             .AddSingleton<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
             .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>, MyPupilModelToMyPupilsPresentationPupilModelMapper>()
-            .AddScoped<IMyPupilsPresentationService, MyPupilsPresentationService>()
-            .AddScoped<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MyPupilsPresentationResponseToMyPupilsViewModelMapper>();
+            .AddScoped<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MyPupilsPresentationResponseToMyPupilsViewModelMapper>()
+            .AddScoped<IGetMyPupilsPresentationService, GetMyPupilsPresentationService>()
+            .AddScoped<IGetSelectedPupilsUniquePupilNumbersPresentationService, GetSelectedPupilsUniquePupilNumbersPresentationService>()
+            .AddScoped<IDeleteMyPupilsPresentationService, DeleteMyPupilsPresentationService>();
+            
 
         // MessagingSink
         services
             .AddScoped<IMyPupilsMessageSink, MyPupilsTempDataMessageSink>()
             .AddSingleton<IMapper<MyPupilsMessage, MyPupilsMessageDto>, MyPupilsMessageToMyPupilsMessageDtoMapper>()
             .AddSingleton<IMapper<MyPupilsMessageDto, MyPupilsMessage>, MyPupilsMessageDtoToMyPupilsMessageMapper>();
-
-        // TODO implement the generic ChainedEvaluationHandlerBuilder and IEvaluator<Tin, TOut>
-        services
-            .AddSingleton<OrderMyPupilsModelPresentationHandler>()
-            .AddSingleton<PaginateMyPupilsModelPresentationHandler>()
-            .AddSingleton<ApplySelectionToPupilPresentationHandler>()
-            .AddSingleton<IMyPupilsPresentationModelHandler>(sp =>
-        {
-            var order = new ChainedEvaluationMyPupilDtosPresentationHandler(sp.GetRequiredService<OrderMyPupilsModelPresentationHandler>());
-
-            var paginate = new ChainedEvaluationMyPupilDtosPresentationHandler(sp.GetRequiredService<PaginateMyPupilsModelPresentationHandler>());
-
-            var applySelection = new ChainedEvaluationMyPupilDtosPresentationHandler(head: sp.GetRequiredService<ApplySelectionToPupilPresentationHandler>());
-
-            order.ChainNext(paginate.ChainNext(applySelection));
-            return order;
-        });
 
         return services;
     }
@@ -92,7 +78,8 @@ public static class CompositionRoot
                     MyPupilsPupilSelectionState,
                     MyPupilsPupilSelectionStateDto>(
                         sp.GetRequiredService<MyPupilsPupilSelectionStateToDtoMapper>(),
-                        sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>());
+                        sp.GetRequiredService<MyPupilsPupilSelectionStateFromDtoMapper>(),
+                        sp.GetRequiredService<IJsonSerializer>());
             })
             // Query
             .AddScoped<ISessionQueryHandler<MyPupilsPupilSelectionState>, AspNetCoreSessionQueryHandler<MyPupilsPupilSelectionState>>()
@@ -103,19 +90,28 @@ public static class CompositionRoot
             .AddScoped<IGetMyPupilsPupilSelectionProvider, GetMyPupilsPupilSelectionProvider>()
             .AddScoped<IClearMyPupilsPupilSelectionsHandler, ClearMyPupilsPupilSelectionsHandler>()
             .AddScoped<IUpdateMyPupilsPupilSelectionsCommandHandler, UpdateMyPupilsPupilSelectionsCommandHandler>()
+
             .AddScoped<IEvaluator<UpdateMyPupilsSelectionStateRequest>, Evaluator<UpdateMyPupilsSelectionStateRequest>>()
             .AddSingleton<SelectAllPupilsCommandHandler>()
             .AddSingleton<DeselectAllPupilsCommandHandler>()
             .AddSingleton<ManualSelectPupilsCommandHandler>()
-            .AddScoped<IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>>((sp) =>
+
+            .AddSingleton((serviceProvider) =>
             {
-                // TODO wrap builder for orchestration of handlers
-                ChainedEvaluationHandler<UpdateMyPupilsSelectionStateRequest> headHandler = new(current: sp.GetRequiredService<SelectAllPupilsCommandHandler>());
+                HandlerChainBuilder<
+                    UpdateMyPupilsSelectionStateRequest,
+                    IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>> handlerChainBuilder =
+                        HandlerChainBuilder<
+                            UpdateMyPupilsSelectionStateRequest,
+                            IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>>
+                                .Create();
 
-                headHandler.ChainNext(sp.GetRequiredService<DeselectAllPupilsCommandHandler>());
-                headHandler.ChainNext(sp.GetRequiredService<ManualSelectPupilsCommandHandler>());
+                handlerChainBuilder
+                    .ChainNext(serviceProvider.GetRequiredService<SelectAllPupilsCommandHandler>())
+                    .ChainNext(serviceProvider.GetRequiredService<DeselectAllPupilsCommandHandler>())
+                    .ChainNext(serviceProvider.GetRequiredService<ManualSelectPupilsCommandHandler>());
 
-                return headHandler; // Return HEAD
+                return handlerChainBuilder.Build();
             });
             
         return services;

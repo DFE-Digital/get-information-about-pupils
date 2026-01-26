@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Search.Application.Models.Search;
+﻿namespace DfE.GIAP.Core.Search.Application.Models.Sort;
 
 /// <summary>
 /// Represents a validated sort direction for Azure AI Search queries.

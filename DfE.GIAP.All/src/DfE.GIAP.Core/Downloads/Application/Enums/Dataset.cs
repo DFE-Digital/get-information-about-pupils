@@ -25,6 +25,8 @@ public enum Dataset
     PP,
     [Description("MTC")]
     MTC,
+    [Description("Pupil Premium")]
+    FE_PP,
     [Description("Special Educational Needs")]
     SEN
 }

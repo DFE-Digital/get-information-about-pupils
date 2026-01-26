@@ -4,7 +4,6 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Domain.Models.Common;
@@ -12,7 +11,9 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -36,6 +37,7 @@ public abstract class BaseLearnerNumberController : Controller
     protected readonly ISelectionManager _selectionManager;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly AzureAppSettings _appSettings;
+    private readonly IJsonSerializer _jsonSerializer;
 
     #region Abstract Properties
 
@@ -50,14 +52,9 @@ public abstract class BaseLearnerNumberController : Controller
     public abstract string SearchSessionKey { get; }
     public abstract string SearchSessionSortField { get; }
     public abstract string SearchSessionSortDirection { get; }
-
-    public abstract int MyPupilListLimit { get; }
-    public abstract bool ShowLocalAuthority { get; }
-
-    public abstract bool ShowMiddleNames { get; }
     public abstract string DownloadSelectedLink { get; }
 
-    public abstract string LearnerNumberLabel { get; }
+    public string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     #endregion Abstract Properties
 
@@ -65,7 +62,8 @@ public abstract class BaseLearnerNumberController : Controller
         IPaginatedSearchService paginatedSearch,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
-        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase)
+        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
+        IJsonSerializer jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -82,6 +80,9 @@ public abstract class BaseLearnerNumberController : Controller
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(jsonSerializer);
+        _jsonSerializer = jsonSerializer;
     }
 
     #region Search
@@ -89,19 +90,17 @@ public abstract class BaseLearnerNumberController : Controller
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
-        var model = new LearnerNumberSearchViewModel();
+        LearnerNumberSearchViewModel model = new();
 
         PopulatePageText(model);
         PopulateNavigation(model);
-        PopulateSorting(model, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection));
+        PopulateSorting(model, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection));
         ClearSortingDataFromSession();
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
-
         SetModelApplicationLabels(model);
 
-        if (returnToSearch ?? false && this.HttpContext.Session.Keys.Contains(SearchSessionKey))
+        if (returnToSearch ?? false && HttpContext.Session.Keys.Contains(SearchSessionKey))
         {
             ModelState.Clear();
             model.LearnerNumber = this.HttpContext.Session.GetString(SearchSessionKey);
@@ -137,12 +136,14 @@ public abstract class BaseLearnerNumberController : Controller
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");
         }
-        var notPaged = hasQueryItem && !calledByController;
-        var allSelected = false;
 
-        model.ShowMiddleNames = this.ShowMiddleNames;
+        bool notPaged = hasQueryItem && !calledByController;
+        bool allSelected = false;
 
-        model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
+        model.SearchBoxErrorMessage =
+            ModelState.IsValid is false ?
+                PupilHelper.GenerateValidationMessageUpnSearch(ModelState) :
+                    null;
 
         model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
 
@@ -308,7 +309,7 @@ public abstract class BaseLearnerNumberController : Controller
     {
         if (string.IsNullOrEmpty(model.LearnerNumber)) return model;
 
-        var learnerNumberArray = model.LearnerNumber.FormatLearnerNumbers();
+        string[] learnerNumberArray = model.LearnerNumber.FormatLearnerNumbers();
 
         string searchText = model.LearnerNumber.ToSearchText();
 
@@ -317,7 +318,7 @@ public abstract class BaseLearnerNumberController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        var result = await _paginatedSearch.GetPage(
+        PaginatedResponse result = await _paginatedSearch.GetPage(
             searchText,
             null,
             first ? _appSettings.MaximumUPNsPerSearch : PAGESIZE,
@@ -329,48 +330,54 @@ public abstract class BaseLearnerNumberController : Controller
             model.SortDirection
             );
 
-        model.Total = result.Count.HasValue ? result.Count.Value : result.Learners.Count;
+        model.Total = result.Count ?? result.Learners.Count;
 
-        var idList = SetLearnerNumberIds(result);
+        List<string> idList = SetLearnerNumberIds(result);
 
-        var combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
+        string[] combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
 
         if (first)
         {
             model.LearnerIdSearchResult = result.GetLearnerIdsAsString();
 
-            var learnerNumberIdSet = result.GetLearnerNumberIds();
-            var learnerNumberSet = result.GetLearnerNumbers();
+            HashSet<string> learnerNumberIdSet = result.GetLearnerNumberIds();
+            HashSet<string> learnerNumberSet = result.GetLearnerNumbers();
             model.LearnerNumberIds = string.Join("\n", learnerNumberIdSet);
-            var missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet).Except(learnerNumberSet);
 
-            this.HttpContext.Session.SetString(MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(missing));
-            this.HttpContext.Session.SetString(TOTAL_SEARCH_RESULTS, model.Total.ToString());
+            IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet).Except(learnerNumberSet);
+
+            HttpContext.Session.SetString(
+                MISSING_LEARNER_NUMBERS_KEY, _jsonSerializer.Serialize(missing));
+
+            HttpContext.Session.SetString(
+                TOTAL_SEARCH_RESULTS, model.Total.ToString());
         }
         else
         {
-            model.Total = Convert.ToInt32(this.HttpContext.Session.GetString(TOTAL_SEARCH_RESULTS));
+            model.Total = Convert.ToInt32(HttpContext.Session.GetString(TOTAL_SEARCH_RESULTS));
         }
+#nullable enable
+        _jsonSerializer.TryDeserialize(HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY), out List<string>? notFound);
+        model.NotFound = notFound;
+#nullable restore
 
-        model.NotFound = JsonConvert.DeserializeObject<List<string>>(this.HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY));
-
-        var duplicateLearnerNumbers = ValidationHelper.GetDuplicates(learnerNumberArray.ToList());
+        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates(learnerNumberArray.ToList());
 
         if (duplicateLearnerNumbers.Any())
         {
-            foreach (var learnerNumber in duplicateLearnerNumbers)
+            foreach (string learnerNumber in duplicateLearnerNumbers)
             {
                 model.Duplicates.Add(learnerNumber);
             }
         }
 
-        var potentialErrorLearnerNumbers = learnerNumberArray.Distinct().ToList();
+        List<string> potentialErrorLearnerNumbers = learnerNumberArray.Distinct().ToList();
 
         if (potentialErrorLearnerNumbers.Any())
         {
-            foreach (var learnerNumber in potentialErrorLearnerNumbers)
+            foreach (string learnerNumber in potentialErrorLearnerNumbers)
             {
-                bool isValid = ValidateLearnerNumber(learnerNumber);
+                bool isValid = ValidationHelper.IsValidUpn(learnerNumber);
 
                 if (!isValid)
                 {
@@ -489,16 +496,12 @@ public abstract class BaseLearnerNumberController : Controller
 
     protected abstract Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model);
 
-    protected abstract bool ValidateLearnerNumber(string learnerNumber);
-
-    protected abstract string GenerateValidationMessage();
-
     protected LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
     {
         model.PageHeading = PageHeading;
         model.LearnerNumberLabel = LearnerNumberLabel;
-        model.ShowLocalAuthority = ShowLocalAuthority;
-
+        model.ShowLocalAuthority = true;
+        model.ShowMiddleNames = true;
         return model;
     }
 

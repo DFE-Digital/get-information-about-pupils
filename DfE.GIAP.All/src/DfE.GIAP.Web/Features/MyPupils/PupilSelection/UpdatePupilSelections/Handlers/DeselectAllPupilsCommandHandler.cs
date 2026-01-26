@@ -1,16 +1,22 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
 internal sealed class DeselectAllPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {
-    public bool CanHandle(UpdateMyPupilsSelectionStateRequest input)
-        => input.UpdateRequest.SelectAllState == MyPupilsFormSelectionModeRequestDto.DeselectAll;
-
-    public void Handle(UpdateMyPupilsSelectionStateRequest input)
+    public ValueTask<HandlerResult> HandleAsync(UpdateMyPupilsSelectionStateRequest input, CancellationToken ctx = default)
     {
-        ArgumentNullException.ThrowIfNull(input);
+        if (input is null)
+        {
+            return HandlerResultValueTaskFactory.FailedWithNullArgument(nameof(input));
+        }
+
+        if (input.UpdateRequest.SelectAllState != MyPupilsFormSelectionModeRequestDto.DeselectAll)
+        {
+            return HandlerResultValueTaskFactory.Skipped();
+        }
+
         input.State.DeselectAll();
+        return HandlerResultValueTaskFactory.SuccessfulResult();
     }
 }

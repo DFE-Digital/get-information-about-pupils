@@ -58,7 +58,7 @@ public class SecurityHeadersMiddlewareTests
     {
         // Arrange
         HttpContext context = CreateContext();
-        RequestDelegate middleware = CreateMiddleware(null);
+        RequestDelegate middleware = CreateMiddleware(null!);
 
         // Act
         await middleware.Invoke(context);
@@ -67,9 +67,9 @@ public class SecurityHeadersMiddlewareTests
         Assert.Empty(context.Response.Headers);
     }
 
-    private static HttpContext CreateContext(List<string> preExistingHeaders = null)
+    private static HttpContext CreateContext(List<string>? preExistingHeaders = null)
     {
-        DefaultHttpContext context = new DefaultHttpContext();
+        DefaultHttpContext context = new();
 
         // Pre-populate headers if provided
         if (preExistingHeaders is not null)
@@ -86,14 +86,14 @@ public class SecurityHeadersMiddlewareTests
     private static RequestDelegate CreateMiddleware(SecurityHeadersOptions settings)
     {
         IConfiguration config = CreateMockConfiguration(settings);
-        ApplicationBuilder builder = new ApplicationBuilder(new ServiceCollection().BuildServiceProvider());
+        ApplicationBuilder builder = new(new ServiceCollection().BuildServiceProvider());
         builder.UseSecurityHeadersMiddleware(config);
         return builder.Build();
     }
 
     private static IConfiguration CreateMockConfiguration(SecurityHeadersOptions settings)
     {
-        Dictionary<string, string> inMemorySettings = new();
+        Dictionary<string, string?> inMemorySettings = new();
 
         if (settings is null) return BuildConfiguration(inMemorySettings);
 
@@ -116,7 +116,7 @@ public class SecurityHeadersMiddlewareTests
         return BuildConfiguration(inMemorySettings);
     }
 
-    private static IConfiguration BuildConfiguration(Dictionary<string, string> inMemorySettings)
+    private static IConfiguration BuildConfiguration(Dictionary<string, string?> inMemorySettings)
     {
         return new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)

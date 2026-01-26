@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.ViewComponents;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Xunit;
 using static DfE.GIAP.Web.ViewComponents.PaginatedResultViewComponent;
@@ -12,20 +13,20 @@ public class PaginatedResultsViewComponentTests
     [MemberData(nameof(GetPaginatedResulTestData))]
     public void Invoke_creates_correct_number_of_pages(PaginatedResultTestData testData)
     {
-        var learners = new List<Learner>();
-        var pageLearnerNumbers = "test";
-        var learnerNumberLabel = "label";
-        var showMiddleNames = true;
-        var showSelectedError = true;
-        var allowMultipleSelection = true;
-        var controllerAction = "test";
-        var showPP = false;
-        var showLocalAuthority = true;
-        var activeSortField = "test";
-        var activeSortDirection = "desc";
+        List<Learner> learners = new List<Learner>();
+        string pageLearnerNumbers = "test";
+        string learnerNumberLabel = "label";
+        bool showMiddleNames = true;
+        bool showSelectedError = true;
+        bool allowMultipleSelection = true;
+        string controllerAction = "test";
+        bool showPP = false;
+        bool showLocalAuthority = true;
+        string activeSortField = "test";
+        string activeSortDirection = "desc";
 
         // act
-        var result = new PaginatedResultViewComponent().Invoke(
+        IViewComponentResult result = new PaginatedResultViewComponent().Invoke(
             learners,
             pageLearnerNumbers,
             learnerNumberLabel,
@@ -43,12 +44,10 @@ public class PaginatedResultsViewComponentTests
             );
 
         // assert
-        Assert.IsType<ViewViewComponentResult>(result);
-        var viewComponentResult = result as ViewViewComponentResult;
-        
-        Assert.IsType<PaginatedResultModel>(viewComponentResult.ViewData.Model);
-        var model = viewComponentResult.ViewData.Model as PaginatedResultModel;
-        
+        ViewViewComponentResult viewComponentResult = Assert.IsType<ViewViewComponentResult>(result);
+        Assert.NotNull(viewComponentResult.ViewData);
+
+        PaginatedResultModel model = Assert.IsType<PaginatedResultModel>(viewComponentResult.ViewData.Model);                
         Assert.Equal(learners, model.Learners);
         Assert.Equal(pageLearnerNumbers, model.PageLearnerNumbers);
         Assert.Equal(showMiddleNames, model.ShowMiddleNames);
@@ -66,8 +65,8 @@ public class PaginatedResultsViewComponentTests
 
     public static IEnumerable<object[]> GetPaginatedResulTestData()
     {
-        var allData = new List<object[]>
-        {
+        List<object[]> allData =
+        [
            new object[] { // 1
                new PaginatedResultTestData()
                {
@@ -332,7 +331,7 @@ public class PaginatedResultsViewComponentTests
                    PageNumber = 1
                }
            },
-        };
+        ];
 
         return allData;
     }
@@ -342,7 +341,7 @@ public class PaginatedResultTestData
 {
     public int PageSize { get; set; }
     public int Total { get; set; }
-    public List<int> AvailablePages { get; set; }
+    public List<int>? AvailablePages { get; set; }
     public bool ShowNext { get; set; }
     public bool ShowPrevious { get; set; }
     public int PageNumber { get; set; }
