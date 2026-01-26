@@ -1553,6 +1553,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
                 return true;
             });
 
+        Mock<IDownloadPupilPremiumPupilDataService> downloadPupilPremiumDataServiceMock = new();
+
+        DownloadPupilPremiumFilesResponse responseStubNoData =
+            new(
+                new DownloadPupilDataResponse());
+
+        downloadPupilPremiumDataServiceMock
+            .Setup(service => service.DownloadAsync(
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(responseStubNoData);
+            
+
         return new PupilPremiumLearnerNumberController(
             _mockLogger,
             _mockPaginatedService,
@@ -1560,7 +1574,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             _mockAppOptions,
             _addPupilsUseCaseMock,
             jsonSerializerMock.Object,
-            new Mock<IDownloadPupilPremiumDataForPupilsService>().Object)
+            downloadPupilPremiumDataServiceMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

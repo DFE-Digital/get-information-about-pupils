@@ -49,7 +49,7 @@ builder.Services
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
     .AddDownloadDependencies()
-    .AddScoped<IDownloadPupilPremiumDataForPupilsService, DownloadPupilPremiumDataForPupilsService>()
+    .AddScoped<IDownloadPupilPremiumPupilDataService, DownloadPupilPremiumPupilDataService>()
     .AddAuthDependencies(configuration)
     .AddMyPupils();
 

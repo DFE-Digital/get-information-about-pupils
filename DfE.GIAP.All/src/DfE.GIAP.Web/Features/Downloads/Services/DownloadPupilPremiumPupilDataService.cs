@@ -5,12 +5,12 @@ using DownloadType = DfE.GIAP.Core.Common.CrossCutting.Logging.Events.DownloadTy
 
 namespace DfE.GIAP.Web.Features.Downloads.Services;
 
-internal sealed class DownloadPupilPremiumDataForPupilsService : IDownloadPupilPremiumDataForPupilsService
+internal sealed class DownloadPupilPremiumPupilDataService : IDownloadPupilPremiumPupilDataService
 {
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadDataUseCase;
     private readonly IEventLogger _eventLogger;
 
-    public DownloadPupilPremiumDataForPupilsService(
+    public DownloadPupilPremiumPupilDataService(
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadDataUseCase,
         IEventLogger eventLogger)
     {

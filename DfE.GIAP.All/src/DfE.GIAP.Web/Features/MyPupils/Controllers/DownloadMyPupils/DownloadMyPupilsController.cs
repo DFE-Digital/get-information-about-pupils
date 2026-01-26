@@ -29,7 +29,7 @@ public class DownloadMyPupilsController : Controller
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
     private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
-    private readonly IDownloadPupilPremiumDataForPupilsService _downloadPupilPremiumDataForPupilsService;
+    private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
 
     public DownloadMyPupilsController(
@@ -39,7 +39,7 @@ public class DownloadMyPupilsController : Controller
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
         IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
-        IDownloadPupilPremiumDataForPupilsService downloadPupilPremiumDataForPupilsService,
+        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler)
     {
         ArgumentNullException.ThrowIfNull(logger);

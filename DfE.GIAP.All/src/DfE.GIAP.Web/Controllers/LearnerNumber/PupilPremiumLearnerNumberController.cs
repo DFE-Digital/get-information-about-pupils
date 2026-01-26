@@ -18,7 +18,7 @@ namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
 {
     private readonly ILogger<PupilPremiumLearnerNumberController> _logger;
-    private readonly IDownloadPupilPremiumDataForPupilsService _downloadPupilPremiumDataForPupilsService;
+    private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
 
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
     public override string SearchAction => "PupilPremium";
@@ -39,7 +39,7 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IJsonSerializer jsonSerializer,
-        IDownloadPupilPremiumDataForPupilsService downloadPupilPremiumDataForPupilsService)
+        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);

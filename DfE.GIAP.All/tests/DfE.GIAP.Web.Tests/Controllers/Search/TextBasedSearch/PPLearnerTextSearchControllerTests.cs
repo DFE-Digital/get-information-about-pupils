@@ -1439,15 +1439,31 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
+
+
+        Mock<IDownloadPupilPremiumPupilDataService> downloadPupilPremiumDataServiceMock = new();
+
+        DownloadPupilPremiumFilesResponse responseStubNoData =
+            new(
+                new DownloadPupilDataResponse());
+
+        downloadPupilPremiumDataServiceMock
+            .Setup(service => service.DownloadAsync(
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(responseStubNoData);
+
+
         return new PPLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
              _mockPaginatedService,
              _mockSelectionManager,
-             _mockSessionProvider.Object,
+             _mockSessionProvider.Object,   
              _mockDownloadService,
              new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
-             new Mock<IDownloadPupilPremiumDataForPupilsService>().Object)
+             downloadPupilPremiumDataServiceMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

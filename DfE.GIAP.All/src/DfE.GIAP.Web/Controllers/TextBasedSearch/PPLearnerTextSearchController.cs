@@ -25,7 +25,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 {
     private readonly ILogger<PPLearnerTextSearchController> _logger;
     private readonly IDownloadService _downloadService;
-    private readonly IDownloadPupilPremiumDataForPupilsService _downloadPupilPremiumDataForPupils;
+    private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupils;
 
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
@@ -65,7 +65,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         ISessionProvider sessionProvider,
         IDownloadService downloadService,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
-        IDownloadPupilPremiumDataForPupilsService downloadPupilPremiumDataForPupils)
+        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
