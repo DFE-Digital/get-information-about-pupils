@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
@@ -13,8 +12,6 @@ using DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Admin.ManageNewsArticles;
 public class ManageNewsArticlesControllerTests

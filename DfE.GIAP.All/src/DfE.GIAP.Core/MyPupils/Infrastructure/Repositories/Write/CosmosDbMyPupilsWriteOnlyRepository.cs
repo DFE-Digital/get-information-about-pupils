@@ -1,7 +1,5 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Domain;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 

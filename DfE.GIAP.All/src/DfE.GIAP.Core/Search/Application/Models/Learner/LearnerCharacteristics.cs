@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.Search.Application.Models.Learner;

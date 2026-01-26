@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService;
+using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
@@ -30,7 +30,6 @@ public sealed class MyPupilsPresentationResponseToMyPupilsViewModelMapper : IMap
         {
             CurrentPageOfPupils = source.MyPupils,
             PageNumber = source.PageNumber,
-            LastPageNumber = source.TotalPages,
             SortDirection = source.SortedDirection,
             SortField = source.SortedField,
             IsAnyPupilsSelected = source.IsAnyPupilsSelected,

@@ -1,33 +1,92 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-public readonly struct Sex
+
+public readonly record struct Sex : IEquatable<Sex>
 {
-    private readonly char? _value;
-    private const char MaleCharacterCode = 'M';
-    private const char FemaleCharacterCode = 'F';
-    public Sex(string? sexCode)
+    public const char MaleCode = 'M';
+    public const char FemaleCode = 'F';
+    public const char UnknownCode = 'U';
+
+    private readonly char _code;
+
+    public bool IsKnown => _code != UnknownCode;
+    public bool IsMale => _code == MaleCode;
+    public bool IsFemale => _code == FemaleCode;
+
+    public Sex(char? code)
     {
-        char? normalisedSexCode = sexCode?.ToLowerInvariant() switch
-        {
-            "m" or "male" => MaleCharacterCode,
-            "f" or "female" => FemaleCharacterCode,
-            // TODO is intersex represented?
-            _ => null
-        };
-
-#pragma warning disable S125 // Sections of code should not be commented out
-        // TODO assumed that it can be null so not validating 
-        //char[] validCodes = [MaleCharacterCode, FemaleCharacterCode];
-        //if (!validCodes.Contains(normalisedSexCode))
-        //{
-        //    throw new ArgumentException($"Invalid character to represent Sex: {normalisedSexCode}");
-        //}
-#pragma warning restore S125 // Sections of code should not be commented out
-
-        _value = normalisedSexCode;
+        _code = NormalizeChar(code);
     }
 
-    public override string ToString() => _value.ToString() ?? string.Empty;
+    public Sex(string? value)
+    {
+        _code = NormalizeString(value);
+    }
 
-    public static Sex Male => new(MaleCharacterCode.ToString());
-    public static Sex Female => new(FemaleCharacterCode.ToString());
+    public override string ToString()
+    {
+        return _code switch
+        {
+            'M' => "M",
+            'F' => "F",
+            _ => string.Empty
+        };
+    }
+
+    public static Sex Male => new(MaleCode);
+    public static Sex Female => new(FemaleCode);
+    public static Sex Unknown => new(UnknownCode);
+
+    public static bool TryParse(string? value, out Sex sex)
+    {
+        char code = NormalizeString(value);
+        sex = new Sex(code);
+        return sex.IsKnown;
+    }
+
+    public static Sex Parse(string? value)
+    {
+        if (!TryParse(value, out Sex sex))
+        {
+            throw new ArgumentException($"Invalid sex value: '{value}'.", nameof(value));
+        }
+        return sex;
+    }
+
+    private static char NormalizeChar(char? c)
+    {
+        if (c == null || (c.HasValue && c.Value == default))
+        {
+            return UnknownCode;
+        }
+
+        char u = char.ToUpperInvariant(c.Value);
+        return u switch
+        {
+            MaleCode => MaleCode,
+            FemaleCode => FemaleCode,
+            _ => UnknownCode
+        };
+    }
+
+    private static char NormalizeString(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return UnknownCode;
+        }
+
+        if (input.Length == 1)
+        {
+            return NormalizeChar(input[0]);
+        }
+
+        // parsing
+        string v = input.Trim().ToLowerInvariant();
+        return v switch
+        {
+            "m" or "male" => MaleCode,
+            "f" or "female" => FemaleCode,
+            _ => UnknownCode
+        };
+    }
 }

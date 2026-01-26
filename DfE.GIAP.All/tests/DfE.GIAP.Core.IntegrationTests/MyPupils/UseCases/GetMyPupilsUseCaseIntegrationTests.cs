@@ -1,13 +1,10 @@
-using System.Configuration;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
@@ -111,14 +108,16 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Assert
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.MyPupils);
-        Assert.Equal(35, getMyPupilsResponse.MyPupils.Count);
+        Assert.Equal(20, getMyPupilsResponse.MyPupils.Count);
 
         MapAzureSearchIndexDtosToPupilDtos mapAzureSearchIndexDtosToPupilDtosMapper = new();
 
         List<MyPupilsModel> expectedPupils =
-            npdResponse.value!
-                .Concat(pupilPremiumResponse.value!)
-                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!).ToList();
+            pupilPremiumResponse.value!
+                .Concat(npdResponse.value!)
+                .Select(mapAzureSearchIndexDtosToPupilDtosMapper.Map!)
+                .Take(20)
+                .ToList();
 
         foreach (MyPupilsModel expectedPupil in expectedPupils)
         {

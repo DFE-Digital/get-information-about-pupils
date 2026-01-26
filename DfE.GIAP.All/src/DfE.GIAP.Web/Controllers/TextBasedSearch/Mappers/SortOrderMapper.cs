@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;

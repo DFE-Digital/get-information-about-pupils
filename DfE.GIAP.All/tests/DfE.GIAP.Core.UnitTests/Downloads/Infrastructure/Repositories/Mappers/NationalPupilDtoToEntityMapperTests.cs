@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
-using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.DataTransferObjects;
+﻿using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 

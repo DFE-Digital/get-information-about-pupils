@@ -1,11 +1,9 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-
-namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 public sealed class PupilName : ValueObject<PupilName>
 {
     // TODO double barrelled names should we expect normalised in data?
     // TODO middlenames required for Search
-    public PupilName(string firstName, string lastName)
+    public PupilName(string? firstName, string? lastName)
     {
         // TODO should we enforce these must exist? or just normalise
         //ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
@@ -23,7 +21,7 @@ public sealed class PupilName : ValueObject<PupilName>
         yield return Surname;
     }
 
-    private static string Normalise(string input)
+    private static string Normalise(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
         {

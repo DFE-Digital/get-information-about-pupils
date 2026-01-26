@@ -4,11 +4,10 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
@@ -28,13 +27,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
-using Xunit;
-using System.Security.Claims;
-using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
-using DfE.GIAP.Core.Downloads.Application.Enums;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 

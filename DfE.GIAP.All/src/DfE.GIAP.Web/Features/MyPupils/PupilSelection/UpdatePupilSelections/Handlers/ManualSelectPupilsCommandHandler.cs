@@ -1,22 +1,27 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.ChainOfResponsibility;
-
-namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
+﻿namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
 internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {
-    public bool CanHandle(UpdateMyPupilsSelectionStateRequest input) => true;
-    public void Handle(UpdateMyPupilsSelectionStateRequest input)
+    public ValueTask<HandlerResult> HandleAsync(UpdateMyPupilsSelectionStateRequest input, CancellationToken ctx = default)
     {
+        if (input is null)
+        {
+            return HandlerResultValueTaskFactory.FailedWithNullArgument(nameof(input));
+        }
+
         List<string> selectedPupilsOnPage = input.UpdateRequest.SelectedPupils?.ToList() ?? [];
-        List<string> deselectedPupilsOnPage = input.UpdateRequest.CurrentPupils.Except(selectedPupilsOnPage).ToList();
+        List<string> deselectedPupilsOnPage = input.UpdateRequest.CurrentPupils?.Except(selectedPupilsOnPage).ToList() ?? [];
 
         foreach (string upn in deselectedPupilsOnPage)
         {
             input.State.Deselect(upn);
         }
+
         foreach (string upn in selectedPupilsOnPage)
         {
             input.State.Select(upn);
         }
+
+        return HandlerResultValueTaskFactory.SuccessfulResult();
     }
 }
