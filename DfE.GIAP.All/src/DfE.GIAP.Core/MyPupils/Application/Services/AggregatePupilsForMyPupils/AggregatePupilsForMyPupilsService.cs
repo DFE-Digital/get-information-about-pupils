@@ -75,7 +75,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             .Select(_dtoToEntityMapper.Map);
 
         // If no query, return ALL results
-        if(query is null)
+        if (query is null)
         {
             return distinctResults;
         }
