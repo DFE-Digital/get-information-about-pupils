@@ -14,6 +14,7 @@ using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
+using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -1438,22 +1439,31 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
-        DownloadPupilDataResponse downloadPupilDataResponse = new();
-        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
-        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
-            .ReturnsAsync(downloadPupilDataResponse);
-        Mock<IEventLogger> mockEventLogger = new();
+
+
+        Mock<IDownloadPupilPremiumPupilDataService> downloadPupilPremiumDataServiceMock = new();
+
+        DownloadPupilPremiumFilesResponse responseStubNoData =
+            new(
+                new DownloadPupilDataResponse());
+
+        downloadPupilPremiumDataServiceMock
+            .Setup(service => service.DownloadAsync(
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(responseStubNoData);
+
 
         return new PPLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
              _mockPaginatedService,
              _mockSelectionManager,
-             _mockSessionProvider.Object,
+             _mockSessionProvider.Object,   
              _mockDownloadService,
              new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
-             mockDownloadPupilDataUseCase.Object,
-             mockEventLogger.Object)
+             downloadPupilPremiumDataServiceMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

@@ -15,6 +15,7 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
+using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -1552,22 +1553,28 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
                 return true;
             });
 
-        DownloadPupilDataResponse downloadPupilDataResponse = new();
-        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
-        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
-            .ReturnsAsync(downloadPupilDataResponse);
-        Mock<IEventLogger> mockEventLogger = new();
+        Mock<IDownloadPupilPremiumPupilDataService> downloadPupilPremiumDataServiceMock = new();
+
+        DownloadPupilPremiumFilesResponse responseStubNoData =
+            new(
+                new DownloadPupilDataResponse());
+
+        downloadPupilPremiumDataServiceMock
+            .Setup(service => service.DownloadAsync(
+                It.IsAny<IEnumerable<string>>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(responseStubNoData);
+            
 
         return new PupilPremiumLearnerNumberController(
             _mockLogger,
-            _mockDownloadService,
             _mockPaginatedService,
             _mockSelectionManager,
             _mockAppOptions,
             _addPupilsUseCaseMock,
             jsonSerializerMock.Object,
-            mockDownloadPupilDataUseCase.Object,
-            mockEventLogger.Object)
+            downloadPupilPremiumDataServiceMock.Object)
         {
             ControllerContext = new ControllerContext()
             {
