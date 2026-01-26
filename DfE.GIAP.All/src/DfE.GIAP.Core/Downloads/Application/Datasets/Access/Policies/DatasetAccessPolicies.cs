@@ -62,6 +62,12 @@ internal static class DatasetAccessPolicies
         new IsLAUserAccessRule(),
         new MinimumHighAgeAccessRule(14));
 
+    public static IDatasetAccessRule FEPupilPremium() => new AnyOfRule(
+       new IsAdminUserAccessRule(),
+       new IsDfEUserAccessRule(),
+       new IsLAUserAccessRule(),
+       new MinimumHighAgeAccessRule(14));
+
     public static IDatasetAccessRule SpecialEducationNeeds() => new AnyOfRule(
         new IsAdminUserAccessRule(),
         new IsDfEUserAccessRule(),

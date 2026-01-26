@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+using DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLoggedIn;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Auth.Application.PostTokenHandlers;
 using Moq;

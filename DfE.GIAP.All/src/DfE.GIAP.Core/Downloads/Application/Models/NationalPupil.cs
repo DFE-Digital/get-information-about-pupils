@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Models.Entries;
+
+namespace DfE.GIAP.Core.Downloads.Application.Models;
 
 public class NationalPupil
 {
@@ -25,7 +27,7 @@ public class NationalPupil
     public List<KeyStage4Entry> KeyStage4 { get; set; } = new();
     public List<MtcEntry> MTC { get; set; } = new();
 
-    public bool HasCensusAutumData => CensusAutumn?.Any() ?? false;
+    public bool HasCensusAutumnData => CensusAutumn?.Any() ?? false;
     public bool HasCensusSpringData => CensusSpring?.Any() ?? false;
     public bool HasCensusSummerData => CensusSummer?.Any() ?? false;
     public bool HasEYFSPData => EarlyYearsFoundationStageProfile?.Any() ?? false;

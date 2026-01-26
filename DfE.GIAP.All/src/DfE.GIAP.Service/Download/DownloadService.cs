@@ -70,7 +70,7 @@ public class DownloadService : IDownloadService
         foreach (string dataset in requestBody.DataTypes)
         {
             // TODO: Temp quick solution
-            if (Enum.TryParse<Dataset>(dataset, out Dataset datasetEnum))
+            if (Enum.TryParse(dataset, out Dataset datasetEnum))
             {
                 _eventLogger.LogDownload(
                     Core.Common.CrossCutting.Logging.Events.DownloadType.Search,

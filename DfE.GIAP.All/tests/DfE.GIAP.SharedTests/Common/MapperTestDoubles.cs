@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using Moq;
+﻿using Moq;
 
 namespace DfE.GIAP.SharedTests.Common;
 

@@ -47,7 +47,7 @@ public sealed class AzureIndexEntityWithPupilTypeToPupilMapperTests
         Assert.True(result.IsOfPupilType(PupilType.NationalPupilDatabase));
         Assert.Equal("John", result.Forename);
         Assert.Equal("Doe", result.Surname);
-        Assert.Equal("2010-01-01", result.DateOfBirth); // DateOfBirth.ToString() from VO
+        Assert.Equal(new DateTime(2010, 1, 1), result.TryParseDateOfBirth());
         Assert.Equal("M", result.Sex);
         Assert.Equal(123, result.LocalAuthorityCode);
     }
@@ -101,8 +101,7 @@ public sealed class AzureIndexEntityWithPupilTypeToPupilMapperTests
         Pupil result = sut.Map(input);
 
         // Assert
-        Assert.False(result.HasDateOfBirth);
-        Assert.Equal(string.Empty, result.DateOfBirth);
+        Assert.Null(result.TryParseDateOfBirth());
     }
 
     [Fact]

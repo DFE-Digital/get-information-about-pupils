@@ -173,11 +173,8 @@ public sealed class PupilTests
             .WithDateOfBirth(null)
             .Build();
 
-        // Act
-        string result = pupil.DateOfBirth;
-
-        // Assert
-        Assert.Equal(string.Empty, result);
+        // Act Assert
+        Assert.Null(pupil.TryParseDateOfBirth());
     }
 
     [Fact]
@@ -191,28 +188,8 @@ public sealed class PupilTests
             .WithDateOfBirth(dob)
             .Build();
 
-        // Act
-        string result = pupil.DateOfBirth;
-
-        // Assert
-        Assert.Equal(dob.ToString("yyyy-MM-dd"), result);
-    }
-
-    [Fact]
-    public void HasDateOfBirth_ReturnsTrue_WhenDateOfBirthIsSet()
-    {
-        // Arrange
-        UniquePupilNumber upn = UniquePupilNumberTestDoubles.Generate();
-
-        Pupil pupil = PupilBuilder.CreateBuilder(upn)
-            .WithDateOfBirth(DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10))
-            .Build();
-
-        // Act
-        bool result = pupil.HasDateOfBirth;
-
-        // Assert
-        Assert.True(result);
+        // Act Assert
+        Assert.Equal(dob, pupil.TryParseDateOfBirth());
     }
 
 

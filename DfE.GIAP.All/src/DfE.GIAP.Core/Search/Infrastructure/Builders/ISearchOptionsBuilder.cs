@@ -1,7 +1,7 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.Builders;
 

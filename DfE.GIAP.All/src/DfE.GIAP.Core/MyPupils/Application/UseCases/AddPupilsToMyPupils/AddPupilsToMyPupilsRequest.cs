@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
-
-namespace DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 public record AddPupilsToMyPupilsRequest : IUseCaseRequest
 {
     public AddPupilsToMyPupilsRequest(

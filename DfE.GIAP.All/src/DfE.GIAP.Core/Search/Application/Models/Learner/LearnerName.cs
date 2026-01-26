@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-
-namespace DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner;
 
 /// <summary>
 /// Represents a learner's name as a domain value object.

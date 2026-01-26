@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 

@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Application.Repositories;
 
-namespace DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLogin;
+namespace DfE.GIAP.Core.Users.Application.UseCases.UpdateLastLoggedIn;
 
 /// <summary>
 /// Handles the use case for updating the "Last Logged In" timestamp of a user.

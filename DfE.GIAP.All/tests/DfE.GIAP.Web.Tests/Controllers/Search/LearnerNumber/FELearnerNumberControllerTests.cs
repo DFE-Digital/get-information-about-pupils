@@ -4,11 +4,10 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
 using DfE.GIAP.Domain.Models.Common;
@@ -28,10 +27,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -99,7 +96,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult? viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
@@ -276,7 +273,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult? viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
@@ -359,11 +356,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         _mockSelectionManager.Received().AddAll(
             Arg.Is<IEnumerable<string>>(l => l.SequenceEqual(new List<string> { "6424316654" })));
@@ -387,11 +384,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult? viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(Messages.Search.Errors.EnterULNs, model.SearchBoxErrorMessage);
     }
@@ -422,7 +419,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Single(model.Invalid);
         Assert.Equal(2, model.Learners.Count());
@@ -455,7 +452,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Single(model.NotFound);
         Assert.Equal(2, model.Learners.Count());
@@ -483,11 +480,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult? viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Single(model.Duplicates);
         Assert.Equal(2, model.Learners.Count());
@@ -521,11 +518,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
 
         // Ensure call to clear selection manager has been called on reset.
@@ -609,11 +606,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
 
         // Ensure the learner number is still not present and we get no learners by default.
@@ -651,11 +648,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(0, model.Total);
     }
@@ -687,11 +684,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(2, model.Learners.ToList().Count);
     }
@@ -723,11 +720,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(1, model.PageNumber);
@@ -773,7 +770,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         model.Learners.AssertSelected(false);
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
@@ -819,7 +816,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
@@ -857,11 +854,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(_paginatedResultsFake.GetUlns(), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
@@ -915,11 +912,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
@@ -953,7 +950,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
@@ -991,11 +988,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult? viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
@@ -1141,11 +1138,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        
+
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(SecurityHelper.SanitizeText(_paginatedResultsFake.GetUlns()), model.LearnerNumber);
         Assert.Equal(0, model.PageNumber);
@@ -1437,7 +1434,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         // assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        
+
         Assert.Equal(Global.DownloadNPDOptionsView, viewResult.ViewName);
         Assert.Equal(model.SelectedPupils, joinedSelectedPupils);
         Assert.True(model.SelectedPupilsCount == ulns.Length);
@@ -1486,72 +1483,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         Assert.Equal(Messages.Downloads.Errors.NoDataForSelectedPupils, sut.TempData["ErrorDetails"]);
     }
 
-    [Fact]
-    public async Task DownloadSelectedUlnDatabaseData_redirects_to_error_page_if_download_null()
-    {
-        string[] ulns = _paginatedResultsFake.GetUlns().FormatLearnerNumbers();
-        string joinedSelectedPupils = string.Join(',', ulns);
-
-        LearnerDownloadViewModel inputDownloadModel = new()
-        {
-            SelectedPupils = joinedSelectedPupils,
-            SelectedPupilsCount = ulns.Length,
-            SelectedDownloadOptions = [],
-            DownloadFileType = DownloadFileType.CSV
-        };
-
-        FELearnerNumberController sut = GetController();
-
-        // act
-        IActionResult result = await sut.DownloadSelectedUlnDatabaseData(inputDownloadModel);
-
-        // assert
-        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-
-        Assert.Equal(Routes.Application.Error, redirectResult.ActionName);
-        Assert.Equal(Routes.Application.Home, redirectResult.ControllerName);
-    }
-
-    [Fact]
-    public async Task DownloadSelectedUlnDatabaseData_returns_data()
-    {
-        string[] ulns = _paginatedResultsFake.GetUlns().FormatLearnerNumbers();
-        string joinedSelectedPupils = string.Join(',', ulns);
-
-        LearnerDownloadViewModel inputDownloadModel = new()
-        {
-            SelectedPupils = joinedSelectedPupils,
-            SelectedPupilsCount = ulns.Length,
-            SelectedDownloadOptions = [],
-            DownloadFileType = DownloadFileType.CSV
-        };
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        FELearnerNumberController sut = GetController();
-        sut.TempData = tempData;
-
-        _mockDownloadService.GetFECSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        // act
-        IActionResult result = await sut.DownloadSelectedUlnDatabaseData(inputDownloadModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
 
     private static void AssertAbstractValues(FELearnerNumberController controller, LearnerNumberSearchViewModel model)
     {
@@ -1594,6 +1525,11 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
             .ReturnsAsync(response);
 
+        DownloadPupilDataResponse downloadPupilDataResponse = new();
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(downloadPupilDataResponse);
+
         IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
 
         Mock<IMapper<(string SortField, string SortDirection), SortOrder>> mockMapper = new();
@@ -1611,7 +1547,8 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockSelectionManager,
             _mockAppOptions,
             mockEventLogger.Object,
-            mockGetAvailableDatasetsForPupilsUseCase.Object)
+            mockGetAvailableDatasetsForPupilsUseCase.Object,
+            mockDownloadPupilDataUseCase.Object)
         {
             ControllerContext = context
         };
