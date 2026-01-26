@@ -295,14 +295,4 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     {
         return await NationalPupilDatabase(model, model.PageNumber, this.HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection), true);
     }
-
-    protected override bool ValidateLearnerNumber(string learnerNumber)
-    {
-        return ValidationHelper.IsValidUpn(learnerNumber);
-    }
-
-    protected override string GenerateValidationMessage()
-    {
-        return PupilHelper.GenerateValidationMessageUpnSearch(ModelState);
-    }
 }
