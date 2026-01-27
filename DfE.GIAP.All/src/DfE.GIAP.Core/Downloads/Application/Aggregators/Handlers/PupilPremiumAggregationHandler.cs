@@ -33,12 +33,9 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
         foreach (PupilPremiumPupil pupil in pupils)
         {
             if (selectedDatasets.Contains(Dataset.PP) && pupil.HasPupilPremiumData)
-            {
                 collection.PupilPremium.AddRange(_ppMapper.Map(pupil));
-            }
         }
 
         return collection;
     }
-
 }
