@@ -5,12 +5,14 @@ using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
-using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
@@ -27,15 +29,24 @@ public class PupilPremiumLearnerNumberController : Controller
     private const int PAGESIZE = 20;
     private const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     private const string TOTAL_SEARCH_RESULTS = "totalSearch";
+
     private readonly ILogger<PupilPremiumLearnerNumberController> _logger;
-    private readonly IPaginatedSearchService _paginatedSearch;
+
+    private readonly IUseCase<
+        PupilPremiumSearchRequest,
+        PupilPremiumSearchResponse> _searchUseCase;
+
+    private readonly IMapper<
+        PupilPremiumLearnerNumericSearchMappingContext,
+        LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
+
     private readonly ISelectionManager _selectionManager;
     private readonly IOptions<AzureAppSettings> _azureAppSettings;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IJsonSerializer _jsonSerializer;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
+    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
-    public string PageHeading => ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
     public string SearchAction => nameof(PupilPremium);
     public string FullTextLearnerSearchController => Global.PPNonUpnController;
     public string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
@@ -47,7 +58,13 @@ public class PupilPremiumLearnerNumberController : Controller
 
     public PupilPremiumLearnerNumberController(
         ILogger<PupilPremiumLearnerNumberController> logger,
-        IPaginatedSearchService paginatedSearch,
+        IUseCase<
+            PupilPremiumSearchRequest,
+            PupilPremiumSearchResponse> searchUseCase,
+        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        IMapper<
+            PupilPremiumLearnerNumericSearchMappingContext,
+            LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -57,8 +74,8 @@ public class PupilPremiumLearnerNumberController : Controller
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
 
-        ArgumentNullException.ThrowIfNull(paginatedSearch);
-        _paginatedSearch = paginatedSearch;
+        ArgumentNullException.ThrowIfNull(searchUseCase);
+        _searchUseCase = searchUseCase;
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
@@ -75,6 +92,12 @@ public class PupilPremiumLearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
         _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
+
+        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
+        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+
+        ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
+        _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
     }
 
 
@@ -377,30 +400,39 @@ public class PupilPremiumLearnerNumberController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        PaginatedResponse result = await _paginatedSearch.GetPage(
-            searchText,
-            null,
-            first ? _azureAppSettings.Value.MaximumUPNsPerSearch : PAGESIZE,
-            pageNumber,
-            indexType,
-            first ? AzureSearchQueryType.Numbers : AzureSearchQueryType.Id,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            model.SortField,
-            model.SortDirection
-            );
+        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
+            new SortOrderRequest(
+                searchKey: "pupil-premium",
+                sortOrder: (model.SortField, model.SortDirection)));
 
-        model.Total = result.Count ?? result.Learners.Count;
+        IList<FilterRequest> filterRequests =
+        [
+            new FilterRequest(
+                filterName: "UPN",
+                filterValues: learnerNumberArray)
+        ];
 
-        List<string> idList = SetLearnerNumberIds(result);
+        PupilPremiumSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
+            new PupilPremiumSearchRequest(
+                searchKeywords: string.Join(" AND ", learnerNumberArray),
+                filterRequests: filterRequests,
+                sortOrder: sortOrder,
+                model.Offset));
+
+        LearnerNumberSearchViewModel result =
+            _learnerNumericSearchResponseToViewModelMapper.Map(
+                PupilPremiumLearnerNumericSearchMappingContext.Create(model, searchResponse));
+
+        List<string> idList = SetLearnerNumberIds(result.Learners);
 
         string[] combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
 
         if (first)
         {
-            model.LearnerIdSearchResult = result.GetLearnerIdsAsString();
+            model.LearnerIdSearchResult = GetLearnerIdsAsString(result.Learners);
 
-            HashSet<string> learnerNumberIdSet = result.GetLearnerNumberIds();
-            HashSet<string> learnerNumberSet = result.GetLearnerNumbers();
+            HashSet<string> learnerNumberIdSet = GetLearnerNumberIds(result.Learners);
+            HashSet<string> learnerNumberSet = GetLearnerNumberIds(result.Learners);
             model.LearnerNumberIds = string.Join("\n", learnerNumberIdSet);
 
             IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet).Except(learnerNumberSet);
@@ -462,7 +494,7 @@ public class PupilPremiumLearnerNumberController : Controller
 
     private LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
     {
-        model.PageHeading = PageHeading;
+        model.PageHeading = ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
         model.LearnerNumberLabel = Global.LearnerNumberLabel;
         model.ShowLocalAuthority = true;
         model.ShowMiddleNames = true;
@@ -504,10 +536,14 @@ public class PupilPremiumLearnerNumberController : Controller
         model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
     }
 
-    private static List<string> SetLearnerNumberIds(PaginatedResponse result)
+    private static string GetLearnerIdsAsString(
+    IEnumerable<Domain.Search.Learner.Learner> learners) =>
+        string.Join(",", learners.Select(learner => learner.Id));
+
+    private static List<string> SetLearnerNumberIds(IEnumerable<Learner> learners)
     {
         List<string> idList = [];
-        foreach (Learner learner in result.Learners)
+        foreach (Learner learner in learners)
         {
             switch (learner.LearnerNumber)
             {
@@ -525,6 +561,20 @@ public class PupilPremiumLearnerNumberController : Controller
 
         return idList;
     }
+
+    private static HashSet<string> GetLearnerNumberIds(
+    IEnumerable<Learner> learners)
+    {
+        HashSet<string> learnerNumberIds = [];
+
+        foreach (Learner learner in learners)
+        {
+            learnerNumberIds.Add(learner.LearnerNumberId);
+        }
+
+        return learnerNumberIds;
+    }
+
 
     // Stores sorting data into session to make it reachable on returnToSearch
     private void SetSortingDataIntoSession(string sortField, string sortDirection)

@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
 using DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 using FluentAssertions;
 
@@ -16,8 +16,7 @@ public class SearchByKeywordRequestTests
         SortOrder sortOrder = SortOrderTestDouble.Stub();
 
         // act
-        SearchRequest request = new(
-            searchIndexKey: "stubIndexKey",
+        FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
             filterRequests: filterRequests,
             sortOrder: sortOrder);
@@ -43,8 +42,7 @@ public class SearchByKeywordRequestTests
         SortOrder sortOrder = SortOrderTestDouble.Stub();
 
         // act
-        SearchRequest request = new(
-            searchIndexKey: "stubIndexKey",
+        FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
             sortOrder: sortOrder);
 
@@ -61,8 +59,7 @@ public class SearchByKeywordRequestTests
         const int Offset = 10;
 
         // act
-        SearchRequest request = new(
-            searchIndexKey: "stubIndexKey",
+        FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
             sortOrder: sortOrder,
             offset: Offset);
@@ -77,8 +74,7 @@ public class SearchByKeywordRequestTests
     {
         // act
         SortOrder sortOrder = SortOrderTestDouble.Stub();
-        SearchRequest request = new(
-            searchIndexKey: "stubIndexKey",
+        FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
             sortOrder: sortOrder);
 

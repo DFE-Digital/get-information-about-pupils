@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using FluentAssertions;
-using Model = DfE.GIAP.Core.Search.Application.Models.Learner;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Learner;
 
@@ -24,9 +24,9 @@ public sealed class LearnerSearchResultTests
     public void Properties_CanBeInitializedViaObjectInitializer()
     {
         // arrange
-        Learners learners = new([
-            new Model.Learner(
-                new LearnerIdentifier("1234567890"),
+        FurtherEducationLearners learners = new([
+            new FurtherEducationLearner(
+                new FurtherEducationLearnerIdentifier("1234567890"),
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),

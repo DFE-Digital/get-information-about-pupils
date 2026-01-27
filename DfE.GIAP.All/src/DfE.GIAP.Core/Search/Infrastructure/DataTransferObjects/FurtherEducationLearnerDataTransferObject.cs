@@ -4,7 +4,7 @@
 /// Data Transfer Object representing a pupil in the Further Education search index.
 /// This model is used to deserialize results returned from Azure Cognitive Search.
 /// </summary>
-public class LearnerDataTransferObject
+public class FurtherEducationLearnerDataTransferObject
 {
     /// <summary>
     /// Gets or sets the Unique Learner Number (ULN) assigned to the pupil.

@@ -6,11 +6,12 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.UseCases;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.Options;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Core.Search.Infrastructure;
 using DfE.GIAP.Core.Search.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
@@ -48,12 +49,12 @@ public static class CompositionRoot
 
         // Register core search services and mappers.
         services
-            .AddScoped<ISearchServiceAdapter<Learners, SearchFacets>, AzureSearchServiceAdapter>()
+            .AddScoped<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>, AzureSearchServiceAdapter>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>()
-            .AddSingleton<IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners>, PageableSearchResultsToLearnerResultsMapper>()
-            .AddSingleton<IMapper<LearnerDataTransferObject, Learner>, SearchResultToLearnerMapper>()
+            .AddSingleton<IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>, PageableSearchResultsToLearnerResultsMapper>()
+            .AddSingleton<IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>, FurtherEducationSearchResultToLearnerMapper>()
             .AddSingleton<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>, AzureFacetResultToEstablishmentFacetsMapper>()
-            .AddScoped<IUseCase<SearchRequest, SearchResponse>, SearchUseCase>()
+            .AddScoped<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>, FurtherEducationSearchUseCase>()
             .AddScoped<SearchCollectionValuedFilterExpression>()
             .AddScoped<SearchByEqualityFilterExpression>();
 
@@ -85,14 +86,13 @@ public static class CompositionRoot
         services.AddAzureSearchFilterServices(configuration);
 
         // Bind search criteria configuration options.
-        services
-            .AddOptions<SearchCriteria>()
-            .Bind(configuration.GetSection(nameof(SearchCriteria)));
+        services.AddOptions<SearchCriteriaOptions>()
+            .Bind(configuration.GetSection(nameof(SearchCriteriaOptions)));
 
         // Bind the SortField configuration options.
         services
             .Configure<SortFieldOptions>(
-                configuration.GetSection("SortFields"));
+                configuration.GetSection(nameof(SortFieldOptions)));
 
         // Register strongly typed configuration instances.
         services.AddSingleton(serviceProvider =>

@@ -1,12 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
 /// <summary>
-/// Provides a test double for <see cref="Learner"/> used in unit tests.
+/// Provides a test double for <see cref="FurtherEducationLearner"/> used in unit tests.
 /// Generates realistic synthetic learner data using Bogus to support deterministic testing
 /// of search result mapping, filtering, and adapter behavior.
 /// </summary>
@@ -14,10 +15,10 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 public static class LearnerTestDouble
 {
     /// <summary>
-    /// Generates a fake <see cref="LearnerIdentifier"/> with a randomized ULN (Unique Learner Number).
+    /// Generates a fake <see cref="FurtherEducationLearnerIdentifier"/> with a randomized ULN (Unique Learner Number).
     /// Ensures numeric format consistency for downstream validation and traceability.
     /// </summary>
-    private static LearnerIdentifier FakeIdentifier(Faker faker) =>
+    private static FurtherEducationLearnerIdentifier FakeIdentifier(Faker faker) =>
         new(
             uniqueLearnerNumber: faker.Random.Int(1000000000, 2146999999).ToString());
 
@@ -40,15 +41,15 @@ public static class LearnerTestDouble
             gender: faker.PickRandom(Gender.Male, Gender.Female, Gender.Other));
 
     /// <summary>
-    /// Constructs a fully populated <see cref="Learner"/> instance using randomized data.
+    /// Constructs a fully populated <see cref="FurtherEducationLearner"/> instance using randomized data.
     /// Enables symbolic traceability and onboarding clarity for test scenarios involving learner entities.
     /// </summary>
-    public static Learner Fake()
+    public static FurtherEducationLearner Fake()
     {
         // Instantiate a Bogus faker for generating realistic fake data
         Faker faker = new();
 
-        LearnerIdentifier learnerIdentifier = FakeIdentifier(faker);
+        FurtherEducationLearnerIdentifier learnerIdentifier = FakeIdentifier(faker);
         LearnerName learnerName = FakeName(faker);
         LearnerCharacteristics learnerCharacteristics = FakeCharacteristics(faker);
 

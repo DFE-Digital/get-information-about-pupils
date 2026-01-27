@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
@@ -14,7 +14,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 public class SearchServiceAdapterTestDouble
 {
     // Shared mock instance for reuse across test scenarios
-    private readonly Mock<ISearchServiceAdapter<Learners, SearchFacets>> _mock = new();
+    private readonly Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> _mock = new();
 
     /// <summary>
     /// Configures the mock adapter to return a predefined <see cref="SearchResults{TResults, TFacets}"/> 
@@ -23,8 +23,8 @@ public class SearchServiceAdapterTestDouble
     /// </summary>
     /// <param name="searchResults">The mock search results to return.</param>
     /// <returns>A configured mock adapter instance for injection into test scenarios.</returns>
-    public Mock<ISearchServiceAdapter<Learners, SearchFacets>> MockFor(
-        SearchResults<Learners, SearchFacets> searchResults)
+    public Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> MockFor(
+        SearchResults<FurtherEducationLearners, SearchFacets> searchResults)
     {
         _mock
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))

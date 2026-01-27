@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using FluentAssertions;
 using Model = DfE.GIAP.Core.Search.Application.Models.Learner;
@@ -11,10 +12,10 @@ public sealed class SearchResultsTests
     public void Properties_CanBeInitializedViaObjectInitializer()
     {
         // arrange
-        Learners learners = new(new List<Model.Learner>
+        FurtherEducationLearners learners = new(new List<FurtherEducationLearner>
         {
             new(
-                new LearnerIdentifier("1234567890"),
+                new FurtherEducationLearnerIdentifier("1234567890"),
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
@@ -28,7 +29,7 @@ public sealed class SearchResultsTests
             });
 
         // act
-        SearchResults<Learners, SearchFacets> result =
+        SearchResults<FurtherEducationLearners, SearchFacets> result =
             new()
             {
                 Results = learners,
@@ -44,7 +45,7 @@ public sealed class SearchResultsTests
     public void Properties_WhenUninitialized_ShouldBeNull()
     {
         // act
-        SearchResults<Learners, SearchFacets> result = new();
+        SearchResults<FurtherEducationLearners, SearchFacets> result = new();
 
         // Assert
         result.Results.Should().BeNull();

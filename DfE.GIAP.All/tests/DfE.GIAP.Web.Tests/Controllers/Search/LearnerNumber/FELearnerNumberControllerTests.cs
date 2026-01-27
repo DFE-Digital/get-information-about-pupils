@@ -8,8 +8,8 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -37,25 +37,25 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<SearchRequest, SearchResponse>>();
+    private readonly IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> _mockUseCase =
+        Substitute.For<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>();
     private AzureAppSettings _mockAppSettings = new();
-    private readonly IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
-        Substitute.For<IMapper<LearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
+    private readonly IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
+        Substitute.For<IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
-        SearchResponse response =
+        FurtherEducationSearchResponse response =
             SearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<SearchRequest>()).Returns(response);
+            Arg.Any<FurtherEducationSearchRequest>()).Returns(response);
 
         _mockLearnerNumberSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerNumericSearchMappingContext>()).Returns(
+            Arg.Any<FurtherEducationLearnerNumericSearchMappingContext>()).Returns(
             new LearnerNumberSearchViewModel()
             {
                 Learners = _paginatedResultsFake.GetValidLearners().Learners

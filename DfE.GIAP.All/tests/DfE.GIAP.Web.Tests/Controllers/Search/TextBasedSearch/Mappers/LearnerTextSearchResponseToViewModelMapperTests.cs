@@ -1,8 +1,9 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
@@ -20,7 +21,7 @@ public class LearnerTextSearchResponseToViewModelMapperTests
     {
         // act/assert
         Assert.Throws<ArgumentNullException>(() =>
-            new LearnerTextSearchResponseToViewModelMapper(
+            new FurtherEducationLearnerTextSearchResponseToViewModelMapper(
                 null, FiltersMapperTestDouble.Mock().Object));
     }
 
@@ -29,7 +30,7 @@ public class LearnerTextSearchResponseToViewModelMapperTests
     {
         // act/assert
         Assert.Throws<ArgumentNullException>(() =>
-            new LearnerTextSearchResponseToViewModelMapper(
+            new FurtherEducationLearnerTextSearchResponseToViewModelMapper(
                 LearnerMapperTestDouble.Mock().Object, null));
     }
 
@@ -45,12 +46,12 @@ public class LearnerTextSearchResponseToViewModelMapperTests
         ];
 
         List<Domain.Search.Learner.Learner> domainLearners = DomainLearnersTestDouble.CreateLearnersStub(learnerFakes);
-        List<Core.Search.Application.Models.Learner.Learner> applicationModelLearners =
+        List<FurtherEducationLearner> applicationModelLearners =
             ApplicationModelLearnersTestDouble.CreateLearnersStub(learnerFakes);
 
-        SearchResponse response =
+        FurtherEducationSearchResponse response =
             SearchByKeyWordsResponseTestDouble.Create(
-                learners: new Learners([applicationModelLearners[0]]),
+                learners: new FurtherEducationLearners([applicationModelLearners[0]]),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
                 status: SearchResponseStatus.Success,
                 totalResults: 1);
@@ -60,7 +61,7 @@ public class LearnerTextSearchResponseToViewModelMapperTests
         Mock<IMapper<SearchFacets, List<FilterData>>> filtersMapper =
             FiltersMapperTestDouble.MockFor(response.FacetedResults!, filters);
 
-        Mock<IMapper<Core.Search.Application.Models.Learner.Learner, Domain.Search.Learner.Learner>> learnerMapper =
+        Mock<IMapper<FurtherEducationLearner, Domain.Search.Learner.Learner>> learnerMapper =
             LearnerMapperTestDouble.MockForMultiple(new[]
             {
                 (applicationModelLearners[0], domainLearners[0]),
@@ -72,10 +73,10 @@ public class LearnerTextSearchResponseToViewModelMapperTests
             PageSize = 1
         };
 
-        LearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext context =
-            LearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext.Create(model, response);
+        FurtherEducationLearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext context =
+            FurtherEducationLearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext.Create(model, response);
 
-        LearnerTextSearchResponseToViewModelMapper mapper = new(learnerMapper.Object, filtersMapper.Object);
+        FurtherEducationLearnerTextSearchResponseToViewModelMapper mapper = new(learnerMapper.Object, filtersMapper.Object);
 
         // act
         LearnerTextSearchViewModel result = mapper.Map(context);

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using DfE.GIAP.Core.UnitTests.Search.TestHarness;
@@ -33,14 +33,14 @@ public class CompositionRootTests : IClassFixture<ConfigBuilder>, IClassFixture<
     public async Task AddCognitiveSearchAdaptorServices_RegistersEverythingNeeded()
     {
         // arrange
-        ISearchServiceAdapter<Learners, SearchFacets> adapter =
-            _serviceProvider.GetRequiredService<ISearchServiceAdapter<Learners, SearchFacets>>();
+        ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> adapter =
+            _serviceProvider.GetRequiredService<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>>();
 
         SearchServiceAdapterRequest searchServiceAdapterRequest =
             SearchServiceAdapterRequestTestDouble.Stub();
 
         // act
-        SearchResults<Learners, SearchFacets> response =
+        SearchResults<FurtherEducationLearners, SearchFacets> response =
             await adapter.SearchAsync(searchServiceAdapterRequest);
 
         // assert

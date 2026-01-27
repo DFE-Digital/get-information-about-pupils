@@ -1,21 +1,22 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Domain.Search.Learner;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 
 /// <summary>
-/// Maps a domain-level <see cref="Core.Search.Application.Models.Learner.Learner"/> entity
+/// Maps a domain-level <see cref="Core.Search.Application.Models.Learner.FurtherEducation.FurtherEducationLearner"/> entity
 /// into a UI-facing <see cref="Learner"/> view model.
 /// Used in text-based search results for Further Education learners.
 /// </summary>
 public sealed class LearnerToViewModelMapper :
-    IMapper<Core.Search.Application.Models.Learner.Learner, Learner>
+    IMapper<FurtherEducationLearner, Learner>
 {
     /// <summary>
-    /// Converts a <see cref="Core.Search.Application.Models.Learner.Learner"/>
+    /// Converts a <see cref="Core.Search.Application.Models.Learner.FurtherEducation.FurtherEducationLearner"/>
     /// into a <see cref="Learner"/> view model.
     /// This bridges domain-layer entities with UI-facing representations,
     /// enabling clean separation between business logic and presentation.
@@ -25,7 +26,7 @@ public sealed class LearnerToViewModelMapper :
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="input"/> is null to prevent null dereferencing.
     /// </exception>
-    public Learner Map(Core.Search.Application.Models.Learner.Learner input)
+    public Learner Map(FurtherEducationLearner input)
     {
         // Defensive null check to ensure safe mapping
         ArgumentNullException.ThrowIfNull(input);

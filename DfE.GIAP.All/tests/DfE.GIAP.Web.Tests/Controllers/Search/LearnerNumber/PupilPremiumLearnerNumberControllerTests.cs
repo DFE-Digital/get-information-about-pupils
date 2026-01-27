@@ -8,14 +8,18 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -1340,7 +1344,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
     private static void AssertAbstractValues(PupilPremiumLearnerNumberController controller, LearnerNumberSearchViewModel model)
     {
-        Assert.Equal(controller.PageHeading, model.PageHeading);
+        Assert.Equal(ApplicationLabels.SearchPupilPremiumWithUpnPageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
         Assert.Equal(controller.SearchAction, model.SearchAction);
         Assert.Equal(controller.FullTextLearnerSearchController, model.FullTextLearnerSearchController);
@@ -1390,7 +1394,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         return new PupilPremiumLearnerNumberController(
             _mockLogger,
-            _mockPaginatedService,
+            new Mock<IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>>().Object,
+            MapperTestDoubles.Default<(string Field, string Direction), SortOrder>().Object,
+            MapperTestDoubles.Default<PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>().Object,
             _mockSelectionManager,
             _mockAppOptions,
             _addPupilsUseCaseMock,

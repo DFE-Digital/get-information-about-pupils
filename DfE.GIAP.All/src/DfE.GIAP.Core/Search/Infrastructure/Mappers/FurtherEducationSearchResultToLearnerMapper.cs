@@ -1,25 +1,26 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.Mappers;
 
 /// <summary>
-/// Maps a <see cref="LearnerDataTransferObject"/> data transfer object
-/// into a domain-level <see cref="Learner"/> model.
+/// Maps a <see cref="FurtherEducationLearnerDataTransferObject"/> data transfer object
+/// into a domain-level <see cref="FurtherEducationLearner"/> model.
 /// </summary>
-public sealed class SearchResultToLearnerMapper : IMapper<LearnerDataTransferObject, Learner>
+public sealed class FurtherEducationSearchResultToLearnerMapper : IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>
 {
     /// <summary>
-    /// Converts a <see cref="LearnerDataTransferObject"/> into a <see cref="Learner"/>.
+    /// Converts a <see cref="FurtherEducationLearnerDataTransferObject"/> into a <see cref="FurtherEducationLearner"/>.
     /// </summary>
     /// <param name="input">The DTO representing a Further Education pupil.</param>
     /// <returns>A mapped domain model representing the learner.</returns>
     /// <exception cref="ArgumentException">
     /// Thrown if <paramref name="input"/> contains null or empty required fields.
     /// </exception>
-    public Learner Map(LearnerDataTransferObject input)
+    public FurtherEducationLearner Map(FurtherEducationLearnerDataTransferObject input)
     {
         // Defensive null checks for required fields
         ArgumentNullException.ThrowIfNull(input);
@@ -29,8 +30,8 @@ public sealed class SearchResultToLearnerMapper : IMapper<LearnerDataTransferObj
         ArgumentNullException.ThrowIfNull(input.DOB);
 
         // Construct domain model using validated input
-        return new Learner(
-            new LearnerIdentifier(input.ULN),
+        return new FurtherEducationLearner(
+            new FurtherEducationLearnerIdentifier(input.ULN),
             new LearnerName(input.Forename, input.Surname),
             new LearnerCharacteristics(
                 input.DOB.Value,

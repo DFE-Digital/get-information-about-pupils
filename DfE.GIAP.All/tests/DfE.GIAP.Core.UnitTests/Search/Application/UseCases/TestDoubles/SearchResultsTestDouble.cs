@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+
 
 // Import model representing search result payload including facets
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -18,7 +19,7 @@ public static class SearchResultsTestDouble
     /// populated with synthetic learner results and facet data.
     /// Useful for simulating successful search responses in test scenarios.
     /// </summary>
-    public static SearchResults<Learners, SearchFacets> Stub() =>
+    public static SearchResults<FurtherEducationLearners, SearchFacets> Stub() =>
         new()
         {
             Results = LearnersTestDouble.Stub(),           // Populated learner results
@@ -29,7 +30,7 @@ public static class SearchResultsTestDouble
     /// Creates an empty <see cref="SearchResults{Learners, SearchFacets}"/> instance.
     /// Useful for testing fallback logic, empty state handling, and edge cases.
     /// </summary>
-    public static SearchResults<Learners, SearchFacets> StubWithNoResults() =>
+    public static SearchResults<FurtherEducationLearners, SearchFacets> StubWithNoResults() =>
         new()
         {
             Results = LearnersTestDouble.EmptyStub(),      // Unpopulated learner results

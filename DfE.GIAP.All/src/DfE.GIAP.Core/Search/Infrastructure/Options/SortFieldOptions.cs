@@ -10,5 +10,5 @@ public sealed class SortFieldOptions
     /// Gets or sets the list of allowed field names for sorting.
     /// These should match the field names defined in the Azure Search index schema.
     /// </summary>
-    public IReadOnlyList<string> ValidFields { get; init; } = [];
+    public Dictionary<string, IReadOnlyList<string>> SortFields { get; init; } = [];
 }

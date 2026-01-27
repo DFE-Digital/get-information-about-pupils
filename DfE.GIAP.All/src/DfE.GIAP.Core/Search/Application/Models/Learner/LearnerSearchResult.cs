@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.Search.Application.Models.Learner;
 
@@ -20,7 +21,7 @@ public sealed class LearnerSearchResult
     /// <summary>
     /// Gets the returned learner results, if any were found.
     /// </summary>
-    public Learners? LearnerResults { get; init; }
+    public FurtherEducationLearners? LearnerResults { get; init; }
 
     /// <summary>
     /// Gets the facet groupings returned from the search, used for aggregation or filtering context.

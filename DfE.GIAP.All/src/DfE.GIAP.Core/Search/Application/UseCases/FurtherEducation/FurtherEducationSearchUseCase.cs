@@ -1,21 +1,20 @@
-﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 
-namespace DfE.GIAP.Core.Search.Application.UseCases;
+namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 
 /// <summary>
 /// Use case responsible for executing a further education pupil search based on first name and/or surname.
 /// It delegates the search operation to a domain-specific adapter and returns structured results.
 /// </summary>
-public sealed class SearchUseCase :
-    IUseCase<SearchRequest, SearchResponse>
+public sealed class FurtherEducationSearchUseCase :
+    IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>
 {
     private readonly SearchCriteria _searchCriteria;
-    private readonly ISearchServiceAdapter<Learners, SearchFacets> _searchServiceAdapter;
+    private readonly ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> _searchServiceAdapter;
 
     /// <summary>
     /// Constructs a new instance of the use case with required dependencies.
@@ -23,9 +22,9 @@ public sealed class SearchUseCase :
     /// <param name="searchCriteria">Provides configuration for search fields and facets.</param>
     /// <param name="searchServiceAdapter">Adapter to interact with Azure Cognitive Search using domain models.</param>
     /// <exception cref="ArgumentNullException">Thrown if either dependency is null.</exception>
-    public SearchUseCase(
+    public FurtherEducationSearchUseCase(
         SearchCriteria searchCriteria,
-        ISearchServiceAdapter<Learners, SearchFacets> searchServiceAdapter)
+        ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> searchServiceAdapter)
     {
         _searchCriteria = searchCriteria ??
             throw new ArgumentNullException(nameof(searchCriteria));
@@ -42,8 +41,8 @@ public sealed class SearchUseCase :
     /// A structured response containing matched pupil records, faceted data, total results count,
     /// or an appropriate error status.
     /// </returns>
-    public async Task<SearchResponse> HandleRequestAsync(
-        SearchRequest request)
+    public async Task<FurtherEducationSearchResponse> HandleRequestAsync(
+        FurtherEducationSearchRequest request)
     {
         if (request == null || string.IsNullOrWhiteSpace(request.SearchKeywords))
         {
@@ -52,10 +51,10 @@ public sealed class SearchUseCase :
 
         try
         {
-            SearchResults<Learners, SearchFacets>? searchResults =
+            SearchResults<FurtherEducationLearners, SearchFacets>? searchResults =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
-                        request.SearchIndexKey,
+                        searchIndexKey: "further-education",
                         request.SearchKeywords,
                         _searchCriteria.SearchFields,
                         request.SortOrder,
@@ -64,11 +63,10 @@ public sealed class SearchUseCase :
                         request.Offset));
 
             return searchResults?.Results?.Count > 0
-                ? new(SearchResponseStatus.Success)
+                ? new(SearchResponseStatus.Success, searchResults.Results.Count)
                 {
                     LearnerSearchResults = searchResults.Results,
-                    FacetedResults = searchResults.FacetResults,
-                    TotalNumberOfResults = searchResults.Results.Count
+                    FacetedResults = searchResults.FacetResults
                 }
                 : new(SearchResponseStatus.NoResultsFound);
 

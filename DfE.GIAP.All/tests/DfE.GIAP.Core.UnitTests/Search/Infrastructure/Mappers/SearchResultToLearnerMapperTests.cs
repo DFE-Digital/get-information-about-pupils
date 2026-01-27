@@ -1,5 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -9,22 +10,22 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.Mappers;
 
 public sealed class SearchResultToLearnerMapperTests
 {
-    private readonly IMapper<LearnerDataTransferObject, Learner> _searchResultToLearnerMapper;
+    private readonly IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> _searchResultToLearnerMapper;
 
     public SearchResultToLearnerMapperTests()
     {
-        _searchResultToLearnerMapper = new SearchResultToLearnerMapper();
+        _searchResultToLearnerMapper = new FurtherEducationSearchResultToLearnerMapper();
     }
 
     [Fact]
     public void Map_WithValidSearchResult_ReturnsConfiguredLearner()
     {
         // arrange
-        LearnerDataTransferObject learnerDataTransferObject =
+        FurtherEducationLearnerDataTransferObject learnerDataTransferObject =
             LearnerDataTransferObjectTestDouble.Fake();
 
         // act
-        Learner? result = _searchResultToLearnerMapper.Map(learnerDataTransferObject);
+        FurtherEducationLearner? result = _searchResultToLearnerMapper.Map(learnerDataTransferObject);
 
         // assert
         result.Should().NotBeNull();
@@ -45,7 +46,7 @@ public sealed class SearchResultToLearnerMapperTests
     public void Map_WithNullSearchResult_ThrowsExpectedArgumentNullException()
     {
         // act.
-        LearnerDataTransferObject? learnerDataTransferObject = null!;
+        FurtherEducationLearnerDataTransferObject? learnerDataTransferObject = null!;
 
         // act.
         _searchResultToLearnerMapper
@@ -59,7 +60,7 @@ public sealed class SearchResultToLearnerMapperTests
     public void Map_WithNullULN_ThrowsExpectedArgumentException()
     {
         // arrange
-        LearnerDataTransferObject learnerDataTransferObject =
+        FurtherEducationLearnerDataTransferObject learnerDataTransferObject =
             LearnerDataTransferObjectTestDouble.Fake();
 
         learnerDataTransferObject.ULN = null!;
@@ -77,7 +78,7 @@ public sealed class SearchResultToLearnerMapperTests
     public void Map_WithNullForename_ThrowsExpectedArgumentException()
     {
         // arrange
-        LearnerDataTransferObject learnerDataTransferObject =
+        FurtherEducationLearnerDataTransferObject learnerDataTransferObject =
             LearnerDataTransferObjectTestDouble.Fake();
 
         learnerDataTransferObject.Forename = null!;
@@ -95,7 +96,7 @@ public sealed class SearchResultToLearnerMapperTests
     public void Map_WithNullSurname_ThrowsExpectedArgumentException()
     {
         // arrange
-        LearnerDataTransferObject learnerDataTransferObject =
+        FurtherEducationLearnerDataTransferObject learnerDataTransferObject =
             LearnerDataTransferObjectTestDouble.Fake();
 
         learnerDataTransferObject.Surname = null!;
@@ -113,7 +114,7 @@ public sealed class SearchResultToLearnerMapperTests
     public void Map_WithNullDateOfBirth_ThrowsExpectedArgumentException()
     {
         // arrange
-        LearnerDataTransferObject learnerDataTransferObject =
+        FurtherEducationLearnerDataTransferObject learnerDataTransferObject =
             LearnerDataTransferObjectTestDouble.Fake();
 
         learnerDataTransferObject.DOB = null!;

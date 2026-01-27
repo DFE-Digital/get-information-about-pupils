@@ -1,10 +1,10 @@
-﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 
 /// <summary>
 /// Represents a learner in the Further Education domain.
 /// Encapsulates identity, name, and core characteristics.
 /// </summary>
-public sealed class Learner : Entity<LearnerIdentifier>
+public sealed class FurtherEducationLearner : Entity<FurtherEducationLearnerIdentifier>
 {
     /// <summary>
     /// Gets the learner's full name.
@@ -17,7 +17,7 @@ public sealed class Learner : Entity<LearnerIdentifier>
     public LearnerCharacteristics Characteristics { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Learner"/> class.
+    /// Initializes a new instance of the <see cref="FurtherEducationLearner"/> class.
     /// </summary>
     /// <param name="learnerIdentifier">The unique identifier for the learner.</param>
     /// <param name="name">The learner's name.</param>
@@ -25,8 +25,8 @@ public sealed class Learner : Entity<LearnerIdentifier>
     /// <exception cref="ArgumentNullException">
     /// Thrown if <paramref name="name"/> or <paramref name="learnerCharacteristics"/> is null.
     /// </exception>
-    public Learner(
-        LearnerIdentifier learnerIdentifier,
+    public FurtherEducationLearner(
+        FurtherEducationLearnerIdentifier learnerIdentifier,
         LearnerName name,
         LearnerCharacteristics learnerCharacteristics) : base(learnerIdentifier)
     {

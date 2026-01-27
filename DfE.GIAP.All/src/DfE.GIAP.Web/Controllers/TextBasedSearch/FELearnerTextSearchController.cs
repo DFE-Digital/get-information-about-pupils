@@ -10,8 +10,8 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
@@ -25,7 +25,7 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 
 namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
@@ -52,8 +52,8 @@ public class FELearnerTextSearchController : Controller
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly AzureAppSettings _appSettings;
     private readonly IUseCase<
-        SearchRequest,
-        SearchResponse> _furtherEducationSearchUseCase;
+        FurtherEducationSearchRequest,
+        FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         LearnerTextSearchMappingContext,
@@ -72,8 +72,8 @@ public class FELearnerTextSearchController : Controller
     public FELearnerTextSearchController(
         ISessionProvider sessionProvider,
         IUseCase<
-            SearchRequest,
-            SearchResponse> furtherEducationSearchUseCase,
+            FurtherEducationSearchRequest,
+            FurtherEducationSearchResponse> furtherEducationSearchUseCase,
         IMapper<
             LearnerTextSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
@@ -353,14 +353,15 @@ public class FELearnerTextSearchController : Controller
     [NonAction]
     public async Task<IActionResult> Search(bool? returnToSearch)
     {
-        LearnerTextSearchViewModel model = new();
+        LearnerTextSearchViewModel model = new()
+        {
+            LearnerNumberLabel = LearnerNumberLabel,
+            ShowMiddleNames = ShowMiddleNames
+        };
 
         PopulatePageText(model);
         PopulateNavigation(model);
-        model.LearnerNumberLabel = LearnerNumberLabel;
-
-        model.ShowMiddleNames = ShowMiddleNames;
-
+        
         if (returnToSearch ?? false)
         {
             if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
@@ -692,10 +693,9 @@ public class FELearnerTextSearchController : Controller
         SortOrder sortOrder =
             _sortOrderViewModelToRequestMapper.Map((sortField, sortDirection));
 
-        SearchResponse searchResponse =
+        FurtherEducationSearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
-                new SearchRequest(
-                    searchIndexKey: "further-education",
+                new FurtherEducationSearchRequest(
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,

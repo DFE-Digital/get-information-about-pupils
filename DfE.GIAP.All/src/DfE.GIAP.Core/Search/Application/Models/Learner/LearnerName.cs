@@ -12,6 +12,11 @@ public sealed class LearnerName : ValueObject<LearnerName>
     public string FirstName { get; }
 
     /// <summary>
+    /// Gets the learner's middle name.
+    /// </summary>
+    public string MiddleName { get; }
+
+    /// <summary>
     /// Gets the learner's surname.
     /// </summary>
     public string Surname { get; }
@@ -24,15 +29,23 @@ public sealed class LearnerName : ValueObject<LearnerName>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="firstName"/> or <paramref name="surname"/> is null or whitespace.
     /// </exception>
-    public LearnerName(string firstName, string surname)
+    public LearnerName(string firstName, string surname) : this(firstName, string.Empty, surname)
     {
-        if (string.IsNullOrWhiteSpace(firstName))
-            throw new ArgumentException("The Learner's first name field is required.");
-        if (string.IsNullOrWhiteSpace(surname))
-            throw new ArgumentException("The Learner's surname field is required.");
 
+    }
+
+    public LearnerName(string firstName, string middleName, string surname)
+    {
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
         FirstName = firstName;
+
+        ArgumentException.ThrowIfNullOrWhiteSpace(surname);
         Surname = surname;
+
+        MiddleName =
+            string.IsNullOrWhiteSpace(middleName) ?
+                string.Empty : middleName;
     }
 
     /// <summary>
@@ -44,6 +57,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return FirstName;
+        yield return MiddleName;
         yield return Surname;
     }
 }

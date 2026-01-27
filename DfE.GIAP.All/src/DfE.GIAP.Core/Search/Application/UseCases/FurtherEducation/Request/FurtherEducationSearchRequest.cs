@@ -1,17 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 
-namespace DfE.GIAP.Core.Search.Application.UseCases.Request;
+namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
 
 /// <summary>
 /// Represents a search request for search querying configured indexes,
 /// optionally scoped with filters and offset for pagination.
 /// </summary>
-public sealed class SearchRequest
-    : IUseCaseRequest<SearchResponse>
+public sealed class FurtherEducationSearchRequest : IUseCaseRequest<FurtherEducationSearchResponse>
 {
     /// <summary>
     /// Initializes a basic search request with keyword(s) and optional offset.
@@ -19,21 +17,14 @@ public sealed class SearchRequest
     /// <param name="searchKeywords">The keyword(s) used to query data.</param>
     /// <param name="offset">Offset for pagination (defaults to 0).</param>
     /// <exception cref="ArgumentException">Thrown if searchKeyword is null or empty.</exception>
-    public SearchRequest(string searchIndexKey, string searchKeywords, SortOrder sortOrder, int offset = 0)
+    public FurtherEducationSearchRequest(string searchKeywords, SortOrder sortOrder, int offset = 0)
     {
-        if (string.IsNullOrWhiteSpace(searchIndexKey))
-        {
-            throw new ArgumentException("SearchIndexKey must not be null or empty.", nameof(searchIndexKey));
-        }
-
-
         if (string.IsNullOrWhiteSpace(searchKeywords))
         {
             throw new ArgumentException(
                 "Search keyword must not be null or empty.", nameof(searchKeywords));
         }
 
-        SearchIndexKey = searchIndexKey;
         SearchKeywords = searchKeywords;
         SortOrder = sortOrder ?? throw new ArgumentNullException(nameof(sortOrder));
         Offset = offset;
@@ -45,18 +36,15 @@ public sealed class SearchRequest
     /// <param name="searchKeywords">The search keyword(s).</param>
     /// <param name="filterRequests">A list of filter criteria.</param>
     /// <param name="offset">Offset for pagination (defaults to 0).</param>
-    public SearchRequest(
-        string searchIndexKey,
+    public FurtherEducationSearchRequest(
         string searchKeywords,
         IList<FilterRequest> filterRequests,
         SortOrder sortOrder,
-        int offset = 0) : this(searchIndexKey, searchKeywords, sortOrder, offset)
+        int offset = 0) : this(searchKeywords, sortOrder, offset)
     {
         FilterRequests = filterRequests ??
             throw new ArgumentNullException(nameof(filterRequests));
     }
-
-    public string SearchIndexKey { get; }
 
     /// <summary>
     /// The keyword(s) used to search query data.

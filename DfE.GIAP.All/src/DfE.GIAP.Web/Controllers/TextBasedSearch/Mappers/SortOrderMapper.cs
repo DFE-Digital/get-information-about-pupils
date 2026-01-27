@@ -9,9 +9,9 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 /// Maps a tuple of (field, direction) into a validated <see cref="SortOrder"/> instance.
 /// Used to translate incoming sort parameters into Azure Search-compatible sort expressions.
 /// </summary>
-public class SortOrderMapper : IMapper<(string Field, string Direction), SortOrder>
+public class SortOrderMapper : IMapper<SortOrderRequest, SortOrder>
 {
-    private readonly IReadOnlyList<string> _sortFieldOptions;
+    private readonly SortFieldOptions _sortFieldOptions;
 
     /// <summary>
     /// Initializes a new instance of <see cref="SortOrderMapper"/>, injecting configured sort field options.
@@ -21,8 +21,9 @@ public class SortOrderMapper : IMapper<(string Field, string Direction), SortOrd
     /// </param>
     public SortOrderMapper(IOptions<SortFieldOptions> options)
     {
-        _sortFieldOptions = options?.Value?.ValidFields
-            ?? throw new ArgumentNullException(nameof(options), "Sort field options must be provided.");
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Value);
+        _sortFieldOptions = options.Value;
     }
 
     /// <summary>
@@ -31,12 +32,12 @@ public class SortOrderMapper : IMapper<(string Field, string Direction), SortOrd
     /// </summary>
     /// <param name="input">Tuple containing the sort field and direction.</param>
     /// <returns>A validated <see cref="SortOrder"/> object.</returns>
-    public SortOrder Map((string Field, string Direction) input)
+    public SortOrder Map(SortOrderRequest input)
     {
         const string DefaultSortField = "search.score()";
         const string DefaultSortDirection = "desc";
 
-        (string field, string direction) = input;
+        (string field, string direction) = input.SortOrder;
 
         if (string.IsNullOrEmpty(field) && string.IsNullOrEmpty(direction))
         {
@@ -44,6 +45,11 @@ public class SortOrderMapper : IMapper<(string Field, string Direction), SortOrd
             direction = DefaultSortDirection;
         }
 
-        return SortOrder.Create(field, direction, _sortFieldOptions);
+        if (!_sortFieldOptions.SortFields.TryGetValue(input.SearchKey, out IReadOnlyList<string> validSortFields))
+        {
+            throw new ArgumentException($"Unable to find valid sort fields for the provided search key: {input.SearchKey}.", nameof(input));
+        }
+
+        return SortOrder.Create(field, direction, validSortFields);
     }
 }

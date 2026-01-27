@@ -1,10 +1,10 @@
-﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 
 /// <summary>
 /// Represents a learner's unique identifier (ULN) as a value object.
 /// Ensures the ULN is a valid 10-digit integer.
 /// </summary>
-public class LearnerIdentifier : ValueObject<LearnerIdentifier>
+public sealed class FurtherEducationLearnerIdentifier : ValueObject<FurtherEducationLearnerIdentifier>
 {
     /// <summary>
     /// Gets the parsed Unique Learner Number (ULN) as an integer.
@@ -12,14 +12,14 @@ public class LearnerIdentifier : ValueObject<LearnerIdentifier>
     public long UniqueLearnerNumber { get; }
 
     /// <summary>
-    /// Constructs a new <see cref="LearnerIdentifier"/> from a string input.
+    /// Constructs a new <see cref="FurtherEducationLearnerIdentifier"/> from a string input.
     /// Validates that the input is a non-null, 10-digit numeric string.
     /// </summary>
     /// <param name="uniqueLearnerNumber">The ULN string to validate and parse.</param>
     /// <exception cref="ArgumentException">
     /// Thrown when the input is null, not 10 digits, or not numeric.
     /// </exception>
-    public LearnerIdentifier(string uniqueLearnerNumber)
+    public FurtherEducationLearnerIdentifier(string uniqueLearnerNumber)
     {
         // Check for null, empty, or whitespace input.
         if (string.IsNullOrWhiteSpace(uniqueLearnerNumber))

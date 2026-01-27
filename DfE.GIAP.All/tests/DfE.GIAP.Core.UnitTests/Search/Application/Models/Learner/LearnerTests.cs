@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using FluentAssertions;
-using Model = DfE.GIAP.Core.Search.Application.Models.Learner;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Learner;
 
@@ -10,7 +10,7 @@ public sealed class LearnerTests
     public void Constructor_WithValidArguments_ShouldInitializeProperties()
     {
         // arrange
-        LearnerIdentifier identifier = new("1234567890");
+        FurtherEducationLearnerIdentifier identifier = new("1234567890");
         LearnerName name = new(firstName: "Alice", surname: "Smith");
         LearnerCharacteristics characteristics =
             new(
@@ -19,7 +19,7 @@ public sealed class LearnerTests
             );
 
         // act
-        Model.Learner learner = new(identifier, name, characteristics);
+        FurtherEducationLearner learner = new(identifier, name, characteristics);
 
         // Assert
         learner.Identifier.Should().Be(identifier);
@@ -31,7 +31,7 @@ public sealed class LearnerTests
     public void Constructor_WithNullName_ShouldThrowArgumentNullException()
     {
         // arrange
-        LearnerIdentifier identifier = new("1234567890");
+        FurtherEducationLearnerIdentifier identifier = new("1234567890");
         LearnerName? name = null;
         LearnerCharacteristics characteristics =
             new(
@@ -41,7 +41,7 @@ public sealed class LearnerTests
 
         // act
         Action act = () =>
-            new Model.Learner(identifier, name!, characteristics);
+            new FurtherEducationLearner(identifier, name!, characteristics);
 
         // Assert
         act.Should().Throw<ArgumentNullException>()
@@ -52,13 +52,13 @@ public sealed class LearnerTests
     public void Constructor_WithNullCharacteristics_ShouldThrowArgumentNullException()
     {
         // arrange
-        LearnerIdentifier identifier = new("1234567890");
+        FurtherEducationLearnerIdentifier identifier = new("1234567890");
         LearnerName name = new("Bob", "Jones");
         LearnerCharacteristics? characteristics = null;
 
         // act
         Action act = () =>
-            new Model.Learner(identifier, name, characteristics!);
+            new FurtherEducationLearner(identifier, name, characteristics!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>()

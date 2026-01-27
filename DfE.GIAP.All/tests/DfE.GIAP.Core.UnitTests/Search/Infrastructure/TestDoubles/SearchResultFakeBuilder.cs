@@ -1,12 +1,12 @@
 ﻿using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
 /// <summary>
 /// A fluent builder for creating fake <see cref="SearchResult{T}"/> collections
-/// containing <see cref="Learner"/> documents for use in unit tests.
+/// containing <see cref="FurtherEducationLearner"/> documents for use in unit tests.
 /// </summary>
 /// <remarks>
 /// This builder allows you to:
@@ -21,7 +21,7 @@ internal class SearchResultFakeBuilder
     /// <summary>
     /// Backing store for the search results being built.
     /// </summary>
-    private List<SearchResult<LearnerDataTransferObject>>? _searchResults;
+    private List<SearchResult<FurtherEducationLearnerDataTransferObject>>? _searchResults;
 
     /// <summary>
     /// Configures the builder to produce an empty search result set.
@@ -38,13 +38,13 @@ internal class SearchResultFakeBuilder
     /// </summary>
     /// <remarks>
     /// The number of results will be between 1 and 10, and each result will contain
-    /// a randomly generated <see cref="Learner"/> document from <see cref="LearnerTestDouble"/>.
+    /// a randomly generated <see cref="FurtherEducationLearner"/> document from <see cref="LearnerTestDouble"/>.
     /// </remarks>
     /// <returns>The current builder instance for fluent chaining.</returns>
     public SearchResultFakeBuilder WithSearchResults()
     {
         int amount = new Bogus.Faker().Random.Number(1, 10);
-        List<SearchResult<LearnerDataTransferObject>> searchResults = new(capacity: amount);
+        List<SearchResult<FurtherEducationLearnerDataTransferObject>> searchResults = new(capacity: amount);
 
         for (int i = 0; i < amount; i++)
         {
@@ -66,7 +66,7 @@ internal class SearchResultFakeBuilder
     {
         _searchResults ??= [];
         _searchResults.Add(
-            SearchModelFactory.SearchResult<LearnerDataTransferObject>(
+            SearchModelFactory.SearchResult<FurtherEducationLearnerDataTransferObject>(
                 document: null!,
                 score: 1.00,
                 highlights: new Dictionary<string, IList<string>>()
@@ -80,8 +80,8 @@ internal class SearchResultFakeBuilder
     /// </summary>
     /// <param name="document">The learner document to include in the search result.</param>
     /// <returns>A <see cref="SearchResult{T}"/> wrapping the provided document.</returns>
-    public static SearchResult<LearnerDataTransferObject> SearchResultWithDocument(
-        LearnerDataTransferObject? document) =>
+    public static SearchResult<FurtherEducationLearnerDataTransferObject> SearchResultWithDocument(
+        FurtherEducationLearnerDataTransferObject? document) =>
         SearchModelFactory.SearchResult(
             document!,
             score: 1.00,
@@ -95,7 +95,7 @@ internal class SearchResultFakeBuilder
     /// <exception cref="NullReferenceException">
     /// Thrown if no search results have been configured before calling this method.
     /// </exception>
-    public List<SearchResult<LearnerDataTransferObject>> Create() =>
+    public List<SearchResult<FurtherEducationLearnerDataTransferObject>> Create() =>
         _searchResults ??
         throw new NullReferenceException(
             "No search results have been configured.");

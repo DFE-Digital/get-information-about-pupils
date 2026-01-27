@@ -5,14 +5,14 @@ using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacterist
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
 /// <summary>
-/// Provides a factory for creating fake <see cref="LearnerDataTransferObject"/> instances
+/// Provides a factory for creating fake <see cref="FurtherEducationLearnerDataTransferObject"/> instances
 /// for use in unit tests. Uses the <c>Bogus</c> library to generate realistic
 /// but randomised data for learner identifiers, names, and characteristics.
 /// </summary>
 internal static class LearnerDataTransferObjectTestDouble
 {
     /// <summary>
-    /// Creates a new <see cref="LearnerDataTransferObject"/> populated with random but plausible values.
+    /// Creates a new <see cref="FurtherEducationLearnerDataTransferObject"/> populated with random but plausible values.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -25,18 +25,18 @@ internal static class LearnerDataTransferObjectTestDouble
     /// </list>
     /// </para>
     /// This is intended for test scenarios where the specific learner details
-    /// are not important, but a valid <see cref="LearnerDataTransferObject"/> object is required.
+    /// are not important, but a valid <see cref="FurtherEducationLearnerDataTransferObject"/> object is required.
     /// </remarks>
     /// <returns>
-    /// A <see cref="LearnerDataTransferObject"/> instance with randomly generated data.
+    /// A <see cref="FurtherEducationLearnerDataTransferObject"/> instance with randomly generated data.
     /// </returns>
-    public static LearnerDataTransferObject Fake()
+    public static FurtherEducationLearnerDataTransferObject Fake()
     {
         // Instantiate a Bogus faker for generating realistic fake data
         Faker faker = new();
 
         // Return the fully constructed LearnerDataTransferObject
-        return new LearnerDataTransferObject()
+        return new FurtherEducationLearnerDataTransferObject()
         {
             ULN = faker.Random.Int(1000000000, 2146999999).ToString(),
             Surname = faker.Name.LastName(),

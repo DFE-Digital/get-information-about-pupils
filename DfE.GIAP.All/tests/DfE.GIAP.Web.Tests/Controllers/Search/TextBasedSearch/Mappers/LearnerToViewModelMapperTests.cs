@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 using Xunit;
@@ -22,7 +23,7 @@ public sealed class LearnerToViewModelMapperTests
     public void Map_WithValidLearner_MapsAllFieldsCorrectly()
     {
         // arrange
-        Learner applicationModellearner =
+        FurtherEducationLearner applicationModellearner =
             ApplicationModelLearnerTestDouble.Stub(
                 uniqueLearnerNumber: "1234567890",
                 firstname: "Alice",

@@ -10,8 +10,8 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -33,7 +33,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.LearnerTextSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
@@ -53,8 +53,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
     private AzureAppSettings _mockAppSettings = new();
-    private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<SearchRequest, SearchResponse>>();
+    private readonly IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> _mockUseCase =
+        Substitute.For<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>();
     private readonly IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
     private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
@@ -77,11 +77,11 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         _mockSortOrderMapper.Map(
             Arg.Any<(string, string)>()).Returns(stubSortOrder);
 
-        SearchResponse response =
+        FurtherEducationSearchResponse response =
             SearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<SearchRequest>()).Returns(response);
+            Arg.Any<FurtherEducationSearchRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<LearnerTextSearchMappingContext>()).Returns(

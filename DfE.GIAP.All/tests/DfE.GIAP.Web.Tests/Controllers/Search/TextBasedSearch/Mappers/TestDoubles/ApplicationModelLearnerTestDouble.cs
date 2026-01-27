@@ -1,20 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 
 /// <summary>
-/// Provides a reusable test double for constructing <see cref="Learner"/> domain objects.
+/// Provides a reusable test double for constructing <see cref="FurtherEducationLearner"/> domain objects.
 /// Centralizes learner scaffolding for unit tests to improve readability and reduce duplication.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public static class ApplicationModelLearnerTestDouble
 {
     /// <summary>
-    /// Creates a <see cref="LearnerIdentifier"/> from a unique learner number.
+    /// Creates a <see cref="FurtherEducationLearnerIdentifier"/> from a unique learner number.
     /// Encapsulates identity logic for symbolic traceability in tests.
     /// </summary>
-    private static LearnerIdentifier Identifier(string uniqueLearnerNumber) =>
+    private static FurtherEducationLearnerIdentifier Identifier(string uniqueLearnerNumber) =>
         new(uniqueLearnerNumber);
 
     /// <summary>
@@ -34,7 +35,7 @@ public static class ApplicationModelLearnerTestDouble
         new(birthDate, gender);
 
     /// <summary>
-    /// Creates a fully populated <see cref="Learner"/> instance for use in unit tests.
+    /// Creates a fully populated <see cref="FurtherEducationLearner"/> instance for use in unit tests.
     /// Combines identity, name, and characteristics into a single domain object.
     /// </summary>
     /// <param name="uniqueLearnerNumber">Unique learner identifier for symbolic traceability.</param>
@@ -42,8 +43,8 @@ public static class ApplicationModelLearnerTestDouble
     /// <param name="surname">Last name of the learner.</param>
     /// <param name="birthDate">Date of birth for age-based diagnostics.</param>
     /// <param name="sex">Gender for demographic filtering and assertions.</param>
-    /// <returns>A scaffolded <see cref="Learner"/> domain object.</returns>
-    public static Learner Stub(
+    /// <returns>A scaffolded <see cref="FurtherEducationLearner"/> domain object.</returns>
+    public static FurtherEducationLearner Stub(
         string uniqueLearnerNumber,
         string firstname,
         string surname,
@@ -51,7 +52,7 @@ public static class ApplicationModelLearnerTestDouble
         LearnerCharacteristics.Gender sex)
     {
         // Construct domain components using helper methods for modularity and reuse
-        LearnerIdentifier learnerIdentifier = Identifier(uniqueLearnerNumber);
+        FurtherEducationLearnerIdentifier learnerIdentifier = Identifier(uniqueLearnerNumber);
         LearnerName learnerName = Name(firstname, surname);
         LearnerCharacteristics learnerCharacteristics = Characteristics(birthDate, sex);
 

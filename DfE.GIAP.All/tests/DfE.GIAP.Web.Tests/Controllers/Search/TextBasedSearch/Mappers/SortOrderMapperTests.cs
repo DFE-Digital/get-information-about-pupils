@@ -11,7 +11,14 @@ public class SortOrderMapperTests
     private static SortOrderMapper CreateMapper(params string[] validFields)
     {
         IOptions<SortFieldOptions> options =
-            Options.Create(new SortFieldOptions { ValidFields = validFields });
+            Options.Create(
+                new SortFieldOptions
+                {
+                    SortFields = new()
+                    {
+                        { "key", validFields }
+                    }
+                });
 
         return new SortOrderMapper(options);
     }

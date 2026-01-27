@@ -1,19 +1,19 @@
-﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿namespace DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 
 /// <summary>
 /// Encapsulates the results of a further education learner search.
 /// Provides a read-only collection interface and ensures immutability at the boundary.
 /// </summary>
-public sealed class Learners
+public sealed class FurtherEducationLearners
 {
     // Internal mutable list to hold search results; encapsulated within the class
-    private readonly List<Learner> _learners;
+    private readonly List<FurtherEducationLearner> _learners;
 
     /// <summary>
     /// Read-only view of the learner results.
     /// Guarantees that consumers cannot modify the internal list.
     /// </summary>
-    public IReadOnlyCollection<Learner> LearnerCollection => _learners.AsReadOnly();
+    public IReadOnlyCollection<FurtherEducationLearner> LearnerCollection => _learners.AsReadOnly();
 
     /// <summary>
     /// Returns the number of learners in the collection.
@@ -27,7 +27,7 @@ public sealed class Learners
     /// Default constructor.
     /// Initializes an empty result set.
     /// </summary>
-    public Learners()
+    public FurtherEducationLearners()
     {
         _learners = [];
     }
@@ -37,7 +37,7 @@ public sealed class Learners
     /// Uses defensive programming to handle potential null inputs.
     /// </summary>
     /// <param name="learners">Sequence of learners to populate the result set.</param>
-    public Learners(IEnumerable<Learner> learners)
+    public FurtherEducationLearners(IEnumerable<FurtherEducationLearner> learners)
     {
         _learners = learners?.ToList() ?? [];
     }
@@ -46,6 +46,6 @@ public sealed class Learners
     /// Static factory method to create an empty result set.
     /// Improves readability and conveys intent more clearly than a constructor.
     /// </summary>
-    public static Learners CreateEmpty() => new();
+    public static FurtherEducationLearners CreateEmpty() => new();
 }
 

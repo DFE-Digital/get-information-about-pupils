@@ -1,13 +1,14 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
-namespace DfE.GIAP.Core.Search.Application.UseCases.Response;
+namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 
 /// <summary>
 /// Represents the result of a search by pupil name in further education.
 /// Includes matched pupils, faceted data, result meta-data, and status.
 /// </summary>
-public sealed class SearchResponse
+public sealed class FurtherEducationSearchResponse
 {
     /// <summary>
     /// Initializes a new response with the specified search status and total result count.
@@ -16,18 +17,16 @@ public sealed class SearchResponse
     /// <param name="totalNumberOfResults">
     /// The total number of matching learner records found. Defaults to zero if null or negative.
     /// </param>
-    public SearchResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
+    public FurtherEducationSearchResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
     {
         Status = status;
-        TotalNumberOfResults = totalNumberOfResults is null || totalNumberOfResults < 0
-            ? 0
-            : totalNumberOfResults.Value;
+        TotalNumberOfResults = new SearchResultCount(totalNumberOfResults);
     }
 
     /// <summary>
     /// Gets the collection of learner search results returned by the query.
     /// </summary>
-    public Learners? LearnerSearchResults { get; init; }
+    public FurtherEducationLearners? LearnerSearchResults { get; init; }
 
     /// <summary>
     /// Gets the faceted aggregation results used for UI filtering, analytics, or navigation.
@@ -43,5 +42,5 @@ public sealed class SearchResponse
     /// Gets the total number of learner's matched by the search criteria.
     /// Guaranteed to be non-negative.
     /// </summary>
-    public int TotalNumberOfResults { get; init; } = 0;
+    public SearchResultCount TotalNumberOfResults { get; }
 }

@@ -11,8 +11,8 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Extensions;
@@ -34,15 +34,14 @@ public class FELearnerNumberController : Controller
     protected readonly ISelectionManager _selectionManager;
 
     private readonly IUseCase<
-        SearchRequest,
-        SearchResponse> _furtherEducationSearchUseCase;
+        FurtherEducationSearchRequest,
+        FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
-        LearnerNumericSearchMappingContext,
+        FurtherEducationLearnerNumericSearchMappingContext,
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
 
-    private readonly IMapper<
-        (string Field, string Direction), SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
@@ -64,13 +63,12 @@ public class FELearnerNumberController : Controller
 
     public FELearnerNumberController(
         IUseCase<
-            SearchRequest,
-            SearchResponse> furtherEducationSearchUseCase,
+            FurtherEducationSearchRequest,
+            FurtherEducationSearchResponse> furtherEducationSearchUseCase,
         IMapper<
-            LearnerNumericSearchMappingContext,
+            FurtherEducationLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
-        IMapper<
-            (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
+        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
         ILogger<FELearnerNumberController> logger,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
@@ -435,7 +433,10 @@ public class FELearnerNumberController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map((model.SortField, model.SortDirection));
+        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
+            new SortOrderRequest(
+                searchKey: "further-education",
+                sortOrder: (model.SortField, model.SortDirection)));
 
         IList<FilterRequest> filterRequests =
         [
@@ -447,10 +448,9 @@ public class FELearnerNumberController : Controller
 
         _eventLogger.LogSearch(SearchIdentifierType.ULN, false, new());
 
-        SearchResponse searchResponse =
+        FurtherEducationSearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
-                new SearchRequest(
-                    searchIndexKey: "further-education",
+                new FurtherEducationSearchRequest(
                     searchKeywords: string.Join(" AND ", learnerNumberArray),
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,
@@ -459,7 +459,7 @@ public class FELearnerNumberController : Controller
 
         LearnerNumberSearchViewModel result =
             _learnerNumericSearchResponseToViewModelMapper.Map(
-                LearnerNumericSearchMappingContext.Create(model, searchResponse));
+                FurtherEducationLearnerNumericSearchMappingContext.Create(model, searchResponse));
 
         List<string> idList = SetLearnerNumberIds(result.Learners);
 

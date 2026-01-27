@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using FluentAssertions;
 using Model = DfE.GIAP.Core.Search.Application.Models.Learner;
 
@@ -10,19 +11,19 @@ public sealed class LearnersTests
     public void Constructor_WithValidLearnerList_ShouldInitializeCollection()
     {
         // arrange
-        Model.Learner learner =
+        FurtherEducationLearner learner =
             new(
-                new LearnerIdentifier("1234567890"),
+                new FurtherEducationLearnerIdentifier("1234567890"),
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
                     LearnerCharacteristics.Gender.Female)
             );
 
-        List<Model.Learner> learners = [learner];
+        List<FurtherEducationLearner> learners = [learner];
 
         // act
-        Learners result = new(learners);
+        FurtherEducationLearners result = new(learners);
 
         // Assert
         result.Count.Should().Be(1);
@@ -34,7 +35,7 @@ public sealed class LearnersTests
     public void Constructor_WithNullInput_ShouldInitializeEmptyCollection()
     {
         // act
-        Learners result = new(null!);
+        FurtherEducationLearners result = new(null!);
 
         // Assert
         result.Count.Should().Be(0);
@@ -45,7 +46,7 @@ public sealed class LearnersTests
     public void DefaultConstructor_ShouldInitializeEmptyCollection()
     {
         // act
-        Learners result = new();
+        FurtherEducationLearners result = new();
 
         // Assert
         result.Count.Should().Be(0);
@@ -56,7 +57,7 @@ public sealed class LearnersTests
     public void CreateEmpty_ShouldReturnEmptyLearnersInstance()
     {
         // act
-        Learners result = Learners.CreateEmpty();
+        FurtherEducationLearners result = FurtherEducationLearners.CreateEmpty();
 
         // Assert
         result.Count.Should().Be(0);
@@ -67,19 +68,19 @@ public sealed class LearnersTests
     public void LearnerCollection_ShouldBeReadOnly()
     {
         // arrange
-        Model.Learner learner = new(
-            new LearnerIdentifier("1234567890"),
+        FurtherEducationLearner learner = new(
+            new FurtherEducationLearnerIdentifier("1234567890"),
             new LearnerName("Bob", "Jones"),
             new LearnerCharacteristics(
                 new DateTime(2004, 3, 15),
                 LearnerCharacteristics.Gender.Male)
         );
 
-        Learners result = new([learner]);
+        FurtherEducationLearners result = new([learner]);
 
         // act
         Action mutate = () =>
-            ((List<Model.Learner>)result.LearnerCollection).Add(learner);
+            ((List<FurtherEducationLearner>)result.LearnerCollection).Add(learner);
 
         // Assert
         mutate.Should().Throw<InvalidCastException>(); // AsReadOnly returns ReadOnlyCollection, not List

@@ -4,7 +4,7 @@ using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
@@ -19,10 +19,10 @@ namespace DfE.GIAP.Core.Search.Infrastructure;
 /// Adapter implementation for further education pupil search.
 /// It delegates search execution to Azure Cognitive Search using domain-specific mappings and configuration.
 /// </summary>
-public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, SearchFacets>
+public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>
 {
     private readonly ISearchByKeywordService _searchByKeywordService;
-    private readonly IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> _searchResultMapper;
+    private readonly IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> _searchResultMapper;
     private readonly IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> _facetsMapper;
     private readonly AzureSearchOptions _azureSearchOptions;
     private readonly ISearchOptionsBuilder _searchOptionsBuilder;
@@ -38,7 +38,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
     public AzureSearchServiceAdapter(
         ISearchByKeywordService searchByKeywordService,
         IOptions<AzureSearchOptions> azureSearchOptions,
-        IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, Learners> searchResultMapper,
+        IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> searchResultMapper,
         IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> facetsMapper,
         ISearchOptionsBuilder searchOptionsBuilder)
     {
@@ -62,7 +62,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
     /// <exception cref="ApplicationException">
     /// Thrown when the Azure Search service fails to return valid results.
     /// </exception>
-    public async Task<SearchResults<Learners, SearchFacets>> SearchAsync(
+    public async Task<SearchResults<FurtherEducationLearners, SearchFacets>> SearchAsync(
         SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
         SearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
@@ -79,8 +79,8 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
                 .WithSortOrder(searchServiceAdapterRequest.SortOrdering)
                 .Build();
 
-        Response<SearchResults<LearnerDataTransferObject>> searchResults =
-            await _searchByKeywordService.SearchAsync<LearnerDataTransferObject>(
+        Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchResults =
+            await _searchByKeywordService.SearchAsync<FurtherEducationLearnerDataTransferObject>(
                 searchServiceAdapterRequest.SearchKeyword,
                 indexOptions.SearchIndex,
                 searchOptions
@@ -88,7 +88,7 @@ public sealed class AzureSearchServiceAdapter : ISearchServiceAdapter<Learners, 
             ?? throw new InvalidOperationException(
                 $"Unable to derive search results based on input {searchServiceAdapterRequest.SearchKeyword}.");
 
-        return new SearchResults<Learners, SearchFacets>
+        return new SearchResults<FurtherEducationLearners, SearchFacets>
         {
             Results = _searchResultMapper.Map(searchResults.Value.GetResults()),
             FacetResults = searchResults.Value.Facets != null

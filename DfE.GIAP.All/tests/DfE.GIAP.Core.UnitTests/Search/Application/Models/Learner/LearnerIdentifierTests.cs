@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Learner;
@@ -12,7 +12,7 @@ public sealed class LearnerIdentifierTests
         string validUln = "1234567890";
 
         // act
-        LearnerIdentifier identifier = new(validUln);
+        FurtherEducationLearnerIdentifier identifier = new(validUln);
 
         // Assert
         identifier.UniqueLearnerNumber.Should().Be(1234567890);
@@ -25,7 +25,7 @@ public sealed class LearnerIdentifierTests
     public void Constructor_WithNullOrWhitespaceULN_ShouldThrowArgumentException(string? input)
     {
         // act
-        Action act = () => new LearnerIdentifier(input!);
+        Action act = () => new FurtherEducationLearnerIdentifier(input!);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -38,7 +38,7 @@ public sealed class LearnerIdentifierTests
     public void Constructor_WithInvalidLength_ShouldThrowArgumentException(string input)
     {
         // act
-        Action act = () => new LearnerIdentifier(input);
+        Action act = () => new FurtherEducationLearnerIdentifier(input);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -51,7 +51,7 @@ public sealed class LearnerIdentifierTests
     public void Constructor_WithNonNumericULN_ShouldThrowArgumentException(string input)
     {
         // act
-        Action act = () => new LearnerIdentifier(input);
+        Action act = () => new FurtherEducationLearnerIdentifier(input);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -62,8 +62,8 @@ public sealed class LearnerIdentifierTests
     public void Equality_WithSameULN_ShouldBeEqual()
     {
         // arrange
-        LearnerIdentifier equalityCheckInstanceA = new("1234567890");
-        LearnerIdentifier equalityCheckInstanceB = new("1234567890");
+        FurtherEducationLearnerIdentifier equalityCheckInstanceA = new("1234567890");
+        FurtherEducationLearnerIdentifier equalityCheckInstanceB = new("1234567890");
 
         // act & Assert
         equalityCheckInstanceA.Should().Be(equalityCheckInstanceB);
@@ -74,8 +74,8 @@ public sealed class LearnerIdentifierTests
     public void Equality_WithDifferentULN_ShouldNotBeEqual()
     {
         // arrange
-        LearnerIdentifier equalityCheckInstanceA = new("1234567890");
-        LearnerIdentifier equalityCheckInstanceB = new("0987654321");
+        FurtherEducationLearnerIdentifier equalityCheckInstanceA = new("1234567890");
+        FurtherEducationLearnerIdentifier equalityCheckInstanceB = new("0987654321");
 
         // act & Assert
         equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);
