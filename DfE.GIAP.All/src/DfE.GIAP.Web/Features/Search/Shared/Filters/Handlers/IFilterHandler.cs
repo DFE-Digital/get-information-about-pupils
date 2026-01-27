@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.ViewModels.Search;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 
 /// <summary>
 /// Defines a contract for applying semantic filter logic to learner search.

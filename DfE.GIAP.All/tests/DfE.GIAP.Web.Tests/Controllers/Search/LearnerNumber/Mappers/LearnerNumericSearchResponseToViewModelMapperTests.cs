@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
-using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
+using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Moq;

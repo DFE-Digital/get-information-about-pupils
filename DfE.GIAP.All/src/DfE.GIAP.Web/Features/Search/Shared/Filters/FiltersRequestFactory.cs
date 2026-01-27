@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.ViewModels.Search;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters;
 
 /// <summary>
 /// Creates a structured filter request payload for learner search.
@@ -42,7 +42,8 @@ public class FiltersRequestFactory : IFiltersRequestFactory
         // otherwise we can ignore (the assumption being we return both male and female by default).
         if (model.SelectedSexValues?.Length == 1)
         {
-            currentFilters.Add(new CurrentFilterDetail() {
+            currentFilters.Add(new CurrentFilterDetail()
+            {
                 FilterName = model.SelectedSexValues.FirstOrDefault(),
                 FilterType = FilterType.Sex
             });

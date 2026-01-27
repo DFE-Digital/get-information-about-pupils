@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -11,13 +11,13 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.Mappers;
 
 public sealed class PageableSearchResultsToLearnerResultsMapperTests
 {
-    IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> _searchResultsMapper;
+    IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, FurtherEducationLearners> _searchResultsMapper;
 
     public PageableSearchResultsToLearnerResultsMapperTests()
     {
         _searchResultsMapper =
             new PageableSearchResultsToLearnerResultsMapper(
-                new FurtherEducationSearchResultToLearnerMapper()
+                new SearchResultToLearnerMapper()
         );
     }
 
@@ -25,10 +25,10 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     public void Map_WithValidSearchResults_ReturnsConfiguredLearner()
     {
         // arrange
-        List<SearchResult<FurtherEducationLearnerDataTransferObject>> searchResultDocuments =
+        List<SearchResult<LearnerDataTransferObject>> searchResultDocuments =
             new SearchResultFakeBuilder().WithSearchResults().Create();
 
-        Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>> pageableSearchResults =
+        Pageable<SearchResult<LearnerDataTransferObject>> pageableSearchResults =
             PageableTestDouble.FromResults(searchResultDocuments);
 
         // act
@@ -39,7 +39,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
         mappedResult.Should().NotBeNull();
         mappedResult.LearnerCollection.Should().HaveCount(searchResultDocuments.Count);
 
-        foreach (SearchResult<FurtherEducationLearnerDataTransferObject> searchResult in searchResultDocuments)
+        foreach (SearchResult<LearnerDataTransferObject> searchResult in searchResultDocuments)
         {
             FurtherEducationLearner? learner =
                 mappedResult.LearnerCollection.ToList()
@@ -57,7 +57,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     public void Map_WithEmptySearchResults_ReturnsEmptyList()
     {
         // arrange
-        List<SearchResult<FurtherEducationLearnerDataTransferObject>> emptySearchResultDocuments =
+        List<SearchResult<LearnerDataTransferObject>> emptySearchResultDocuments =
             new SearchResultFakeBuilder().WithEmptySearchResult().Create();
 
         // act
@@ -86,7 +86,7 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
     public void Map_WithANullSearchResult_ThrowsInvalidOperationException()
     {
         // arrange
-        List<SearchResult<FurtherEducationLearnerDataTransferObject>> searchResultDocuments =
+        List<SearchResult<LearnerDataTransferObject>> searchResultDocuments =
             new SearchResultFakeBuilder().IncludeNullDocument().Create();
 
         // act.
@@ -95,6 +95,10 @@ public sealed class PageableSearchResultsToLearnerResultsMapperTests
                 mapper.Map(PageableTestDouble.FromResults(searchResultDocuments)))
                     .Should()
                         .Throw<InvalidOperationException>()
+                        .WithMessage("Search result document object cannot be null.");
+    }
+}
+tionException>()
                         .WithMessage("Search result document object cannot be null.");
     }
 }

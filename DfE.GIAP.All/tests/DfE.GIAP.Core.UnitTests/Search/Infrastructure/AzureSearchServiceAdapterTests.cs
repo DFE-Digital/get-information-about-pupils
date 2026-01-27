@@ -3,7 +3,7 @@ using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Infrastructure;
@@ -22,7 +22,7 @@ public sealed class AzureSearchServiceAdapterTests
 {
     private const string _mockSearchIndexKey = "further-education";
     private readonly ISearchByKeywordService _mockSearchByKeywordService;
-    private readonly IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> _mockSearchResultMapper =
+    private readonly IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, FurtherEducationLearners> _mockSearchResultMapper =
         PageableSearchResultsToLearnerResultsMapperTestDouble.DefaultMock();
     private readonly IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> _mockFacetsMapper =
         FacetResultToLearnerFacetsMapperTestDouble.DefaultMock();
@@ -30,10 +30,10 @@ public sealed class AzureSearchServiceAdapterTests
     private readonly ISearchOptionsBuilder _mockSearchOptionsBuilder =
         new SearchOptionsBuilder(searchFilterExpressionsBuilder: FilterExpressionTestDouble.Mock());
 
-    private static AzureSearchServiceAdapter CreateSearchServiceAdapterWith(
+    private static FurtherEducationAzureSearchServiceAdapter CreateSearchServiceAdapterWith(
         ISearchByKeywordService searchByKeywordService,
         IOptions<AzureSearchOptions> searchOptions,
-        IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> searchResultMapper,
+        IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, FurtherEducationLearners> searchResultMapper,
         IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> facetsMapper,
         ISearchOptionsBuilder searchOptionsBuilder
        ) =>
@@ -53,7 +53,7 @@ public sealed class AzureSearchServiceAdapterTests
     {
         // arrange
         Mock<Response> responseMock = new();
-        Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse =
+        Response<SearchResults<LearnerDataTransferObject>> searchServiceResponse =
             Response.FromValue(
                 SearchModelFactory.SearchResults(
                     new SearchResultFakeBuilder().WithSearchResults().Create(),
@@ -99,7 +99,7 @@ public sealed class AzureSearchServiceAdapterTests
     {
         // act, assert
 
-        Func<AzureSearchServiceAdapter> act = () =>
+        Func<FurtherEducationAzureSearchServiceAdapter> act = () =>
         {
             return new(
                 _mockSearchByKeywordService,
@@ -116,7 +116,7 @@ public sealed class AzureSearchServiceAdapterTests
     public Task Search_MapperThrowsException_ExceptionPassesThrough()
     {
         // arrange
-        IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> mockEstablishmentResultsMapper =
+        IMapper<Pageable<SearchResult<LearnerDataTransferObject>>, FurtherEducationLearners> mockEstablishmentResultsMapper =
             PageableSearchResultsToLearnerResultsMapperTestDouble.MockMapperThrowingArgumentException();
 
         ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> searchServiceAdapter =
@@ -142,6 +142,10 @@ public sealed class AzureSearchServiceAdapterTests
                     )
                 )
             .Should()
+            .ThrowAsync<ArgumentException>();
+    }
+}
+.Should()
             .ThrowAsync<ArgumentException>();
     }
 }

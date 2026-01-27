@@ -3,9 +3,9 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.ViewModels.Search;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Features.Search.FurtherEducation.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.FurtherEducation;
 
 /// <summary>
 /// Maps a <see cref="LearnerSearchMappingContext"/> — which contains both the search response
@@ -13,7 +13,7 @@ namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
 /// This mapper bridges domain-layer search results with UI-facing representations.
 /// </summary>
 public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
-    IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel>
+    IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>
 {
     // Mapper for converting individual FurtherEducationLearner domain entities into UI-facing Learner view models.
     private readonly IMapper<FurtherEducationLearner, Learner> _furtherEducationLearnerToViewModelMapper;
@@ -44,11 +44,11 @@ public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
     }
 
     /// <summary>
-    /// Maps the search response and existing model into a fully populated <see cref="LearnerTextSearchMappingContext"/>.
+    /// Maps the search response and existing model into a fully populated <see cref="FurtherEducationLearnerTextSearchMappingContext"/>.
     /// </summary>
     /// <param name="input">Encapsulated context containing the view model and search response.</param>
-    /// <returns>A populated <see cref="LearnerTextSearchMappingContext"/> ready for UI rendering.</returns>
-    public LearnerTextSearchViewModel Map(LearnerTextSearchMappingContext input)
+    /// <returns>A populated <see cref="FurtherEducationLearnerTextSearchMappingContext"/> ready for UI rendering.</returns>
+    public LearnerTextSearchViewModel Map(FurtherEducationLearnerTextSearchMappingContext input)
     {
         // Map facet filters from the response into structured filter data for the view model.
         input.Model.Filters =
@@ -74,7 +74,7 @@ public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
     /// Encapsulates the inputs required to map a learner text search response into a view model.
     /// This wrapper replaces tuple usage to improve readability, semantic clarity, and extensibility.
     /// </summary>
-    public sealed class LearnerTextSearchMappingContext
+    public sealed class FurtherEducationLearnerTextSearchMappingContext
     {
         /// <summary>
         /// The existing view model instance to be populated with search results.
@@ -89,7 +89,7 @@ public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
         public FurtherEducationSearchResponse Response { get; init; }
 
         /// <summary>
-        /// Constructs a new <see cref="LearnerTextSearchMappingContext"/> with required inputs.
+        /// Constructs a new <see cref="FurtherEducationLearnerTextSearchMappingContext"/> with required inputs.
         /// Performs null checks to ensure safe downstream mapping.
         /// </summary>
         /// <param name="model">The target view model to populate.</param>
@@ -97,7 +97,7 @@ public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
         /// <exception cref="ArgumentNullException">
         /// Thrown if either <paramref name="model"/> or <paramref name="response"/> is null.
         /// </exception>
-        public LearnerTextSearchMappingContext(
+        public FurtherEducationLearnerTextSearchMappingContext(
             LearnerTextSearchViewModel model,
             FurtherEducationSearchResponse response)
         {
@@ -106,13 +106,13 @@ public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
         }
 
         /// <summary>
-        /// Factory method for creating a new <see cref="LearnerTextSearchMappingContext"/>.
+        /// Factory method for creating a new <see cref="FurtherEducationLearnerTextSearchMappingContext"/>.
         /// Improves readability and discoverability when constructing context objects.
         /// </summary>
         /// <param name="model">The target view model to populate.</param>
         /// <param name="response">The search response to map from.</param>
-        /// <returns>A new instance of <see cref="LearnerTextSearchMappingContext"/>.</returns>
-        public static LearnerTextSearchMappingContext Create(
+        /// <returns>A new instance of <see cref="FurtherEducationLearnerTextSearchMappingContext"/>.</returns>
+        public static FurtherEducationLearnerTextSearchMappingContext Create(
             LearnerTextSearchViewModel model,
             FurtherEducationSearchResponse response) =>
             new(model, response);

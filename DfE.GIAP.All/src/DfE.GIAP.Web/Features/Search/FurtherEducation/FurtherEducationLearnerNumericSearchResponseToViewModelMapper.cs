@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.ViewModels.Search;
 
-namespace DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
+namespace DfE.GIAP.Web.Features.Search.FurtherEducation;
 
 public sealed class FurtherEducationLearnerNumericSearchResponseToViewModelMapper :
     IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>

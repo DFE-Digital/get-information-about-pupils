@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.ViewModels.Search;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters;
 
 /// <summary>
 /// Defines a contract for creating structured filter request payloads.

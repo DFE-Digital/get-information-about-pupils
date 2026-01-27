@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 

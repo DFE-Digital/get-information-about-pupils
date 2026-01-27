@@ -5,7 +5,7 @@ using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Moq;
@@ -73,8 +73,8 @@ public class LearnerTextSearchResponseToViewModelMapperTests
             PageSize = 1
         };
 
-        FurtherEducationLearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext context =
-            FurtherEducationLearnerTextSearchResponseToViewModelMapper.LearnerTextSearchMappingContext.Create(model, response);
+        FurtherEducationLearnerTextSearchResponseToViewModelMapper.FurtherEducationLearnerTextSearchMappingContext context =
+            FurtherEducationLearnerTextSearchResponseToViewModelMapper.FurtherEducationLearnerTextSearchMappingContext.Create(model, response);
 
         FurtherEducationLearnerTextSearchResponseToViewModelMapper mapper = new(learnerMapper.Object, filtersMapper.Object);
 

@@ -1,9 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Application.Models.Sort;
+﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Sort.Mappers;
 
 /// <summary>
 /// Maps a tuple of (field, direction) into a validated <see cref="SortOrder"/> instance.
@@ -37,19 +36,20 @@ public class SortOrderMapper : IMapper<SortOrderRequest, SortOrder>
         const string DefaultSortField = "search.score()";
         const string DefaultSortDirection = "desc";
 
-        (string field, string direction) = input.SortOrder;
+        (string? field, string? direction) = input.SortOrder;
 
-        if (string.IsNullOrEmpty(field) && string.IsNullOrEmpty(direction))
-        {
-            field = DefaultSortField;
-            direction = DefaultSortDirection;
-        }
-
-        if (!_sortFieldOptions.SortFields.TryGetValue(input.SearchKey, out IReadOnlyList<string> validSortFields))
+        if (!_sortFieldOptions.SortFields.TryGetValue(input.SearchKey, out IReadOnlyList<string>? validSortFields))
         {
             throw new ArgumentException($"Unable to find valid sort fields for the provided search key: {input.SearchKey}.", nameof(input));
         }
 
-        return SortOrder.Create(field, direction, validSortFields);
+        return SortOrder.Create(
+            string.IsNullOrEmpty(field) ?
+                DefaultSortField :
+                    field,
+            string.IsNullOrEmpty(direction) ?
+                DefaultSortDirection :
+                    direction!,
+            validSortFields);
     }
 }

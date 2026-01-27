@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.ViewModels.Search;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 
 /// <summary>
 /// Contract for a registry that delegates filter application to registered handlers.

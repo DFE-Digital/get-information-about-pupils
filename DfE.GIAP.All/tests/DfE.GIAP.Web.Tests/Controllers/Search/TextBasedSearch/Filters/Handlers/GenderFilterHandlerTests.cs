@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 using DfE.GIAP.Web.ViewModels.Search;
 using Xunit;
 

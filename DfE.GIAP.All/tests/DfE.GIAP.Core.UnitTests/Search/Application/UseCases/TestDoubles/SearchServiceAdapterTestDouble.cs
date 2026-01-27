@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;

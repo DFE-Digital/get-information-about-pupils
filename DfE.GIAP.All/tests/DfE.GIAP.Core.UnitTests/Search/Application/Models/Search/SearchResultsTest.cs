@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using FluentAssertions;
 using Model = DfE.GIAP.Core.Search.Application.Models.Learner;
@@ -12,7 +11,7 @@ public sealed class SearchResultsTests
     public void Properties_CanBeInitializedViaObjectInitializer()
     {
         // arrange
-        FurtherEducationLearners learners = new(new List<FurtherEducationLearner>
+        FurtherEducationLearners learners = new(new List<Model.FurtherEducationLearner>
         {
             new(
                 new FurtherEducationLearnerIdentifier("1234567890"),

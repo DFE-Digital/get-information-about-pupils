@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
+using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.ViewModels.Search;
 using Moq;
 using Xunit;

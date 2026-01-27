@@ -15,8 +15,8 @@ using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -25,10 +25,10 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Features.Search.FurtherEducation.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
+namespace DfE.GIAP.Web.Features.Search.FurtherEducation.Controllers;
 
 [Route(Routes.Application.Search)]
 public class FELearnerTextSearchController : Controller
@@ -56,7 +56,7 @@ public class FELearnerTextSearchController : Controller
         FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
-        LearnerTextSearchMappingContext,
+        FurtherEducationLearnerTextSearchMappingContext,
         LearnerTextSearchViewModel> _learnerSearchResponseToViewModelMapper;
 
     private readonly IMapper<
@@ -75,7 +75,7 @@ public class FELearnerTextSearchController : Controller
             FurtherEducationSearchRequest,
             FurtherEducationSearchResponse> furtherEducationSearchUseCase,
         IMapper<
-            LearnerTextSearchMappingContext,
+            FurtherEducationLearnerTextSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<
             Dictionary<string, string[]>,
@@ -361,7 +361,7 @@ public class FELearnerTextSearchController : Controller
 
         PopulatePageText(model);
         PopulateNavigation(model);
-        
+
         if (returnToSearch ?? false)
         {
             if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
@@ -526,7 +526,7 @@ public class FELearnerTextSearchController : Controller
             }
         }
 
-        if (!model.FilterErrors.DobError && (day > 0 && month > 0 && year > 0) && !PupilHelper.IsValidateDate($"{day.ToString("00")}/{month.ToString("00")}/{year}"))
+        if (!model.FilterErrors.DobError && day > 0 && month > 0 && year > 0 && !PupilHelper.IsValidateDate($"{day.ToString("00")}/{month.ToString("00")}/{year}"))
         {
             ModelState.AddModelError("InvalidDate", Messages.Search.Errors.DobInvalid);
             model.FilterErrors.InvalidDob = true;
@@ -702,7 +702,7 @@ public class FELearnerTextSearchController : Controller
                     offset: model.Offset));
 
         return _learnerSearchResponseToViewModelMapper.Map(
-            LearnerTextSearchMappingContext.Create(model, searchResponse));
+            FurtherEducationLearnerTextSearchMappingContext.Create(model, searchResponse));
     }
 
     public static Dictionary<string, bool> ConvertFiltersToFlags(List<CurrentFilterDetail> filters)
@@ -943,7 +943,7 @@ public class FELearnerTextSearchController : Controller
 
     private LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
-        model.PageHeading = PageHeading; 
+        model.PageHeading = PageHeading;
         model.ShowLocalAuthority = false;
         return model;
     }

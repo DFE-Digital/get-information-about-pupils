@@ -12,7 +12,6 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
@@ -21,7 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Web.Controllers.LearnerNumber;
+namespace DfE.GIAP.Web.Features.Search.PupilPremium.Controllers;
 
 [Route(Routes.Application.Search)]
 public class PupilPremiumLearnerNumberController : Controller
@@ -537,7 +536,7 @@ public class PupilPremiumLearnerNumberController : Controller
     }
 
     private static string GetLearnerIdsAsString(
-    IEnumerable<Domain.Search.Learner.Learner> learners) =>
+    IEnumerable<Learner> learners) =>
         string.Join(",", learners.Select(learner => learner.Id));
 
     private static List<string> SetLearnerNumberIds(IEnumerable<Learner> learners)

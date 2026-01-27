@@ -14,7 +14,6 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -24,7 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Web.Controllers.LearnerNumber;
+namespace DfE.GIAP.Web.Features.Search.FurtherEducation.Controllers;
 
 [Route(Routes.Application.Search)]
 public class FELearnerNumberController : Controller
@@ -300,7 +299,7 @@ public class FELearnerNumberController : Controller
 
         PopulatePageText(model);
         PopulateNavigation(model);
-        PopulateSorting(model, HttpContext.Session.GetString(SearchSessionSortField), this.HttpContext.Session.GetString(SearchSessionSortDirection));
+        PopulateSorting(model, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection));
         ClearSortingDataFromSession();
         LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 

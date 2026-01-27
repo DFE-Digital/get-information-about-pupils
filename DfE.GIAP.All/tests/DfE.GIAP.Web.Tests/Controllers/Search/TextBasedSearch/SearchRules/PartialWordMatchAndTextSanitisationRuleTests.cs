@@ -1,6 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.SearchRules;
+using DfE.GIAP.Web.Features.Search.Shared.SearchRules;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.SearchRules;

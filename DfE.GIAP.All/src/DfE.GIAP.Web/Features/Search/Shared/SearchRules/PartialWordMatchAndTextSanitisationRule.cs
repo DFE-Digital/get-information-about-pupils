@@ -3,7 +3,7 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.SearchRules;
+namespace DfE.GIAP.Web.Features.Search.Shared.SearchRules;
 
 /// <summary>
 /// Facilitates search rules to be specified when running a search
@@ -31,7 +31,7 @@ public class PartialWordMatchAndTextSanitisationRule : ISearchRule
     /// <param name="searchKeyword"></param>
     /// <returns></returns>
     public string ApplySearchRules(string searchKeyword) =>
-        (_ruleOptions.SearchRule == "PartialWordMatchAndTextSanitisation") ? 
+        _ruleOptions.SearchRule == "PartialWordMatchAndTextSanitisation" ?
             _partialWordMatchRule.ApplySearchRules(
                 new StringBuilder(searchKeyword.TrimEnd())
                 .Replace("-", " ")

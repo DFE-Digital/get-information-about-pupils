@@ -1,18 +1,19 @@
-﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
+﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
+using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Models.Learner.PupilPremium;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.FilterRegistration;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+using DfE.GIAP.Web.Features.Search.FurtherEducation;
+using DfE.GIAP.Web.Features.Search.PupilPremium;
+using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 using DfE.GIAP.Web.ViewModels.Search;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
-using DfE.GIAP.Core.Search;
+using static DfE.GIAP.Web.Features.Search.FurtherEducation.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Features.Search;
 
@@ -25,8 +26,21 @@ public static class CompositionRoot
 
         services.AddSearchDependencies(configuration);
 
+        services
+            .AddSearchRules()
+            .AddFilters();
+
+        services
+            .AddFurtherEducationSearches()
+            .AddPupilPremiumSearches();
+
+        return services;
+    }
+
+    private static IServiceCollection AddFurtherEducationSearches(this IServiceCollection services)
+    {
         services.AddSingleton<IMapper<
-            LearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
+            FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
             FurtherEducationLearnerTextSearchResponseToViewModelMapper>();
 
         services.AddSingleton<IMapper<
@@ -34,14 +48,28 @@ public static class CompositionRoot
             FurtherEducationLearnerNumericSearchResponseToViewModelMapper>();
 
         services.AddSingleton<IMapper<
-            FurtherEducationLearner, Learner>, LearnerToViewModelMapper>();
+            FurtherEducationLearner, Learner>,
+            FurtherEducationLearnerToViewModelMapper>();
 
-        services.AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderMapper>();
+        return services;
+    }
 
+    private static IServiceCollection AddPupilPremiumSearches(this IServiceCollection services)
+    {
+        services.AddSingleton<IMapper<
+            PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
+            PupilPremiumLearnerNumericSearchResponseToViewModelMapper>();
+
+        services.AddSingleton<IMapper<
+            PupilPremiumLearner, Learner>,
+            PupilPremiumLearnerToViewModelMapper>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSearchRules(this IServiceCollection services)
+    {
         services.AddSingleton<ISearchRule, PartialWordMatchRule>();
-
-        services.AddFilters();
-
         return services;
     }
 

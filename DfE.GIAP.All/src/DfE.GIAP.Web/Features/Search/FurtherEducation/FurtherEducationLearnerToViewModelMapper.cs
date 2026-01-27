@@ -1,22 +1,23 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Domain.Search.Learner;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.FurtherEducation;
 
 /// <summary>
-/// Maps a domain-level <see cref="Core.Search.Application.Models.Learner.FurtherEducation.FurtherEducationLearner"/> entity
+/// Maps a domain-level <see cref="FurtherEducationLearner"/> entity
 /// into a UI-facing <see cref="Learner"/> view model.
 /// Used in text-based search results for Further Education learners.
 /// </summary>
-public sealed class LearnerToViewModelMapper :
+public sealed class FurtherEducationLearnerToViewModelMapper :
     IMapper<FurtherEducationLearner, Learner>
 {
     /// <summary>
-    /// Converts a <see cref="Core.Search.Application.Models.Learner.FurtherEducation.FurtherEducationLearner"/>
+    /// Converts a <see cref="FurtherEducationLearner"/>
     /// into a <see cref="Learner"/> view model.
     /// This bridges domain-layer entities with UI-facing representations,
     /// enabling clean separation between business logic and presentation.
@@ -43,31 +44,12 @@ public sealed class LearnerToViewModelMapper :
             Forename = input.Name.FirstName,
 
             // Converts sex enum to human-readable string using description meta-data
-            Sex = MapSexDescription(input.Characteristics.Sex),
+            Sex = input.Characteristics.Sex.MapSexDescription(),
 
             // Maps birth date directly; assumes implicit conversion from value object to DateTime
             DOB = input.Characteristics.BirthDate
         };
 
         return learner;
-    }
-
-    /// <summary>
-    /// Converts a <see cref="Gender"/> enum value into a human-readable string.
-    /// If the enum field has a <see cref="DescriptionAttribute"/>, that value is used;
-    /// otherwise, the enum name is returned as a fall-back.
-    /// </summary>
-    /// <param name="gender">The gender enum value to convert.</param>
-    /// <returns>A string description of the gender, suitable for UI display.</returns>
-    private static string MapSexDescription(Gender gender)
-    {
-        // Use reflection to retrieve the DescriptionAttribute from the enum field
-        DescriptionAttribute descriptionAttribute =
-            gender.GetType()                                // Gets the enum type (Gender)
-                .GetField(gender.ToString())?               // Retrieves the field info for the enum value
-                .GetCustomAttribute<DescriptionAttribute>();// Extracts the DescriptionAttribute if present
-
-        // Return the description if available; otherwise fall-back to enum name
-        return descriptionAttribute?.Description ?? gender.ToString();
     }
 }

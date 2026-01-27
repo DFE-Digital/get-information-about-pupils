@@ -6,6 +6,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Controllers.TextBasedSearch;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -14,7 +15,7 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
+namespace DfE.GIAP.Web.Features.Search.PupilPremium.Controllers;
 
 [Route(Routes.Application.Search)]
 public class PPLearnerTextSearchController : BaseLearnerTextSearchController
@@ -47,7 +48,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
-    public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
+    public override ReturnRoute ReturnRoute => ReturnRoute.NonPupilPremium;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
@@ -237,7 +238,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
     private void PopulateConfirmationNavigation(StarredPupilConfirmationViewModel model)
     {
-        model.DownloadType = Common.Enums.DownloadType.PupilPremium;
+        model.DownloadType = DownloadType.PupilPremium;
         model.ConfirmationReturnController = SearchController;
         model.ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction;
         model.CancelReturnController = SearchController;

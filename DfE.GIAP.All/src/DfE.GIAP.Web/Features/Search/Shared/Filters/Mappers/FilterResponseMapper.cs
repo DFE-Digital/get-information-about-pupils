@@ -2,7 +2,7 @@
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 
 /// <summary>
 /// Maps a single <see cref="SearchFacet"/> to a <see cref="FilterData"/> object.

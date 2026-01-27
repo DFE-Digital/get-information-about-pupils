@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using FluentAssertions;
 using Model = DfE.GIAP.Core.Search.Application.Models.Learner;
 
@@ -11,7 +10,7 @@ public sealed class LearnersTests
     public void Constructor_WithValidLearnerList_ShouldInitializeCollection()
     {
         // arrange
-        FurtherEducationLearner learner =
+        Model.FurtherEducationLearner learner =
             new(
                 new FurtherEducationLearnerIdentifier("1234567890"),
                 new LearnerName("Alice", "Smith"),
@@ -20,7 +19,7 @@ public sealed class LearnersTests
                     LearnerCharacteristics.Gender.Female)
             );
 
-        List<FurtherEducationLearner> learners = [learner];
+        List<Model.FurtherEducationLearner> learners = [learner];
 
         // act
         FurtherEducationLearners result = new(learners);
@@ -68,7 +67,7 @@ public sealed class LearnersTests
     public void LearnerCollection_ShouldBeReadOnly()
     {
         // arrange
-        FurtherEducationLearner learner = new(
+        Model.FurtherEducationLearner learner = new(
             new FurtherEducationLearnerIdentifier("1234567890"),
             new LearnerName("Bob", "Jones"),
             new LearnerCharacteristics(
@@ -80,7 +79,7 @@ public sealed class LearnersTests
 
         // act
         Action mutate = () =>
-            ((List<FurtherEducationLearner>)result.LearnerCollection).Add(learner);
+            ((List<Model.FurtherEducationLearner>)result.LearnerCollection).Add(learner);
 
         // Assert
         mutate.Should().Throw<InvalidCastException>(); // AsReadOnly returns ReadOnlyCollection, not List

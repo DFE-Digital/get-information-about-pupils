@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 using Xunit;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
@@ -10,7 +10,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers;
 
 public sealed class LearnerToViewModelMapperTests
 {
-    private readonly LearnerToViewModelMapper _mapper = new();
+    private readonly FurtherEducationLearnerToViewModelMapper _mapper = new();
 
     [Fact]
     public void Map_WithNullInput_ThrowsArgumentNullException()
@@ -51,7 +51,7 @@ public sealed class LearnerToViewModelMapperTests
     {
         // act
         object? result =
-            typeof(LearnerToViewModelMapper)
+            typeof(FurtherEducationLearnerToViewModelMapper)
                 .GetMethod("MapSexDescription", BindingFlags.NonPublic | BindingFlags.Static)!
                 .Invoke(null, [gender]);
 

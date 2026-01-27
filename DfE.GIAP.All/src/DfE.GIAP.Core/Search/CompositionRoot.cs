@@ -3,12 +3,10 @@ using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.Options;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
@@ -18,6 +16,7 @@ using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
+using DfE.GIAP.Web.Features.Search.Shared.Sort.Mappers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -49,7 +48,9 @@ public static class CompositionRoot
 
         // Register core search services and mappers.
         services
-            .AddScoped<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>, AzureSearchServiceAdapter>()
+            .AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderMapper>()
+            .AddScoped<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>, FurtherEducationAzureSearchServiceAdapter>()
+            .AddScoped<IAzureSearchByKeywordService, AzureSearchByKeywordService>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>()
             .AddSingleton<IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>, PageableSearchResultsToLearnerResultsMapper>()
             .AddSingleton<IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>, FurtherEducationSearchResultToLearnerMapper>()
@@ -86,13 +87,14 @@ public static class CompositionRoot
         services.AddAzureSearchFilterServices(configuration);
 
         // Bind search criteria configuration options.
-        services.AddOptions<SearchCriteriaOptions>()
-            .Bind(configuration.GetSection(nameof(SearchCriteriaOptions)));
+        services
+            .AddOptions<SearchCriteria>()
+            .Bind(configuration.GetSection(nameof(SearchCriteria)));
 
         // Bind the SortField configuration options.
         services
             .Configure<SortFieldOptions>(
-                configuration.GetSection(nameof(SortFieldOptions)));
+                configuration.GetSection("SortFields"));
 
         // Register strongly typed configuration instances.
         services.AddSingleton(serviceProvider =>

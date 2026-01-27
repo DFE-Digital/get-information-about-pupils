@@ -2,7 +2,7 @@
 using DfE.GIAP.Web.ViewModels.Search;
 using DfE.GIAP.Domain.Search.Learner;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 
 /// <summary>
 /// Handles gender-based filtering logic for learner search.

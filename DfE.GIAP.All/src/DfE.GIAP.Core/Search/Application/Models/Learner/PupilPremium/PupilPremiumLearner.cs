@@ -12,16 +12,19 @@ public sealed class PupilPremiumLearner : Entity<UniquePupilNumber>
     /// Gets the learner's characteristics, such as date of birth and gender.
     /// </summary>
     public LearnerCharacteristics Characteristics { get; }
+    public LocalAuthorityCode LocalAuthority { get; }
 
     public PupilPremiumLearner(
         UniquePupilNumber upn,
         LearnerName name,
-        LearnerCharacteristics learnerCharacteristics) : base(upn)
+        LearnerCharacteristics learnerCharacteristics,
+        LocalAuthorityCode localAuthority) : base(upn)
     {
         ArgumentNullException.ThrowIfNull(name);
         Name = name;
 
         ArgumentNullException.ThrowIfNull(learnerCharacteristics);
         Characteristics = learnerCharacteristics;
+        LocalAuthority = localAuthority;
     }
 }

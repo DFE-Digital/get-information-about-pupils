@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.ViewModels.Search;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Filters.Handlers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 
 /// <summary>
 /// Handles the Date of Birth (DOB) filter logic for text-based learner search.

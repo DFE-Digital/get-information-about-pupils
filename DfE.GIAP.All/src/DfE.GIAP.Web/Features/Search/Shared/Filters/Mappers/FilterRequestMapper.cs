@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Domain.Search.Learner;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 
 /// <summary>
 /// Maps <see cref="FilterData"/> from the domain layer into a <see cref="FilterRequest"/>.

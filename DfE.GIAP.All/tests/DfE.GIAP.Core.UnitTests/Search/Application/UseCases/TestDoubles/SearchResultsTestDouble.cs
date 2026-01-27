@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 
 // Import model representing search result payload including facets
 using DfE.GIAP.Core.Search.Application.Models.Search;

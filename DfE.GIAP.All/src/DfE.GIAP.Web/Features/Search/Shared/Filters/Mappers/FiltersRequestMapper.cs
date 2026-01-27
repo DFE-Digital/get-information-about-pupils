@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Domain.Search.Learner;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 
 /// <summary>
 /// Maps a dictionary of raw filter name/value pairs (from the web layer)

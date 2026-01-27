@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 using Moq;
 using Xunit;
 

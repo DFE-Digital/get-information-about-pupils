@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Domain.Search.Learner;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 
 /// <summary>
 /// Maps a <see cref="SearchFacets"/> object to a list of <see cref="FilterData"/>.
@@ -36,5 +36,5 @@ public class FiltersResponseMapper : IMapper<SearchFacets, List<FilterData>>
     /// </returns>
     public List<FilterData> Map(SearchFacets input) =>
         input?.Facets == null
-            ? [] : input.Facets.ToList().ConvertAll(facet =>_filterResponseMapper.Map(facet));
+            ? [] : input.Facets.ToList().ConvertAll(facet => _filterResponseMapper.Map(facet));
 }

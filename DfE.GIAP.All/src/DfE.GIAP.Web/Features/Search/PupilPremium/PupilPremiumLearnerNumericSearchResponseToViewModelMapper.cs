@@ -35,7 +35,7 @@ public sealed class PupilPremiumLearnerNumericSearchResponseToViewModelMapper :
 
 public record PupilPremiumLearnerNumericSearchMappingContext
 {
-    
+
     public LearnerNumberSearchViewModel Model { get; init; }
 
     public PupilPremiumSearchResponse Response { get; init; }

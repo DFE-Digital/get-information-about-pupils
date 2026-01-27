@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers;
+using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Controllers.TextBasedSearch.Mappers;

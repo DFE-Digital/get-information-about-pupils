@@ -17,8 +17,8 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers.TextBasedSearch;
-using DfE.GIAP.Web.Controllers.TextBasedSearch.Filters;
+using DfE.GIAP.Web.Features.Search.FurtherEducation.Controllers;
+using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
@@ -33,7 +33,7 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
-using static DfE.GIAP.Web.Controllers.TextBasedSearch.Mappers.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Features.Search.FurtherEducation.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch;
 
@@ -55,8 +55,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private AzureAppSettings _mockAppSettings = new();
     private readonly IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> _mockUseCase =
         Substitute.For<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>();
-    private readonly IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
-        Substitute.For<IMapper<LearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
+    private readonly IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
+        Substitute.For<IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
     private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
         Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
@@ -84,7 +84,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             Arg.Any<FurtherEducationSearchRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(
             new LearnerTextSearchViewModel()
             {
                 SearchText = "Somethuiing",
@@ -163,7 +163,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         FELearnerTextSearchController sut = GetController();
 
@@ -206,7 +206,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         FELearnerTextSearchController sut = GetController();
 
@@ -258,7 +258,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(
             new LearnerTextSearchViewModel()
             {
                 SearchText = searchText,
@@ -491,7 +491,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         FELearnerTextSearchController sut = GetController();
 
@@ -526,7 +526,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         searchFilters.CustomFilterText.Forename = "Forename";
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(
             new LearnerTextSearchViewModel()
             {
                 SearchText = searchText,
@@ -566,7 +566,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(
             new LearnerTextSearchViewModel()
             {
                 SearchText = searchText,
@@ -613,7 +613,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         FELearnerTextSearchController sut = GetController();
 
@@ -652,7 +652,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         FELearnerTextSearchController sut = GetController();
 
@@ -695,7 +695,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         string surnameFilter = null!;
         string middlenameFilter = null!;
@@ -746,7 +746,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         string surnameFilter = null!;
         string middlenameFilter = null!;
@@ -818,7 +818,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         FELearnerTextSearchController sut = GetController();
 
@@ -862,7 +862,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(
             new LearnerTextSearchViewModel()
             {
                 SearchText = searchText,
@@ -1028,7 +1028,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             };
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
-            Arg.Any<LearnerTextSearchMappingContext>()).Returns(searchViewModel);
+            Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
