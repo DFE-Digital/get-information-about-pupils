@@ -31,7 +31,6 @@ public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, EYF
             FSP_LLSOA11 = eyfspEntry?.LLSOA11,
             FSP_IDACISCORE = eyfspEntry?.IDACISCORE,
             FSP_IDACIRANK = eyfspEntry?.IDACIRANK,
-            FSP_COM_G01 = eyfspEntry?.COM_G01,
             FSP_COM_E01 = eyfspEntry?.COM_E01,
             FSP_COM_E02 = eyfspEntry?.COM_E02,
             FSP_PSE_E03 = eyfspEntry?.PSE_E03,

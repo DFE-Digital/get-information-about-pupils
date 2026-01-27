@@ -20,7 +20,6 @@ public class EYFSPOutput
     public string? FSP_LLSOA11 { get; set; }
     public string? FSP_IDACISCORE { get; set; }
     public string? FSP_IDACIRANK { get; set; }
-    public string? FSP_COM_G01 { get; set; }
     public string? FSP_COM_E01 { get; set; }
     public string? FSP_COM_E02 { get; set; }
     public string? FSP_PSE_E03 { get; set; }
