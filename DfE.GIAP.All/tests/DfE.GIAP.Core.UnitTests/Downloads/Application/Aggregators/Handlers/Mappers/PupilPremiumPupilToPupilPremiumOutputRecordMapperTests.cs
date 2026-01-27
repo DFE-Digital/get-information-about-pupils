@@ -26,7 +26,7 @@ public sealed class PupilPremiumPupilToPupilPremiumOutputRecordMapperTests
 
         PupilPremiumOutputRecord result = mapper.Map(pupil);
 
-        Assert.Equal(pupil.UniquePupilNumber, result.UniquePupilNumber);
+        Assert.Equal(pupil.UniquePupilNumber, result.UPN);
         Assert.Equal(pupil.Forename, result.Forename);
         Assert.Equal(pupil.Surname, result.Surname);
         Assert.Equal(pupil.Sex, result.Sex);
