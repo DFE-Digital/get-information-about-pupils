@@ -5,7 +5,7 @@ using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
-using DfE.GIAP.SharedTests.Common;
+using Moq;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers;
 
@@ -14,19 +14,18 @@ public sealed class PupilPremiumAggregationHandlerTests
     [Fact]
     public void Constructor_Throws_WhenRepositoryIsNull()
     {
-        Mock<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>> mockPpMapper =
-            MapperTestDoubles.Default<PupilPremiumPupil, PupilPremiumOutputRecord>();
+        Mock<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>> mockMapper =
+            new();
 
         Assert.Throws<ArgumentNullException>(() =>
-            new PupilPremiumAggregationHandler(null!, mockPpMapper.Object));
+            new PupilPremiumAggregationHandler(null!, mockMapper.Object));
     }
 
     [Fact]
-    public void Constructor_Throws_WhenPpMapperIsNull()
+    public void Constructor_Throws_WhenMapperIsNull()
     {
-        Mock<IPupilPremiumReadOnlyRepository> mockRepository = new();
-        Mock<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>> mockPpMapper =
-           MapperTestDoubles.Default<PupilPremiumPupil, PupilPremiumOutputRecord>();
+        Mock<IPupilPremiumReadOnlyRepository> mockRepository =
+            new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new PupilPremiumAggregationHandler(mockRepository.Object, null!));
@@ -35,13 +34,14 @@ public sealed class PupilPremiumAggregationHandlerTests
     [Fact]
     public void SupportedDownloadType_ReturnsPupilPremium()
     {
-        Mock<IPupilPremiumReadOnlyRepository> mockRepository = new();
-        Mock<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>> mockPpMapper =
-          MapperTestDoubles.Default<PupilPremiumPupil, PupilPremiumOutputRecord>();
+        Mock<IPupilPremiumReadOnlyRepository> mockRepository =
+            new();
 
-        PupilPremiumAggregationHandler handler = new(
-            mockRepository.Object,
-            ppMapper: mockPpMapper.Object);
+        Mock<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>> mockMapper =
+            new();
+
+        PupilPremiumAggregationHandler handler =
+            new(mockRepository.Object, mockMapper.Object);
 
         DownloadType result = handler.SupportedDownloadType;
 
@@ -49,79 +49,115 @@ public sealed class PupilPremiumAggregationHandlerTests
     }
 
     [Fact]
-    public async Task AggregateAsync_AddsPP_WhenDatasetSelected_AndPupilHasPPData()
+    public async Task AggregateAsync_AddsMappedRecords_ForEachPupilWithPPData()
     {
-        Mock<IPupilPremiumReadOnlyRepository> mockRepository = new();
-        Mock<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>> mockPpMapper =
-          MapperTestDoubles.Default<PupilPremiumPupil, PupilPremiumOutputRecord>();
+        Mock<IPupilPremiumReadOnlyRepository> mockRepository =
+            new();
 
-        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
-        PupilPremiumOutputRecord mapped = new();
+        Mock<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>> mockMapper =
+            new();
+
+        PupilPremiumPupil pupil1 = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
+        PupilPremiumPupil pupil2 = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
+
+        IEnumerable<PupilPremiumOutputRecord> mapped1 =
+            new[] { new PupilPremiumOutputRecord() };
+
+        IEnumerable<PupilPremiumOutputRecord> mapped2 =
+            new[]
+            {
+                new PupilPremiumOutputRecord(),
+                new PupilPremiumOutputRecord()
+            };
 
         mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
-             .ReturnsAsync(new[] { pupil });
+            .ReturnsAsync(new[] { pupil1, pupil2 });
 
-        mockPpMapper.Setup(m => m.Map(pupil)).Returns(mapped);
+        mockMapper.Setup(m => m.Map(pupil1)).Returns(mapped1);
+        mockMapper.Setup(m => m.Map(pupil2)).Returns(mapped2);
 
-        PupilPremiumAggregationHandler handler = new(
-            mockRepository.Object,
-            ppMapper: mockPpMapper.Object);
+        PupilPremiumAggregationHandler handler =
+            new(mockRepository.Object, mockMapper.Object);
 
         PupilDatasetCollection result = await handler.AggregateAsync(
             new[] { "id1" },
             new[] { Dataset.PP });
 
-        Assert.Single(result.PupilPremium);
-        mockPpMapper.Verify(m => m.Map(pupil), Times.Once);
+        Assert.Equal(3, result.PupilPremium.Count);
+        mockMapper.Verify(m => m.Map(pupil1), Times.Once);
+        mockMapper.Verify(m => m.Map(pupil2), Times.Once);
     }
 
     [Fact]
-    public async Task AggregateAsync_DoesNotAddPP_WhenPupilHasNoPPData()
+    public async Task AggregateAsync_DoesNotAddRecords_WhenPupilHasNoPPData()
     {
-        Mock<IPupilPremiumReadOnlyRepository> mockRepository = new();
-        Mock<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>> mockPpMapper =
-          MapperTestDoubles.Default<PupilPremiumPupil, PupilPremiumOutputRecord>();
+        Mock<IPupilPremiumReadOnlyRepository> mockRepository =
+            new();
+
+        Mock<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>> mockMapper =
+            new();
 
         PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: false);
-        PupilPremiumOutputRecord mapped = new();
 
         mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
-             .ReturnsAsync(new[] { pupil });
+            .ReturnsAsync(new[] { pupil });
 
-        PupilPremiumAggregationHandler handler = new(
-            mockRepository.Object,
-            ppMapper: mockPpMapper.Object);
+        PupilPremiumAggregationHandler handler =
+            new(mockRepository.Object, mockMapper.Object);
 
         PupilDatasetCollection result = await handler.AggregateAsync(
             new[] { "id1" },
             new[] { Dataset.PP });
 
         Assert.Empty(result.PupilPremium);
-        mockPpMapper.Verify(m => m.Map(It.IsAny<PupilPremiumPupil>()), Times.Never);
+        mockMapper.Verify(m => m.Map(It.IsAny<PupilPremiumPupil>()), Times.Never);
     }
 
     [Fact]
-    public async Task AggregateAsync_DoesNotAddPP_WhenDatasetNotSelected()
+    public async Task AggregateAsync_DoesNotAddRecords_WhenDatasetNotSelected()
     {
-        Mock<IPupilPremiumReadOnlyRepository> mockRepository = new();
-        Mock<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>> mockPpMapper =
-          MapperTestDoubles.Default<PupilPremiumPupil, PupilPremiumOutputRecord>();
+        Mock<IPupilPremiumReadOnlyRepository> mockRepository =
+            new();
+
+        Mock<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>> mockMapper =
+            new();
 
         PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
-        PupilPremiumOutputRecord mapped = new();
 
         mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
-             .ReturnsAsync(new[] { pupil });
+            .ReturnsAsync(new[] { pupil });
 
-        PupilPremiumAggregationHandler handler = new(
-            mockRepository.Object,
-            ppMapper: mockPpMapper.Object);
+        PupilPremiumAggregationHandler handler =
+            new(mockRepository.Object, mockMapper.Object);
 
         PupilDatasetCollection result = await handler.AggregateAsync(
             new[] { "id1" },
             Enumerable.Empty<Dataset>());
 
         Assert.Empty(result.PupilPremium);
-        mockPpMapper.Verify(m => m.Map(It.IsAny<PupilPremiumPupil>()), Times.Never);
+        mockMapper.Verify(m => m.Map(It.IsAny<PupilPremiumPupil>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task AggregateAsync_HandlesEmptyRepositoryResult()
+    {
+        Mock<IPupilPremiumReadOnlyRepository> mockRepository =
+            new();
+
+        Mock<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>> mockMapper =
+            new();
+
+        mockRepository.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>()))
+            .ReturnsAsync(Array.Empty<PupilPremiumPupil>());
+
+        PupilPremiumAggregationHandler handler =
+            new(mockRepository.Object, mockMapper.Object);
+
+        PupilDatasetCollection result = await handler.AggregateAsync(
+            new[] { "id1" },
+            new[] { Dataset.PP });
+
+        Assert.Empty(result.PupilPremium);
+        mockMapper.Verify(m => m.Map(It.IsAny<PupilPremiumPupil>()), Times.Never);
     }
 }
