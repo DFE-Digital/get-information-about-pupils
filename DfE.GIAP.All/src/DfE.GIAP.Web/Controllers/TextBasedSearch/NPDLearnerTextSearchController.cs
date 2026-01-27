@@ -57,7 +57,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     public override string SearchAction => Global.NPDNonUpnAction;
     public override string SearchController => Global.NPDTextSearchController;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonNationalPupilDatabase;
-    public override string InvalidUPNsConfirmationAction => Global.NPDNonUpnInvalidUPNsConfirmation;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
@@ -379,20 +378,5 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
         }
 
         return RedirectToAction(SearchAction, SearchController);
-    }
-
-
-    [HttpPost]
-    [Route(Routes.NPDNonUpnInvalidUPNs)]
-    public async Task<IActionResult> NonUpnInvalidUPNs(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNs(model);
-    }
-
-    [HttpPost]
-    [Route(Routes.NPDNonUpnInvalidUPNsConfirmation)]
-    public async Task<IActionResult> NonUpnInvalidUPNsConfirmation(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNsConfirmation(model);
     }
 }

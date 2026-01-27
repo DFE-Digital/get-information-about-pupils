@@ -24,7 +24,6 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
     public override string SearchAction => "PupilPremium";
     public override string FullTextLearnerSearchController => Global.PPNonUpnController;
     public override string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
-    public override string InvalidUPNsConfirmationAction => "PPInvalidUPNsConfirmation";
     public override string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPupilPremiumDownloadLinks.cshtml";
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
     public override string SearchSessionKey => "SearchPPUPN_SearchText";
@@ -77,22 +76,6 @@ public class PupilPremiumLearnerNumberController : BaseLearnerNumberController
             calledByController,
             ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
     }
-
-
-    [HttpPost]
-    [Route(Routes.PPInvalidUPNs)]
-    public async Task<IActionResult> PPInvalidUPNs(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNs(model);
-    }
-
-    [HttpPost]
-    [Route(Routes.PPInvalidUPNsConfirmation)]
-    public async Task<IActionResult> PPInvalidUPNsConfirmation(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNsConfirmation(model);
-    }
-
 
     [HttpPost]
     [Route("add-pp-to-my-pupil-list")]

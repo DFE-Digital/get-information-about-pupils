@@ -28,7 +28,6 @@ public static class Global
     public const string NPDDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
     public const string NPDDownloadCancellationReturnAction = "DownloadCancellationReturn";
     public const string NPDCTFDownloadConfirmationReturnAction = "DownloadNpdCommonTransferFileDataReturn";
-    public const string NPDNonUpnInvalidUPNsConfirmation = "NonUpnInvalidUPNsConfirmation";
     public const string NationalPupilDatabaseView = "~/Views/Search/Upn/NationalPupilDatabase.cshtml";
     public const string StarredPupilConfirmationView = "~/Views/Search/Common/_StarredPupilConfirmation.cshtml";
     public const string NPDNonUpnDownloadLinksView = "~/Views/Shared/LearnerText/_SearchPageDownloadLinks.cshtml";
@@ -45,7 +44,6 @@ public static class Global
     public const string PPLearnerNumberSearchController = "PupilPremiumLearnerNumber";
     public const string PPDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
     public const string PPDownloadCancellationReturnAction = "DownloadCancellationReturn";
-    public const string PPNonUpnInvalidUPNsConfirmation = "PPNonUpnInvalidUPNsConfirmation";
     public const string PPView = "~/Views/Search/Upn/PupilPremium.cshtml";
     public const string PPNonUpnDownloadLinksView = "~/Views/Shared/LearnerText/_SearchPupilPremiumDownloadLinks.cshtml";
 
@@ -68,13 +66,8 @@ public static class Global
     public const string MyPupilListDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
     public const string MyPupilListDownloadCancellationReturnAction = "DownloadCancellationReturn";
 
-    // Invalid UPN
-    public const string InvalidUPNConfirmation_ReturnToSearch = "ReturnToSearch";
-    public const string InvalidUPNConfirmation_MyPupilList = "GoToMyPupilList";
-
     // Number Search
     public const string SearchView = "~/Views/Shared/LearnerNumber/Search.cshtml";
-    public const string InvalidUPNsView = "~/Views/Shared/LearnerNumber/InvalidUPNs.cshtml";
     public const string LearnerNumberSearchBoxView = "../Shared/LearnerNumber/_SearchBox";
     public const string LearnerNumberSearchBoxViewDownloads = "../Shared/LearnerNumber/_SearchBoxDownloads";
     public const string DownloadNPDOptionsView = "../Shared/LearnerNumber/DownloadOptions";

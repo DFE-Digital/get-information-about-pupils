@@ -156,7 +156,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 Learners = _paginatedResultsFake.GetValidLearners().Learners,
                 PageHeading = "Advanced search ULN",
                 DownloadLinksPartial = "~/Views/Shared/LearnerText/_SearchFurtherEducationDownloadLinks.cshtml",
-                InvalidUPNsConfirmationAction = "",
                 LearnerTextSearchController = "FELearnerTextSearch",
                 LearnerTextSearchAction = "FurtherEducationNonUlnSearch",
                 LearnerNumberController = "search",
@@ -810,7 +809,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 Learners = _paginatedResultsFake.GetValidLearners().Learners,
                 PageHeading = "Advanced search ULN",
                 DownloadLinksPartial = "~/Views/Shared/LearnerText/_SearchFurtherEducationDownloadLinks.cshtml",
-                InvalidUPNsConfirmationAction = "",
                 LearnerTextSearchController = "FELearnerTextSearch",
                 LearnerTextSearchAction = "FurtherEducationNonUlnSearch",
                 LearnerNumberController = "search",
@@ -1233,7 +1231,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             Learners = _paginatedResultsFake.GetValidLearners().Learners,
             PageHeading = "Advanced search ULN",
             DownloadLinksPartial = "~/Views/Shared/LearnerText/_SearchFurtherEducationDownloadLinks.cshtml",
-            InvalidUPNsConfirmationAction = "",
             LearnerTextSearchController = "FELearnerTextSearch",
             LearnerTextSearchAction = "FurtherEducationNonUlnSearch",
             LearnerNumberController = "search",
@@ -1260,7 +1257,6 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     {
         Assert.Equal(ApplicationLabels.SearchFEWithoutUlnPageHeading, model.PageHeading);
         Assert.Equal(Global.FENonUlnDownloadLinksView, model.DownloadLinksPartial);
-        Assert.Equal(string.Empty, model.InvalidUPNsConfirmationAction);
         Assert.Equal(Global.FELearnerTextSearchController, model.LearnerTextSearchController);
         Assert.Equal(Global.FELearnerTextSearchAction, model.LearnerTextSearchAction);
         Assert.Equal(Routes.Application.Search, model.LearnerNumberController);
