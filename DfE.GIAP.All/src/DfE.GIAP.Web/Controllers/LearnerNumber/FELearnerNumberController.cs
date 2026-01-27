@@ -13,7 +13,6 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Extensions;
@@ -31,7 +30,6 @@ namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 public class FELearnerNumberController : Controller
 {
     private readonly ILogger<FELearnerNumberController> _logger;
-    private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
     protected readonly ISelectionManager _selectionManager;
 
@@ -74,7 +72,6 @@ public class FELearnerNumberController : Controller
         IMapper<
             (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
         ILogger<FELearnerNumberController> logger,
-        IDownloadService downloadService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
@@ -92,9 +89,6 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -299,16 +293,6 @@ public class FELearnerNumberController : Controller
         return View(Global.DownloadNPDOptionsView, searchDownloadViewModel);
     }
 
-    protected bool ValidateLearnerNumber(string learnerNumber)
-    {
-        return ValidationHelper.IsValidUln(learnerNumber);
-    }
-
-    protected string GenerateValidationMessage()
-    {
-        return PupilHelper.GenerateValidationMessageUlnSearch(ModelState);
-    }
-
     #region WIP - this will be slowly refactored away from the controller as we move through more search types
 
     [NonAction]
@@ -374,7 +358,9 @@ public class FELearnerNumberController : Controller
 
         model.ShowMiddleNames = _showMiddleNames;
 
-        model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
+        model.SearchBoxErrorMessage =
+            ModelState.IsValid is false ?
+                PupilHelper.GenerateValidationMessageUlnSearch(ModelState) : null;
 
         model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
 
@@ -515,7 +501,7 @@ public class FELearnerNumberController : Controller
                     .Replace("\n", string.Empty))
                 .Where(t => !string.IsNullOrWhiteSpace(t))
                 .Distinct()
-                .Where((sanitisedLearnerNumber) => !ValidateLearnerNumber(sanitisedLearnerNumber))
+                .Where((sanitisedLearnerNumber) => !ValidationHelper.IsValidUln(sanitisedLearnerNumber))
                 .ToList() ?? [];
 
         model.Invalid.AddRange(invalidIdentifiers);
