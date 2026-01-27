@@ -35,7 +35,6 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
-    private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCase<SearchRequest, SearchResponse> _mockUseCase =
@@ -1462,14 +1461,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         FELearnerNumberController sut = GetController();
         sut.TempData = tempData;
 
-        _mockDownloadService.GetFECSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile());
-
         // act
         IActionResult result = await sut.DownloadSelectedUlnDatabaseData(inputDownloadModel);
 
@@ -1543,7 +1534,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockLearnerNumberSearchResponseToViewModelMapper,
             mockMapper.Object,
             _mockLogger,
-            _mockDownloadService,
             _mockSelectionManager,
             _mockAppOptions,
             mockEventLogger.Object,
