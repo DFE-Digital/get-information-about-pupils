@@ -2,7 +2,7 @@
 
 public class PupilPremiumOutputRecord
 {
-    public string? UniquePupilNumber { get; set; }
+    public string? UPN { get; set; }
     public string? Surname { get; set; }
     public string? Forename { get; set; }
     public string? Sex { get; set; }
