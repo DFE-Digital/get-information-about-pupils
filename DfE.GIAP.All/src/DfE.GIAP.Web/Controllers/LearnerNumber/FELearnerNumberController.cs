@@ -454,8 +454,7 @@ public class FELearnerNumberController : Controller
                     searchKeywords: string.Join(" AND ", learnerNumberArray),
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,
-                    offset: model.Offset))
-            .ConfigureAwait(false);
+                    offset: model.Offset));
 
 
         LearnerNumberSearchViewModel result =

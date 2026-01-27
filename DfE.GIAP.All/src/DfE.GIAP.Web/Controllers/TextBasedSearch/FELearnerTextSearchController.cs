@@ -699,8 +699,7 @@ public class FELearnerTextSearchController : Controller
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,
-                    offset: model.Offset))
-            .ConfigureAwait(false);
+                    offset: model.Offset));
 
         return _learnerSearchResponseToViewModelMapper.Map(
             LearnerTextSearchMappingContext.Create(model, searchResponse));
