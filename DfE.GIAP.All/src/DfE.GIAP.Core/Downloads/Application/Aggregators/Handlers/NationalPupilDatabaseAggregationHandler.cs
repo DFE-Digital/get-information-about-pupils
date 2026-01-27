@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Aggregators;
-using DfE.GIAP.Core.Downloads.Application.Enums;
+﻿using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
@@ -9,6 +8,7 @@ namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationHandler
 {
     public DownloadType SupportedDownloadType => DownloadType.NPD;
+
     private readonly INationalPupilReadOnlyRepository _npdReadRepository;
     private readonly IMapper<NationalPupil, CensusAutumnOutput> _autumnMapper;
     private readonly IMapper<NationalPupil, CensusSummerOutput> _summerMapper;
@@ -19,6 +19,7 @@ public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationH
     private readonly IMapper<NationalPupil, MTCOutput> _mtcMapper;
     private readonly IMapper<NationalPupil, PhonicsOutput> _phonicsMapper;
     private readonly IMapper<NationalPupil, EYFSPOutput> _eyfspMapper;
+
     public NationalPupilDatabaseAggregationHandler(
         INationalPupilReadOnlyRepository npdReadRepository,
         IMapper<NationalPupil, CensusAutumnOutput> autumnMapper,

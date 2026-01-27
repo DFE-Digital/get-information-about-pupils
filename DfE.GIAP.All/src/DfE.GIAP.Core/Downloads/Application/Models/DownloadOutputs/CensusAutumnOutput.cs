@@ -39,9 +39,9 @@ public class CensusAutumnOutput
     public string? ExtendedHours { get; set; }
     public string? ExpandedHours { get; set; }
     public int DAFIndicator { get; set; }
-    public int Funding_Basis_ECO { get; set; }
-    public int Funding_Basis_HSD { get; set; }
-    public int Funding_Basis_LAA { get; set; }
+    public int? Funding_Basis_ECO { get; set; }
+    public int? Funding_Basis_HSD { get; set; }
+    public int? Funding_Basis_LAA { get; set; }
     public string? TLevelQualHrs { get; set; }
     public string? TLevelNonqualHrs { get; set; }
 }

@@ -14,7 +14,7 @@ public class NationalPupil
     public string? Forename { get; set; }
     public string? MiddleName { get; set; }
     public char? Gender { get; set; }
-    public char? Sex { get; set; }
+    public string? Sex { get; set; }
     public DateTime DOB { get; set; }
 
     public List<CensusAutumnEntry>? CensusAutumn { get; set; }

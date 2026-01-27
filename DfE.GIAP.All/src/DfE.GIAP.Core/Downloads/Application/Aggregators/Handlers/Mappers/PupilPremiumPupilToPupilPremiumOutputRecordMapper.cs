@@ -13,7 +13,7 @@ public class PupilPremiumPupilToPupilPremiumOutputRecordMapper : IMapper<PupilPr
         PupilPremiumEntry? ppEntry = input.PupilPremium?.FirstOrDefault();
         return new PupilPremiumOutputRecord
         {
-            UniquePupilNumber = input.UniquePupilNumber,
+            UPN = input.UniquePupilNumber,
             Surname = input.Surname,
             Forename = input.Forename,
             Sex = input.Sex,
