@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Common.Application;
+﻿using System.Collections.Generic;
+using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
@@ -63,7 +64,7 @@ public static class CompositionRoot
 
     private static IServiceCollection RegisterApplicationMappers(this IServiceCollection services)
     {
-        services.AddScoped<IMapper<PupilPremiumPupil, PupilPremiumOutputRecord>, PupilPremiumPupilToPupilPremiumOutputRecordMapper>();
+        services.AddScoped<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>, PupilPremiumPupilToPupilPremiumOutputRecordMapper>();
         services.AddScoped<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>, FurtherEducationPupilToPpOutputRecordMapper>();
         services.AddScoped<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>, FurtherEducationPupilToSenOutputRecordMapper>();
         services.AddScoped<IMapper<NationalPupil, CensusAutumnOutput>, NationalPupilToCensusAutumnOutputRecordMapper>();

@@ -17,7 +17,7 @@ public class PupilPremiumEntryDto
     public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
-    public string? DateOfBirth { get; set; }
+    public string? DOB { get; set; }
 
     [JsonProperty("NCYear")]
     public string? NCYear { get; set; }

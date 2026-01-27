@@ -56,7 +56,7 @@ public sealed class PupilPremiumDtoToEntityMapperTests
                     Surname = "Brown",
                     Forename = "Tom",
                     Sex = "M",
-                    DateOfBirth = "2011-02-02",
+                    DOB = "2011-02-02",
                     NCYear = "Y5",
                     DeprivationPupilPremium = 1,
                     ServiceChildPremium = 0,
@@ -84,7 +84,7 @@ public sealed class PupilPremiumDtoToEntityMapperTests
         Assert.Equal("Brown", entry.Surname);
         Assert.Equal("Tom", entry.Forename);
         Assert.Equal("M", entry.Sex);
-        Assert.Equal("2011-02-02", entry.DateOfBirth);
+        Assert.Equal("2011-02-02", entry.DOB);
         Assert.Equal("Y5", entry.NCYear);
 
         // ints copied directly

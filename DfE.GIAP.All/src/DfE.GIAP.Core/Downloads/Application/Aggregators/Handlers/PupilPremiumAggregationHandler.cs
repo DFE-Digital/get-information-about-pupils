@@ -10,11 +10,11 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
     public DownloadType SupportedDownloadType => DownloadType.PupilPremium;
 
     private readonly IPupilPremiumReadOnlyRepository _ppReadRepository;
-    private readonly IMapper<PupilPremiumPupil, PupilPremiumOutputRecord> _ppMapper;
+    private readonly IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>> _ppMapper;
 
     public PupilPremiumAggregationHandler(
         IPupilPremiumReadOnlyRepository pupilPremiumReadRepository,
-        IMapper<PupilPremiumPupil, PupilPremiumOutputRecord> ppMapper)
+        IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>> ppMapper)
     {
         ArgumentNullException.ThrowIfNull(pupilPremiumReadRepository);
         ArgumentNullException.ThrowIfNull(ppMapper);
@@ -33,9 +33,16 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
         foreach (PupilPremiumPupil pupil in pupils)
         {
             if (selectedDatasets.Contains(Dataset.PP) && pupil.HasPupilPremiumData)
-                collection.PupilPremium.Add(_ppMapper.Map(pupil));
+            {
+                IEnumerable<PupilPremiumOutputRecord> mappedOutputRecords = _ppMapper.Map(pupil);
+                foreach (PupilPremiumOutputRecord record in mappedOutputRecords)
+                {
+                    collection.PupilPremium.Add(record);
+                }
+            }
         }
 
         return collection;
     }
+
 }
