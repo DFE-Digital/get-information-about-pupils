@@ -19,7 +19,7 @@ public class PupilPremiumPupilToPupilPremiumOutputRecordMapper
             Surname = ppEntry.Surname,
             Forename = ppEntry.Forename,
             Sex = ppEntry.Sex,
-            DOB = ppEntry.DOB,
+            DOB = ppEntry.DOB.ToShortDateString(),
             NCYear = ppEntry.NCYear,
             DeprivationPupilPremium = ppEntry.DeprivationPupilPremium,
             ServiceChildPremium = ppEntry.ServiceChildPremium,
