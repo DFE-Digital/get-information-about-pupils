@@ -11,7 +11,6 @@ public class LearnerNumberSearchViewModel
     public string PageHeading { get; set; }
 
     public string SearchAction { get; set; }
-    public string InvalidUPNsConfirmationAction { get; set; }
     public string FullTextLearnerSearchController { get; set; }
     public string FullTextLearnerSearchAction { get; set; }
 

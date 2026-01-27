@@ -2,10 +2,6 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers.Rbac;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
-using DfE.GIAP.Core.Downloads.Application.Enums;
-using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
@@ -52,8 +48,6 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string SearchAction => Global.PPNonUpnAction;
     public override string SearchController => Global.PPNonUpnController;
     public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonPupilPremium;
-
-    public override string InvalidUPNsConfirmationAction => Global.PPNonUpnInvalidUPNsConfirmation;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
@@ -248,20 +242,5 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         model.ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction;
         model.CancelReturnController = SearchController;
         model.CancelReturnAction = Global.PPDownloadCancellationReturnAction;
-    }
-
-
-    [HttpPost]
-    [Route(Routes.PPNonUpnInvalidUPNs)]
-    public async Task<IActionResult> PPNonUpnInvalidUPNs(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNs(model);
-    }
-
-    [HttpPost]
-    [Route(Routes.PPNonUpnInvalidUPNsConfirmation)]
-    public async Task<IActionResult> PPNonUpnInvalidUPNsConfirmation(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNsConfirmation(model);
     }
 }

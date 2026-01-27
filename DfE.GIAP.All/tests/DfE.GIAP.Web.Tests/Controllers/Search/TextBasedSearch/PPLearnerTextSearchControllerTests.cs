@@ -656,31 +656,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     }
 
     [Fact]
-    public async Task PPAddToMyPupilList_redirects_to_InvalidUPNs_if_invalid_upn_selected()
-    {
-        // Arrange
-        string searchText = "John Smith";
-        string upn = _paginatedResultsFake.GetUpnsWithInvalid();
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-
-        _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-
-        PPLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
-
-        // Act
-        IActionResult result = await sut.PPAddToMyPupilList(searchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
-
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-    }
-
-    [Fact]
     public async Task PPAddToMyPupilList_sets_download_links_correctly_on_serach_reload()
     {
         // Arrange
@@ -1008,157 +983,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
     }
 
-    [Fact]
-    public async Task PPNonUpnInvalidUPNs_returns_invalid_upn_page_upns_only()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetInvalidUpn();
-        InvalidLearnerNumberSearchViewModel invalidLearnerNumberSearchViewModel = new()
-        {
-            LearnerNumber = upn
-        };
-
-        PPLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
-
-        // act
-        IActionResult result = await sut.PPNonUpnInvalidUPNs(invalidLearnerNumberSearchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
-
-        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        Assert.True(vm.Learners.SequenceEqual(_paginatedResultsFake.GetInvalidLearners().Learners));
-    }
-
-    [Fact]
-    public async Task PPNonUpnInvalidUPNs_returns_invalid_upn_page_ids_and_upns()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetInvalidUpn();
-        InvalidLearnerNumberSearchViewModel invalidLearnerNumberSearchViewModel = new()
-        {
-            LearnerNumber = upn
-        };
-
-        IEnumerable<Learner> expectedLearners = _paginatedResultsFake.GetInvalidLearners().Learners.Concat(_paginatedResultsFake.GetValidLearners().Learners);
-
-        PPLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, _paginatedResultsFake.GetValidLearners());
-
-        // act
-        IActionResult result = await sut.PPNonUpnInvalidUPNs(invalidLearnerNumberSearchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
-
-        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        Assert.True(vm.Learners.SequenceEqual(expectedLearners));
-    }
-
-    [Fact]
-    public async Task PPNonUpnInvalidUPNs_returns_invalid_upn_page_ids_only()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetInvalidUpn();
-        InvalidLearnerNumberSearchViewModel invalidLearnerNumberSearchViewModel = new()
-        {
-            LearnerNumber = upn
-        };
-
-        PPLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, new PaginatedResponse());
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, _paginatedResultsFake.GetInvalidLearners());
-
-        // act
-        IActionResult result = await sut.PPNonUpnInvalidUPNs(invalidLearnerNumberSearchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
-
-        InvalidLearnerNumberSearchViewModel vm = Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        Assert.True(vm.Learners.SequenceEqual(_paginatedResultsFake.GetInvalidLearners().Learners));
-    }
-
-    [Fact]
-    public async Task PPNonUpnInvalidUPNsConfirmation_redirects_to_my_pupil_list()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetInvalidUpn();
-        InvalidLearnerNumberSearchViewModel invalidLearnerNumberSearchViewModel = new()
-        {
-            LearnerNumber = upn,
-            SelectedInvalidUPNOption = Global.InvalidUPNConfirmation_MyPupilList
-        };
-
-        PPLearnerTextSearchController sut = GetController();
-
-        // act
-        IActionResult result = await sut.PPNonUpnInvalidUPNsConfirmation(invalidLearnerNumberSearchViewModel);
-
-        // Assert
-        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
-        Assert.Equal(Global.MyPupilListControllerName, viewResult.ControllerName);
-        Assert.Equal(Global.MyPupilListAction, viewResult.ActionName);
-    }
-
-    [Fact]
-    public async Task PPNonUpnInvalidUPNsConfirmation_redirects_to_search()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetInvalidUpn();
-        InvalidLearnerNumberSearchViewModel invalidLearnerNumberSearchViewModel = new()
-        {
-            LearnerNumber = upn,
-            SelectedInvalidUPNOption = Global.InvalidUPNConfirmation_ReturnToSearch
-        };
-
-        PPLearnerTextSearchController sut = GetController();
-
-        // act
-        IActionResult result = await sut.PPNonUpnInvalidUPNsConfirmation(invalidLearnerNumberSearchViewModel);
-
-        // Assert
-        RedirectToActionResult viewResult = Assert.IsType<RedirectToActionResult>(result, exactMatch: false);
-        Assert.Equal(Global.PPNonUpnAction, viewResult.ActionName);
-    }
-
-    [Fact]
-    public async Task PPNonUpnInvalidUPNsConfirmation_returns_no_option_selected_validation_message()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetInvalidUpn();
-        InvalidLearnerNumberSearchViewModel invalidLearnerNumberSearchViewModel = new()
-        {
-            LearnerNumber = upn,
-            SelectedInvalidUPNOption = string.Empty
-        };
-
-        PPLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Numbers, _paginatedResultsFake.GetInvalidLearners());
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Id, new PaginatedResponse());
-
-        MockModelState(invalidLearnerNumberSearchViewModel, sut);
-
-        // act
-        IActionResult result = await sut.PPNonUpnInvalidUPNsConfirmation(invalidLearnerNumberSearchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.IsType<InvalidLearnerNumberSearchViewModel>(viewResult.Model);
-        Assert.Equal(Global.InvalidUPNsView, viewResult.ViewName);
-        Assert.Single(sut.ViewData.ModelState["NoContinueSelection"]!.Errors);
-    }
-
     [Theory]
     [InlineData("Forename", "asc")]
     [InlineData("Surname", "desc")]
@@ -1415,7 +1239,6 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     {
         Assert.Equal(controller.PageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
-        Assert.Equal(controller.InvalidUPNsConfirmationAction, model.InvalidUPNsConfirmationAction);
         Assert.Equal(controller.SearchController, model.LearnerTextSearchController);
         Assert.Equal(controller.SearchAction, model.LearnerTextSearchAction);
         Assert.Equal(controller.SearchLearnerNumberController, model.LearnerNumberController);

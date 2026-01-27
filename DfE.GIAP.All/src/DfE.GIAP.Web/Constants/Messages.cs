@@ -13,6 +13,7 @@ public static class Messages
             public const string TitleRequired = "Title must be entered";
             public const string BodyRequired = "Body must be entered";
             public const string NoPupilsSelected = "You have not selected any pupils";
+            public const string InvalidPupilIdentifier = "The selected pupil(s) do not have a valid UPN";
         }
     }
 

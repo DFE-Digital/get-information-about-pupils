@@ -963,8 +963,6 @@ public class FELearnerTextSearchController : Controller
         model.RedirectFrom = Routes.FurtherEducation.LearnerTextSearch;
         model.DownloadLinksPartial = Global.FENonUlnDownloadLinksView;
 
-        model.InvalidUPNsConfirmationAction = string.Empty;
-
         return model;
     }
 

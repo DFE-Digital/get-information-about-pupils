@@ -4,8 +4,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -661,7 +659,6 @@ public class FELearnerNumberController : Controller
     protected LearnerNumberSearchViewModel PopulateNavigation(LearnerNumberSearchViewModel model)
     {
         model.DownloadLinksPartial = DownloadLinksPartial;
-        model.InvalidUPNsConfirmationAction = string.Empty;
         model.SearchAction = SearchAction;
         model.FullTextLearnerSearchController = Global.FELearnerTextSearchController;
         model.FullTextLearnerSearchAction = Global.FELearnerTextSearchAction;
