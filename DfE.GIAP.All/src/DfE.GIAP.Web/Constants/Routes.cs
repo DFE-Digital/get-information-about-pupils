@@ -4,7 +4,6 @@ public static class Routes
 {
     public const string DownloadSelectedNationalPupilDatabaseData = "download";
     public const string NPDNonUpnAddToMyPupilList = "add-npd-nonupn-to-my-pupil-list";
-    public const string InvalidUPNsReturn = "InvalidUPNsReturn";
 
     public static class Application
     {
