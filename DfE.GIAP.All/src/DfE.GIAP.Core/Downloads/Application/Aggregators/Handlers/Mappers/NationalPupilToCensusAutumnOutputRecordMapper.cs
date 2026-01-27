@@ -13,13 +13,13 @@ public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPup
         CensusAutumnEntry? censusAutumnEntry = input.CensusAutumn?.FirstOrDefault();
         return new CensusAutumnOutput
         {
-            PupilMatchingRef = input.PupilMatchingRef,
-            UPN = input.Upn,
-            Surname = input.Surname,
-            Forename = input.Forename,
-            MiddleNames = input.MiddleName,
-            Sex = input.Sex,
-            DOB = input.DOB.ToShortDateString(),
+            PupilMatchingRef = censusAutumnEntry?.PupilMatchingRef,
+            UPN = censusAutumnEntry?.UniquePupilNumber,
+            Surname = censusAutumnEntry?.Surname,
+            Forename = censusAutumnEntry?.Forename,
+            MiddleNames = censusAutumnEntry?.MiddleNames,
+            Sex = censusAutumnEntry?.Sex,
+            DOB = censusAutumnEntry?.DOB.ToShortDateString(),
             AcademicYear = censusAutumnEntry?.AcademicYear,
             CensusTerm = censusAutumnEntry?.CensusTerm,
             LA = censusAutumnEntry?.LocalAuthority,
@@ -45,14 +45,9 @@ public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPup
             SecondarySENType = censusAutumnEntry?.SecondarySpecialEducationalNeedsType,
             IDACI_S = censusAutumnEntry?.IncomeDeprivationAffectingChildrenIndexScore,
             IDACI_R = censusAutumnEntry?.IncomeDeprivationAffectingChildrenIndexRating,
-            EYPPR = null,
-            EYPPBF = null,
             ExtendedHours = censusAutumnEntry?.ExtendedHours,
             ExpandedHours = censusAutumnEntry?.ExpandedHours,
             DAFIndicator = censusAutumnEntry?.DisabilityAccessFundIndicator ?? 0,
-            Funding_Basis_ECO = null,
-            Funding_Basis_HSD = null,
-            Funding_Basis_LAA = null,
             TLevelQualHrs = censusAutumnEntry?.TLevelQualHrs,
             TLevelNonqualHrs = censusAutumnEntry?.TLevelNonqualHrs
         };

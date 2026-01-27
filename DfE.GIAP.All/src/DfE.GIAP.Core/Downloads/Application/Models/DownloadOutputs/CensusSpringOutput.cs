@@ -42,6 +42,4 @@ public class CensusSpringOutput
     public string? Funding_Basis_ECO { get; set; }
     public string? Funding_Basis_HSD { get; set; }
     public string? Funding_Basis_LAA { get; set; }
-    public string? TLevelQualHrs { get; set; }
-    public string? TLevelNonqualHrs { get; set; }
 }

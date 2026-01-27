@@ -13,13 +13,13 @@ public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPup
         CensusSpringEntry? censusSpringEntry = input.CensusSpring?.FirstOrDefault();
         return new CensusSpringOutput
         {
-            PupilMatchingRef = input.PupilMatchingRef,
-            UPN = input.Upn,
-            Surname = input.Surname,
-            Forename = input.Forename,
-            MiddleNames = input.MiddleName,
-            DOB = input.DOB.ToShortDateString(),
-            Sex = input.Sex,
+            PupilMatchingRef = censusSpringEntry?.PupilMatchingRef,
+            UPN = censusSpringEntry?.UniquePupilNumber,
+            Surname = censusSpringEntry?.Surname,
+            Forename = censusSpringEntry?.Forename,
+            MiddleNames = censusSpringEntry?.MiddleNames,
+            DOB = censusSpringEntry?.DOB.ToShortDateString(),
+            Sex = censusSpringEntry?.Sex,
             AcademicYear = censusSpringEntry?.AcademicYear,
             CensusTerm = censusSpringEntry?.CensusTerm,
             LA = censusSpringEntry?.LocalAuthority,
@@ -53,8 +53,6 @@ public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPup
             Funding_Basis_ECO = censusSpringEntry?.Funding_Basis_ECO,
             Funding_Basis_HSD = censusSpringEntry?.Funding_Basis_HSD,
             Funding_Basis_LAA = censusSpringEntry?.Funding_Basis_LAA,
-            TLevelQualHrs = null,
-            TLevelNonqualHrs = null
         };
     }
 }
