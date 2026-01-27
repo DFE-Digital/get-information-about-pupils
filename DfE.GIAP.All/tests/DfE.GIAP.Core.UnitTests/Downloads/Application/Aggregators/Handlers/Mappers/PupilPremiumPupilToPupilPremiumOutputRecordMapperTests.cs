@@ -19,80 +19,61 @@ public sealed class PupilPremiumPupilToPupilPremiumOutputRecordMapperTests
     }
 
     [Fact]
-    public void Map_MapsSimplePropertiesCorrectly()
+    public void Map_ReturnsEmpty_WhenPupilPremiumListIsNull()
     {
         PupilPremiumPupilToPupilPremiumOutputRecordMapper mapper = new();
-        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create();
+        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: false);
+        pupil.PupilPremium = null!;
 
-        PupilPremiumOutputRecord result = mapper.Map(pupil);
+        IEnumerable<PupilPremiumOutputRecord> result = mapper.Map(pupil);
 
-        Assert.Equal(pupil.UniquePupilNumber, result.UPN);
-        Assert.Equal(pupil.Forename, result.Forename);
-        Assert.Equal(pupil.Surname, result.Surname);
-        Assert.Equal(pupil.Sex, result.Sex);
-        Assert.Equal(pupil.DOB.ToShortDateString(), result.DOB);
+        Assert.Empty(result);
     }
 
     [Fact]
-    public void Map_MapsPupilPremiumEntry_WhenEntryExists()
+    public void Map_ReturnsEmpty_WhenPupilPremiumListIsEmpty()
+    {
+        PupilPremiumPupilToPupilPremiumOutputRecordMapper mapper = new();
+        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: false);
+        pupil.PupilPremium = new List<PupilPremiumEntry>();
+
+        IEnumerable<PupilPremiumOutputRecord> result = mapper.Map(pupil);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void Map_MapsAllPupilPremiumEntries()
     {
         PupilPremiumPupilToPupilPremiumOutputRecordMapper mapper = new();
         PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
 
-        PupilPremiumOutputRecord result = mapper.Map(pupil);
+        IEnumerable<PupilPremiumOutputRecord> result = mapper.Map(pupil);
 
-        PupilPremiumEntry entry = pupil.PupilPremium[0];
-
-        Assert.Equal(entry.NCYear, result.NCYear);
-        Assert.Equal(entry.DeprivationPupilPremium, result.DeprivationPupilPremium);
-        Assert.Equal(entry.ServiceChildPremium, result.ServiceChildPremium);
-        Assert.Equal(entry.AdoptedfromCarePremium, result.AdoptedfromCarePremium);
-        Assert.Equal(entry.LookedAfterPremium, result.LookedAfterPremium);
-        Assert.Equal(entry.PupilPremiumFTE, result.PupilPremiumFTE);
-        Assert.Equal(entry.PupilPremiumCashAmount, result.PupilPremiumCashAmount);
-        Assert.Equal(entry.PupilPremiumFYStartDate, result.PupilPremiumFYStartDate);
-        Assert.Equal(entry.PupilPremiumFYEndDate, result.PupilPremiumFYEndDate);
-        Assert.Equal(entry.LastFSM, result.LastFSM);
+        Assert.Equal(pupil.PupilPremium.Count, result.Count());
     }
 
     [Fact]
-    public void Map_SetsPpFieldsToNull_WhenNoPpEntryExists()
+    public void Map_MapsPupilPremiumEntryFieldsCorrectly()
     {
         PupilPremiumPupilToPupilPremiumOutputRecordMapper mapper = new();
-        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: false);
+        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
 
-        PupilPremiumOutputRecord result = mapper.Map(pupil);
+        PupilPremiumEntry entry = pupil.PupilPremium!.First();
 
-        Assert.Null(result.NCYear);
-        Assert.Null(result.DeprivationPupilPremium);
-        Assert.Null(result.ServiceChildPremium);
-        Assert.Null(result.AdoptedfromCarePremium);
-        Assert.Null(result.LookedAfterPremium);
-        Assert.Null(result.PupilPremiumFTE);
-        Assert.Null(result.PupilPremiumCashAmount);
-        Assert.Null(result.PupilPremiumFYStartDate);
-        Assert.Null(result.PupilPremiumFYEndDate);
-        Assert.Null(result.LastFSM);
-    }
+        IEnumerable<PupilPremiumOutputRecord> result = mapper.Map(pupil);
+        PupilPremiumOutputRecord mapped = result.First();
 
-    [Fact]
-    public void Map_SetsPpFieldsToNull_WhenPpListIsNull()
-    {
-        PupilPremiumPupilToPupilPremiumOutputRecordMapper mapper = new();
-        PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: false);
-
-        PupilPremiumOutputRecord result = mapper.Map(pupil);
-
-        Assert.Null(result.NCYear);
-        Assert.Null(result.DeprivationPupilPremium);
-        Assert.Null(result.ServiceChildPremium);
-        Assert.Null(result.AdoptedfromCarePremium);
-        Assert.Null(result.LookedAfterPremium);
-        Assert.Null(result.PupilPremiumFTE);
-        Assert.Null(result.PupilPremiumCashAmount);
-        Assert.Null(result.PupilPremiumFYStartDate);
-        Assert.Null(result.PupilPremiumFYEndDate);
-        Assert.Null(result.LastFSM);
+        Assert.Equal(entry.NCYear, mapped.NCYear);
+        Assert.Equal(entry.DeprivationPupilPremium, mapped.DeprivationPupilPremium);
+        Assert.Equal(entry.ServiceChildPremium, mapped.ServiceChildPremium);
+        Assert.Equal(entry.AdoptedfromCarePremium, mapped.AdoptedfromCarePremium);
+        Assert.Equal(entry.LookedAfterPremium, mapped.LookedAfterPremium);
+        Assert.Equal(entry.PupilPremiumFTE, mapped.PupilPremiumFTE);
+        Assert.Equal(entry.PupilPremiumCashAmount, mapped.PupilPremiumCashAmount);
+        Assert.Equal(entry.PupilPremiumFYStartDate, mapped.PupilPremiumFYStartDate);
+        Assert.Equal(entry.PupilPremiumFYEndDate, mapped.PupilPremiumFYEndDate);
+        Assert.Equal(entry.LastFSM, mapped.LastFSM);
     }
 
     [Fact]
@@ -101,10 +82,10 @@ public sealed class PupilPremiumPupilToPupilPremiumOutputRecordMapperTests
         PupilPremiumPupilToPupilPremiumOutputRecordMapper mapper = new();
         PupilPremiumPupil pupil = PupilPremiumPupilTestDouble.Create(includePupilPremium: true);
 
-        PupilPremiumOutputRecord result = mapper.Map(pupil);
+        IEnumerable<PupilPremiumOutputRecord> result = mapper.Map(pupil);
 
-        Assert.Null(result.GetType().GetProperty("MODSERVICE"));
-        Assert.Null(result.GetType().GetProperty("CENSUSSERVICEEVER6"));
+        // These properties do not exist on the output record
+        Assert.Null(typeof(PupilPremiumOutputRecord).GetProperty("MODSERVICE"));
+        Assert.Null(typeof(PupilPremiumOutputRecord).GetProperty("CENSUSSERVICEEVER6"));
     }
 }
-

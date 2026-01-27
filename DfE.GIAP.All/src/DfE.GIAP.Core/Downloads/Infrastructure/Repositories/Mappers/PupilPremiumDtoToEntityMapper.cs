@@ -25,7 +25,7 @@ internal class PupilPremiumDtoToEntityMapper : IMapper<PupilPremiumPupilDto, Pup
                 Surname = ppDto.Surname,
                 Forename = ppDto.Forename,
                 Sex = ppDto.Sex,
-                DateOfBirth = ppDto.DateOfBirth,
+                DOB = ppDto.DOB,
                 NCYear = ppDto.NCYear,
                 DeprivationPupilPremium = ppDto.DeprivationPupilPremium,
                 ServiceChildPremium = ppDto.ServiceChildPremium,

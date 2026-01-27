@@ -14,7 +14,7 @@ internal static class PupilPremiumPupilTestDouble
             .RuleFor(p => p.Surname, f => f.Name.LastName())
             .RuleFor(p => p.Forename, f => f.Name.FirstName())
             .RuleFor(p => p.Sex, f => f.PickRandom("Male", "Female", "Other"))
-            .RuleFor(p => p.DateOfBirth, f => f.Date.Past(18, DateTime.Today.AddYears(-16)).ToString("yyyy-MM-dd"))
+            .RuleFor(p => p.DOB, f => DateTime.Parse(f.Date.Past(18, DateTime.Today.AddYears(-16)).ToString("yyyy-MM-dd")))
             .RuleFor(p => p.NCYear, f => f.Random.Int(1, 13).ToString())
             .RuleFor(p => p.DeprivationPupilPremium, f => f.Random.Int(0, 1))
             .RuleFor(p => p.ServiceChildPremium, f => f.Random.Int(0, 1))
