@@ -197,7 +197,6 @@ public class PaginatedResultsFake
 
     public string GetBase64EncodedUpn() => "QTIwMzEwMjIwOTA4Mw==-GIAP";
     public string GetUpn() => "A203102209083";
-    public string GetInvalidUpn() => "this-is-invalid";
     public string GetUpns() => "A203102209083\r\nA203202811068\r\n";
     public string GetUpnsWithInvalid() => "A203102209083\r\nA203202811068\r\nthis-is-invalid\r\n";
     public string GetUlnsWithNotFound() => "6424316654\r\n7621706219\r\n753706219\r\n";
