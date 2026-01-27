@@ -6,10 +6,6 @@ namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
 public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, MTCOutput>
 {
-    public NationalPupilToMtcOutputRecordMapper()
-    {
-    }
-
     public MTCOutput Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
