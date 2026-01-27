@@ -65,8 +65,8 @@ public static class CompositionRoot
     private static IServiceCollection RegisterApplicationMappers(this IServiceCollection services)
     {
         services.AddScoped<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>, PupilPremiumPupilToPupilPremiumOutputRecordMapper>();
-        services.AddScoped<IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>, FurtherEducationPupilToPpOutputRecordMapper>();
-        services.AddScoped<IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord>, FurtherEducationPupilToSenOutputRecordMapper>();
+        services.AddScoped<IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationPPOutputRecord>>, FurtherEducationPupilToPpOutputRecordMapper>();
+        services.AddScoped<IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationSENOutputRecord>>, FurtherEducationPupilToSenOutputRecordMapper>();
         services.AddScoped<IMapper<NationalPupil, CensusAutumnOutput>, NationalPupilToCensusAutumnOutputRecordMapper>();
         services.AddScoped<IMapper<NationalPupil, CensusSummerOutput>, NationalPupilToCensusSummerOutputRecordMapper>();
         services.AddScoped<IMapper<NationalPupil, CensusSpringOutput>, NationalPupilToCensusSpringOutputRecordMapper>();

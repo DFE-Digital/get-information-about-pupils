@@ -34,11 +34,7 @@ public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
         {
             if (selectedDatasets.Contains(Dataset.PP) && pupil.HasPupilPremiumData)
             {
-                IEnumerable<PupilPremiumOutputRecord> mappedOutputRecords = _ppMapper.Map(pupil);
-                foreach (PupilPremiumOutputRecord record in mappedOutputRecords)
-                {
-                    collection.PupilPremium.Add(record);
-                }
+                collection.PupilPremium.AddRange(_ppMapper.Map(pupil));
             }
         }
 
