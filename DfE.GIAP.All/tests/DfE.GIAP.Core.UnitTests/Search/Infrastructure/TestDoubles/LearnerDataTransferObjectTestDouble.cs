@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;

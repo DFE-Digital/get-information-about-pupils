@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Infrastructure.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.Web.Features.Search.Shared.Sort.Mappers;
 using Microsoft.Extensions.Options;
 using Xunit;

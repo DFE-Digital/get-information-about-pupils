@@ -26,10 +26,11 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        services.AddSearchDependencies(configuration);
+        services.AddSearchCore(configuration);
 
         services
             .AddSearchRules()
+            .AddSort()
             .AddFilters();
 
         services

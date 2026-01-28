@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 

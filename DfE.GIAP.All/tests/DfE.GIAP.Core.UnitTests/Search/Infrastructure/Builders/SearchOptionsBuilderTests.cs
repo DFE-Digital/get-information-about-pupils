@@ -2,7 +2,7 @@
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Infrastructure.Builders;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.Builders;

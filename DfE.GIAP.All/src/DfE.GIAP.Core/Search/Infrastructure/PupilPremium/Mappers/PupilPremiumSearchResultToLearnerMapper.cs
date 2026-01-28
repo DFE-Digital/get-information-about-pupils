@@ -1,16 +1,18 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
+﻿using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Application.Models.Learner.PupilPremium;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.Mappers;
+namespace DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 
 /// <summary>
-/// Maps a <see cref="FurtherEducationLearnerDataTransferObject"/> data transfer object
-/// into a domain-level <see cref="FurtherEducationLearner"/> model.
+/// Maps a <see cref="PupilPremiumLearnerDataTransferObject"/> data transfer object
+/// into a domain-level <see cref="PupilPremiumLearner"/> model.
 /// </summary>
-public sealed class FurtherEducationSearchResultToLearnerMapper : IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>
+public sealed class PupilPremiumSearchResultToLearnerMapper : IMapper<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>
 {
     /// <summary>
     /// Converts a <see cref="FurtherEducationLearnerDataTransferObject"/> into a <see cref="FurtherEducationLearner"/>.
@@ -20,24 +22,22 @@ public sealed class FurtherEducationSearchResultToLearnerMapper : IMapper<Furthe
     /// <exception cref="ArgumentException">
     /// Thrown if <paramref name="input"/> contains null or empty required fields.
     /// </exception>
-    public FurtherEducationLearner Map(FurtherEducationLearnerDataTransferObject input)
+    public PupilPremiumLearner Map(PupilPremiumLearnerDataTransferObject input)
     {
         // Defensive null checks for required fields
         ArgumentNullException.ThrowIfNull(input);
-        ArgumentException.ThrowIfNullOrEmpty(input.ULN);
+        ArgumentException.ThrowIfNullOrEmpty(input.UPN);
         ArgumentException.ThrowIfNullOrEmpty(input.Forename);
         ArgumentException.ThrowIfNullOrEmpty(input.Surname);
         ArgumentNullException.ThrowIfNull(input.DOB);
+        ArgumentNullException.ThrowIfNull(input.LocalAuthority);
 
         // Construct domain model using validated input
-        return new FurtherEducationLearner(
-            new FurtherEducationLearnerIdentifier(input.ULN),
-            new LearnerName(input.Forename, input.Surname),
-            new LearnerCharacteristics(
-                input.DOB.Value,
-                ParseGender(input.Sex, input.Gender) // Handles nulls and unknowns gracefully
-            )
-        );
+        return new PupilPremiumLearner(
+            new UniquePupilNumber(input.UPN),
+            new LearnerName(input.Forename, input.Middlenames ?? string.Empty, input.Surname),
+            new LearnerCharacteristics(input.DOB.Value, ParseGender(input.Sex, input.Gender)),
+            new LocalAuthorityCode(input.LocalAuthority));
     }
 
     /// <summary>

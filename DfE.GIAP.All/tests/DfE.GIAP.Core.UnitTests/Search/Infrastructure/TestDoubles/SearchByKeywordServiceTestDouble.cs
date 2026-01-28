@@ -2,7 +2,7 @@
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 

@@ -1,4 +1,4 @@
-namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+namespace DfE.GIAP.Core.Common.Domain;
 public sealed class UniquePupilNumbers
 {
     private readonly HashSet<UniquePupilNumber> _uniquePupilNumbers;

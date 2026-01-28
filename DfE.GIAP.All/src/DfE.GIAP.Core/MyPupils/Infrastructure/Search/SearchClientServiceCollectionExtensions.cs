@@ -1,8 +1,8 @@
 using Azure;
 using Azure.Search.Documents;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

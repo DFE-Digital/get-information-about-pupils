@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.Options;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 
 /// <summary>
 /// The search options to use by the <see cref="CognitiveSearchServiceAdapter{TSearchResult}"/>

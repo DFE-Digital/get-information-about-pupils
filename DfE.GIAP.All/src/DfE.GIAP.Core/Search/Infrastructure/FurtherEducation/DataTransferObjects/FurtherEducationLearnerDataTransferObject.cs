@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+﻿namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 /// <summary>
 /// Data Transfer Object representing a pupil in the Further Education search index.

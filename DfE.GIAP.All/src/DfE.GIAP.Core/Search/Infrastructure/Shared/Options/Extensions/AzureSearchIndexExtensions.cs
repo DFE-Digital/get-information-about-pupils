@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
+﻿using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
 /// <summary>
 /// Provides extension methods for retrieving AzureSearchIndex options from AzureSearch configuration.
 /// </summary>

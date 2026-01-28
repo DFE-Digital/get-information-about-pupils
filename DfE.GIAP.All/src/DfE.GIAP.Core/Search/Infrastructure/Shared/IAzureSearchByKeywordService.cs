@@ -3,7 +3,7 @@ using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
-namespace DfE.GIAP.Core.Search.Infrastructure;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared;
 public interface IAzureSearchByKeywordService
 {
     Task<SearchResults<TOutputModel, SearchFacets>>

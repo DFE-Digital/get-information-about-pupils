@@ -3,7 +3,7 @@ using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.Builders;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 
 /// <summary>
 /// Defines an abstraction for constructing tailored <see cref="SearchOptions" /> instances.

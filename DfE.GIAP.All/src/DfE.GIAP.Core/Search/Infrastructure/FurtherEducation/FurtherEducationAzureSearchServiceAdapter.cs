@@ -3,9 +3,10 @@ using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.Shared;
 
-namespace DfE.GIAP.Core.Search.Infrastructure;
+namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation;
 
 /// <summary>
 /// Adapter implementation for further education pupil search.
@@ -15,7 +16,7 @@ public sealed class FurtherEducationAzureSearchServiceAdapter : ISearchServiceAd
 {
     private readonly IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> _searchResultMapper;
     private readonly IAzureSearchByKeywordService _azureSearchByKeywordService;
-    
+
     /// <summary>
     /// Constructs a new adapter for executing further education search queries.
     /// </summary>

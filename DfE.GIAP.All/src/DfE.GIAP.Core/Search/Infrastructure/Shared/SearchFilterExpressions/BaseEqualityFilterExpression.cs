@@ -2,7 +2,7 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Formatters;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.SearchFilterExpressions;
 
 /// <summary>
 /// Abstract base class for constructing equality-based filter expressions

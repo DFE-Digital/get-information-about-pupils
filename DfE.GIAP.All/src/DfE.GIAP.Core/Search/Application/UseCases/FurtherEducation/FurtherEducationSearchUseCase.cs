@@ -1,8 +1,10 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Options;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 
@@ -23,13 +25,15 @@ public sealed class FurtherEducationSearchUseCase :
     /// <param name="searchServiceAdapter">Adapter to interact with Azure Cognitive Search using domain models.</param>
     /// <exception cref="ArgumentNullException">Thrown if either dependency is null.</exception>
     public FurtherEducationSearchUseCase(
-        SearchCriteria searchCriteria,
+        IOptions<SearchCriteriaOptions> options,
         ISearchServiceAdapter<FurtherEducationLearners, SearchFacets> searchServiceAdapter)
     {
-        _searchCriteria = searchCriteria ??
-            throw new ArgumentNullException(nameof(searchCriteria));
-        _searchServiceAdapter = searchServiceAdapter ??
-            throw new ArgumentNullException(nameof(searchServiceAdapter));
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Value);
+        _searchCriteria = options.Value.GetSearchCriteria("further-education");
+
+        ArgumentNullException.ThrowIfNull(searchServiceAdapter);
+        _searchServiceAdapter = searchServiceAdapter;
     }
 
     /// <summary>

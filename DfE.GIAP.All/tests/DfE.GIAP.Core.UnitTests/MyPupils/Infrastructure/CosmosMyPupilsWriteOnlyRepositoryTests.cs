@@ -1,7 +1,7 @@
 using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.MyPupils.Domain;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.Core.UnitTests.TestDoubles;

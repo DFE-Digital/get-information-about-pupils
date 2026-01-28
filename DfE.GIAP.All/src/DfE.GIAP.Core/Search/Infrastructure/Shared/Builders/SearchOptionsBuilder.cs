@@ -4,7 +4,7 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.Builders;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 
 /// <summary>
 /// Provides a concrete implementation of the <see cref="ISearchOptionsBuilder"/> abstraction,

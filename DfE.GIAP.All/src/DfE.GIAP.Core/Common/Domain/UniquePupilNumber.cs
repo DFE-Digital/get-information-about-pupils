@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+namespace DfE.GIAP.Core.Common.Domain;
 public sealed class UniquePupilNumber : ValueObject<UniquePupilNumber>
 {
     public UniquePupilNumber(string value)

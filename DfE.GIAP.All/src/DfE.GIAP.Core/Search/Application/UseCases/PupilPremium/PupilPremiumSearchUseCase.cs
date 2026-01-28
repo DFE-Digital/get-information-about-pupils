@@ -1,6 +1,8 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Options;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 internal sealed class PupilPremiumSearchUseCase : IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>
@@ -9,11 +11,12 @@ internal sealed class PupilPremiumSearchUseCase : IUseCase<PupilPremiumSearchReq
     private readonly SearchCriteria _searchCriteria;
 
     public PupilPremiumSearchUseCase(
-        SearchCriteria searchCriteria,
+        IOptions<SearchCriteriaOptions> options,
         ISearchServiceAdapter<PupilPremiumLearners, SearchFacets> searchServiceAdapter)
     {
-        ArgumentNullException.ThrowIfNull(searchCriteria);
-        _searchCriteria = searchCriteria;
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Value);
+        _searchCriteria = options.Value.GetSearchCriteria("pupil-premium");
 
         ArgumentNullException.ThrowIfNull(searchServiceAdapter);
         _searchServiceAdapter = searchServiceAdapter;

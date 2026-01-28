@@ -34,7 +34,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
                 .Build();
 
         services
-            .AddSearchDependencies(searchConfiguration);
+            .AddSearchCore(searchConfiguration);
 
         return Task.CompletedTask;
     }

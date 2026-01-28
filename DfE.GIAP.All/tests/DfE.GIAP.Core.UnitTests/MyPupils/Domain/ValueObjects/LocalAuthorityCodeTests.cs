@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.Common.Domain;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
 public class LocalAuthorityCodeTests

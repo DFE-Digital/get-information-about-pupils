@@ -1,7 +1,7 @@
 ﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Formatters;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.SearchFilterExpressions;
 
 /// <summary>
 /// Concrete implementation of <see cref="BaseEqualityFilterExpression"/> that builds

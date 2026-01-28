@@ -2,27 +2,27 @@
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.Mappers;
+namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 
 /// <summary>
 /// Maps a pageable collection of Azure Search results containing <see cref="FurtherEducationLearnerDataTransferObject"/>
 /// into a domain model <see cref="FurtherEducationLearners"/> collection.
 /// </summary>
-public sealed class PageableSearchResultsToLearnerResultsMapper :
+public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper :
     IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>
 {
     private readonly IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> _searchResultToLearnerMapper;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PageableSearchResultsToLearnerResultsMapper"/> class.
+    /// Initializes a new instance of the <see cref="PageableFurtherEducationSearchResultsToLearnerResultsMapper"/> class.
     /// </summary>
     /// <param name="searchResultToLearnerMapper">
     /// Mapper used to convert individual <see cref="FurtherEducationLearnerDataTransferObject"/> documents
     /// into <see cref="FurtherEducationLearner"/> domain objects.
     /// </param>
-    public PageableSearchResultsToLearnerResultsMapper(
+    public PageableFurtherEducationSearchResultsToLearnerResultsMapper(
         IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> searchResultToLearnerMapper)
     {
         _searchResultToLearnerMapper = searchResultToLearnerMapper;

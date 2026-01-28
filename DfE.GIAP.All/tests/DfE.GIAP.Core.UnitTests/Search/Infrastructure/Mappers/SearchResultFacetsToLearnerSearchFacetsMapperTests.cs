@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Infrastructure.Mappers;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using FluentAssertions;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;

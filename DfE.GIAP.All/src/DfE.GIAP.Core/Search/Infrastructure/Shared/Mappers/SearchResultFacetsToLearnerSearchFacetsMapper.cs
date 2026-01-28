@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
-namespace DfE.GIAP.Core.Search.Infrastructure.Mappers;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
 
 /// <summary>
 /// Maps a dictionary of Azure Cognitive Search facet results into a structured

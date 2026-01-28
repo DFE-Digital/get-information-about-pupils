@@ -3,5 +3,21 @@
 namespace DfE.GIAP.Core.Search.Application.Options;
 public sealed class SearchCriteriaOptions
 {
-    Dictionary<string, SearchCriteria> Criteria { get; set; } = [];
+    public Dictionary<string, SearchCriteria> Criteria { get; set; } = [];
+}
+
+public static class SearchCriteriaOptionsExtensions
+{
+    public static SearchCriteria GetSearchCriteria(this SearchCriteriaOptions options, string key)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        if (!options.Criteria.TryGetValue("pupil-premium", out SearchCriteria? criteria))
+        {
+            throw new ArgumentException($"Unable to get criteria for key:{key}");
+        };
+
+        return criteria!;
+    }
 }

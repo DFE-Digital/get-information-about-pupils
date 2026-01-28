@@ -4,13 +4,13 @@ using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Infrastructure.Builders;
-using DfE.GIAP.Core.Search.Infrastructure.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
-namespace DfE.GIAP.Core.Search.Infrastructure;
+namespace DfE.GIAP.Core.Search.Infrastructure.Shared;
 internal sealed class AzureSearchByKeywordService : IAzureSearchByKeywordService
 {
     private readonly ISearchByKeywordService _searchByKeywordService;
@@ -54,8 +54,7 @@ internal sealed class AzureSearchByKeywordService : IAzureSearchByKeywordService
                 request.SearchKeyword,
                 indexOptions.SearchIndex,
                 searchOptions
-            ).ConfigureAwait(false)
-            ?? throw new InvalidOperationException(
+            ) ?? throw new InvalidOperationException(
                 $"Unable to derive search results based on input {request.SearchKeyword}.");
 
         return new SearchResults<TOutputModel, SearchFacets>

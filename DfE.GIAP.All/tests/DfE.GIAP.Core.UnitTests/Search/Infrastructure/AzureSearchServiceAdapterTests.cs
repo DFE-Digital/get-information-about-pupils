@@ -6,10 +6,11 @@ using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Infrastructure;
 using DfE.GIAP.Core.Search.Infrastructure.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.Options;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using FluentAssertions;
@@ -142,10 +143,6 @@ public sealed class AzureSearchServiceAdapterTests
                     )
                 )
             .Should()
-            .ThrowAsync<ArgumentException>();
-    }
-}
-.Should()
             .ThrowAsync<ArgumentException>();
     }
 }
