@@ -16,7 +16,6 @@ using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Options;
 using DfE.GIAP.Core.Search.Infrastructure.SearchFilterExpressions;
-using DfE.GIAP.Web.Features.Search.Shared.Sort.Mappers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -48,7 +47,6 @@ public static class CompositionRoot
 
         // Register core search services and mappers.
         services
-            .AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderMapper>()
             .AddScoped<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>, FurtherEducationAzureSearchServiceAdapter>()
             .AddScoped<IAzureSearchByKeywordService, AzureSearchByKeywordService>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>()
