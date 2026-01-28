@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
@@ -11,7 +11,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Enables deterministic testing of search orchestration logic without invoking real infrastructure.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public class SearchServiceAdapterTestDouble
+public class FurtherEducationSearchServiceAdapterTestDouble
 {
     // Shared mock instance for reuse across test scenarios
     private readonly Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> _mock = new();

@@ -1,8 +1,7 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.Mappers;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using FluentAssertions;
 

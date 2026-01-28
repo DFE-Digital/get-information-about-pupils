@@ -1395,7 +1395,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         return new PupilPremiumLearnerNumberController(
             _mockLogger,
             new Mock<IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>>().Object,
-            MapperTestDoubles.Default<(string Field, string Direction), SortOrder>().Object,
+            MapperTestDoubles.Default<SortOrderRequest, SortOrder>().Object,
             MapperTestDoubles.Default<PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>().Object,
             _mockSelectionManager,
             _mockAppOptions,

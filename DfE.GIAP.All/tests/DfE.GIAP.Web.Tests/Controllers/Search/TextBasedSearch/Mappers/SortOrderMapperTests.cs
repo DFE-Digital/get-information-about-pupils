@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.Search.Shared.Sort.Mappers;
 using Microsoft.Extensions.Options;
-using Xunit;
-
+    
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers;
 
 public class SortOrderMapperTests
@@ -29,8 +29,15 @@ public class SortOrderMapperTests
         // act/assert
         ArgumentNullException ex =
             Assert.Throws<ArgumentNullException>(() => new SortOrderMapper(null!));
+    }
 
-        Assert.Contains("Sort field options must be provided", ex.Message);
+    [Fact]
+    public void Constructor_WithNullOptionsValue_ThrowsArgumentNullException()
+    {
+        // act/assert
+        ArgumentNullException ex =
+            Assert.Throws<ArgumentNullException>(()
+                => new SortOrderMapper(OptionsTestDoubles.MockNullOptions<SortFieldOptions>()));
     }
 
     [Fact]
@@ -38,13 +45,13 @@ public class SortOrderMapperTests
     {
         // arrange
         SortOrderMapper mapper = CreateMapper("name", "region");
+        SortOrderRequest request = new("key", (null, null));
 
         // act
-        ArgumentException ex =
-            Assert.Throws<ArgumentException>(() => mapper.Map((null, null)));
+        SortOrder order = mapper.Map(request);
 
         // assert
-        Assert.Contains("Unknown sort field 'search.score()' (Parameter 'sortField')", ex.Message);
+        Assert.Equal("search.score() desc", order.Value);
     }
 
     [Fact]
@@ -52,13 +59,24 @@ public class SortOrderMapperTests
     {
         // arrange
         SortOrderMapper mapper = CreateMapper("name", "region");
+        SortOrderRequest request = new("key", (string.Empty, string.Empty));
 
         // act
-        ArgumentException ex =
-            Assert.Throws<ArgumentException>(() => mapper.Map(("", "")));
+        SortOrder order = mapper.Map(request);
 
         // assert
-        Assert.Contains("Unknown sort field 'search.score()' (Parameter 'sortField')", ex.Message);
+        Assert.Equal("search.score() desc", order.Value);
+    }
+
+    [Fact]
+    public void Map_WithUnknownKey_Throws()
+    {
+        // arrange
+        SortOrderMapper mapper = CreateMapper("name", "region");
+        SortOrderRequest request = new("unknown-key", (string.Empty, string.Empty));
+
+        // act
+        Assert.Throws<ArgumentException>(() => mapper.Map(request));
     }
 
     [Fact]
@@ -66,9 +84,10 @@ public class SortOrderMapperTests
     {
         // arrange
         SortOrderMapper mapper = CreateMapper("name", "region");
+        SortOrderRequest request = new("key", ("name", "asc"));
 
         // act
-        SortOrder result = mapper.Map(("name", "asc"));
+        SortOrder result = mapper.Map(request);
 
         // assert
         Assert.Equal("name asc", result.Value);
@@ -79,13 +98,11 @@ public class SortOrderMapperTests
     {
         // arrange
         SortOrderMapper mapper = CreateMapper("name", "region");
+        SortOrderRequest request = new("key", ("invalidField", "desc"));
 
         // act
         ArgumentException ex =
-            Assert.Throws<ArgumentException>(() => mapper.Map(("invalidField", "desc")));
-
-        // assert
-        Assert.Contains("Unknown sort field 'invalidField' (Parameter 'sortField')", ex.Message);
+            Assert.Throws<ArgumentException>(() => mapper.Map(request));
     }
 
     [Theory]
@@ -96,9 +113,10 @@ public class SortOrderMapperTests
     {
         // arrange
         SortOrderMapper mapper = CreateMapper("name", "region", "search.score()");
+        SortOrderRequest request = new("key", (field, direction));
 
         // act
-        SortOrder result = mapper.Map((field, direction));
+        SortOrder result = mapper.Map(request);
 
         // assert
         Assert.Equal($"{field} {direction}", result.Value);

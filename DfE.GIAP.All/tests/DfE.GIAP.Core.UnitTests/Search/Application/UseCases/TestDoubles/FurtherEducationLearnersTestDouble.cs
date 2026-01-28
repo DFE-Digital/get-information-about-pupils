@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 
@@ -8,7 +8,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 /// Enables deterministic testing of search result handling and downstream mapping logic.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class LearnersTestDouble
+public static class FurtherEducationLearnersTestDouble
 {
     /// <summary>
     /// Creates a stubbed <see cref="FurtherEducationLearners"/> instance populated with a randomized number of learner objects.

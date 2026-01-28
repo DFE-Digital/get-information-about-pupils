@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using DfE.GIAP.Core.UnitTests.Search.TestHarness;
@@ -37,7 +37,7 @@ public class CompositionRootTests : IClassFixture<ConfigBuilder>, IClassFixture<
             _serviceProvider.GetRequiredService<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>>();
 
         SearchServiceAdapterRequest searchServiceAdapterRequest =
-            SearchServiceAdapterRequestTestDouble.Stub();
+            SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: "further-education");
 
         // act
         SearchResults<FurtherEducationLearners, SearchFacets> response =

@@ -17,7 +17,7 @@ public record PupilPremiumLearners
     /// </summary>
     public PupilPremiumLearners() : this([])
     {
-        
+
     }
 
     /// <summary>

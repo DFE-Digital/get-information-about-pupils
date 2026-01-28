@@ -105,7 +105,7 @@ public static class CompositionRoot
             .AddSingleton<
                 IMapper<
                     PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>,
-                    PupilPremiumSearchResultToLearnerMapper>();    
+                    PupilPremiumSearchResultToLearnerMapper>();
         return services;
     }
 
@@ -135,7 +135,7 @@ public static class CompositionRoot
 
     private static IServiceCollection AddAzureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        
+
         services
             .AddScoped<IAzureSearchByKeywordService, AzureSearchByKeywordService>()
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();

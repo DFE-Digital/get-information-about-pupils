@@ -1523,10 +1523,10 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
 
-        Mock<IMapper<(string SortField, string SortDirection), SortOrder>> mockMapper = new();
+        Mock<IMapper<SortOrderRequest, SortOrder>> mockMapper = new();
 
         mockMapper
-            .Setup((mapper) => mapper.Map(It.IsAny<(string, string)>()))
+            .Setup((mapper) => mapper.Map(It.IsAny<SortOrderRequest>()))
             .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
 
         return new FELearnerNumberController(

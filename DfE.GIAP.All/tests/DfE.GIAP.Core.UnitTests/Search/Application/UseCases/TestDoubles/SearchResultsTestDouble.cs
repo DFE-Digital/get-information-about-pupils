@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+
 
 // Import model representing search result payload including facets
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -21,7 +22,7 @@ public static class SearchResultsTestDouble
     public static SearchResults<FurtherEducationLearners, SearchFacets> Stub() =>
         new()
         {
-            Results = LearnersTestDouble.Stub(),           // Populated learner results
+            Results = FurtherEducationLearnersTestDouble.Stub(),           // Populated learner results
             FacetResults = SearchFacetsTestDouble.Stub()   // Populated facet results
         };
 
@@ -32,7 +33,7 @@ public static class SearchResultsTestDouble
     public static SearchResults<FurtherEducationLearners, SearchFacets> StubWithNoResults() =>
         new()
         {
-            Results = LearnersTestDouble.EmptyStub(),      // Unpopulated learner results
+            Results = FurtherEducationLearnersTestDouble.EmptyStub(),      // Unpopulated learner results
             FacetResults = SearchFacetsTestDouble.Stub()   // Populated facet results
         };
 }
