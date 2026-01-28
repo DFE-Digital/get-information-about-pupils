@@ -24,10 +24,17 @@ internal sealed class AzureSearchByKeywordService : IAzureSearchByKeywordService
         IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> facetsMapper,
         ISearchOptionsBuilder searchOptionsBuilder)
     {
+        ArgumentNullException.ThrowIfNull(azureSearchOptions);
         ArgumentNullException.ThrowIfNull(azureSearchOptions?.Value);
         _azureSearchOptions = azureSearchOptions.Value;
+
+        ArgumentNullException.ThrowIfNull(searchByKeywordService);
         _searchByKeywordService = searchByKeywordService;
+
+        ArgumentNullException.ThrowIfNull(facetsMapper);
         _facetsMapper = facetsMapper;
+
+        ArgumentNullException.ThrowIfNull(searchOptionsBuilder);
         _searchOptionsBuilder = searchOptionsBuilder;
     }
 

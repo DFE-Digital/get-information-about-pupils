@@ -14,6 +14,5 @@ internal static class FacetResultToLearnerFacetsMapperTestDouble
     /// Returns a default mock implementation of IMapper for facet result mapping.
     /// This mock can be injected into tests to simulate mapping behavior without dependencies.
     /// </summary>
-    public static IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> DefaultMock() =>
-        Mock.Of<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>>();
+    public static Mock<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>> DefaultMock() => new();
 }

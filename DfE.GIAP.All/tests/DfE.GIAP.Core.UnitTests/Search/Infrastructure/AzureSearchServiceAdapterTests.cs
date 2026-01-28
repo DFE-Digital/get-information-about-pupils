@@ -8,12 +8,14 @@ using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.Core.UnitTests.Search.Application.UseCases.TestDoubles;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
+using FacetResult = Azure.Search.Documents.Models.FacetResult;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure;
 
@@ -21,7 +23,7 @@ public sealed class AzureSearchByKeywordServiceTests
 {
     private readonly string _mockSearchIndexKey = "further-education";
 
-    private readonly IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> _mockFacetsMapper =
+    private readonly Mock<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>> _mockFacetsMapper =
         FacetResultToLearnerFacetsMapperTestDouble.DefaultMock();
 
     private readonly AzureSearchOptions _mockAzureSearchOptions = AzureSearchOptionsTestDouble.Stub();
@@ -41,7 +43,7 @@ public sealed class AzureSearchByKeywordServiceTests
     public void Ctor_Throws_When_AzureSearchOptions_Is_Null()
     {
         // Arrange
-        ISearchByKeywordService searchByKeywordService = new SearchServiceTestDouble().Create();
+        ISearchByKeywordService searchByKeywordService = SearchServiceTestDouble.DefaultMock();
         IOptions<AzureSearchOptions> nullOptions = OptionsTestDoubles.MockNullOptions<AzureSearchOptions>();
         ISearchOptionsBuilder searchOptionsBuilder = _mockSearchOptionsBuilder;
 
@@ -50,7 +52,7 @@ public sealed class AzureSearchByKeywordServiceTests
             new(
                 searchByKeywordService,
                 nullOptions,
-                _mockFacetsMapper,
+                _mockFacetsMapper.Object,
                 searchOptionsBuilder);
 
         // Assert
@@ -75,11 +77,13 @@ public sealed class AzureSearchByKeywordServiceTests
 
         IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_mockAzureSearchOptions);
 
+
+
         AzureSearchByKeywordService sut =
             new(
                 mockSearchByKeywordService.Object,
                 options,
-                _mockFacetsMapper,
+                _mockFacetsMapper.Object,
                 _mockSearchOptionsBuilder);
 
         SearchServiceAdapterRequest request = SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockSearchIndexKey);
@@ -120,8 +124,27 @@ public sealed class AzureSearchByKeywordServiceTests
         Mock<Response> responseMock = new();
 
         // Build a small fake SearchResults with a Facets dictionary
-        IDictionary<string, IList<AzureFacetResult>> sdkFacets =
-            new Dictionary<string, IList<AzureFacetResult>>() { };
+
+        IDictionary<string, IList<FacetResult>> sdkFacets =
+            new Dictionary<string, IList<FacetResult>>
+            {
+                {
+                    "facet1",
+                    new List<FacetResult>
+                    {
+                        // bucket: value="Value1", count=5
+                        SearchModelFactory.FacetResult(
+                            count: 5,
+                            additionalProperties: new Dictionary<string, object>
+                            {
+                                ["value"] = "Value1"
+                            }),
+                    }
+                }
+            };
+
+        _mockFacetsMapper.Setup(t => t.Map(It.IsAny<Dictionary<string, IList<AzureFacetResult>>>()))
+            .Returns(SearchFacetsTestDouble.Stub());
 
         Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse =
             Response.FromValue(
@@ -142,7 +165,7 @@ public sealed class AzureSearchByKeywordServiceTests
             new AzureSearchByKeywordService(
                 mockSearchByKeywordService.Object,
                 options,
-                _mockFacetsMapper,
+                _mockFacetsMapper.Object,
                 _mockSearchOptionsBuilder);
 
         SearchServiceAdapterRequest request = SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockSearchIndexKey);
@@ -180,11 +203,10 @@ public sealed class AzureSearchByKeywordServiceTests
 
         IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_mockAzureSearchOptions);
 
-        AzureSearchByKeywordService sut =
-            new AzureSearchByKeywordService(
+        AzureSearchByKeywordService sut = new(
                 mockSearchByKeywordService.Object,
                 options,
-                _mockFacetsMapper,
+                _mockFacetsMapper.Object,
                 _mockSearchOptionsBuilder);
 
         SearchServiceAdapterRequest request = SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockSearchIndexKey);
@@ -233,7 +255,7 @@ public sealed class AzureSearchByKeywordServiceTests
             new(
                 mockSearchByKeywordService.Object,
                 options,
-                _mockFacetsMapper,
+                _mockFacetsMapper.Object,
                 _mockSearchOptionsBuilder);
 
         SearchServiceAdapterRequest request = SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockSearchIndexKey);
