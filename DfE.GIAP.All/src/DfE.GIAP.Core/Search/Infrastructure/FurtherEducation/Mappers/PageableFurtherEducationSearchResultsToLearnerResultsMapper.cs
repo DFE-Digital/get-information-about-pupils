@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;

@@ -4,6 +4,7 @@ using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
@@ -42,7 +43,7 @@ internal sealed class AzureSearchByKeywordService : IAzureSearchByKeywordService
         SearchServiceAdapterRequest request,
         IMapper<Pageable<SearchResult<TDto>>, TOutputModel> dtoToOutputModelMapper) where TDto : class
     {
-        SearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(request.SearchIndexKey);
+        AzureSearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(request.SearchIndexKey);
 
         SearchOptions searchOptions =
             _searchOptionsBuilder

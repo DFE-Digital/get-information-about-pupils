@@ -23,4 +23,9 @@
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Search\Application\UseCases\PupilPremium\" />
+    <Folder Include="Search\Infrastructure\PupilPremium\" />
+  </ItemGroup>
+
 </Project>

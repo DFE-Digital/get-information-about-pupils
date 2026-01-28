@@ -4,15 +4,12 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-using DfE.GIAP.Core.Search.Application.Models.Learner.PupilPremium;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Options;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
@@ -59,7 +56,7 @@ public static class CompositionRoot
             .AddSingleton<
                 IMapper<
                     Dictionary<string, IList<AzureFacetResult>>, SearchFacets>,
-                    AzureFacetResultToEstablishmentFacetsMapper>();
+                    AzureSearchFacetResultsToEstablishmentFacetsMapper>();
 
         return services;
     }
@@ -97,7 +94,7 @@ public static class CompositionRoot
             .AddScoped<
                 ISearchServiceAdapter<
                     PupilPremiumLearners, SearchFacets>,
-                    PupilPremiumSearchServiceAdaptor>()
+                    PupilPremiumAzureSearchServiceAdaptor>()
             .AddSingleton<
                 IMapper<
                     Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners>,

@@ -7,7 +7,7 @@ using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;

@@ -1,7 +1,8 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Options;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;

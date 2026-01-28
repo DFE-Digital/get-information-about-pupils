@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-using DfE.GIAP.Core.Search.Application.Models.Learner.PupilPremium;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;

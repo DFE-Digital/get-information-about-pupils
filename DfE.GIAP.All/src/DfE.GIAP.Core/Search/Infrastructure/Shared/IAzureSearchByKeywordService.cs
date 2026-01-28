@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.Shared;
 public interface IAzureSearchByKeywordService

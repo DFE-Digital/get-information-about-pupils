@@ -2,8 +2,7 @@
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;

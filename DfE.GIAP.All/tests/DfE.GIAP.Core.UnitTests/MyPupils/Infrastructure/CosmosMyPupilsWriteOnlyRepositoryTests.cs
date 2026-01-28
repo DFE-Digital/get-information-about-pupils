@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.Domain;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;

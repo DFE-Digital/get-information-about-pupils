@@ -1,9 +1,8 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Options;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;

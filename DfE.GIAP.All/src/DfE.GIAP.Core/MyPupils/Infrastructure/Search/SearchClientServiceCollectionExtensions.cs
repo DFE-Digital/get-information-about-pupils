@@ -28,7 +28,7 @@ public static class SearchClientServiceCollectionExtensions
             AzureSearchConnectionOptions connectionOptions = sp.GetRequiredService<IOptions<AzureSearchConnectionOptions>>().Value;
             AzureSearchOptions indexOptions = sp.GetRequiredService<IOptions<AzureSearchOptions>>().Value;
 
-            SearchIndexOptions searchIndexOptions = indexOptions.GetIndexOptions(searchClientKey);
+            AzureSearchIndexOptions searchIndexOptions = indexOptions.GetIndexOptions(searchClientKey);
 
             return new SearchClient(
                 endpoint: new Uri(connectionOptions.EndpointUri!),

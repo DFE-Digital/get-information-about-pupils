@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using DfE.GIAP.Core.UnitTests.Search.TestHarness;
 using FluentAssertions;

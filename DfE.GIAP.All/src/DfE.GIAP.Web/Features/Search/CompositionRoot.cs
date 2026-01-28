@@ -2,20 +2,23 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
-using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
-using DfE.GIAP.Core.Search.Application.Models.Learner.PupilPremium;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
+using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
+using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
+using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
-using DfE.GIAP.Web.Features.Search.Shared.Sort.Mappers;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.ViewModels.Search;
-using static DfE.GIAP.Web.Features.Search.FurtherEducation.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
+using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Features.Search;
 
@@ -52,7 +55,7 @@ public static class CompositionRoot
 
         services.AddSingleton<IMapper<
             FurtherEducationLearner, Learner>,
-            FurtherEducationLearnerToViewModelMapper>();
+            FurtherEducationLearnerToLearnerMapper>();
 
         return services;
     }
@@ -65,14 +68,14 @@ public static class CompositionRoot
 
         services.AddSingleton<IMapper<
             PupilPremiumLearner, Learner>,
-            PupilPremiumLearnerToViewModelMapper>();
+            PupilPremiumLearnerToLearnerMapper>();
 
         return services;
     }
 
     private static IServiceCollection AddSort(this IServiceCollection services)
     {
-        services.AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderMapper>();
+        services.AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderRequestToSortOrderMapper>();
         return services;
     }
 
