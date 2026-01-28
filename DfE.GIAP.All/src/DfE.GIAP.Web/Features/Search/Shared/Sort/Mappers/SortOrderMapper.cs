@@ -38,18 +38,17 @@ public class SortOrderMapper : IMapper<SortOrderRequest, SortOrder>
 
         (string? field, string? direction) = input.SortOrder;
 
-        if (!_sortFieldOptions.SortFields.TryGetValue(input.SearchKey, out IReadOnlyList<string>? validSortFields))
+        if (!_sortFieldOptions.SortFields.TryGetValue(input.SearchKey, out IReadOnlyList<string>? optionsValidSortFields))
         {
             throw new ArgumentException($"Unable to find valid sort fields for the provided search key: {input.SearchKey}.", nameof(input));
         }
 
+        List<string> validSortFields = [..optionsValidSortFields, DefaultSortField];
+
         return SortOrder.Create(
-            string.IsNullOrEmpty(field) ?
-                DefaultSortField :
-                    field,
-            string.IsNullOrEmpty(direction) ?
-                DefaultSortDirection :
-                    direction!,
-            validSortFields);
+            string.IsNullOrEmpty(field) ? DefaultSortField : field,
+            string.IsNullOrEmpty(direction) ? DefaultSortDirection : direction!,
+            validFields: validSortFields.Distinct().ToList().AsReadOnly()
+            );
     }
 }
