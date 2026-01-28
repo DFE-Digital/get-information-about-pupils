@@ -64,7 +64,7 @@ public class FELearnerTextSearchController : Controller
         IList<FilterRequest>> _filtersRequestMapper;
 
     private readonly IMapper<
-        (string Field, string Direction), SortOrder> _sortOrderViewModelToRequestMapper;
+        SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
@@ -81,7 +81,7 @@ public class FELearnerTextSearchController : Controller
             Dictionary<string, string[]>,
             IList<FilterRequest>> filtersRequestMapper,
         IMapper<
-            (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
+            SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
         IFiltersRequestFactory filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
         IPaginatedSearchService paginatedSearch,
@@ -691,7 +691,10 @@ public class FELearnerTextSearchController : Controller
                     .GenerateFilterRequest(model, currentFilters));
 
         SortOrder sortOrder =
-            _sortOrderViewModelToRequestMapper.Map((sortField, sortDirection));
+            _sortOrderViewModelToRequestMapper.Map(
+                new SortOrderRequest(
+                    searchKey:"further-education",
+                    sortOrder: (sortField, sortDirection)));
 
         FurtherEducationSearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
