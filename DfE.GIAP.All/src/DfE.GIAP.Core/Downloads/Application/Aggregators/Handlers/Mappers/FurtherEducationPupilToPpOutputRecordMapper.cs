@@ -1,26 +1,28 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class FurtherEducationPupilToPpOutputRecordMapper : IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord>
+public class FurtherEducationPupilToPpOutputRecordMapper
+    : IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationPPOutputRecord>>
 {
-    public FurtherEducationPPOutputRecord Map(FurtherEducationPupil input)
+    public IEnumerable<FurtherEducationPPOutputRecord> Map(FurtherEducationPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        FurtherEducationPupilPremiumEntry? ppEntry = input.PupilPremium?.FirstOrDefault();
-        return new FurtherEducationPPOutputRecord
+        if (input.PupilPremium is null || !input.PupilPremium.Any())
+            return Enumerable.Empty<FurtherEducationPPOutputRecord>();
+
+        return input.PupilPremium.Select(pp => new FurtherEducationPPOutputRecord
         {
             ULN = input.UniqueLearnerNumber,
             Forename = input.Forename,
             Surname = input.Surname,
             Sex = input.Sex,
             DOB = input.DOB.ToShortDateString(),
-            ACAD_YEAR = ppEntry?.AcademicYear,
-            NCYear = ppEntry?.NationalCurriculumYear,
-            Pupil_Premium_FTE = ppEntry?.FullTimeEquivalent
-        };
+            ACAD_YEAR = pp.AcademicYear,
+            NCYear = pp.NationalCurriculumYear,
+            Pupil_Premium_FTE = pp.FullTimeEquivalent
+        });
     }
 }

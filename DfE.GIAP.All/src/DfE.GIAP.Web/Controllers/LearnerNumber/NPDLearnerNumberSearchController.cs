@@ -35,7 +35,6 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override string SearchAction => "NationalPupilDatabase";
     public override string FullTextLearnerSearchController => "Search";
     public override string FullTextLearnerSearchAction => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
-    public override string InvalidUPNsConfirmationAction => "NPDInvalidUPNsConfirmation";
     public override string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPageDownloadLinks.cshtml";
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.NPD;
     public override string SearchSessionKey => "SearchNPD_SearchText";
@@ -103,21 +102,6 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
             !ControllerContext.HttpContext.Request.Query.ContainsKey("pageNumber"),
             calledByController,
             ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
-    }
-
-
-    [HttpPost]
-    [Route(Routes.NPDInvalidUPNs)]
-    public async Task<IActionResult> NPDInvalidUPNs(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNs(model);
-    }
-
-    [HttpPost]
-    [Route(Routes.NPDInvalidUPNsConfirmation)]
-    public async Task<IActionResult> NPDInvalidUPNsConfirmation(InvalidLearnerNumberSearchViewModel model)
-    {
-        return await InvalidUPNsConfirmation(model);
     }
 
 

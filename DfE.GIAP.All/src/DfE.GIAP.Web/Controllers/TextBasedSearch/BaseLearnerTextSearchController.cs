@@ -6,7 +6,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
@@ -60,7 +59,6 @@ public abstract class BaseLearnerTextSearchController : Controller
     public abstract string DownloadLinksPartial { get; }
     public abstract AzureSearchIndexType IndexType { get; }
     public abstract ReturnRoute ReturnRoute { get; }
-    public abstract string InvalidUPNsConfirmationAction { get; }
     public string LearnerNumberLabel => Global.LearnerNumberLabel;
     public abstract string DownloadSelectedLink { get; }
 
@@ -410,49 +408,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         TempData.Remove(PersistedSelectedSexFiltersKey);
     }
 
-
-    [NonAction]
-    public async Task<IActionResult> InvalidUPNs(InvalidLearnerNumberSearchViewModel model)
-    {
-        _logger.LogInformation("National pupil database Upn Invalid UPNs POST method called");
-
-        model.SearchAction = SearchAction;
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
-
-        model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
-
-        model = await GetInvalidPupil(model, IndexType).ConfigureAwait(false);
-
-        _logger.LogInformation("National pupil database Upn Invalid UPNs POST search method invoked");
-
-        return View(Global.InvalidUPNsView, model);
-    }
-
-    [NonAction]
-    public async Task<IActionResult> InvalidUPNsConfirmation(InvalidLearnerNumberSearchViewModel model)
-    {
-        model.SearchAction = SearchAction;
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
-
-        if (!string.IsNullOrEmpty(model.SelectedInvalidUPNOption))
-        {
-            switch (model.SelectedInvalidUPNOption)
-            {
-                case Global.InvalidUPNConfirmation_ReturnToSearch:
-
-                    return RedirectToAction(model.SearchAction, new { returnToSearch = true });
-
-                case Global.InvalidUPNConfirmation_MyPupilList: return RedirectToAction(Global.MyPupilListAction, Global.MyPupilListControllerName);
-            }
-        }
-        else
-        {
-            ModelState.AddModelError("NoContinueSelection", Messages.Common.Errors.NoContinueSelection);
-        }
-
-        return await InvalidUPNs(model);
-    }
-
     [NonAction]
     public async Task<IActionResult> AddToMyPupilList(LearnerTextSearchViewModel model)
     {
@@ -477,12 +432,10 @@ public abstract class BaseLearnerTextSearchController : Controller
             selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
         }
 
-        if (!ValidationHelper.IsValidUpn(selectedUpn)) // TODO can we surface invalid UPNs?
+        if (!ValidationHelper.IsValidUpn(selectedUpn))
         {
-            return await InvalidUPNs(new InvalidLearnerNumberSearchViewModel()
-            {
-                LearnerNumber = selectedUpn
-            });
+            model.ErrorDetails = Messages.Common.Errors.InvalidPupilIdentifier;
+            return await ReturnToSearch(model);
         }
 
         try
@@ -635,46 +588,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         model.PageLearnerNumbers = String.Join(',', model.Learners.Select(l => l.LearnerNumberId));
 
         model.ShowOverLimitMessage = model.Total > 100000;
-
-        return model;
-    }
-
-    private async Task<InvalidLearnerNumberSearchViewModel> GetInvalidPupil(InvalidLearnerNumberSearchViewModel model, AzureSearchIndexType indexType)
-    {
-        string searchInput = model.LearnerNumber.ToDecryptedSearchText();
-
-        PaginatedResponse result = await _paginatedSearch.GetPage(
-          searchInput,
-            null,
-            1,
-            0,
-            indexType,
-            AzureSearchQueryType.Numbers,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())
-            );
-
-        model.Learners = result.Learners ?? new List<Learner>();
-
-        PaginatedResponse nonUPNResult = await _paginatedSearch.GetPage(
-        searchInput,
-        null,
-        1,
-        0,
-        indexType,
-        AzureSearchQueryType.Id,
-        AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId())
-        );
-
-        model.Learners = model.Learners.Union(nonUPNResult.Learners);
-        model.Learners.ToList().ForEach(x => x.LearnerNumberId = x.LearnerNumber);
-        int lowAge = User.GetOrganisationLowAge();
-        int highAge = User.GetOrganisationHighAge();
-
-        bool isAdmin = User.IsAdmin();
-        if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-        {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-        }
 
         return model;
     }
@@ -1043,8 +956,6 @@ public abstract class BaseLearnerTextSearchController : Controller
         model.RedirectUrls.DobFilterUrl = DobFilterUrl;
         model.RedirectFrom = RedirectFrom;
         model.DownloadLinksPartial = DownloadLinksPartial;
-
-        model.InvalidUPNsConfirmationAction = InvalidUPNsConfirmationAction;
 
         return model;
     }

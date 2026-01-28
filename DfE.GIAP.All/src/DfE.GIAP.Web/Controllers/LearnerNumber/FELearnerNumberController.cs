@@ -4,8 +4,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -15,7 +13,6 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.Request;
 using DfE.GIAP.Core.Search.Application.UseCases.Response;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.LearnerNumber.Mappers;
 using DfE.GIAP.Web.Extensions;
@@ -33,7 +30,6 @@ namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 public class FELearnerNumberController : Controller
 {
     private readonly ILogger<FELearnerNumberController> _logger;
-    private readonly IDownloadService _downloadService;
     private readonly AzureAppSettings _appSettings;
     protected readonly ISelectionManager _selectionManager;
 
@@ -76,7 +72,6 @@ public class FELearnerNumberController : Controller
         IMapper<
             (string Field, string Direction), SortOrder> sortOrderViewModelToRequestMapper,
         ILogger<FELearnerNumberController> logger,
-        IDownloadService downloadService,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
@@ -94,9 +89,6 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -301,16 +293,6 @@ public class FELearnerNumberController : Controller
         return View(Global.DownloadNPDOptionsView, searchDownloadViewModel);
     }
 
-    protected bool ValidateLearnerNumber(string learnerNumber)
-    {
-        return ValidationHelper.IsValidUln(learnerNumber);
-    }
-
-    protected string GenerateValidationMessage()
-    {
-        return PupilHelper.GenerateValidationMessageUlnSearch(ModelState);
-    }
-
     #region WIP - this will be slowly refactored away from the controller as we move through more search types
 
     [NonAction]
@@ -376,7 +358,9 @@ public class FELearnerNumberController : Controller
 
         model.ShowMiddleNames = _showMiddleNames;
 
-        model.SearchBoxErrorMessage = ModelState.IsValid is false ? GenerateValidationMessage() : null;
+        model.SearchBoxErrorMessage =
+            ModelState.IsValid is false ?
+                PupilHelper.GenerateValidationMessageUlnSearch(ModelState) : null;
 
         model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
 
@@ -470,8 +454,7 @@ public class FELearnerNumberController : Controller
                     searchKeywords: string.Join(" AND ", learnerNumberArray),
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,
-                    offset: model.Offset))
-            .ConfigureAwait(false);
+                    offset: model.Offset));
 
 
         LearnerNumberSearchViewModel result =
@@ -517,7 +500,7 @@ public class FELearnerNumberController : Controller
                     .Replace("\n", string.Empty))
                 .Where(t => !string.IsNullOrWhiteSpace(t))
                 .Distinct()
-                .Where((sanitisedLearnerNumber) => !ValidateLearnerNumber(sanitisedLearnerNumber))
+                .Where((sanitisedLearnerNumber) => !ValidationHelper.IsValidUln(sanitisedLearnerNumber))
                 .ToList() ?? [];
 
         model.Invalid.AddRange(invalidIdentifiers);
@@ -661,7 +644,6 @@ public class FELearnerNumberController : Controller
     protected LearnerNumberSearchViewModel PopulateNavigation(LearnerNumberSearchViewModel model)
     {
         model.DownloadLinksPartial = DownloadLinksPartial;
-        model.InvalidUPNsConfirmationAction = string.Empty;
         model.SearchAction = SearchAction;
         model.FullTextLearnerSearchController = Global.FELearnerTextSearchController;
         model.FullTextLearnerSearchAction = Global.FELearnerTextSearchAction;

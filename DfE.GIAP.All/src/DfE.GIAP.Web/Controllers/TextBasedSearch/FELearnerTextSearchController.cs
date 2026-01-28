@@ -699,8 +699,7 @@ public class FELearnerTextSearchController : Controller
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
                     sortOrder: sortOrder,
-                    offset: model.Offset))
-            .ConfigureAwait(false);
+                    offset: model.Offset));
 
         return _learnerSearchResponseToViewModelMapper.Map(
             LearnerTextSearchMappingContext.Create(model, searchResponse));
@@ -962,8 +961,6 @@ public class FELearnerTextSearchController : Controller
         SetDateOfBirthFilterUrl(model);
         model.RedirectFrom = Routes.FurtherEducation.LearnerTextSearch;
         model.DownloadLinksPartial = Global.FENonUlnDownloadLinksView;
-
-        model.InvalidUPNsConfirmationAction = string.Empty;
 
         return model;
     }

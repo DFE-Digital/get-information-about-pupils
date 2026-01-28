@@ -10,13 +10,13 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
     public DownloadType SupportedDownloadType => DownloadType.FurtherEducation;
 
     private readonly IFurtherEducationReadOnlyRepository _feReadRepository;
-    private readonly IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord> _ppMapper;
-    private readonly IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord> _senMapper;
+    private readonly IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationPPOutputRecord>> _ppMapper;
+    private readonly IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationSENOutputRecord>> _senMapper;
 
     public FurtherEducationAggregationHandler(
         IFurtherEducationReadOnlyRepository feReadRepository,
-        IMapper<FurtherEducationPupil, FurtherEducationPPOutputRecord> ppMapper,
-        IMapper<FurtherEducationPupil, FurtherEducationSENOutputRecord> senMapper)
+        IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationPPOutputRecord>> ppMapper,
+        IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationSENOutputRecord>> senMapper)
     {
         ArgumentNullException.ThrowIfNull(feReadRepository);
         ArgumentNullException.ThrowIfNull(ppMapper);
@@ -28,9 +28,9 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
 
 
     public async Task<PupilDatasetCollection> AggregateAsync(
-            IEnumerable<string> pupilIds,
-            IEnumerable<Dataset> selectedDatasets,
-            CancellationToken cancellationToken = default)
+        IEnumerable<string> pupilIds,
+        IEnumerable<Dataset> selectedDatasets,
+        CancellationToken cancellationToken = default)
     {
         PupilDatasetCollection collection = new();
         IEnumerable<FurtherEducationPupil> pupils = await _feReadRepository.GetPupilsByIdsAsync(pupilIds);
@@ -38,9 +38,10 @@ public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandle
         foreach (FurtherEducationPupil pupil in pupils)
         {
             if (selectedDatasets.Contains(Dataset.FE_PP) && pupil.HasPupilPremiumData)
-                collection.FurtherEducationPP.Add(_ppMapper.Map(pupil));
+                collection.FurtherEducationPP.AddRange(_ppMapper.Map(pupil));
+
             if (selectedDatasets.Contains(Dataset.SEN) && pupil.HasSpecialEducationalNeedsData)
-                collection.SEN.Add(_senMapper.Map(pupil));
+                collection.SEN.AddRange(_senMapper.Map(pupil));
         }
 
         return collection;

@@ -4,15 +4,6 @@ public static class Routes
 {
     public const string DownloadSelectedNationalPupilDatabaseData = "download";
     public const string NPDNonUpnAddToMyPupilList = "add-npd-nonupn-to-my-pupil-list";
-    public const string NPDInvalidUPNs = "npd-invalid-upns";
-    public const string NPDInvalidUPNsConfirmation = "npd-invalid-upns-confirmation";
-    public const string NPDNonUpnInvalidUPNs = "npd-nonupn-invalid-upns";
-    public const string NPDNonUpnInvalidUPNsConfirmation = "npd-nonupn-invalid-upns-confirmation";
-    public const string PPInvalidUPNs = "pp-invalid-upns";
-    public const string PPInvalidUPNsConfirmation = "pp-invalid-upns-confirmation";
-    public const string PPNonUpnInvalidUPNs = "pp-nonupn-invalid-upns";
-    public const string PPNonUpnInvalidUPNsConfirmation = "pp-nonupn-invalid-upns-confirmation";
-    public const string InvalidUPNsReturn = "InvalidUPNsReturn";
 
     public static class Application
     {

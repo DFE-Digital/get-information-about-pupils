@@ -24,7 +24,6 @@ public class LearnerTextSearchViewModel
     public string LearnerTextSearchAction { get; set; }
     public string LearnerNumberController { get; set; }
     public string LearnerNumberAction { get; set; }
-    public string InvalidUPNsConfirmationAction { get; set; }
 
     public int PageNumber { get; set; }
     public int PageSize { get; set; }
