@@ -13,7 +13,7 @@ public static class SearchCriteriaOptionsExtensions
         ArgumentNullException.ThrowIfNull(options);
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
 
-        if (!options.Criteria.TryGetValue("pupil-premium", out SearchCriteria? criteria))
+        if (!options.Criteria.TryGetValue(key, out SearchCriteria? criteria))
         {
             throw new ArgumentException($"Unable to get criteria for key:{key}");
         };
