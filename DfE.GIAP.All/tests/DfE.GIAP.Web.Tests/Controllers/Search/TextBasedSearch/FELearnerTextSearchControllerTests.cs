@@ -60,8 +60,8 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
         Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
-    private readonly IMapper<(string, string), SortOrder> _mockSortOrderMapper =
-        Substitute.For<IMapper<(string, string), SortOrder>>();
+    private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
+        Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
 
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -75,7 +75,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         );
 
         _mockSortOrderMapper.Map(
-            Arg.Any<(string, string)>()).Returns(stubSortOrder);
+            Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
 
         FurtherEducationSearchResponse response =
             FurtherEducationSearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
