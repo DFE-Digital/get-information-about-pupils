@@ -2,14 +2,14 @@
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 /// <summary>
 /// Provides a reusable test double for constructing <see cref="FurtherEducationLearner"/> domain objects.
 /// Centralizes learner scaffolding for unit tests to improve readability and reduce duplication.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class ApplicationModelLearnerTestDouble
+public static class FurtherEducationLearnerTestDouble
 {
     /// <summary>
     /// Creates a <see cref="FurtherEducationLearnerIdentifier"/> from a unique learner number.

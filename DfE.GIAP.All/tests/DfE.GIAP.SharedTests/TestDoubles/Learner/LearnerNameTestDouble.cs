@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 
-namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
 public static class LearnerNameTestDouble
 {
     /// <summary>
@@ -11,5 +11,6 @@ public static class LearnerNameTestDouble
     public static LearnerName FakeName(Faker faker) =>
         new(
             firstName: faker.Name.FirstName(),
+            middleName: faker.PickRandom(faker.Name.FirstName(), string.Empty),
             surname: faker.Name.LastName());
 }

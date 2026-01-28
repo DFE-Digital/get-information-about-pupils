@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 
 /// <summary>
 /// Provides scaffolds for creating <see cref="SearchFacet"/> and <see cref="SearchFacets"/> objects.

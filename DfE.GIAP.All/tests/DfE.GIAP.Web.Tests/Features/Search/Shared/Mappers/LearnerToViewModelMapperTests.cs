@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
-using DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers;
 
@@ -21,7 +21,7 @@ public sealed class LearnerToViewModelMapperTests
     {
         // arrange
         FurtherEducationLearner applicationModellearner =
-            ApplicationModelLearnerTestDouble.Stub(
+            FurtherEducationLearnerTestDouble.Stub(
                 uniqueLearnerNumber: "1234567890",
                 firstname: "Alice",
                 surname: "Smith",

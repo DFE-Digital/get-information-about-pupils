@@ -5,12 +5,12 @@ using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 
-public sealed class PupilPremiumLearnerNumericSearchResponseToViewModelMapper :
+public sealed class PupilPremiumLearnerNumericSearchMappingContextToViewModelMapper :
     IMapper<PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>
 {
     private readonly IMapper<PupilPremiumLearner, Learner> _pupilPremiumModelToLearnerMapper;
 
-    public PupilPremiumLearnerNumericSearchResponseToViewModelMapper(
+    public PupilPremiumLearnerNumericSearchMappingContextToViewModelMapper(
         IMapper<PupilPremiumLearner, Learner> pupilPremiumModelToLearnerMapper)
     {
         ArgumentNullException.ThrowIfNull(pupilPremiumModelToLearnerMapper);
@@ -31,28 +31,4 @@ public sealed class PupilPremiumLearnerNumericSearchResponseToViewModelMapper :
 
         return input.Model;
     }
-}
-
-public record PupilPremiumLearnerNumericSearchMappingContext
-{
-
-    public LearnerNumberSearchViewModel Model { get; init; }
-
-    public PupilPremiumSearchResponse Response { get; init; }
-
-    public PupilPremiumLearnerNumericSearchMappingContext(
-        LearnerNumberSearchViewModel model,
-        PupilPremiumSearchResponse response)
-    {
-        ArgumentNullException.ThrowIfNull(model);
-        Model = model;
-
-        ArgumentNullException.ThrowIfNull(response);
-        Response = response;
-    }
-
-    public static PupilPremiumLearnerNumericSearchMappingContext Create(
-        LearnerNumberSearchViewModel model,
-        PupilPremiumSearchResponse response) =>
-        new(model, response);
 }

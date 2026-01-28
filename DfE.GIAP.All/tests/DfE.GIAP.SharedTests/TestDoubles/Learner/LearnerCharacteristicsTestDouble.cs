@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 
-namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
 public static class LearnerCharacteristicsTestDouble
 {
     /// <summary>

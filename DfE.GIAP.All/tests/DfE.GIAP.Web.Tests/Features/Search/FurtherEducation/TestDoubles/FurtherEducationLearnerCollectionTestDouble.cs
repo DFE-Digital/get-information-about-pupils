@@ -2,14 +2,14 @@
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 /// <summary>
 /// Provides reusable scaffolds for creating view-model-layer <see cref="FurtherEducationLearner"/> objects.
-/// Wraps <see cref="ApplicationModelLearnerTestDouble.Stub"/> for consistent and readable test setup.
+/// Wraps <see cref="FurtherEducationLearnerTestDouble.Stub"/> for consistent and readable test setup.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class ApplicationModelLearnersTestDouble
+public static class FurtherEducationLearnerCollectionTestDouble
 {
     /// <summary>
     /// Creates multiple view model learners from a collection of value tuples.
@@ -25,7 +25,7 @@ public static class ApplicationModelLearnersTestDouble
         List<FurtherEducationLearner> result = [];
         foreach ((string uln, string firstName, string surname, DateTime birthDate, Gender gender) in learners)
         {
-            result.Add(ApplicationModelLearnerTestDouble.Stub(uln, firstName, surname, birthDate, gender));
+            result.Add(FurtherEducationLearnerTestDouble.Stub(uln, firstName, surname, birthDate, gender));
         }
         return result;
     }

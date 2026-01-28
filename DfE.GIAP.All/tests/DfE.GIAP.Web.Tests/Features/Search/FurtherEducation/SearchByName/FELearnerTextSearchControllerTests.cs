@@ -20,7 +20,7 @@ using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -77,7 +77,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
 
         FurtherEducationSearchResponse response =
-            FurtherEducationSearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
+            FurtherEducationSearchResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchRequest>()).Returns(response);

@@ -2,6 +2,7 @@
 using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
 
 namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 

@@ -64,7 +64,7 @@ public static class CompositionRoot
     {
         services.AddSingleton<IMapper<
             PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
-            PupilPremiumLearnerNumericSearchResponseToViewModelMapper>();
+            PupilPremiumLearnerNumericSearchMappingContextToViewModelMapper>();
 
         services.AddSingleton<IMapper<
             PupilPremiumLearner, Learner>,

@@ -1,10 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Domain.Search.Learner;
-using Moq;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 /// <summary>
 /// Provides a reusable test double for mapping between application and domain Learner models.

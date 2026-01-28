@@ -8,8 +8,8 @@ using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
-public static class PupilPremiumSearchByKeyWordsResponseTestDouble
+namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
+public static class PupilPremiumSearchResponseTestDouble
 {
     /// <summary>
     /// Creates a fully populated response with learners and facets.

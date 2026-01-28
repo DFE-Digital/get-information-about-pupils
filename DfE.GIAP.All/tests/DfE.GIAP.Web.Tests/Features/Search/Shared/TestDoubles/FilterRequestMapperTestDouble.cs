@@ -5,7 +5,7 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Domain.Search.Learner;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 
 /// <summary>
 /// Provides a reusable test double for <see cref="IMapper{FilterData, FilterRequest}"/> used in unit tests.

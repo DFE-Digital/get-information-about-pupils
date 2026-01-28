@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 /// <summary>
 /// Provides reusable scaffolds for generating randomized learner data using <see cref="Faker"/>.
 /// Supports symbolic traceability and deterministic test composition.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class FakeLearnerDataTestDouble
+public static class FakeFurtherEducationLearnerDataTestDouble
 {
     /// <summary>
     /// Generates a valid ULN (Unique Learner Number) as a string.
@@ -52,12 +54,18 @@ public static class FakeLearnerDataTestDouble
     /// A tuple containing ULN, first name, surname, birthdate, and gender.
     /// </returns>
     public static (string Uln, string FirstName, string Surname, DateTime BirthDate, Gender Gender)
-        CreateLearnerFake(Faker faker) =>
-        (
+        CreateFurtherEducationLearnerFake(Faker faker)
+    {
+        LearnerName name = LearnerNameTestDouble.FakeName(faker);
+        LearnerCharacteristics characteristics = LearnerCharacteristicsTestDouble.FakeCharacteristics(faker);
+
+        return (
             Uln: CreateUniqueLearnerNumber(faker),
-            FirstName: CreateFirstname(faker),
-            Surname: CreateSurname(faker),
-            BirthDate: CreateBirthDate(faker),
-            Gender: CreateGender(faker)
+            name.FirstName,
+            name.Surname,
+            characteristics.BirthDate,
+            Gender: characteristics.Sex
         );
+    }
+
 }

@@ -2,14 +2,14 @@
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Domain.Search.Learner;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 
 /// <summary>
 /// Provides deterministic scaffolds for creating domain-layer <see cref="Learner"/> objects.
 /// Designed for unit tests that require explicit control over learner attributes.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class DomainLearnersTestDouble
+public static class LearnerTestDouble
 {
     /// <summary>
     /// Creates a list of <see cref="Learner"/> objects from a collection of value tuples.

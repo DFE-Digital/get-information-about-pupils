@@ -4,7 +4,8 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
-using DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
@@ -26,16 +27,16 @@ public class FurtherEducationLearnerNumericSearchResponseToViewModelMapperTests
         Faker faker = new();
         (string Uln, string FirstName, string Surname, DateTime BirthDate, Gender Gender)[] learnerFakes =
         [
-            FakeLearnerDataTestDouble.CreateLearnerFake(faker),
-            FakeLearnerDataTestDouble.CreateLearnerFake(faker)
+            FakeFurtherEducationLearnerDataTestDouble.CreateFurtherEducationLearnerFake(faker),
+            FakeFurtherEducationLearnerDataTestDouble.CreateFurtherEducationLearnerFake(faker)
         ];
 
-        List<Domain.Search.Learner.Learner> domainLearners = DomainLearnersTestDouble.CreateLearnersStub(learnerFakes);
+        List<Domain.Search.Learner.Learner> domainLearners = LearnerTestDouble.CreateLearnersStub(learnerFakes);
         List<FurtherEducationLearner> applicationModelLearners =
-            ApplicationModelLearnersTestDouble.CreateLearnersStub(learnerFakes);
+            FurtherEducationLearnerCollectionTestDouble.CreateLearnersStub(learnerFakes);
 
         FurtherEducationSearchResponse response =
-            FurtherEducationSearchByKeyWordsResponseTestDouble.Create(
+            FurtherEducationSearchResponseTestDouble.Create(
                 learners: new FurtherEducationLearners([applicationModelLearners[0]]),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
                 status: SearchResponseStatus.Success,

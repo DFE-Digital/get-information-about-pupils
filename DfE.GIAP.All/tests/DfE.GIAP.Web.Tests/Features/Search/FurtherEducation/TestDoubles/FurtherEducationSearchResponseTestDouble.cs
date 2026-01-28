@@ -5,14 +5,14 @@ using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 /// <summary>
 /// Provides scaffolds for creating <see cref="FurtherEducationSearchResponse"/> objects for unit testing.
 /// Enables deterministic construction of learner results and facet overlays for search scenarios.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class FurtherEducationSearchByKeyWordsResponseTestDouble
+public static class FurtherEducationSearchResponseTestDouble
 {
     /// <summary>
     /// Creates a fully populated response with learners and facets.
