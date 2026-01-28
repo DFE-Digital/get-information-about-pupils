@@ -4,7 +4,6 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
@@ -237,15 +236,7 @@ public sealed class AzureSearchByKeywordServiceTests
                 _mockFacetsMapper,
                 _mockSearchOptionsBuilder);
 
-        SearchServiceAdapterRequest request = new SearchServiceAdapterRequest(
-            searchIndexKey: _mockSearchIndexKey,
-            searchKeyword: "SearchKeyword",
-            searchFields: [],
-            facets: [],
-            sortOrdering: new SortOrder(
-                sortField: "sortField",
-                sortDirection: "sortDirection",
-                validSortFields: []));
+        SearchServiceAdapterRequest request = SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockSearchIndexKey);
 
         // Act & Assert
         return sut
