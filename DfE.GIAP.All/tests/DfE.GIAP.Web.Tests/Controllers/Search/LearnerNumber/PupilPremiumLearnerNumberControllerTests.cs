@@ -7,7 +7,6 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Features.Downloads.Services;
@@ -93,11 +92,13 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     public async Task PupilPremium_returns_search_page_when_returned_to()
     {
         // arrange
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
+        string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // act
         IActionResult result = await sut.PupilPremium(true);
@@ -110,9 +111,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, _paginatedResultsFake.GetUpns());
+        Assert.Equal(model.LearnerNumber, upns);
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(formattedUpns));
     }
 
     [Fact]
@@ -120,18 +121,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -147,9 +150,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
     }
 
     [Fact]
@@ -157,19 +160,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // act
         IActionResult result = await sut.PupilPremium(inputModel, 1, "", "");
@@ -182,7 +186,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
         model.Learners.AssertSelected(true);
     }
@@ -192,24 +196,22 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectAllNoJsChecked = "true",
             SelectedPupil = ["A203102209083"],
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
-        paginatedResponse.ToggleSelectAll(false);
-
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // act
         IActionResult result = await sut.PupilPremium(inputModel, 1, "", "");
@@ -226,7 +228,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
         _mockSelectionManager.DidNotReceive().RemoveAll(Arg.Any<string[]>());
         Assert.Equal(2, model.Learners.Where(l => l.Selected == true).Count());
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
     }
@@ -244,15 +246,12 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             SelectedPupil = ["A203102209083"]
         };
 
-        PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
-        paginatedResponse.ToggleSelectAll(true);
-
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // act
         IActionResult result = await sut.PupilPremium(inputModel, 1, "", "");
@@ -269,7 +268,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockSelectionManager.DidNotReceive().AddAll(Arg.Any<string[]>());
         _mockSelectionManager.Received().RemoveAll(Arg.Any<string[]>());
         Assert.Equal(2, model.Learners.Where(l => l.Selected == false).Count());
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
         Assert.False(model.ToggleSelectAll);
     }
@@ -279,15 +278,14 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectedPupil = ["A203102209083"],
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
-
-        PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSession.SetString(
@@ -297,7 +295,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // act
         IActionResult result = await sut.PupilPremium(inputModel, 1, "", "", true);
@@ -314,7 +312,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             Arg.Is<IEnumerable<string>>(l => l.SequenceEqual(new List<string> { "A203102209083" })));
         _mockSelectionManager.Received().RemoveAll(
             Arg.Is<IEnumerable<string>>(l => l.SequenceEqual(new List<string> { "A203202811068" })));
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
     }
 
@@ -346,18 +344,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpnsWithInvalid();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = upns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -382,18 +382,19 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpnsWithNotFound();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = upns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // act
         IActionResult result = await sut.PupilPremium(inputModel, 0, "", "", false);
@@ -415,18 +416,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpnsWithDuplicates();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = upns.FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -504,19 +507,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -532,7 +536,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
         model.Learners.AssertSelected(true);
         Assert.Equal(model.SortField, sortField);
@@ -544,21 +548,22 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
 
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
             SelectAllNoJsChecked = "true",
             SelectedPupil = ["A203102209083"],
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -578,7 +583,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockSelectionManager.Received().AddAll(Arg.Any<string[]>());
         _mockSelectionManager.DidNotReceive().RemoveAll(Arg.Any<string[]>());
         Assert.Equal(2, model.Learners.Where(l => l.Selected == true).Count());
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
         Assert.True(model.ToggleSelectAll);
 
@@ -604,7 +609,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -624,7 +629,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         _mockSelectionManager.DidNotReceive().AddAll(Arg.Any<string[]>());
         _mockSelectionManager.Received().RemoveAll(Arg.Any<string[]>());
         Assert.Equal(2, model.Learners.Where(l => l.Selected == false).Count());
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(1, model.PageNumber);
         Assert.False(model.ToggleSelectAll);
 
@@ -636,11 +641,14 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     public async Task PupilPremium_preserves_sort_settings_in_session_if_returnToSearch_true()
     {
         // arrange
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
+        string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -658,9 +666,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, _paginatedResultsFake.GetUpns());
+        Assert.Equal(model.LearnerNumber, upns);
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.LearnerNumber.FormatLearnerNumbers().SequenceEqual(formattedUpns));
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
     }
@@ -670,18 +678,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -700,9 +710,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -713,18 +723,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -743,9 +755,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -756,18 +768,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -786,9 +800,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -799,14 +813,16 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
@@ -829,9 +845,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -887,14 +903,16 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
@@ -917,9 +935,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -930,18 +948,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -960,9 +980,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -973,18 +993,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+        _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -1003,9 +1025,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -1016,14 +1038,16 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
@@ -1046,9 +1070,9 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
 
         AssertAbstractValues(sut, model);
-        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
+        Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -1059,14 +1083,16 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumber = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
@@ -1091,7 +1117,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(upns));
         Assert.Equal(0, model.PageNumber);
-        Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
+        Assert.True(model.SelectedPupil.SequenceEqual(formattedUpns));
 
         Assert.Equal(model.SortField, sortField);
         Assert.Equal(model.SortDirection, sortDirection);
@@ -1102,20 +1128,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // Arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(
-            sut.SearchSessionKey,
-            upns);
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
@@ -1137,11 +1163,13 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // Arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         _mockSelectionManager
@@ -1175,22 +1203,22 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // Arrange
         string upns = _paginatedResultsFake.GetUpnsWithInvalid();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         _mockSelectionManager
             .GetSelected(Arg.Any<string[]>())
-            .Returns(upns.FormatLearnerNumbers().ToHashSet());
+            .Returns([..formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSession.SetString(
-            sut.SearchSessionKey,
-            upns);
+        _mockSession.SetString(sut.SearchSessionKey, upns);
 
         // Act
         IActionResult result = await sut.PPAddToMyPupilList(inputModel);
@@ -1205,16 +1233,20 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // Arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([..formattedUpns]);
 
-        _addPupilsUseCaseMock.When(t => t.HandleRequestAsync(Arg.Any<AddPupilsToMyPupilsRequest>())).Throws(new MyPupilsLimitExceededException(1));
+        _addPupilsUseCaseMock
+            .When(t => t.HandleRequestAsync(Arg.Any<AddPupilsToMyPupilsRequest>()))
+            .Throws(new MyPupilsLimitExceededException(1));
 
         PupilPremiumLearnerNumberController sut = GetController();
 
@@ -1243,11 +1275,13 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpnsWithInvalid();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
@@ -1279,16 +1313,18 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
+        List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
+
         LearnerNumberSearchViewModel inputModel = new()
         {
             LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
+            SelectedPupil = formattedUpns,
+            PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
         PupilPremiumLearnerNumberController sut = GetController();
 
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString("totalSearch", "20");
 
