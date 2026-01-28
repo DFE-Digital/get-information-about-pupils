@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Domain.Search.Learner;
-using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
 

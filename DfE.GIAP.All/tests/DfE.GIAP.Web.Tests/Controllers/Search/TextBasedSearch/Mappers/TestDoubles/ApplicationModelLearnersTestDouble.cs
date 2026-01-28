@@ -20,10 +20,10 @@ public static class ApplicationModelLearnersTestDouble
     /// </param>
     /// <returns>A list of scaffolded <see cref="FurtherEducationLearner"/> objects.</returns>
     public static List<FurtherEducationLearner> CreateLearnersStub(
-        IEnumerable<(string Uln, string FirstName, string Surname, DateTime BirthDate, LearnerCharacteristics.Gender Gender)> learners)
+        IEnumerable<(string Uln, string FirstName, string Surname, DateTime BirthDate, Gender Gender)> learners)
     {
         List<FurtherEducationLearner> result = [];
-        foreach ((string uln, string firstName, string surname, DateTime birthDate, LearnerCharacteristics.Gender gender) in learners)
+        foreach ((string uln, string firstName, string surname, DateTime birthDate, Gender gender) in learners)
         {
             result.Add(ApplicationModelLearnerTestDouble.Stub(uln, firstName, surname, birthDate, gender));
         }

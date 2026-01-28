@@ -16,7 +16,7 @@ public sealed class LearnersTests
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
-                    LearnerCharacteristics.Gender.Female)
+                    Gender.Female)
             );
 
         List<FurtherEducationLearner> learners = [learner];
@@ -72,7 +72,7 @@ public sealed class LearnersTests
             new LearnerName("Bob", "Jones"),
             new LearnerCharacteristics(
                 new DateTime(2004, 3, 15),
-                LearnerCharacteristics.Gender.Male)
+                Gender.Male)
         );
 
         FurtherEducationLearners result = new([learner]);

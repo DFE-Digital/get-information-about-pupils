@@ -18,7 +18,7 @@ public sealed class SearchResultsTests
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
-                    LearnerCharacteristics.Gender.Female))
+                    Gender.Female))
         });
 
         SearchFacets facets =

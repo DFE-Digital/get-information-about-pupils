@@ -39,7 +39,7 @@ public class LearnerNumericSearchResponseToViewModelMapperTests
             ApplicationModelLearnersTestDouble.CreateLearnersStub(learnerFakes);
 
         FurtherEducationSearchResponse response =
-            SearchByKeyWordsResponseTestDouble.Create(
+            FurtherEducationSearchByKeyWordsResponseTestDouble.Create(
                 learners: new FurtherEducationLearners([applicationModelLearners[0]]),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
                 status: SearchResponseStatus.Success,

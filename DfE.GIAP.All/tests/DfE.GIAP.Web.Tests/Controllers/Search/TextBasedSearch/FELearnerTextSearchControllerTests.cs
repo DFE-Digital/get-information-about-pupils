@@ -78,7 +78,7 @@ public class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             Arg.Any<(string, string)>()).Returns(stubSortOrder);
 
         FurtherEducationSearchResponse response =
-            SearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
+            FurtherEducationSearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchRequest>()).Returns(response);

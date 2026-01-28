@@ -11,7 +11,7 @@ namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoub
 /// Enables deterministic construction of learner results and facet overlays for search scenarios.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class SearchByKeyWordsResponseTestDouble
+public static class FurtherEducationSearchByKeyWordsResponseTestDouble
 {
     /// <summary>
     /// Creates a fully populated response with learners and facets.
@@ -47,7 +47,7 @@ public static class SearchByKeyWordsResponseTestDouble
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
-                    LearnerCharacteristics.Gender.Female)
+                    Gender.Female)
                 )
             ]
         );

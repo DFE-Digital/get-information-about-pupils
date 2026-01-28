@@ -49,7 +49,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     {
         _paginatedResultsFake = paginatedResultsFake;
         FurtherEducationSearchResponse response =
-            SearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
+            FurtherEducationSearchByKeyWordsResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchRequest>()).Returns(response);

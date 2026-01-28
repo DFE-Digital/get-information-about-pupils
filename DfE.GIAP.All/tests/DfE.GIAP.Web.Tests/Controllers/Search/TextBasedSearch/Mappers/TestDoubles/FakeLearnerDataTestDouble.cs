@@ -38,11 +38,11 @@ public static class FakeLearnerDataTestDouble
     /// <summary>
     /// Randomly selects a gender from the available enum values.
     /// </summary>
-    public static LearnerCharacteristics.Gender CreateGender(Faker faker) =>
+    public static Gender CreateGender(Faker faker) =>
         faker.PickRandom(
-            LearnerCharacteristics.Gender.Male,
-            LearnerCharacteristics.Gender.Female,
-            LearnerCharacteristics.Gender.Other
+            Gender.Male,
+            Gender.Female,
+            Gender.Other
         );
 
     /// <summary>
@@ -51,7 +51,7 @@ public static class FakeLearnerDataTestDouble
     /// <returns>
     /// A tuple containing ULN, first name, surname, birthdate, and gender.
     /// </returns>
-    public static (string Uln, string FirstName, string Surname, DateTime BirthDate, LearnerCharacteristics.Gender Gender)
+    public static (string Uln, string FirstName, string Surname, DateTime BirthDate, Gender Gender)
         CreateLearnerFake(Faker faker) =>
         (
             Uln: CreateUniqueLearnerNumber(faker),

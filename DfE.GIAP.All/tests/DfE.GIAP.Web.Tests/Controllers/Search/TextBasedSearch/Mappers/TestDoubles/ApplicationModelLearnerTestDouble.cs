@@ -31,7 +31,7 @@ public static class ApplicationModelLearnerTestDouble
     /// </summary>
     private static LearnerCharacteristics Characteristics(
         DateTime birthDate,
-        LearnerCharacteristics.Gender gender) =>
+        Gender gender) =>
         new(birthDate, gender);
 
     /// <summary>
@@ -49,7 +49,7 @@ public static class ApplicationModelLearnerTestDouble
         string firstname,
         string surname,
         DateTime birthDate,
-        LearnerCharacteristics.Gender sex)
+        Gender sex)
     {
         // Construct domain components using helper methods for modularity and reuse
         FurtherEducationLearnerIdentifier learnerIdentifier = Identifier(uniqueLearnerNumber);

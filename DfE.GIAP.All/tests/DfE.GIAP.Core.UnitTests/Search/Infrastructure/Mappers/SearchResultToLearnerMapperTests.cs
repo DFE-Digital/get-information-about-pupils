@@ -35,9 +35,9 @@ public sealed class SearchResultToLearnerMapperTests
         result.Characteristics.Should().NotBeNull();
         result.Characteristics.BirthDate.Should().NotBeNull();
         result.Characteristics.Sex.Should().BeOneOf(
-            LearnerCharacteristics.Gender.Male,
-            LearnerCharacteristics.Gender.Female,
-            LearnerCharacteristics.Gender.Other);
+            Gender.Male,
+            Gender.Female,
+            Gender.Other);
         result.Identifier.Should().NotBeNull();
     }
 

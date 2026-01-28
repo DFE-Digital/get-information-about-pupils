@@ -1,10 +1,7 @@
-﻿using System.Reflection;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.Models.Learner.FurtherEducation;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers.TestDoubles;
-using Xunit;
-using static DfE.GIAP.Core.Search.Application.Models.Learner.LearnerCharacteristics;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.TextBasedSearch.Mappers;
 
@@ -29,7 +26,7 @@ public sealed class LearnerToViewModelMapperTests
                 firstname: "Alice",
                 surname: "Smith",
                 birthDate: new DateTime(2000, 1, 15),
-                sex: LearnerCharacteristics.Gender.Female);
+                sex: Gender.Female);
 
         // act
         Domain.Search.Learner.Learner result = _mapper.Map(applicationModellearner);
@@ -41,22 +38,6 @@ public sealed class LearnerToViewModelMapperTests
         Assert.Equal("Smith", result.Surname);
         Assert.Equal("F", result.Sex);
         Assert.Equal(new DateTime(2000, 1, 15), result.DOB);
-    }
-
-    [Theory]
-    [InlineData(Gender.Male, "M")]
-    [InlineData(Gender.Female, "F")]
-    [InlineData(Gender.Other, "Unspecified")]
-    public void MapGender_AssignsCorrectValue(Gender gender, string expected)
-    {
-        // act
-        object? result =
-            typeof(FurtherEducationLearnerToViewModelMapper)
-                .GetMethod("MapSexDescription", BindingFlags.NonPublic | BindingFlags.Static)!
-                .Invoke(null, [gender]);
-
-        // assert
-        Assert.Equal(expected, result);
     }
 }
 

@@ -15,7 +15,7 @@ public sealed class LearnerTests
         LearnerCharacteristics characteristics =
             new(
                 DateTimeOffset.Parse("2005-06-01").Date,
-                LearnerCharacteristics.Gender.Female
+                Gender.Female
             );
 
         // act
@@ -36,7 +36,7 @@ public sealed class LearnerTests
         LearnerCharacteristics characteristics =
             new(
                 DateTimeOffset.Now.Date,
-                LearnerCharacteristics.Gender.Female
+                Gender.Female
             );
 
         // act
