@@ -137,6 +137,7 @@ public class PupilPremiumLearnerNumberController : Controller
 
 
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
+    [ValidateAntiForgeryToken]
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(LearnerNumberSearchViewModel searchViewModel, CancellationToken ctx = default)
     {
