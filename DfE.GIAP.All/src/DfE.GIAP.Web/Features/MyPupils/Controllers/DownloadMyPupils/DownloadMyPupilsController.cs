@@ -70,6 +70,7 @@ public class DownloadMyPupilsController : Controller
 
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadCommonTransferFileData(
         [FromForm] List<string> SelectedPupils,
         MyPupilsQueryRequestDto query)
@@ -123,6 +124,7 @@ public class DownloadMyPupilsController : Controller
 
     [HttpPost]
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(
         [FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto query, CancellationToken ctx = default)
     {
@@ -166,6 +168,7 @@ public class DownloadMyPupilsController : Controller
 
     [HttpPost]
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadSelectedNPDDataUPN([FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto query)
     {
         List<string> updatedPupils = await UpsertSelectedPupilsAsync(SelectedPupils);
@@ -185,6 +188,7 @@ public class DownloadMyPupilsController : Controller
 
     [HttpPost]
     [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(string selectedPupilsJoined)
     {
         string[] selectedPupils = selectedPupilsJoined.Split(',');
@@ -233,6 +237,7 @@ public class DownloadMyPupilsController : Controller
 
     [HttpPost]
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadFile)]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
         if (!string.IsNullOrEmpty(model.SelectedPupils))
