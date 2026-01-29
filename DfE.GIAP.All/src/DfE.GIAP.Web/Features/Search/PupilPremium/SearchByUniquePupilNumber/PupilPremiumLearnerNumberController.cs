@@ -130,9 +130,53 @@ public class PupilPremiumLearnerNumberController : Controller
 
     [HttpPost]
     [Route("add-pp-to-my-pupil-list")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> PPAddToMyPupilList(LearnerNumberSearchViewModel model)
     {
-        return await AddToMyPupilList(model);
+        PopulatePageText(model);
+        PopulateNavigation(model);
+
+        SetSelections(
+            model.PageLearnerNumbers.Split(','),
+            model.SelectedPupil);
+
+        HashSet<string> selectedUpns = GetSelected(model.LearnerNumberIds.FormatLearnerNumbers());
+
+        if (selectedUpns.Count == 0)
+        {
+            model.NoPupil = true;
+            model.NoPupilSelected = true;
+            return await ReturnToPage(model);
+        }
+
+        List<string> invalidUPNs = selectedUpns.Where(x => !ValidationHelper.IsValidUpn(x)).ToList();
+
+        if (invalidUPNs.Count > 0)
+        {
+            model.Invalid = invalidUPNs;
+            model.ErrorDetails = Messages.Common.Errors.InvalidPupilIdentifier;
+            model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
+        }
+
+        model.SelectedPupil = model.SelectedPupil.Except(invalidUPNs).ToList();
+        selectedUpns = selectedUpns.Where(t => !invalidUPNs.Contains(t)).ToHashSet();
+
+        try
+        {
+            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(
+                new AddPupilsToMyPupilsRequest(
+                    userId: User.GetUserId(),
+                    pupils: selectedUpns));
+        }
+
+        catch (MyPupilsLimitExceededException)
+        {
+            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
+            return await ReturnToPage(model);
+        }
+
+        model.ItemAddedToMyPupilList = true;
+        return await ReturnToPage(model);
     }
 
 
@@ -188,54 +232,6 @@ public class PupilPremiumLearnerNumberController : Controller
     }
 
     #region WIP OLD INHERITED METHODS
-
-    private async Task<IActionResult> AddToMyPupilList(LearnerNumberSearchViewModel model)
-    {
-        PopulatePageText(model);
-        PopulateNavigation(model);
-
-        SetSelections(
-            model.PageLearnerNumbers.Split(','),
-            model.SelectedPupil);
-
-        HashSet<string> selected = GetSelected(model.LearnerNumberIds.FormatLearnerNumbers());
-
-        if (selected.Count == 0)
-        {
-            model.NoPupil = true;
-            model.NoPupilSelected = true;
-            return await ReturnToPage(model);
-        }
-
-        List<string> invalidUPNs = selected.Where(x => !ValidationHelper.IsValidUpn(x)).ToList();
-
-        if (invalidUPNs.Count > 0)
-        {
-            model.Invalid = invalidUPNs;
-            model.ErrorDetails = Messages.Common.Errors.InvalidPupilIdentifier;
-            model.LearnerNumber = SecurityHelper.SanitizeText(model.LearnerNumber);
-        }
-
-        model.SelectedPupil = model.SelectedPupil.Except(invalidUPNs).ToList();
-        selected = selected.Where(t => !invalidUPNs.Contains(t)).ToHashSet();
-
-        try
-        {
-            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(
-                new AddPupilsToMyPupilsRequest(
-                    userId: User.GetUserId(),
-                    pupils: selected));
-        }
-
-        catch (MyPupilsLimitExceededException)
-        {
-            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-            return await ReturnToPage(model);
-        }
-
-        model.ItemAddedToMyPupilList = true;
-        return await ReturnToPage(model);
-    }
 
     private async Task<IActionResult> Search(bool? returnToSearch)
     {
@@ -429,7 +425,7 @@ public class PupilPremiumLearnerNumberController : Controller
 
         if (first)
         {
-            model.LearnerIdSearchResult = GetLearnerIdsAsString(result.Learners);
+            model.LearnerIdSearchResult = string.Join(",", result.Learners.Select(learner => learner.Id));
 
             HashSet<string> learnerNumberIdSet = GetLearnerNumberIds(result.Learners);
             HashSet<string> learnerNumberSet = GetLearnerNumberIds(result.Learners);
@@ -492,15 +488,6 @@ public class PupilPremiumLearnerNumberController : Controller
         return model;
     }
 
-    private LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
-    {
-        model.PageHeading = ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
-        model.LearnerNumberLabel = Global.LearnerNumberLabel;
-        model.ShowLocalAuthority = true;
-        model.ShowMiddleNames = true;
-        return model;
-    }
-
     private LearnerNumberSearchViewModel PopulateNavigation(LearnerNumberSearchViewModel model)
     {
         model.DownloadLinksPartial = DownloadLinksPartial;
@@ -529,16 +516,22 @@ public class PupilPremiumLearnerNumberController : Controller
         return model;
     }
 
-    private void SetModelApplicationLabels(LearnerNumberSearchViewModel model)
+
+    private static LearnerNumberSearchViewModel PopulatePageText(LearnerNumberSearchViewModel model)
+    {
+        model.PageHeading = ApplicationLabels.SearchPupilPremiumWithUpnPageHeading;
+        model.LearnerNumberLabel = Global.LearnerNumberLabel;
+        model.ShowLocalAuthority = true;
+        model.ShowMiddleNames = true;
+        return model;
+    }
+
+    private static void SetModelApplicationLabels(LearnerNumberSearchViewModel model)
     {
         model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
         model.DownloadSelectedLink = ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
         model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
     }
-
-    private static string GetLearnerIdsAsString(
-    IEnumerable<Learner> learners) =>
-        string.Join(",", learners.Select(learner => learner.Id));
 
     private static List<string> SetLearnerNumberIds(IEnumerable<Learner> learners)
     {
