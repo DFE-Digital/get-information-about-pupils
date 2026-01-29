@@ -102,7 +102,7 @@ public static class CompositionRoot
             .AddSingleton<
                 IMapper<
                     PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>,
-                    PupilPremiumSearchResultToLearnerMapper>();
+                    PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper>();
         return services;
     }
 

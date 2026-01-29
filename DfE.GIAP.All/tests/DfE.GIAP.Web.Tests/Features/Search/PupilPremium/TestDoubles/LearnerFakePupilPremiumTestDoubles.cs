@@ -19,7 +19,7 @@ public static class LearnerFakePupilPremiumTestDoubles
         {
             Id = UniquePupilNumberTestDoubles.Generate().Value,
             Forename = name.FirstName,
-            Middlenames = name.MiddleName,
+            Middlenames = name.MiddleNames,
             Surname = name.Surname,
             DOB = characteristics.BirthDate,
             Sex = characteristics.Sex.MapSexDescription(),

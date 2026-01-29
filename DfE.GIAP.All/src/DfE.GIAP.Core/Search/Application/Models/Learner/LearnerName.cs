@@ -14,7 +14,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
     /// <summary>
     /// Gets the learner's middle name.
     /// </summary>
-    public string MiddleName { get; }
+    public string MiddleNames { get; } // TODO should this be string[]
 
     /// <summary>
     /// Gets the learner's surname.
@@ -43,7 +43,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
         ArgumentException.ThrowIfNullOrWhiteSpace(surname);
         Surname = surname;
 
-        MiddleName =
+        MiddleNames =
             string.IsNullOrWhiteSpace(middleName) ?
                 string.Empty : middleName;
     }
@@ -57,7 +57,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
     protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return FirstName;
-        yield return MiddleName;
+        yield return MiddleNames;
         yield return Surname;
     }
 }

@@ -16,7 +16,7 @@ public class PupilPremiumLearnerToLearnerMapper : IMapper<PupilPremiumLearner, L
             LearnerNumber = input.Identifier.Value.ToString(),
 
             Forename = input.Name.FirstName,
-            Middlenames = input.Name.MiddleName,
+            Middlenames = input.Name.MiddleNames,
             Surname = input.Name.Surname,
 
             Sex = input.Characteristics.Sex.MapSexDescription(),
