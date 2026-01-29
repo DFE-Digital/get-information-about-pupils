@@ -34,7 +34,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
 
     }
 
-    public LearnerName(string firstName, string middleName, string surname)
+    public LearnerName(string firstName, string? middleName, string surname)
     {
 
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);

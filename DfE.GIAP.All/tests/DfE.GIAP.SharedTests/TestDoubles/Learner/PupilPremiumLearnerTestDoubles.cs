@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using DfE.GIAP.Core.Search.Application.Models.Learner;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
 
@@ -22,6 +23,18 @@ public static class PupilPremiumLearnerTestDoubles
         return new PupilPremiumLearner(
                 UniquePupilNumberTestDoubles.Generate(),
                 LearnerNameTestDouble.FakeName(faker),
+                LearnerCharacteristicsTestDouble.FakeCharacteristics(faker),
+                LocalAuthorityCodeTestDoubles.Stub());
+    }
+
+    public static PupilPremiumLearner FakeWithMiddleName(string? middleName)
+    {
+        Faker faker = new();
+        LearnerName generatedName = LearnerNameTestDouble.FakeName(faker);
+
+        return new PupilPremiumLearner(
+                UniquePupilNumberTestDoubles.Generate(),
+                new LearnerName(generatedName.FirstName, middleName!, generatedName.Surname),
                 LearnerCharacteristicsTestDouble.FakeCharacteristics(faker),
                 LocalAuthorityCodeTestDoubles.Stub());
     }
