@@ -4,14 +4,17 @@ using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
+using DfE.GIAP.Web.Features.Search.Services;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
@@ -32,6 +35,7 @@ public static class CompositionRoot
         services.AddSearchCore(configuration);
 
         services
+            .AddSearchOptions(configuration)
             .AddSearchRules()
             .AddSort()
             .AddFilters();
@@ -39,6 +43,21 @@ public static class CompositionRoot
         services
             .AddFurtherEducationSearches()
             .AddPupilPremiumSearches();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSearchOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services
+            .AddOptions<SearchCriteriaOptions>()
+            .Bind(configuration.GetSection(nameof(SearchCriteriaOptions)));
+
+        services
+            .AddOptions<SortFieldOptions>()
+            .Bind(configuration.GetSection(nameof(SortFieldOptions)));
+
+        services.AddSingleton<ISearchCriteriaProvider, SearchCriteriaProvider>();
 
         return services;
     }

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Search.Application.Options;
+﻿namespace DfE.GIAP.Web.Features.Search.Options;
 
 /// <summary>
 /// Represents a configurable set of valid field names that can be used for sorting

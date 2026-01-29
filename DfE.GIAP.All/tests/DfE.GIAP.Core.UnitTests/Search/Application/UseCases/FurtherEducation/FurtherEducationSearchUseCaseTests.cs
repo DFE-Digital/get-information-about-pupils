@@ -1,20 +1,18 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.Options;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
-using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.FurtherEducation;
 
 public sealed class FurtherEducationSearchUseCaseTests
 {
     private readonly SearchResults<FurtherEducationLearners, SearchFacets> _searchResults;
-    private readonly IOptions<SearchCriteriaOptions> _searchByKeywordCriteriaStub;
+    private readonly ISearchCriteriaProvider _providerStub;
     private readonly SearchCriteria _furtherEducationSearchCriteriaStub;
 
     public FurtherEducationSearchUseCaseTests()
@@ -24,13 +22,9 @@ public sealed class FurtherEducationSearchUseCaseTests
 
         _furtherEducationSearchCriteriaStub = SearchCriteriaTestDouble.Stub();
 
-        _searchByKeywordCriteriaStub = OptionsTestDoubles.MockAs(new SearchCriteriaOptions()
-        {
-            Criteria = new()
-            {
-                { "further-education", _furtherEducationSearchCriteriaStub }
-            }
-        });
+        Mock<ISearchCriteriaProvider> provider = new();
+        provider.Setup(mockProvider => mockProvider.GetCriteria(It.IsAny<string>())).Returns(_furtherEducationSearchCriteriaStub);
+        _providerStub = provider.Object;
     }
 
     [Fact]
@@ -56,7 +50,7 @@ public sealed class FurtherEducationSearchUseCaseTests
             );
 
         FurtherEducationSearchUseCase useCase =
-            new(_searchByKeywordCriteriaStub, mockSearchServiceAdapter.Object);
+            new(_providerStub, mockSearchServiceAdapter.Object);
 
         // act
         FurtherEducationSearchResponse response =
@@ -83,7 +77,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         FurtherEducationSearchRequest request = new(searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
 
         FurtherEducationSearchUseCase useCase =
-            new(_searchByKeywordCriteriaStub, mockSearchServiceAdapter.Object);
+            new(_providerStub, mockSearchServiceAdapter.Object);
 
         // act
         FurtherEducationSearchResponse response =
@@ -107,7 +101,7 @@ public sealed class FurtherEducationSearchUseCaseTests
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
         FurtherEducationSearchUseCase useCase =
-            new(_searchByKeywordCriteriaStub, mockSearchServiceAdapter.Object);
+            new(_providerStub, mockSearchServiceAdapter.Object);
 
         // act
         FurtherEducationSearchResponse response =
@@ -136,7 +130,7 @@ public sealed class FurtherEducationSearchUseCaseTests
             .ThrowsAsync(new ApplicationException());
 
         FurtherEducationSearchUseCase useCase =
-            new(_searchByKeywordCriteriaStub, mockSearchServiceAdapter.Object);
+            new(_providerStub, mockSearchServiceAdapter.Object);
 
         // act
         FurtherEducationSearchResponse response =
@@ -165,7 +159,7 @@ public sealed class FurtherEducationSearchUseCaseTests
             .ReturnsAsync(FurtherEducationSearchResultsTestDoubles.StubWithNoResults);
 
         FurtherEducationSearchUseCase useCase =
-            new(_searchByKeywordCriteriaStub, mockSearchServiceAdapter.Object);
+            new(_providerStub, mockSearchServiceAdapter.Object);
 
         // act
         FurtherEducationSearchResponse response =

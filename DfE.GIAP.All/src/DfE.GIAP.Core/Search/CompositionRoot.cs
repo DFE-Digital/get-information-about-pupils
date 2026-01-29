@@ -5,7 +5,6 @@ using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
 using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.Options;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
@@ -117,15 +116,6 @@ public static class CompositionRoot
         services.AddSingleton(
             serviceProvider =>
                 serviceProvider.GetRequiredService<IOptions<AzureSearchOptions>>().Value);
-
-        services
-            .AddOptions<SearchCriteriaOptions>()
-            .Bind(configuration.GetSection(nameof(SearchCriteriaOptions)));
-
-        // Bind the SortField configuration options.
-        services
-            .AddOptions<SortFieldOptions>()
-            .Bind(configuration.GetSection(nameof(SortFieldOptions)));
 
         return services;
     }
