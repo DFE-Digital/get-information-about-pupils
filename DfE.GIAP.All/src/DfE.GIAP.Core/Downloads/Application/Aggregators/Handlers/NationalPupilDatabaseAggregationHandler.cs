@@ -10,27 +10,27 @@ public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationH
     public DownloadType SupportedDownloadType => DownloadType.NPD;
 
     private readonly INationalPupilReadOnlyRepository _npdReadRepository;
-    private readonly IMapper<NationalPupil, CensusAutumnOutput> _autumnMapper;
-    private readonly IMapper<NationalPupil, CensusSummerOutput> _summerMapper;
-    private readonly IMapper<NationalPupil, CensusSpringOutput> _springMapper;
-    private readonly IMapper<NationalPupil, KS1Output> _ks1Mapper;
-    private readonly IMapper<NationalPupil, KS2Output> _ks2Mapper;
-    private readonly IMapper<NationalPupil, KS4Output> _ks4Mapper;
-    private readonly IMapper<NationalPupil, MTCOutput> _mtcMapper;
-    private readonly IMapper<NationalPupil, PhonicsOutput> _phonicsMapper;
-    private readonly IMapper<NationalPupil, EYFSPOutput> _eyfspMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>> _autumnMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<CensusSummerOutput>> _summerMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<CensusSpringOutput>> _springMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<KS1Output>> _ks1Mapper;
+    private readonly IMapper<NationalPupil, IEnumerable<KS2Output>> _ks2Mapper;
+    private readonly IMapper<NationalPupil, IEnumerable<KS4Output>> _ks4Mapper;
+    private readonly IMapper<NationalPupil, IEnumerable<MTCOutput>> _mtcMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<PhonicsOutput>> _phonicsMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<EYFSPOutput>> _eyfspMapper;
 
     public NationalPupilDatabaseAggregationHandler(
         INationalPupilReadOnlyRepository npdReadRepository,
-        IMapper<NationalPupil, CensusAutumnOutput> autumnMapper,
-        IMapper<NationalPupil, CensusSummerOutput> summerMapper,
-        IMapper<NationalPupil, CensusSpringOutput> springMapper,
-        IMapper<NationalPupil, KS1Output> ks1Mapper,
-        IMapper<NationalPupil, KS2Output> ks2Mapper,
-        IMapper<NationalPupil, KS4Output> ks4Mapper,
-        IMapper<NationalPupil, MTCOutput> mtcMapper,
-        IMapper<NationalPupil, PhonicsOutput> phonicsMapper,
-        IMapper<NationalPupil, EYFSPOutput> eyfspMapper)
+        IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>> autumnMapper,
+        IMapper<NationalPupil, IEnumerable<CensusSummerOutput>> summerMapper,
+        IMapper<NationalPupil, IEnumerable<CensusSpringOutput>> springMapper,
+        IMapper<NationalPupil, IEnumerable<KS1Output>> ks1Mapper,
+        IMapper<NationalPupil, IEnumerable<KS2Output>> ks2Mapper,
+        IMapper<NationalPupil, IEnumerable<KS4Output>> ks4Mapper,
+        IMapper<NationalPupil, IEnumerable<MTCOutput>> mtcMapper,
+        IMapper<NationalPupil, IEnumerable<PhonicsOutput>> phonicsMapper,
+        IMapper<NationalPupil, IEnumerable<EYFSPOutput>> eyfspMapper)
     {
         ArgumentNullException.ThrowIfNull(npdReadRepository);
         ArgumentNullException.ThrowIfNull(autumnMapper);
@@ -65,23 +65,23 @@ public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationH
         foreach (NationalPupil pupil in pupils)
         {
             if (selectedDatasets.Contains(Dataset.Census_Autumn) && pupil.HasCensusAutumnData)
-                collection.CensusAutumn.Add(_autumnMapper.Map(pupil));
+                collection.CensusAutumn.AddRange(_autumnMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.Census_Summer) && pupil.HasCensusSummerData)
-                collection.CensusSummer.Add(_summerMapper.Map(pupil));
+                collection.CensusSummer.AddRange(_summerMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.Census_Spring) && pupil.HasCensusSpringData)
-                collection.CensusSpring.Add(_springMapper.Map(pupil));
+                collection.CensusSpring.AddRange(_springMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.KS1) && pupil.HasKeyStage1Data)
-                collection.KS1.Add(_ks1Mapper.Map(pupil));
+                collection.KS1.AddRange(_ks1Mapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.KS2) && pupil.HasKeyStage2Data)
-                collection.KS2.Add(_ks2Mapper.Map(pupil));
+                collection.KS2.AddRange(_ks2Mapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.KS4) && pupil.HasKeyStage4Data)
-                collection.KS4.Add(_ks4Mapper.Map(pupil));
+                collection.KS4.AddRange(_ks4Mapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.MTC) && pupil.HasMtcData)
-                collection.MTC.Add(_mtcMapper.Map(pupil));
+                collection.MTC.AddRange(_mtcMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.Phonics) && pupil.HasPhonicsData)
-                collection.Phonics.Add(_phonicsMapper.Map(pupil));
+                collection.Phonics.AddRange(_phonicsMapper.Map(pupil));
             if (selectedDatasets.Contains(Dataset.EYFSP) && pupil.HasEYFSPData)
-                collection.EYFSP.Add(_eyfspMapper.Map(pupil));
+                collection.EYFSP.AddRange(_eyfspMapper.Map(pupil));
         }
 
         return collection;

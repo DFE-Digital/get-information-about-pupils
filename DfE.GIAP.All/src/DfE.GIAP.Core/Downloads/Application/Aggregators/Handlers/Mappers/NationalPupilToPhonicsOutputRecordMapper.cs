@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToPhonicsOutputRecordMapper : IMapper<NationalPupil, PhonicsOutput>
+public class NationalPupilToPhonicsOutputRecordMapper : IMapper<NationalPupil, IEnumerable<PhonicsOutput>>
 {
-    public PhonicsOutput Map(NationalPupil input)
+    public IEnumerable<PhonicsOutput> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        PhonicsEntry? phonicsEntry = input.Phonics?.FirstOrDefault();
-        return new PhonicsOutput
+        if (input.Phonics is null || !input.Phonics.Any())
+            return Enumerable.Empty<PhonicsOutput>();
+
+        return input.Phonics.Select(phonicsEntry => new PhonicsOutput
         {
             Phonics_ACADYR = phonicsEntry?.AcademicYear,
             Phonics_PUPILMATCHINGREF = phonicsEntry?.PupilMatchingReference,
@@ -29,6 +30,6 @@ public class NationalPupilToPhonicsOutputRecordMapper : IMapper<NationalPupil, P
             Phonics_PHONICS_MARK = phonicsEntry?.Phonics_Mark,
             Phonics_PHONICS_OUTCOME = phonicsEntry?.Phonics_Outcome,
             Phonics_VERSION = phonicsEntry?.Version
-        };
+        });
     }
 }

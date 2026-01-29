@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToCensusSummerOutputRecordMapper : IMapper<NationalPupil, CensusSummerOutput>
+public class NationalPupilToCensusSummerOutputRecordMapper : IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>
 {
-    public CensusSummerOutput Map(NationalPupil input)
+    public IEnumerable<CensusSummerOutput> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        CensusSummerEntry? censusSummerEntry = input.CensusSummer?.FirstOrDefault();
-        return new CensusSummerOutput
+        if (input.CensusSummer is null || !input.CensusSummer.Any())
+            return Enumerable.Empty<CensusSummerOutput>();
+
+        return input.CensusSummer.Select(censusSummerEntry => new CensusSummerOutput
         {
             PupilMatchingRef = censusSummerEntry?.PupilMatchingRef,
             AcademicYear = censusSummerEntry?.AcademicYear,
@@ -48,6 +49,6 @@ public class NationalPupilToCensusSummerOutputRecordMapper : IMapper<NationalPup
             ExtendedHours = censusSummerEntry?.ExtendedHours,
             ExpandedHours = censusSummerEntry?.ExpandedHours,
             DAFIndicator = censusSummerEntry?.DisabilityAccessFundIndicator,
-        };
+        });
     }
 }

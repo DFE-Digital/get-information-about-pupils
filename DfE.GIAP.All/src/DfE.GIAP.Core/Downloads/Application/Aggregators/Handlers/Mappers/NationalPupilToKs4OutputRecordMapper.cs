@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToKs4OutputRecordMapper : IMapper<NationalPupil, KS4Output>
+public class NationalPupilToKs4OutputRecordMapper : IMapper<NationalPupil, IEnumerable<KS4Output>>
 {
-    public KS4Output Map(NationalPupil input)
+    public IEnumerable<KS4Output> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        KeyStage4Entry? keyStage4Entry = input.KeyStage4?.FirstOrDefault();
-        return new KS4Output
+        if (input.KeyStage4 is null || !input.KeyStage4.Any())
+            return Enumerable.Empty<KS4Output>();
+
+        return input.KeyStage4.Select(keyStage4Entry => new KS4Output
         {
             KS4_ACADYR = keyStage4Entry?.ACADYR,
             KS4_PUPILMATCHINGREF = keyStage4Entry?.PUPILMATCHINGREF,
@@ -305,7 +306,7 @@ public class NationalPupilToKs4OutputRecordMapper : IMapper<NationalPupil, KS4Ou
             KS4_KS2EMSS = keyStage4Entry?.KS2EMSS,
             KS4_KS2EMSS_GRP = keyStage4Entry?.KS2EMSS_GRP,
             KS4_VERSION = keyStage4Entry?.VERSION
-        };
+        });
     }
 }
 

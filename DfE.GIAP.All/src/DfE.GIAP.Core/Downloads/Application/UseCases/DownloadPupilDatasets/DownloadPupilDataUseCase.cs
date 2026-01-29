@@ -115,6 +115,5 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
             Dataset.MTC => "mtc_results",
             _ => "results"
         };
-
 }
 

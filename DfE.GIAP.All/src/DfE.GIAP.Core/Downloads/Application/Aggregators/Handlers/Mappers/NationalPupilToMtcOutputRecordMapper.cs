@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, MTCOutput>
+public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, IEnumerable<MTCOutput>>
 {
-    public MTCOutput Map(NationalPupil input)
+    public IEnumerable<MTCOutput> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        MtcEntry? mtcEntry = input.MTC?.FirstOrDefault();
-        return new MTCOutput
+        if (input.MTC is null || !input.MTC.Any())
+            return Enumerable.Empty<MTCOutput>();
+
+        return input.MTC.Select(mtcEntry => new MTCOutput
         {
             ACADYR = mtcEntry?.ACADYR,
             PupilMatchingRef = mtcEntry?.PupilMatchingRef,
@@ -29,6 +30,6 @@ public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, MTCOu
             FormMark = mtcEntry?.FormMark,
             PupilStatus = mtcEntry?.PupilStatus,
             ReasonNotTakingCheck = mtcEntry?.ReasonNotTakingCheck
-        };
+        });
     }
 }

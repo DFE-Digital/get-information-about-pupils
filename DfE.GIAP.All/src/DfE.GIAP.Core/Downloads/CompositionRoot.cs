@@ -67,15 +67,15 @@ public static class CompositionRoot
         services.AddScoped<IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>>, PupilPremiumPupilToPupilPremiumOutputRecordMapper>();
         services.AddScoped<IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationPPOutputRecord>>, FurtherEducationPupilToPpOutputRecordMapper>();
         services.AddScoped<IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationSENOutputRecord>>, FurtherEducationPupilToSenOutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, CensusAutumnOutput>, NationalPupilToCensusAutumnOutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, CensusSummerOutput>, NationalPupilToCensusSummerOutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, CensusSpringOutput>, NationalPupilToCensusSpringOutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, EYFSPOutput>, NationalPupilToEyfspOutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, KS1Output>, NationalPupilToKs1OutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, KS2Output>, NationalPupilToKs2OutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, KS4Output>, NationalPupilToKs4OutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, MTCOutput>, NationalPupilToMtcOutputRecordMapper>();
-        services.AddScoped<IMapper<NationalPupil, PhonicsOutput>, NationalPupilToPhonicsOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>, NationalPupilToCensusAutumnOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>, NationalPupilToCensusSummerOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>, NationalPupilToCensusSpringOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>, NationalPupilToEyfspOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<KS1Output>>, NationalPupilToKs1OutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<KS2Output>>, NationalPupilToKs2OutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<KS4Output>>, NationalPupilToKs4OutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<MTCOutput>>, NationalPupilToMtcOutputRecordMapper>();
+        services.AddScoped<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>, NationalPupilToPhonicsOutputRecordMapper>();
 
         return services;
     }

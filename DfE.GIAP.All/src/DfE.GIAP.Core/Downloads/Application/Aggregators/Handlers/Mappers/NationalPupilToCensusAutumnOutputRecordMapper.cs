@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPupil, CensusAutumnOutput>
+public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>
 {
-    public CensusAutumnOutput Map(NationalPupil input)
+    public IEnumerable<CensusAutumnOutput> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        CensusAutumnEntry? censusAutumnEntry = input.CensusAutumn?.FirstOrDefault();
-        return new CensusAutumnOutput
+        if (input.CensusAutumn is null || !input.CensusAutumn.Any())
+            return Enumerable.Empty<CensusAutumnOutput>();
+
+        return input.CensusAutumn.Select(censusAutumnEntry => new CensusAutumnOutput
         {
             PupilMatchingRef = censusAutumnEntry?.PupilMatchingRef,
             UPN = censusAutumnEntry?.UniquePupilNumber,
@@ -50,6 +51,6 @@ public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPup
             DAFIndicator = censusAutumnEntry?.DisabilityAccessFundIndicator ?? 0,
             TLevelQualHrs = censusAutumnEntry?.TLevelQualHrs,
             TLevelNonqualHrs = censusAutumnEntry?.TLevelNonqualHrs
-        };
+        });
     }
 }

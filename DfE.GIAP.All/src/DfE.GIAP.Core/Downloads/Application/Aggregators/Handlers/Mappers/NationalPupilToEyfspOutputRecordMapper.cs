@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, EYFSPOutput>
+public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, IEnumerable<EYFSPOutput>>
 {
-    public EYFSPOutput Map(NationalPupil input)
+    public IEnumerable<EYFSPOutput> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        EarlyYearsFoundationStageProfileEntry? eyfspEntry = input.EarlyYearsFoundationStageProfile?.FirstOrDefault();
-        return new EYFSPOutput
+        if (input.EarlyYearsFoundationStageProfile is null || !input.EarlyYearsFoundationStageProfile.Any())
+            return Enumerable.Empty<EYFSPOutput>();
+
+        return input.EarlyYearsFoundationStageProfile.Select(eyfspEntry => new EYFSPOutput
         {
             FSP_PupilMatchingRef = eyfspEntry?.PUPILMATCHINGREF,
             FSP_ACADYR = eyfspEntry?.ACADYR,
@@ -51,6 +52,6 @@ public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, EYF
             FSP_AGE = eyfspEntry?.AGE,
             FSP_GLD = eyfspEntry?.GLD,
             FSP_VERSION = eyfspEntry?.VERSION
-        };
+        });
     }
 }

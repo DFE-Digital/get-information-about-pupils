@@ -1,17 +1,18 @@
 ﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPupil, CensusSpringOutput>
+public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>
 {
-    public CensusSpringOutput Map(NationalPupil input)
+    public IEnumerable<CensusSpringOutput> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        CensusSpringEntry? censusSpringEntry = input.CensusSpring?.FirstOrDefault();
-        return new CensusSpringOutput
+        if (input.CensusSpring is null || !input.CensusSpring.Any())
+            return Enumerable.Empty<CensusSpringOutput>();
+
+        return input.CensusSpring.Select(censusSpringEntry => new CensusSpringOutput
         {
             PupilMatchingRef = censusSpringEntry?.PupilMatchingRef,
             UPN = censusSpringEntry?.UniquePupilNumber,
@@ -53,6 +54,6 @@ public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPup
             Funding_Basis_ECO = censusSpringEntry?.Funding_Basis_ECO,
             Funding_Basis_HSD = censusSpringEntry?.Funding_Basis_HSD,
             Funding_Basis_LAA = censusSpringEntry?.Funding_Basis_LAA,
-        };
+        });
     }
 }

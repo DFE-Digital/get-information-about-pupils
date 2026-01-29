@@ -2,10 +2,12 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -13,13 +15,12 @@ using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers;
-using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using DfE.GIAP.Web.Shared.Serializer;
 
 namespace DfE.GIAP.Web.Controllers.LearnerNumber;
 
@@ -43,7 +44,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
-
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
 
 
     public NPDLearnerNumberSearchController(ILogger<NPDLearnerNumberSearchController> logger,
@@ -54,7 +55,8 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
-        IJsonSerializer jsonSerializer)
+        IJsonSerializer jsonSerializer,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -72,6 +74,9 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
+        _downloadPupilDataUseCase = downloadPupilDataUseCase;
     }
 
 
@@ -221,20 +226,45 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                var downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
-                    await _downloadService.GetCSVFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
-                    await _downloadService.GetTABFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
+                //var downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
+                //    await _downloadService.GetCSVFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
+                //    await _downloadService.GetTABFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
 
-                if (downloadFile == null)
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+                foreach (string datasetString in model.SelectedDownloadOptions)
                 {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+                    if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
+                        selectedDatasets.Add(dataset);
                 }
 
-                if (downloadFile.Bytes != null)
+                DownloadPupilDataRequest request = new(
+                   SelectedPupils: selectedPupils,
+                   SelectedDatasets: selectedDatasets,
+                   DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                   FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
+
+                DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
+
+                //string loggingBatchId = Guid.NewGuid().ToString();
+                //foreach (string dataset in model.SelectedDownloadOptions)
+                //{
+                //    // TODO: Temp quick solution
+                //    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                //    {
+                //        _eventLogger.LogDownload(
+                //            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                //            DownloadFileFormat.CSV,
+                //            DownloadEventType.FE,
+                //            loggingBatchId,
+                //            datasetEnum);
+                //    }
+                //}
+
+
+                if (response.FileContents is not null)
                 {
                     model.ErrorDetails = null;
-
-                    return SearchDownloadHelper.DownloadFile(downloadFile);
+                    return File(response.FileContents, response.ContentType, response.FileName);
                 }
                 else
                 {
