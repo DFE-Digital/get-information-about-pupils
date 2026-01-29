@@ -1,12 +1,15 @@
-﻿using DfE.GIAP.Common.AppSettings;
+﻿using System.Security.Claims;
+using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Models.Common;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
-using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -16,6 +19,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Controllers.LearnerNumber;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -27,8 +31,6 @@ using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
-using DfE.GIAP.Web.Shared.Serializer;
-using System.Security.Claims;
 
 namespace DfE.GIAP.Web.Tests.Controllers.Search.LearnerNumber;
 
@@ -125,7 +127,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -240,7 +242,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model); 
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         model.Learners.AssertSelected(false);
         _mockSelectionManager.DidNotReceive().AddAll(Arg.Any<string[]>());
@@ -377,7 +379,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Single(model.NotFound);
         Assert.Equal(2, model.Learners.Count());
@@ -924,7 +926,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
-        LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);        
+        LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -966,7 +968,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -1008,7 +1010,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel? model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        
+
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(0, model.PageNumber);
@@ -1493,176 +1495,6 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         Assert.Equal(Messages.Search.Errors.SelectFileType, sut.TempData["ErrorDetails"]);
     }
 
-    [Fact]
-    public async Task DownloadSelectedNationalPupilDatabaseData_returns_to_options_page_if_no_download_data_exists()
-    {
-        string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = string.Join(',', upns);
-
-        LearnerDownloadViewModel inputDownloadModel = new()
-        {
-            SelectedPupils = joinedSelectedPupils,
-            SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = [],
-            DownloadFileType = DownloadFileType.CSV
-        };
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerNumberSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        _mockDownloadService.GetCSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile());
-
-        // act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
-
-        // assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.DownloadNPDOptionsView, viewResult.ViewName);
-
-        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        Assert.Equal(model.SelectedPupils, joinedSelectedPupils);
-        Assert.Equal(upns.Length, model.SelectedPupilsCount);
-        Assert.Equal(Messages.Downloads.Errors.NoDataForSelectedPupils, sut.TempData["ErrorDetails"]);
-    }
-
-    [Fact]
-    public async Task DownloadSelectedNationalPupilDatabaseData_redirects_to_error_page_if_download_null()
-    {
-        string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = string.Join(',', upns);
-
-        LearnerDownloadViewModel inputDownloadModel = new()
-        {
-            SelectedPupils = joinedSelectedPupils,
-            SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = [],
-            DownloadFileType = DownloadFileType.CSV
-        };
-
-        NPDLearnerNumberSearchController sut = GetController();
-
-        // act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
-
-        // assert
-        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal(Routes.Application.Error, redirectResult.ActionName);
-        Assert.Equal(Routes.Application.Home, redirectResult.ControllerName);
-    }
-
-    [Fact]
-    public async Task DownloadSelectedNationalPupilDatabaseData_with_csv_type_returns_csv_data()
-    {
-        string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = string.Join(',', upns);
-
-        LearnerDownloadViewModel inputDownloadModel = new()
-        {
-            SelectedPupils = joinedSelectedPupils,
-            SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = [],
-            DownloadFileType = DownloadFileType.CSV
-        };
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerNumberSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        _mockDownloadService.GetCSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile()
-            {
-                FileName = "test_csv",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        // act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-
-        // Make sure the right call to download csv file has been made.
-        await _mockDownloadService.Received().GetCSVFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>());
-    }
-
-    [Fact]
-    public async Task DownloadSelectedNationalPupilDatabaseData_with_tab_type_returns_tab_data()
-    {
-        string[] upns = _paginatedResultsFake.GetUpns().FormatLearnerNumbers();
-        string joinedSelectedPupils = string.Join(',', upns);
-
-        LearnerDownloadViewModel inputDownloadModel = new()
-        {
-            SelectedPupils = joinedSelectedPupils,
-            SelectedPupilsCount = upns.Length,
-            SelectedDownloadOptions = [],
-            DownloadFileType = DownloadFileType.TAB
-        };
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerNumberSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        _mockDownloadService.GetTABFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>())
-            .Returns(new ReturnFile()
-            {
-                FileName = "test_tab",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        // act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(inputDownloadModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-
-        // Make sure the right call to download tab file has been made.
-        await _mockDownloadService.Received().GetTABFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>());
-    }
-
     private static void AssertAbstractValues(NPDLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
     {
         Assert.Equal(controller.PageHeading, model.PageHeading);
@@ -1693,15 +1525,19 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS1, HasData: true, CanDownload: true),
                 new AvailableDatasetResult(Dataset: Core.Downloads.Application.Enums.Dataset.KS2, HasData: true, CanDownload: true)
             ];
-        GetAvailableDatasetsForPupilsResponse response = new(availableDatasetResults);
-
+        GetAvailableDatasetsForPupilsResponse availableDatasetResponse = new(availableDatasetResults);
         Mock<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>> mockGetAvailableDatasetsForPupilsUseCase = new();
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
-            .ReturnsAsync(response);
+            .ReturnsAsync(availableDatasetResponse);
+
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(It.IsAny<DownloadPupilDataResponse>);
+        Mock<IEventLogger> mockEventLogger = new();
 
         // TODO verify serializer called, but will require pulling all of this sut creation out
         Mock<IJsonSerializer> jsonSerializerMock = new();
-        List<string>? notFoundLearners = ["E938218618008" ];
+        List<string>? notFoundLearners = ["E938218618008"];
 
         jsonSerializerMock
             .Setup(t => t.Serialize(It.IsAny<object>()))
@@ -1723,8 +1559,9 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             _mockAppOptions,
             _addPupilsUseCaseMock,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
-            jsonSerializerMock.Object
-            )
+            jsonSerializerMock.Object,
+            mockDownloadPupilDataUseCase.Object,
+            mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {

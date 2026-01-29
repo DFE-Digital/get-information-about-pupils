@@ -68,7 +68,7 @@ public sealed class FurtherEducationPupilToPpOutputRecordMapperTests
         Assert.Equal(pupil.Forename, first.Forename);
         Assert.Equal(pupil.Surname, first.Surname);
         Assert.Equal(pupil.Sex, first.Sex);
-        Assert.Equal(pupil.DOB.ToShortDateString(), first.DOB);
+        Assert.Equal(pupil.DOB?.ToShortDateString(), first.DOB);
     }
 
     [Fact]
