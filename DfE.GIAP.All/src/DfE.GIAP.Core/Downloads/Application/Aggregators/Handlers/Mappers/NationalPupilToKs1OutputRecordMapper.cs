@@ -20,7 +20,7 @@ public class NationalPupilToKs1OutputRecordMapper : IMapper<NationalPupil, IEnum
             UPN = ks1Entry?.UPN,
             SURNAME = ks1Entry?.SURNAME,
             FORENAMES = ks1Entry?.FORENAMES,
-            DOB = ks1Entry?.DOB,
+            DOB = ks1Entry?.DOB?.ToShortDateString(),
             GENDER = ks1Entry?.GENDER,
             SEX = ks1Entry?.SEX,
             LA = ks1Entry?.LA,

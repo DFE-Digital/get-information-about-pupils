@@ -8,7 +8,7 @@ public class FurtherEducationPupil
     public string? Forename { get; set; }
     public string? Surname { get; set; }
     public string? Sex { get; set; }
-    public DateTime DOB { get; set; }
+    public DateTime? DOB { get; set; }
     public string? ConcatenatedName { get; set; }
     public List<FurtherEducationPupilPremiumEntry>? PupilPremium { get; set; }
     public List<SpecialEducationalNeedsEntry>? specialEducationalNeeds { get; set; }

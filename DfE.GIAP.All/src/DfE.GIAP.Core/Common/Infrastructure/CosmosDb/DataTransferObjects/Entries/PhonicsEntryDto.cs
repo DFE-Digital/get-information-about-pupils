@@ -29,7 +29,7 @@ public class PhonicsEntryDto
     public string? SEX { get; set; }
 
     [JsonProperty("Phonics_DOB")]
-    public string? DateOfBirth { get; set; }
+    public DateTime? DOB { get; set; }
 
     [JsonProperty("Phonics_LA")]
     public string? LocalAuthority { get; set; }

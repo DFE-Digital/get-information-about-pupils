@@ -231,7 +231,7 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
                 ForeNames = dto.ForeNames,
                 Gender = dto.Gender,
                 SEX = dto.SEX,
-                DateOfBirth = dto.DateOfBirth,
+                DOB = dto.DOB,
                 LocalAuthority = dto.LocalAuthority,
                 Establishment = dto.Establishment,
                 UniqueReferenceNumber = dto.UniqueReferenceNumber,

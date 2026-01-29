@@ -19,7 +19,7 @@ public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPup
             Surname = censusSpringEntry?.Surname,
             Forename = censusSpringEntry?.Forename,
             MiddleNames = censusSpringEntry?.MiddleNames,
-            DOB = censusSpringEntry?.DOB.ToShortDateString(),
+            DOB = censusSpringEntry?.DOB?.ToShortDateString(),
             Sex = censusSpringEntry?.Sex,
             AcademicYear = censusSpringEntry?.AcademicYear,
             CensusTerm = censusSpringEntry?.CensusTerm,

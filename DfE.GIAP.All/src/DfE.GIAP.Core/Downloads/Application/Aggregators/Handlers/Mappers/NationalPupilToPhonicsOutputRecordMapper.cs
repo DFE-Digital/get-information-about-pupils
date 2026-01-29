@@ -20,7 +20,7 @@ public class NationalPupilToPhonicsOutputRecordMapper : IMapper<NationalPupil, I
             Phonics_UPN = phonicsEntry?.UniquePupilNumber,
             Phonics_SURNAME = phonicsEntry?.SurName,
             Phonics_FORENAMES = phonicsEntry?.ForeNames,
-            Phonics_DOB = phonicsEntry?.DateOfBirth,
+            Phonics_DOB = phonicsEntry?.DOB?.ToShortDateString(),
             Phonics_SEX = phonicsEntry?.SEX,
             Phonics_LA = phonicsEntry?.LocalAuthority,
             Phonics_ESTAB = phonicsEntry?.Establishment,

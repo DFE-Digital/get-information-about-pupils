@@ -20,7 +20,7 @@ public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPup
             Forename = censusAutumnEntry?.Forename,
             MiddleNames = censusAutumnEntry?.MiddleNames,
             Sex = censusAutumnEntry?.Sex,
-            DOB = censusAutumnEntry?.DOB.ToShortDateString(),
+            DOB = censusAutumnEntry?.DOB?.ToShortDateString(),
             AcademicYear = censusAutumnEntry?.AcademicYear,
             CensusTerm = censusAutumnEntry?.CensusTerm,
             LA = censusAutumnEntry?.LocalAuthority,

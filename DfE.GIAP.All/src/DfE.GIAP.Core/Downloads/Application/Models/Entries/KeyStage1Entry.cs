@@ -8,7 +8,7 @@ public class KeyStage1Entry
     public string? UPN { get; set; }
     public string? SURNAME { get; set; }
     public string? FORENAMES { get; set; }
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
     public string? GENDER { get; set; }
     public string? SEX { get; set; }
     public string? LA { get; set; }

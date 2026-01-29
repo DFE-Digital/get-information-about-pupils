@@ -23,7 +23,7 @@ public class KeyStage1EntryDto
     public string? FORENAMES { get; set; }
 
     [JsonProperty("DOB")]
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
 
     [JsonProperty("GENDER")]
     public string? GENDER { get; set; }

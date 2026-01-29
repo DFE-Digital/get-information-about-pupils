@@ -19,7 +19,7 @@ public class NationalPupilToKs4OutputRecordMapper : IMapper<NationalPupil, IEnum
             KS4_UPN = keyStage4Entry?.UPN,
             KS4_SURNAME = keyStage4Entry?.SURNAME,
             KS4_FORENAMES = keyStage4Entry?.FORENAMES,
-            KS4_DOB = keyStage4Entry?.DOB,
+            KS4_DOB = keyStage4Entry?.DOB?.ToShortDateString(),
             KS4_YEARGRP = keyStage4Entry?.YEARGRP,
             KS4_ACTYRGRP = keyStage4Entry?.ACTYRGRP,
             KS4_SEX = keyStage4Entry?.SEX,

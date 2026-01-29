@@ -20,7 +20,7 @@ public class EarlyYearsFoundationStageProfileEntryDto
     public string? FORENAME { get; set; }
 
     [JsonProperty("FSP_DOB")]
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
 
     [JsonProperty("FSP_GENDER")]
     public string? GENDER { get; set; }

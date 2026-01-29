@@ -20,7 +20,7 @@ public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, IEnum
             Surname = mtcEntry?.Surname,
             Forename = mtcEntry?.Forename,
             Sex = mtcEntry?.Sex,
-            DOB = mtcEntry?.DOB,
+            DOB = mtcEntry?.DOB?.ToShortDateString(),
             LA = mtcEntry?.LA,
             LA_9Code = mtcEntry?.LA_9Code,
             ESTAB = mtcEntry?.Estab,

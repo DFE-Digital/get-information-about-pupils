@@ -23,7 +23,7 @@ public class MtcEntryDto
     public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
 
     [JsonProperty("LA")]
     public string? LA { get; set; }

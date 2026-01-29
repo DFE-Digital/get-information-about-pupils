@@ -45,7 +45,7 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-
+    private readonly IEventLogger _eventLogger;
 
     public NPDLearnerNumberSearchController(ILogger<NPDLearnerNumberSearchController> logger,
         IDownloadCommonTransferFileService ctfService,
@@ -56,7 +56,8 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IJsonSerializer jsonSerializer,
-        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+        IEventLogger eventLogger)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, addPupilsToMyPupilsUseCase, jsonSerializer)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -77,6 +78,8 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
 
@@ -226,10 +229,6 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                //var downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
-                //    await _downloadService.GetCSVFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
-                //    await _downloadService.GetTABFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
-
                 List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
                 foreach (string datasetString in model.SelectedDownloadOptions)
                 {
@@ -245,21 +244,20 @@ public class NPDLearnerNumberSearchController : BaseLearnerNumberController
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
 
-                //string loggingBatchId = Guid.NewGuid().ToString();
-                //foreach (string dataset in model.SelectedDownloadOptions)
-                //{
-                //    // TODO: Temp quick solution
-                //    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
-                //    {
-                //        _eventLogger.LogDownload(
-                //            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
-                //            DownloadFileFormat.CSV,
-                //            DownloadEventType.FE,
-                //            loggingBatchId,
-                //            datasetEnum);
-                //    }
-                //}
-
+                string loggingBatchId = Guid.NewGuid().ToString();
+                foreach (string dataset in model.SelectedDownloadOptions)
+                {
+                    // TODO: Temp quick solution
+                    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                    {
+                        _eventLogger.LogDownload(
+                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
+                            DownloadEventType.NPD,
+                            loggingBatchId,
+                            datasetEnum);
+                    }
+                }
 
                 if (response.FileContents is not null)
                 {

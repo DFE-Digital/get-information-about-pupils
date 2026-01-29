@@ -19,7 +19,7 @@ public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, IEn
             FSP_UPN = eyfspEntry?.UPN,
             FSP_SURNAME = eyfspEntry?.SURNAME,
             FSP_FORENAME = eyfspEntry?.FORENAME,
-            FSP_DOB = eyfspEntry?.DOB,
+            FSP_DOB = eyfspEntry?.DOB?.ToShortDateString(),
             FSP_SEX = eyfspEntry?.SEX,
             FSP_MTH_ENTRY = eyfspEntry?.MTH_ENTRY,
             FSP_LA = eyfspEntry?.LA,

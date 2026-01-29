@@ -8,7 +8,7 @@ public class MtcEntry
     public string? Surname { get; set; }
     public string? Forename { get; set; }
     public string? Sex { get; set; }
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
     public string? LA { get; set; }
     public string? LA_9Code { get; set; }
     public string? Estab { get; set; }

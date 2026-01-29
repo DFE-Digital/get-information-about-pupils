@@ -21,7 +21,7 @@ public class NationalPupilToKs2OutputRecordMapper : IMapper<NationalPupil, IEnum
             UPN = keyStage2Entry?.UPN,
             FORENAMES = keyStage2Entry?.FORENAMES,
             SURNAME = keyStage2Entry?.SURNAME,
-            DOB = keyStage2Entry?.DOB,
+            DOB = keyStage2Entry?.DOB?.ToShortDateString(),
             YEARGRP = keyStage2Entry?.YEARGRP,
             SEX = keyStage2Entry?.SEX,
             LA = keyStage2Entry?.LA,

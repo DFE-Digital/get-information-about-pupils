@@ -10,7 +10,7 @@ public class PhonicsEntry
     public string? ForeNames { get; set; }
     public string? Gender { get; set; }
     public string? SEX { get; set; }
-    public string? DateOfBirth { get; set; }
+    public DateTime? DOB { get; set; }
     public string? LocalAuthority { get; set; }
     public string? Establishment { get; set; }
     public string? UniqueReferenceNumber { get; set; }
