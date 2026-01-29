@@ -65,7 +65,7 @@ public sealed class FurtherEducationLearnerTextSearchResponseToViewModelMapper :
 
         // Populate meta-data fields for pagination and UI messaging.
         input.Model.Count = input.Response.LearnerSearchResults?.Count ?? 0;
-        input.Model.Total = input.Response.TotalNumberOfResults.Count + input.Model.Offset;
+        input.Model.Total = input.Response.TotalNumberOfResults + input.Model.Offset;
 
         return input.Model;
     }

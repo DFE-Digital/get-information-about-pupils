@@ -9,4 +9,6 @@ public readonly struct SearchResultCount
     }
 
     public int Count { get; }
+
+    public static implicit operator int(SearchResultCount count) => count.Count;
 }
