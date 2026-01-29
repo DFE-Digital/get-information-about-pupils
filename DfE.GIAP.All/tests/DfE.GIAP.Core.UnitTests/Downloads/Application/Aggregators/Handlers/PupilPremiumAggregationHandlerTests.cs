@@ -5,7 +5,6 @@ using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
-using Moq;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers;
 
