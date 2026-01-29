@@ -25,7 +25,9 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
     {
         // arrange
         List<SearchResult<FurtherEducationLearnerDataTransferObject>> searchResultDocuments =
-            new SearchResultFakeBuilder().WithSearchResults().Create();
+            new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                .WithSearchResults(FurtherEducationLearnerDataTransferObjectTestDouble.Fake())
+                .Create();
 
         Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>> pageableSearchResults =
             PageableTestDouble.FromResults(searchResultDocuments);
@@ -57,7 +59,9 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
     {
         // arrange
         List<SearchResult<FurtherEducationLearnerDataTransferObject>> emptySearchResultDocuments =
-            new SearchResultFakeBuilder().WithEmptySearchResult().Create();
+            new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                .WithEmptySearchResult()
+                .Create();
 
         // act
         FurtherEducationLearners? result =
@@ -86,7 +90,9 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
     {
         // arrange
         List<SearchResult<FurtherEducationLearnerDataTransferObject>> searchResultDocuments =
-            new SearchResultFakeBuilder().IncludeNullDocument().Create();
+            new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                .IncludeNullDocument()
+                .Create();
 
         // act.
         _searchResultsMapper

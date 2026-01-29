@@ -10,24 +10,18 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 /// </summary>
 internal static class PageableTestDouble
 {
-    /// <summary>
-    /// Constructs a stubbed <see cref="Pageable{SearchResult{FurtherEducationLearnerDataTransferObject}}"/> from a list of search results.
-    /// Wraps the results in a single page with no continuation token, simulating a complete response.
-    /// </summary>
-    /// <param name="results">List of learner search results to include in the mock page.</param>
-    /// <returns>A pageable object containing a single page of results for test scenarios.</returns>
-    public static Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>> FromResults(
-        List<SearchResult<FurtherEducationLearnerDataTransferObject>> results)
+    public static Pageable<SearchResult<TDataTransferObject>> FromResults<TDataTransferObject>(
+        List<SearchResult<TDataTransferObject>> results)
     {
         // Create a single page from the provided results, with no continuation token
-        Page<SearchResult<FurtherEducationLearnerDataTransferObject>> page =
-            Page<SearchResult<FurtherEducationLearnerDataTransferObject>>.FromValues(
+        Page<SearchResult<TDataTransferObject>> page =
+            Page<SearchResult<TDataTransferObject>>.FromValues(
                 results,
                 continuationToken: null,
                 new Mock<Response>().Object); // Mocked Azure response metadata
 
         // Wrap the page in a pageable sequence to simulate Azure's paginated result structure
-        return Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>
-            .FromPages(new List<Page<SearchResult<FurtherEducationLearnerDataTransferObject>>>() { page });
+        return Pageable<SearchResult<TDataTransferObject>>
+            .FromPages(new List<Page<SearchResult<TDataTransferObject>>>() { page });
     }
 }

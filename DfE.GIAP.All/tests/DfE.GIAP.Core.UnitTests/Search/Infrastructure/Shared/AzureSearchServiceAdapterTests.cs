@@ -69,7 +69,9 @@ public sealed class AzureSearchByKeywordServiceTests
         Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse =
             Response.FromValue(
                 SearchModelFactory.SearchResults(
-                    new SearchResultFakeBuilder().WithSearchResults().Create(),
+                    new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                        .WithSearchResults(FurtherEducationLearnerDataTransferObjectTestDouble.Fake())
+                        .Create(),
                     10, null, null, responseMock.Object),
                 responseMock.Object);
 
@@ -150,7 +152,9 @@ public sealed class AzureSearchByKeywordServiceTests
         Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse =
             Response.FromValue(
                 SearchModelFactory.SearchResults(
-                    new SearchResultFakeBuilder().WithSearchResults().Create(),
+                    new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                        .WithSearchResults(FurtherEducationLearnerDataTransferObjectTestDouble.Fake())
+                        .Create(),
                     10,
                     facets: sdkFacets,
                     coverage: null,
@@ -192,7 +196,7 @@ public sealed class AzureSearchByKeywordServiceTests
         Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse =
             Response.FromValue(
                 SearchModelFactory.SearchResults(
-                    new SearchResultFakeBuilder().WithSearchResults().Create(),
+                    new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>().WithSearchResults(FurtherEducationLearnerDataTransferObjectTestDouble.Fake()).Create(),
                     10,
                     facets: null,
                     coverage: null,
@@ -240,7 +244,9 @@ public sealed class AzureSearchByKeywordServiceTests
         Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse =
             Response.FromValue(
                 SearchModelFactory.SearchResults(
-                    new SearchResultFakeBuilder().WithSearchResults().Create(),
+                    new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                        .WithSearchResults(FurtherEducationLearnerDataTransferObjectTestDouble.Fake())
+                        .Create(),
                     10,
                     null,
                     null,

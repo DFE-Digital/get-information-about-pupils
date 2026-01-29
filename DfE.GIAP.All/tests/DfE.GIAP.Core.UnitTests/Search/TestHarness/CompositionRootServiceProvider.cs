@@ -2,6 +2,7 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,8 +40,8 @@ public sealed class CompositionRootServiceProvider
         ISearchByKeywordService mockSearchService =
             new SearchServiceTestDouble()
                 .WithSearchKeywordAndCollection("searchKeyword", "idx-further-education-v3")
-                .WithSearchResults(new SearchResultFakeBuilder()
-                    .WithSearchResults()
+                .WithSearchResults(new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
+                    .WithSearchResults(FurtherEducationLearnerDataTransferObjectTestDouble.Fake())
                     .Create())
                 .Create();
         services.AddScoped(provider => mockSearchService);
