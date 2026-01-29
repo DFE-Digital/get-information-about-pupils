@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Options;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using Microsoft.Extensions.Options;
 

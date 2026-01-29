@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Options;
+using DfE.GIAP.Web.Features.Search.Options;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Features.Search.Shared.Sort;
