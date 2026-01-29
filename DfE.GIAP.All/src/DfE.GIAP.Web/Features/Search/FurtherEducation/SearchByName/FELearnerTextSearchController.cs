@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -11,8 +10,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
-using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
@@ -23,7 +20,6 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 
@@ -38,19 +34,17 @@ public class FELearnerTextSearchController : Controller
     private const string PageHeading = ApplicationLabels.SearchFEWithoutUlnPageHeading;
     private const string LearnerNumberLabel = Global.FELearnerNumberLabel;
 
-    private const string SearchSessionKey = Global.FENonUlnSearchSessionKey;
-    private const string SearchFiltersSessionKey = Global.FENonUlnSearchFiltersSessionKey;
+    public string SearchSessionKey => Global.FENonUlnSearchSessionKey;
+    public string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
 
-    private const string SortDirectionKey = Global.FENonUlnSortDirectionSessionKey;
-    private const string SortFieldKey = Global.FENonUlnSortFieldSessionKey;
+    public string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
+    public string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
 
     private readonly ISessionProvider _sessionProvider;
-    private readonly IDownloadService _downloadService;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
     private readonly ILogger<FELearnerTextSearchController> _logger;
     protected readonly ITextSearchSelectionManager _selectionManager;
-    private readonly AzureAppSettings _appSettings;
     private readonly IUseCase<
         FurtherEducationSearchRequest,
         FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
@@ -84,11 +78,8 @@ public class FELearnerTextSearchController : Controller
             SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
         IFiltersRequestFactory filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
-        IPaginatedSearchService paginatedSearch,
         ITextSearchSelectionManager selectionManager,
-        IDownloadService downloadService,
         IEventLogger eventLogger,
-        IOptions<AzureAppSettings> azureAppSettings,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
     {
@@ -97,9 +88,6 @@ public class FELearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
@@ -115,10 +103,6 @@ public class FELearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
-
-        ArgumentNullException.ThrowIfNull(azureAppSettings);
-        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        _appSettings = azureAppSettings.Value;
 
         ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
         _filtersRequestBuilder = filtersRequestBuilder;
