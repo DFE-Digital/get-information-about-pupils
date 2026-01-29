@@ -50,7 +50,7 @@ public sealed class SearchCriteriaProviderTests
     }
 
     [Fact]
-    public void GetCriteria_Throws_When_Key_Exists_In_Options_Criteria()
+    public void GetCriteria_Throws_When_Key_DoesNot_Exist_In_Options_Criteria()
     {
         // Arrange
         SearchCriteria expected = new SearchCriteria();
@@ -64,28 +64,10 @@ public sealed class SearchCriteriaProviderTests
         IOptions<SearchCriteriaOptions> options = OptionsTestDoubles.MockAs(searchCriteriaOptions);
 
         SearchCriteriaProvider provider = new(options);
-        Func<SearchCriteria> act = () => provider.GetCriteria("known-key");
+        Func<SearchCriteria> act = () => provider.GetCriteria("missing-key");
 
         // Act & Assert
         Assert.ThrowsAny<ArgumentException>(act);
-    }
-
-    [Fact]
-    public void GetCriteria_Returns_Null_When_Key_Does_Not_Exist_In_Options_Criteria()
-    {
-        // Arrange
-        Dictionary<string, SearchCriteria> criteria = [];
-
-        SearchCriteriaOptions searchCriteriaOptions = CreateOptionsWithCriteria(criteria);
-        IOptions<SearchCriteriaOptions> options = OptionsTestDoubles.MockAs(searchCriteriaOptions);
-
-        SearchCriteriaProvider provider = new(options);
-
-        // Act
-        SearchCriteria result = provider.GetCriteria("missing-key");
-
-        // Assert
-        Assert.Null(result);
     }
 
     [Fact]
