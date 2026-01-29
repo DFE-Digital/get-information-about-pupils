@@ -185,8 +185,8 @@ public class NPDLearnerNumberSearchController : Controller
             model.PageLearnerNumbers.Split(','),
             model.SelectedPupil);
 
-        var available = model.LearnerNumberIds.FormatLearnerNumbers();
-        var selected = GetSelected(available);
+        string[] available = model.LearnerNumberIds.FormatLearnerNumbers();
+        HashSet<string> selected = GetSelected(available);
 
         if (selected.Count == 0)
         {
@@ -202,7 +202,7 @@ public class NPDLearnerNumberSearchController : Controller
             return await NationalPupilDatabase(model, model.PageNumber, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection), true);
         }
 
-        var downloadFile = await _ctfService.GetCommonTransferFile(selected.ToArray(),
+        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(selected.ToArray(),
                                                                 model.LearnerNumber.FormatLearnerNumbers(),
                                                                 User.GetLocalAuthorityNumberForEstablishment(),
                                                                 User.GetEstablishmentNumber(),
@@ -277,7 +277,7 @@ public class NPDLearnerNumberSearchController : Controller
     {
         if (!string.IsNullOrEmpty(model.SelectedPupils))
         {
-            var selectedPupils = model.SelectedPupils.Split(',');
+            string[] selectedPupils = model.SelectedPupils.Split(',');
 
             if (model.SelectedDownloadOptions == null)
             {
@@ -285,7 +285,7 @@ public class NPDLearnerNumberSearchController : Controller
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                var downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
+                ReturnFile downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
                     await _downloadService.GetCSVFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
                     await _downloadService.GetTABFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
 
@@ -326,7 +326,7 @@ public class NPDLearnerNumberSearchController : Controller
             searchViewModel.PageLearnerNumbers.Split(','),
             searchViewModel.SelectedPupil);
 
-        var selectedPupils = GetSelected(searchViewModel.LearnerNumberIds.FormatLearnerNumbers());
+        HashSet<string> selectedPupils = GetSelected(searchViewModel.LearnerNumberIds.FormatLearnerNumbers());
 
         if (selectedPupils.Count == 0)
         {
@@ -335,14 +335,13 @@ public class NPDLearnerNumberSearchController : Controller
             return await NationalPupilDatabase(searchViewModel, searchViewModel.PageNumber, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection), true);
         }
 
-        var joinedSelectedPupils = string.Join(',', selectedPupils);
+        string joinedSelectedPupils = string.Join(',', selectedPupils);
         return await DownloadSelectedNationalPupilDatabaseData(joinedSelectedPupils, searchViewModel.LearnerNumber, selectedPupils.Count);
     }
 
     #region WIP Refactor out inherited methods
 
-    [NonAction]
-    public async Task<IActionResult> Search(bool? returnToSearch)
+    private async Task<IActionResult> Search(bool? returnToSearch)
     {
         LearnerNumberSearchViewModel model = new();
 
@@ -375,8 +374,7 @@ public class NPDLearnerNumberSearchController : Controller
         return View(Global.SearchView, model);
     }
 
-    [NonAction]
-    public async Task<IActionResult> Search(LearnerNumberSearchViewModel model, int pageNumber, string sortField = "", string sortDirection = "", bool hasQueryItem = false, bool calledByController = false, bool resetSelections = false)
+    private async Task<IActionResult> Search(LearnerNumberSearchViewModel model, int pageNumber, string sortField = "", string sortDirection = "", bool hasQueryItem = false, bool calledByController = false, bool resetSelections = false)
     {
         _logger.LogInformation("BaseLearnerNumberController POST method called");
         if (resetSelections)
@@ -459,7 +457,7 @@ public class NPDLearnerNumberSearchController : Controller
         model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
     }
 
-    protected async Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model)
+    private async Task<IActionResult> ReturnToPage(LearnerNumberSearchViewModel model)
     {
         return await NationalPupilDatabase(model, model.PageNumber, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection), true);
     }
@@ -539,7 +537,7 @@ public class NPDLearnerNumberSearchController : Controller
 
         List<string> potentialErrorLearnerNumbers = learnerNumberArray.Distinct().ToList();
 
-        if (potentialErrorLearnerNumbers.Any())
+        if (potentialErrorLearnerNumbers.Count > 0)
         {
             foreach (string learnerNumber in potentialErrorLearnerNumbers)
             {
