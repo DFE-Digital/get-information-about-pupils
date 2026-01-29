@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 
-namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles;
 
 /// <summary>
 /// Provides a stubbed instance of <see cref="SearchCriteria"/> for use in unit tests.

@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.FurtherEducation;
