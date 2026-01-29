@@ -1,5 +1,5 @@
 using Bogus;
-using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.Common;

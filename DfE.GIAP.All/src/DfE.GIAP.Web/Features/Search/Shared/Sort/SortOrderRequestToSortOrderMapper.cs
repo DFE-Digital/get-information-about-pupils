@@ -33,6 +33,8 @@ public class SortOrderRequestToSortOrderMapper : IMapper<SortOrderRequest, SortO
     /// <returns>A validated <see cref="SortOrder"/> object.</returns>
     public SortOrder Map(SortOrderRequest input)    
     {
+        ArgumentNullException.ThrowIfNull(input);
+
         const string DefaultSortField = "search.score()";
         const string DefaultSortDirection = "desc";
 

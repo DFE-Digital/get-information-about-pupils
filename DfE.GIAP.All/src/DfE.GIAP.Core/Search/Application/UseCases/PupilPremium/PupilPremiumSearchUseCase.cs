@@ -8,8 +8,8 @@ using Microsoft.Extensions.Options;
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 internal sealed class PupilPremiumSearchUseCase : IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>
 {
-    private readonly ISearchServiceAdapter<PupilPremiumLearners, SearchFacets> _searchServiceAdapter;
     private readonly SearchCriteria _searchCriteria;
+    private readonly ISearchServiceAdapter<PupilPremiumLearners, SearchFacets> _searchServiceAdapter;
 
     public PupilPremiumSearchUseCase(
         IOptions<SearchCriteriaOptions> options,

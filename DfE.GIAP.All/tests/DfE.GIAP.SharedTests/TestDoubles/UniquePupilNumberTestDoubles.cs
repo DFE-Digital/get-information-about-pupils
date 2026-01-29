@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.ValueObjects;
 using Fare;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;

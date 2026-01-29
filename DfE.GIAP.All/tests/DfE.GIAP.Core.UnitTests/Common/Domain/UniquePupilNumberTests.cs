@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
+﻿using DfE.GIAP.Core.Common.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Domain;

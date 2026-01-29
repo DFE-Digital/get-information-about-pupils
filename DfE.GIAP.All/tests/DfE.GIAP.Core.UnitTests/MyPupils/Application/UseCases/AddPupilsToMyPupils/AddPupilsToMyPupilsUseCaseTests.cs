@@ -1,5 +1,6 @@
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;

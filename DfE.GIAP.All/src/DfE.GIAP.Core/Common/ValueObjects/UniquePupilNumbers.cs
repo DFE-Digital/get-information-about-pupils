@@ -1,3 +1,5 @@
+using DfE.GIAP.Core.Common.ValueObjects;
+
 namespace DfE.GIAP.Core.Common.Domain;
 public sealed class UniquePupilNumbers
 {
