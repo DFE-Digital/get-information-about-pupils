@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -24,7 +24,7 @@ internal class AzureSearchResponseBuilder
     /// <summary>
     /// The collection of search results to include in the simulated response.
     /// </summary>
-    private IEnumerable<SearchResult<LearnerDataTransferObject>>? _searchResults;
+    private IEnumerable<SearchResult<FurtherEducationLearnerDataTransferObject>>? _searchResults;
 
     /// <summary>
     /// The collection of facet results to include in the simulated response.
@@ -42,7 +42,7 @@ internal class AzureSearchResponseBuilder
     /// The current <see cref="AzureSearchResponseBuilder"/> instance for fluent chaining.
     /// </returns>
     public AzureSearchResponseBuilder WithSearchResults(
-        IEnumerable<SearchResult<LearnerDataTransferObject>>? searchResults)
+        IEnumerable<SearchResult<FurtherEducationLearnerDataTransferObject>>? searchResults)
     {
         _searchResults = searchResults;
         return this;
@@ -76,7 +76,7 @@ internal class AzureSearchResponseBuilder
     /// <returns>
     /// A <see cref="Response{SearchResults}"/> containing the configured test data.
     /// </returns>
-    public Response<SearchResults<LearnerDataTransferObject>> Create()
+    public Response<SearchResults<FurtherEducationLearnerDataTransferObject>> Create()
     {
         // Create a mock Response object to satisfy the Azure SDK's Response<T> requirements.
         Mock<Response> responseMock = new();

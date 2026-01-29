@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 

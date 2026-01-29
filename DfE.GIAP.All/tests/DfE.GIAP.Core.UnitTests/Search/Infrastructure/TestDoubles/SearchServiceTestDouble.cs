@@ -3,7 +3,7 @@ using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -41,16 +41,16 @@ internal class SearchServiceTestDouble
     /// </returns>
     public static Expression<Func<
         ISearchByKeywordService,
-        Task<Response<SearchResults<LearnerDataTransferObject>>>>> SearchRequest(
+        Task<Response<SearchResults<FurtherEducationLearnerDataTransferObject>>>>> SearchRequest(
         string keyword, string collection) =>
             searchService =>
-                searchService.SearchAsync<LearnerDataTransferObject>(
+                searchService.SearchAsync<FurtherEducationLearnerDataTransferObject>(
                     keyword, collection, It.IsAny<SearchOptions>());
 
     // Backing fields for builder configuration
     private string _keyword = string.Empty;
     private string _collection = string.Empty;
-    private IEnumerable<SearchResult<LearnerDataTransferObject>>? _searchResults;
+    private IEnumerable<SearchResult<FurtherEducationLearnerDataTransferObject>>? _searchResults;
     private Dictionary<string, IList<FacetResult>>? _facets;
 
     /// <summary>
@@ -62,7 +62,7 @@ internal class SearchServiceTestDouble
     /// <param name="collection">The collection name to match in the mock setup.</param>
     /// <returns>A configured mock <see cref="ISearchByKeywordService"/> instance.</returns>
     public ISearchByKeywordService MockFor(
-        Response<SearchResults<LearnerDataTransferObject>> searchResult, string keyword, string collection)
+        Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchResult, string keyword, string collection)
     {
         Mock<ISearchByKeywordService> searchServiceMock = new();
 
@@ -88,7 +88,7 @@ internal class SearchServiceTestDouble
     /// <summary>
     /// Configures the builder with the search results to return.
     /// </summary>
-    public SearchServiceTestDouble WithSearchResults(IEnumerable<SearchResult<LearnerDataTransferObject>> results)
+    public SearchServiceTestDouble WithSearchResults(IEnumerable<SearchResult<FurtherEducationLearnerDataTransferObject>> results)
     {
         _searchResults = results;
         return this;
@@ -113,7 +113,7 @@ internal class SearchServiceTestDouble
     public ISearchByKeywordService Create()
     {
         // Build a fake Azure Search response with the configured results and facets
-        Response<SearchResults<LearnerDataTransferObject>> response =
+        Response<SearchResults<FurtherEducationLearnerDataTransferObject>> response =
             new AzureSearchResponseBuilder()
                 .WithSearchResults(_searchResults)
                 .WithFacets(_facets)

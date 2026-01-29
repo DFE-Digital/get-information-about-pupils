@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.Search.Application.Models.Learner;
 
@@ -52,29 +51,5 @@ public sealed class LearnerCharacteristics : ValueObject<LearnerCharacteristics>
     {
         yield return BirthDate;
         yield return Sex;
-    }
-
-    /// <summary>
-    /// Defines the supported gender values for a learner.
-    /// </summary>
-    public enum Gender
-    {
-        /// <summary>
-        /// Represents a male learner.
-        /// </summary>
-        [Description("M")]
-        Male,
-
-        /// <summary>
-        /// Represents a female learner.
-        /// </summary>
-        [Description("F")]
-        Female,
-
-        /// <summary>
-        /// Represents a learner who identifies as another gender.
-        /// </summary>
-        [Description("Unspecified")]
-        Other
     }
 }

@@ -73,12 +73,12 @@ public static class ConfigurationTestDoubles
         Dictionary<string, string?> searchCriteriaStub = new()
         {
             // SearchCriteria: Fields and facets used in search queries
-            ["SearchCriteria:SearchFields:0"] = "Forename",
-            ["SearchCriteria:SearchFields:1"] = "Surname",
-            ["SearchCriteria:Facets:0"] = "ForenameLC",
-            ["SearchCriteria:Facets:1"] = "SurnameLC",
-            ["SearchCriteria:Facets:2"] = "Gender",
-            ["SearchCriteria:Facets:3"] = "Sex",
+            ["SearchCriteriaOptions:Criteria:further-education:SearchFields:0"] = "Forename",
+            ["SearchCriteriaOptions:Criteria:further-education::SearchFields:1"] = "Surname",
+            ["SearchCriteriaOptions:Criteria:further-education::Facets:0"] = "ForenameLC",
+            ["SearchCriteriaOptions:Criteria:further-education::Facets:1"] = "SurnameLC",
+            ["SearchCriteriaOptions:Criteria:further-education::Facets:2"] = "Gender",
+            ["SearchCriteriaOptions:Criteria:further-education::Facets:3"] = "Sex",
         };
 
         builder.AddInMemoryCollection(searchCriteriaStub);

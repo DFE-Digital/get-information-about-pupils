@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
+﻿using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
 internal static class AggregatePupilsForMyPupilsServiceTestDoubles

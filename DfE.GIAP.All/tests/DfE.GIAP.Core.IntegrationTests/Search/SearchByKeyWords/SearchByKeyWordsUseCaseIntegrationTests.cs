@@ -2,8 +2,7 @@
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
@@ -34,7 +33,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
                 .Build();
 
         services
-            .AddSearchDependencies(searchConfiguration);
+            .AddSearchCore(searchConfiguration);
 
         return Task.CompletedTask;
     }
@@ -54,23 +53,23 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
 
-        IUseCase<SearchRequest, SearchResponse> sut =
-            ResolveApplicationType<IUseCase<SearchRequest, SearchResponse>>()!;
+        IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> sut =
+            ResolveApplicationType<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>()!;
 
         SortOrder sortOrder = new(
             sortField: "Forename",
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        SearchRequest request = new(searchIndexKey: "further-education", searchKeywords: "test", sortOrder);
+        FurtherEducationSearchRequest request = new(searchKeywords: "test", sortOrder);
 
         // act
-        SearchResponse response = await sut.HandleRequestAsync(request);
+        FurtherEducationSearchResponse response = await sut.HandleRequestAsync(request);
 
         // assert
         Assert.NotNull(response);
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(SearchResponseStatus.Success, response.Status);
-        Assert.Equal(10, response.TotalNumberOfResults);
+        Assert.Equal(10, response.TotalNumberOfResults.Count);
     }
 }

@@ -24,30 +24,30 @@ public sealed class LearnerNameTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
+    [InlineData("\n")]
     public void Constructor_WithInvalidFirstName_ShouldThrowArgumentException(string? invalidFirstName)
     {
         // act
-        Action act = () =>
-            new LearnerName(invalidFirstName!, "ValidSurname");
+        Func<LearnerName> act = () =>
+            new(invalidFirstName!, "ValidSurname");
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("The Learner's first name field is required.");
+        Assert.ThrowsAny<ArgumentException>(act);
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
+    [InlineData("\n")]
     public void Constructor_WithInvalidSurname_ShouldThrowArgumentException(string? invalidSurname)
     {
         // act
-        Action act = () =>
-            new LearnerName("ValidFirstName", invalidSurname!);
+        Func<LearnerName> act = () =>
+            new("ValidForename"!, invalidSurname!);
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("The Learner's surname field is required.");
+        Assert.ThrowsAny<ArgumentException>(act);
     }
 
     [Fact]

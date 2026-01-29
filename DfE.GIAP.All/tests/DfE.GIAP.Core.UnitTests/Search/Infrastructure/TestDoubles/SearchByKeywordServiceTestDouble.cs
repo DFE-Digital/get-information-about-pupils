@@ -2,7 +2,7 @@
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -44,14 +44,14 @@ internal static class SearchByKeywordServiceTestDouble
     /// <param name="searchServiceResponse">The mocked response to return from SearchAsync.</param>
     /// <returns>A configured mock instance for injection into test scenarios.</returns>
     public static Mock<ISearchByKeywordService> MockFor(
-        Response<SearchResults<LearnerDataTransferObject>> searchServiceResponse)
+        Response<SearchResults<FurtherEducationLearnerDataTransferObject>> searchServiceResponse)
     {
         // Create a baseline mock instance
         Mock<ISearchByKeywordService> mockService = DefaultMock();
 
         // Configure the mock to capture input parameters and return the provided response
         mockService.Setup(service =>
-            service.SearchAsync<LearnerDataTransferObject>(
+            service.SearchAsync<FurtherEducationLearnerDataTransferObject>(
                 It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SearchOptions>()))
             .Callback<string, string, SearchOptions>((keyword, index, options) =>
             {

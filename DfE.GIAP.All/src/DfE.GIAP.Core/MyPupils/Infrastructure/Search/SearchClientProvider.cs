@@ -1,7 +1,7 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Infrastructure.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Search;

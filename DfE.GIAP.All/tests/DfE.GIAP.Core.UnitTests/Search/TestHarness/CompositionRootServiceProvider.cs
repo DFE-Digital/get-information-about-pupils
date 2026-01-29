@@ -32,7 +32,7 @@ public sealed class CompositionRootServiceProvider
         services.AddSingleton(configuration);
 
         // Register core search dependencies via extension method
-        services.AddSearchDependencies(configuration);
+        services.AddSearchCore(configuration);
 
         // Replace ISearchByKeywordService with a mock implementation
         services.RemoveAll<ISearchByKeywordService>();

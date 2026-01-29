@@ -1,8 +1,8 @@
 using Azure;
 using Azure.Search.Documents;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Options.Extensions;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +28,7 @@ public static class SearchClientServiceCollectionExtensions
             AzureSearchConnectionOptions connectionOptions = sp.GetRequiredService<IOptions<AzureSearchConnectionOptions>>().Value;
             AzureSearchOptions indexOptions = sp.GetRequiredService<IOptions<AzureSearchOptions>>().Value;
 
-            SearchIndexOptions searchIndexOptions = indexOptions.GetIndexOptions(searchClientKey);
+            AzureSearchIndexOptions searchIndexOptions = indexOptions.GetIndexOptions(searchClientKey);
 
             return new SearchClient(
                 endpoint: new Uri(connectionOptions.EndpointUri!),
