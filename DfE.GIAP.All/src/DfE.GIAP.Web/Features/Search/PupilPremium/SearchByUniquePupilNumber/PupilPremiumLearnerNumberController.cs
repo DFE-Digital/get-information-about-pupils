@@ -26,8 +26,8 @@ namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 public class PupilPremiumLearnerNumberController : Controller
 {
     private const int PAGESIZE = 20;
-    private const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
-    private const string TOTAL_SEARCH_RESULTS = "totalSearch";
+    public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
+    public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
     private readonly ILogger<PupilPremiumLearnerNumberController> _logger;
 

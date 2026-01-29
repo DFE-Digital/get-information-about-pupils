@@ -13,7 +13,7 @@ using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers;
-using DfE.GIAP.Web.Controllers.LearnerNumber;
+using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -140,7 +140,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
         // act
@@ -179,7 +179,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(false);
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
         NPDLearnerNumberSearchController sut = GetController();
@@ -221,7 +221,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(true);
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         NPDLearnerNumberSearchController sut = GetController();
@@ -260,7 +260,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -481,7 +481,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
             PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUpns().FormatLearnerNumbers())
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
         NPDLearnerNumberSearchController sut = GetController();
@@ -526,7 +526,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(false);
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
 
         NPDLearnerNumberSearchController sut = GetController();
@@ -573,7 +573,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         PaginatedResponse paginatedResponse = _paginatedResultsFake.GetValidLearners();
         paginatedResponse.ToggleSelectAll(true);
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         NPDLearnerNumberSearchController sut = GetController();
@@ -1681,7 +1681,7 @@ public class NPDLearnerNumberSearchControllerTests : IClassFixture<PaginatedResu
         };
 
         _mockAppOptions.Value.Returns(_mockAppSettings);
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(NPDLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
 
         List<AvailableDatasetResult> availableDatasetResults =
