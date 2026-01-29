@@ -26,7 +26,7 @@ internal sealed class AzureSearchByKeywordService : IAzureSearchByKeywordService
         ISearchOptionsBuilder searchOptionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(azureSearchOptions);
-        ArgumentNullException.ThrowIfNull(azureSearchOptions?.Value);
+        ArgumentNullException.ThrowIfNull(azureSearchOptions.Value);
         _azureSearchOptions = azureSearchOptions.Value;
 
         ArgumentNullException.ThrowIfNull(searchByKeywordService);
