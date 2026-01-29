@@ -106,6 +106,7 @@ public class NPDLearnerNumberSearchController : Controller
 
     [Route(Routes.NationalPupilDatabase.NationalPupilDatabaseLearnerNumber)]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> NationalPupilDatabase(
         [FromForm] LearnerNumberSearchViewModel model,
         [FromQuery] int pageNumber,
@@ -128,6 +129,7 @@ public class NPDLearnerNumberSearchController : Controller
 
     [HttpPost]
     [Route("add-npd-to-my-pupil-list")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> NPDAddToMyPupilList(LearnerNumberSearchViewModel model)
     {
         PopulatePageText(model);
@@ -179,6 +181,7 @@ public class NPDLearnerNumberSearchController : Controller
 
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadCommonTransferFileData(LearnerNumberSearchViewModel model)
     {
         SetSelections(
@@ -224,6 +227,7 @@ public class NPDLearnerNumberSearchController : Controller
 
     [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(
         string selectedPupilsJoined,
         string learnerNumber,
@@ -273,6 +277,7 @@ public class NPDLearnerNumberSearchController : Controller
 
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadFile)]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
         if (!string.IsNullOrEmpty(model.SelectedPupils))
@@ -320,6 +325,7 @@ public class NPDLearnerNumberSearchController : Controller
 
     [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadSelectedNPDDataUPN(LearnerNumberSearchViewModel searchViewModel)
     {
         SetSelections(
