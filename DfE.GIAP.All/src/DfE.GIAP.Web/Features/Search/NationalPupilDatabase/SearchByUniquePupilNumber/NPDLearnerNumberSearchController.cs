@@ -31,8 +31,8 @@ namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupil
 public class NPDLearnerNumberSearchController : Controller
 {
     private const int PAGESIZE = 20;
-    private const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
-    private const string TOTAL_SEARCH_RESULTS = "totalSearch";
+    public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
+    public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
     private readonly ILogger<NPDLearnerNumberSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;

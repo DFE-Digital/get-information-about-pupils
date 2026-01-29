@@ -218,7 +218,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUlns().FormatLearnerNumbers())
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(FELearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. ulns.FormatLearnerNumbers()]);
 
         FELearnerNumberController sut = GetController();
@@ -702,7 +702,7 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             PageLearnerNumbers = string.Join(',', _paginatedResultsFake.GetUlns().FormatLearnerNumbers())
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(FELearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(ulns.FormatLearnerNumbers().ToHashSet());
 
         FELearnerNumberController sut = GetController();

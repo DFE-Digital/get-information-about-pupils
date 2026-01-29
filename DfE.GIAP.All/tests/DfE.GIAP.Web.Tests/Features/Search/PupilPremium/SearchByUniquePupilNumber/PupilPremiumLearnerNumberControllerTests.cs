@@ -167,7 +167,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
@@ -205,7 +205,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
@@ -245,7 +245,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             SelectedPupil = ["A203102209083"]
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         PupilPremiumLearnerNumberController sut = GetController();
@@ -286,7 +286,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
@@ -514,7 +514,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
@@ -557,7 +557,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
         PupilPremiumLearnerNumberController sut = GetController();
@@ -603,7 +603,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             SelectedPupil = ["A203102209083"]
         };
 
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
         PupilPremiumLearnerNumberController sut = GetController();
@@ -1358,7 +1358,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         };
 
         _mockAppOptions.Value.Returns(_mockAppSettings);
-        _mockSession.SetString(BaseLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
         // TODO verify serializer called, but will require pulling all of this sut creation out
         Mock<IJsonSerializer> jsonSerializerMock = new();
