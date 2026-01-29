@@ -110,6 +110,7 @@ public class PupilPremiumLearnerNumberController : Controller
 
     [Route(Routes.Application.PupilPremium)]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> PupilPremium(
         [FromForm] LearnerNumberSearchViewModel model,
         [FromQuery] int pageNumber,
