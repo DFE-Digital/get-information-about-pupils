@@ -4,7 +4,7 @@ using DfE.GIAP.Web.Features.Search.Options;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Features.Search.Services;
-
+#nullable enable
 public sealed class SearchCriteriaProvider : ISearchCriteriaProvider
 {
     private readonly SearchCriteriaOptions _options;
@@ -20,7 +20,7 @@ public sealed class SearchCriteriaProvider : ISearchCriteriaProvider
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
 
-        if (_options.Criteria.TryGetValue(key, out SearchCriteria criteria))
+        if (!_options.Criteria.TryGetValue(key, out SearchCriteria? criteria))
         {
             throw new ArgumentException($"Unable to get criteria for key:{key}");
         };
