@@ -21,8 +21,9 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using DfE.GIAP.Web.Controllers.TextBasedSearch;
 
-namespace DfE.GIAP.Web.Controllers.TextBasedSearch;
+namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 
 [Route(Routes.Application.Search)]
 public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
@@ -56,7 +57,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
     public override string SearchAction => Global.NPDNonUpnAction;
     public override string SearchController => Global.NPDTextSearchController;
-    public override ReturnRoute ReturnRoute => Common.Enums.ReturnRoute.NonNationalPupilDatabase;
+    public override ReturnRoute ReturnRoute => ReturnRoute.NonNationalPupilDatabase;
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
@@ -237,7 +238,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
             switch (model.DownloadType)
             {
                 case DownloadType.CTF: return await DownloadNpdCommonTransferFileData(new LearnerTextSearchViewModel() { SelectedPupil = model.SelectedPupil });
-                case DownloadType.NPD: return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupil, this.HttpContext.Session.Keys.Contains(SearchSessionKey) ? this.HttpContext.Session.GetString(SearchSessionKey) : string.Empty);
+                case DownloadType.NPD: return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupil, HttpContext.Session.Keys.Contains(SearchSessionKey) ? HttpContext.Session.GetString(SearchSessionKey) : string.Empty);
             }
         }
 
@@ -335,7 +336,7 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     [HttpPost]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
-        if (!String.IsNullOrEmpty(model.SelectedPupils))
+        if (!string.IsNullOrEmpty(model.SelectedPupils))
         {
             var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
             var sortOrder = new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" };
@@ -371,8 +372,8 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;
-            if (this.HttpContext.Session.Keys.Contains(SearchSessionKey))
-                model.TextSearchViewModel.SearchText = this.HttpContext.Session.GetString(SearchSessionKey);
+            if (HttpContext.Session.Keys.Contains(SearchSessionKey))
+                model.TextSearchViewModel.SearchText = HttpContext.Session.GetString(SearchSessionKey);
 
             return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.TextSearchViewModel.SearchText);
         }
