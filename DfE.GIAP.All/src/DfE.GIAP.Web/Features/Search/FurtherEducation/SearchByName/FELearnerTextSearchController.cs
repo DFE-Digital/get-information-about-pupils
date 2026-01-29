@@ -38,10 +38,11 @@ public class FELearnerTextSearchController : Controller
     private const string PageHeading = ApplicationLabels.SearchFEWithoutUlnPageHeading;
     private const string LearnerNumberLabel = Global.FELearnerNumberLabel;
 
-    public string SearchSessionKey => Global.FENonUlnSearchSessionKey;
-    public string SearchFiltersSessionKey => Global.FENonUlnSearchFiltersSessionKey;
-    public string SortDirectionKey => Global.FENonUlnSortDirectionSessionKey;
-    public string SortFieldKey => Global.FENonUlnSortFieldSessionKey;
+    private const string SearchSessionKey = Global.FENonUlnSearchSessionKey;
+    private const string SearchFiltersSessionKey = Global.FENonUlnSearchFiltersSessionKey;
+
+    private const string SortDirectionKey = Global.FENonUlnSortDirectionSessionKey;
+    private const string SortFieldKey = Global.FENonUlnSortFieldSessionKey;
 
     private readonly ISessionProvider _sessionProvider;
     private readonly IDownloadService _downloadService;
