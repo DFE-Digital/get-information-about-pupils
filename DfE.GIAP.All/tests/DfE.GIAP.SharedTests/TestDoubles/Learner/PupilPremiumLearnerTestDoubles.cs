@@ -1,9 +1,8 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.Learner;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
 public static class PupilPremiumLearnerTestDoubles
 {
     public static List<PupilPremiumLearner> FakeMany(int count = 10)
@@ -11,12 +10,12 @@ public static class PupilPremiumLearnerTestDoubles
         List<PupilPremiumLearner> learners = [];
         for (int i = 0; i < count; i++)
         {
-            learners.Add(CreateFake());
+            learners.Add(Fake());
         }
         return learners;
     }
 
-    public static PupilPremiumLearner CreateFake()
+    public static PupilPremiumLearner Fake()
     {
         Faker faker = new();
 

@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
 using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
