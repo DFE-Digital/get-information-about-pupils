@@ -27,7 +27,7 @@ public sealed class PupilPremiumLearnerNumericSearchMappingContextToViewModelMap
         input.Model.Learners = learners;
 
         // Populate meta-data fields for pagination and UI messaging.
-        input.Model.Total = input.Response.TotalNumberOfResults.Count;
+        input.Model.Total = input.Response.TotalNumberOfResults;
 
         return input.Model;
     }

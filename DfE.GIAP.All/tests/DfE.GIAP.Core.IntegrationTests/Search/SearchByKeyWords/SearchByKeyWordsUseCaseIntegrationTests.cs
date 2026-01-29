@@ -84,6 +84,6 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(response);
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(SearchResponseStatus.Success, response.Status);
-        Assert.Equal(10, response.TotalNumberOfResults.Count);
+        Assert.Equal(10, response.TotalNumberOfResults);
     }
 }
