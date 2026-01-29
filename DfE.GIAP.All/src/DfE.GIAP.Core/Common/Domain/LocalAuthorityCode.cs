@@ -20,7 +20,7 @@ public readonly struct LocalAuthorityCode
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(code);
 
-        if (!int.TryParse(code, NumberStyles.None, CultureInfo.InvariantCulture, out int parsed))
+        if (!int.TryParse(code?.Trim(), NumberStyles.None, CultureInfo.InvariantCulture, out int parsed))
         {
             throw new ArgumentException("Local authority code must be numeric.", nameof(code));
         }
