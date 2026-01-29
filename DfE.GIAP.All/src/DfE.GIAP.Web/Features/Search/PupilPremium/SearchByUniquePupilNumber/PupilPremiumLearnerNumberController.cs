@@ -428,10 +428,9 @@ public class PupilPremiumLearnerNumberController : Controller
             model.LearnerIdSearchResult = string.Join(",", result.Learners.Select(learner => learner.Id));
 
             HashSet<string> learnerNumberIdSet = GetLearnerNumberIds(result.Learners);
-            HashSet<string> learnerNumberSet = GetLearnerNumberIds(result.Learners);
             model.LearnerNumberIds = string.Join("\n", learnerNumberIdSet);
 
-            IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet).Except(learnerNumberSet);
+            IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet);
 
             HttpContext.Session.SetString(
                 MISSING_LEARNER_NUMBERS_KEY, _jsonSerializer.Serialize(missing));
@@ -499,9 +498,11 @@ public class PupilPremiumLearnerNumberController : Controller
 
     private LearnerNumberSearchViewModel PopulateSorting(LearnerNumberSearchViewModel model, string sortField, string sortDirection)
     {
+        // store sorting in session so returnToSearch can retrieve
         if (!string.IsNullOrEmpty(sortField) && !string.IsNullOrEmpty(sortDirection))
         {
-            SetSortingDataIntoSession(sortField, sortDirection);
+            HttpContext.Session.SetString(SearchSessionSortField, sortField);
+            HttpContext.Session.SetString(SearchSessionSortDirection, sortDirection);
             SetSortingDataIntoModel(model, sortField, sortDirection);
         }
         else if (!string.IsNullOrEmpty(HttpContext.Session.GetString(SearchSessionSortField))
@@ -568,15 +569,7 @@ public class PupilPremiumLearnerNumberController : Controller
         return learnerNumberIds;
     }
 
-
-    // Stores sorting data into session to make it reachable on returnToSearch
-    private void SetSortingDataIntoSession(string sortField, string sortDirection)
-    {
-        HttpContext.Session.SetString(SearchSessionSortField, sortField);
-        HttpContext.Session.SetString(SearchSessionSortDirection, sortDirection);
-    }
-
-    private LearnerNumberSearchViewModel SetSortingDataIntoModel(LearnerNumberSearchViewModel model, string sortField, string sortDirection)
+    private static LearnerNumberSearchViewModel SetSortingDataIntoModel(LearnerNumberSearchViewModel model, string sortField, string sortDirection)
     {
         model.SortField = sortField;
         model.SortDirection = sortDirection;
