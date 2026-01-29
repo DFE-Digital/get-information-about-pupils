@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;

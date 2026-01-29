@@ -24,6 +24,7 @@ public sealed class SortDirectionTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
+    [InlineData(" ")]
     public void Constructor_WithNullOrEmptyInput_ShouldThrowArgumentException(string? input)
     {
         // act

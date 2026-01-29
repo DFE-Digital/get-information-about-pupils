@@ -11,7 +11,7 @@ public sealed class LearnerCharacteristicsTests
     {
         // arrange
         DateTime birthDate = new(2005, 6, 1);
-        LearnerCharacteristics.Gender gender = LearnerCharacteristics.Gender.Female;
+        Gender gender = Gender.Female;
 
         // act
         LearnerCharacteristics characteristics = new(birthDate, gender);
@@ -26,10 +26,10 @@ public sealed class LearnerCharacteristicsTests
     {
         // arrange
         DateTime birthDate = new(2005, 6, 1);
-        LearnerCharacteristics.Gender invalidGender = (LearnerCharacteristics.Gender)999;
+        Gender invalidGender = (Gender)999;
 
         // act
-        Action act = () => new LearnerCharacteristics(birthDate, invalidGender);
+        Func<LearnerCharacteristics> act = () => new(birthDate, invalidGender);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -41,7 +41,7 @@ public sealed class LearnerCharacteristicsTests
     {
         // arrange
         DateTime birthDate = new(2005, 6, 1);
-        LearnerCharacteristics.Gender gender = LearnerCharacteristics.Gender.Male;
+        Gender gender = Gender.Male;
 
         LearnerCharacteristics equalityCheckInstanceA = new(birthDate, gender);
         LearnerCharacteristics equalityCheckInstanceB = new(birthDate, gender);
@@ -57,8 +57,8 @@ public sealed class LearnerCharacteristicsTests
         // arrange
         DateTime birthDate = new(2005, 6, 1);
 
-        LearnerCharacteristics equalityCheckInstanceA = new(birthDate, LearnerCharacteristics.Gender.Male);
-        LearnerCharacteristics equalityCheckInstanceB = new(birthDate, LearnerCharacteristics.Gender.Other);
+        LearnerCharacteristics equalityCheckInstanceA = new(birthDate, Gender.Male);
+        LearnerCharacteristics equalityCheckInstanceB = new(birthDate, Gender.Other);
 
         // act & Assert
         equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);

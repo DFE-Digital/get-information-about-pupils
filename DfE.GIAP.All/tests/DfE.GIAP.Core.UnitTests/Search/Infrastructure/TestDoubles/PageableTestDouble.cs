@@ -1,6 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -10,24 +10,18 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 /// </summary>
 internal static class PageableTestDouble
 {
-    /// <summary>
-    /// Constructs a stubbed <see cref="Pageable{SearchResult{LearnerDataTransferObject}}"/> from a list of search results.
-    /// Wraps the results in a single page with no continuation token, simulating a complete response.
-    /// </summary>
-    /// <param name="results">List of learner search results to include in the mock page.</param>
-    /// <returns>A pageable object containing a single page of results for test scenarios.</returns>
-    public static Pageable<SearchResult<LearnerDataTransferObject>> FromResults(
-        List<SearchResult<LearnerDataTransferObject>> results)
+    public static Pageable<SearchResult<TDataTransferObject>> FromResults<TDataTransferObject>(
+        List<SearchResult<TDataTransferObject>> results)
     {
         // Create a single page from the provided results, with no continuation token
-        Page<SearchResult<LearnerDataTransferObject>> page =
-            Page<SearchResult<LearnerDataTransferObject>>.FromValues(
+        Page<SearchResult<TDataTransferObject>> page =
+            Page<SearchResult<TDataTransferObject>>.FromValues(
                 results,
                 continuationToken: null,
                 new Mock<Response>().Object); // Mocked Azure response metadata
 
         // Wrap the page in a pageable sequence to simulate Azure's paginated result structure
-        return Pageable<SearchResult<LearnerDataTransferObject>>
-            .FromPages(new List<Page<SearchResult<LearnerDataTransferObject>>>() { page });
+        return Pageable<SearchResult<TDataTransferObject>>
+            .FromPages(new List<Page<SearchResult<TDataTransferObject>>>() { page });
     }
 }
