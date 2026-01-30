@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 
@@ -135,4 +137,64 @@ public class DelimitedFileExporterTests
 
         Assert.Equal(expected, output);
     }
+
+    [Fact]
+    public async Task ExportAsync_Uses_DisplayNameAttribute_For_Header()
+    {
+        // Arrange
+        List<DisplayNameAttributeRecord> records = new List<DisplayNameAttributeRecord>
+        {
+            new DisplayNameAttributeRecord { Age = 50 }
+        };
+
+        using MemoryStream stream = new MemoryStream();
+
+        // Act
+        await _exporter.ExportAsync(records, FileFormat.Csv, stream);
+        string output = ReadStream(stream);
+
+        // Assert
+        string expected =
+            "User Age" + Environment.NewLine +
+            "50" + Environment.NewLine;
+
+        Assert.Equal(expected, output);
+    }
+
+    [Fact]
+    public async Task ExportAsync_Uses_DisplayAttribute_For_Header()
+    {
+        // Arrange
+        List<DisplayAttributeRecord> records = new List<DisplayAttributeRecord>
+        {
+            new DisplayAttributeRecord { Age = 50 }
+        };
+
+        using MemoryStream stream = new MemoryStream();
+
+        // Act
+        await _exporter.ExportAsync(records, FileFormat.Csv, stream);
+        string output = ReadStream(stream);
+
+        // Assert
+        string expected =
+            "User Age" + Environment.NewLine +
+            "50" + Environment.NewLine;
+
+        Assert.Equal(expected, output);
+    }
+
+
+    private class DisplayNameAttributeRecord
+    {
+        [DisplayName("User Age")]
+        public int Age { get; set; }
+    }
+
+    private class DisplayAttributeRecord
+    {
+        [Display(Name = "User Age")]
+        public int Age { get; set; }
+    }
+
 }
