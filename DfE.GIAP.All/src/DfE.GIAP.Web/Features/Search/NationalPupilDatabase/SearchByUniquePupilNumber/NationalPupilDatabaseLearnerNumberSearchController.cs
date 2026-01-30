@@ -8,6 +8,10 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
@@ -15,6 +19,7 @@ using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
@@ -28,16 +33,18 @@ using Newtonsoft.Json;
 namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 
 [Route(Routes.Application.Search)]
-public class NPDLearnerNumberSearchController : Controller
+public class NationalPupilDatabaseLearnerNumberSearchController : Controller
 {
     private const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
-    private readonly ILogger<NPDLearnerNumberSearchController> _logger;
+    private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IDownloadService _downloadService;
-    private readonly IPaginatedSearchService _paginatedSearch;
+    private readonly IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> _searchUseCase;
+    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly IMapper<NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
     private readonly ISelectionManager _selectionManager;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly AzureAppSettings _appSettings;
@@ -56,10 +63,17 @@ public class NPDLearnerNumberSearchController : Controller
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IJsonSerializer _jsonSerializer;
 
-    public NPDLearnerNumberSearchController(ILogger<NPDLearnerNumberSearchController> logger,
+    public NationalPupilDatabaseLearnerNumberSearchController(
+        ILogger<NationalPupilDatabaseLearnerNumberSearchController> logger,
         IDownloadCommonTransferFileService ctfService,
         IDownloadService downloadService,
-        IPaginatedSearchService paginatedSearchService,
+        IUseCase<
+            NationalPupilDatabaseSearchRequest,
+            NationalPupilDatabaseSearchResponse> searchUseCase,
+        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        IMapper<
+            NationalPupilDatabaseLearnerNumericSearchMappingContext,
+            LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -75,8 +89,14 @@ public class NPDLearnerNumberSearchController : Controller
         ArgumentNullException.ThrowIfNull(downloadService);
         _downloadService = downloadService;
 
-        ArgumentNullException.ThrowIfNull(paginatedSearchService);
-        _paginatedSearch = paginatedSearchService;
+        ArgumentNullException.ThrowIfNull(searchUseCase);
+        _searchUseCase = searchUseCase;
+
+        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
+        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+
+        ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
+        _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
@@ -488,33 +508,40 @@ public class NPDLearnerNumberSearchController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        PaginatedResponse result = await _paginatedSearch.GetPage(
-            searchText,
-            null,
-            first ? _appSettings.MaximumUPNsPerSearch : PAGESIZE,
-            pageNumber,
-            indexType,
-            first ? AzureSearchQueryType.Numbers : AzureSearchQueryType.Id,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            model.SortField,
-            model.SortDirection
-            );
+        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
+            new SortOrderRequest(
+                searchKey: "npd",
+                sortOrder: (model.SortField, model.SortDirection)));
 
-        model.Total = result.Count ?? result.Learners.Count;
+        IList<FilterRequest> filterRequests =
+        [
+            new FilterRequest(
+                filterName: "UPN",
+                filterValues: learnerNumberArray)
+        ];
 
-        List<string> idList = SetLearnerNumberIds(result);
+        NationalPupilDatabaseSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
+            new NationalPupilDatabaseSearchRequest(
+                searchKeywords: string.Join(" AND ", learnerNumberArray),
+                filterRequests: filterRequests,
+                sortOrder: sortOrder,
+                model.Offset));
+
+        LearnerNumberSearchViewModel result =
+            _learnerNumericSearchResponseToViewModelMapper.Map(
+                NationalPupilDatabaseLearnerNumericSearchMappingContext.Create(model, searchResponse));
+
+        List<string> idList = SetLearnerNumberIds(result.Learners);
 
         string[] combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
 
         if (first)
         {
-            model.LearnerIdSearchResult = result.GetLearnerIdsAsString();
-
-            HashSet<string> learnerNumberIdSet = result.GetLearnerNumberIds();
-            HashSet<string> learnerNumberSet = result.GetLearnerNumbers();
+            model.LearnerIdSearchResult = string.Join(",", result.Learners.Select(learner => learner.Id));
+            HashSet<string> learnerNumberIdSet = GetLearnerNumberIds(result.Learners);
             model.LearnerNumberIds = string.Join("\n", learnerNumberIdSet);
 
-            IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet).Except(learnerNumberSet);
+            IEnumerable<string> missing = combinedIdLearnerNumberArray.Except(learnerNumberIdSet);
 
             HttpContext.Session.SetString(
                 MISSING_LEARNER_NUMBERS_KEY, _jsonSerializer.Serialize(missing));
@@ -571,10 +598,10 @@ public class NPDLearnerNumberSearchController : Controller
         return model;
     }
 
-    private static List<string> SetLearnerNumberIds(PaginatedResponse result)
+    private static List<string> SetLearnerNumberIds(IEnumerable<Learner> learners)
     {
         List<string> idList = [];
-        foreach (Learner learner in result.Learners)
+        foreach (Learner learner in learners)
         {
             switch (learner.LearnerNumber)
             {
@@ -591,6 +618,18 @@ public class NPDLearnerNumberSearchController : Controller
         }
 
         return idList;
+    }
+
+    private static HashSet<string> GetLearnerNumberIds(IEnumerable<Learner> learners)
+    {
+        HashSet<string> learnerNumberIds = [];
+
+        foreach (Learner learner in learners)
+        {
+            learnerNumberIds.Add(learner.LearnerNumberId);
+        }
+
+        return learnerNumberIds;
     }
 
     private HashSet<string> GetSelected(string[] available)

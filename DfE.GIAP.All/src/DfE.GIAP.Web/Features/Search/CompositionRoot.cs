@@ -6,11 +6,14 @@ using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
+using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
@@ -41,9 +44,10 @@ public static class CompositionRoot
             .AddFilters();
 
         services
-            .AddFurtherEducationSearches()
-            .AddPupilPremiumSearches();
-
+            .AddNationalPupilDatabaseSearches()
+            .AddPupilPremiumSearches()
+            .AddFurtherEducationSearches();
+            
         return services;
     }
 
@@ -88,6 +92,19 @@ public static class CompositionRoot
         services.AddSingleton<IMapper<
             PupilPremiumLearner, Learner>,
             PupilPremiumLearnerToLearnerMapper>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddNationalPupilDatabaseSearches(this IServiceCollection services)
+    {
+        services.AddSingleton<IMapper<
+            NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
+            NationalPupilDatabaseLearnerNumericSearchMappingContextToViewModelMapper>();
+
+        services.AddSingleton<IMapper<
+            NationalPupilDatabaseLearner, Learner>,
+            NationalPupilDatabaseLearnerToLearnerMapper>();
 
         return services;
     }

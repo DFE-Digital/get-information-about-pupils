@@ -23,13 +23,13 @@ using Newtonsoft.Json;
 namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 
 [Route(Routes.Application.Search)]
-public class PupilPremiumLearnerNumberController : Controller
+public class PupilPremiumLearnerNumberSearchController : Controller
 {
     private const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
-    private readonly ILogger<PupilPremiumLearnerNumberController> _logger;
+    private readonly ILogger<PupilPremiumLearnerNumberSearchController> _logger;
 
     private readonly IUseCase<
         PupilPremiumSearchRequest,
@@ -47,7 +47,7 @@ public class PupilPremiumLearnerNumberController : Controller
     private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
     public string SearchAction => nameof(PupilPremium);
-    public string FullTextLearnerSearchController => Global.PPNonUpnController;
+    public string FullTextLearnerSearchController => Global.PPTextSearchController;
     public string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPupilPremiumDownloadLinks.cshtml";
     public AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
@@ -55,8 +55,8 @@ public class PupilPremiumLearnerNumberController : Controller
     public string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
 
-    public PupilPremiumLearnerNumberController(
-        ILogger<PupilPremiumLearnerNumberController> logger,
+    public PupilPremiumLearnerNumberSearchController(
+        ILogger<PupilPremiumLearnerNumberSearchController> logger,
         IUseCase<
             PupilPremiumSearchRequest,
             PupilPremiumSearchResponse> searchUseCase,
@@ -427,7 +427,6 @@ public class PupilPremiumLearnerNumberController : Controller
         if (first)
         {
             model.LearnerIdSearchResult = string.Join(",", result.Learners.Select(learner => learner.Id));
-
             HashSet<string> learnerNumberIdSet = GetLearnerNumberIds(result.Learners);
             model.LearnerNumberIds = string.Join("\n", learnerNumberIdSet);
 

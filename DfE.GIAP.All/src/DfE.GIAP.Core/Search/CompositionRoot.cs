@@ -7,11 +7,16 @@ using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
+using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
@@ -48,8 +53,9 @@ public static class CompositionRoot
         services
             .AddSearchOptions(configuration)
             .AddAzureServices(configuration)
-            .AddFurtherEducationSearchAdaptors()
+            .AddNationalPupilDatabaseSearchAdaptors()
             .AddPupilPremiumSearchAdaptors()
+            .AddFurtherEducationSearchAdaptors()
             .AddFilterExpressions()
 
             .AddSingleton<
@@ -102,6 +108,27 @@ public static class CompositionRoot
                 IMapper<
                     PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>,
                     PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper>();
+        return services;
+    }
+
+    private static IServiceCollection AddNationalPupilDatabaseSearchAdaptors(this IServiceCollection services)
+    {
+        services
+            .AddScoped<
+                IUseCase<
+                    NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>,
+                    NationalPupilDatabaseSearchUseCase>()
+            .AddScoped<
+                    ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>,
+                    NationalPupilDatabaseAzureSearchServiceAdaptor>()
+            .AddSingleton<
+                IMapper<
+                    Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>,
+                    PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper>()
+            .AddSingleton<
+                IMapper<
+                    NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>,
+                    NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper>();
         return services;
     }
 

@@ -8,7 +8,6 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -27,7 +26,7 @@ namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByUniquePupilNum
 
 public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
-    private readonly ILogger<PupilPremiumLearnerNumberController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerNumberController>>();
+    private readonly ILogger<PupilPremiumLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerNumberSearchController>>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
@@ -69,7 +68,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     public async Task PupilPremium_returns_empty_page_when_first_navigated_to()
     {
         // arrange
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         // act
         IActionResult result = await sut.PupilPremium(null);
@@ -95,7 +94,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         List<string> formattedUpns = upns.FormatLearnerNumbers().ToList();
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -131,7 +130,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -167,10 +166,10 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -205,10 +204,10 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -245,10 +244,10 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             SelectedPupil = ["A203102209083"]
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -286,13 +285,13 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSession.SetString(
            _paginatedResultsFake.TotalSearchResultsSessionKey,
            _paginatedResultsFake.TotalSearchResultsSessionValue);
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(["A203102209083"]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -322,7 +321,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new();
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
         sut.ModelState.AddModelError("test", "<span style='display:none'>1</span>");
 
         // act
@@ -354,7 +353,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -391,7 +390,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -426,7 +425,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -514,10 +513,10 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -557,10 +556,10 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -603,10 +602,10 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             SelectedPupil = ["A203102209083"]
         };
 
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -645,7 +644,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -688,7 +687,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -733,7 +732,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -778,7 +777,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -823,7 +822,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
         _mockSession.SetString(
@@ -868,7 +867,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -913,7 +912,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -958,7 +957,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -1003,7 +1002,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -1048,7 +1047,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -1093,7 +1092,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -1138,7 +1137,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -1175,7 +1174,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             .GetSelected(Arg.Any<string[]>())
             .Returns([]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(
             sut.SearchSessionKey,
@@ -1215,7 +1214,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             .GetSelected(Arg.Any<string[]>())
             .Returns([.. formattedUpns]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
 
@@ -1247,7 +1246,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             .When(t => t.HandleRequestAsync(Arg.Any<AddPupilsToMyPupilsRequest>()))
             .Throws(new MyPupilsLimitExceededException(1));
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(
             sut.SearchSessionKey,
@@ -1285,7 +1284,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([]);
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, upns);
         _mockSession.SetString(
@@ -1321,7 +1320,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             PageLearnerNumbers = string.Join(',', formattedUpns)
         };
 
-        PupilPremiumLearnerNumberController sut = GetController();
+        PupilPremiumLearnerNumberSearchController sut = GetController();
 
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns([.. formattedUpns]);
         _mockSession.SetString(sut.SearchSessionKey, upns);
@@ -1339,7 +1338,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         Assert.Contains(Messages.Downloads.Errors.NoDataForSelectedPupils, model.ErrorDetails);
     }
 
-    private static void AssertAbstractValues(PupilPremiumLearnerNumberController controller, LearnerNumberSearchViewModel model)
+    private static void AssertAbstractValues(PupilPremiumLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
     {
         Assert.Equal(ApplicationLabels.SearchPupilPremiumWithUpnPageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
@@ -1348,7 +1347,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         Assert.Equal(controller.FullTextLearnerSearchAction, model.FullTextLearnerSearchAction);
     }
 
-    private PupilPremiumLearnerNumberController GetController()
+    private PupilPremiumLearnerNumberSearchController GetController()
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
@@ -1358,7 +1357,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         };
 
         _mockAppOptions.Value.Returns(_mockAppSettings);
-        _mockSession.SetString(PupilPremiumLearnerNumberController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
+        _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
         // TODO verify serializer called, but will require pulling all of this sut creation out
         Mock<IJsonSerializer> jsonSerializerMock = new();
@@ -1394,7 +1393,7 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             .Setup((mapper) => mapper.Map(It.IsAny<SortOrderRequest>()))
             .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
 
-        return new PupilPremiumLearnerNumberController(
+        return new PupilPremiumLearnerNumberSearchController(
             _mockLogger,
             _mockUseCase.Object,
             mockMapper.Object,
