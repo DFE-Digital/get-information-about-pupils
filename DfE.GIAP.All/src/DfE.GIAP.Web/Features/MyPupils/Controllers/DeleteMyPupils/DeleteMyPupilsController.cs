@@ -14,7 +14,7 @@ namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 
 #nullable enable
 
-[Route(Routes.MyPupilList.DeleteMyPupils)]
+[Route(Routes.MyPupilList.MyPupilsBase)]
 public class DeleteMyPupilsController : Controller
 {
     private readonly ILogger<DeleteMyPupilsController> _logger;
@@ -55,6 +55,7 @@ public class DeleteMyPupilsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Route(Routes.MyPupilList.DeleteMyPupilsRoute)]
     public async Task<IActionResult> Delete(
         [FromForm] List<string>? SelectedPupils,
         MyPupilsQueryRequestDto? queryRequest)

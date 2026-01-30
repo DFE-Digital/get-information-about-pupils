@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Constants;
+﻿using System.Reflection.Metadata;
+
+namespace DfE.GIAP.Web.Constants;
 
 public static class Routes
 {
@@ -55,12 +57,20 @@ public static class Routes
 
     public static class MyPupilList
     {
-        public const string MyPupilsBase = "~/my-pupil-list";
-        public const string DeleteMyPupils = $"{MyPupilsBase}/Delete";
-        public const string DownloadNonUPNConfirmationReturn = "mpl-nonupn-starred-pupil-confirmation";
-        public const string DownloadCancellationReturn = "mpl-starred-pupil-cancellation";
-        public const string MyPupilListView = "~/Views/MyPupilList/Index.cshtml";
-        public const string MyPupilListViewConfirmation = "~/Views/MyPupilList/PupilListConfirmation.cshtml";
+        public const string MyPupilsBase = "/my-pupil-list";
+
+        public const string GetMyPupilsController = "GetMyPupils";
+
+        public const string DeleteMyPupilsRoute = "delete";
+        public const string DeleteMyPupilsController = "DeleteMyPupils";
+
+        public const string DownloadConfirmRoute = "download-npd-selected";
+        public const string DownloadOptionsRoute = "download-npd";
+        public const string DownloadMyPupilsController = "DownloadMyPupils";
+        public const string DownloadNpdOptionsControllerAction = "GetDownloadNpdOptions";
+        public const string DownloadPupilPremiumControllerAction = "ToDownloadSelectedPupilPremiumDataUPN";
+        
+        public const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
     }
 
     public static class NationalPupilDatabase

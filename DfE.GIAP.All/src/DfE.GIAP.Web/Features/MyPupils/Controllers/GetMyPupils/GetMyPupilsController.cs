@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Extensions;
+﻿using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +40,6 @@ public class GetMyPupilsController : Controller
 
         MyPupilsViewModel viewModel = _mapToPupilsViewModel.Map(response);
 
-        return View(Constants.Routes.MyPupilList.MyPupilListView, viewModel);
+        return View(Constants.Routes.MyPupilList.MyPupilsView, viewModel);
     }
 }

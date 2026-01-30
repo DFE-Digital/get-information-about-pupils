@@ -53,7 +53,7 @@
                 </div>
                 <div class="govuk-grid-column-one-quarter">
                     <button asp-controller="@Model.DownloadController"
-                            asp-action="ToDownloadSelectedNPDDataUPN"
+                            asp-action="@Routes.MyPupilList.DownloadNpdOptionsControllerAction"
                             id="download--selected--npd--data--link"
                             type="submit"
                             class="govuk-list webapp-button-as-link">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="govuk-grid-column-one-quarter">
                     <button asp-controller="@Model.DownloadController"
-                            asp-action="ToDownloadSelectedPupilPremiumDataUPN"
+                            asp-action="@Routes.MyPupilList.DownloadPupilPremiumControllerAction"
                             id="download--selected--pp--data--link"
                             type="submit"
                             class="govuk-list webapp-button-as-link">
