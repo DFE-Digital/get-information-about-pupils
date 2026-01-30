@@ -40,7 +40,7 @@ public static class PupilPremiumPupilDtoTestDoubles
             .RuleFor(e => e.UniquePupilNumber, f => f.Random.Replace("##########"))
             .RuleFor(e => e.Surname, f => f.Name.LastName())
             .RuleFor(e => e.Forename, f => f.Name.FirstName())
-            .RuleFor(e => e.Sex, (f, _) => f.PickRandom(new[] { "M", "F", "O" }))
+            .RuleFor(e => e.Sex, (f, _) => f.PickRandom(new[] { "M", "F" }))
             .RuleFor(e => e.DOB, f => DateTime.Parse(f.Date.Past(18, DateTime.Today.AddYears(-16)).ToString("yyyy-MM-dd")))
             .RuleFor(e => e.NCYear, f => f.Random.Int(1, 13).ToString())
             .RuleFor(e => e.DeprivationPupilPremium, f => f.Random.Int(0, 1))

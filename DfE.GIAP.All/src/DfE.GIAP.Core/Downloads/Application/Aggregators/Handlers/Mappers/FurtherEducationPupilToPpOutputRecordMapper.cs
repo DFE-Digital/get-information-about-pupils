@@ -19,7 +19,7 @@ public class FurtherEducationPupilToPpOutputRecordMapper
             Forename = input.Forename,
             Surname = input.Surname,
             Sex = input.Sex,
-            DOB = input.DOB.ToShortDateString(),
+            DOB = input.DOB?.ToShortDateString(),
             ACAD_YEAR = pp.AcademicYear,
             NCYear = pp.NationalCurriculumYear,
             Pupil_Premium_FTE = pp.FullTimeEquivalent

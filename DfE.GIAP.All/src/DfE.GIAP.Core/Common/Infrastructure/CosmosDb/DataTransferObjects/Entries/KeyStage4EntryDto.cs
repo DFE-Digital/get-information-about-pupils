@@ -20,7 +20,7 @@ public class KeyStage4EntryDto
     public string? FORENAMES { get; set; }
 
     [JsonProperty("KS4_DOB")]
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
 
     [JsonProperty("KS4_YEARGRP")]
     public string? YEARGRP { get; set; }

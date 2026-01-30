@@ -55,7 +55,7 @@ public class CensusSummerEntryDto
     public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
-    public string? DOB { get; set; }
+    public DateTime DOB { get; set; }
 
     [JsonProperty("Ethnicity")]
     public string? Ethnicity { get; set; }

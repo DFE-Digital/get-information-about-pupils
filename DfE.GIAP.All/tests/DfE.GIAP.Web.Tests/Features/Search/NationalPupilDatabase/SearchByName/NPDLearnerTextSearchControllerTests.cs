@@ -4,6 +4,8 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -703,194 +705,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         Assert.Equal(1, model.SelectedPupilsCount);
     }
 
-    [Theory]
-    [InlineData("A203102209083")]
-    [InlineData("QTIwMzEwMjIwOTA4Mw==-GIAP")]
-    public async Task DownloadSelectedNationalPupilDatabaseData_returns_data(string upn)
-    {
-        // Arrange
-        LearnerDownloadViewModel downloadViewModel = new()
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = ["csv"]
-        };
-
-        _mockDownloadService.GetCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = FileType.ZipFile,
-               Bytes = []
-           });
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-        NPDLearnerTextSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        // Act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
-
-        // Assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
-
-    [Theory]
-#pragma warning disable CA1861 // Avoid constant arrays as arguments
-    [InlineData(DownloadFileType.None, new string[] { "csv" }, new byte[0], Messages.Search.Errors.SelectFileType)]
-#pragma warning restore CA1861 // Avoid constant arrays as arguments
-    [InlineData(DownloadFileType.CSV, null, new byte[0], Messages.Search.Errors.SelectOneOrMoreDataTypes)]
-#pragma warning disable CA1861 // Avoid constant arrays as arguments
-    [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, Messages.Downloads.Errors.NoDataForSelectedPupils)]
-#pragma warning restore CA1861 // Avoid constant arrays as arguments
-    public async Task DownloadSelectedNationalPupilDatabaseData_returns_correct_validation_error_message(DownloadFileType downloadFileType, string[]? selectedDownloadOptions, byte[]? fileBytes, string errorMessage)
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new()
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = downloadFileType,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = selectedDownloadOptions
-        };
-
-        _mockDownloadService.GetCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = FileType.ZipFile,
-               Bytes = fileBytes
-           });
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerTextSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        // Act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonLearnerNumberDownloadOptionsView, viewResult.ViewName);
-
-        LearnerDownloadViewModel model = Assert.IsType<LearnerDownloadViewModel>(viewResult.Model);
-        Assert.Equal(errorMessage, model.ErrorDetails);
-    }
-
-    [Fact]
-    public async Task DownloadSelectedNationalPupilDatabaseData_shows_error_when_file_is_empty()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new()
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = ["csv"]
-        };
-
-        _mockDownloadService.GetCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = null
-           });
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerTextSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        // Act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
-
-        // Assert
-        Assert.IsType<ViewResult>(result);
-    }
-
-    [Fact]
-    public async Task DownloadSelectedNationalPupilDatabaseData_shows_error_when_there_are_no_files_to_download()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        LearnerDownloadViewModel downloadViewModel = new()
-        {
-            SelectedPupils = upn,
-            LearnerNumber = upn,
-            ErrorDetails = string.Empty,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            SelectedDownloadOptions = ["csv"]
-        };
-
-        _mockDownloadService.GetCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = null,
-               FileType = null,
-               Bytes = null
-           });
-
-        ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
-        TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
-        ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
-
-        NPDLearnerTextSearchController sut = GetController();
-        sut.TempData = tempData;
-
-        // Act
-        IActionResult result = await sut.DownloadSelectedNationalPupilDatabaseData(downloadViewModel);
-
-        // Assert
-        Assert.IsType<ViewResult>(result);
-    }
-
     [Fact]
     public async Task DownloadSelectedNationalPupilDatabaseData_returns_search_page_with_error_if_no_pupil_selected()
     {
@@ -940,7 +754,7 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(DownloadType.NPD, starredPupilViewModel.DownloadType);
+        Assert.Equal(Common.Enums.DownloadType.NPD, starredPupilViewModel.DownloadType);
         Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
 
     }
@@ -1032,7 +846,7 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(DownloadType.CTF, starredPupilViewModel.DownloadType);
+        Assert.Equal(Common.Enums.DownloadType.CTF, starredPupilViewModel.DownloadType);
         Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
     }
 
@@ -1108,7 +922,7 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         {
             SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
             ConfirmationGiven = true,
-            DownloadType = DownloadType.CTF
+            DownloadType = Common.Enums.DownloadType.CTF
         };
 
         _mockCtfService.GetCommonTransferFile(
@@ -1143,7 +957,7 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         {
             SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
             ConfirmationGiven = true,
-            DownloadType = DownloadType.NPD
+            DownloadType = Common.Enums.DownloadType.NPD
         };
 
         _mockDownloadService.GetCSVFile(
@@ -1506,6 +1320,11 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         mockGetAvailableDatasetsForPupilsUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<GetAvailableDatasetsForPupilsRequest>()))
             .ReturnsAsync(response);
 
+        Mock<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>> mockDownloadPupilDataUseCase = new();
+        mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
+            .ReturnsAsync(It.IsAny<DownloadPupilDataResponse>);
+        Mock<IEventLogger> mockEventLogger = new();
+
         return new NPDLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
@@ -1515,7 +1334,9 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
              _mockSessionProvider.Object,
              _mockDownloadService,
              mockGetAvailableDatasetsForPupilsUseCase.Object,
-             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object)
+             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
+             mockDownloadPupilDataUseCase.Object,
+             mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {

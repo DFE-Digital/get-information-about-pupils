@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class CensusSpringOutput
+public class CensusSpringOutputRecord
 {
     public string? PupilMatchingRef { get; set; }
     public string? AcademicYear { get; set; }
@@ -38,10 +38,8 @@ public class CensusSpringOutput
     public string? EYPPBF { get; set; }
     public string? ExtendedHours { get; set; }
     public string? ExpandedHours { get; set; }
-    public int DAFIndicator { get; set; }
-    public int Funding_Basis_ECO { get; set; }
-    public int Funding_Basis_HSD { get; set; }
-    public int Funding_Basis_LAA { get; set; }
-    public string? TLevelQualHrs { get; set; }
-    public string? TLevelNonqualHrs { get; set; }
+    public int? DAFIndicator { get; set; }
+    public string? Funding_Basis_ECO { get; set; }
+    public string? Funding_Basis_HSD { get; set; }
+    public string? Funding_Basis_LAA { get; set; }
 }

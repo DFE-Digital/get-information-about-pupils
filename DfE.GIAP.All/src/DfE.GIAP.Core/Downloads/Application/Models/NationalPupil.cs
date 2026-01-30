@@ -14,7 +14,7 @@ public class NationalPupil
     public string? Forename { get; set; }
     public string? MiddleName { get; set; }
     public char? Gender { get; set; }
-    public char? Sex { get; set; }
+    public string? Sex { get; set; }
     public DateTime DOB { get; set; }
 
     public List<CensusAutumnEntry>? CensusAutumn { get; set; }
@@ -24,8 +24,8 @@ public class NationalPupil
     public List<PhonicsEntry>? Phonics { get; set; }
     public List<KeyStage1Entry>? KeyStage1 { get; set; }
     public List<KeyStage2Entry>? KeyStage2 { get; set; }
-    public List<KeyStage4Entry> KeyStage4 { get; set; } = new();
-    public List<MtcEntry> MTC { get; set; } = new();
+    public List<KeyStage4Entry>? KeyStage4 { get; set; }
+    public List<MtcEntry>? MTC { get; set; }
 
     public bool HasCensusAutumnData => CensusAutumn?.Any() ?? false;
     public bool HasCensusSpringData => CensusSpring?.Any() ?? false;

@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class KS1Output
+public class KS1OutputRecord
 {
     public string? ACADYR { get; set; }
     public string? PUPILMATCHINGREF { get; set; }
@@ -9,7 +9,7 @@ public class KS1Output
     public string? SURNAME { get; set; }
     public string? FORENAMES { get; set; }
     public string? DOB { get; set; }
-    public string? GENDER { get; set; } // ?
+    public string? GENDER { get; set; } // Needed for historical KS1 files which are no longer produced.
     public string? SEX { get; set; }
     public string? LA { get; set; }
     public string? LA_9Code { get; set; }

@@ -19,7 +19,7 @@ public class FurtherEducationPupilToSenOutputRecordMapper
             Forename = input.Forename,
             Surname = input.Surname,
             Sex = input.Sex,
-            DOB = input.DOB.ToShortDateString(),
+            DOB = input.DOB?.ToShortDateString(),
             NCYear = sen.NationalCurriculumYear,
             ACAD_YEAR = sen.AcademicYear,
             SEN_PROVISION = sen.Provision

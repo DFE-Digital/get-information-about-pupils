@@ -7,7 +7,7 @@ public class KeyStage4Entry
     public string? UPN { get; set; }
     public string? SURNAME { get; set; }
     public string? FORENAMES { get; set; }
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
     public string? YEARGRP { get; set; }
     public string? ACTYRGRP { get; set; }
     public string? SEX { get; set; }

@@ -55,7 +55,7 @@ public class CensusAutumnEntryDto
     public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
-    public string? DOB { get; set; }
+    public DateTime DOB { get; set; }
 
     [JsonProperty("FSMeligible")]
     public string? FreeSchoolMealEligible { get; set; }

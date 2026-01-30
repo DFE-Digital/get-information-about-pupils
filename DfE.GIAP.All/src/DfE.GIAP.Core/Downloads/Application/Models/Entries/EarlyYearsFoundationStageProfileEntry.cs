@@ -7,7 +7,7 @@ public class EarlyYearsFoundationStageProfileEntry
     public string? UPN { get; set; }
     public string? SURNAME { get; set; }
     public string? FORENAME { get; set; }
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
     public string? GENDER { get; set; }
     public string? SEX { get; set; }
     public string? MTH_ENTRY { get; set; }

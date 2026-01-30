@@ -19,7 +19,7 @@ public class CensusSummerEntry
     public string? FormerSurname { get; set; }
     public string? Gender { get; set; }
     public string? Sex { get; set; }
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
     public string? Ethnicity { get; set; }
     public string? FreeSchoolMealEligible { get; set; }
     public string? FreeSchoolMealProtected { get; set; }

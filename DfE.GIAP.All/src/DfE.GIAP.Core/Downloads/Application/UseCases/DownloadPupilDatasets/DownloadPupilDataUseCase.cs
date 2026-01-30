@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Downloads.Application.Aggregators;
+﻿using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
 
@@ -116,6 +115,5 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
             Dataset.MTC => "mtc_results",
             _ => "results"
         };
-
 }
 

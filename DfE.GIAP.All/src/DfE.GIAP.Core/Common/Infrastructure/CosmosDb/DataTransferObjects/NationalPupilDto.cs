@@ -36,7 +36,7 @@ public class NationalPupilDto
     public char? Gender { get; set; }
 
     [JsonProperty("Sex")]
-    public char? Sex { get; set; }
+    public string? Sex { get; set; }
 
     [JsonProperty("DOB")]
     public DateTime DOB { get; set; }

@@ -26,7 +26,7 @@ public class KeyStage2EntryDto
     public string? FORENAMES { get; set; }
 
     [JsonProperty("DOB")]
-    public string? DOB { get; set; }
+    public DateTime? DOB { get; set; }
 
     [JsonProperty("YEARGRP")]
     public string? YEARGRP { get; set; }
