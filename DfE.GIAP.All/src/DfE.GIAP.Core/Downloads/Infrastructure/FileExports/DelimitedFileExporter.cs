@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.FileExports;
 
@@ -22,10 +24,22 @@ public class DelimitedFileExporter : IDelimitedFileExporter
 
         using StreamWriter writer = new(output, leaveOpen: true);
 
-        // Header
-        await writer.WriteLineAsync(string.Join(delimiter, props.Select(p => p.Name)));
+        // Build header row using Display / DisplayName attributes
+        IEnumerable<string?> headers = props.Select(p =>
+        {
+            DisplayAttribute? display = p.GetCustomAttribute<DisplayAttribute>();
+            if (display is not null)
+                return display.Name;
+            DisplayNameAttribute? displayName = p.GetCustomAttribute<DisplayNameAttribute>();
+            if (displayName is not null)
+                return displayName.DisplayName;
 
-        // Rows
+            return p.Name;
+        });
+
+        await writer.WriteLineAsync(string.Join(delimiter, headers));
+
+        // Write rows
         foreach (T? record in records)
         {
             IEnumerable<string> values = props.Select(p => p.GetValue(record)?.ToString() ?? string.Empty);
