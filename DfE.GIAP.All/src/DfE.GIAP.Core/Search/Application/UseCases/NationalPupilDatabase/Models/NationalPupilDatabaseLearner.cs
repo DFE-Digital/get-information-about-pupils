@@ -2,14 +2,14 @@
 using DfE.GIAP.Core.Common.ValueObjects;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
 
-namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-public sealed class PupilPremiumLearner : Entity<UniquePupilNumber>
+namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+public sealed class NationalPupilDatabaseLearner : Entity<UniquePupilNumber>
 {
-    public PupilPremiumLearner(
-        UniquePupilNumber upn,
+    public NationalPupilDatabaseLearner(
+        UniquePupilNumber identifier,
         LearnerName name,
         LearnerCharacteristics learnerCharacteristics,
-        LocalAuthorityCode localAuthority) : base(upn)
+        LocalAuthorityCode localAuthority) : base(identifier)
     {
         ArgumentNullException.ThrowIfNull(name);
         Name = name;

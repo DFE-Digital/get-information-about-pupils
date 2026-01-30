@@ -1,12 +1,12 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Domain.Search.Learner;
 
-namespace DfE.GIAP.Web.Features.Search.PupilPremium;
+namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 
-internal sealed class PupilPremiumLearnerToLearnerMapper : IMapper<PupilPremiumLearner, Learner>
+internal sealed class NationalPupilDatabaseLearnerToLearnerMapper : IMapper<NationalPupilDatabaseLearner, Learner>
 {
-    public Learner Map(PupilPremiumLearner input)
+    public Learner Map(NationalPupilDatabaseLearner input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
@@ -23,7 +23,7 @@ internal sealed class PupilPremiumLearnerToLearnerMapper : IMapper<PupilPremiumL
 
             DOB = input.Characteristics.BirthDate,
 
-            LocalAuthority = input.LocalAuthority.Code.ToString()            
+            LocalAuthority = input.LocalAuthority.Code.ToString()
         };
 
         return learner;
