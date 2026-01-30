@@ -167,9 +167,9 @@ public class DownloadMyPupilsController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadRequest)]
+    [Route(Routes.MyPupilList.DownloadOptionsRoute)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToDownloadSelectedNPDDataUPN([FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto query)
+    public async Task<IActionResult> GetDownloadNpdOptions([FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto query)
     {
         List<string> updatedPupils = await UpsertSelectedPupilsAsync(SelectedPupils);
 
@@ -183,60 +183,12 @@ public class DownloadMyPupilsController : Controller
             return RedirectToGetMyPupils(query);
         }
 
-        return await DownloadSelectedNationalPupilDatabaseData(string.Join(",", updatedPupils));
+        return await GetDownloadNpdOptions(string.Join(",", updatedPupils));
     }
 
-    [HttpPost]
-    [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(string selectedPupilsJoined)
-    {
-        string[] selectedPupils = selectedPupilsJoined.Split(',');
-
-        LearnerDownloadViewModel searchDownloadViewModel = new()
-        {
-            SelectedPupils = selectedPupilsJoined,
-            ErrorDetails = (string)TempData["ErrorDetails"],
-            SelectedPupilsCount = selectedPupils.Length,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = true,
-            DownloadRoute = Routes.NationalPupilDatabase.LearnerNumberDownloadFile,
-            SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
-        };
-
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
-        searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
-
-        SearchDownloadHelper.AddDownloadDataTypes(
-            searchDownloadViewModel,
-            User,
-            User.GetOrganisationLowAge(),
-            User.GetOrganisationHighAge(),
-            User.IsOrganisationLocalAuthority(),
-            User.IsOrganisationAllAges());
-
-        ModelState.Clear();
-
-        if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
-        {
-            string[] downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
-
-            IEnumerable<CheckDownloadDataType> disabledTypes = await _downloadService.CheckForNoDataAvailable(
-                selectedPupils,
-                selectedPupils,
-                downloadTypeArray,
-                AzureFunctionHeaderDetails.Create(
-                    User.GetUserId(),
-                    User.GetSessionId()));
-
-            SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
-        }
-
-        return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
-    }
 
     [HttpPost]
-    [Route(Routes.NationalPupilDatabase.LearnerNumberDownloadFile)]
+    [Route(Routes.MyPupilList.DownloadConfirmRoute)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
@@ -275,11 +227,60 @@ public class DownloadMyPupilsController : Controller
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;
-            return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils);
+            return await GetDownloadNpdOptions(model.SelectedPupils);
         }
 
         return RedirectToAction(Global.MyPupilListAction, Global.MyPupilListControllerName);
     }
+
+    private async Task<IActionResult> GetDownloadNpdOptions(string selectedPupilsJoined)
+    {
+        string[] selectedPupils = selectedPupilsJoined.Split(',');
+
+        LearnerDownloadViewModel searchDownloadViewModel = new()
+        {
+            LearnerNumber = selectedPupilsJoined,
+            SelectedPupils = selectedPupilsJoined,
+            ErrorDetails = (string)(TempData["ErrorDetails"] ?? string.Empty),
+            SelectedPupilsCount = selectedPupils.Length,
+            DownloadFileType = DownloadFileType.CSV,
+            ShowTABDownloadType = true,
+            DownloadRoute = Routes.MyPupilList.DownloadConfirmRoute,
+            SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
+        };
+
+        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
+
+        searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
+
+        SearchDownloadHelper.AddDownloadDataTypes(
+            searchDownloadViewModel,
+            User,
+            User.GetOrganisationLowAge(),
+            User.GetOrganisationHighAge(),
+            User.IsOrganisationLocalAuthority(),
+            User.IsOrganisationAllAges());
+
+        ModelState.Clear();
+
+        if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
+        {
+            string[] downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
+
+            IEnumerable<CheckDownloadDataType> disabledTypes = await _downloadService.CheckForNoDataAvailable(
+                selectedPupils,
+                selectedPupils,
+                downloadTypeArray,
+                AzureFunctionHeaderDetails.Create(
+                    User.GetUserId(),
+                    User.GetSessionId()));
+
+            SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
+        }
+
+        return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
+    }
+
 
     private async Task<List<string>> UpsertSelectedPupilsAsync(List<string> selectedPupils)
     {
@@ -301,7 +302,7 @@ public class DownloadMyPupilsController : Controller
     {
         return RedirectToAction(
             actionName: "Index",
-            controllerName: "GetMyPupils",
+            controllerName: Routes.MyPupilList.GetMyPupilsController,
             new
             {
                 request.PageNumber,
