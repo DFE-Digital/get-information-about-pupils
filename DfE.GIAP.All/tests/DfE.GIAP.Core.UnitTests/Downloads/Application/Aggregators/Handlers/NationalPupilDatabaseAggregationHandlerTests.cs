@@ -14,15 +14,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     [Fact]
     public void Constructor_Throws_WhenRepositoryIsNull()
     {
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -42,14 +42,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenAutumnMapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -69,14 +69,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenSummerMapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -96,14 +96,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenSpringMapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -123,14 +123,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenKs1MapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -150,14 +150,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenKs2MapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -177,14 +177,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenKs4MapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -204,14 +204,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenMtcMapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -231,14 +231,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenPhonicsMapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -258,14 +258,14 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void Constructor_Throws_WhenEyfspMapperIsNull()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
 
         Assert.Throws<ArgumentNullException>(() =>
             new NationalPupilDatabaseAggregationHandler(
@@ -285,15 +285,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public void SupportedDownloadType_ReturnsNpd()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupilDatabaseAggregationHandler handler =
             new NationalPupilDatabaseAggregationHandler(
@@ -316,15 +316,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsAutumnData_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -334,7 +334,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<CensusAutumnOutput> mapped = new() { new CensusAutumnOutput() };
+        List<CensusAutumnOutputRecord> mapped = new() { new CensusAutumnOutputRecord() };
         autumn.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -354,15 +354,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapAutumn_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -389,15 +389,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapAutumn_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -425,15 +425,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsSummerData_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -443,7 +443,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<CensusSummerOutput> mapped = new() { new CensusSummerOutput() };
+        List<CensusSummerOutputRecord> mapped = new() { new CensusSummerOutputRecord() };
         summer.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -463,15 +463,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapSummer_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -498,15 +498,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapSummer_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -534,15 +534,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsSpringData_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -552,7 +552,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<CensusSpringOutput> mapped = new() { new CensusSpringOutput() };
+        List<CensusSpringOutputRecord> mapped = new() { new CensusSpringOutputRecord() };
         spring.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -572,15 +572,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapSpring_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -607,15 +607,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapSpring_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -643,15 +643,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsKS1Data_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -661,7 +661,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<KS1Output> mapped = new() { new KS1Output() };
+        List<KS1OutputRecord> mapped = new() { new KS1OutputRecord() };
         ks1.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -681,15 +681,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapKS1_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -716,15 +716,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapKS1_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -752,15 +752,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsKS2Data_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -770,7 +770,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<KS2Output> mapped = new() { new KS2Output() };
+        List<KS2OutputRecord> mapped = new() { new KS2OutputRecord() };
         ks2.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -790,15 +790,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapKS2_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -825,15 +825,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapKS2_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -860,15 +860,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsKS4Data_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -878,7 +878,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<KS4Output> mapped = new() { new KS4Output() };
+        List<KS4OutputRecord> mapped = new() { new KS4OutputRecord() };
         ks4.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -898,15 +898,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapKS4_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -933,15 +933,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapKS4_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -969,15 +969,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsMTCData_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -987,7 +987,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<MTCOutput> mapped = new() { new MTCOutput() };
+        List<MTCOutputRecord> mapped = new() { new MTCOutputRecord() };
         mtc.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -1007,15 +1007,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapMTC_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -1042,15 +1042,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapMTC_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -1077,15 +1077,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsPhonicsData_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -1095,7 +1095,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<PhonicsOutput> mapped = new() { new PhonicsOutput() };
+        List<PhonicsOutputRecord> mapped = new() { new PhonicsOutputRecord() };
         phonics.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -1115,15 +1115,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapPhonics_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -1150,15 +1150,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapPhonics_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
 
         NationalPupil pupil = new()
         {
@@ -1185,15 +1185,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_MapsEYFSPData_WhenSelectedAndAvailable()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
 
         NationalPupil pupil = new()
         {
@@ -1206,7 +1206,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
         List<NationalPupil> pupils = new() { pupil };
         repo.Setup(r => r.GetPupilsByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(pupils);
 
-        List<EYFSPOutput> mapped = new() { new EYFSPOutput() };
+        List<EYFSPOutputRecord> mapped = new() { new EYFSPOutputRecord() };
         eyfsp.Setup(m => m.Map(pupil)).Returns(mapped);
 
         NationalPupilDatabaseAggregationHandler handler =
@@ -1226,15 +1226,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapEYFSP_WhenNotSelected()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
 
         NationalPupil pupil = new()
         {
@@ -1264,15 +1264,15 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
     public async Task AggregateAsync_DoesNotMapEYFSP_WhenPupilHasNoData()
     {
         Mock<INationalPupilReadOnlyRepository> repo = new();
-        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutput>>> eyfsp = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>> autumn = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutput>>> summer = new();
-        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutput>>> spring = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS1Output>>> ks1 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS2Output>>> ks2 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<KS4Output>>> ks4 = new();
-        Mock<IMapper<NationalPupil, IEnumerable<MTCOutput>>> mtc = new();
-        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutput>>> phonics = new();
+        Mock<IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>> eyfsp = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>> autumn = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>>> summer = new();
+        Mock<IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>>> spring = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>> ks1 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS2OutputRecord>>> ks2 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<KS4OutputRecord>>> ks4 = new();
+        Mock<IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>> mtc = new();
+        Mock<IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>> phonics = new();
 
         NationalPupil pupil = new()
         {

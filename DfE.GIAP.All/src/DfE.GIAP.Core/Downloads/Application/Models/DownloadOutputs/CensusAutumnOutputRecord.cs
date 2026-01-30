@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class CensusAutumnOutput
+public class CensusAutumnOutputRecord
 {
     public string? PupilMatchingRef { get; set; }
     public string? AcademicYear { get; set; }

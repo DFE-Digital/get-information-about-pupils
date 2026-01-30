@@ -28,7 +28,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeEyfsp: false);
         pupil.EarlyYearsFoundationStageProfile = null!;
 
-        IEnumerable<EYFSPOutput> result = mapper.Map(pupil);
+        IEnumerable<EYFSPOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -41,7 +41,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeEyfsp: false);
 
-        IEnumerable<EYFSPOutput> result = mapper.Map(pupil);
+        IEnumerable<EYFSPOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -54,7 +54,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeEyfsp: true);
 
-        IEnumerable<EYFSPOutput> result = mapper.Map(pupil);
+        IEnumerable<EYFSPOutputRecord> result = mapper.Map(pupil);
 
         Assert.Equal(pupil.EarlyYearsFoundationStageProfile!.Count, result.Count());
     }
@@ -70,7 +70,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
         EarlyYearsFoundationStageProfileEntry entry =
             pupil.EarlyYearsFoundationStageProfile!.First();
 
-        EYFSPOutput mapped = mapper.Map(pupil).First();
+        EYFSPOutputRecord mapped = mapper.Map(pupil).First();
 
         Assert.Equal(entry.PUPILMATCHINGREF, mapped.FSP_PupilMatchingRef);
         Assert.Equal(entry.ACADYR, mapped.FSP_ACADYR);
@@ -81,7 +81,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
         Assert.Equal(entry.SEX, mapped.FSP_SEX);
         Assert.Equal(entry.MTH_ENTRY, mapped.FSP_MTH_ENTRY);
         Assert.Equal(entry.LA, mapped.FSP_LA);
-        Assert.Equal(entry.LA_9CODE, mapped.FSP_LA_9CODE);
+        Assert.Equal(entry.LA_9CODE, mapped.FSP_LA_9Code);
         Assert.Equal(entry.ESTAB, mapped.FSP_ESTAB);
         Assert.Equal(entry.LAESTAB, mapped.FSP_LAESTAB);
         Assert.Equal(entry.URN, mapped.FSP_URN);
@@ -122,7 +122,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
 
         pupil.EarlyYearsFoundationStageProfile!.Insert(0, null!);
 
-        List<EYFSPOutput> result = mapper.Map(pupil).ToList();
+        List<EYFSPOutputRecord> result = mapper.Map(pupil).ToList();
 
         Assert.Equal(pupil.EarlyYearsFoundationStageProfile.Count, result.Count);
         Assert.Null(result[0].FSP_PupilMatchingRef);
@@ -132,9 +132,9 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
     public void Map_IgnoresUnmappedFieldsInEyfspEntry()
     {
         // These exist on the entry but not on the output
-        Assert.Null(typeof(EYFSPOutput).GetProperty("COM_G01"));
-        Assert.Null(typeof(EYFSPOutput).GetProperty("EXP_G16"));
-        Assert.Null(typeof(EYFSPOutput).GetProperty("FSP_IMD_2010"));
-        Assert.Null(typeof(EYFSPOutput).GetProperty("FSP_PCON"));
+        Assert.Null(typeof(EYFSPOutputRecord).GetProperty("COM_G01"));
+        Assert.Null(typeof(EYFSPOutputRecord).GetProperty("EXP_G16"));
+        Assert.Null(typeof(EYFSPOutputRecord).GetProperty("FSP_IMD_2010"));
+        Assert.Null(typeof(EYFSPOutputRecord).GetProperty("FSP_PCON"));
     }
 }

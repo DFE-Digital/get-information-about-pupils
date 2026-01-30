@@ -3,16 +3,16 @@ using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToPhonicsOutputRecordMapper : IMapper<NationalPupil, IEnumerable<PhonicsOutput>>
+public class NationalPupilToPhonicsOutputRecordMapper : IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>>
 {
-    public IEnumerable<PhonicsOutput> Map(NationalPupil input)
+    public IEnumerable<PhonicsOutputRecord> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         if (input.Phonics is null || !input.Phonics.Any())
-            return Enumerable.Empty<PhonicsOutput>();
+            return Enumerable.Empty<PhonicsOutputRecord>();
 
-        return input.Phonics.Select(phonicsEntry => new PhonicsOutput
+        return input.Phonics.Select(phonicsEntry => new PhonicsOutputRecord
         {
             Phonics_ACADYR = phonicsEntry?.AcademicYear,
             Phonics_PUPILMATCHINGREF = phonicsEntry?.PupilMatchingReference,

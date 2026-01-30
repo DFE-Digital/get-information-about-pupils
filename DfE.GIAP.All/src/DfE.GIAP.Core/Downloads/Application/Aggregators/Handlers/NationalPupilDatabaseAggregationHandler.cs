@@ -10,27 +10,27 @@ public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationH
     public DownloadType SupportedDownloadType => DownloadType.NPD;
 
     private readonly INationalPupilReadOnlyRepository _npdReadRepository;
-    private readonly IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>> _autumnMapper;
-    private readonly IMapper<NationalPupil, IEnumerable<CensusSummerOutput>> _summerMapper;
-    private readonly IMapper<NationalPupil, IEnumerable<CensusSpringOutput>> _springMapper;
-    private readonly IMapper<NationalPupil, IEnumerable<KS1Output>> _ks1Mapper;
-    private readonly IMapper<NationalPupil, IEnumerable<KS2Output>> _ks2Mapper;
-    private readonly IMapper<NationalPupil, IEnumerable<KS4Output>> _ks4Mapper;
-    private readonly IMapper<NationalPupil, IEnumerable<MTCOutput>> _mtcMapper;
-    private readonly IMapper<NationalPupil, IEnumerable<PhonicsOutput>> _phonicsMapper;
-    private readonly IMapper<NationalPupil, IEnumerable<EYFSPOutput>> _eyfspMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>> _autumnMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>> _summerMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>> _springMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<KS1OutputRecord>> _ks1Mapper;
+    private readonly IMapper<NationalPupil, IEnumerable<KS2OutputRecord>> _ks2Mapper;
+    private readonly IMapper<NationalPupil, IEnumerable<KS4OutputRecord>> _ks4Mapper;
+    private readonly IMapper<NationalPupil, IEnumerable<MTCOutputRecord>> _mtcMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>> _phonicsMapper;
+    private readonly IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>> _eyfspMapper;
 
     public NationalPupilDatabaseAggregationHandler(
         INationalPupilReadOnlyRepository npdReadRepository,
-        IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>> autumnMapper,
-        IMapper<NationalPupil, IEnumerable<CensusSummerOutput>> summerMapper,
-        IMapper<NationalPupil, IEnumerable<CensusSpringOutput>> springMapper,
-        IMapper<NationalPupil, IEnumerable<KS1Output>> ks1Mapper,
-        IMapper<NationalPupil, IEnumerable<KS2Output>> ks2Mapper,
-        IMapper<NationalPupil, IEnumerable<KS4Output>> ks4Mapper,
-        IMapper<NationalPupil, IEnumerable<MTCOutput>> mtcMapper,
-        IMapper<NationalPupil, IEnumerable<PhonicsOutput>> phonicsMapper,
-        IMapper<NationalPupil, IEnumerable<EYFSPOutput>> eyfspMapper)
+        IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>> autumnMapper,
+        IMapper<NationalPupil, IEnumerable<CensusSummerOutputRecord>> summerMapper,
+        IMapper<NationalPupil, IEnumerable<CensusSpringOutputRecord>> springMapper,
+        IMapper<NationalPupil, IEnumerable<KS1OutputRecord>> ks1Mapper,
+        IMapper<NationalPupil, IEnumerable<KS2OutputRecord>> ks2Mapper,
+        IMapper<NationalPupil, IEnumerable<KS4OutputRecord>> ks4Mapper,
+        IMapper<NationalPupil, IEnumerable<MTCOutputRecord>> mtcMapper,
+        IMapper<NationalPupil, IEnumerable<PhonicsOutputRecord>> phonicsMapper,
+        IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>> eyfspMapper)
     {
         ArgumentNullException.ThrowIfNull(npdReadRepository);
         ArgumentNullException.ThrowIfNull(autumnMapper);

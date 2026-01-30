@@ -6,13 +6,12 @@ using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public sealed class NationalPupilToCensusSummerOutputMapperTests
+public sealed class NationalPupilToCensusAutumnOutputRecordMapperTests
 {
     [Fact]
     public void Map_ThrowsArgumentNullException_WhenInputIsNull()
     {
-        NationalPupilToCensusSummerOutputRecordMapper mapper =
-            new NationalPupilToCensusSummerOutputRecordMapper();
+        NationalPupilToCensusAutumnOutputRecordMapper mapper = new();
 
         Action act = () => mapper.Map(null!);
 
@@ -20,58 +19,56 @@ public sealed class NationalPupilToCensusSummerOutputMapperTests
     }
 
     [Fact]
-    public void Map_ReturnsEmpty_WhenCensusSummerListIsNull()
+    public void Map_ReturnsEmpty_WhenCensusAutumnListIsNull()
     {
-        NationalPupilToCensusSummerOutputRecordMapper mapper =
-            new NationalPupilToCensusSummerOutputRecordMapper();
-
+        NationalPupilToCensusAutumnOutputRecordMapper mapper = new();
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: false);
-        pupil.CensusSummer = null!;
+        pupil.CensusAutumn = null!;
 
-        IEnumerable<CensusSummerOutput> result = mapper.Map(pupil);
+        IEnumerable<CensusAutumnOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
 
     [Fact]
-    public void Map_ReturnsEmpty_WhenCensusSummerListIsEmpty()
+    public void Map_ReturnsEmpty_WhenCensusAutumnListIsEmpty()
     {
-        NationalPupilToCensusSummerOutputRecordMapper mapper =
-            new NationalPupilToCensusSummerOutputRecordMapper();
-
+        NationalPupilToCensusAutumnOutputRecordMapper mapper = new();
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: false);
 
-        IEnumerable<CensusSummerOutput> result = mapper.Map(pupil);
+        IEnumerable<CensusAutumnOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
 
     [Fact]
-    public void Map_MapsAllCensusSummerEntries()
+    public void Map_MapsAllCensusAutumnEntries()
     {
-        NationalPupilToCensusSummerOutputRecordMapper mapper =
-            new NationalPupilToCensusSummerOutputRecordMapper();
-
+        NationalPupilToCensusAutumnOutputRecordMapper mapper = new();
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: true);
 
-        IEnumerable<CensusSummerOutput> result = mapper.Map(pupil);
+        IEnumerable<CensusAutumnOutputRecord> result = mapper.Map(pupil);
 
-        Assert.Equal(pupil.CensusSummer!.Count, result.Count());
+        Assert.Equal(pupil.CensusAutumn!.Count, result.Count());
     }
 
     [Fact]
-    public void Map_MapsCensusSummerEntryFieldsCorrectly()
+    public void Map_MapsCensusAutumnEntryFieldsCorrectly()
     {
-        NationalPupilToCensusSummerOutputRecordMapper mapper =
-            new NationalPupilToCensusSummerOutputRecordMapper();
-
+        NationalPupilToCensusAutumnOutputRecordMapper mapper = new();
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: true);
 
-        CensusSummerEntry entry = pupil.CensusSummer!.First();
+        CensusAutumnEntry entry = pupil.CensusAutumn!.First();
 
-        CensusSummerOutput mapped = mapper.Map(pupil).First();
+        CensusAutumnOutputRecord mapped = mapper.Map(pupil).First();
 
         Assert.Equal(entry.PupilMatchingRef, mapped.PupilMatchingRef);
+        Assert.Equal(entry.UniquePupilNumber, mapped.UPN);
+        Assert.Equal(entry.Surname, mapped.Surname);
+        Assert.Equal(entry.Forename, mapped.Forename);
+        Assert.Equal(entry.MiddleNames, mapped.MiddleNames);
+        Assert.Equal(entry.Sex, mapped.Sex);
+        Assert.Equal(entry.DOB?.ToShortDateString(), mapped.DOB);
         Assert.Equal(entry.AcademicYear, mapped.AcademicYear);
         Assert.Equal(entry.CensusTerm, mapped.CensusTerm);
         Assert.Equal(entry.LocalAuthority, mapped.LA);
@@ -79,19 +76,13 @@ public sealed class NationalPupilToCensusSummerOutputMapperTests
         Assert.Equal(entry.LocalAuthorityEstablishment, mapped.LAEstab);
         Assert.Equal(entry.UniqueReferenceNumber, mapped.URN);
         Assert.Equal(entry.Phase, mapped.PHASE);
-        Assert.Equal(entry.UniquePupilNumber, mapped.UPN);
         Assert.Equal(entry.FormerUniquePupilNumber, mapped.FormerUPN);
-        Assert.Equal(entry.Surname, mapped.Surname);
-        Assert.Equal(entry.Forename, mapped.Forename);
-        Assert.Equal(entry.MiddleNames, mapped.MiddleNames);
         Assert.Equal(entry.PreferredSurname, mapped.PreferredSurname);
         Assert.Equal(entry.FormerSurname, mapped.FormerSurname);
-        Assert.Equal(entry.Sex, mapped.Sex);
-        Assert.Equal(entry.DOB?.ToShortDateString(), mapped.DOB);
         Assert.Equal(entry.FreeSchoolMealEligible, mapped.FSMeligible);
         Assert.Equal(entry.FreeSchoolMealProtected, mapped.FSM_protected);
-        Assert.Equal(entry.EVERFSM_6, mapped.EVERFSM_6);
-        Assert.Equal(entry.EVERFSM_6_P, mapped.EVERFSM_6_P);
+        Assert.Equal(entry.FreeSchoolMealEligible, mapped.EVERFSM_6);
+        Assert.Equal(entry.FreeSchoolMealProtected, mapped.EVERFSM_6_P);
         Assert.Equal(entry.Language, mapped.Language);
         Assert.Equal(entry.HoursAtSetting, mapped.HoursAtSetting);
         Assert.Equal(entry.FundedHours, mapped.FundedHours);
@@ -106,30 +97,29 @@ public sealed class NationalPupilToCensusSummerOutputMapperTests
         Assert.Equal(entry.ExtendedHours, mapped.ExtendedHours);
         Assert.Equal(entry.ExpandedHours, mapped.ExpandedHours);
         Assert.Equal(entry.DisabilityAccessFundIndicator, mapped.DAFIndicator);
+        Assert.Equal(entry.TLevelQualHrs, mapped.TLevelQualHrs);
+        Assert.Equal(entry.TLevelNonqualHrs, mapped.TLevelNonqualHrs);
     }
 
     [Fact]
     public void Map_HandlesNullEntriesInsideList()
     {
-        NationalPupilToCensusSummerOutputRecordMapper mapper =
-            new NationalPupilToCensusSummerOutputRecordMapper();
-
+        NationalPupilToCensusAutumnOutputRecordMapper mapper = new();
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: true);
 
-        pupil.CensusSummer!.Insert(0, null!);
+        pupil.CensusAutumn!.Insert(0, null!);
 
-        List<CensusSummerOutput> result = mapper.Map(pupil).ToList();
+        List<CensusAutumnOutputRecord> result = mapper.Map(pupil).ToList();
 
-        Assert.Equal(pupil.CensusSummer.Count, result.Count);
+        Assert.Equal(pupil.CensusAutumn.Count, result.Count);
         Assert.Null(result[0].PupilMatchingRef);
     }
 
     [Fact]
-    public void Map_IgnoresUnmappedFieldsInCensusSummerEntry()
+    public void Map_IgnoresUnmappedFieldsInCensusAutumnEntry()
     {
-        // These exist on the entry but not on the output
-        Assert.Null(typeof(CensusSummerOutput).GetProperty("Ethnicity"));
-        Assert.Null(typeof(CensusSummerOutput).GetProperty("ServiceChild"));
-        Assert.Null(typeof(CensusSummerOutput).GetProperty("Gender"));
+        // These fields do not exist on CensusAutumnOutput
+        Assert.Null(typeof(CensusAutumnOutputRecord).GetProperty("SomeUnmappedField"));
+        Assert.Null(typeof(CensusAutumnOutputRecord).GetProperty("AnotherUnmappedField"));
     }
 }

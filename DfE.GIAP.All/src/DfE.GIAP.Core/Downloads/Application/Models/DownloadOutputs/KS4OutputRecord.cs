@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class KS4Output
+public class KS4OutputRecord
 {
     public string? KS4_ACADYR { get; set; }
     public string? KS4_PUPILMATCHINGREF { get; set; }

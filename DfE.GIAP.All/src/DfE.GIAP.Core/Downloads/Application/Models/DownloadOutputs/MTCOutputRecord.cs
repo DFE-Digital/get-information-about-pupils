@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class MTCOutput
+public class MTCOutputRecord
 {
     public string? ACADYR { get; set; }
     public string? PupilMatchingRef { get; set; }

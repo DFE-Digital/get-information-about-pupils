@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class PhonicsOutput
+public class PhonicsOutputRecord
 {
     public string? Phonics_ACADYR { get; set; }
     public string? Phonics_PUPILMATCHINGREF { get; set; }

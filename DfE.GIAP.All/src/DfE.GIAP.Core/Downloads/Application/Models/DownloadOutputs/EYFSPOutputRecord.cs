@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
-public class EYFSPOutput
+public class EYFSPOutputRecord
 {
     public string? FSP_ACADYR { get; set; }
     public string? FSP_PupilMatchingRef { get; set; }
@@ -11,7 +11,7 @@ public class EYFSPOutput
     public string? FSP_SEX { get; set; }
     public string? FSP_MTH_ENTRY { get; set; }
     public string? FSP_LA { get; set; }
-    public string? FSP_LA_9CODE { get; set; }
+    public string? FSP_LA_9Code { get; set; }
     public string? FSP_ESTAB { get; set; }
     public string? FSP_LAESTAB { get; set; }
     public string? FSP_URN { get; set; }

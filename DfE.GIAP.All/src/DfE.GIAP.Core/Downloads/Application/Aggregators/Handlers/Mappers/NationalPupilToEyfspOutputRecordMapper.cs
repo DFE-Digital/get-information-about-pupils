@@ -3,16 +3,16 @@ using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, IEnumerable<EYFSPOutput>>
+public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, IEnumerable<EYFSPOutputRecord>>
 {
-    public IEnumerable<EYFSPOutput> Map(NationalPupil input)
+    public IEnumerable<EYFSPOutputRecord> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         if (input.EarlyYearsFoundationStageProfile is null || !input.EarlyYearsFoundationStageProfile.Any())
-            return Enumerable.Empty<EYFSPOutput>();
+            return Enumerable.Empty<EYFSPOutputRecord>();
 
-        return input.EarlyYearsFoundationStageProfile.Select(eyfspEntry => new EYFSPOutput
+        return input.EarlyYearsFoundationStageProfile.Select(eyfspEntry => new EYFSPOutputRecord
         {
             FSP_PupilMatchingRef = eyfspEntry?.PUPILMATCHINGREF,
             FSP_ACADYR = eyfspEntry?.ACADYR,
@@ -23,7 +23,7 @@ public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, IEn
             FSP_SEX = eyfspEntry?.SEX,
             FSP_MTH_ENTRY = eyfspEntry?.MTH_ENTRY,
             FSP_LA = eyfspEntry?.LA,
-            FSP_LA_9CODE = eyfspEntry?.LA_9CODE,
+            FSP_LA_9Code = eyfspEntry?.LA_9CODE,
             FSP_ESTAB = eyfspEntry?.ESTAB,
             FSP_LAESTAB = eyfspEntry?.LAESTAB,
             FSP_URN = eyfspEntry?.URN,

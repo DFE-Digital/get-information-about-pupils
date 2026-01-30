@@ -3,16 +3,16 @@ using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToKs1OutputRecordMapper : IMapper<NationalPupil, IEnumerable<KS1Output>>
+public class NationalPupilToKs1OutputRecordMapper : IMapper<NationalPupil, IEnumerable<KS1OutputRecord>>
 {
-    public IEnumerable<KS1Output> Map(NationalPupil input)
+    public IEnumerable<KS1OutputRecord> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         if (input.KeyStage1 is null || !input.KeyStage1.Any())
-            return Enumerable.Empty<KS1Output>();
+            return Enumerable.Empty<KS1OutputRecord>();
 
-        return input.KeyStage1.Select(ks1Entry => new KS1Output
+        return input.KeyStage1.Select(ks1Entry => new KS1OutputRecord
         {
             ACADYR = ks1Entry?.ACADYR,
             PUPILMATCHINGREF = ks1Entry?.PUPILMATCHINGREF,

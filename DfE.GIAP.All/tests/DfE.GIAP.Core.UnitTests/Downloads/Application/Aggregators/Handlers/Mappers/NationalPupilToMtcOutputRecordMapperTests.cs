@@ -28,7 +28,7 @@ public sealed class NationalPupilToMtcOutputRecordMapperTests
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeMtc: false);
         pupil.MTC = null!;
 
-        IEnumerable<MTCOutput> result = mapper.Map(pupil);
+        IEnumerable<MTCOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -41,7 +41,7 @@ public sealed class NationalPupilToMtcOutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeMtc: false);
 
-        IEnumerable<MTCOutput> result = mapper.Map(pupil);
+        IEnumerable<MTCOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -54,7 +54,7 @@ public sealed class NationalPupilToMtcOutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeMtc: true);
 
-        IEnumerable<MTCOutput> result = mapper.Map(pupil);
+        IEnumerable<MTCOutputRecord> result = mapper.Map(pupil);
 
         Assert.Equal(pupil.MTC!.Count, result.Count());
     }
@@ -69,7 +69,7 @@ public sealed class NationalPupilToMtcOutputRecordMapperTests
 
         MtcEntry entry = pupil.MTC!.First();
 
-        MTCOutput mapped = mapper.Map(pupil).First();
+        MTCOutputRecord mapped = mapper.Map(pupil).First();
 
         Assert.Equal(entry.ACADYR, mapped.ACADYR);
         Assert.Equal(entry.PupilMatchingRef, mapped.PupilMatchingRef);
@@ -99,7 +99,7 @@ public sealed class NationalPupilToMtcOutputRecordMapperTests
 
         pupil.MTC!.Insert(0, null!);
 
-        List<MTCOutput> result = mapper.Map(pupil).ToList();
+        List<MTCOutputRecord> result = mapper.Map(pupil).ToList();
 
         Assert.Equal(pupil.MTC.Count, result.Count);
         Assert.Null(result[0].PupilMatchingRef);
@@ -109,7 +109,7 @@ public sealed class NationalPupilToMtcOutputRecordMapperTests
     public void Map_IgnoresUnmappedFieldsInMtcEntry()
     {
         // These exist on the entry but not on the output
-        Assert.Null(typeof(MTCOutput).GetProperty("SomeUnmappedField"));
-        Assert.Null(typeof(MTCOutput).GetProperty("RandomExtraField"));
+        Assert.Null(typeof(MTCOutputRecord).GetProperty("SomeUnmappedField"));
+        Assert.Null(typeof(MTCOutputRecord).GetProperty("RandomExtraField"));
     }
 }

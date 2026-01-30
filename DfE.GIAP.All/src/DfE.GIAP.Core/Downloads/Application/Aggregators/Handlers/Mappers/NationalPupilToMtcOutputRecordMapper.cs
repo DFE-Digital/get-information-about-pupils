@@ -3,16 +3,16 @@ using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, IEnumerable<MTCOutput>>
+public class NationalPupilToMtcOutputRecordMapper : IMapper<NationalPupil, IEnumerable<MTCOutputRecord>>
 {
-    public IEnumerable<MTCOutput> Map(NationalPupil input)
+    public IEnumerable<MTCOutputRecord> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         if (input.MTC is null || !input.MTC.Any())
-            return Enumerable.Empty<MTCOutput>();
+            return Enumerable.Empty<MTCOutputRecord>();
 
-        return input.MTC.Select(mtcEntry => new MTCOutput
+        return input.MTC.Select(mtcEntry => new MTCOutputRecord
         {
             ACADYR = mtcEntry?.ACADYR,
             PupilMatchingRef = mtcEntry?.PupilMatchingRef,

@@ -1,9 +1,11 @@
-﻿using System.Drawing.Printing;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -11,15 +13,12 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
@@ -62,6 +61,8 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IJsonSerializer _jsonSerializer;
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
+    private readonly IEventLogger _eventLogger;
 
     public NationalPupilDatabaseLearnerNumberSearchController(
         ILogger<NationalPupilDatabaseLearnerNumberSearchController> logger,
@@ -78,7 +79,9 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
-        IJsonSerializer jsonSerializer)
+        IJsonSerializer jsonSerializer,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+        IEventLogger eventLogger)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -113,6 +116,11 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(jsonSerializer);
         _jsonSerializer = jsonSerializer;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
+        _downloadPupilDataUseCase = downloadPupilDataUseCase;
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
 
@@ -310,20 +318,40 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                ReturnFile downloadFile = model.DownloadFileType == DownloadFileType.CSV ?
-                    await _downloadService.GetCSVFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false) :
-                    await _downloadService.GetTABFile(selectedPupils, model.LearnerNumber.FormatLearnerNumbers(), model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase).ConfigureAwait(false);
-
-                if (downloadFile == null)
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+                foreach (string datasetString in model.SelectedDownloadOptions)
                 {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+                    if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
+                        selectedDatasets.Add(dataset);
                 }
 
-                if (downloadFile.Bytes != null)
+                DownloadPupilDataRequest request = new(
+                   SelectedPupils: selectedPupils,
+                   SelectedDatasets: selectedDatasets,
+                   DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                   FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
+
+                DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
+
+                string loggingBatchId = Guid.NewGuid().ToString();
+                foreach (string dataset in model.SelectedDownloadOptions)
+                {
+                    // TODO: Temp quick solution
+                    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                    {
+                        _eventLogger.LogDownload(
+                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
+                            DownloadEventType.NPD,
+                            loggingBatchId,
+                            datasetEnum);
+                    }
+                }
+
+                if (response.FileContents is not null)
                 {
                     model.ErrorDetails = null;
-
-                    return SearchDownloadHelper.DownloadFile(downloadFile);
+                    return File(response.FileContents, response.ContentType, response.FileName);
                 }
                 else
                 {

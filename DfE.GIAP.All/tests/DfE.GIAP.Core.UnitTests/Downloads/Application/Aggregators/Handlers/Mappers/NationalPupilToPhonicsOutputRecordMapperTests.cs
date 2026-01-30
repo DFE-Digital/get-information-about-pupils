@@ -32,7 +32,7 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
         NationalPupil pupil = NationalPupilTestDoubles.Create(includePhonics: false);
         pupil.Phonics = null!;
 
-        IEnumerable<PhonicsOutput> result = mapper.Map(pupil);
+        IEnumerable<PhonicsOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -45,7 +45,7 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includePhonics: false);
 
-        IEnumerable<PhonicsOutput> result = mapper.Map(pupil);
+        IEnumerable<PhonicsOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -58,7 +58,7 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includePhonics: true);
 
-        IEnumerable<PhonicsOutput> result = mapper.Map(pupil);
+        IEnumerable<PhonicsOutputRecord> result = mapper.Map(pupil);
 
         Assert.Equal(pupil.Phonics!.Count, result.Count());
     }
@@ -73,7 +73,7 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
 
         PhonicsEntry entry = pupil.Phonics!.First();
 
-        PhonicsOutput mapped = mapper.Map(pupil).First();
+        PhonicsOutputRecord mapped = mapper.Map(pupil).First();
 
         Assert.Equal(entry.AcademicYear, mapped.Phonics_ACADYR);
         Assert.Equal(entry.PupilMatchingReference, mapped.Phonics_PUPILMATCHINGREF);
@@ -103,7 +103,7 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
 
         pupil.Phonics!.Insert(0, null!);
 
-        List<PhonicsOutput> result = mapper.Map(pupil).ToList();
+        List<PhonicsOutputRecord> result = mapper.Map(pupil).ToList();
 
         Assert.Equal(pupil.Phonics.Count, result.Count);
         Assert.Null(result[0].Phonics_PUPILMATCHINGREF);
@@ -113,8 +113,8 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
     public void Map_IgnoresUnmappedFieldsInPhonicsEntry()
     {
         // These exist on the entry but not on the output
-        Assert.Null(typeof(PhonicsOutput).GetProperty("Gender"));
-        Assert.Null(typeof(PhonicsOutput).GetProperty("Phonics_Mark_Aut21"));
-        Assert.Null(typeof(PhonicsOutput).GetProperty("Phonics_Outcome_Aut21"));
+        Assert.Null(typeof(PhonicsOutputRecord).GetProperty("Gender"));
+        Assert.Null(typeof(PhonicsOutputRecord).GetProperty("Phonics_Mark_Aut21"));
+        Assert.Null(typeof(PhonicsOutputRecord).GetProperty("Phonics_Outcome_Aut21"));
     }
 }

@@ -28,7 +28,7 @@ public sealed class NationalPupilToKs2OutputRecordMapperTests
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeKeyStages: false);
         pupil.KeyStage2 = null!;
 
-        IEnumerable<KS2Output> result = mapper.Map(pupil);
+        IEnumerable<KS2OutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -41,7 +41,7 @@ public sealed class NationalPupilToKs2OutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeKeyStages: false);
 
-        IEnumerable<KS2Output> result = mapper.Map(pupil);
+        IEnumerable<KS2OutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -54,7 +54,7 @@ public sealed class NationalPupilToKs2OutputRecordMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeKeyStages: true);
 
-        IEnumerable<KS2Output> result = mapper.Map(pupil);
+        IEnumerable<KS2OutputRecord> result = mapper.Map(pupil);
 
         Assert.Equal(pupil.KeyStage2!.Count, result.Count());
     }
@@ -69,7 +69,7 @@ public sealed class NationalPupilToKs2OutputRecordMapperTests
 
         KeyStage2Entry entry = pupil.KeyStage2!.First();
 
-        KS2Output mapped = mapper.Map(pupil).First();
+        KS2OutputRecord mapped = mapper.Map(pupil).First();
 
         // Core identity fields
         Assert.Equal(entry.ACADYR, mapped.ACADYR);
@@ -158,7 +158,7 @@ public sealed class NationalPupilToKs2OutputRecordMapperTests
 
         pupil.KeyStage2!.Insert(0, null!);
 
-        List<KS2Output> result = mapper.Map(pupil).ToList();
+        List<KS2OutputRecord> result = mapper.Map(pupil).ToList();
 
         Assert.Equal(pupil.KeyStage2.Count, result.Count);
         Assert.Null(result[0].PupilMatchingRef);
@@ -168,8 +168,8 @@ public sealed class NationalPupilToKs2OutputRecordMapperTests
     public void Map_IgnoresUnmappedFieldsInKeyStage2Entry()
     {
         // These exist on the entry but not on the output
-        Assert.Null(typeof(KS2Output).GetProperty("SomeLegacyField"));
-        Assert.Null(typeof(KS2Output).GetProperty("DISC_PSENG"));
-        Assert.Null(typeof(KS2Output).GetProperty("APS"));
+        Assert.Null(typeof(KS2OutputRecord).GetProperty("SomeLegacyField"));
+        Assert.Null(typeof(KS2OutputRecord).GetProperty("DISC_PSENG"));
+        Assert.Null(typeof(KS2OutputRecord).GetProperty("APS"));
     }
 }

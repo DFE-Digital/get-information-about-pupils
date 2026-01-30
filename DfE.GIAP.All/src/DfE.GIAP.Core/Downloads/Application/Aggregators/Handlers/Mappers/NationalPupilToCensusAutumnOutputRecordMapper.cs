@@ -3,16 +3,16 @@ using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPupil, IEnumerable<CensusAutumnOutput>>
+public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>>
 {
-    public IEnumerable<CensusAutumnOutput> Map(NationalPupil input)
+    public IEnumerable<CensusAutumnOutputRecord> Map(NationalPupil input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         if (input.CensusAutumn is null || !input.CensusAutumn.Any())
-            return Enumerable.Empty<CensusAutumnOutput>();
+            return Enumerable.Empty<CensusAutumnOutputRecord>();
 
-        return input.CensusAutumn.Select(censusAutumnEntry => new CensusAutumnOutput
+        return input.CensusAutumn.Select(censusAutumnEntry => new CensusAutumnOutputRecord
         {
             PupilMatchingRef = censusAutumnEntry?.PupilMatchingRef,
             UPN = censusAutumnEntry?.UniquePupilNumber,

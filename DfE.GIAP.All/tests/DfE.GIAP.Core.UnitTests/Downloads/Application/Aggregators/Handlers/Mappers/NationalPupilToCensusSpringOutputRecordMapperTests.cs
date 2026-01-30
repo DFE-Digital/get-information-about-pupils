@@ -6,7 +6,7 @@ using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Aggregators.Handlers.Mappers;
 
-public sealed class NationalPupilToCensusSpringOutputMapperTests
+public sealed class NationalPupilToCensusSpringOutputRecordMapperTests
 {
     [Fact]
     public void Map_ThrowsArgumentNullException_WhenInputIsNull()
@@ -28,7 +28,7 @@ public sealed class NationalPupilToCensusSpringOutputMapperTests
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: false);
         pupil.CensusSpring = null!;
 
-        IEnumerable<CensusSpringOutput> result = mapper.Map(pupil);
+        IEnumerable<CensusSpringOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -41,7 +41,7 @@ public sealed class NationalPupilToCensusSpringOutputMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: false);
 
-        IEnumerable<CensusSpringOutput> result = mapper.Map(pupil);
+        IEnumerable<CensusSpringOutputRecord> result = mapper.Map(pupil);
 
         Assert.Empty(result);
     }
@@ -54,7 +54,7 @@ public sealed class NationalPupilToCensusSpringOutputMapperTests
 
         NationalPupil pupil = NationalPupilTestDoubles.Create(includeCensus: true);
 
-        IEnumerable<CensusSpringOutput> result = mapper.Map(pupil);
+        IEnumerable<CensusSpringOutputRecord> result = mapper.Map(pupil);
 
         Assert.Equal(pupil.CensusSpring!.Count, result.Count());
     }
@@ -69,7 +69,7 @@ public sealed class NationalPupilToCensusSpringOutputMapperTests
 
         CensusSpringEntry entry = pupil.CensusSpring!.First();
 
-        CensusSpringOutput mapped = mapper.Map(pupil).First();
+        CensusSpringOutputRecord mapped = mapper.Map(pupil).First();
 
         Assert.Equal(entry.PupilMatchingRef, mapped.PupilMatchingRef);
         Assert.Equal(entry.UniquePupilNumber, mapped.UPN);
@@ -123,7 +123,7 @@ public sealed class NationalPupilToCensusSpringOutputMapperTests
 
         pupil.CensusSpring!.Insert(0, null!);
 
-        List<CensusSpringOutput> result = mapper.Map(pupil).ToList();
+        List<CensusSpringOutputRecord> result = mapper.Map(pupil).ToList();
 
         Assert.Equal(pupil.CensusSpring.Count, result.Count);
         Assert.Null(result[0].PupilMatchingRef);
@@ -133,7 +133,7 @@ public sealed class NationalPupilToCensusSpringOutputMapperTests
     public void Map_IgnoresUnmappedFieldsInCensusSpringEntry()
     {
         // These fields exist on the entry but not on the output
-        Assert.Null(typeof(CensusSpringOutput).GetProperty("Ethnicity"));
-        Assert.Null(typeof(CensusSpringOutput).GetProperty("Gender"));
+        Assert.Null(typeof(CensusSpringOutputRecord).GetProperty("Ethnicity"));
+        Assert.Null(typeof(CensusSpringOutputRecord).GetProperty("Gender"));
     }
 }
