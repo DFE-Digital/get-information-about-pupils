@@ -1,13 +1,13 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Learner;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
-public static class PupilPremiumLearnerTestDoubles
+public static class NationalPupilDatabaseLearnerTestDoubles
 {
-    public static List<PupilPremiumLearner> FakeMany(int count = 10)
+    public static List<NationalPupilDatabaseLearner> FakeMany(int count = 10)
     {
-        List<PupilPremiumLearner> learners = [];
+        List<NationalPupilDatabaseLearner> learners = [];
         for (int i = 0; i < count; i++)
         {
             learners.Add(Fake());
@@ -15,23 +15,23 @@ public static class PupilPremiumLearnerTestDoubles
         return learners;
     }
 
-    public static PupilPremiumLearner Fake()
+    public static NationalPupilDatabaseLearner Fake()
     {
         Faker faker = new();
 
-        return new PupilPremiumLearner(
+        return new NationalPupilDatabaseLearner(
                 UniquePupilNumberTestDoubles.Generate(),
                 LearnerNameTestDouble.FakeName(faker),
                 LearnerCharacteristicsTestDouble.FakeCharacteristics(faker),
                 LocalAuthorityCodeTestDoubles.Stub());
     }
 
-    public static PupilPremiumLearner FakeWithMiddleName(string? middleName)
+    public static NationalPupilDatabaseLearner FakeWithMiddleName(string? middleName)
     {
         Faker faker = new();
         LearnerName generatedName = LearnerNameTestDouble.FakeName(faker);
 
-        return new PupilPremiumLearner(
+        return new NationalPupilDatabaseLearner(
                 UniquePupilNumberTestDoubles.Generate(),
                 new LearnerName(generatedName.FirstName, middleName!, generatedName.Surname),
                 LearnerCharacteristicsTestDouble.FakeCharacteristics(faker),
