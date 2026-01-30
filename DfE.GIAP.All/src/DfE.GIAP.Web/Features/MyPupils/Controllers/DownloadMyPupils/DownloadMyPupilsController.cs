@@ -72,10 +72,10 @@ public class DownloadMyPupilsController : Controller
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadCommonTransferFileData(
-        [FromForm] List<string> SelectedPupils,
+        MyPupilsFormStateRequestDto updateForm,
         MyPupilsQueryRequestDto query)
     {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(SelectedPupils);
+        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
 
         if (updatedPupils.Count == 0)
         {
@@ -126,9 +126,11 @@ public class DownloadMyPupilsController : Controller
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(
-        [FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto query, CancellationToken ctx = default)
+        MyPupilsFormStateRequestDto updateForm,
+        MyPupilsQueryRequestDto query,
+        CancellationToken ctx = default)
     {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(SelectedPupils);
+        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
 
         if (updatedPupils.Count == 0)
         {
@@ -169,9 +171,9 @@ public class DownloadMyPupilsController : Controller
     [HttpPost]
     [Route(Routes.MyPupilList.DownloadOptionsRoute)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> GetDownloadNpdOptions([FromForm] List<string> SelectedPupils, MyPupilsQueryRequestDto query)
+    public async Task<IActionResult> GetDownloadNpdOptions(MyPupilsFormStateRequestDto updateForm, MyPupilsQueryRequestDto query)
     {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(SelectedPupils);
+        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
 
         if (updatedPupils.Count == 0)
         {
@@ -282,14 +284,12 @@ public class DownloadMyPupilsController : Controller
     }
 
 
-    private async Task<List<string>> UpsertSelectedPupilsAsync(List<string> selectedPupils)
+    private async Task<List<string>> UpsertSelectedPupilsAsync(MyPupilsFormStateRequestDto? updateForm)
     {
-        MyPupilsFormStateRequestDto request = new()
+        if(updateForm != null)
         {
-            SelectedPupils = selectedPupils
-        };
-
-        await _updateMyPupilsPupilSelectionsCommandHandler.Handle(request);
+            await _updateMyPupilsPupilSelectionsCommandHandler.Handle(updateForm);
+        }
 
         List<string> allSelectedPupils =
             (await _getSelectedPupilsPresentationHandler.GetSelectedPupilsAsync(userId: User.GetUserId()))
