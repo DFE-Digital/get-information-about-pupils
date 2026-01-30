@@ -54,7 +54,7 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
                 continue;
 
             string baseName = GetBaseFileName(dataset);
-            string ext = request.FileFormat == FileFormat.Csv ? "csv" : "txt";
+            string ext = request.FileFormat == FileFormat.Csv ? "csv" : "tab";
             string fileName = $"{baseName}.{ext}";
 
             writers.Add(fileName, stream => _fileExporter.ExportAsync(records, request.FileFormat, stream));
