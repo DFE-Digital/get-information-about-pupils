@@ -34,7 +34,7 @@ public sealed class SortDirection
     /// </exception>
     public SortDirection(string direction)
     {
-        ArgumentException.ThrowIfNullOrEmpty(direction);
+        ArgumentException.ThrowIfNullOrWhiteSpace(direction);
 
         // Normalize casing to lowercase using invariant culture for consistency across locales.
         string normalizedSortDirection = direction.ToLowerInvariant();

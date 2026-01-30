@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain.Entities;
 public sealed class Pupil : Entity<UniquePupilNumber>

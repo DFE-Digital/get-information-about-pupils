@@ -1,5 +1,6 @@
 ﻿using Azure.Search.Documents;
-using DfE.GIAP.Core.Common.CrossCutting;
+using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;

@@ -1,6 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Command;
 using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.UnitTests.TestDoubles;
+using DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.SharedTests.Common;

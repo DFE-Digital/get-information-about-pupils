@@ -4,8 +4,8 @@
     ViewData["Title"] = Model.SearchResultPageHeading;
 }
 
-<form action=@Routes.NationalPupilDatabase.LearnerNumberDownloadFile method="POST">
-
+<form action=@Model.DownloadRoute method="POST">
+    @Html.AntiForgeryToken()
     <input type="hidden" name="SelectedPupils" value="@Model.SelectedPupils" />
     <input type="hidden" name="LearnerNumber" value="@Model.LearnerNumber" />
 
@@ -37,7 +37,7 @@
             </div>
             <div class="govuk-button-group">
                 <button class="govuk-button" id="btn-search-download" type="submit">Download</button>
-                <a class="govuk-link" asp-controller="GetMyPupils" asp-action="Index" id="return--to--my--pupil--list--link">Return to my pupil list</a>
+                <a class="govuk-link" asp-controller="@Routes.MyPupilList.GetMyPupilsController" asp-action="Index" id="return--to--my--pupil--list--link">Return to my pupil list</a>
             </div>
         </div>
     </div>

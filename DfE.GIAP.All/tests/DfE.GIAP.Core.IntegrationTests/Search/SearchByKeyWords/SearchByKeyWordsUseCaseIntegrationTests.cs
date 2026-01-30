@@ -1,14 +1,17 @@
 ﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
+using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.Request;
-using DfE.GIAP.Core.Search.Application.UseCases.Response;
+using DfE.GIAP.Core.Search.Application.Services;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
+using Moq;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
@@ -34,7 +37,17 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
                 .Build();
 
         services
-            .AddSearchDependencies(searchConfiguration);
+            .AddSearchCore(searchConfiguration)
+            // provider of Options 
+            .AddSingleton<ISearchCriteriaProvider>(sp =>
+            {
+                Mock<ISearchCriteriaProvider> provider = new();
+                provider
+                    .Setup(t => t.GetCriteria(It.IsAny<string>()))
+                    .Returns(SearchCriteriaTestDouble.Stub());
+
+                return provider.Object;
+            });
 
         return Task.CompletedTask;
     }
@@ -54,18 +67,18 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
 
-        IUseCase<SearchRequest, SearchResponse> sut =
-            ResolveApplicationType<IUseCase<SearchRequest, SearchResponse>>()!;
+        IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> sut =
+            ResolveApplicationType<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>()!;
 
         SortOrder sortOrder = new(
             sortField: "Forename",
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        SearchRequest request = new(searchIndexKey: "further-education", searchKeywords: "test", sortOrder);
+        FurtherEducationSearchRequest request = new(searchKeywords: "test", sortOrder);
 
         // act
-        SearchResponse response = await sut.HandleRequestAsync(request);
+        FurtherEducationSearchResponse response = await sut.HandleRequestAsync(request);
 
         // assert
         Assert.NotNull(response);

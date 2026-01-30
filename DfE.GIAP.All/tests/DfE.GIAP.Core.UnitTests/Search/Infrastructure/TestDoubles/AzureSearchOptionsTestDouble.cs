@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Infrastructure.Options;
+﻿using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -15,11 +15,11 @@ internal static class AzureSearchOptionsTestDouble
     /// </summary>
     public static AzureSearchOptions Stub()
     {
-        Dictionary<string, SearchIndexOptions> indexes = new()
+        Dictionary<string, AzureSearchIndexOptions> indexes = new()
         {
             {
                 "further-education",
-                new SearchIndexOptions()
+                new AzureSearchIndexOptions()
                 {
                     SearchMode = 0,                         // Default search mode (e.g., 'Any' or 'All' depending on enum)
                     Size = 100,                             // Max number of results to return

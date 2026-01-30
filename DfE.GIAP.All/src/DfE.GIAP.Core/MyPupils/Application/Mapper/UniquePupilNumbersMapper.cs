@@ -1,4 +1,5 @@
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Mapper;
 internal sealed class UniquePupilNumbersMapper : IMapper<IEnumerable<string>, UniquePupilNumbers>
