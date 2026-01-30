@@ -1522,7 +1522,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         Assert.Equal(Messages.Search.Errors.SelectFileType, sut.TempData["ErrorDetails"]);
     }
 
-    private static void AssertAbstractValues(NPDLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
+    private static void AssertAbstractValues(NationalPupilDatabaseLearnerNumberSearchController controller, LearnerNumberSearchViewModel model)
     {
         Assert.Equal(controller.PageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
