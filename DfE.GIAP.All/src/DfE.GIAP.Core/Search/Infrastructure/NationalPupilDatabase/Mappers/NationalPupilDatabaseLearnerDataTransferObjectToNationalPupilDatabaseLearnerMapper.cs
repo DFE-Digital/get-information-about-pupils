@@ -5,8 +5,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
-internal sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper
-    : IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>
+internal sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper : IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>
 {
     public NationalPupilDatabaseLearner Map(NationalPupilDatabaseLearnerDataTransferObject input)
     {

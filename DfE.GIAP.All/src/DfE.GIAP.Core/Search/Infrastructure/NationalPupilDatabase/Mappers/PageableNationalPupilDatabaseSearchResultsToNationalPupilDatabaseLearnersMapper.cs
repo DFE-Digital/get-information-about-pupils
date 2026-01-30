@@ -4,12 +4,12 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
-internal sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper
-    : IMapper<Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>
+internal sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper : IMapper<Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>
 {
     private readonly IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> _searchResultToLearnerMapper;
 
-    public PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper(IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> searchResultToLearnerMapper)
+    public PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper(
+        IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> searchResultToLearnerMapper)
     {
         ArgumentNullException.ThrowIfNull(searchResultToLearnerMapper);
         _searchResultToLearnerMapper = searchResultToLearnerMapper;
