@@ -26,7 +26,6 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_Writes_CsvHeaderAndRows()
     {
-        // Arrange
         List<TestRecord> records = new List<TestRecord>
         {
             new TestRecord { Name = "Alice", Age = 30 },
@@ -35,11 +34,9 @@ public class DelimitedFileExporterTests
 
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Csv, stream);
         string output = ReadStream(stream);
 
-        // Assert
         string expected =
             "Name,Age" + Environment.NewLine +
             "Alice,30" + Environment.NewLine +
@@ -51,7 +48,6 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_Writes_TsvHeaderAndRows()
     {
-        // Arrange
         List<TestRecord> records = new List<TestRecord>
         {
             new TestRecord { Name = "Charlie", Age = 25 }
@@ -59,11 +55,9 @@ public class DelimitedFileExporterTests
 
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Tab, stream);
         string output = ReadStream(stream);
 
-        // Assert
         string expected =
             "Name\tAge" + Environment.NewLine +
             "Charlie\t25" + Environment.NewLine;
@@ -74,7 +68,6 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_InfersType_WhenTIsObject()
     {
-        // Arrange
         List<object> records = new List<object>
         {
             new TestRecord { Name = "Dana", Age = 22 }
@@ -82,11 +75,9 @@ public class DelimitedFileExporterTests
 
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Csv, stream);
         string output = ReadStream(stream);
 
-        // Assert
         string expected =
             "Name,Age" + Environment.NewLine +
             "Dana,22" + Environment.NewLine;
@@ -97,15 +88,12 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_Writes_HeaderOnly_WhenNoRecords()
     {
-        // Arrange
         IEnumerable<TestRecord> records = Enumerable.Empty<TestRecord>();
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Csv, stream);
         string output = ReadStream(stream);
 
-        // Assert
         Assert.Equal("Name,Age" + Environment.NewLine, output);
     }
 
@@ -118,7 +106,6 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_Handles_NullPropertyValues()
     {
-        // Arrange
         List<NullRecord> records = new List<NullRecord>
         {
             new NullRecord { Value1 = null, Value2 = "Test" }
@@ -126,11 +113,9 @@ public class DelimitedFileExporterTests
 
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Csv, stream);
         string output = ReadStream(stream);
 
-        // Assert
         string expected =
             "Value1,Value2" + Environment.NewLine +
             ",Test" + Environment.NewLine;
@@ -141,7 +126,6 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_Uses_DisplayNameAttribute_For_Header()
     {
-        // Arrange
         List<DisplayNameAttributeRecord> records = new List<DisplayNameAttributeRecord>
         {
             new DisplayNameAttributeRecord { Age = 50 }
@@ -149,11 +133,9 @@ public class DelimitedFileExporterTests
 
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Csv, stream);
         string output = ReadStream(stream);
 
-        // Assert
         string expected =
             "User Age" + Environment.NewLine +
             "50" + Environment.NewLine;
@@ -164,7 +146,6 @@ public class DelimitedFileExporterTests
     [Fact]
     public async Task ExportAsync_Uses_DisplayAttribute_For_Header()
     {
-        // Arrange
         List<DisplayAttributeRecord> records = new List<DisplayAttributeRecord>
         {
             new DisplayAttributeRecord { Age = 50 }
@@ -172,11 +153,9 @@ public class DelimitedFileExporterTests
 
         using MemoryStream stream = new MemoryStream();
 
-        // Act
         await _exporter.ExportAsync(records, FileFormat.Csv, stream);
         string output = ReadStream(stream);
 
-        // Assert
         string expected =
             "User Age" + Environment.NewLine +
             "50" + Environment.NewLine;
