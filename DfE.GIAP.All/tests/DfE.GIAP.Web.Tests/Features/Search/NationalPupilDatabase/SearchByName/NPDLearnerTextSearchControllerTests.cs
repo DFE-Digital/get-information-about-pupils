@@ -28,7 +28,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase;
+namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByName;
 
 public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
