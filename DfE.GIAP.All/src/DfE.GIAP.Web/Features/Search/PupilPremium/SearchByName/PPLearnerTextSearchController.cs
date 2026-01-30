@@ -47,7 +47,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
     public override string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.PupilPremium.NonUPN}";
     public override AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
     public override string SearchAction => Global.PPNonUpnAction;
-    public override string SearchController => Global.PPNonUpnController;
+    public override string SearchController => Global.PPTextSearchController;
     public override ReturnRoute ReturnRoute => ReturnRoute.NonPupilPremium;
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
@@ -166,7 +166,7 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
         }
 
         model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        return RedirectToAction(Global.PPNonUpnAction, Global.PPNonUpnController);
+        return RedirectToAction(Global.PPNonUpnAction, Global.PPTextSearchController);
     }
 
     [Route(Routes.PupilPremium.LearnerTextDownloadRequest)]

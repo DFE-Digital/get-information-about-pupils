@@ -47,7 +47,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
     public string SearchAction => nameof(PupilPremium);
-    public string FullTextLearnerSearchController => Global.PPNonUpnController;
+    public string FullTextLearnerSearchController => Global.PPTextSearchController;
     public string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPupilPremiumDownloadLinks.cshtml";
     public AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;

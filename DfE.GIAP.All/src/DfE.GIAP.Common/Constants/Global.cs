@@ -14,7 +14,7 @@ public static class Global
     // NPD
     public const string LearnerNumberLabel = "UPN";
     public const string SearchControllerName = "Search";
-    public const string NPDLearnerNumberSearchController = "NPDLearnerNumberSearch";
+    public const string NPDLearnerNumberSearchController = "NationalPupilDatabaseLearnerNumberSearch";
     public const string NPDLearnerNumberSearchAction = "NationalPupilDatabase";
     public const string NPDLearnerTextSearchDatabaseName = "NonUpnDatabaseName";
     public const string NonUpnSearchView = "~/Views/Shared/LearnerText/Search.cshtml";
@@ -38,10 +38,10 @@ public static class Global
     public const string PPNonUpnSortDirectionSessionKey = "SearchPPNonUPN_SortDirection";
     public const string PPNonUpnSortFieldSessionKey = "SearchPPNonUPN_SortField";
     public const string PPAction = "PupilPremium";
-    public const string PPNonUpnController = "PPLearnerTextSearch";
+    public const string PPTextSearchController = "PPLearnerTextSearch";
     public const string PPNonUpnAction = "NonUpnPupilPremiumDatabase";
     public const string PPLearnerTextSearchDatabaseName = "NonUpnDatabaseName";
-    public const string PPLearnerNumberSearchController = "PupilPremiumLearnerNumber";
+    public const string PPLearnerNumberSearchController = "PupilPremiumLearnerNumberSearch";
     public const string PPDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
     public const string PPDownloadCancellationReturnAction = "DownloadCancellationReturn";
     public const string PPView = "~/Views/Search/Upn/PupilPremium.cshtml";
