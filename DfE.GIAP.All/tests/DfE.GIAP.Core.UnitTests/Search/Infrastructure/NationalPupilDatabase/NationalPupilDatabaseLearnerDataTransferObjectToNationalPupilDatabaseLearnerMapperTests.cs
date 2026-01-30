@@ -12,7 +12,7 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     {
         // Arrange
         NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        
+
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => mapper.Map(null!));
     }

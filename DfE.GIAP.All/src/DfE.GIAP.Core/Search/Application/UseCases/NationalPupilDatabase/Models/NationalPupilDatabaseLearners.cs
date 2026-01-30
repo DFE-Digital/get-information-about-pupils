@@ -3,7 +3,7 @@ public record NationalPupilDatabaseLearners
 {
     public NationalPupilDatabaseLearners() : this([])
     {
-        
+
     }
 
     public NationalPupilDatabaseLearners(IEnumerable<NationalPupilDatabaseLearner> learners)
