@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.ValueObjects;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;

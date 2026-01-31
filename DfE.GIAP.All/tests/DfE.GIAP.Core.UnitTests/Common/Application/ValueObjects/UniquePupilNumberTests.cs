@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.Common.ValueObjects;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.Core.UnitTests.Common.Domain;
+namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 public sealed class UniquePupilNumberTests
 {
     public static TheoryData<string> ValidUpnValues => new()

@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.Common.ValueObjects;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 public sealed class PupilPremiumLearner : Entity<UniquePupilNumber>

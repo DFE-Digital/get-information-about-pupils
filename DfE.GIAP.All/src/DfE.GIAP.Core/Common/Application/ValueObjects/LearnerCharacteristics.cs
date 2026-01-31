@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
-namespace DfE.GIAP.Core.Search.Application.Models.Learner;
+namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 
 /// <summary>
 /// Represents a learner's core characteristics as a value object,

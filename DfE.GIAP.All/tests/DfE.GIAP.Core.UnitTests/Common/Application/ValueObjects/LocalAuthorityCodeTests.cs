@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Common.Domain;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
-namespace DfE.GIAP.Core.UnitTests.Common.Domain;
+namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 public class LocalAuthorityCodeTests
 {
     [Fact]

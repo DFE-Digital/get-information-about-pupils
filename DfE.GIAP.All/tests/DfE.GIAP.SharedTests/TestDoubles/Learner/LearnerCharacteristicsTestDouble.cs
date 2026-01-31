@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bogus;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
 public static class LearnerCharacteristicsTestDouble

@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
-namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Learner;
+namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 public sealed class GenderConverterExtensionsTests
 {
     [Theory]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DfE.GIAP.Core.Common.Domain;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
 public static class LocalAuthorityCodeTestDoubles
