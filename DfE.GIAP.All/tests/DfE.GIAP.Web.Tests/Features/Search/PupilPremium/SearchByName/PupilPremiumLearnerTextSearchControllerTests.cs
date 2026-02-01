@@ -1181,7 +1181,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
         Assert.Equal(controller.SearchController, model.LearnerTextSearchController);
         Assert.Equal(controller.SearchAction, model.LearnerTextSearchAction);
-        Assert.Equal(controller.SearchLearnerNumberController, model.LearnerNumberController);
+        Assert.Equal(Routes.Application.Search, model.LearnerNumberController);
         Assert.Equal(controller.SearchLearnerNumberAction, model.LearnerNumberAction);
     }
 
