@@ -189,7 +189,9 @@ public class FELearnerTextSearchController : Controller
     [HttpPost]
     public async Task<IActionResult> SexFilter(LearnerTextSearchViewModel model)
     {
-        return await SexSearchFilter(model);
+        SetPersistedSexFiltersForViewModel(model);
+        ModelState.Clear();
+        return await ReturnToRoute(model);
     }
 
     [Route(Routes.DownloadSelectedNationalPupilDatabaseData)]
@@ -575,14 +577,6 @@ public class FELearnerTextSearchController : Controller
             model.FilterErrors.ForenameError = true;
         }
 
-        return await ReturnToRoute(model).ConfigureAwait(false);
-    }
-
-    [NonAction]
-    public async Task<IActionResult> SexSearchFilter(LearnerTextSearchViewModel model)
-    {
-        SetPersistedSexFiltersForViewModel(model);
-        ModelState.Clear();
         return await ReturnToRoute(model).ConfigureAwait(false);
     }
 

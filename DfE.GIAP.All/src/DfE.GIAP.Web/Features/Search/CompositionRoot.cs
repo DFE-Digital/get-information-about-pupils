@@ -16,6 +16,7 @@ using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
+using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Services;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
@@ -89,6 +90,10 @@ public static class CompositionRoot
             PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
             PupilPremiumLearnerNumericSearchMappingContextToViewModelMapper>();
 
+        services.AddSingleton<
+            IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
+            PupilPremiumLearnerTextSearchMappingContextToViewModelMapper>();
+
         services.AddSingleton<IMapper<
             PupilPremiumLearner, Learner>,
             PupilPremiumLearnerToLearnerMapper>();
@@ -147,6 +152,7 @@ public static class CompositionRoot
             {
                 { "SurnameLC", new NameFilterHandler("SurnameLC") },
                 { "ForenameLC", new NameFilterHandler("ForenameLC") },
+                { "MiddlenameLC", new NameFilterHandler("MiddlenameLC") },
                 { "DOB", new DobFilterHandler() },
                 { "Sex", new GenderFilterHandler("Sex") }
             };
