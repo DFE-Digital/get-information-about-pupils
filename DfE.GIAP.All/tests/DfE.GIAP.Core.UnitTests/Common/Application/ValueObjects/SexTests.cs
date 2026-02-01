@@ -119,4 +119,45 @@ public sealed class SexTests
         Assert.NotEqual(Sex.Male, Sex.Unknown);
         Assert.NotEqual(Sex.Female, Sex.Unknown);
     }
+
+
+    [Fact]
+    public void Sort_ASC_Orders_F_Then_M_Then_U()
+    {
+        // Arrange
+        List<Sex> input = [Sex.Unknown, Sex.Male, Sex.Female];
+
+        // Act
+        input.Sort();
+
+        // Assert
+        Assert.Equal(new[] { Sex.Female, Sex.Male, Sex.Unknown }, input);
+    }
+
+    [Fact]
+    public void OrderByDescending_Inverts_To_U_Then_M_Then_F()
+    {
+        // Arrange
+        List<Sex> input = [Sex.Male, Sex.Female, Sex.Unknown,];
+
+        // Act Assert
+        Assert.Equal(
+            [Sex.Unknown, Sex.Male, Sex.Female],
+                input.OrderByDescending(s => s));
+    }
+
+    [Fact]
+    public void CompareTo_Respects_Ranking()
+    {
+        // Arrange
+        Sex f = Sex.Female;
+        Sex m = Sex.Male;
+        Sex u = Sex.Unknown;
+
+        // Act Assert
+        Assert.True(f.CompareTo(m) < 0); // F < M
+        Assert.True(m.CompareTo(u) < 0); // M < U
+        Assert.True(f.CompareTo(u) < 0); // F < U
+    }
+
 }
