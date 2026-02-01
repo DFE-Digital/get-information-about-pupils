@@ -54,7 +54,7 @@ public readonly record struct Sex : IEquatable<Sex>
 
     private static char NormalizeChar(char? c)
     {
-        if (c == null || c.HasValue && c.Value == default)
+        if (c == null || c.Value == default)
         {
             return UnknownCode;
         }
