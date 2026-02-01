@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 
-public readonly record struct Sex : IEquatable<Sex>
+public readonly record struct Sex : IEquatable<Sex>, IComparable<Sex>
 {
     private const char MaleCode = 'M';
     private const char FemaleCode = 'F';
@@ -32,6 +32,21 @@ public readonly record struct Sex : IEquatable<Sex>
         };
     }
 
+    public int CompareTo(Sex other)
+    {
+        return GetRank(_code)
+                .CompareTo(
+                    GetRank(other._code));
+    }
+
+    private static int GetRank(char c) => c switch
+    {
+        FemaleCode => 0,
+        MaleCode => 1,
+        _ => 2 
+    };
+
+
     private static char NormalizeChar(char? c)
     {
         if (c == null || c.Value == default)
@@ -47,6 +62,8 @@ public readonly record struct Sex : IEquatable<Sex>
             _ => UnknownCode
         };
     }
+
+
 
     private static char NormalizeString(string? input)
     {
