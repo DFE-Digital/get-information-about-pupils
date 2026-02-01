@@ -26,16 +26,6 @@ public readonly record struct Sex : IEquatable<Sex>
     public bool IsMale => _code == MaleCode;
     public bool IsFemale => _code == FemaleCode;
 
-    public override string ToString()
-    {
-        return _code switch
-        {
-            MaleCode => "M",
-            FemaleCode => "F",
-            _ => "U"
-        };
-    }
-
     public static bool TryParse(string? value, out Sex sex)
     {
         char code = NormalizeString(value);
@@ -50,6 +40,17 @@ public readonly record struct Sex : IEquatable<Sex>
             throw new ArgumentException($"Invalid sex value: '{value}'.", nameof(value));
         }
         return sex;
+    }
+
+
+    public override string ToString()
+    {
+        return _code switch
+        {
+            MaleCode => "M",
+            FemaleCode => "F",
+            _ => "U"
+        };
     }
 
     private static char NormalizeChar(char? c)

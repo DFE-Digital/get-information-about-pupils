@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 
@@ -17,6 +16,8 @@ internal sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearner
         ArgumentNullException.ThrowIfNull(input.DOB);
         ArgumentNullException.ThrowIfNull(input.LocalAuthority);
 
+        DateTime dateOfBirth = input.DOB!.Value;
+
         // Construct domain model using validated input
         return new PupilPremiumLearner(
             new UniquePupilNumber(input.UPN),
@@ -25,7 +26,7 @@ internal sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearner
                 middleName: input.Middlenames,
                 surname: input.Surname),
             new LearnerCharacteristics(
-                input.DOB.Value,
+                dateOfBirth,
                 new Sex(input.Sex)),
             new LocalAuthorityCode(input.LocalAuthority));
     }
