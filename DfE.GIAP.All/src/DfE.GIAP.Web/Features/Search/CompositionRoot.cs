@@ -152,7 +152,7 @@ public static class CompositionRoot
             {
                 { "SurnameLC", new NameFilterHandler("SurnameLC") },
                 { "ForenameLC", new NameFilterHandler("ForenameLC") },
-                { "MiddlenameLC", new NameFilterHandler("MiddlenameLC") },
+                { "MiddlenamesLC", new NameFilterHandler("MiddlenameLC") },
                 { "DOB", new DobFilterHandler() },
                 { "Sex", new GenderFilterHandler("Sex") }
             };
