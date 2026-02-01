@@ -22,27 +22,6 @@ public readonly record struct Sex : IEquatable<Sex>
     public static Sex Female => new(FemaleCode);
     public static Sex Unknown => new(UnknownCode);
 
-    public bool IsKnown => _code != UnknownCode;
-    public bool IsMale => _code == MaleCode;
-    public bool IsFemale => _code == FemaleCode;
-
-    public static bool TryParse(string? value, out Sex sex)
-    {
-        char code = NormalizeString(value);
-        sex = new Sex(code);
-        return sex.IsKnown;
-    }
-
-    public static Sex Parse(string? value)
-    {
-        if (!TryParse(value, out Sex sex))
-        {
-            throw new ArgumentException($"Invalid sex value: '{value}'.", nameof(value));
-        }
-        return sex;
-    }
-
-
     public override string ToString()
     {
         return _code switch
