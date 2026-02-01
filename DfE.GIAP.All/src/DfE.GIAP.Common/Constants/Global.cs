@@ -38,7 +38,7 @@ public static class Global
     public const string PPNonUpnSortDirectionSessionKey = "SearchPPNonUPN_SortDirection";
     public const string PPNonUpnSortFieldSessionKey = "SearchPPNonUPN_SortField";
     public const string PPAction = "PupilPremium";
-    public const string PPTextSearchController = "PPLearnerTextSearch";
+    public const string PPTextSearchController = "PupilPremiumLearnerTextSearch";
     public const string PPNonUpnAction = "NonUpnPupilPremiumDatabase";
     public const string PPLearnerTextSearchDatabaseName = "NonUpnDatabaseName";
     public const string PPLearnerNumberSearchController = "PupilPremiumLearnerNumberSearch";
