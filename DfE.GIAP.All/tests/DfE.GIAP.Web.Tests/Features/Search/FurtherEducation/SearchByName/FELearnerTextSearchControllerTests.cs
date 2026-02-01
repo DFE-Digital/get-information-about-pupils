@@ -1115,9 +1115,9 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             PageHeading = "Advanced search ULN",
             DownloadLinksPartial = "~/Views/Shared/LearnerText/_SearchFurtherEducationDownloadLinks.cshtml",
             LearnerTextSearchController = "FELearnerTextSearch",
-            LearnerTextSearchAction = "NonUpnPupilPremiumDatabase",
+            LearnerTextSearchAction = "FurtherEducationNonUlnSearch",
             LearnerNumberController = "search",
-            LearnerNumberAction = "NonUpnPupilPremiumDatabase"
+            LearnerNumberAction = "pupil-uln"
         };
     }
 
