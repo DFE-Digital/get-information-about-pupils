@@ -37,7 +37,7 @@ public class FurtherEducationLearnerTextSearchResponseToViewModelMapperTests
     {
         // arrange
         Faker faker = new();
-        (string Uln, string FirstName, string Surname, DateTime BirthDate, Gender Gender)[] learnerFakes =
+        (string Uln, string FirstName, string Surname, DateTime BirthDate, Sex Gender)[] learnerFakes =
         [
             FakeFurtherEducationLearnerDataTestDouble.CreateFurtherEducationLearnerFake(faker),
             FakeFurtherEducationLearnerDataTestDouble.CreateFurtherEducationLearnerFake(faker)

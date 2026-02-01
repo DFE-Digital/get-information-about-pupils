@@ -1,8 +1,20 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
+namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 public sealed class SexTests
 {
+    [Theory]
+    [InlineData('m')]
+    [InlineData('M')]
+    public void Constructor_WithValidMaleCharacter_ShouldNormaliseAndStoreCorrectly(char input)
+    {
+        // Act
+        Sex sex = new(input);
+
+        // Assert
+        Assert.Equal(Sex.Male, sex);
+    }
+
     [Theory]
     [InlineData("M")]
     [InlineData("male")]
@@ -32,6 +44,18 @@ public sealed class SexTests
     }
 
     [Theory]
+    [InlineData('f')]
+    [InlineData('F')]
+    public void Constructor_WithValidFemaleCharacter_ShouldNormaliseAndStoreCorrectly(char input)
+    {
+        // Act
+        Sex sex = new(input);
+
+        // Assert
+        Assert.Equal(Sex.Female, sex);
+    }
+
+    [Theory]
     [InlineData("X")]
     [InlineData("z")]
     [InlineData(" ")]
@@ -46,8 +70,8 @@ public sealed class SexTests
         Sex sex = new(input);
 
         // Assert
-        Assert.Equal(string.Empty, sex.ToString());
-        // TODO when throwing Assert.Throws<ArgumentException>(act);
+        Assert.Equal("U", sex.ToString());
+        // TODO consider throwing Assert.Throws<ArgumentException>(act);
     }
 
     [Fact]
@@ -82,7 +106,9 @@ public sealed class SexTests
     public void Equality_ShouldWorkForSameSex()
     {
         // Act & Assert
+        Assert.Equal(Sex.Male, Sex.Male);
         Assert.Equal(Sex.Female, Sex.Female);
+        Assert.Equal(Sex.Unknown, Sex.Unknown);
     }
 
     [Fact]
@@ -90,5 +116,7 @@ public sealed class SexTests
     {
         // Act & Assert
         Assert.NotEqual(Sex.Male, Sex.Female);
+        Assert.NotEqual(Sex.Male, Sex.Unknown);
+        Assert.NotEqual(Sex.Female, Sex.Unknown);
     }
 }

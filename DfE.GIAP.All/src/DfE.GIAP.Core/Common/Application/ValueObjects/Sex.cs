@@ -1,16 +1,12 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 
 public readonly record struct Sex : IEquatable<Sex>
 {
-    public const char MaleCode = 'M';
-    public const char FemaleCode = 'F';
-    public const char UnknownCode = 'U';
+    private const char MaleCode = 'M';
+    private const char FemaleCode = 'F';
+    private const char UnknownCode = 'U';
 
     private readonly char _code;
-
-    public bool IsKnown => _code != UnknownCode;
-    public bool IsMale => _code == MaleCode;
-    public bool IsFemale => _code == FemaleCode;
 
     public Sex(char? code)
     {
@@ -22,19 +18,23 @@ public readonly record struct Sex : IEquatable<Sex>
         _code = NormalizeString(value);
     }
 
+    public static Sex Male => new(MaleCode);
+    public static Sex Female => new(FemaleCode);
+    public static Sex Unknown => new(UnknownCode);
+
+    public bool IsKnown => _code != UnknownCode;
+    public bool IsMale => _code == MaleCode;
+    public bool IsFemale => _code == FemaleCode;
+
     public override string ToString()
     {
         return _code switch
         {
-            'M' => "M",
-            'F' => "F",
-            _ => string.Empty
+            MaleCode => "M",
+            FemaleCode => "F",
+            _ => "U"
         };
     }
-
-    public static Sex Male => new(MaleCode);
-    public static Sex Female => new(FemaleCode);
-    public static Sex Unknown => new(UnknownCode);
 
     public static bool TryParse(string? value, out Sex sex)
     {
@@ -54,7 +54,7 @@ public readonly record struct Sex : IEquatable<Sex>
 
     private static char NormalizeChar(char? c)
     {
-        if (c == null || (c.HasValue && c.Value == default))
+        if (c == null || c.HasValue && c.Value == default)
         {
             return UnknownCode;
         }

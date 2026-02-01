@@ -166,7 +166,7 @@ public sealed class AzureIndexEntityWithPupilTypeToPupilMapperTests
         Pupil result = sut.Map(input);
 
         // Assert
-        Assert.Equal(string.Empty, result.Sex);
+        Assert.Equal("U", result.Sex);
     }
 
     [Fact]

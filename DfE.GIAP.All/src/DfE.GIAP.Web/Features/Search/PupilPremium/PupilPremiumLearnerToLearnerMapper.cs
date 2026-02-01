@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+﻿using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Domain.Search.Learner;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium;
@@ -19,7 +18,7 @@ internal sealed class PupilPremiumLearnerToLearnerMapper : IMapper<PupilPremiumL
             Middlenames = input.Name.MiddleNames,
             Surname = input.Name.Surname,
 
-            Sex = input.Characteristics.Sex.MapSexDescription(),
+            Sex = input.Characteristics.Sex.ToString(),
 
             DOB = input.Characteristics.BirthDate,
 

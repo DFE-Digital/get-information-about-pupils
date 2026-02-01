@@ -21,7 +21,7 @@ public static class LearnerFakePupilPremiumTestDoubles
             Middlenames = name.MiddleNames,
             Surname = name.Surname,
             DOB = characteristics.BirthDate,
-            Sex = characteristics.Sex.MapSexDescription(),
+            Sex = characteristics.Sex.ToString(),
             LocalAuthority = localAuthority.Code.ToString()
         };
     }

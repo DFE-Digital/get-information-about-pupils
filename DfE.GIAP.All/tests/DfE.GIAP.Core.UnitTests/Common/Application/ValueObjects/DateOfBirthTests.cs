@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.SharedTests.Common;
 
-namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.ValueObjects;
+namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 public sealed class DateOfBirthTests
 {
     [Fact]

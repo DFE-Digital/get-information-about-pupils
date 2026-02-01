@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+﻿using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
@@ -39,7 +38,7 @@ public sealed class NationalPupilDatabaseLearnerToLearnerMapperTests
         Assert.Equal(input.Name.MiddleNames, result.Middlenames);
         Assert.Equal(input.Name.Surname, result.Surname);
 
-        Assert.Equal(input.Characteristics.Sex.MapSexDescription(), result.Sex);
+        Assert.Equal(input.Characteristics.Sex.ToString(), result.Sex);
 
         Assert.Equal(input.Characteristics.BirthDate, result.DOB);
         Assert.Equal(input.LocalAuthority.Code.ToString(), result.LocalAuthority);

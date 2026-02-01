@@ -12,7 +12,7 @@ public static class PupilPremiumLearnerDataTransferObjectTestDoubles
     {
         Faker faker = new();
 
-        string gender = faker.PickRandom(Gender.Male, Gender.Female, Gender.Other).MapSexDescription();
+        string gender = faker.PickRandom(Sex.Male, Sex.Female, Sex.Unknown).ToString();
 
         PupilPremiumLearnerDataTransferObject dto = new()
         {

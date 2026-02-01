@@ -7,14 +7,21 @@ using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.NationalPupilDatabase;
 public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapperTests
 {
+    private readonly NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper _sut;
+    private readonly NationalPupilDatabaseLearnerDataTransferObject _mappingInput;
+    public NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapperTests()
+    {
+        _sut = new();
+
+        _mappingInput = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
+
+    }
+
     [Fact]
     public void Map_ThrowsArgumentNullException_WhenInputIsNull()
     {
-        // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => mapper.Map(null!));
+        Assert.Throws<ArgumentNullException>(() => _sut.Map(null!));
     }
 
     [Theory]
@@ -23,12 +30,10 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     public void Map_ThrowsArgumentException_WhenUPNIsNullOrEmpty(string? upn)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.UPN = upn;
+        _mappingInput.UPN = upn;
 
         // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(() => mapper.Map(input));
+        Assert.ThrowsAny<ArgumentException>(() => _sut.Map(_mappingInput));
     }
 
     [Theory]
@@ -37,12 +42,10 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     public void Map_ThrowsArgumentException_WhenForenameIsNullOrEmpty(string? forename)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.Forename = forename;
+        _mappingInput.Forename = forename;
 
         // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(() => mapper.Map(input));
+        Assert.ThrowsAny<ArgumentException>(() => _sut.Map(_mappingInput));
     }
 
     [Theory]
@@ -51,36 +54,30 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     public void Map_ThrowsArgumentException_WhenSurnameIsNullOrEmpty(string? surname)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.Surname = surname;
+        _mappingInput.Surname = surname;
 
         // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(() => mapper.Map(input));
+        Assert.ThrowsAny<ArgumentException>(() => _sut.Map(_mappingInput));
     }
 
     [Fact]
     public void Map_ThrowsArgumentNullException_WhenDOBIsNull()
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.DOB = null;
+        _mappingInput.DOB = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => mapper.Map(input));
+        Assert.Throws<ArgumentNullException>(() => _sut.Map(_mappingInput));
     }
 
     [Fact]
     public void Map_ThrowsArgumentNullException_WhenLocalAuthorityIsNull()
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.LocalAuthority = null!;
+        _mappingInput.LocalAuthority = null!;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => mapper.Map(input));
+        Assert.Throws<ArgumentNullException>(() => _sut.Map(_mappingInput));
     }
 
     [Theory]
@@ -90,23 +87,17 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     public void Map_ThrowsArgumentException_WhenLocalAuthorityIsEmptyOrWhiteSpace(string localAuthority)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.LocalAuthority = localAuthority;
+        _mappingInput.LocalAuthority = localAuthority;
 
         // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(() => mapper.Map(input));
+        Assert.ThrowsAny<ArgumentException>(() => _sut.Map(_mappingInput));
     }
 
     [Fact]
     public void Map_ReturnsLearner_WhenInputIsValid()
     {
-        // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-
         // Act
-        NationalPupilDatabaseLearner result = mapper.Map(input);
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
 
         // Assert
         Assert.NotNull(result);
@@ -116,12 +107,10 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     public void Map_SetsEmptyMiddleNames_WhenMiddleNamesIsNull()
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.Middlenames = null;
+        _mappingInput.Middlenames = null;
 
         // Act
-        NationalPupilDatabaseLearner result = mapper.Map(input);
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
 
         // Assert
         // Adjust this assertion to match your domain model API if needed.
@@ -129,47 +118,82 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     }
 
     [Theory]
-    [InlineData("M", Gender.Male)]
-    [InlineData("m", Gender.Male)]
-    [InlineData(" M ", Gender.Male)]
-    [InlineData("F", Gender.Female)]
-    [InlineData("f", Gender.Female)]
-    [InlineData(" F ", Gender.Female)]
-    [InlineData("O", Gender.Other)]
-    [InlineData("o", Gender.Other)]
-    [InlineData(" O ", Gender.Other)]
-    public void Map_MapsGenderFromSex_WhenSexIsProvided(string sex, Gender expected)
+    [InlineData("M")]
+    [InlineData("m")]
+    [InlineData(" M ")]
+    public void Map_MapsSexFromSex_WhenSexIsProvided_Male(string sex)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.Sex = sex;
-        input.Gender = "F"; // Should be ignored because Sex is not null/whitespace
+        _mappingInput.Sex = sex;
+        _mappingInput.Gender = "F"; // Should be ignored because Sex is not null/whitespace
 
         // Act
-        NationalPupilDatabaseLearner result = mapper.Map(input);
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
 
         // Assert
-        Assert.Equal(expected, result.Characteristics.Sex);
+        Assert.Equal(Sex.Male, result.Characteristics.Sex);
     }
 
     [Theory]
-    [InlineData("M", Gender.Male)]
-    [InlineData(" F ", Gender.Female)]
-    [InlineData("o", Gender.Other)]
-    public void Map_MapsGenderFromGender_WhenSexIsNullOrWhiteSpace(string gender, Gender expected)
+    [InlineData("F")]
+    [InlineData("f")]
+    [InlineData(" F ")]
+    public void Map_MapsSexFromSex_Female_WhenSexIsProvided_Female(string sex)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.Sex = "   "; // triggers fallback to Gender
-        input.Gender = gender;
+        _mappingInput.Sex = sex;
+        _mappingInput.Gender = "M"; // Should be ignored because Sex is not null/whitespace
 
         // Act
-        NationalPupilDatabaseLearner result = mapper.Map(input);
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
 
         // Assert
-        Assert.Equal(expected, result.Characteristics.Sex);
+        Assert.Equal(Sex.Female, result.Characteristics.Sex);
+    }
+
+    [Theory]
+    [InlineData("O")]
+    [InlineData("o")]
+    [InlineData(" z ")]
+    public void Map_MapsSexFromSex_Unknown_WhenSexIsProvided_UnknownSex(string sex)
+    {
+        // Arrange
+        _mappingInput.Sex = sex;
+        _mappingInput.Gender = "F"; // Should be ignored because Sex is not null/whitespace
+
+        // Act
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
+
+        // Assert
+        Assert.Equal(Sex.Unknown, result.Characteristics.Sex);
+    }
+
+    [Fact]
+    public void Map_MapsSexFromGender_WhenSexIsNullOrWhiteSpace_Female()
+    {
+        // Arrange
+        _mappingInput.Sex = null; // triggers fallback to Gender
+        _mappingInput.Gender = "M";
+
+        // Act
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
+
+        // Assert
+        Assert.Equal(Sex.Male, result.Characteristics.Sex);
+    }
+
+    [Fact]
+    public void Map_MapsSexFromGender_WhenSexIsNullOrWhiteSpace_Male()
+    {
+        // Arrange
+        _mappingInput.Sex = null; // triggers fallback to Gender
+        _mappingInput.Gender = "F";
+
+        // Act
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
+
+        // Assert
+        Assert.Equal(Sex.Female, result.Characteristics.Sex);
     }
 
     [Theory]
@@ -178,18 +202,16 @@ public sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupi
     [InlineData(" ")]
     [InlineData("X")]
     [InlineData("Unknown")]
-    public void Map_DefaultsGenderToOther_WhenSexAndGenderAreUnrecognisedOrMissing(string? value)
+    public void Map_DefaultsSexToOther_WhenSexIsNullOrWhitespace_And_GenderIsUnknown(string? value)
     {
         // Arrange
-        NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper mapper = new();
-        NationalPupilDatabaseLearnerDataTransferObject input = NationalPupilDatabaseLearnerDataTransferObjectTestDoubles.Stub();
-        input.Sex = value;
-        input.Gender = value;
+        _mappingInput.Sex = value;
+        _mappingInput.Gender = value;
 
         // Act
-        NationalPupilDatabaseLearner result = mapper.Map(input);
+        NationalPupilDatabaseLearner result = _sut.Map(_mappingInput);
 
         // Assert
-        Assert.Equal(Gender.Other, result.Characteristics.Sex);
+        Assert.Equal(Sex.Unknown, result.Characteristics.Sex);
     }
 }

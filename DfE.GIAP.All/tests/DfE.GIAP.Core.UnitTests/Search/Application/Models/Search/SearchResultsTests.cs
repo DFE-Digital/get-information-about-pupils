@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Search;
@@ -12,21 +12,9 @@ public sealed class SearchResultsTests
     public void Properties_CanBeInitializedViaObjectInitializer()
     {
         // arrange
-        FurtherEducationLearners learners = new(new List<FurtherEducationLearner>
-        {
-            new(
-                new FurtherEducationLearnerIdentifier("1234567890"),
-                new LearnerName("Alice", "Smith"),
-                new LearnerCharacteristics(
-                    new DateTime(2005, 6, 1),
-                    Gender.Female))
-        });
+        FurtherEducationLearners learners = FurtherEducationLearnersTestDouble.Stub();
 
-        SearchFacets facets =
-            new(new List<SearchFacet>
-            {
-                new("Region", [new FacetResult("North", 10)])
-            });
+        SearchFacets facets = SearchFacetsTestDouble.Stub();
 
         // act
         SearchResults<FurtherEducationLearners, SearchFacets> result =

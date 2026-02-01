@@ -31,7 +31,7 @@ public static class FurtherEducationLearnerTestDouble
     /// </summary>
     private static LearnerCharacteristics Characteristics(
         DateTime birthDate,
-        Gender gender) =>
+        Sex gender) =>
         new(birthDate, gender);
 
     /// <summary>
@@ -49,7 +49,7 @@ public static class FurtherEducationLearnerTestDouble
         string firstname,
         string surname,
         DateTime birthDate,
-        Gender sex)
+        Sex sex)
     {
         // Construct domain components using helper methods for modularity and reuse
         FurtherEducationLearnerIdentifier learnerIdentifier = Identifier(uniqueLearnerNumber);
