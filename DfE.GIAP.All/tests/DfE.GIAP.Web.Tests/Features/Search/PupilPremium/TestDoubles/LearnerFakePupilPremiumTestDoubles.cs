@@ -1,6 +1,5 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;

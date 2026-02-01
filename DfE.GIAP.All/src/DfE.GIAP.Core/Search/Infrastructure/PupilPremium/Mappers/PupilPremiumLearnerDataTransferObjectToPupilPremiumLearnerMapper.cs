@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.Common.ValueObjects;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 

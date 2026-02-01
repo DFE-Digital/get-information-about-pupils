@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Learner;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Domain.Search.Learner;
 

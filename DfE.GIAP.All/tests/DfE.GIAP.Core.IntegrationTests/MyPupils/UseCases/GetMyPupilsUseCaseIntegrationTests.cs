@@ -1,6 +1,5 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using DfE.GIAP.Core.Common.Domain;
-using DfE.GIAP.Core.Common.ValueObjects;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.MyPupils;

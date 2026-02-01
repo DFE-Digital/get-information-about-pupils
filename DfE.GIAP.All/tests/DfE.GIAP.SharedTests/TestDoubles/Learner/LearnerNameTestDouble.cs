@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using DfE.GIAP.Core.Search.Application.Models.Learner;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
 public static class LearnerNameTestDouble

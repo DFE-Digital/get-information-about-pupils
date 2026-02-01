@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace DfE.GIAP.Core.Search.Application.Models.Learner;
+namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 /// <summary>
 /// Defines the supported gender values for a learner.
 /// </summary>

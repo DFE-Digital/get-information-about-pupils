@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace DfE.GIAP.Core.Common.Domain;
+namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 // See https://www.get-information-schools.service.gov.uk/Guidance/LaNameCodes
 public readonly struct LocalAuthorityCode
 {
