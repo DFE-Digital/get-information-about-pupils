@@ -60,7 +60,7 @@ public class FilterHandlerRegistry : IFilterHandlerRegistry
             "Surname" => FilterKeys.SurnameLC,
             "Forename" => FilterKeys.ForenameLC,
             "Dob" => FilterKeys.Dob,
-
+            "MiddleName" => FilterKeys.MiddlenamesLC,
             // Default: return the original string if no mapping is defined
             _ => rawFilterType
         };
@@ -88,5 +88,7 @@ public class FilterHandlerRegistry : IFilterHandlerRegistry
         /// Used to apply case-insensitive logic to forename-based filters.
         /// </summary>
         public const string ForenameLC = "ForenameLC";
+
+        public const string MiddlenamesLC = "MiddlenamesLC";
     }
 }
