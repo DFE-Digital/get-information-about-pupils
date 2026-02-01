@@ -5,7 +5,7 @@ namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 public sealed class LearnerNameTests
 {
     [Fact]
-    public void Constructor_WithValidNames_ShouldInitializeProperties()
+    public void Constructor_WithValidFirstLastNames_ShouldInitializeProperties()
     {
         // arrange
         const string firstName = "Alice";
@@ -17,6 +17,42 @@ public sealed class LearnerNameTests
         // Assert
         Assert.Equal(firstName, learnerName.FirstName);
         Assert.Equal(surname, learnerName.Surname);
+    }
+
+    [Fact]
+    public void Constructor_WithValidFirstMiddleLastNames_ShouldInitializeProperties()
+    {
+        // arrange
+        const string firstName = "Alice";
+        const string middleName = "Beth";
+        const string surname = "Smith";
+
+        // act
+        LearnerName learnerName = new(firstName, middleName, surname);
+
+        // Assert
+        Assert.Equal(firstName, learnerName.FirstName);
+        Assert.Equal(middleName, learnerName.MiddleNames);
+        Assert.Equal(surname, learnerName.Surname);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("\n")]
+    public void Constructor_WithValidNames_AndEmptyOrNullMiddleName_Should_NormaliseMiddleName(string? middleNameInput)
+    {
+        // act
+        LearnerName learnerName = new(
+            firstName: "John",
+            middleName: middleNameInput,
+            surname: "Doe");
+
+        // Assert
+        Assert.Equal("John", learnerName.FirstName);
+        Assert.Equal(string.Empty, learnerName.MiddleNames);
+        Assert.Equal("Doe", learnerName.Surname);
     }
 
     [Theory]
