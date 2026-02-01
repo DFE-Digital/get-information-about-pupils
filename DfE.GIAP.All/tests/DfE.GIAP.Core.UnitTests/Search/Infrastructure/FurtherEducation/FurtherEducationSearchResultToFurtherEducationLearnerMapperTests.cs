@@ -9,7 +9,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.FurtherEducation;
 
 public sealed class FurtherEducationSearchResultToFurtherEducationLearnerMapperTests
 {
-    private readonly IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> _searchResultToLearnerMapper;
+    private readonly FurtherEducationSearchResultToLearnerMapper _searchResultToLearnerMapper;
 
     public FurtherEducationSearchResultToFurtherEducationLearnerMapperTests()
     {
@@ -35,9 +35,9 @@ public sealed class FurtherEducationSearchResultToFurtherEducationLearnerMapperT
         result.Characteristics.Should().NotBeNull();
         result.Characteristics.BirthDate.Should().NotBeNull();
         result.Characteristics.Sex.Should().BeOneOf(
-            Gender.Male,
-            Gender.Female,
-            Gender.Other);
+            Sex.Male,
+            Sex.Female,
+            Sex.Unknown);
         result.Identifier.Should().NotBeNull();
     }
 

@@ -1,7 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 

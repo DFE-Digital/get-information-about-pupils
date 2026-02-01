@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 public sealed class DateOfBirth : ValueObject<DateOfBirth>
 {
     // TODO leap years
@@ -26,8 +26,8 @@ public sealed class DateOfBirth : ValueObject<DateOfBirth>
         DateTime today = DateTime.UtcNow; // Assumes UTC so inaccurate with BST for 1 hour?
 
         bool hasOccuredThisMonth =
-            (today.Month > Month) ||
-                (today.Month == Month && today.Day >= Day);
+            today.Month > Month ||
+                today.Month == Month && today.Day >= Day;
 
         return hasOccuredThisMonth ?
             today.Year - Year :

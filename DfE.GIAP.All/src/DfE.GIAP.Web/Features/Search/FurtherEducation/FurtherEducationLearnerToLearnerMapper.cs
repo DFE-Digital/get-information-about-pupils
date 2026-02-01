@@ -40,7 +40,7 @@ public sealed class FurtherEducationLearnerToLearnerMapper :
             Forename = input.Name.FirstName,
 
             // Converts sex enum to human-readable string using description meta-data
-            Sex = input.Characteristics.Sex.MapSexDescription(),
+            Sex = input.Characteristics.Sex.ToString(),
 
             // Maps birth date directly; assumes implicit conversion from value object to DateTime
             DOB = input.Characteristics.BirthDate

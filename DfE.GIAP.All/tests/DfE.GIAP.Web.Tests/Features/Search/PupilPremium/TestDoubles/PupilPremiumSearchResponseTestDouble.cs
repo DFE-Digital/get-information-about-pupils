@@ -29,7 +29,7 @@ public static class PupilPremiumSearchResponseTestDouble
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(age: 13),
-                    Gender.Female),
+                    Sex.Female),
                 new LocalAuthorityCode(100)
                 )
             ]

@@ -19,7 +19,7 @@ internal sealed class NationalPupilDatabaseLearnerToLearnerMapper : IMapper<Nati
             Middlenames = input.Name.MiddleNames,
             Surname = input.Name.Surname,
 
-            Sex = input.Characteristics.Sex.MapSexDescription(),
+            Sex = input.Characteristics.Sex.ToString(),
 
             DOB = input.Characteristics.BirthDate,
 

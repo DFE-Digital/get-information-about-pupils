@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
@@ -11,7 +10,7 @@ public sealed class LearnerCharacteristicsTests
     {
         // arrange
         DateTime birthDate = new(2005, 6, 1);
-        Gender gender = Gender.Female;
+        Sex gender = Sex.Female;
 
         // act
         LearnerCharacteristics characteristics = new(birthDate, gender);
@@ -22,26 +21,11 @@ public sealed class LearnerCharacteristicsTests
     }
 
     [Fact]
-    public void Constructor_WithInvalidGender_ShouldThrowArgumentException()
-    {
-        // arrange
-        DateTime birthDate = new(2005, 6, 1);
-        Gender invalidGender = (Gender)999;
-
-        // act
-        Func<LearnerCharacteristics> act = () => new(birthDate, invalidGender);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("The learner's gender field is invalid.");
-    }
-
-    [Fact]
     public void Equality_WithSameValues_ShouldBeEqual()
     {
         // arrange
         DateTime birthDate = new(2005, 6, 1);
-        Gender gender = Gender.Male;
+        Sex gender = Sex.Male;
 
         LearnerCharacteristics equalityCheckInstanceA = new(birthDate, gender);
         LearnerCharacteristics equalityCheckInstanceB = new(birthDate, gender);
@@ -57,8 +41,8 @@ public sealed class LearnerCharacteristicsTests
         // arrange
         DateTime birthDate = new(2005, 6, 1);
 
-        LearnerCharacteristics equalityCheckInstanceA = new(birthDate, Gender.Male);
-        LearnerCharacteristics equalityCheckInstanceB = new(birthDate, Gender.Other);
+        LearnerCharacteristics equalityCheckInstanceA = new(birthDate, Sex.Male);
+        LearnerCharacteristics equalityCheckInstanceB = new(birthDate, Sex.Unknown);
 
         // act & Assert
         equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);

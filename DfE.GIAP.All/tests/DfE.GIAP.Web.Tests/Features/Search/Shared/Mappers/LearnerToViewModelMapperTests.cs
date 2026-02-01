@@ -26,7 +26,7 @@ public sealed class LearnerToViewModelMapperTests
                 firstname: "Alice",
                 surname: "Smith",
                 birthDate: new DateTime(2000, 1, 15),
-                sex: Gender.Female);
+                sex: Sex.Female);
 
         // act
         Domain.Search.Learner.Learner result = _mapper.Map(applicationModellearner);

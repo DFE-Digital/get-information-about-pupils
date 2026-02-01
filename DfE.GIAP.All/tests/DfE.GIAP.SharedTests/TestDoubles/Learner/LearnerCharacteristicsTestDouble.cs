@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bogus;
+﻿using Bogus;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
@@ -15,7 +10,23 @@ public static class LearnerCharacteristicsTestDouble
     /// </summary>
     public static LearnerCharacteristics FakeCharacteristics(Faker faker) =>
         new(
-            birthDate: faker.Date.PastOffset(yearsToGoBack: 18).Date,
-            gender: faker.PickRandom(Gender.Male, Gender.Female, Gender.Other));
+            birthDate: CreateBirthDate(faker),
+            sex: CreateSex(faker));
 
+
+    /// <summary>
+    /// Generates a birthdate at least 18 years in the past.
+    /// </summary>
+    public static DateTime CreateBirthDate(Faker faker) =>
+        faker.Date.PastOffset(yearsToGoBack: 18).Date;
+
+    /// <summary>
+    /// Randomly selects a gender from the available enum values.
+    /// </summary>
+    public static Sex CreateSex(Faker faker) =>
+        faker.PickRandom(
+            Sex.Male,
+            Sex.Female,
+            Sex.Unknown
+        );
 }

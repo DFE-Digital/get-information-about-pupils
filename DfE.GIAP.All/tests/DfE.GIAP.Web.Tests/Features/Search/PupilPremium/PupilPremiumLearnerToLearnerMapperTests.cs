@@ -40,7 +40,7 @@ public sealed class PupilPremiumLearnerToLearnerMapperTests
         Assert.Equal(input.Name.MiddleNames, result.Middlenames);
         Assert.Equal(input.Name.Surname, result.Surname);
 
-        Assert.Equal(input.Characteristics.Sex.MapSexDescription(), result.Sex);
+        Assert.Equal(input.Characteristics.Sex.ToString(), result.Sex);
 
         Assert.Equal(input.Characteristics.BirthDate, result.DOB);
         Assert.Equal(input.LocalAuthority.Code.ToString(), result.LocalAuthority);

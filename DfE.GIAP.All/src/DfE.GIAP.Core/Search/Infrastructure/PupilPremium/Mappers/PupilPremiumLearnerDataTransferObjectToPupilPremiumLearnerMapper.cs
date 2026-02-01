@@ -4,7 +4,7 @@ using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 
-public sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper : IMapper<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>
+internal sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper : IMapper<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>
 {
     public PupilPremiumLearner Map(PupilPremiumLearnerDataTransferObject input)
     {
@@ -16,27 +16,18 @@ public sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMa
         ArgumentNullException.ThrowIfNull(input.DOB);
         ArgumentNullException.ThrowIfNull(input.LocalAuthority);
 
+        DateTime dateOfBirth = input.DOB!.Value;
+
         // Construct domain model using validated input
         return new PupilPremiumLearner(
             new UniquePupilNumber(input.UPN),
-            new LearnerName(input.Forename, input.Middlenames ?? string.Empty, input.Surname),
-            new LearnerCharacteristics(input.DOB.Value, ParseGender(input.Sex, input.Gender)),
+            new LearnerName(
+                firstName: input.Forename,
+                middleName: input.Middlenames,
+                surname: input.Surname),
+            new LearnerCharacteristics(
+                dateOfBirth,
+                new Sex(input.Sex)),
             new LocalAuthorityCode(input.LocalAuthority));
-    }
-
-    private static Gender ParseGender(string? sex, string? gender)
-    {
-        if (string.IsNullOrWhiteSpace(sex))
-        {
-            sex = gender;
-        }
-
-        return sex?.Trim().ToUpperInvariant() switch
-        {
-            "M" => Gender.Male,
-            "F" => Gender.Female,
-            "O" => Gender.Other,
-            _ => Gender.Other // fall-back for unrecognized values
-        };
     }
 }

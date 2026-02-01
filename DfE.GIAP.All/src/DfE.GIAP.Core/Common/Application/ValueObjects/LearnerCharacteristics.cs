@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-
-namespace DfE.GIAP.Core.Common.Application.ValueObjects;
+﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 
 /// <summary>
 /// Represents a learner's core characteristics as a value object,
@@ -16,26 +14,21 @@ public sealed class LearnerCharacteristics : ValueObject<LearnerCharacteristics>
     /// <summary>
     /// Gets the learner's Sex.
     /// </summary>
-    public Gender Sex { get; }
+    public Sex Sex { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LearnerCharacteristics"/> class.
     /// Validates that the date of birth is not null and the gender is a defined enum value.
     /// </summary>
     /// <param name="birthDate">The learner's date of birth.</param>
-    /// <param name="gender">The learner's gender.</param>
+    /// <param name="sex">The learner's gender.</param>
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="birthDate"/> is null.</exception>
-    /// <exception cref="ArgumentException">Thrown if <paramref name="gender"/> is not a valid enum value.</exception>
-    public LearnerCharacteristics(DateTime birthDate, Gender gender)
+    /// <exception cref="ArgumentException">Thrown if <paramref name="sex"/> is not a valid enum value.</exception>
+    public LearnerCharacteristics(DateTime birthDate, Sex sex)
     {
         BirthDate = new DateOfBirth(birthDate);
 
-        if (!Enum.IsDefined(typeof(Gender), gender))
-        {
-            throw new ArgumentException("The learner's gender field is invalid.");
-        }
-
-        Sex = gender;
+        Sex = sex;
     }
 
     /// <summary>

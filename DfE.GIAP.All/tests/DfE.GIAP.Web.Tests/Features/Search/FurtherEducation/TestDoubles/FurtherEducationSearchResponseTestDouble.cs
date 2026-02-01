@@ -48,7 +48,7 @@ public static class FurtherEducationSearchResponseTestDouble
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
-                    Gender.Female)
+                    Sex.Female)
                 )
             ]
         );

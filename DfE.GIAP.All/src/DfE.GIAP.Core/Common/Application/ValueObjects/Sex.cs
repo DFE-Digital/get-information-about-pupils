@@ -1,16 +1,12 @@
-﻿namespace DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
+﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 
-public readonly record struct Sex : IEquatable<Sex>
+public readonly record struct Sex : IEquatable<Sex>, IComparable<Sex>
 {
-    public const char MaleCode = 'M';
-    public const char FemaleCode = 'F';
-    public const char UnknownCode = 'U';
+    private const char MaleCode = 'M';
+    private const char FemaleCode = 'F';
+    private const char UnknownCode = 'U';
 
     private readonly char _code;
-
-    public bool IsKnown => _code != UnknownCode;
-    public bool IsMale => _code == MaleCode;
-    public bool IsFemale => _code == FemaleCode;
 
     public Sex(char? code)
     {
@@ -22,39 +18,38 @@ public readonly record struct Sex : IEquatable<Sex>
         _code = NormalizeString(value);
     }
 
-    public override string ToString()
-    {
-        return _code switch
-        {
-            'M' => "M",
-            'F' => "F",
-            _ => string.Empty
-        };
-    }
-
     public static Sex Male => new(MaleCode);
     public static Sex Female => new(FemaleCode);
     public static Sex Unknown => new(UnknownCode);
 
-    public static bool TryParse(string? value, out Sex sex)
+    public override string ToString()
     {
-        char code = NormalizeString(value);
-        sex = new Sex(code);
-        return sex.IsKnown;
+        return _code switch
+        {
+            FemaleCode => "F",
+            MaleCode => "M",
+            _ => "U"
+        };
     }
 
-    public static Sex Parse(string? value)
+    public int CompareTo(Sex other)
     {
-        if (!TryParse(value, out Sex sex))
-        {
-            throw new ArgumentException($"Invalid sex value: '{value}'.", nameof(value));
-        }
-        return sex;
+        return GetRank(_code)
+                .CompareTo(
+                    GetRank(other._code));
     }
+
+    private static int GetRank(char c) => c switch
+    {
+        FemaleCode => 0,
+        MaleCode => 1,
+        _ => 2
+    };
+
 
     private static char NormalizeChar(char? c)
     {
-        if (c == null || (c.HasValue && c.Value == default))
+        if (c == null || c.Value == default)
         {
             return UnknownCode;
         }
@@ -67,6 +62,8 @@ public readonly record struct Sex : IEquatable<Sex>
             _ => UnknownCode
         };
     }
+
+
 
     private static char NormalizeString(string? input)
     {

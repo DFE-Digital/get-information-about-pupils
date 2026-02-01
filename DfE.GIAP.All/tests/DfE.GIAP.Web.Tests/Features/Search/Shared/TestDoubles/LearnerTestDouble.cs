@@ -21,10 +21,10 @@ public static class LearnerTestDouble
     /// </param>
     /// <returns>A list of domain-layer <see cref="Learner"/> objects.</returns>
     public static List<Learner> CreateLearnersStub(
-        IEnumerable<(string Id, string Forename, string Surname, DateTime DOB, Gender Gender)> learners)
+        IEnumerable<(string Id, string Forename, string Surname, DateTime DOB, Sex Gender)> learners)
     {
         List<Learner> result = [];
-        foreach ((string id, string forename, string surname, DateTime dob, Gender gender) in learners)
+        foreach ((string id, string forename, string surname, DateTime dob, Sex gender) in learners)
         {
             result.Add(CreateLearnerStub(id, forename, surname, dob, gender));
         }
@@ -39,20 +39,20 @@ public static class LearnerTestDouble
     /// <param name="forename">Learner's first name.</param>
     /// <param name="surname">Learner's last name.</param>
     /// <param name="dob">Date of birth for age-based filtering or diagnostics.</param>
-    /// <param name="gender">Learner's gender, used for demographic assertions.</param>
+    /// <param name="sex">Learner's gender, used for demographic assertions.</param>
     /// <returns>A fully populated <see cref="Learner"/> object.</returns>
     public static Learner CreateLearnerStub(
         string id,
         string forename,
         string surname,
         DateTime dob,
-        Gender gender) =>
+        Sex sex) =>
         new()
         {
             Id = id,
             Forename = forename,
             Surname = surname,
             DOB = dob,
-            Sex = gender.ToString()
+            Sex = sex.ToString()
         };
 }

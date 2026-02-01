@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 
@@ -20,27 +21,12 @@ internal sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPu
             new UniquePupilNumber(input.UPN),
             new LearnerName(
                 firstName: input.Forename,
-                middleName: input.Middlenames ?? string.Empty,
+                middleName: input.Middlenames,
                 surname: input.Surname),
             new LearnerCharacteristics(
                 birthDate: input.DOB.Value,
-                gender: ParseGender(input.Sex, input.Gender)),
+                // sex is not guanteed on NPD records, so we fallback so we fallback to {pupil}.Gender
+                sex: new Sex(string.IsNullOrWhiteSpace(input.Sex) ? input.Gender : input.Sex)),
             new LocalAuthorityCode(input.LocalAuthority));
-    }
-
-    private static Gender ParseGender(string? sex, string? gender)
-    {
-        if (string.IsNullOrWhiteSpace(sex))
-        {
-            sex = gender;
-        }
-
-        return sex?.Trim().ToUpperInvariant() switch
-        {
-            "M" => Gender.Male,
-            "F" => Gender.Female,
-            "O" => Gender.Other,
-            _ => Gender.Other // fall-back for unrecognized values
-        };
     }
 }

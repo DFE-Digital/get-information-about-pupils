@@ -42,8 +42,8 @@ internal static class FurtherEducationLearnerDataTransferObjectTestDouble
             Surname = faker.Name.LastName(),
             Forename = faker.Name.FirstName(),
             DOB = faker.Date.PastOffset(yearsToGoBack: 18).Date,
-            Gender = faker.PickRandom(Gender.Male, Gender.Female, Gender.Other).ToString(),
-            Sex = faker.PickRandom(Gender.Male, Gender.Female, Gender.Other).ToString()
+            Gender = faker.PickRandom(Sex.Male, Sex.Female, Sex.Unknown).ToString(),
+            Sex = faker.PickRandom(Sex.Male, Sex.Female, Sex.Unknown).ToString()
         };
     }
 }
