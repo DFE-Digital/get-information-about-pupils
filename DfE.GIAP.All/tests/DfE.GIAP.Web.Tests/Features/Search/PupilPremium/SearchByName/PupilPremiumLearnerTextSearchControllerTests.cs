@@ -3,14 +3,11 @@ using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
@@ -24,17 +21,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
 using Newtonsoft.Json;
 using NSubstitute;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 
-public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
+public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
-    private readonly ILogger<PPLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<PPLearnerTextSearchController>>();
-    private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
+    private readonly ILogger<PupilPremiumLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerTextSearchController>>();
     private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
@@ -44,7 +38,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
-    public PPLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
+    public PupilPremiumLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
         _searchFiltersFake = searchFiltersFake;
@@ -54,7 +48,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     public async Task NonUpnPupilPremiumDatabase_returns_empty_page_when_first_navigated_to()
     {
         // Arrange
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         // Act
 
@@ -77,7 +71,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
@@ -120,7 +114,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 PupilPremiumSearchFiltersSessionKey)).Returns(
                     searchViewModel.SearchFilters).Verifiable();
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -142,7 +136,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     public async Task NonUpnPupilPremiumDatabase_does_not_call_GetPage_if_model_state_not_valid()
     {
         // Arrange
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         // Act
         await sut.NonUpnPupilPremiumDatabase(new LearnerTextSearchViewModel(), string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
@@ -164,7 +158,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     public async Task NonUpnNationalPupilDatabase_populates_LearnerNumberIds_with_Id_when_UPN_0()
     {
         // Arrange
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         //override default user to make admin so Ids are not masked, not testing rbac rules for this test
         sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
 
@@ -222,7 +216,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -248,7 +242,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(0, 0, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -271,7 +265,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(1, 0, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -292,7 +286,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(1, 1, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -313,7 +307,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(99, 1, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -334,7 +328,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(0, 1, 0);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -355,7 +349,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(1, 0, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -376,7 +370,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(1, 99, 2015);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
@@ -397,7 +391,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(1, 2, 9999);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -420,7 +414,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         SearchFilters searchFilter = SetDobFilters(1, 2, 1970);
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -443,7 +437,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string surnameFilter = "Surname";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -468,7 +462,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string middlenameFilter = "Middle";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -497,7 +491,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 searchText,
                 _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -529,7 +523,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 _searchFiltersFake.GetSearchFilters(),
                 [genderFilter]);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -559,7 +553,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{ ""FilterName"":""Female"",""FilterType"":6}]";
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -589,7 +583,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{""FilterName"":""Female"",""FilterType"":6}, {""FilterName"":""Male"",""FilterType"":6}]";
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -616,7 +610,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -639,7 +633,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -665,7 +659,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -693,7 +687,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -719,21 +713,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         };
         downloadViewModel.TextSearchViewModel.StarredPupilConfirmationViewModel.ConfirmationGiven = true;
 
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           true,
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>(),
-           Arg.Any<UserOrganisation>())
-           .Returns(new ReturnFile()
-           {
-               FileName = null,
-               FileType = null,
-               Bytes = null
-           });
-
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         // act
         IActionResult result = await sut.DownloadPupilPremiumFile(downloadViewModel);
@@ -757,21 +737,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             LearnerNumbers = _paginatedResultsFake.GetUpn()
         };
 
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>(),
-           Arg.Any<UserOrganisation>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = []
-           });
-
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // act
@@ -795,20 +761,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             ShowTABDownloadType = true
         };
 
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = null,
-               FileType = null,
-               Bytes = null
-           });
-
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         // act
         IActionResult result = await sut.DownloadPupilPremiumFile(downloadViewModel);
@@ -826,7 +779,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         sut.TempData = Substitute.For<ITempDataDictionary>();
@@ -853,7 +806,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
@@ -888,25 +841,12 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             ShowTABDownloadType = true
         };
 
-        _mockDownloadService.GetPupilPremiumCSVFile(
-           Arg.Any<string[]>(),
-           Arg.Any<string[]>(),
-           Arg.Any<bool>(),
-           Arg.Any<AzureFunctionHeaderDetails>(),
-           Arg.Any<ReturnRoute>())
-           .Returns(new ReturnFile()
-           {
-               FileName = "test",
-               FileType = "csv",
-               Bytes = fileBytes
-           });
-
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();
         TempDataDictionaryFactory tempDataDictionaryFactory = new(tempDataProvider);
         ITempDataDictionary tempData = tempDataDictionaryFactory.GetTempData(new DefaultHttpContext());
 
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         sut.TempData = tempData;
 
         // act
@@ -940,7 +880,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 PupilPremiumSearchFiltersSessionKey)).Returns(
                     searchViewModel.SearchFilters).Verifiable();
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
@@ -966,7 +906,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
@@ -997,7 +937,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string? forenameFilter = null;
         string? searchByRemove = null;
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
@@ -1033,7 +973,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string sortDirection = "asc";
 
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
@@ -1083,7 +1023,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
                 PupilPremiumSearchFiltersSessionKey)).Returns(
                     searchViewModel.SearchFilters).Verifiable();
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         _mockSession.SetString(sut.SortDirectionKey, sortDirection);
         _mockSession.SetString(sut.SortFieldKey, sortField);
@@ -1119,7 +1059,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string sortDirection = "asc";
 
         // act
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
@@ -1152,7 +1092,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
         string surnameFilter = "Surname";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
 
         _mockSession.SetString(sut.SortDirectionKey, "asc");
         _mockSession.SetString(sut.SortFieldKey, "Forename");
@@ -1187,7 +1127,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
 
         ITempDataDictionary mockTempDataDictionary = Substitute.For<ITempDataDictionary>();
         mockTempDataDictionary.Add("PersistedSelectedGenderFilters", searchByRemove);
-        PPLearnerTextSearchController sut = GetController();
+        PupilPremiumLearnerTextSearchController sut = GetController();
         sut.TempData = mockTempDataDictionary;
 
         _mockSession.SetString(sut.SortDirectionKey, "asc");
@@ -1235,7 +1175,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     }
 
 
-    private static void AssertAbstractValues(PPLearnerTextSearchController controller, LearnerTextSearchViewModel model)
+    private static void AssertAbstractValues(PupilPremiumLearnerTextSearchController controller, LearnerTextSearchViewModel model)
     {
         Assert.Equal(controller.PageHeading, model.PageHeading);
         Assert.Equal(controller.DownloadLinksPartial, model.DownloadLinksPartial);
@@ -1246,7 +1186,7 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
     }
 
 
-    private PPLearnerTextSearchController GetController()
+    private PupilPremiumLearnerTextSearchController GetController()
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
@@ -1278,13 +1218,12 @@ public class PPLearnerTextSearchControllerTests : IClassFixture<PaginatedResults
             .ReturnsAsync(responseStubNoData);
 
 
-        return new PPLearnerTextSearchController(
+        return new PupilPremiumLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
              _mockPaginatedService,
              _mockSelectionManager,
              _mockSessionProvider.Object,
-             _mockDownloadService,
              new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
              downloadPupilPremiumDataServiceMock.Object)
         {

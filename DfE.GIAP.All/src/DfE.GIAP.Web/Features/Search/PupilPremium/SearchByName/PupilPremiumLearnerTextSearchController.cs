@@ -3,7 +3,6 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
@@ -18,10 +17,9 @@ using Microsoft.Extensions.Options;
 namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 
 [Route(Routes.Application.Search)]
-public class PPLearnerTextSearchController : BaseLearnerTextSearchController
+public sealed class PupilPremiumLearnerTextSearchController : BaseLearnerTextSearchController
 {
-    private readonly ILogger<PPLearnerTextSearchController> _logger;
-    private readonly IDownloadService _downloadService;
+    private readonly ILogger<PupilPremiumLearnerTextSearchController> _logger;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupils;
 
     public override string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
@@ -52,22 +50,18 @@ public class PPLearnerTextSearchController : BaseLearnerTextSearchController
 
     public override string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
-    public PPLearnerTextSearchController(
-        ILogger<PPLearnerTextSearchController> logger,
+    public PupilPremiumLearnerTextSearchController(
+        ILogger<PupilPremiumLearnerTextSearchController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IPaginatedSearchService paginatedSearch,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
-        IDownloadService downloadService,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils)
         : base(logger, paginatedSearch, selectionManager, azureAppSettings, sessionProvider, addPupilsToMyPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupils);
         _downloadPupilPremiumDataForPupils = downloadPupilPremiumDataForPupils;
