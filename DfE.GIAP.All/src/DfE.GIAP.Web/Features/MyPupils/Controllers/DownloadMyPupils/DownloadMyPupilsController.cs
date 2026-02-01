@@ -1,6 +1,9 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
@@ -31,6 +34,8 @@ public class DownloadMyPupilsController : Controller
     private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
+    private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadUseCase;
+    private readonly IEventLogger _eventLogger;
 
     public DownloadMyPupilsController(
         ILogger<DownloadMyPupilsController> logger,
@@ -40,7 +45,9 @@ public class DownloadMyPupilsController : Controller
         IDownloadService downloadService,
         IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
-        IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler)
+        IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler,
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadUseCase,
+        IEventLogger eventLogger)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -66,6 +73,12 @@ public class DownloadMyPupilsController : Controller
 
         ArgumentNullException.ThrowIfNull(updateMyPupilsPupilSelectionsCommandHandler);
         _updateMyPupilsPupilSelectionsCommandHandler = updateMyPupilsPupilSelectionsCommandHandler;
+
+        ArgumentNullException.ThrowIfNull(downloadUseCase);
+        _downloadUseCase = downloadUseCase;
+
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     [HttpPost]
@@ -204,19 +217,49 @@ public class DownloadMyPupilsController : Controller
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                ReturnFile downloadFile = model.DownloadFileType == DownloadFileType.CSV
-                    ? await _downloadService.GetCSVFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase)
-                    : await _downloadService.GetTABFile(selectedPupils, selectedPupils, model.SelectedDownloadOptions, true, AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()), ReturnRoute.NationalPupilDatabase);
+                // Note: Applied from Search impl
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
 
-                if (downloadFile == null)
+                foreach (string datasetString in model.SelectedDownloadOptions)
+                {
+                    if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
+                        selectedDatasets.Add(dataset);
+                }
+
+                DownloadPupilDataRequest request = new(
+                   SelectedPupils: selectedPupils,
+                   SelectedDatasets: selectedDatasets,
+                   DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                   FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
+
+                DownloadPupilDataResponse response = await _downloadUseCase.HandleRequestAsync(request);
+
+                string loggingBatchId = Guid.NewGuid().ToString();
+
+                foreach (string dataset in model.SelectedDownloadOptions)
+                {
+                    // TODO: Temp quick solution
+                    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                    {
+                        _eventLogger.LogDownload(
+                            Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
+                            model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
+                            DownloadEventType.NPD,
+                            loggingBatchId,
+                            datasetEnum);
+                    }
+                }
+                // End: applied from Search
+
+                if (response is null)
                 {
                     return base.RedirectToAction(Routes.Application.Error, Routes.Application.Home);
                 }
 
-                if (downloadFile.Bytes != null)
+                if (response.FileContents is not null)
                 {
                     model.ErrorDetails = null;
-                    return SearchDownloadHelper.DownloadFile(downloadFile);
+                    return File(response.FileContents, response.ContentType, response.FileName);
                 }
                 else
                 {
