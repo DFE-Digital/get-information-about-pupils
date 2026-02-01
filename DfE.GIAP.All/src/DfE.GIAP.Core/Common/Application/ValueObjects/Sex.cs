@@ -26,8 +26,8 @@ public readonly record struct Sex : IEquatable<Sex>, IComparable<Sex>
     {
         return _code switch
         {
-            MaleCode => "M",
             FemaleCode => "F",
+            MaleCode => "M",
             _ => "U"
         };
     }
@@ -43,7 +43,7 @@ public readonly record struct Sex : IEquatable<Sex>, IComparable<Sex>
     {
         FemaleCode => 0,
         MaleCode => 1,
-        _ => 2 
+        _ => 2
     };
 
 
