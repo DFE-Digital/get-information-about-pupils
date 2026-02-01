@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
 
@@ -9,15 +8,15 @@ public sealed class LearnerNameTests
     public void Constructor_WithValidNames_ShouldInitializeProperties()
     {
         // arrange
-        string firstName = "Alice";
-        string surname = "Smith";
+        const string firstName = "Alice";
+        const string surname = "Smith";
 
         // act
         LearnerName learnerName = new(firstName, surname);
 
         // Assert
-        learnerName.FirstName.Should().Be(firstName);
-        learnerName.Surname.Should().Be(surname);
+        Assert.Equal(firstName, learnerName.FirstName);
+        Assert.Equal(surname, learnerName.Surname);
     }
 
     [Theory]
@@ -51,27 +50,88 @@ public sealed class LearnerNameTests
     }
 
     [Fact]
-    public void Equality_WithSameNames_ShouldBeEqual()
+    public void Equality_WithSameFirstLastNames_ShouldBeEqual()
     {
         // arrange
         LearnerName equalityCheckInstanceA = new("John", "Doe");
         LearnerName equalityCheckInstanceB = new("John", "Doe");
 
         // act & Assert
-        equalityCheckInstanceA.Should().Be(equalityCheckInstanceB);
-        equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeTrue();
+        Assert.Equal(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.True(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
     }
 
     [Fact]
-    public void Equality_WithDifferentNames_ShouldNotBeEqual()
+    public void Equality_WithDifferentFirstNames_SameLastNames_ShouldNotBeEqual()
     {
         // arrange
-        LearnerName equalityCheckInstanceA = new("John", "Doe");
+        LearnerName equalityCheckInstanceA = new("Michael", "Doe");
         LearnerName equalityCheckInstanceB = new("Jane", "Doe");
 
         // act & Assert
-        equalityCheckInstanceA.Should().NotBe(equalityCheckInstanceB);
-        equalityCheckInstanceA.Equals(equalityCheckInstanceB).Should().BeFalse();
+        Assert.NotEqual(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.False(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
+    }
+
+    [Fact]
+    public void Equality_WithDifferentLastNames_SameFirstNames_ShouldNotBeEqual()
+    {
+        // arrange
+        LearnerName equalityCheckInstanceA = new("John", "Doe");
+        LearnerName equalityCheckInstanceB = new("Jane", "Donald");
+
+        // act & Assert
+        Assert.NotEqual(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.False(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
+    }
+
+    [Fact]
+    public void Equality_WithSameFirstMiddleLastNames_ShouldBeEqual()
+    {
+        // arrange
+        LearnerName equalityCheckInstanceA = new("John", "Knight", "Doe");
+        LearnerName equalityCheckInstanceB = new("John", "Knight", "Doe");
+
+        // act & Assert
+        Assert.Equal(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.True(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
+    }
+
+    [Fact]
+    public void Equality_WithDifferentFirstNames_SameMiddleLastNames_ShouldNotBeEqual()
+    {
+        // arrange
+        LearnerName equalityCheckInstanceA = new("Michael", "Knight", "Doe");
+        LearnerName equalityCheckInstanceB = new("Jane", "Knight", "Doe");
+
+        // act & Assert
+        Assert.NotEqual(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.False(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
+    }
+
+
+    [Fact]
+    public void Equality_WithDifferentMiddleNames_SameFirstLastNames_ShouldNotBeEqual()
+    {
+        // arrange
+        LearnerName equalityCheckInstanceA = new("John", "Knight", "Doe");
+        LearnerName equalityCheckInstanceB = new("Jane", "Lancelot", "Doe");
+
+        // act & Assert
+        Assert.NotEqual(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.False(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
+    }
+
+    [Fact]
+    public void Equality_WithDifferentLastNames_SameFirstMiddleNames_ShouldNotBeEqual()
+    {
+        // arrange
+        LearnerName equalityCheckInstanceA = new("John", "Knight", "Doe");
+        LearnerName equalityCheckInstanceB = new("Jane", "Knight", "Donald");
+
+        // act & Assert
+        Assert.NotEqual(equalityCheckInstanceA, equalityCheckInstanceB);
+        Assert.False(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
     }
 }
 
