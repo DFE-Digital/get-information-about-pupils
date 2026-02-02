@@ -5,7 +5,6 @@ namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 
 public record PupilPremiumLearnerTextSearchMappingContext
 {
-
     public LearnerTextSearchViewModel Model { get; init; }
 
     public PupilPremiumSearchResponse Response { get; init; }

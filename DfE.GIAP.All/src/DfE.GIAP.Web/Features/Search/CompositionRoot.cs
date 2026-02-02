@@ -13,6 +13,7 @@ using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
+using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
@@ -106,6 +107,10 @@ public static class CompositionRoot
         services.AddSingleton<IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
             NationalPupilDatabaseLearnerNumericSearchMappingContextToViewModelMapper>();
+
+        services.AddSingleton<IMapper<
+            NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
+            NationalPupilDatabaseLearnerTextSearchMappingContextToViewModelMapper>();
 
         services.AddSingleton<IMapper<
             NationalPupilDatabaseLearner, Learner>,
