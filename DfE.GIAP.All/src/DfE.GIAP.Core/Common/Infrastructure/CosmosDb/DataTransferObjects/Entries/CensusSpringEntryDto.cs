@@ -85,7 +85,7 @@ public class CensusSpringEntryDto
     public string? EnrolStatus { get; set; }
 
     [JsonProperty("EntryDate")]
-    public string? EntryDate { get; set; }
+    public DateTime? EntryDate { get; set; }
 
     [JsonProperty("NCyearActual")]
     public string? NationalCurriculumYearActual { get; set; }

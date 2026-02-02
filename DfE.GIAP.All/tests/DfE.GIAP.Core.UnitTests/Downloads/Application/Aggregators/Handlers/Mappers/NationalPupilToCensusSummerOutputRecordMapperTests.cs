@@ -96,7 +96,7 @@ public sealed class NationalPupilToCensusSummerOutputRecordMapperTests
         Assert.Equal(entry.HoursAtSetting, mapped.HoursAtSetting);
         Assert.Equal(entry.FundedHours, mapped.FundedHours);
         Assert.Equal(entry.EnrolStatus, mapped.EnrolStatus);
-        Assert.Equal(entry.EntryDate, mapped.EntryDate);
+        Assert.Equal(entry.EntryDate?.ToShortDateString(), mapped.EntryDate);
         Assert.Equal(entry.NationalCurriculumYearActual, mapped.NCyearActual);
         Assert.Equal(entry.SpecialEducationalNeedsProvision, mapped.SENProvision);
         Assert.Equal(entry.PrimarySpecialEducationalNeedsType, mapped.PrimarySENeedsType);
