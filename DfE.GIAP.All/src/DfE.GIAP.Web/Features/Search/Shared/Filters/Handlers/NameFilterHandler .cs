@@ -7,7 +7,7 @@ namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 /// Handles name-based filtering logic for learner search.
 /// Appends distinct name values to the request filter under a specified key.
 /// </summary>
-public class NameFilterHandler : IFilterHandler
+internal sealed class NameFilterHandler : IFilterHandler
 {
     /// <summary>
     /// The key used to store name filter values in the requestFilters dictionary.
@@ -36,7 +36,10 @@ public class NameFilterHandler : IFilterHandler
         Dictionary<string, string[]> requestFilters)
     {
         // Skip if the filter name is null, empty, or whitespace.
-        if (string.IsNullOrWhiteSpace(filter.FilterName)) return;
+        if (string.IsNullOrWhiteSpace(filter.FilterName))
+        {
+            return;
+        }
 
         // Retrieve existing values for the target key, or initialize an empty array.
         if (!requestFilters.TryGetValue(_targetKey, out string[] existing))

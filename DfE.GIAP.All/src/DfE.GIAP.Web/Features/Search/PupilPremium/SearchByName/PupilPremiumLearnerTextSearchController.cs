@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Text.Json;
+﻿using System.Text.Json;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
@@ -8,13 +7,15 @@ using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -39,7 +40,22 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupils;
 
-    public string PageHeading => ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
+    private readonly IUseCase<
+        PupilPremiumSearchRequest,
+        PupilPremiumSearchResponse> _searchUseCase;
+
+    private readonly IMapper<
+        PupilPremiumLearnerTextSearchMappingContext,
+        LearnerTextSearchViewModel> _learnerSearchResponseToViewModelMapper;
+
+    private readonly IMapper<
+        Dictionary<string, string[]>,
+        IList<FilterRequest>> _filtersRequestMapper;
+
+    private readonly IMapper<
+        SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+
+    private readonly IFiltersRequestFactory _filtersRequestBuilder;
     public string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     public string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
@@ -51,39 +67,28 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     public string SearchView => Global.NonUpnSearchView;
     public string DownloadLinksPartial => Global.PPNonUpnDownloadLinksView;
     public string SearchLearnerNumberAction => Routes.PupilPremium.PupilPremiumDatabase;
-    public string RedirectUrlFormAction => Global.PPNonUpnAction;
     public string LearnerTextDatabaseName => Global.PPLearnerTextSearchDatabaseName;
-    public string RedirectFrom => Routes.PupilPremium.NonUPN;
 
-    public string SurnameFilterUrl => Routes.PupilPremium.NonUPNSurnameFilter;
     public string DobFilterUrl => Routes.PupilPremium.NonUpnDobFilter;
-    public string ForenameFilterUrl => Routes.PupilPremium.NonUpnForenameFilter;
-    public string MiddlenameFilterUrl => Routes.PupilPremium.NonUpnMiddlenameFilter;
 
-    public string SexFilterUrl => Routes.PupilPremium.NonUpnSexFilter;
-    public string FormAction => Routes.PupilPremium.NonUPN;
-    public string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.PupilPremium.NonUPN}";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
     public string SearchAction => Global.PPNonUpnAction;
     public string SearchController => Global.PPTextSearchController;
-    public ReturnRoute ReturnRoute => ReturnRoute.NonPupilPremium;
-
-    public string DownloadSelectedLink => ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
 
     public PupilPremiumLearnerTextSearchController(
         ILogger<PupilPremiumLearnerTextSearchController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
-        IPaginatedSearchService paginatedSearchService,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
-        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils)
+        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils,
+        IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse> searchUseCase,
+        IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
+        IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
+        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        IFiltersRequestFactory filtersRequestBuilder)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(paginatedSearchService);
-        _paginatedSearchService = paginatedSearchService;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -100,6 +105,21 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupils);
         _downloadPupilPremiumDataForPupils = downloadPupilPremiumDataForPupils;
+
+        ArgumentNullException.ThrowIfNull(searchUseCase);
+        _searchUseCase = searchUseCase;
+
+        ArgumentNullException.ThrowIfNull(learnerSearchResponseToViewModelMapper);
+        _learnerSearchResponseToViewModelMapper = learnerSearchResponseToViewModelMapper;
+
+        ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
+        _filtersRequestMapper = filtersRequestMapper;
+
+        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
+        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+
+        ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
+        _filtersRequestBuilder = filtersRequestBuilder;
     }
 
     [Route(Routes.PupilPremium.NonUPN)]
@@ -119,328 +139,26 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         string forenameFilter,
         string searchByRemove,
         [FromQuery] string sortField,
-        [FromQuery] string sortDirection,
-        bool returned = false,
-        bool fail = false,
-        bool calledByController = false)
+        [FromQuery] string sortDirection)
     {
         _logger.LogInformation("Pupil Premium NonUpn POST method called");
         model.ShowHiddenUPNWarningMessage = true;
-        return await Search(model, surnameFilter, middleNameFilter, forenameFilter,
-                                 searchByRemove, model.PageNumber,
-                                 ControllerContext.HttpContext.Request.Query.ContainsKey("pageNumber"),
-                                 calledByController,
-                                 sortField, sortDirection,
-                                 ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
+        return await Search(
+            model,
+            surnameFilter,
+            middleNameFilter,
+            forenameFilter,
+            searchByRemove,
+            model.PageNumber,
+            sortField,
+            sortDirection,
+            ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
     }
 
 
     [Route(Routes.PupilPremium.NonUpnDobFilter)]
     [HttpPost]
     public async Task<IActionResult> DobFilter(LearnerTextSearchViewModel model)
-    {
-        return await DobSearchFilter(model);
-    }
-
-    [Route(Routes.PupilPremium.NonUPNSurnameFilter)]
-    [HttpPost]
-    public async Task<IActionResult> SurnameFilter(LearnerTextSearchViewModel model, string surnameFilter)
-    {
-        return await SurnameSearchFilter(model, surnameFilter);
-    }
-
-    [Route(Routes.PupilPremium.NonUpnMiddlenameFilter)]
-    [HttpPost]
-    public async Task<IActionResult> MiddlenameFilter(LearnerTextSearchViewModel model, string middlenameFilter)
-    {
-        return await MiddlenameSearchFilter(model, middlenameFilter);
-    }
-
-    [Route(Routes.PupilPremium.NonUpnForenameFilter)]
-    [HttpPost]
-    public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
-    {
-        return await ForenameSearchFilter(model, forenameFilter);
-    }
-
-    [Route(Routes.PupilPremium.NonUpnSexFilter)]
-    [HttpPost]
-    public async Task<IActionResult> SexFilter(LearnerTextSearchViewModel model)
-    {
-        return await SexSearchFilter(model);
-    }
-
-    [HttpPost]
-    [Route("add-pp-nonupn-to-my-pupil-list")]
-    public async Task<IActionResult> PPAddToMyPupilList(LearnerTextSearchViewModel model)
-    {
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        SetSortOptions(model);
-
-        SetSelections(model.SelectedPupil);
-
-        string selectedUpn = GetSelected();
-
-        if (string.IsNullOrEmpty(selectedUpn))
-        {
-            model.NoPupil = true;
-            model.NoPupilSelected = true;
-            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
-            return await ReturnToSearch(model);
-        }
-
-        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
-        {
-            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
-        }
-
-        if (!ValidationHelper.IsValidUpn(selectedUpn))
-        {
-            model.ErrorDetails = Messages.Common.Errors.InvalidPupilIdentifier;
-            return await ReturnToSearch(model);
-        }
-
-        try
-        {
-            string userId = User.GetUserId();
-            AddPupilsToMyPupilsRequest addRequest = new(
-                userId: userId,
-                pupils: [selectedUpn]);
-
-            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
-        }
-
-        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
-        {
-            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
-            return await ReturnToSearch(model);
-        }
-
-        model.ItemAddedToMyPupilList = true;
-        return await ReturnToSearch(model);
-    }
-
-    [Route(Routes.PupilPremium.DownloadPupilPremiumFile)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadPupilPremiumFile(LearnerDownloadViewModel model, CancellationToken ctx = default)
-    {
-        string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
-
-        DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
-            pupilUpns: [selectedPupil],
-            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
-            ctx);
-
-        if (result.HasData)
-        {
-            return result.GetResult();
-        }
-
-        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        return RedirectToAction(Global.PPNonUpnAction, Global.PPTextSearchController);
-    }
-
-    [Route(Routes.PupilPremium.LearnerTextDownloadRequest)]
-    public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(LearnerTextSearchViewModel model)
-    {
-        SetSelections(model.SelectedPupil);
-
-        string selectedPupil = GetSelected();
-
-        if (string.IsNullOrEmpty(selectedPupil))
-        {
-            model.ErrorDetails = Messages.Downloads.Errors.NoPupilSelected;
-            model.NoPupil = true;
-            model.NoPupilSelected = true;
-            return await ReturnToSearch(model);
-        }
-
-        if (PupilHelper.CheckIfStarredPupil(selectedPupil) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
-        {
-            PopulateConfirmationNavigation(model.StarredPupilConfirmationViewModel);
-            model.StarredPupilConfirmationViewModel.SelectedPupil = selectedPupil;
-            return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
-        }
-
-        LearnerDownloadViewModel searchDownloadViewModel = new LearnerDownloadViewModel
-        {
-            SelectedPupils = selectedPupil,
-            LearnerNumber = selectedPupil,
-            ErrorDetails = model.ErrorDetails,
-            SelectedPupilsCount = 1,
-            DownloadFileType = DownloadFileType.CSV,
-            ShowTABDownloadType = false
-        };
-
-        return await DownloadPupilPremiumFile(searchDownloadViewModel);
-    }
-
-    [Route(Routes.PupilPremium.DownloadNonUPNConfirmationReturn)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel model)
-    {
-        model.ConfirmationError = !model.ConfirmationGiven;
-        PopulateConfirmationNavigation(model);
-
-        if (model.ConfirmationGiven)
-        {
-            LearnerDownloadViewModel searchDownloadViewModel = new LearnerDownloadViewModel
-            {
-                SelectedPupils = model.SelectedPupil,
-                LearnerNumber = model.SelectedPupil,
-                ErrorDetails = "No Confirmation Given for Starred Pupil",
-                SelectedPupilsCount = 1,
-                DownloadFileType = DownloadFileType.CSV,
-                ShowTABDownloadType = false
-            };
-
-            return await DownloadPupilPremiumFile(searchDownloadViewModel);
-        }
-
-        return ConfirmationForStarredPupil(model);
-    }
-
-    [Route(Routes.PupilPremium.DownloadCancellationReturn)]
-    [HttpPost]
-    public async Task<IActionResult> DownloadCancellationReturn(StarredPupilConfirmationViewModel model)
-    {
-        return await Search(true);
-    }
-
-    private void PopulateConfirmationNavigation(StarredPupilConfirmationViewModel model)
-    {
-        model.DownloadType = DownloadType.PupilPremium;
-        model.ConfirmationReturnController = SearchController;
-        model.ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction;
-        model.CancelReturnController = SearchController;
-        model.CancelReturnAction = Global.PPDownloadCancellationReturnAction;
-    }
-
-    #region WIP legacy inherited methods to deprecate
-
-    private async Task<IActionResult> Search(bool? returnToSearch)
-    {
-        LearnerTextSearchViewModel model = new();
-
-        PopulatePageText(model);
-        PopulateNavigation(model);
-        model.LearnerNumberLabel = LearnerNumberLabel;
-
-        if (returnToSearch ?? false)
-        {
-            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
-            {
-                model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
-            }
-            if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
-            {
-                model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
-            }
-
-            SetSortOptions(model);
-            GetPersistedSexFiltersForViewModel(model);
-            model = await GenerateLearnerTextSearchViewModel(model, null, null, null, null,
-                model.SortField,
-                model.SortDirection);
-            model.PageNumber = 0;
-            model.PageSize = PAGESIZE;
-        }
-
-        if (!returnToSearch.HasValue)
-        {
-            _selectionManager.Clear();
-        }
-
-        return View(Global.NonUpnSearchView, model);
-    }
-
-    private async Task<IActionResult> Search(
-        LearnerTextSearchViewModel model,
-        string surnameFilter, string middlenameFilter,
-        string forenameFilter, string searchByRemove,
-        int pageNumber,
-        bool hasQueryItem = false,
-        bool calledByController = false,
-        string sortField = "",
-        string sortDirection = "",
-        bool resetSelection = false)
-    {
-        GetPersistedSexFiltersForViewModel(model);
-        model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
-        model.LearnerNumberLabel = LearnerNumberLabel;
-        bool notPaged = hasQueryItem || calledByController;
-
-        if (notPaged && !model.NoPupilSelected)
-        {
-            SetSelections(model.SelectedPupil);
-        }
-
-        if (resetSelection || searchByRemove != null)
-        {
-            _selectionManager.Clear();
-            ClearSortOptions();
-            RemoveSexFilterItemFromModel(model, searchByRemove);
-            SetPersistedSexFiltersForViewModel(model);
-        }
-
-        if (resetSelection && searchByRemove == null)
-        {
-            RemoveAllSexFilterItemsFromModel(model);
-        }
-
-        model.PageNumber = pageNumber;
-        model.PageSize = PAGESIZE;
-
-        if (!string.IsNullOrEmpty(sortField) || !string.IsNullOrEmpty(sortDirection))
-        {
-            HttpContext.Session.SetString(SortFieldKey, sortField);
-            HttpContext.Session.SetString(SortDirectionKey, sortDirection);
-        }
-
-        SetSortOptions(model);
-        if (!string.IsNullOrEmpty(model.SearchText))
-        {
-            model = await GenerateLearnerTextSearchViewModel(
-            model,
-            surnameFilter,
-            middlenameFilter,
-            forenameFilter,
-            searchByRemove,
-            model.SortField,
-            model.SortDirection);
-        }
-
-        model.ReturnRoute = ReturnRoute;
-
-        PopulatePageText(model);
-        PopulateNavigation(model);
-
-        _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
-
-        if (model.SearchFilters != null)
-        {
-            _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
-        }
-
-        return View(SearchView, model);
-    }
-
-    private async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
-    {
-        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
-        {
-            model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
-        }
-        if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
-        {
-            model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
-        }
-
-        return await Search(model, null, null, null, null, model.PageNumber, calledByController: true, hasQueryItem: true, sortField: model.SortField, sortDirection: model.SortDirection);
-    }
-
-    private async Task<IActionResult> DobSearchFilter(LearnerTextSearchViewModel model)
     {
         int day = model.SearchFilters.CustomFilterText.DobDay;
         int month = model.SearchFilters.CustomFilterText.DobMonth;
@@ -516,11 +234,12 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             model.FilterErrors.DobError = true;
         }
 
-        return await ReturnToRoute(model).ConfigureAwait(false);
+        return await ReturnToRoute(model);
     }
 
-
-    private async Task<IActionResult> SurnameSearchFilter(LearnerTextSearchViewModel model, string surnameFilter)
+    [Route(Routes.PupilPremium.NonUPNSurnameFilter)]
+    [HttpPost]
+    public async Task<IActionResult> SurnameFilter(LearnerTextSearchViewModel model, string surnameFilter)
     {
         ModelState.Clear();
 
@@ -535,10 +254,12 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             model.FilterErrors.SurnameError = true;
         }
 
-        return await ReturnToRoute(model).ConfigureAwait(false);
+        return await ReturnToRoute(model);
     }
 
-    private async Task<IActionResult> MiddlenameSearchFilter(LearnerTextSearchViewModel model, string middlenameFilter)
+    [Route(Routes.PupilPremium.NonUpnMiddlenameFilter)]
+    [HttpPost]
+    public async Task<IActionResult> MiddlenameFilter(LearnerTextSearchViewModel model, string middlenameFilter)
     {
         ModelState.Clear();
 
@@ -553,10 +274,12 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             model.FilterErrors.MiddlenameError = true;
         }
 
-        return await ReturnToRoute(model).ConfigureAwait(false);
+        return await ReturnToRoute(model);
     }
 
-    private async Task<IActionResult> ForenameSearchFilter(LearnerTextSearchViewModel model, string forenameFilter)
+    [Route(Routes.PupilPremium.NonUpnForenameFilter)]
+    [HttpPost]
+    public async Task<IActionResult> ForenameFilter(LearnerTextSearchViewModel model, string forenameFilter)
     {
         ModelState.Clear();
 
@@ -571,26 +294,313 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             model.FilterErrors.ForenameError = true;
         }
 
-        return await ReturnToRoute(model).ConfigureAwait(false);
+        return await ReturnToRoute(model);
     }
 
-    [NonAction]
-    public async Task<IActionResult> SexSearchFilter(LearnerTextSearchViewModel model)
+    [Route(Routes.PupilPremium.NonUpnSexFilter)]
+    [HttpPost]
+    public async Task<IActionResult> SexFilter(LearnerTextSearchViewModel model)
     {
         SetPersistedSexFiltersForViewModel(model);
         ModelState.Clear();
-        return await ReturnToRoute(model).ConfigureAwait(false);
+        return await ReturnToRoute(model);
     }
 
-    protected async Task<IActionResult> ReturnToRoute(LearnerTextSearchViewModel model)
+    [HttpPost]
+    [Route("add-pp-nonupn-to-my-pupil-list")]
+    public async Task<IActionResult> PPAddToMyPupilList(LearnerTextSearchViewModel model)
+    {
+        PopulatePageText(model);
+        PopulateNavigation(model);
+        SetSortOptions(model);
+
+        SetSelections(model.SelectedPupil);
+
+        string selectedUpn = _selectionManager.GetSelectedFromSession();
+
+        if (string.IsNullOrEmpty(selectedUpn))
+        {
+            model.NoPupil = true;
+            model.NoPupilSelected = true;
+            model.ErrorDetails = Messages.Common.Errors.NoPupilsSelected;
+            return await ReturnToSearch(model);
+        }
+
+        if (PupilHelper.CheckIfStarredPupil(selectedUpn))
+        {
+            selectedUpn = RbacHelper.DecodeUpn(selectedUpn);
+        }
+
+        if (!ValidationHelper.IsValidUpn(selectedUpn))
+        {
+            model.ErrorDetails = Messages.Common.Errors.InvalidPupilIdentifier;
+            return await ReturnToSearch(model);
+        }
+
+        try
+        {
+            string userId = User.GetUserId();
+            AddPupilsToMyPupilsRequest addRequest = new(
+                userId: userId,
+                pupils: [selectedUpn]);
+
+            await _addPupilsToMyPupilsUseCase.HandleRequestAsync(addRequest);
+        }
+
+        catch (MyPupilsLimitExceededException) // TODO domain exception bleeding through. Result Pattern? Decision: Preserve existing behaviour
+        {
+            model.ErrorDetails = Messages.Common.Errors.MyPupilListLimitExceeded;
+            return await ReturnToSearch(model);
+        }
+
+        model.ItemAddedToMyPupilList = true;
+        return await ReturnToSearch(model);
+    }
+
+    [Route(Routes.PupilPremium.DownloadPupilPremiumFile)]
+    [HttpPost]
+    public async Task<IActionResult> DownloadPupilPremiumFile(LearnerDownloadViewModel model, CancellationToken ctx = default)
+    {
+        string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
+
+        DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
+            pupilUpns: [selectedPupil],
+            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            ctx);
+
+        if (result.HasData)
+        {
+            return result.GetResult();
+        }
+
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+        return RedirectToAction(Global.PPNonUpnAction, Global.PPTextSearchController);
+    }
+
+    [Route(Routes.PupilPremium.LearnerTextDownloadRequest)]
+    public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(LearnerTextSearchViewModel model)
+    {
+        SetSelections(model.SelectedPupil);
+
+        string selectedPupil = _selectionManager.GetSelectedFromSession();
+
+        if (string.IsNullOrEmpty(selectedPupil))
+        {
+            model.ErrorDetails = Messages.Downloads.Errors.NoPupilSelected;
+            model.NoPupil = true;
+            model.NoPupilSelected = true;
+            return await ReturnToSearch(model);
+        }
+
+        if (PupilHelper.CheckIfStarredPupil(selectedPupil) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
+        {
+            PopulateConfirmationNavigation(model.StarredPupilConfirmationViewModel);
+            model.StarredPupilConfirmationViewModel.SelectedPupil = selectedPupil;
+            return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
+        }
+
+        LearnerDownloadViewModel searchDownloadViewModel = new()
+        {
+            SelectedPupils = selectedPupil,
+            LearnerNumber = selectedPupil,
+            ErrorDetails = model.ErrorDetails,
+            SelectedPupilsCount = 1,
+            DownloadFileType = DownloadFileType.CSV,
+            ShowTABDownloadType = false
+        };
+
+        return await DownloadPupilPremiumFile(searchDownloadViewModel);
+    }
+
+    [Route(Routes.PupilPremium.DownloadNonUPNConfirmationReturn)]
+    [HttpPost]
+    public async Task<IActionResult> DownloadFileConfirmationReturn(StarredPupilConfirmationViewModel model)
+    {
+        model.ConfirmationError = !model.ConfirmationGiven;
+        PopulateConfirmationNavigation(model);
+
+        if (model.ConfirmationGiven)
+        {
+            LearnerDownloadViewModel searchDownloadViewModel = new()
+            {
+                SelectedPupils = model.SelectedPupil,
+                LearnerNumber = model.SelectedPupil,
+                ErrorDetails = "No Confirmation Given for Starred Pupil",
+                SelectedPupilsCount = 1,
+                DownloadFileType = DownloadFileType.CSV,
+                ShowTABDownloadType = false
+            };
+
+            return await DownloadPupilPremiumFile(searchDownloadViewModel);
+        }
+
+        return ConfirmationForStarredPupil(model);
+    }
+
+    [Route(Routes.PupilPremium.DownloadCancellationReturn)]
+    [HttpPost]
+    public async Task<IActionResult> DownloadCancellationReturn()
+    {
+        return await Search(true);
+    }
+
+    #region WIP legacy inherited methods to deprecate
+    private void PopulateConfirmationNavigation(StarredPupilConfirmationViewModel model)
+    {
+        model.DownloadType = DownloadType.PupilPremium;
+        model.ConfirmationReturnController = SearchController;
+        model.ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction;
+        model.CancelReturnController = SearchController;
+        model.CancelReturnAction = Global.PPDownloadCancellationReturnAction;
+    }
+
+    private async Task<IActionResult> Search(bool? returnToSearch)
+    {
+        LearnerTextSearchViewModel model = new();
+
+        PopulatePageText(model);
+        PopulateNavigation(model);
+        model.LearnerNumberLabel = LearnerNumberLabel;
+
+        if (returnToSearch ?? false)
+        {
+            if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+            {
+                model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+            }
+            if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+            {
+                model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
+            }
+
+            SetSortOptions(model);
+            GetPersistedSexFiltersForViewModel(model);
+
+            model = await GenerateLearnerTextSearchViewModel(
+                model,
+                null,
+                null,
+                null,
+                null,
+                model.SortField,
+                model.SortDirection);
+
+            model.PageNumber = 0;
+            model.PageSize = PAGESIZE;
+        }
+
+        if (!returnToSearch.HasValue)
+        {
+            _selectionManager.Clear();
+        }
+
+        return View(Global.NonUpnSearchView, model);
+    }
+
+    private async Task<IActionResult> Search(
+        LearnerTextSearchViewModel model,
+        string surnameFilter,
+        string middlenameFilter,
+        string forenameFilter,
+        string searchByRemove,
+        int pageNumber,
+        string sortField = "",
+        string sortDirection = "",
+        bool resetSelection = false)
+    {
+        GetPersistedSexFiltersForViewModel(model);
+        model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
+        model.LearnerNumberLabel = LearnerNumberLabel;
+        
+        if (resetSelection || searchByRemove != null)
+        {
+            _selectionManager.Clear();
+            ClearSortOptions();
+
+            if (!string.IsNullOrWhiteSpace(searchByRemove))
+            {
+                model.SelectedSexValues =
+                    model.SelectedSexValues?.Where(selectedSexValue =>
+                        selectedSexValue.SwitchSexToParseName() != searchByRemove).ToArray();
+            }
+
+            SetPersistedSexFiltersForViewModel(model);
+        }
+
+        if (resetSelection && searchByRemove == null)
+        {
+            RemoveAllSexFilterItemsFromModel(model);
+        }
+
+        model.PageNumber = pageNumber;
+        model.PageSize = PAGESIZE;
+
+        if (!string.IsNullOrEmpty(sortField) || !string.IsNullOrEmpty(sortDirection))
+        {
+            _sessionProvider.SetSessionValue(SortFieldKey, sortField);
+            _sessionProvider.SetSessionValue(SortDirectionKey, sortDirection);
+        }
+
+        SetSortOptions(model);
+
+        if (!string.IsNullOrEmpty(model.SearchText))
+        {
+            model = await GenerateLearnerTextSearchViewModel(
+                model,
+                surnameFilter,
+                middlenameFilter,
+                forenameFilter,
+                searchByRemove,
+                model.SortField,
+                model.SortDirection);
+        }
+
+        model.ReturnRoute = ReturnRoute.NonPupilPremium;
+
+        PopulatePageText(model);
+        PopulateNavigation(model);
+
+        _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
+
+        if (model.SearchFilters != null)
+        {
+            _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
+        }
+
+        return View(SearchView, model);
+    }
+
+    private async Task<IActionResult> ReturnToSearch(LearnerTextSearchViewModel model)
+    {
+        if (_sessionProvider.ContainsSessionKey(SearchSessionKey))
+        {
+            model.SearchText = _sessionProvider.GetSessionValue(SearchSessionKey);
+        }
+        if (_sessionProvider.ContainsSessionKey(SearchFiltersSessionKey))
+        {
+            model.SearchFilters = _sessionProvider.GetSessionValueOrDefault<SearchFilters>(SearchFiltersSessionKey);
+        }
+
+        return await Search(
+            model,
+            null,
+            null,
+            null,
+            null,
+            model.PageNumber,
+            sortField: model.SortField,
+            sortDirection: model.SortDirection);
+    }
+
+    private async Task<IActionResult> ReturnToRoute(LearnerTextSearchViewModel model)
     {
         _selectionManager.Clear();
         ClearSortOptions();
 
-        return await Search(model, null, null, null, null, model.PageNumber, false);
+        return await Search(model, null, null, null, null, model.PageNumber);
     }
 
-    protected void GetPersistedSexFiltersForViewModel(
+    private void GetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model)
     {
         string[] sexFilters =
@@ -602,25 +612,13 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             model.SelectedSexValues = sexFilters;
     }
 
-    protected void SetPersistedSexFiltersForViewModel(
+    private void SetPersistedSexFiltersForViewModel(
         LearnerTextSearchViewModel model) =>
-        TempData.SetPersistedObject(
-            model.SelectedSexValues,
-            PersistedSelectedSexFiltersKey);
+            TempData.SetPersistedObject(
+                model.SelectedSexValues,
+                PersistedSelectedSexFiltersKey);
 
-    protected void RemoveSexFilterItemFromModel(
-        LearnerTextSearchViewModel model,
-        string sexFilterItem)
-    {
-        if (!string.IsNullOrWhiteSpace(sexFilterItem))
-        {
-            model.SelectedSexValues =
-                model.SelectedSexValues?.Where(selectedSexValue =>
-                    selectedSexValue.SwitchSexToParseName() != sexFilterItem).ToArray();
-        }
-    }
-
-    protected void RemoveAllSexFilterItemsFromModel(
+    private void RemoveAllSexFilterItemsFromModel(
         LearnerTextSearchViewModel model)
     {
         model.SelectedSexValues = null;
@@ -631,9 +629,25 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     private void SetSortOptions(LearnerTextSearchViewModel model)
     {
         if (HttpContext.Session.Keys.Contains(SortDirectionKey))
+        {
             model.SortDirection = HttpContext.Session.GetString(SortDirectionKey);
+        }
+            
         if (HttpContext.Session.Keys.Contains(SortFieldKey))
+        {
             model.SortField = HttpContext.Session.GetString(SortFieldKey);
+        }
+    }
+
+    private void SetSearchFiltersUrls(LearnerTextSearchViewModel model)
+    {
+        model.RedirectUrls.SurnameFilterURL = Routes.PupilPremium.NonUPNSurnameFilter;
+        model.RedirectUrls.FormAction = Routes.PupilPremium.NonUPN;
+        model.RedirectUrls.RemoveAction = $"/{Routes.Application.Search}/{Routes.PupilPremium.NonUPN}";
+        model.RedirectUrls.DobFilterUrl = DobFilterUrl;
+        model.RedirectUrls.ForenameFilterUrl = Routes.PupilPremium.NonUpnForenameFilter;
+        model.RedirectUrls.MiddlenameFilterUrl = Routes.PupilPremium.NonUpnMiddlenameFilter;
+        model.RedirectUrls.SexFilterUrl = Routes.PupilPremium.NonUpnSexFilter;
     }
 
     private void ClearSortOptions()
@@ -642,30 +656,27 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         HttpContext.Session.Remove(SortFieldKey);
     }
 
-
-    private LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
+    private static void PopulatePageText(LearnerTextSearchViewModel model)
     {
-        model.PageHeading = PageHeading;
+        model.PageHeading = ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
         model.ShowMiddleNames = true;
         model.ShowLocalAuthority = true;
-        return model;
     }
 
-    private LearnerTextSearchViewModel PopulateNavigation(LearnerTextSearchViewModel model)
+
+    private void PopulateNavigation(LearnerTextSearchViewModel model)
     {
         model.LearnerTextSearchController = SearchController;
         model.LearnerTextSearchAction = SearchAction;
 
         model.LearnerNumberController = Routes.Application.Search;
         model.LearnerNumberAction = SearchLearnerNumberAction;
-        model.RedirectUrls.FormAction = RedirectUrlFormAction;
+        model.RedirectUrls.FormAction = Global.PPNonUpnAction;
 
         model.LearnerTextDatabaseName = LearnerTextDatabaseName;
         model.RedirectUrls.DobFilterUrl = DobFilterUrl;
-        model.RedirectFrom = RedirectFrom;
+        model.RedirectFrom = Routes.PupilPremium.NonUPN;
         model.DownloadLinksPartial = DownloadLinksPartial;
-
-        return model;
     }
 
     private void SetSelections(string selected)
@@ -677,16 +688,10 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         }
     }
 
-    private string GetSelected()
-    {
-        return _selectionManager.GetSelectedFromSession();
-    }
 
-
-    [NonAction]
-    public IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
+    private IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
     {
-        LearnerTextSearchViewModel searchViewModel = new LearnerTextSearchViewModel()
+        LearnerTextSearchViewModel searchViewModel = new()
         {
             SearchText = HttpContext.Session.Keys.Contains(SearchSessionKey) ? HttpContext.Session.GetString(SearchSessionKey) : string.Empty,
             LearnerTextSearchController = SearchController,
@@ -701,7 +706,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         return View(SearchView, searchViewModel);
     }
 
-    protected async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
+    private async Task<LearnerTextSearchViewModel> GenerateLearnerTextSearchViewModel(
         LearnerTextSearchViewModel model,
         string surnameFilter,
         string middlenameFilter,
@@ -710,93 +715,42 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         string sortField = "",
         string sortDirection = "")
     {
-        List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
+        List<CurrentFilterDetail> currentFilters =
+            SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
-        model.LearnerTextDatabaseName = LearnerTextDatabaseName;
+        IList<FilterRequest> filterRequests =
+           _filtersRequestMapper.Map(
+               _filtersRequestBuilder
+                   .GenerateFilterRequest(model, currentFilters));
 
-        model = SetSearchFiltersUrls(model);
+        SortOrder sortOrder =
+            _sortOrderViewModelToRequestMapper.Map(
+                new SortOrderRequest(
+                    searchKey: "pupil-premium",
+                    sortOrder: (sortField, sortDirection)));
 
-        if (ModelState.IsValid)
+        PupilPremiumSearchResponse searchResponse =
+            await _searchUseCase.HandleRequestAsync(
+                new PupilPremiumSearchRequest(
+                    searchKeywords: model.SearchText,
+                    filterRequests: filterRequests,
+                    sortOrder: sortOrder,
+                    offset: model.Offset));
+
+        LearnerTextSearchViewModel viewModel = _learnerSearchResponseToViewModelMapper.Map(
+            PupilPremiumLearnerTextSearchMappingContext.Create(model, searchResponse));
+
+        SetLearnerNumberId(viewModel);
+
+        if (!User.IsAdmin())
         {
-            model.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
-            model.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
-            model.DownloadSelectedLink = DownloadSelectedLink;
-
-
-            if (currentFilters.Count > 0)
-            {
-                model.SearchFilters.CurrentFiltersApplied = currentFilters;
-            }
-
-            if (currentFilters != null)
-            {
-                model.SearchFilters.CurrentFiltersAppliedString = JsonSerializer.Serialize(currentFilters);
-            }
+            viewModel.Learners = RbacHelper.CheckRbacRulesGeneric(
+                viewModel.Learners.ToList(),
+                statutoryLowAge: User.GetOrganisationLowAge(),
+                statutoryHighAge: User.GetOrganisationHighAge());
         }
 
-        bool hasCustomFilters = (model.SearchFilters.CustomFilterText.Surname != null ||
-            model.SearchFilters.CustomFilterText.Forename != null ||
-            model.SearchFilters.CustomFilterText.Middlename != null ||
-            model.SearchFilters.CustomFilterText.DobDay != 0 ||
-            model.SearchFilters.CustomFilterText.DobMonth != 0 ||
-            model.SearchFilters.CustomFilterText.DobYear != 0) ? true : false;
-
-        bool first = hasCustomFilters || model.PageNumber != 0 ? false : true;
-        model = await GetPupilsByNameForSearchBuilder(
-            model,
-            IndexType,
-            currentFilters,
-            model.PageNumber,
-            first,
-            sortField,
-            sortDirection).ConfigureAwait(false);
-
-        return model;
-    }
-
-    private async Task<LearnerTextSearchViewModel> GetPupilsByNameForSearchBuilder(
-        LearnerTextSearchViewModel model,
-        AzureSearchIndexType indexType,
-        List<CurrentFilterDetail> currentFilters,
-        int pageNumber,
-        bool first,
-        string sortField = "",
-        string sortDirection = "")
-    {
-        Dictionary<string, string[]> requestFilters = GenerateRequestModel(model, currentFilters);
-
-        PaginatedResponse result = await _paginatedSearchService.GetPage(
-            model.SearchText,
-            requestFilters,
-            first ? _azureAppSettings.MaximumNonUPNResults : PAGESIZE,
-            pageNumber,
-            indexType,
-            AzureSearchQueryType.Text,
-            AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-            sortField,
-            sortDirection
-          );
-
-        ParseSex(ref result);
-
-        int lowAge = User.GetOrganisationLowAge();
-        int highAge = User.GetOrganisationHighAge();
-
-        model.Learners = result.Learners;
-        model.Count = (int)result.Count;
-        model.Total = result.Count ?? result.Learners.Count;
-
-        model.Filters = result.Filters;
-
-        SetLearnerNumberId(model);
-
-        bool isAdmin = User.IsAdmin();
-        if (!isAdmin && indexType != AzureSearchIndexType.FurtherEducation)
-        {
-            model.Learners = RbacHelper.CheckRbacRulesGeneric<Learner>(model.Learners.ToList(), lowAge, highAge);
-        }
-
-        string selected = GetSelected();
+        string selected = _selectionManager.GetSelectedFromSession();
 
         if (!string.IsNullOrEmpty(selected))
         {
@@ -809,115 +763,30 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             }
         }
 
-        model.Learners = first ? result.Learners.Take(PAGESIZE) : result.Learners;
+        viewModel.LearnerTextDatabaseName = LearnerTextDatabaseName;
 
-        model.PageLearnerNumbers = string.Join(',', model.Learners.Select(l => l.LearnerNumberId));
+        SetSearchFiltersUrls(viewModel);
 
-        model.ShowOverLimitMessage = model.Total > 100000;
+        viewModel.PageLearnerNumbers = string.Join(',', viewModel.Learners.Select(l => l.LearnerNumberId));
 
-        return model;
-    }
+        viewModel.ShowOverLimitMessage = viewModel.Total > 100000;
 
-    private static Dictionary<string, string[]> GenerateRequestModel(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters)
-    {
-        Dictionary<string, string[]> requestFilters = [];
-        List<string> surnameList = [];
-        List<string> middlenameList = [];
-        List<string> forenameList = [];
-        List<string> dobList = [];
-
-        if (currentFilters != null)
+        if (ModelState.IsValid)
         {
-            foreach (CurrentFilterDetail filter in currentFilters)
+            viewModel.AddSelectedToMyPupilListLink = ApplicationLabels.AddSelectedToMyPupilListLink;
+            viewModel.DownloadSelectedASCTFLink = ApplicationLabels.DownloadSelectedAsCtfLink;
+            viewModel.DownloadSelectedLink = ApplicationLabels.DownloadSelectedPupilPremiumDataLink;
+
+            if (currentFilters.Count > 0)
             {
-                if (filter.FilterType == FilterType.Surname)
-                {
-                    surnameList.Add(filter.FilterName);
-                }
-                if (filter.FilterType == FilterType.MiddleName)
-                {
-                    middlenameList.Add(filter.FilterName);
-                }
-                if (filter.FilterType == FilterType.Forename)
-                {
-                    forenameList.Add(filter.FilterName);
-                }
-                if (filter.FilterType == FilterType.Dob)
-                {
-                    if (!model.FilterErrors.DobError)
-                    {
-                        if (model.SearchFilters.CustomFilterText.DobDay == 0 && model.SearchFilters.CustomFilterText.DobMonth == 0 &&
-                            model.SearchFilters.CustomFilterText.DobYear == 0)
-                        {
-                            PupilHelper.ConvertFilterNameToCustomDOBFilterText(filter.FilterName, out int dobDay, out int dobMonth, out int dobYear);
-                            model.SearchFilters.CustomFilterText.DobDay = dobDay;
-                            model.SearchFilters.CustomFilterText.DobMonth = dobMonth;
-                            model.SearchFilters.CustomFilterText.DobYear = dobYear;
-                        }
-
-                        if (model.SearchFilters.CustomFilterText.DobDay > 0 && model.SearchFilters.CustomFilterText.DobMonth > 0 && model.SearchFilters.CustomFilterText.DobYear > 0)
-                        {
-                            dobList.Add(DateTime.Parse(filter.FilterName, new CultureInfo("en-GB")).ToString("yyy-MM-dd", new CultureInfo("en-GB")));
-                            requestFilters.Add("dob", dobList.ToArray());
-                        }
-                        else
-                        {
-                            if (model.SearchFilters.CustomFilterText.DobMonth == 0)
-                                requestFilters.Add("dobyear", new string[] { model.SearchFilters.CustomFilterText.DobYear.ToString() });
-                            else
-                            {
-                                requestFilters.Add("dobmonth", new string[] { model.SearchFilters.CustomFilterText.DobMonth.ToString() });
-                                requestFilters.Add("dobyear", new string[] { model.SearchFilters.CustomFilterText.DobYear.ToString() });
-                            }
-                        }
-                    }
-                }
-
-                if (filter.FilterType == FilterType.Sex)
-                {
-                    List<string> currentSelectedSexList = [];
-                    if (model.SelectedSexValues != null)
-                    {
-                        currentSelectedSexList = model.SelectedSexValues.ToList();
-                    }
-
-                    if (!currentSelectedSexList.Any(x => x.Equals(filter.FilterName.Substring(0, 1))))
-                    {
-                        currentSelectedSexList.Add(filter.FilterName.Substring(0, 1));
-                    }
-                    model.SelectedSexValues = [.. currentSelectedSexList];
-                }
+                viewModel.SearchFilters.CurrentFiltersApplied = currentFilters;
             }
+
+            viewModel.SearchFilters.CurrentFiltersAppliedString = JsonSerializer.Serialize(currentFilters);
         }
 
-        if (surnameList.ToArray().Length > 0)
-            requestFilters.Add("surname", surnameList.ToArray());
-
-        if (middlenameList.ToArray().Length > 0)
-            requestFilters.Add("middlenames", middlenameList.ToArray());
-
-        if (forenameList.ToArray().Length > 0)
-            requestFilters.Add("forename", forenameList.ToArray());
-
-        if (model.SelectedSexValues != null && model.SelectedSexValues.Length > 0)
-            requestFilters.Add("sex", model.SelectedSexValues.ToArray());
-
-        return requestFilters;
+        return viewModel;
     }
-
-    private static void ParseSex(ref PaginatedResponse result)
-    {
-        List<FilterData> sexFilter = result.Filters.Where(
-            (filterData) =>
-                filterData.Name.Equals("Sex")).ToList();
-
-        sexFilter.ForEach(
-            (filterData) =>
-                filterData.Items.ForEach(
-                    (filterDataItem) =>
-                        filterDataItem.Value = filterDataItem.Value.SwitchSexToParseName()));
-    }
-
     private static List<CurrentFilterDetail> CheckTextFilters(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters,
       string surnameFilter, string middlenameFilter, string forenameFilter)
     {
@@ -997,8 +866,12 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     }
 
 
-    private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
-   string surnameFilter, string middlenameFilter, string forenameFilter, string searchByRemove)
+    private static List<CurrentFilterDetail> SetCurrentFilters(
+        LearnerTextSearchViewModel model,
+        string surnameFilter,
+        string middlenameFilter,
+        string forenameFilter,
+        string searchByRemove)
     {
         List<CurrentFilterDetail> currentFilters = !string.IsNullOrEmpty(model.SearchFilters.CurrentFiltersAppliedString)
                                                    ? JsonSerializer.Deserialize<List<CurrentFilterDetail>>(model.SearchFilters.CurrentFiltersAppliedString)
@@ -1019,19 +892,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             currentFilters = CheckTextFilters(model, currentFilters, surnameFilter, middlenameFilter, forenameFilter);
         }
         return currentFilters.ToList();
-    }
-
-    private LearnerTextSearchViewModel SetSearchFiltersUrls(LearnerTextSearchViewModel model)
-    {
-        model.RedirectUrls.SurnameFilterURL = SurnameFilterUrl;
-        model.RedirectUrls.FormAction = FormAction;
-        model.RedirectUrls.RemoveAction = RemoveActionUrl;
-        model.RedirectUrls.DobFilterUrl = DobFilterUrl;
-        model.RedirectUrls.ForenameFilterUrl = ForenameFilterUrl;
-        model.RedirectUrls.MiddlenameFilterUrl = MiddlenameFilterUrl;
-        model.RedirectUrls.SexFilterUrl = SexFilterUrl;
-
-        return model;
     }
 
     private static List<CurrentFilterDetail> CheckSexFilter(
@@ -1131,8 +991,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         return currentFilters;
     }
-
-
 
     private static void SetLearnerNumberId(LearnerTextSearchViewModel model)
     {

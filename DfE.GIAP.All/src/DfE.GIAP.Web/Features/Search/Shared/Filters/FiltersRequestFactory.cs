@@ -8,7 +8,7 @@ namespace DfE.GIAP.Web.Features.Search.Shared.Filters;
 /// Creates a structured filter request payload for learner search.
 /// Delegates filter logic to registered handlers via the IFilterHandlerRegistry.
 /// </summary>
-public class FiltersRequestFactory : IFiltersRequestFactory
+internal sealed class FiltersRequestFactory : IFiltersRequestFactory
 {
     /// <summary>
     /// Registry that maps filter types to their corresponding handler implementations.

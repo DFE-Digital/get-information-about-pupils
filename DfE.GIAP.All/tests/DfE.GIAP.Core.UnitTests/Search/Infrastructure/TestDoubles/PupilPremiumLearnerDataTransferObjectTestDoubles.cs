@@ -12,8 +12,6 @@ public static class PupilPremiumLearnerDataTransferObjectTestDoubles
     {
         Faker faker = new();
 
-        string gender = faker.PickRandom(Sex.Male, Sex.Female, Sex.Unknown).ToString();
-
         PupilPremiumLearnerDataTransferObject dto = new()
         {
             UPN = UniquePupilNumberTestDoubles.Generate().Value,
@@ -22,8 +20,7 @@ public static class PupilPremiumLearnerDataTransferObjectTestDoubles
             Surname = faker.Name.LastName(),
             DOB = DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(10),
             LocalAuthority = LocalAuthorityCodeTestDoubles.Stub().Code.ToString(),
-            Sex = gender,
-            Gender = gender
+            Sex = faker.PickRandom(Sex.Male, Sex.Female, Sex.Unknown).ToString()
         };
 
         return dto;

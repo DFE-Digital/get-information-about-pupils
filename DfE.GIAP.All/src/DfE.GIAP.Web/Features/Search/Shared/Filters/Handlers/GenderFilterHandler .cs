@@ -8,7 +8,7 @@ namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 /// Handles gender-based filtering logic for learner search.
 /// Appends the initial character of the filter name to the model and request filters under a target key.
 /// </summary>
-public class GenderFilterHandler : IFilterHandler
+internal sealed class GenderFilterHandler : IFilterHandler
 {
     /// <summary>
     /// The key used to store gender filter values in both model.Filters and requestFilters.

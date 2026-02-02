@@ -11,8 +11,6 @@ public sealed class PupilPremiumLearnerDataTransferObject
 
     public string? Sex { get; set; }
 
-    public string? Gender { get; set; }
-
     public DateTime? DOB { get; set; }
 
     public string? LocalAuthority { get; set; }
