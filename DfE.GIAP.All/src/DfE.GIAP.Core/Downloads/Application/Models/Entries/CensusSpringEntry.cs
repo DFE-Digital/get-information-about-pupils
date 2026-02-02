@@ -29,7 +29,7 @@ public class CensusSpringEntry
     public string? HoursAtSetting { get; set; }
     public string? FundedHours { get; set; }
     public string? EnrolStatus { get; set; }
-    public string? EntryDate { get; set; }
+    public DateTime? EntryDate { get; set; }
     public string? NationalCurriculumYearActual { get; set; }
     public string? SpecialEducationalNeedsProvision { get; set; }
     public string? PrimarySpecialEducationalNeedsType { get; set; }

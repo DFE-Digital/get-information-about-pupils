@@ -39,7 +39,7 @@ public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPup
             HoursAtSetting = censusSpringEntry?.HoursAtSetting,
             FundedHours = censusSpringEntry?.FundedHours,
             EnrolStatus = censusSpringEntry?.EnrolStatus,
-            EntryDate = censusSpringEntry?.EntryDate,
+            EntryDate = censusSpringEntry?.EntryDate?.ToShortDateString(),
             NCyearActual = censusSpringEntry?.NationalCurriculumYearActual,
             SENProvision = censusSpringEntry?.SpecialEducationalNeedsProvision,
             PrimarySENeedsType = censusSpringEntry?.PrimarySpecialEducationalNeedsType,
