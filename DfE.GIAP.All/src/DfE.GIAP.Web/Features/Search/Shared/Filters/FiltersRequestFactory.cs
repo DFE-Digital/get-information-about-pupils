@@ -8,7 +8,7 @@ namespace DfE.GIAP.Web.Features.Search.Shared.Filters;
 /// Creates a structured filter request payload for learner search.
 /// Delegates filter logic to registered handlers via the IFilterHandlerRegistry.
 /// </summary>
-public class FiltersRequestFactory : IFiltersRequestFactory
+internal sealed class FiltersRequestFactory : IFiltersRequestFactory
 {
     /// <summary>
     /// Registry that maps filter types to their corresponding handler implementations.
@@ -37,17 +37,6 @@ public class FiltersRequestFactory : IFiltersRequestFactory
     {
         // Initialize an empty filter dictionary.
         Dictionary<string, string[]> requestFilters = [];
-
-        // Sex is setup a bit differently and we only care is we have a single value selected,
-        // otherwise we can ignore (the assumption being we return both male and female by default).
-        if (model.SelectedSexValues?.Length == 1)
-        {
-            currentFilters.Add(new CurrentFilterDetail()
-            {
-                FilterName = model.SelectedSexValues.FirstOrDefault(),
-                FilterType = FilterType.Sex
-            });
-        }
 
         // Apply filters only if the list is non-null and non-empty.
         if (currentFilters != null && currentFilters.Count != 0)

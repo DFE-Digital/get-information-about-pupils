@@ -126,7 +126,6 @@ public sealed class PupilPremiumSearchResultToLearnerMapperTests
     {
         // Arrange
         _mappingInput.Sex = sex;
-        _mappingInput.Gender = "F"; // Should be ignored because Sex is not null/whitespace
 
         // Act
         PupilPremiumLearner result = _sut.Map(_mappingInput);
@@ -143,7 +142,6 @@ public sealed class PupilPremiumSearchResultToLearnerMapperTests
     {
         // Arrange
         _mappingInput.Sex = sex;
-        _mappingInput.Gender = "M"; // Should be ignored because Sex is not null/whitespace
 
         // Act
         PupilPremiumLearner result = _sut.Map(_mappingInput);
@@ -165,7 +163,6 @@ public sealed class PupilPremiumSearchResultToLearnerMapperTests
     {
         // Arrange
         _mappingInput.Sex = sex;
-        _mappingInput.Gender = "F"; // Should be ignored because Sex is not null/whitespace
 
         // Act
         PupilPremiumLearner result = _sut.Map(_mappingInput);

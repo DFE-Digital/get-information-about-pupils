@@ -29,11 +29,10 @@ using DfE.GIAP.Web.Controllers.TextBasedSearch;
 namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 
 [Route(Routes.Application.Search)]
-public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
+public sealed class NationalPupilDatabaseLearnerTextSearchController : BaseLearnerTextSearchController
 {
-    private readonly ILogger<NPDLearnerTextSearchController> _logger;
+    private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
-    private readonly IDownloadService _downloadService;
 
     public override string PageHeading => ApplicationLabels.SearchNPDWithOutUpnPageHeading;
     public override string SearchSessionKey => Global.NPDNonUpnSearchSessionKey;
@@ -67,13 +66,12 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
     private readonly IEventLogger _eventLogger;
 
-    public NPDLearnerTextSearchController(ILogger<NPDLearnerTextSearchController> logger,
+    public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
        IOptions<AzureAppSettings> azureAppSettings,
        IPaginatedSearchService paginatedSearch,
        ITextSearchSelectionManager selectionManager,
        IDownloadCommonTransferFileService ctfService,
        ISessionProvider sessionProvider,
-       IDownloadService downloadService,
        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
@@ -90,9 +88,6 @@ public class NPDLearnerTextSearchController : BaseLearnerTextSearchController
 
         ArgumentNullException.ThrowIfNull(ctfService);
         _ctfService = ctfService;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;

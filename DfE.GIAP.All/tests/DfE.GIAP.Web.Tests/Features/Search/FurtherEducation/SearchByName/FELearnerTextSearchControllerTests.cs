@@ -33,19 +33,21 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
     private readonly ILogger<FELearnerTextSearchController> _mockLogger = Substitute.For<ILogger<FELearnerTextSearchController>>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
-
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
-    private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
     private readonly IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> _mockUseCase =
         Substitute.For<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>();
+
     private readonly IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
+
     private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
         Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
+
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
+
     private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
 
@@ -57,7 +59,7 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
         SortOrder stubSortOrder = new(
             sortField: "Surname",
             sortDirection: "asc",
-            validSortFields: new[] { "Surname", "DOB", "Forename" }
+            validSortFields: ["Surname", "DOB", "Forename"]
         );
 
         _mockSortOrderMapper.Map(
@@ -810,12 +812,8 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
         string sortDirection = "asc";
 
         FELearnerTextSearchController sut = GetController();
-        //_mockSession.SetString(sut.SearchSessionKey, searchText);
-        //_mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
         _sessionProvider.SetSessionValue(sut.SearchSessionKey, searchText);
         _sessionProvider.SetSessionValue(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-        //_mockSession.SetString(sut.SortDirectionKey, sortDirection);
-        //_mockSession.SetString(sut.SortFieldKey, sortField);
         _sessionProvider.SetSessionValue(sut.SortDirectionKey, sortDirection);
         _sessionProvider.SetSessionValue(sut.SortFieldKey, sortField);
 
@@ -1105,9 +1103,11 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
         Assert.Null(model.SortDirection);
     }
 
-    private LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(string searchText, SearchFilters searchFilters)
+    private LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(
+        string searchText,
+        SearchFilters searchFilters)
     {
-        return new LearnerTextSearchViewModel()
+        return new()
         {
             SearchText = searchText,
             SearchFilters = searchFilters,
@@ -1136,8 +1136,12 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetFEApproverClaimsPrincipal();
 
-        DefaultHttpContext httpContextStub = new DefaultHttpContext() { User = user, Session = new Mock<ISession>().Object };
-        TempDataDictionary mockTempData = new TempDataDictionary(httpContextStub, _mockTempDataProvider);
+        DefaultHttpContext httpContextStub = new()
+        {
+            User = user,
+            Session = new Mock<ISession>().Object
+        };
+        TempDataDictionary mockTempData = new(httpContextStub, _mockTempDataProvider);
         Mock<IEventLogger> mockEventLogger = new();
 
         List<AvailableDatasetResult> availableDatasetResults =
