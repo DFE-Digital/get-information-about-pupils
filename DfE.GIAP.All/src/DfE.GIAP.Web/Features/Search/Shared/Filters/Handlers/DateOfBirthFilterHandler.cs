@@ -9,7 +9,7 @@ namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 /// Handles the Date of Birth (DOB) filter logic for text-based learner search.
 /// Converts user-entered DOB components into structured filter values.
 /// </summary>
-public class DobFilterHandler : IFilterHandler
+internal sealed class DobFilterHandler : IFilterHandler
 {
     /// <summary>
     /// Date format expected in the filter value (e.g., "15/3/2005").
@@ -34,7 +34,10 @@ public class DobFilterHandler : IFilterHandler
         Dictionary<string, string[]> requestFilters)
     {
         // Skip processing if DOB input has validation errors.
-        if (model.FilterErrors.DobError) return;
+        if (model.FilterErrors.DobError)
+        {
+            return;
+        }
 
         CustomFilterText dobText = model.SearchFilters.CustomFilterText;
 
