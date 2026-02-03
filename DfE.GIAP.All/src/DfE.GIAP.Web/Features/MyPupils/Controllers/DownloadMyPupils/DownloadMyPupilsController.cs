@@ -2,8 +2,6 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
@@ -13,6 +11,8 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
 using DfE.GIAP.Web.Helpers.SearchDownload;
+using DfE.GIAP.Web.Services.Download;
+using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

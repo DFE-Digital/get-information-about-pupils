@@ -33,7 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
     <ProjectReference Include="..\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
-    <ProjectReference Include="..\DfE.GIAP.Service\DfE.GIAP.Service.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />

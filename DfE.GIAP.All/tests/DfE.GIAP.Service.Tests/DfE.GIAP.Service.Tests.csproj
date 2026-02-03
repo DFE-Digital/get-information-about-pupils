@@ -16,7 +16,4 @@
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="coverlet.msbuild" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\DfE.GIAP.Service\DfE.GIAP.Service.csproj" />
-  </ItemGroup>
 </Project>

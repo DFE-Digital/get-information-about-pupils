@@ -1,16 +1,14 @@
-﻿using DfE.GIAP.Service.ApiProcessor;
+﻿using System.Net;
 using DfE.GIAP.Service.Tests.FakeHttpHandlers;
 using DfE.GIAP.Service.Tests.FakeLogger;
 using DfE.GIAP.Service.Tests.Models;
+using DfE.GIAP.Web.Services.ApiProcessor;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using NSubstitute;
-using System.Net;
-using Xunit;
 
-namespace DfE.GIAP.Service.Tests.Services.ApiProcessor;
+namespace DfE.GIAP.Web.Tests.Services;
 
-public class ApiServiceTests
+public sealed class ApiServiceTests
 {
     [Fact]
     public async Task GetAsync_with_response_model_returns_correct_type()
@@ -19,15 +17,15 @@ public class ApiServiceTests
         var expected = new ApiItemModel();
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
-        var fakeLogger = Substitute.For<ILogger<ApiService>>();
+        var fakeLogger = new Mock<ILogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.GetAsync<ApiItemModel>(url);
@@ -44,15 +42,16 @@ public class ApiServiceTests
         ApiItemModel expected = null;
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<ILogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
         var fakeException = new HttpRequestException();
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(x => { throw fakeException; });
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Throws(fakeException);
+
 
         // act
         var actual = await apiProcessorService.GetAsync<ApiItemModel>(url);
@@ -60,7 +59,16 @@ public class ApiServiceTests
         // assert
         Assert.Null(actual);
         Assert.Equal(expected, actual);
-        fakeLogger.Received().Log(LogLevel.Error, Arg.Any<string>(), Arg.Is<HttpRequestException>(fakeException));
+
+        fakeLogger.Verify(
+            x => x.Log(
+                It.Is<LogLevel>(lvl => lvl == LogLevel.Error),
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.Is<Exception>(ex => ex == fakeException),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+
     }
 
 
@@ -71,15 +79,15 @@ public class ApiServiceTests
         List<ApiItemModel> expected = null;
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage();
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(x => { throw new HttpRequestException(); });
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Throws(new HttpRequestException());
 
         // act
         var actual = await apiProcessorService.GetAsync<List<ApiItemModel>>(url);
@@ -87,7 +95,8 @@ public class ApiServiceTests
         // assert
         Assert.Null(actual);
         Assert.Equal(expected, actual);
-        fakeLogger.Received().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.IsAny<HttpRequestException>()), Times.Once);
+
     }
 
     [Fact]
@@ -97,18 +106,18 @@ public class ApiServiceTests
         List<ApiItemModel> expected = null;
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.NotFound
         };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.GetAsync<List<ApiItemModel>>(url);
@@ -116,7 +125,7 @@ public class ApiServiceTests
         // assert
         Assert.Null(actual);
         Assert.Equal(expected, actual);
-        fakeLogger.DidNotReceive().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.IsAny<HttpRequestException>()), Times.Never);
     }
 
     [Fact]
@@ -126,15 +135,15 @@ public class ApiServiceTests
         var expected = new List<ApiItemModel>();
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
-        var fakeLogger = Substitute.For<ILogger<ApiService>>();
+        var fakeLogger = new Mock<ILogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.GetToListAsync<ApiItemModel>(url);
@@ -151,15 +160,15 @@ public class ApiServiceTests
         List<ApiItemModel> expected = null;
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
         var fakeException = new HttpRequestException();
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(x => { throw fakeException; });
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Throws(fakeException);
 
         // act
         var actual = await apiProcessorService.GetToListAsync<ApiItemModel>(url);
@@ -167,7 +176,7 @@ public class ApiServiceTests
         // assert
         Assert.Null(actual);
         Assert.Equal(expected, actual);
-        fakeLogger.Received().Log(LogLevel.Error, Arg.Any<string>(), Arg.Is<HttpRequestException>(fakeException));
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.Is<HttpRequestException>(e => e.Equals(fakeException))), Times.Once);
     }
 
     [Fact]
@@ -177,18 +186,19 @@ public class ApiServiceTests
         List<ApiItemModel> expected = null;
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.BadGateway
         };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
+
 
         // act
         var actual = await apiProcessorService.GetToListAsync<ApiItemModel>(url);
@@ -196,7 +206,7 @@ public class ApiServiceTests
         // assert
         Assert.Null(actual);
         Assert.Equal(expected, actual);
-        fakeLogger.Received().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.IsAny<HttpRequestException>()), Times.Once);
     }
 
     [Fact]
@@ -206,18 +216,18 @@ public class ApiServiceTests
         List<ApiItemModel> expected = null;
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.NotFound
         };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.GetToListAsync<ApiItemModel>(url);
@@ -225,7 +235,11 @@ public class ApiServiceTests
         // assert
         Assert.Null(actual);
         Assert.Equal(expected, actual);
-        fakeLogger.DidNotReceive().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+
+        fakeLogger.Verify(t => t.Log(
+            LogLevel.Error,
+            It.IsAny<string>(),
+            It.IsAny<HttpRequestException>()), Times.Never);
     }
 
     [Fact]
@@ -235,18 +249,18 @@ public class ApiServiceTests
         var expected = new List<ApiItemModel>();
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK
         };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.PostAsync<List<ApiItemModel>>(url, expected);
@@ -263,18 +277,18 @@ public class ApiServiceTests
         var expected = new List<ApiItemModel>();
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.BadGateway
         };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.PostAsync<List<ApiItemModel>>(url, expected);
@@ -282,7 +296,7 @@ public class ApiServiceTests
         // assert
         Assert.IsType<HttpStatusCode>(actual);
         Assert.Equal(HttpStatusCode.BadGateway, actual);
-        fakeLogger.Received().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.IsAny<HttpRequestException>()), Times.Once);
     }
 
     [Fact]
@@ -292,23 +306,22 @@ public class ApiServiceTests
         var expected = new List<ApiItemModel>();
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage();
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(x => { throw new HttpRequestException(); });
-
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Throws(new HttpRequestException());
         // act
         var actual = await apiProcessorService.PostAsync<List<ApiItemModel>>(url, expected);
 
         // assert
         Assert.IsType<HttpStatusCode>(actual);
         Assert.Equal(HttpStatusCode.BadRequest, actual);
-        fakeLogger.Received().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.IsAny<HttpRequestException>()), Times.Once);
     }
 
     [Fact]
@@ -318,18 +331,18 @@ public class ApiServiceTests
         var expected = new List<ApiItemModel>();
         var url = new Uri("https://www.somewhere.com", UriKind.Absolute);
 
-        var fakeHttpRequestSender = Substitute.For<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
         var httpClient = new HttpClient(fakeHttpMessageHandler);
         var httpResponse = new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.NotFound
         };
-        var fakeLogger = Substitute.For<FakeLogger<ApiService>>();
+        var fakeLogger = new Mock<FakeLogger<ApiService>>();
 
-        var apiProcessorService = new ApiService(httpClient, fakeLogger);
+        var apiProcessorService = new ApiService(httpClient, fakeLogger.Object);
 
-        fakeHttpRequestSender.Send(Arg.Any<HttpRequestMessage>()).Returns(httpResponse);
+        fakeHttpRequestSender.Setup(t => t.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
         // act
         var actual = await apiProcessorService.PostAsync<List<ApiItemModel>>(url, expected);
@@ -337,6 +350,7 @@ public class ApiServiceTests
         // assert
         Assert.IsType<HttpStatusCode>(actual);
         Assert.Equal(HttpStatusCode.NotFound, actual);
-        fakeLogger.DidNotReceive().Log(LogLevel.Error, Arg.Any<string>(), Arg.Any<HttpRequestException>());
+        fakeLogger.Verify(t => t.Log(LogLevel.Error, It.IsAny<string>(), It.IsAny<HttpRequestException>()), Times.Never);
+
     }
 }

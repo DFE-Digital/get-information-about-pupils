@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -9,10 +8,8 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -24,10 +21,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 
@@ -35,8 +30,6 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 {
     private readonly ILogger<PupilPremiumLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerTextSearchController>>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
-    private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private AzureAppSettings _mockAppSettings = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
@@ -1302,15 +1295,6 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
 
-        _mockAppSettings = new AzureAppSettings()
-        {
-            MaximumUPNsPerSearch = 4000,
-            DownloadOptionsCheckLimit = 500,
-            MaximumNonUPNResults = 100
-        };
-
-        _mockAppOptions.Value.Returns(_mockAppSettings);
-
         DefaultHttpContext httpContextStub = new()
         {
             User = user,
@@ -1335,7 +1319,6 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
         return new PupilPremiumLearnerTextSearchController(
             _mockLogger,
-            _mockAppOptions,
             _mockSelectionManager,
             _mockSessionProvider.Object,
             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
@@ -1373,18 +1356,5 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
                 DobYear = year
             }
         };
-    }
-
-    /*https://bytelanguage.net/2020/07/31/writing-unit-test-for-model-validation/*/
-
-    private static void MockModelState<TModel, TController>(TModel model, TController controller) where TController : ControllerBase
-    {
-        ValidationContext validationContext = new(model!, null, null);
-        List<ValidationResult> validationResults = [];
-        Validator.TryValidateObject(model!, validationContext, validationResults, true);
-        foreach (ValidationResult validationResult in validationResults)
-        {
-            controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage!);
-        }
     }
 }
