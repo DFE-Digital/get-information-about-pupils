@@ -884,13 +884,13 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             viewModel.DownloadSelectedLink = ApplicationLabels.DownloadSelectedNationalPupilDatabaseDataLink;
 
 
-            if (currentFilters.Count > 0)
-            {
-                viewModel.SearchFilters.CurrentFiltersApplied = currentFilters;
-            }
-
             if (currentFilters != null)
             {
+                if (currentFilters.Count > 0)
+                {
+                    viewModel.SearchFilters.CurrentFiltersApplied = currentFilters;
+                }
+
                 viewModel.SearchFilters.CurrentFiltersAppliedString = JsonSerializer.Serialize(currentFilters);
             }
         }
