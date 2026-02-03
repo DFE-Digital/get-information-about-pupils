@@ -235,18 +235,23 @@ public class DownloadMyPupilsController : Controller
 
                 string loggingBatchId = Guid.NewGuid().ToString();
 
-                foreach (string dataset in model.SelectedDownloadOptions)
-                {
-                    // TODO: Temp quick solution
-                    if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
+                var datasetsToLog = model.SelectedDownloadOptions
+                    .Select(dataset => new
                     {
-                        _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
-                            model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
-                            DownloadEventType.NPD,
-                            loggingBatchId,
-                            datasetEnum);
-                    }
+                        Success = Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset Parsed),
+                        Parsed
+                    })
+                    .Where(x => x.Success)
+                    .Select(x => x.Parsed);
+
+                foreach (var datasetEnum in datasetsToLog)
+                {
+                    _eventLogger.LogDownload(
+                        Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
+                        model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
+                        DownloadEventType.NPD,
+                        loggingBatchId,
+                        datasetEnum);
                 }
                 // End: applied from Search
 
