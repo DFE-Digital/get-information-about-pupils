@@ -561,8 +561,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         {
             string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupils) ? RbacHelper.DecodeUpn(model.SelectedPupils) : model.SelectedPupils;
 
-            string[] sortOrder = [ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0"];
-
             if (model.SelectedDownloadOptions == null)
             {
                 model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
