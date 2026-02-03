@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
@@ -19,7 +21,7 @@ public class NationalPupilToEyfspOutputRecordMapper : IMapper<NationalPupil, IEn
             FSP_UPN = eyfspEntry?.UPN,
             FSP_SURNAME = eyfspEntry?.SURNAME,
             FSP_FORENAME = eyfspEntry?.FORENAME,
-            FSP_DOB = eyfspEntry?.DOB?.ToShortDateString(),
+            FSP_DOB = eyfspEntry?.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             FSP_SEX = eyfspEntry?.SEX,
             FSP_MTH_ENTRY = eyfspEntry?.MTH_ENTRY,
             FSP_LA = eyfspEntry?.LA,
