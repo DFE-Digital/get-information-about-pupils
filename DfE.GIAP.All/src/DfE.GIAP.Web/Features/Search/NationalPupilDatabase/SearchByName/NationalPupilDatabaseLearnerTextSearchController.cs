@@ -175,7 +175,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         _logger.LogInformation("National pupil database NonUpn POST method called");
         model.ShowHiddenUPNWarningMessage = true;
-        IActionResult m = await Search(
+
+        return await Search(
             model,
             surnameFilter,
             middlenameFilter,
@@ -187,8 +188,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             sortField,
             sortDirection,
             ControllerContext.HttpContext.Request.Query.ContainsKey("reset"));
-
-        return m;
     }
 
 
@@ -353,7 +352,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         SetSelections(model.SelectedPupil);
 
-        string selectedUpn = GetSelected();
+        string selectedUpn = _selectionManager.GetSelectedFromSession();
 
         if (string.IsNullOrEmpty(selectedUpn))
         {
@@ -401,7 +400,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         SetSelections(model.SelectedPupil);
 
-        string selectedPupil = GetSelected();
+        string selectedPupil = _selectionManager.GetSelectedFromSession();
 
         if (string.IsNullOrEmpty(selectedPupil))
         {
@@ -488,7 +487,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         SetSelections(model.SelectedPupil);
 
-        string selectedPupil = GetSelected();
+        string selectedPupil = _selectionManager.GetSelectedFromSession();
 
         if (string.IsNullOrEmpty(selectedPupil))
         {
@@ -689,13 +688,22 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         {
             _selectionManager.Clear();
             ClearSortOptions();
-            RemoveSexFilterItemFromModel(model, searchByRemove);
+
+            if (!string.IsNullOrWhiteSpace(searchByRemove))
+            {
+                model.SelectedSexValues =
+                    model.SelectedSexValues?.Where(selectedSexValue =>
+                        selectedSexValue.SwitchSexToParseName() != searchByRemove).ToArray();
+            }
+
             SetPersistedSexFiltersForViewModel(model);
         }
 
         if (resetSelection && searchByRemove == null)
         {
-            RemoveAllSexFilterItemsFromModel(model);
+            model.SelectedSexValues = null;
+            SetPersistedSexFiltersForViewModel(model);
+            TempData.Remove(PersistedSelectedSexFiltersKey);
         }
 
         model.PageNumber = pageNumber;
@@ -766,7 +774,9 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 keepTempDataBetweenRequests: true);
 
         if (sexFilters != null)
+        {
             model.SelectedSexValues = sexFilters;
+        }
     }
 
     private void SetPersistedSexFiltersForViewModel(
@@ -774,27 +784,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         TempData.SetPersistedObject(
             model.SelectedSexValues,
             PersistedSelectedSexFiltersKey);
-
-    private void RemoveSexFilterItemFromModel(
-        LearnerTextSearchViewModel model,
-        string sexFilterItem)
-    {
-        if (!string.IsNullOrWhiteSpace(sexFilterItem))
-        {
-            model.SelectedSexValues =
-                model.SelectedSexValues?.Where(selectedSexValue =>
-                    selectedSexValue.SwitchSexToParseName() != sexFilterItem).ToArray();
-        }
-    }
-
-    private void RemoveAllSexFilterItemsFromModel(
-        LearnerTextSearchViewModel model)
-    {
-        model.SelectedSexValues = null;
-        SetPersistedSexFiltersForViewModel(model);
-        TempData.Remove(PersistedSelectedSexFiltersKey);
-    }
-
    
     
     private IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
@@ -826,9 +815,9 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         List<CurrentFilterDetail> currentFilters = SetCurrentFilters(model, surnameFilter, middlenameFilter, foremameFilter, searchByRemove);
 
         IList<FilterRequest> filterRequests =
-           _filtersRequestMapper.Map(
-               _filtersRequestBuilder
-                   .GenerateFilterRequest(model, currentFilters));
+            _filtersRequestMapper.Map(
+                _filtersRequestBuilder
+                    .GenerateFilterRequest(model, currentFilters));
 
         SortOrder sortOrder =
             _sortOrderViewModelToRequestMapper.Map(
@@ -847,7 +836,15 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         LearnerTextSearchViewModel viewModel = _learnerSearchResponseToViewModelMapper.Map(
             NationalPupilDatabaseLearnerTextSearchMappingContext.Create(model, searchResponse));
 
-        SetLearnerNumberId(viewModel);
+
+        foreach (Learner learner in viewModel.Learners)
+        {
+            learner.LearnerNumberId = learner.LearnerNumber switch
+            {
+                "0" => learner.Id,
+                _ => learner.LearnerNumber,
+            };
+        }
 
         if (!User.IsAdmin())
         {
@@ -857,7 +854,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 statutoryHighAge: User.GetOrganisationHighAge());
         }
 
-        string selected = GetSelected();
+        string selected = _selectionManager.GetSelectedFromSession();
 
         if (!string.IsNullOrEmpty(selected))
         {
@@ -872,7 +869,13 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         viewModel.LearnerTextDatabaseName = LearnerTextDatabaseName;
 
-        SetSearchFiltersUrls(viewModel);
+        viewModel.RedirectUrls.SurnameFilterURL = SurnameFilterUrl;
+        viewModel.RedirectUrls.FormAction = FormAction;
+        viewModel.RedirectUrls.RemoveAction = RemoveActionUrl;
+        viewModel.RedirectUrls.DobFilterUrl = DobFilterUrl;
+        viewModel.RedirectUrls.ForenameFilterUrl = ForenameFilterUrl;
+        viewModel.RedirectUrls.MiddlenameFilterUrl = MiddlenameFilterUrl;
+        viewModel.RedirectUrls.SexFilterUrl = SexFilterUrl;
 
         if (ModelState.IsValid)
         {
@@ -899,15 +902,45 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         return viewModel;
     }
 
-    private List<CurrentFilterDetail> SetCurrentFilters(LearnerTextSearchViewModel model,
-       string surnameFilter, string middlenameFilter, string forenameFilter, string searchByRemove)
+    private static List<CurrentFilterDetail> SetCurrentFilters(
+        LearnerTextSearchViewModel model,
+        string surnameFilter,
+        string middlenameFilter,
+        string forenameFilter,
+        string searchByRemove)
     {
-        List<CurrentFilterDetail> currentFilters = !string.IsNullOrEmpty(model.SearchFilters.CurrentFiltersAppliedString)
-                                                   ? JsonSerializer.Deserialize<List<CurrentFilterDetail>>(model.SearchFilters.CurrentFiltersAppliedString)
-                                                   : new List<CurrentFilterDetail>();
+        List<CurrentFilterDetail> currentFilters =
+            !string.IsNullOrEmpty(model.SearchFilters.CurrentFiltersAppliedString) ?
+                JsonSerializer.Deserialize<List<CurrentFilterDetail>>(model.SearchFilters.CurrentFiltersAppliedString) :
+                    [];
 
         currentFilters = CheckDobFilter(model, currentFilters);
-        currentFilters = CheckSexFilter(model, currentFilters);
+
+        if (model.SelectedSexValues?.Length > 0)
+        {
+            currentFilters.RemoveAll(currentFilterDetail =>
+                currentFilterDetail.FilterType == FilterType.Sex);
+
+            model.SelectedSexValues.Distinct().ToList().ForEach(sexFilterItem =>
+            {
+                currentFilters.Add(
+                    new CurrentFilterDetail
+                    {
+                        FilterType = FilterType.Sex,
+                        FilterName = sexFilterItem.SwitchSexToParseName()
+                    });
+            });
+        }
+
+        else if (model.SelectedSexValues == null && currentFilters.Count > 0)
+        {
+            currentFilters.Where((currentFilterDetail) => currentFilterDetail.FilterType == FilterType.Sex)
+                .Select(currentFilterDetail => currentFilterDetail.FilterName)
+                .ToList()
+                .ForEach( (sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
+
+            model.SelectedSexValues = null;
+        }
 
         if (!string.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Forename) ||
             !string.IsNullOrEmpty(model.SearchFilters.CustomFilterText.Middlename) ||
@@ -920,11 +953,16 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             currentFilters = RemoveFilterValue(searchByRemove, currentFilters, model);
             currentFilters = CheckTextFilters(model, currentFilters, surnameFilter, middlenameFilter, forenameFilter);
         }
+
         return currentFilters.ToList();
     }
 
-    private List<CurrentFilterDetail> CheckTextFilters(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters,
-      string surnameFilter, string middlenameFilter, string forenameFilter)
+    private static List<CurrentFilterDetail> CheckTextFilters(
+        LearnerTextSearchViewModel model,
+        List<CurrentFilterDetail> currentFilters,
+        string surnameFilter,
+        string middlenameFilter,
+        string forenameFilter)
     {
         if (forenameFilter != null)
         {
@@ -958,52 +996,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         return currentFilters;
     }
 
-
-
-    private void SetSearchFiltersUrls(LearnerTextSearchViewModel model)
-    {
-        model.RedirectUrls.SurnameFilterURL = SurnameFilterUrl;
-        model.RedirectUrls.FormAction = FormAction;
-        model.RedirectUrls.RemoveAction = RemoveActionUrl;
-        model.RedirectUrls.DobFilterUrl = DobFilterUrl;
-        model.RedirectUrls.ForenameFilterUrl = ForenameFilterUrl;
-        model.RedirectUrls.MiddlenameFilterUrl = MiddlenameFilterUrl;
-        model.RedirectUrls.SexFilterUrl = SexFilterUrl;
-    }
-
-    private List<CurrentFilterDetail> CheckSexFilter(
-        LearnerTextSearchViewModel model,
-        List<CurrentFilterDetail> currentFilters)
-    {
-        if (model.SelectedSexValues?.Length > 0)
-        {
-            RemoveAllSexFilters(currentFilters);
-            AddSelectedSexValuesToCurrentFilters(model, currentFilters);
-        }
-
-        else if (model.SelectedSexValues == null && currentFilters.Count > 0)
-        {
-            RemoveSelectedFilterValueFromCurrentFilters(currentFilters, model);
-            model.SelectedSexValues = null;
-        }
-
-        return currentFilters;
-    }
-
-    private void AddSelectedSexValuesToCurrentFilters(
-        LearnerTextSearchViewModel model,
-        List<CurrentFilterDetail> currentFilters)
-    {
-        model.SelectedSexValues.Distinct().ToList().ForEach(sexFilterItem =>
-        {
-            currentFilters.Add(
-                new CurrentFilterDetail
-                {
-                    FilterType = FilterType.Sex,
-                    FilterName = sexFilterItem.SwitchSexToParseName()
-                });
-        });
-    }
 
 
     private static void AddNameFilter(ref List<CurrentFilterDetail> currentFilters, FilterType filterType, string filterValue)
@@ -1047,29 +1039,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             }
         }
         return currentFilters;
-    }
-
-    private static void RemoveAllSexFilters(
-        List<CurrentFilterDetail> currentFilters) =>
-        currentFilters.RemoveAll(currentFilterDetail =>
-            currentFilterDetail.FilterType == FilterType.Sex);
-
-    private static IEnumerable<string> ExtractSexValuesFromCurrentFilterDetail(
-        IEnumerable<CurrentFilterDetail> currentFilters) =>
-        currentFilters.Where(currentFilterDetail =>
-                currentFilterDetail.FilterType == FilterType.Sex)
-            .Select(currentFilterDetail =>
-                currentFilterDetail.FilterName);
-
-    private static void RemoveSelectedFilterValueFromCurrentFilters(
-        List<CurrentFilterDetail> currentFilters,
-        LearnerTextSearchViewModel model)
-    {
-        IEnumerable<string> currentFiltersSex =
-            ExtractSexValuesFromCurrentFilterDetail(currentFilters);
-
-        currentFiltersSex.ToList().ForEach(
-            (sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
     }
 
     private static List<CurrentFilterDetail> CheckDobFilter(LearnerTextSearchViewModel model, List<CurrentFilterDetail> currentFilters)
@@ -1132,22 +1101,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         HttpContext.Session.Remove(SortFieldKey);
     }
 
-
-    private static void SetLearnerNumberId(LearnerTextSearchViewModel model)
-    {
-
-        foreach (Learner learner in model.Learners)
-        {
-            learner.LearnerNumberId = learner.LearnerNumber switch
-            {
-                "0" => learner.Id,
-                _ => learner.LearnerNumber,
-            };
-
-        }
-
-    }
-
     private LearnerTextSearchViewModel PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = PageHeading;
@@ -1180,11 +1133,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             _selectionManager.Clear();
             _selectionManager.Add(selected);
         }
-    }
-
-    private string GetSelected()
-    {
-        return _selectionManager.GetSelectedFromSession();
     }
     #endregion
 }
