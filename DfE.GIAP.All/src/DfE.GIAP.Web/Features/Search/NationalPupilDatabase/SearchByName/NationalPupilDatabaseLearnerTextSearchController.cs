@@ -856,12 +856,10 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         if (!string.IsNullOrEmpty(selected))
         {
-            foreach (Learner learner in viewModel.Learners)
+            foreach (Learner learner in viewModel.Learners.Where((t) => !string.IsNullOrEmpty(t.LearnerNumberId)))
             {
-                if (!string.IsNullOrEmpty(learner.LearnerNumberId))
-                {
-                    learner.Selected = selected.Contains(learner.LearnerNumberId);
-                }
+                
+                learner.Selected = selected.Contains(learner.LearnerNumberId);
             }
         }
 
