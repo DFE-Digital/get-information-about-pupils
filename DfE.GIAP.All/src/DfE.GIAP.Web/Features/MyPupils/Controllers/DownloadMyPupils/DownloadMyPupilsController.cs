@@ -19,6 +19,7 @@ using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Linq;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Areas.DownloadMyPupils;
@@ -218,13 +219,11 @@ public class DownloadMyPupilsController : Controller
             else if (model.DownloadFileType != DownloadFileType.None)
             {
                 // Note: Applied from Search impl
-                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
-
-                foreach (string datasetString in model.SelectedDownloadOptions)
-                {
-                    if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
-                        selectedDatasets.Add(dataset);
-                }
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets =
+                    model.SelectedDownloadOptions
+                        .Where(datasetString => Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset _))
+                        .Select(datasetString => Enum.Parse<Core.Downloads.Application.Enums.Dataset>(datasetString, ignoreCase: true))
+                        .ToList();
 
                 DownloadPupilDataRequest request = new(
                    SelectedPupils: selectedPupils,
