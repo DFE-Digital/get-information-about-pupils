@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
@@ -68,7 +70,7 @@ public sealed class NationalPupilToCensusAutumnOutputRecordMapperTests
         Assert.Equal(entry.Forename, mapped.Forename);
         Assert.Equal(entry.MiddleNames, mapped.MiddleNames);
         Assert.Equal(entry.Sex, mapped.Sex);
-        Assert.Equal(entry.DOB?.ToShortDateString(), mapped.DOB);
+        Assert.Equal(entry.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture), mapped.DOB);
         Assert.Equal(entry.AcademicYear, mapped.AcademicYear);
         Assert.Equal(entry.CensusTerm, mapped.CensusTerm);
         Assert.Equal(entry.LocalAuthority, mapped.LA);
@@ -87,7 +89,7 @@ public sealed class NationalPupilToCensusAutumnOutputRecordMapperTests
         Assert.Equal(entry.HoursAtSetting, mapped.HoursAtSetting);
         Assert.Equal(entry.FundedHours, mapped.FundedHours);
         Assert.Equal(entry.EnrolStatus, mapped.EnrolStatus);
-        Assert.Equal(entry.EntryDate?.ToShortDateString(), mapped.EntryDate);
+        Assert.Equal(entry.EntryDate?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture), mapped.EntryDate);
         Assert.Equal(entry.NationalCurriculumYearActual, mapped.NCyearActual);
         Assert.Equal(entry.SpecialEducationalNeedsProvision, mapped.SENProvision);
         Assert.Equal(entry.PrimarySpecialEducationalNeedsType, mapped.PrimarySENeedsType);

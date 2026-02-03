@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
@@ -20,7 +22,7 @@ public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPup
             Forename = censusAutumnEntry?.Forename,
             MiddleNames = censusAutumnEntry?.MiddleNames,
             Sex = censusAutumnEntry?.Sex,
-            DOB = censusAutumnEntry?.DOB?.ToShortDateString(),
+            DOB = censusAutumnEntry?.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             AcademicYear = censusAutumnEntry?.AcademicYear,
             CensusTerm = censusAutumnEntry?.CensusTerm,
             LA = censusAutumnEntry?.LocalAuthority,
@@ -39,7 +41,7 @@ public class NationalPupilToCensusAutumnOutputRecordMapper : IMapper<NationalPup
             HoursAtSetting = censusAutumnEntry?.HoursAtSetting,
             FundedHours = censusAutumnEntry?.FundedHours,
             EnrolStatus = censusAutumnEntry?.EnrolStatus,
-            EntryDate = censusAutumnEntry?.EntryDate?.ToShortDateString(),
+            EntryDate = censusAutumnEntry?.EntryDate?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             NCyearActual = censusAutumnEntry?.NationalCurriculumYearActual,
             SENProvision = censusAutumnEntry?.SpecialEducationalNeedsProvision,
             PrimarySENeedsType = censusAutumnEntry?.PrimarySpecialEducationalNeedsType,

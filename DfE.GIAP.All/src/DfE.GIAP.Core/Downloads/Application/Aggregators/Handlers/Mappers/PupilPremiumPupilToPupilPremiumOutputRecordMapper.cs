@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
@@ -19,7 +21,7 @@ public class PupilPremiumPupilToPupilPremiumOutputRecordMapper
             Surname = ppEntry.Surname,
             Forename = ppEntry.Forename,
             Sex = ppEntry.Sex,
-            DOB = ppEntry.DOB.ToShortDateString(),
+            DOB = ppEntry.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             NCYear = ppEntry.NCYear,
             DeprivationPupilPremium = ppEntry.DeprivationPupilPremium,
             ServiceChildPremium = ppEntry.ServiceChildPremium,
