@@ -12,14 +12,13 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Download;
-using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Services.Download;
+using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -39,7 +38,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<NationalPupilDatabaseLearnerNumberSearchController>>();
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
-    private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
@@ -49,7 +47,9 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
-    private readonly Mock<IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>> _mockUseCase = new();
+    private readonly Mock<
+        IUseCase<
+            NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>> _mockUseCase = new();
 
     private readonly Mock<
         IMapper<
@@ -112,7 +112,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(true);
@@ -148,7 +147,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
@@ -184,7 +182,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
 
@@ -222,7 +219,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
@@ -264,7 +260,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
@@ -306,7 +301,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "", true);
@@ -367,8 +361,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
 
-        SetupPaginatedSearch(sut.IndexType, _paginatedResultsFake.GetInvalidLearners());
-
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
 
@@ -400,7 +392,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", false);
@@ -436,7 +427,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 0, "", "", true);
@@ -524,7 +514,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -569,7 +558,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -616,7 +604,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearch(sut.IndexType, paginatedResponse);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -650,7 +637,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -694,7 +680,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Forename";
         string sortDirection = "asc";
@@ -736,7 +721,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Forename";
         string sortDirection = "desc";
@@ -778,7 +762,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "MiddleNames";
         string sortDirection = "asc";
@@ -820,7 +803,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "MiddleNames";
         string sortDirection = "desc";
@@ -861,7 +843,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Surname";
         string sortDirection = "asc";
@@ -903,7 +884,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Surname";
         string sortDirection = "desc";
@@ -945,7 +925,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Sex";
         string sortDirection = "asc";
@@ -986,7 +965,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Sex";
         string sortDirection = "desc";
@@ -1028,7 +1006,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Dob";
         string sortDirection = "asc";
@@ -1070,7 +1047,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         string sortField = "Dob";
         string sortDirection = "desc";
@@ -1117,8 +1093,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
 
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
-
         // Act
         IActionResult result = await sut.NPDAddToMyPupilList(inputModel);
 
@@ -1154,7 +1128,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
-            _paginatedResultsFake.TotalSearchResultsSessionValue); SetupPaginatedSearchGetValidLearners(sut.IndexType);
+            _paginatedResultsFake.TotalSearchResultsSessionValue);
 
         // Act
         IActionResult result = await sut.NPDAddToMyPupilList(inputModel);
@@ -1195,8 +1169,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // Act
         IActionResult result = await sut.NPDAddToMyPupilList(inputModel);
@@ -1268,7 +1240,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
@@ -1317,7 +1288,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
@@ -1359,7 +1329,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         };
 
         NationalPupilDatabaseLearnerNumberSearchController sut = GetController(commonTransferFileUPNLimit: 1);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
         _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
         _mockSession.SetString("totalSearch", "20");
 
@@ -1395,7 +1364,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         _mockSession.SetString(
             _paginatedResultsFake.TotalSearchResultsSessionKey,
             _paginatedResultsFake.TotalSearchResultsSessionValue);
-        SetupPaginatedSearchGetValidLearners(sut.IndexType);
 
         // act
         IActionResult result = await sut.ToDownloadSelectedNPDDataUPN(inputModel);
@@ -1608,50 +1576,5 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
                 HttpContext = new DefaultHttpContext() { User = user, Session = _mockSession }
             }
         };
-    }
-
-    private void SetupPaginatedSearch(AzureSearchIndexType indexType, AzureSearchQueryType azureSearchQueryType, PaginatedResponse paginatedResponse)
-    {
-        _mockPaginatedService.GetPage(
-               Arg.Any<string>(),
-               Arg.Any<Dictionary<string, string[]>>(),
-               Arg.Any<int>(),
-               Arg.Any<int>(),
-               Arg.Is(indexType),
-               Arg.Is(azureSearchQueryType),
-               Arg.Any<AzureFunctionHeaderDetails>(),
-               Arg.Any<string>(),
-               Arg.Any<string>())
-               .Returns(paginatedResponse);
-    }
-
-    private void SetupPaginatedSearch(AzureSearchIndexType indexType, PaginatedResponse paginatedResponse)
-    {
-        _mockPaginatedService.GetPage(
-                       Arg.Any<string>(),
-                       Arg.Any<Dictionary<string, string[]>>(),
-                       Arg.Any<int>(),
-                       Arg.Any<int>(),
-                       Arg.Is(indexType),
-                       Arg.Is<AzureSearchQueryType>(x => x == AzureSearchQueryType.Numbers || x == AzureSearchQueryType.Id),
-                       Arg.Any<AzureFunctionHeaderDetails>(),
-                       Arg.Any<string>(),
-                       Arg.Any<string>())
-                       .Returns(paginatedResponse);
-    }
-
-    private void SetupPaginatedSearchGetValidLearners(AzureSearchIndexType indexType)
-    {
-        _mockPaginatedService.GetPage(
-           Arg.Any<string>(),
-            Arg.Any<Dictionary<string, string[]>>(),
-            Arg.Any<int>(),
-            Arg.Any<int>(),
-            Arg.Is(indexType),
-            Arg.Is<AzureSearchQueryType>(x => x == AzureSearchQueryType.Numbers || x == AzureSearchQueryType.Id),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<string>(),
-            Arg.Any<string>())
-            .Returns(_paginatedResultsFake.GetValidLearners());
     }
 }

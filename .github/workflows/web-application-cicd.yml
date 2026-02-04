@@ -71,7 +71,6 @@ jobs:
           for proj in \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
-            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Service.Tests/DfE.GIAP.Service.Tests.csproj \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
           do
             TEST_PROJECT=$(basename "$proj" .csproj)
@@ -208,7 +207,7 @@ jobs:
             -reports:"coverage-unit/**/*.xml;coverage-integration/**/*.xml" \
             -reporttypes:SonarQube \
             -targetdir:"merged-coverage-reports/" \
-            -assemblyfilters:"-DfE.GIAP.Web.Views;-DfE.GIAP.Service.Tests"
+            -assemblyfilters:"-DfE.GIAP.Web.Views"
 
       - name: Upload merged coverage report to SonarQube
         uses: actions/upload-artifact@v6

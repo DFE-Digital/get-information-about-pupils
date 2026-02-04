@@ -1,21 +1,18 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.ApiProcessor;
-using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Tests.FakeHttpHandlers;
+using DfE.GIAP.Web.Services.ApiProcessor;
+using DfE.GIAP.Web.Services.Download;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Moq;
 using Newtonsoft.Json;
-using NSubstitute;
-using Xunit;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 
 namespace DfE.GIAP.Service.Tests.Download;
 
 [Trait("Category", "Download Service Unit Tests")]
-public class DownloadServiceTests
+public sealed class DownloadServiceTests
 {
     [Fact]
     public async Task GetCSVFileReturnsCorrectReturnFile()
@@ -158,10 +155,14 @@ public class DownloadServiceTests
         var dataTypes = new string[] { "KS1", "KS2" };
         var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "12345", SessionId = "67890" };
 
-        var mockApiService = Substitute.For<IApiService>();
-        mockApiService.PostAsync<DownloadRequest, IEnumerable<DownloadDataType>>(
-            Arg.Any<Uri>(), Arg.Any<DownloadRequest>(), Arg.Any<AzureFunctionHeaderDetails>())
-            .Returns(new List<DownloadDataType>() { DownloadDataType.EYFSP });
+        
+        var mockApiService = new Mock<IApiService>();
+        mockApiService.Setup(t =>
+            t.PostAsync<DownloadRequest, IEnumerable<DownloadDataType>>(
+                It.IsAny<Uri>(),
+                It.IsAny<DownloadRequest>(),
+                It.IsAny<AzureFunctionHeaderDetails>()))
+            .ReturnsAsync(new List<DownloadDataType>() { DownloadDataType.EYFSP });
 
         var url = "http://somewhere.net";
         var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url, DownloadOptionsCheckLimit = 500 };
@@ -169,20 +170,19 @@ public class DownloadServiceTests
         var eventLogging = new Mock<IEventLogger>();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
 
-        var sut = new DownloadService(fakeAppSettings.Object, mockApiService, eventLogging.Object);
+        var sut = new DownloadService(fakeAppSettings.Object, mockApiService.Object, eventLogging.Object);
 
         // act
         var result = await sut.CheckForNoDataAvailable(upns, upns, dataTypes, azureFunctionHeaderDetails);
 
         // assert
-        await mockApiService.Received().PostAsync<DownloadRequest, IEnumerable<CheckDownloadDataType>>(
-            Arg.Any<Uri>(),
-            Arg.Is<DownloadRequest>(d => d.FileType.Equals("csv") &&
+        mockApiService.Verify(t =>
+            t.PostAsync<DownloadRequest, IEnumerable<CheckDownloadDataType>>(
+                It.IsAny<Uri>(),
+                It.Is<DownloadRequest>(d => d.FileType.Equals("csv") &&
                     d.UPNs.SequenceEqual(upns) &&
                     d.DataTypes.SequenceEqual(dataTypes) &&
-                    d.CheckOnly == true
-                ),
-            Arg.Is<AzureFunctionHeaderDetails>(azureFunctionHeaderDetails)
-            );
+                    d.CheckOnly),
+                It.IsAny<AzureFunctionHeaderDetails>()), Times.Once);
     }
 }

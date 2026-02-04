@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -12,7 +11,6 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
@@ -24,7 +22,6 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 
@@ -34,8 +31,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
     private readonly ILogger<PupilPremiumLearnerTextSearchController> _logger;
-    private readonly IPaginatedSearchService _paginatedSearchService;
-    private readonly AzureAppSettings _azureAppSettings;
     private readonly IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse> _useCase;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
@@ -80,7 +75,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
     public PupilPremiumLearnerTextSearchController(
         ILogger<PupilPremiumLearnerTextSearchController> logger,
-        IOptions<AzureAppSettings> azureAppSettings,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -94,10 +88,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(azureAppSettings);
-        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        _azureAppSettings = azureAppSettings.Value;
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;

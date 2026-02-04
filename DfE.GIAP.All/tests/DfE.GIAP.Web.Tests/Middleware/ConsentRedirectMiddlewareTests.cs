@@ -1,28 +1,27 @@
-﻿using DfE.GIAP.Web.Constants;
+﻿using System.Security.Claims;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using NSubstitute;
-using System.Security.Claims;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Middleware;
 
-public class ConsentRedirectMiddlewareTests
+public sealed class ConsentRedirectMiddlewareTests
 {
     [Fact]
     public async Task InvokeAsync_redirects_when_consent_not_given()
     {
         // Arrange
         HttpContext context = CreateContext(true);
-        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
-        sessionProvider.GetSessionValue(SessionKeys.ConsentGivenKey).Returns((string)null!);
+        Mock<ISessionProvider> sessionProvider = new();
+        sessionProvider.Setup(t => t.GetSessionValue(SessionKeys.ConsentGivenKey)).Returns((string)null!);
         ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
-        await middleware.InvokeAsync(context, sessionProvider);
+        await middleware.InvokeAsync(context, sessionProvider.Object);
 
         // Assert
         Assert.Equal(StatusCodes.Status302Found, context.Response.StatusCode);
@@ -34,12 +33,12 @@ public class ConsentRedirectMiddlewareTests
     {
         // Arrange
         HttpContext context = CreateContext(true);
-        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
-        sessionProvider.GetSessionValueOrDefault<bool>(SessionKeys.ConsentGivenKey).Returns(true);
+        Mock<ISessionProvider> sessionProvider = new();
+        sessionProvider.Setup(t => t.GetSessionValueOrDefault<bool>(SessionKeys.ConsentGivenKey)).Returns(true);
         ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act
-        await middleware.InvokeAsync(context, sessionProvider);
+        await middleware.InvokeAsync(context, sessionProvider.Object);
 
         // Assert
         Assert.NotEqual(StatusCodes.Status302Found, context.Response.StatusCode);
@@ -75,7 +74,7 @@ public class ConsentRedirectMiddlewareTests
     {
         // Arrange
         HttpContext context = CreateContext(false);
-        ISessionProvider sessionProvider = Substitute.For<ISessionProvider>();
+        ISessionProvider sessionProvider = new Mock<ISessionProvider>().Object;
         ConsentRedirectMiddleware middleware = CreateMiddleware();
 
         // Act

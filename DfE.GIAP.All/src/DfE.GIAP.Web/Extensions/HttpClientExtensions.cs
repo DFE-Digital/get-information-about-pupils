@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Common.Constants.AzureFunction;
 using DfE.GIAP.Domain.Models.Common;
 
-namespace DfE.GIAP.Service.Helpers;
+namespace DfE.GIAP.Web.Extensions;
 
-public static class HttpClientHelper
+public static class HttpClientExtensions
 {
 
     public static void ConfigureHeaders(this HttpClient httpClient,
