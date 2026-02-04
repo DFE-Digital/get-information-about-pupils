@@ -51,8 +51,6 @@ public sealed class AspNetCoreSessionQueryHandlerTests
 
         AspNetCoreSessionQueryHandler<StubSessionObject> sut = new(sessionProviderMock.Object, sessionObjectSerializerMock.Object);
 
-        string? capturedSessionAccessKey = null;
-
         // Act
         SessionQueryResponse<StubSessionObject> sessionQueryResponse = sut.Handle(new SessionCacheKey("key"));
 
