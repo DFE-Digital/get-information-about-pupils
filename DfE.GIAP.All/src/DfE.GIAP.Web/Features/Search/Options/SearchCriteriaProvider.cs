@@ -1,9 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.Services;
-using DfE.GIAP.Web.Features.Search.Options;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Web.Features.Search.Services;
+namespace DfE.GIAP.Web.Features.Search.Options;
 #nullable enable
 public sealed class SearchCriteriaProvider : ISearchCriteriaProvider
 {

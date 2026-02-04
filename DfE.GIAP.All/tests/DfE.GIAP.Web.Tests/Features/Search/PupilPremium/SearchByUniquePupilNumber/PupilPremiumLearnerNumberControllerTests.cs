@@ -7,8 +7,10 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
@@ -39,9 +41,14 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
         IMapper<
             PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
 
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
+
     public PupilPremiumLearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         PupilPremiumSearchResponse response =
             PupilPremiumSearchResponseTestDouble.CreateSuccessResponse();
@@ -1402,7 +1409,8 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             _mockAppOptions,
             _addPupilsUseCaseMock,
             jsonSerializerMock.Object,
-            downloadPupilPremiumDataServiceMock.Object)
+            downloadPupilPremiumDataServiceMock.Object,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {

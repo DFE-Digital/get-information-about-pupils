@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
@@ -16,16 +17,20 @@ public sealed class FurtherEducationSearchRequest : IUseCaseRequest<FurtherEduca
     /// <param name="searchKeywords">The keyword(s) used to query data.</param>
     /// <param name="offset">Offset for pagination (defaults to 0).</param>
     /// <exception cref="ArgumentException">Thrown if searchKeyword is null or empty.</exception>
-    public FurtherEducationSearchRequest(string searchKeywords, SortOrder sortOrder, int offset = 0)
+    public FurtherEducationSearchRequest(string searchKeywords, SearchCriteria searchCriteria, SortOrder sortOrder, int offset = 0)
     {
         if (string.IsNullOrWhiteSpace(searchKeywords))
         {
             throw new ArgumentException(
                 "Search keyword must not be null or empty.", nameof(searchKeywords));
         }
-
         SearchKeywords = searchKeywords;
-        SortOrder = sortOrder ?? throw new ArgumentNullException(nameof(sortOrder));
+
+        ArgumentNullException.ThrowIfNull(searchCriteria);
+        SearchCriteria = searchCriteria;
+
+        ArgumentNullException.ThrowIfNull(sortOrder);
+        SortOrder = sortOrder;
         Offset = offset;
     }
 
@@ -38,8 +43,9 @@ public sealed class FurtherEducationSearchRequest : IUseCaseRequest<FurtherEduca
     public FurtherEducationSearchRequest(
         string searchKeywords,
         IList<FilterRequest> filterRequests,
+        SearchCriteria searchCriteria,
         SortOrder sortOrder,
-        int offset = 0) : this(searchKeywords, sortOrder, offset)
+        int offset = 0) : this(searchKeywords, searchCriteria, sortOrder, offset)
     {
         FilterRequests = filterRequests ??
             throw new ArgumentNullException(nameof(filterRequests));
@@ -49,6 +55,11 @@ public sealed class FurtherEducationSearchRequest : IUseCaseRequest<FurtherEduca
     /// The keyword(s) used to search query data.
     /// </summary>
     public string SearchKeywords { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public SearchCriteria SearchCriteria { get; }
 
     /// <summary>
     /// The offset used for paging through search results.

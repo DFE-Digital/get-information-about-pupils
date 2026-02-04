@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
@@ -13,7 +12,6 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.PupilPremium;
 public sealed class PupilPremiumSearchUseCaseTests
 {
     private readonly SearchResults<PupilPremiumLearners, SearchFacets> _searchResults;
-    private readonly ISearchCriteriaProvider _providerStub;
     private readonly SearchCriteria _searchCriteriaStub;
 
     public PupilPremiumSearchUseCaseTests()
@@ -22,10 +20,6 @@ public sealed class PupilPremiumSearchUseCaseTests
         _searchResults = PupilPremiumSearchResultsTestDoubles.Stub();
 
         _searchCriteriaStub = SearchCriteriaTestDouble.Stub();
-
-        Mock<ISearchCriteriaProvider> provider = new();
-        provider.Setup(mockProvider => mockProvider.GetCriteria(It.IsAny<string>())).Returns(_searchCriteriaStub);
-        _providerStub = provider.Object;
     }
 
     [Fact]
@@ -47,11 +41,12 @@ public sealed class PupilPremiumSearchUseCaseTests
         PupilPremiumSearchRequest request =
             new(
                 searchKeywords: "searchkeyword",
+                searchCriteria: _searchCriteriaStub,
                 filterRequests: [FilterRequestTestDouble.Fake()],
                 sortOrder: SortOrderTestDouble.Stub()
             );
 
-        PupilPremiumSearchUseCase useCase = new(_providerStub, mockSearchServiceAdapter.Object);
+        PupilPremiumSearchUseCase useCase = new(mockSearchServiceAdapter.Object);
 
         // act
         PupilPremiumSearchResponse response =
@@ -75,9 +70,12 @@ public sealed class PupilPremiumSearchUseCaseTests
         Mock<ISearchServiceAdapter<PupilPremiumLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        PupilPremiumSearchRequest request = new(searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
+        PupilPremiumSearchRequest request = new(
+            searchKeywords: "searchkeyword",
+            searchCriteria: _searchCriteriaStub,
+            sortOrder: SortOrderTestDouble.Stub());
 
-        PupilPremiumSearchUseCase useCase = new(_providerStub, mockSearchServiceAdapter.Object);
+        PupilPremiumSearchUseCase useCase = new(mockSearchServiceAdapter.Object);
 
         // act
         PupilPremiumSearchResponse response =
@@ -101,7 +99,7 @@ public sealed class PupilPremiumSearchUseCaseTests
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
         PupilPremiumSearchUseCase useCase =
-            new(_providerStub, mockSearchServiceAdapter.Object);
+            new(mockSearchServiceAdapter.Object);
 
         // act
         PupilPremiumSearchResponse response =
@@ -123,14 +121,17 @@ public sealed class PupilPremiumSearchUseCaseTests
         Mock<ISearchServiceAdapter<PupilPremiumLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        PupilPremiumSearchRequest request = new(searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
+        PupilPremiumSearchRequest request = new(
+            searchKeywords: "searchkeyword",
+            searchCriteria: _searchCriteriaStub,
+            sortOrder: SortOrderTestDouble.Stub());
 
         Mock.Get(mockSearchServiceAdapter.Object)
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ThrowsAsync(new ApplicationException());
 
         PupilPremiumSearchUseCase useCase =
-            new(_providerStub, mockSearchServiceAdapter.Object);
+            new(mockSearchServiceAdapter.Object);
 
         // act
         PupilPremiumSearchResponse response =
@@ -152,14 +153,17 @@ public sealed class PupilPremiumSearchUseCaseTests
         Mock<ISearchServiceAdapter<PupilPremiumLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        PupilPremiumSearchRequest request = new(searchKeywords: "searchkeyword", sortOrder: SortOrderTestDouble.Stub());
+        PupilPremiumSearchRequest request = new(
+            searchKeywords: "searchkeyword",
+            searchCriteria: _searchCriteriaStub,
+            sortOrder: SortOrderTestDouble.Stub());
 
         Mock.Get(mockSearchServiceAdapter.Object)
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ReturnsAsync(PupilPremiumSearchResultsTestDoubles.StubWithNoResults());
 
         PupilPremiumSearchUseCase useCase =
-            new(_providerStub, mockSearchServiceAdapter.Object);
+            new(mockSearchServiceAdapter.Object);
 
         // act
         PupilPremiumSearchResponse response =
