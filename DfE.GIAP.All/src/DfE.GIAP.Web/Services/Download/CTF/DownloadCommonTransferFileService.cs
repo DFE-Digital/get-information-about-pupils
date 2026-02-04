@@ -12,7 +12,7 @@ namespace DfE.GIAP.Web.Services.Download.CTF;
 public class DownloadCommonTransferFileService : IDownloadCommonTransferFileService
 {
     private readonly IApiService _apiProcessorService;
-    private AzureAppSettings _azureAppSettings;
+    private readonly AzureAppSettings _azureAppSettings;
     private readonly IEventLogger _eventLogger;
 
     public DownloadCommonTransferFileService(
