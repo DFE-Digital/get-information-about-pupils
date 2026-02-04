@@ -1509,8 +1509,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
         _mockAppSettings = new AzureAppSettings()
         {
-            MaximumUPNsPerSearch = 4000,
-            //UpnNPDMyPupilListLimit = maxMPLLimit,
             CommonTransferFileUPNLimit = commonTransferFileUPNLimit,
             DownloadOptionsCheckLimit = 500
         };

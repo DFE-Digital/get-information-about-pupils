@@ -19,9 +19,8 @@ public class LearnerNumberSearchViewModel
     public string DownloadLinksPartial { get; set; }
 
     public string LearnerNumberLabel { get; set; }
-    public static int MaximumLearnerNumbersPerSearch { get; set; }
 
-    [SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch")]
+    [SearchLearnerNumberValidation]
     [DataType(DataType.MultilineText)]
     public string LearnerNumber { get; set; }
     public string LearnerNumberIds { get; set; }

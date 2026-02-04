@@ -55,35 +55,6 @@ public class DownloadService : IDownloadService
         return response;
     }
 
-    public async Task<ReturnFile> GetFECSVFile(string[] selectedPupils,
-                                     string[] selectedDownloadOptions,
-                                     bool confirmationGiven,
-                                     AzureFunctionHeaderDetails azureFunctionHeaderDetails,
-                                     ReturnRoute returnRoute)
-    {
-        var getCSVFile = _azureAppSettings.DownloadPupilsByULNsUrl;
-
-        var requestBody = new DownloadUlnRequest { ULNs = selectedPupils, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven };
-        var response = await _apiProcessorService.PostAsync<DownloadUlnRequest, ReturnFile>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
-
-        string loggingBatchId = Guid.NewGuid().ToString();
-        foreach (string dataset in requestBody.DataTypes)
-        {
-            // TODO: Temp quick solution
-            if (Enum.TryParse(dataset, out Dataset datasetEnum))
-            {
-                _eventLogger.LogDownload(
-                    Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
-                    DownloadFileFormat.CSV,
-                    DownloadEventType.FE,
-                    loggingBatchId,
-                    datasetEnum);
-            }
-        }
-
-        return response;
-    }
-
     public async Task<ReturnFile> GetTABFile(string[] selectedPupils,
                                              string[] sortOrder,
                                              string[] selectedDownloadOptions,
@@ -120,26 +91,6 @@ public class DownloadService : IDownloadService
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, FileType = "csv", CheckOnly = true };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, IEnumerable<CheckDownloadDataType>>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
-
-        return response;
-    }
-
-    public async Task<ReturnFile> GetPupilPremiumCSVFile(string[] selectedPupils,
-                                                         string[] sortOrder,
-                                                         bool confirmationGiven,
-                                                         AzureFunctionHeaderDetails azureFunctionHeaderDetails,
-                                                         ReturnRoute returnRoute,
-                                                         UserOrganisation userOrganisation = null)
-    {
-        var getFile = _azureAppSettings.DownloadPupilPremiumByUPNFforCSVUrl;
-
-        var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation, ConfirmationGiven = confirmationGiven };
-        var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
-
-        _eventLogger.LogDownload(
-            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
-            DownloadFileFormat.CSV,
-            DownloadEventType.PP);
 
         return response;
     }

@@ -31,7 +31,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
     private readonly ILogger<PupilPremiumLearnerTextSearchController> _logger;
-    private readonly IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse> _useCase;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;

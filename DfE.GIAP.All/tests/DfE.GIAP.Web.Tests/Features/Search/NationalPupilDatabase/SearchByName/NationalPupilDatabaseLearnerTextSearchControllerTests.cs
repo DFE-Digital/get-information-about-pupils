@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
@@ -25,7 +24,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
 
@@ -36,8 +34,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<NationalPupilDatabaseLearnerTextSearchController>>();
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
-    private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private AzureAppSettings _mockAppSettings = new();
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
@@ -1390,16 +1386,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
-        _mockAppSettings = new AzureAppSettings()
-        {
-            MaximumUPNsPerSearch = 4000,
-            CommonTransferFileUPNLimit = 4000,
-            DownloadOptionsCheckLimit = 500,
-            MaximumNonUPNResults = 100
-        };
-
-        _mockAppOptions.Value.Returns(_mockAppSettings);
-
         DefaultHttpContext httpContextStub = new() { User = user, Session = _mockSession };
         TempDataDictionary mockTempData = new(httpContextStub, Substitute.For<ITempDataProvider>());
 
@@ -1420,7 +1406,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
 
         return new NationalPupilDatabaseLearnerTextSearchController(
              _mockLogger,
-             _mockAppOptions,
              _mockSelectionManager,
              _mockCtfService,
              _mockSessionProvider.Object,

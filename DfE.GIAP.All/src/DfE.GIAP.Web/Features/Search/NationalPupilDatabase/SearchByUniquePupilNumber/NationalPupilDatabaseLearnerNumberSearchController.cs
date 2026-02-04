@@ -278,7 +278,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             ShowTABDownloadType = true
         };
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
         ModelState.Clear();
 
         PopulateNavigation(searchDownloadViewModel.NumberSearchViewModel);
@@ -414,7 +413,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             HttpContext.Session.GetString(SearchSessionSortDirection));
 
         ClearSortingDataFromSession();
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
         SetModelApplicationLabels(model);
 
@@ -448,7 +446,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         PopulateNavigation(model);
         PopulateSorting(model, sortField, sortDirection);
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");

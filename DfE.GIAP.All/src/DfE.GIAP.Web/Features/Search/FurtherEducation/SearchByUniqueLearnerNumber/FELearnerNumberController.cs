@@ -260,7 +260,6 @@ public class FELearnerNumberController : Controller
             ShowTABDownloadType = false
         };
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumULNsPerSearch;
         ModelState.Clear();
 
         PopulateNavigation(searchDownloadViewModel.NumberSearchViewModel);
@@ -306,7 +305,6 @@ public class FELearnerNumberController : Controller
         PopulateNavigation(model);
         PopulateSorting(model, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection));
         ClearSortingDataFromSession();
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
         model.ShowMiddleNames = _showMiddleNames;
 
@@ -350,7 +348,6 @@ public class FELearnerNumberController : Controller
         PopulateNavigation(model);
         PopulateSorting(model, sortField, sortDirection);
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");

@@ -42,7 +42,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
 
     private readonly ISelectionManager _selectionManager;
-    private readonly IOptions<AzureAppSettings> _azureAppSettings;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IJsonSerializer _jsonSerializer;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
@@ -82,10 +81,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
-
-        ArgumentNullException.ThrowIfNull(azureAppSettings);
-        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        _azureAppSettings = azureAppSettings;
 
         ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
         _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
@@ -253,7 +248,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
             HttpContext.Session.GetString(SearchSessionSortDirection));
 
         ClearSortingDataFromSession();
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _azureAppSettings.Value.MaximumUPNsPerSearch;
 
         SetModelApplicationLabels(model);
 
@@ -287,7 +281,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         PopulateNavigation(model);
         PopulateSorting(model, sortField, sortDirection);
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _azureAppSettings.Value.MaximumUPNsPerSearch;
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");

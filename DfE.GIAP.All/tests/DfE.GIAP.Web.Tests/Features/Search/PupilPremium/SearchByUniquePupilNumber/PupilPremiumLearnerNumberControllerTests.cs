@@ -1358,12 +1358,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
 
-        _mockAppSettings = new AzureAppSettings()
-        {
-            MaximumUPNsPerSearch = 4000,
-        };
-
-        _mockAppOptions.Value.Returns(_mockAppSettings);
         _mockSession.SetString(PupilPremiumLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY, JsonConvert.SerializeObject(new List<string>()));
 
         // TODO verify serializer called, but will require pulling all of this sut creation out

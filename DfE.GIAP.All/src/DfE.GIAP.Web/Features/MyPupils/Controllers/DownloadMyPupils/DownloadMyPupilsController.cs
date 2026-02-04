@@ -251,7 +251,6 @@ public class DownloadMyPupilsController : Controller
             SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
         };
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
 
