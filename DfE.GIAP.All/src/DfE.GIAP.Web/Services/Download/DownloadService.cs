@@ -10,7 +10,7 @@ namespace DfE.GIAP.Web.Services.Download;
 
 public class DownloadService : IDownloadService
 {
-    private AzureAppSettings _azureAppSettings;
+    private readonly AzureAppSettings _azureAppSettings;
     private readonly IApiService _apiProcessorService;
     private readonly IEventLogger _eventLogger;
 
