@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
@@ -68,7 +70,7 @@ public sealed class FurtherEducationPupilToPpOutputRecordMapperTests
         Assert.Equal(pupil.Forename, first.Forename);
         Assert.Equal(pupil.Surname, first.Surname);
         Assert.Equal(pupil.Sex, first.Sex);
-        Assert.Equal(pupil.DOB?.ToShortDateString(), first.DOB);
+        Assert.Equal(pupil.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture), first.DOB);
     }
 
     [Fact]

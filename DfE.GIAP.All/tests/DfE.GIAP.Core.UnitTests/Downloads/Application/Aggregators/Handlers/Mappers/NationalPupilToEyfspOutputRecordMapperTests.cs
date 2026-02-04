@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
@@ -77,7 +79,7 @@ public sealed class NationalPupilToEyfspOutputRecordMapperTests
         Assert.Equal(entry.UPN, mapped.FSP_UPN);
         Assert.Equal(entry.SURNAME, mapped.FSP_SURNAME);
         Assert.Equal(entry.FORENAME, mapped.FSP_FORENAME);
-        Assert.Equal(entry.DOB?.ToShortDateString(), mapped.FSP_DOB);
+        Assert.Equal(entry.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture), mapped.FSP_DOB);
         Assert.Equal(entry.SEX, mapped.FSP_SEX);
         Assert.Equal(entry.MTH_ENTRY, mapped.FSP_MTH_ENTRY);
         Assert.Equal(entry.LA, mapped.FSP_LA);

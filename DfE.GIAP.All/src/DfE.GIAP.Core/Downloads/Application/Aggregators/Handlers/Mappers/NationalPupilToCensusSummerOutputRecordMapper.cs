@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
@@ -30,7 +32,7 @@ public class NationalPupilToCensusSummerOutputRecordMapper : IMapper<NationalPup
             PreferredSurname = censusSummerEntry?.PreferredSurname,
             FormerSurname = censusSummerEntry?.FormerSurname,
             Sex = censusSummerEntry?.Sex,
-            DOB = censusSummerEntry?.DOB?.ToShortDateString(),
+            DOB = censusSummerEntry?.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             FSMeligible = censusSummerEntry?.FreeSchoolMealEligible,
             FSM_protected = censusSummerEntry?.FreeSchoolMealProtected,
             EVERFSM_6 = censusSummerEntry?.EVERFSM_6,
@@ -39,7 +41,7 @@ public class NationalPupilToCensusSummerOutputRecordMapper : IMapper<NationalPup
             HoursAtSetting = censusSummerEntry?.HoursAtSetting,
             FundedHours = censusSummerEntry?.FundedHours,
             EnrolStatus = censusSummerEntry?.EnrolStatus,
-            EntryDate = censusSummerEntry?.EntryDate?.ToShortDateString(),
+            EntryDate = censusSummerEntry?.EntryDate?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             NCyearActual = censusSummerEntry?.NationalCurriculumYearActual,
             SENProvision = censusSummerEntry?.SpecialEducationalNeedsProvision,
             PrimarySENeedsType = censusSummerEntry?.PrimarySpecialEducationalNeedsType,
