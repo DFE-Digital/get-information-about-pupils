@@ -6,25 +6,20 @@ namespace DfE.GIAP.Web.Shared.Session.Infrastructure.Command;
 public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHandler<TValue> where TValue : class
 {
     private readonly IAspNetCoreSessionProvider _sessionProvider;
-    private readonly ISessionObjectKeyResolver _sessionKeyResolver;
     private readonly ISessionObjectSerializer<TValue> _sessionObjectSerializer;
 
     public AspNetCoreSessionCommandHandler(
         IAspNetCoreSessionProvider sessionProvider,
-        ISessionObjectKeyResolver sessionKeyResolver,
         ISessionObjectSerializer<TValue> sessionObjectSerializer)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
 
-        ArgumentNullException.ThrowIfNull(sessionKeyResolver);
-        _sessionKeyResolver = sessionKeyResolver;
-
         ArgumentNullException.ThrowIfNull(sessionObjectSerializer);
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    public void StoreInSession(TValue value)
+    public void StoreInSession(SessionCacheKey sessionCacheKey, TValue value)
     {
         ArgumentNullException.ThrowIfNull(value);
 
@@ -32,6 +27,8 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
 
         _sessionProvider
             .GetSession()
-            .SetString(key: _sessionKeyResolver.Resolve<TValue>(), json);
+            .SetString(
+                key: sessionCacheKey.Value,
+                value: json);
     }
 }

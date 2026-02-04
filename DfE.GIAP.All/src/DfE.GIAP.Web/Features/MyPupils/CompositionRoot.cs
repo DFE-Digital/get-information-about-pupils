@@ -12,6 +12,7 @@ using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Options;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
@@ -46,6 +47,7 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsPresentationServices(this IServiceCollection services)
     {
         services.AddOptions<MyPupilsMessagingOptions>();
+        services.AddOptions<MyPupilSelectionOptions>();
 
         // PresentationService
         services

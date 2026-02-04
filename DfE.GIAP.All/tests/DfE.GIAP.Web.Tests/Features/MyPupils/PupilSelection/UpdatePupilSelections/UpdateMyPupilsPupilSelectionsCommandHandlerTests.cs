@@ -1,7 +1,12 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Options;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
+using DfE.GIAP.Web.Shared.Session.Abstraction;
+using HandlebarsDotNet;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
@@ -14,7 +19,8 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
             () => new(
                 null!,
                 ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
-                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object);
+                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object,
+                OptionsTestDoubles.Default<MyPupilSelectionOptions>());
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -28,7 +34,8 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
             () => new(
                 new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
                 null!,
-                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object);
+                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object,
+                OptionsTestDoubles.Default<MyPupilSelectionOptions>());
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -42,7 +49,38 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
             () => new(
                 new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
                 ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
-                null!);
+                null!,
+                OptionsTestDoubles.Default<MyPupilSelectionOptions>());
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constuctor_Throws_When_Options_Is_Null()
+    {
+        // Arrange
+        Func<UpdateMyPupilsPupilSelectionsCommandHandler> construct =
+            () => new(
+                new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
+                ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
+                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object,
+                null);
+
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(construct);
+    }
+
+    [Fact]
+    public void Constuctor_Throws_When_OptionsValue_Is_Null()
+    {
+        // Arrange
+        Func<UpdateMyPupilsPupilSelectionsCommandHandler> construct =
+            () => new(
+                new Mock<IGetMyPupilsPupilSelectionProvider>().Object,
+                ISessionCommandHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
+                new Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>>().Object,
+                OptionsTestDoubles.MockNullOptions<MyPupilSelectionOptions>());
 
         // Act Assert
         Assert.Throws<ArgumentNullException>(construct);
@@ -61,7 +99,8 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
         UpdateMyPupilsPupilSelectionsCommandHandler sut = new(
             providerMock.Object,
             selectionStateCommandHandler.Object,
-            evaluationHandlerMock.Object);
+            evaluationHandlerMock.Object,
+            OptionsTestDoubles.Default<MyPupilSelectionOptions>());
 
         // Act Assert
         Func<Task> act = () => sut.Handle(null!);
@@ -84,11 +123,14 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
 
         Mock<IEvaluator<UpdateMyPupilsSelectionStateRequest>> evaluatorMock = new();
 
+        IOptions<MyPupilSelectionOptions> options = OptionsTestDoubles.Default<MyPupilSelectionOptions>();
+
         // Arrange
         UpdateMyPupilsPupilSelectionsCommandHandler sut = new(
                 providerMock.Object,
                 selectionStateCommandHandler.Object,
-                evaluatorMock.Object);
+                evaluatorMock.Object,
+                options);
 
         MyPupilsFormStateRequestDto request = new();
 
@@ -108,6 +150,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
 
         selectionStateCommandHandler.Verify(handler =>
             handler.StoreInSession(
+                It.Is<SessionCacheKey>(t => t.Value == options.Value.SelectionsSessionKey),
                 It.Is<MyPupilsPupilSelectionState>((store) => ReferenceEquals(defaultState, store))),
             Times.Once);
     }
