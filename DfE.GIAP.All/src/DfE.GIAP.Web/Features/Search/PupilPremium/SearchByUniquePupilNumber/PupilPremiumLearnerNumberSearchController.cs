@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
@@ -52,7 +51,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     public string FullTextLearnerSearchController => Global.PPTextSearchController;
     public string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPupilPremiumDownloadLinks.cshtml";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
     public string SearchSessionKey => "SearchPPUPN_SearchText";
     public string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
@@ -255,7 +253,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, IndexType, 0, true).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -331,7 +329,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
             model = await GetPupilsForSearchBuilder(
                 model,
-                IndexType,
                 pageNumber,
                 notPaged).ConfigureAwait(false);
         }
@@ -379,7 +376,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
     private async Task<LearnerNumberSearchViewModel> GetPupilsForSearchBuilder(
        LearnerNumberSearchViewModel model,
-       AzureSearchIndexType indexType,
        int pageNumber,
        bool first)
     {
