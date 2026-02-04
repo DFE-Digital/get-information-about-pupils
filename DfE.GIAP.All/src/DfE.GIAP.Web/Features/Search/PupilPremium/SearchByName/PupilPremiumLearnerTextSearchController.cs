@@ -656,14 +656,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         HttpContext.Session.Remove(SortFieldKey);
     }
 
-    private static void PopulatePageText(LearnerTextSearchViewModel model)
-    {
-        model.PageHeading = ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
-        model.ShowMiddleNames = true;
-        model.ShowLocalAuthority = true;
-    }
-
-
     private void PopulateNavigation(LearnerTextSearchViewModel model)
     {
         model.LearnerTextSearchController = SearchController;
@@ -820,6 +812,13 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
             AddNameFilter(ref currentFilters, FilterType.Surname, model.SearchFilters.CustomFilterText.Surname);
         }
         return currentFilters;
+    }
+
+        private static void PopulatePageText(LearnerTextSearchViewModel model)
+    {
+        model.PageHeading = ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
+        model.ShowMiddleNames = true;
+        model.ShowLocalAuthority = true;
     }
 
     private static void AddNameFilter(ref List<CurrentFilterDetail> currentFilters, FilterType filterType, string filterValue)

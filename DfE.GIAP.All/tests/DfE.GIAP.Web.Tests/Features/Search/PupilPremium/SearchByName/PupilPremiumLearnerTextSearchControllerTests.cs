@@ -134,7 +134,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     public async Task NonUpnPupilPremiumDatabase_return_to_search_page_persists_search()
     {
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<PupilPremiumLearnerTextSearchMappingContext>()).Returns(searchViewModel);
@@ -688,7 +689,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<PupilPremiumLearnerTextSearchMappingContext>()).Returns(searchViewModel);
@@ -1155,7 +1157,6 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
         // arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-
 
         SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
 
