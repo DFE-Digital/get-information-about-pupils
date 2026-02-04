@@ -1493,7 +1493,6 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         _mockAppSettings = new AzureAppSettings()
         {
-            MaximumULNsPerSearch = 4000,
             CommonTransferFileUPNLimit = 4000,
             DownloadOptionsCheckLimit = 500
         };

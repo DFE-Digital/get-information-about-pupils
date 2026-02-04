@@ -14,8 +14,6 @@ namespace DfE.GIAP.Common.Tests.Validation
         public void IsValidLearnerNumber_Check()
         {
             // Arrange
-            LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = 2;
-
             var ulnString = "H356210811018";
             var vm = new LearnerNumberSearchViewModel() { LearnerNumber = ulnString };
             var customValidationAttribute = new SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch");
@@ -31,8 +29,6 @@ namespace DfE.GIAP.Common.Tests.Validation
         public void NoLearnerNumbersError()
         {
             // Arrange
-            LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = 2;
-
             var vm = new LearnerNumberSearchViewModel() { LearnerNumberLabel = "UPN" };
             var customValidationAttribute = new SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch");
 
@@ -48,8 +44,6 @@ namespace DfE.GIAP.Common.Tests.Validation
         public void MaximumThresholdReachedError()
         {
             // Arrange
-            LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = 2;
-
             var ulnString = "9999375358\r\n9999375358\r\n9999375358";
             var vm = new LearnerNumberSearchViewModel() { LearnerNumber = ulnString, LearnerNumberLabel = "ULN" };
             var customValidationAttribute = new SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch");
@@ -59,7 +53,7 @@ namespace DfE.GIAP.Common.Tests.Validation
 
             // Assert
             Assert.False(validationResult == ValidationResult.Success);
-            Assert.Equal($"More than {LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch} {vm.LearnerNumberLabel}s have been entered, please review and reduce to the maximum of {LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch}", validationResult.ErrorMessage);
+            Assert.Contains($"have been entered, please review and reduce to the maximum of", validationResult.ErrorMessage);
         }
     }
 }

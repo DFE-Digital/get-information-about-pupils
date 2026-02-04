@@ -41,7 +41,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
     private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _logger;
-    private readonly IOptions<AzureAppSettings> _azureAppSettings;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly ISessionProvider _sessionProvider;
@@ -98,7 +97,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private readonly ISearchCriteriaProvider _searchCriteriaProvider;
 
     public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
-        IOptions<AzureAppSettings> azureAppSettings,
         ITextSearchSelectionManager selectionManager,
         IDownloadCommonTransferFileService ctfService,
         ISessionProvider sessionProvider,
@@ -115,10 +113,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(azureAppSettings);
-        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        _azureAppSettings = azureAppSettings;
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
