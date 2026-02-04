@@ -182,7 +182,7 @@ public sealed class DownloadServiceTests
                 It.Is<DownloadRequest>(d => d.FileType.Equals("csv") &&
                     d.UPNs.SequenceEqual(upns) &&
                     d.DataTypes.SequenceEqual(dataTypes) &&
-                    d.CheckOnly == true),
+                    d.CheckOnly),
                 It.IsAny<AzureFunctionHeaderDetails>()), Times.Once);
     }
 }
