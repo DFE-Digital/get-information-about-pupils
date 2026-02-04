@@ -25,7 +25,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
 
         if (input.Any())
         {
-            IEnumerable<PupilPremiumLearner> mappedResults =
+            List<PupilPremiumLearner> mappedResults =
                 input.Select(result =>
                 {
                     if (result == null || result.Document == null)
@@ -42,7 +42,8 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
                         return null;
                     }
                 })
-                .Where(learner => learner != null)!;
+                .Where(learner => learner != null)
+                .ToList()!;
 
 
             learners = new PupilPremiumLearners(mappedResults);

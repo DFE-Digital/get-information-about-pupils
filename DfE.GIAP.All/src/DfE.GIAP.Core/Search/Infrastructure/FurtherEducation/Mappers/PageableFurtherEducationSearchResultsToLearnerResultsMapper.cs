@@ -45,7 +45,7 @@ public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper 
 
         if (input.Any())
         {
-            IEnumerable<FurtherEducationLearner> mappedResults =
+            List<FurtherEducationLearner> mappedResults =
                 input.Select(result =>
                 {
                     if (result == null || result.Document == null)
@@ -62,7 +62,8 @@ public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper 
                         return null;
                     }
                 })
-                .Where(learner => learner != null)!;
+                .Where(learner => learner != null)
+                .ToList()!;
 
             learners = new FurtherEducationLearners(mappedResults);
         }
