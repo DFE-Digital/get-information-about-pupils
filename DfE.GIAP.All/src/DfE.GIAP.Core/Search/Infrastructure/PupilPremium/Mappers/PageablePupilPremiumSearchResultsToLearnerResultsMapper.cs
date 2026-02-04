@@ -24,12 +24,27 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
 
         if (input.Any())
         {
-            IEnumerable<PupilPremiumLearner> mappedResults =
+            List<PupilPremiumLearner> mappedResults =
                 input.Select(result =>
-                    result.Document != null
-                        ? _searchResultToLearnerMapper.Map(result.Document)
-                        : throw new InvalidOperationException(
-                            "Search result document object cannot be null."));
+                {
+                    if (result == null || result.Document == null)
+                    {
+                        return null;
+                    }
+
+                    try
+                    {
+                        return _searchResultToLearnerMapper.Map(result.Document);
+                    }
+                    catch (Exception)
+                    {
+                        // Swallow mapping errors for individual records; invalid results are skipped.
+                        return null;
+                    }
+                })
+                .Where(learner => learner != null)
+                .ToList()!;
+
 
             learners = new PupilPremiumLearners(mappedResults);
         }

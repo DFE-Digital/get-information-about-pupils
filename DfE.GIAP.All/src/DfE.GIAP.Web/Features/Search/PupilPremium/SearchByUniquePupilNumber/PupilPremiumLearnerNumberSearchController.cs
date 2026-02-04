@@ -6,12 +6,14 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
@@ -44,6 +46,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IJsonSerializer _jsonSerializer;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
+    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
     private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
     public string SearchAction => nameof(PupilPremium);
@@ -68,7 +71,8 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IJsonSerializer jsonSerializer,
-        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService)
+        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
+        ISearchCriteriaProvider searchCriteriaProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -91,12 +95,15 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
         _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
-
+        
         ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
         _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
 
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
+
+        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
+        _searchCriteriaProvider = searchCriteriaProvider;
     }
 
 
@@ -409,10 +416,13 @@ public class PupilPremiumLearnerNumberSearchController : Controller
                 filterValues: learnerNumberArray)
         ];
 
+        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("pupil-premium-upn");
+
         PupilPremiumSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
             new PupilPremiumSearchRequest(
                 searchKeywords: string.Join(" AND ", learnerNumberArray),
                 filterRequests: filterRequests,
+                searchCriteria: searchCriteria,
                 sortOrder: sortOrder,
                 model.Offset));
 

@@ -1,8 +1,12 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
+using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using FluentAssertions;
 
@@ -95,7 +99,7 @@ public sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilDat
     }
 
     [Fact]
-    public void Map_WithANullSearchResult_ThrowsInvalidOperationException()
+    public void Map_WithANullSearchResult_SkipsNullDocuments()
     {
         // arrange
         List<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>> searchResultDocuments =
@@ -103,12 +107,17 @@ public sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilDat
                 .IncludeNullDocument()
                 .Create();
 
-        // act.
-        _sut
-            .Invoking(mapper =>
-                mapper.Map(PageableTestDouble.FromResults(searchResultDocuments)))
-                    .Should()
-                        .Throw<InvalidOperationException>()
-                        .WithMessage("Search result document object cannot be null.");
+        Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>> pageableSearchResults =
+            PageableTestDouble.FromResults(searchResultDocuments);
+
+        // act
+        NationalPupilDatabaseLearners result = _sut.Map(pageableSearchResults);
+
+        // assert
+        result.Should().NotBeNull();
+
+        // null document entries must be excluded
+        result.Values.Should().HaveCount(
+            searchResultDocuments.Count(sr => sr.Document != null));
     }
 }

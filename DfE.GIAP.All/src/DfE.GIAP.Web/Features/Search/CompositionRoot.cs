@@ -4,7 +4,6 @@ using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
@@ -13,12 +12,12 @@ using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
+using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Features.Search.Services;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
@@ -105,6 +104,10 @@ public static class CompositionRoot
         services.AddSingleton<IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
             NationalPupilDatabaseLearnerNumericSearchMappingContextToViewModelMapper>();
+
+        services.AddSingleton<IMapper<
+            NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
+            NationalPupilDatabaseLearnerTextSearchMappingContextToViewModelMapper>();
 
         services.AddSingleton<IMapper<
             NationalPupilDatabaseLearner, Learner>,

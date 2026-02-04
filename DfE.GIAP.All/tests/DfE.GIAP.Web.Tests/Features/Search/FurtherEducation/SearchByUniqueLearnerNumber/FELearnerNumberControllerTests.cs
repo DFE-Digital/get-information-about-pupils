@@ -9,13 +9,12 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.Service.Download;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -43,11 +42,16 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
+
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
         FurtherEducationSearchResponse response =
             FurtherEducationSearchResponseTestDouble.CreateSuccessResponse();
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchRequest>()).Returns(response);
@@ -1536,7 +1540,8 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
             _mockAppOptions,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
-            mockDownloadPupilDataUseCase.Object)
+            mockDownloadPupilDataUseCase.Object,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = context
         };

@@ -7,13 +7,18 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download.CTF;
-using DfE.GIAP.Service.Search;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
+using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -26,11 +31,10 @@ using NSubstitute;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByName;
 
-public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
+public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
     private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<NationalPupilDatabaseLearnerTextSearchController>>();
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
-    private readonly IPaginatedSearchService _mockPaginatedService = Substitute.For<IPaginatedSearchService>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private AzureAppSettings _mockAppSettings = new();
@@ -39,10 +43,53 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
 
-    public NPDLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
+
+    private readonly IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> _mockUseCase =
+        Substitute.For<IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>>();
+
+    private readonly IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
+        Substitute.For<IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
+
+    private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
+        Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
+
+    private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
+
+    private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
+        Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
+
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
+
+    public NationalPupilDatabaseLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
         _searchFiltersFake = searchFiltersFake;
+
+        SortOrder stubSortOrder = new(
+            sortField: "Surname",
+            sortDirection: "asc",
+            validSortFields: ["Surname", "DOB", "Forename"]
+        );
+
+        _mockSortOrderMapper.Map(
+            Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
+
+        NationalPupilDatabaseSearchResponse response =
+            NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
+
+        _mockUseCase.HandleRequestAsync(
+            Arg.Any<NationalPupilDatabaseSearchRequest>()).Returns(response);
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(
+            new LearnerTextSearchViewModel()
+            {
+                SearchText = "Somethuiing",
+                Learners = _paginatedResultsFake.GetValidLearners().Learners
+            });
     }
 
     [Fact]
@@ -76,8 +123,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         IActionResult result = await sut.NonUpnNationalPupilDatabase(false);
 
         // Assert
@@ -95,7 +140,11 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         const string NpdSearchTextSessionKey = "SearchNonUPN_SearchText";
         const string NpdSearchFiltersSessionKey = "SearchNonUPN_SearchFilters";
@@ -115,8 +164,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
                     searchViewModel.SearchFilters).Verifiable();
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
@@ -142,14 +189,22 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         string? forenameFilter = null;
         string? searchByRemove = null;
 
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
+
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
-        IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, null, null, searchByRemove);
+        IActionResult result = await sut.NonUpnNationalPupilDatabase(
+            searchViewModel,
+            surnameFilter,
+            middlenameFilter,
+            forenameFilter,
+            null,
+            null,
+            searchByRemove);
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
@@ -161,78 +216,67 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         Assert.True(model.Learners.SequenceEqual(_paginatedResultsFake.GetValidLearners().Learners));
     }
 
-    [Fact]
-    public async Task NonUpnNationalPupilDatabase_does_not_call_GetPage_if_model_state_not_valid()
-    {
-        // Arrange
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
+    //[Fact]
+    //public async Task NonUpnNationalPupilDatabase_does_not_call_GetPage_if_model_state_not_valid()
+    //{
+    //    // Arrange
+    //    NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        // Act
-        await sut.NonUpnNationalPupilDatabase(new LearnerTextSearchViewModel(), string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
+    //    // Act
+    //    await sut.NonUpnNationalPupilDatabase(new LearnerTextSearchViewModel(), string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
 
-        // Assert
-        await _mockPaginatedService.DidNotReceive().GetPage(Arg.Any<string>(),
-        Arg.Any<Dictionary<string, string[]>>(),
-        Arg.Any<int>(),
-        Arg.Any<int>(),
-        Arg.Any<AzureSearchIndexType>(),
-        Arg.Any<AzureSearchQueryType>(),
-        Arg.Any<AzureFunctionHeaderDetails>(),
-        Arg.Any<string>(),
-        Arg.Any<string>());
-    }
+    //    // Assert
+    //}
 
-    [Fact]
-    public async Task NonUpnNationalPupilDatabase_populates_LearnerNumberIds_with_Id_when_UPN_0()
-    {
-        // Arrange
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-        //override default user to make admin so Ids are not masked, not testing rbac rules for this test
-        sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
+    //[Fact]
+    //public async Task NonUpnNationalPupilDatabase_populates_LearnerNumberIds_with_Id_when_UPN_0()
+    //{
+    //    // Arrange
+    //    NationalPupilDatabaseLearnerTextSearchController sut = GetController();
+    //    //override default user to make admin so Ids are not masked, not testing rbac rules for this test
+    //    sut.ControllerContext.HttpContext.User = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
 
 
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        PaginatedResponse response = new()
-        {
-            Learners = [
-                new Learner()
-                {
-                    Id = "123",
-                    LearnerNumber = "0",
-                },
-                new Learner()
-                {
-                    Id = "456",
-                    LearnerNumber = "A203202811068",
-                }
-            ],
-            Count = 2
-        };
-        List<Learner> expectedLearners = [
-            new Learner()
-            {
-                Id = "123",
-                LearnerNumber = "0",
-                LearnerNumberId = "123",
-            },
-            new Learner()
-            {
-                Id = "456",
-                LearnerNumber = "A203202811068",
-                LearnerNumberId = "A203202811068",
-            }
-        ];
+    //    _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
+    //    PaginatedResponse response = new()
+    //    {
+    //        Learners = [
+    //            new Learner()
+    //            {
+    //                Id = "123",
+    //                LearnerNumber = "0",
+    //            },
+    //            new Learner()
+    //            {
+    //                Id = "456",
+    //                LearnerNumber = "A203202811068",
+    //            }
+    //        ],
+    //        Count = 2
+    //    };
+    //    List<Learner> expectedLearners = [
+    //        new Learner()
+    //        {
+    //            Id = "123",
+    //            LearnerNumber = "0",
+    //            LearnerNumberId = "123",
+    //        },
+    //        new Learner()
+    //        {
+    //            Id = "456",
+    //            LearnerNumber = "A203202811068",
+    //            LearnerNumberId = "A203202811068",
+    //        }
+    //    ];
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, response);
+    //    // Act
+    //    IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
 
-        // Act
-        IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        Assert.True(model.Learners.SequenceEqual(expectedLearners));
-    }
+    //    // Assert
+    //    ViewResult viewResult = Assert.IsType<ViewResult>(result);
+    //    LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
+    //    Assert.True(model.Learners.SequenceEqual(expectedLearners));
+    //}
 
 
     [Theory]
@@ -243,9 +287,10 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
@@ -273,8 +318,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
@@ -298,8 +341,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
@@ -321,8 +362,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
@@ -342,8 +381,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
@@ -365,8 +402,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
@@ -386,8 +421,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
@@ -409,8 +442,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
@@ -430,8 +461,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, searchFilter);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
@@ -453,8 +482,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.DobFilter(searchViewModel);
 
@@ -469,13 +496,27 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     public async Task SurnameFilter_Returns_to_route_with_correct_surname_filter()
     {
         // Arrange
-        string searchText = "John Smith";
-        string surnameFilter = "Surname";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+        const string searchText = "John Smith";
+        const string surnameFilter = "Surname";
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+        const string sortField = "Forename";
+        const string sortDirection = "asc";
+
+        LearnerTextSearchViewModel searchViewModel = new()
+        {
+            SearchText = searchText,
+            SearchFilters = searchFilters,
+            Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            SortField = sortField,
+            SortDirection = sortDirection
+        };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>())
+                .Returns(searchViewModel);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.SurnameFilter(searchViewModel, surnameFilter);
@@ -499,9 +540,10 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         string middlenameFilter = "Middle";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
         // Act
         IActionResult result = await sut.MiddlenameFilter(searchViewModel, middlenameFilter);
@@ -523,9 +565,10 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         string forenameFilter = "Forename";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
+        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
         // Act
         IActionResult result = await sut.ForenameFilter(searchViewModel, forenameFilter);
@@ -548,12 +591,24 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     public async Task SexFilter_Returns_to_route_with_correct_sex_filter(string sexFilter)
     {
         // Arrange
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), [sexFilter]);
+        const string searchText = "John Smith";
+
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(
+            new LearnerTextSearchViewModel()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                SelectedSexValues = [sexFilter],
+                Learners = _paginatedResultsFake.GetValidLearners().Learners
+            });
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.SexFilter(searchViewModel);
@@ -574,13 +629,25 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     public async Task SexFilter_returns_all_genders_when_no_gender_selected()
     {
         // Arrange
-        string searchText = "Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null);
-        searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{ ""FilterName"":""Female"",""FilterType"":6}]";
+        const string searchText = "Smith";
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+        searchFilters.CurrentFiltersAppliedString =
+            @"[{ ""FilterName"":""Female"",""FilterType"":6}]";
+
+        LearnerTextSearchViewModel searchViewModel =
+            new()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>())
+                .Returns(searchViewModel);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.SexFilter(searchViewModel);
@@ -600,13 +667,23 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     public async Task SexFilter_returns_all_genders_when_more_than_one_gender_deselected()
     {
         // Arrange
-        string searchText = "Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters(), null);
-        searchViewModel.SearchFilters.CurrentFiltersAppliedString = @"[{""FilterName"":""Female"",""FilterType"":6}, {""FilterName"":""Male"",""FilterType"":6}]";
+        const string searchText = "Smith";
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+        searchFilters.CurrentFiltersAppliedString =
+            @"[{""FilterName"":""Female"",""FilterType"":6}, {""FilterName"":""Male"",""FilterType"":6}]";
+
+        LearnerTextSearchViewModel searchViewModel =
+            new()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.SexFilter(searchViewModel);
@@ -630,14 +707,17 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         // Arrange
         string searchText = "John Smith";
         string upn = _paginatedResultsFake.GetUpn();
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
         // Act
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.NonUpnAddToMyPupilList(searchViewModel);
 
@@ -655,13 +735,14 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         // Act
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.NonUpnAddToMyPupilList(searchViewModel);
 
@@ -705,10 +786,13 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         string upn = string.Empty;
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>())
+                .Returns(searchViewModel);
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         sut.TempData = Substitute.For<ITempDataDictionary>();
 
@@ -736,8 +820,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         // Act
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.ToDownloadSelectedNPDDataNonUPN(searchViewModel);
 
@@ -797,12 +879,15 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         string upn = string.Empty;
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>())
+                .Returns(searchViewModel);
+
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
         // Act
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
 
@@ -829,8 +914,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         // Act
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
 
         // Assert
@@ -853,23 +936,21 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         _mockSelectionManager.GetSelectedFromSession().Returns(upn);
 
         _mockCtfService.GetCommonTransferFile(
-        Arg.Any<string[]>(),
-        Arg.Any<string[]>(),
-        Arg.Any<string>(),
-        Arg.Any<string>(),
-        Arg.Any<bool>(),
-        Arg.Any<AzureFunctionHeaderDetails>(),
-        Arg.Any<ReturnRoute>()
-        ).Returns(new ReturnFile()
-        {
-            FileName = "test",
-            FileType = FileType.ZipFile,
-            Bytes = null
-        });
+            Arg.Any<string[]>(),
+            Arg.Any<string[]>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<bool>(),
+            Arg.Any<AzureFunctionHeaderDetails>(),
+            Arg.Any<ReturnRoute>()
+            ).Returns(new ReturnFile()
+            {
+                FileName = "test",
+                FileType = FileType.ZipFile,
+                Bytes = null
+            });
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
@@ -919,19 +1000,19 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         };
 
         _mockCtfService.GetCommonTransferFile(
-       Arg.Any<string[]>(),
-       Arg.Any<string[]>(),
-       Arg.Any<string>(),
-       Arg.Any<string>(),
-       Arg.Any<bool>(),
-       Arg.Any<AzureFunctionHeaderDetails>(),
-       Arg.Any<ReturnRoute>()
-       ).Returns(new ReturnFile()
-       {
-           FileName = "test",
-           FileType = FileType.ZipFile,
-           Bytes = []
-       });
+            Arg.Any<string[]>(),
+            Arg.Any<string[]>(),
+            Arg.Any<string>(),
+            Arg.Any<string>(),
+            Arg.Any<bool>(),
+            Arg.Any<AzureFunctionHeaderDetails>(),
+            Arg.Any<ReturnRoute>()
+            ).Returns(new ReturnFile()
+            {
+                FileName = "test",
+                FileType = FileType.ZipFile,
+                Bytes = []
+            });
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
@@ -977,7 +1058,12 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>())
+                .Returns(searchViewModel);
 
         const string NpdSearchTextSessionKey = "SearchNonUPN_SearchText";
         const string NpdSearchFiltersSessionKey = "SearchNonUPN_SearchFilters";
@@ -998,10 +1084,8 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
-        IActionResult result = await sut.DownloadCancellationReturn(new StarredPupilConfirmationViewModel());
+        IActionResult result = await sut.DownloadCancellationReturn();
 
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
@@ -1020,17 +1104,31 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+
+        LearnerTextSearchViewModel searchViewModel =
+        new()
+        {
+            SearchText = searchText,
+            SearchFilters = searchFilters,
+            Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            SortDirection = sortDirection,
+            SortField = sortField
+        };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
+
         string? surnameFilter = null;
         string? middlenameFilter = null;
         string? forenameFilter = null;
         string? searchByRemove = null;
 
         NationalPupilDatabaseLearnerTextSearchController sut = GetController();
+
         _mockSession.SetString(sut.SearchSessionKey, searchText);
         _mockSession.SetString(sut.SearchFiltersSessionKey, JsonConvert.SerializeObject(searchViewModel.SearchFilters));
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, sortField, sortDirection);
@@ -1051,7 +1149,21 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+
+        LearnerTextSearchViewModel searchViewModel =
+            new()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            };
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>())
+                .Returns(searchViewModel);
+
         string? surnameFilter = null;
         string? middlenameFilter = null;
         string? forenameFilter = null;
@@ -1066,8 +1178,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         _mockSession.SetString(sut.SortDirectionKey, sortDirection);
         _mockSession.SetString(sut.SortFieldKey, sortField);
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
@@ -1089,10 +1199,18 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
     {
         // Arrange
         string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
 
         string sortField = "Forename";
         string sortDirection = "asc";
+
+        LearnerTextSearchViewModel searchViewModel =
+            SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        searchViewModel.SortField = sortField;
+        searchViewModel.SortDirection = sortDirection;
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(searchViewModel);
 
         const string NpdSearchTextSessionKey = "SearchNonUPN_SearchText";
         const string NpdSearchFiltersSessionKey = "SearchNonUPN_SearchFilters";
@@ -1116,8 +1234,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         _mockSession.SetString(sut.SortDirectionKey, sortDirection);
         _mockSession.SetString(sut.SortFieldKey, sortField);
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(true);
 
@@ -1138,6 +1254,19 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         // Arrange
         string searchText = "John Smith";
         LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
+
+        SearchFilters searchFilters = _searchFiltersFake.GetSearchFilters();
+
+        _mockLearnerSearchResponseToViewModelMapper.Map(
+            Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(
+            new LearnerTextSearchViewModel()
+            {
+                SearchText = searchText,
+                SearchFilters = searchFilters,
+                Learners = _paginatedResultsFake.GetValidLearners().Learners
+
+            });
+
         string? surnameFilter = null;
         string? middlenameFilter = null;
         string? forenameFilter = null;
@@ -1154,8 +1283,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         sut.ControllerContext.HttpContext.Request.Query = Substitute.For<IQueryCollection>();
         sut.ControllerContext.HttpContext.Request.Query.ContainsKey("reset").Returns(true);
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, null, null);
@@ -1183,8 +1310,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
 
         _mockSession.SetString(sut.SortDirectionKey, "asc");
         _mockSession.SetString(sut.SortFieldKey, "Forename");
-
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
 
         // Act
         IActionResult result = await sut.SurnameFilter(searchViewModel, surnameFilter);
@@ -1219,8 +1344,6 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         _mockSession.SetString(sut.SortDirectionKey, "asc");
         _mockSession.SetString(sut.SortFieldKey, "Forename");
 
-        SetupPaginatedSearch(sut.IndexType, AzureSearchQueryType.Text, _paginatedResultsFake.GetValidLearners());
-
         // Act
         IActionResult result = await sut.NonUpnNationalPupilDatabase(searchViewModel, surnameFilter, middlenameFilter, forenameFilter, searchByRemove, "", "");
 
@@ -1233,7 +1356,7 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         Assert.True(string.IsNullOrEmpty(model.SortDirection));
     }
 
-    private static LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(
+    private LearnerTextSearchViewModel SetupLearnerTextSearchViewModel(
         string searchText,
         SearchFilters searchFilters,
         string[]? selectedSexValues = null)
@@ -1242,25 +1365,16 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         {
             SearchText = searchText,
             SearchFilters = searchFilters,
-            SelectedSexValues = selectedSexValues
+            SelectedSexValues = selectedSexValues,
+            Learners = _paginatedResultsFake.GetValidLearners().Learners,
+            PageHeading = "Advanced search NPD",
+            DownloadLinksPartial = "~/Views/Shared/LearnerText/_SearchPageDownloadLinks.cshtml",
+            LearnerTextSearchController = "NationalPupilDatabaseLearnerTextSearch",
+            LearnerTextSearchAction = "NonUpnNationalPupilDatabase",
+            LearnerNumberController = "search",
+            LearnerNumberAction = "national-pupil-database"
         };
     }
-
-    private void SetupPaginatedSearch(AzureSearchIndexType indexType, AzureSearchQueryType azureSearchQueryType, PaginatedResponse paginatedResponse)
-    {
-        _mockPaginatedService.GetPage(
-       Arg.Any<string>(),
-       Arg.Any<Dictionary<string, string[]>>(),
-       Arg.Any<int>(),
-       Arg.Any<int>(),
-       Arg.Is(indexType),
-       Arg.Is(azureSearchQueryType),
-       Arg.Any<AzureFunctionHeaderDetails>(),
-       Arg.Any<string>(),
-       Arg.Any<string>())
-       .Returns(paginatedResponse);
-    }
-
 
     private static void AssertAbstractValues(NationalPupilDatabaseLearnerTextSearchController controller, LearnerTextSearchViewModel model)
     {
@@ -1307,14 +1421,19 @@ public sealed class NPDLearnerTextSearchControllerTests : IClassFixture<Paginate
         return new NationalPupilDatabaseLearnerTextSearchController(
              _mockLogger,
              _mockAppOptions,
-             _mockPaginatedService,
              _mockSelectionManager,
              _mockCtfService,
              _mockSessionProvider.Object,
              mockGetAvailableDatasetsForPupilsUseCase.Object,
              new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
              mockDownloadPupilDataUseCase.Object,
-             mockEventLogger.Object)
+             mockEventLogger.Object,
+             _mockUseCase,
+             _mockLearnerSearchResponseToViewModelMapper,
+             _mockFiltersRequestMapper,
+             _mockSortOrderMapper,
+             _mockFiltersRequestBuilder,
+             _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {

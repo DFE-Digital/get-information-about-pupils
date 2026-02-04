@@ -3,8 +3,6 @@ using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Models.Common;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
@@ -17,8 +15,10 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
@@ -31,7 +31,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByName;
 
@@ -53,12 +52,17 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
     private readonly Mock<IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>> _mockUseCase = new();
 
     private readonly Mock<
-    IMapper<
-        NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
+        IMapper<
+            NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
+
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
 
     public NationalPupilDatabaseLearnerNumberSearchControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         NationalPupilDatabaseSearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
@@ -1596,7 +1600,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             jsonSerializerMock.Object,
             mockDownloadPupilDataUseCase.Object,
-            mockEventLogger.Object)
+            mockEventLogger.Object,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {
