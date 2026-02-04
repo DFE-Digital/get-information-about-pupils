@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;

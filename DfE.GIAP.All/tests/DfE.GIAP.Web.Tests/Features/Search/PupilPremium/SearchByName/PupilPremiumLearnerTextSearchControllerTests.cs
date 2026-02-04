@@ -8,13 +8,11 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -29,7 +27,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
-using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 

@@ -7,11 +7,11 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
