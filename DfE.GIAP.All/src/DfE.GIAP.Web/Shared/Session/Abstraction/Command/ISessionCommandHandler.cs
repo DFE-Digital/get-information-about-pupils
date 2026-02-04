@@ -2,5 +2,5 @@
 
 public interface ISessionCommandHandler<in TValue> where TValue : class
 {
-    void StoreInSession(TValue value);
+    void StoreInSession(SessionCacheKey sessionCacheKey, TValue value);
 }
