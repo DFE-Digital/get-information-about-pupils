@@ -13,7 +13,7 @@ public record NationalPupilDatabaseSearchRequest : IUseCaseRequest<NationalPupil
 
         ArgumentNullException.ThrowIfNull(searchCriteria);
         SearchCriteria = searchCriteria;
-        
+
         ArgumentNullException.ThrowIfNull(sortOrder);
         SortOrder = sortOrder;
         Offset = offset;
