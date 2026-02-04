@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using DfE.GIAP.Domain.Models.User;
+﻿using System.Security.Claims;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers;
-using Xunit;
 using static DfE.GIAP.Web.Constants.DsiKeys;
 
 namespace DfE.GIAP.Web.Tests.Helpers;
