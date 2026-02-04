@@ -8,8 +8,10 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
@@ -56,6 +58,9 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
 
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
+
     public PupilPremiumLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
@@ -69,6 +74,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
         _mockSortOrderMapper.Map(
             Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         PupilPremiumSearchResponse response =
             PupilPremiumSearchResponseTestDouble.CreateSuccessResponse();
@@ -1344,7 +1351,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
             _mockSortOrderMapper,
-            _mockFiltersRequestBuilder)
+            _mockFiltersRequestBuilder,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {

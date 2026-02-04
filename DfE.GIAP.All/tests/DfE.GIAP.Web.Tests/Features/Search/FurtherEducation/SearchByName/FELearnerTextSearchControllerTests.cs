@@ -7,7 +7,9 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
@@ -51,6 +53,8 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
     private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
 
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
@@ -64,6 +68,9 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
 
         _mockSortOrderMapper.Map(
             Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+
+        _mockSearchCriteriaProvider = new();
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         FurtherEducationSearchResponse response =
             FurtherEducationSearchResponseTestDouble.CreateSuccessResponse();
@@ -1171,7 +1178,8 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             _mockSelectionManager,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
-            mockDownloadPupilDataUseCase.Object)
+            mockDownloadPupilDataUseCase.Object,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {

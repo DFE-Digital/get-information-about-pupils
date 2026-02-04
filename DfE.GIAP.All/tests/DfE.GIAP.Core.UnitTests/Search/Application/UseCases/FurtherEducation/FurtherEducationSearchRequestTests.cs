@@ -1,7 +1,9 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.FurtherEducation;
@@ -12,6 +14,7 @@ public class FurtherEducationSearchRequestTests
     public void Constructor_WithFilterParam_PopulatesFilterRequests()
     {
         // arrange
+        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
         List<FilterRequest> filterRequests = [FilterRequestTestDouble.Fake()];
         SortOrder sortOrder = SortOrderTestDouble.Stub();
 
@@ -19,10 +22,12 @@ public class FurtherEducationSearchRequestTests
         FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
             filterRequests: filterRequests,
+            searchCriteria: searchCriteria,
             sortOrder: sortOrder);
 
         // assert
         request.FilterRequests.Should().NotBeNull();
+        request.SearchCriteria.Should().NotBeNull();
         request.SortOrder.Should().NotBeNull();
 
         foreach (FilterRequest item in filterRequests)
@@ -40,14 +45,17 @@ public class FurtherEducationSearchRequestTests
     {
         // arrange
         SortOrder sortOrder = SortOrderTestDouble.Stub();
+        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
 
         // act
         FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
+            searchCriteria: searchCriteria,
             sortOrder: sortOrder);
 
         // assert
         request.SortOrder.Should().NotBeNull();
+        request.SearchCriteria.Should().NotBeNull();
         request.FilterRequests.Should().BeNull();
     }
 
@@ -56,16 +64,19 @@ public class FurtherEducationSearchRequestTests
     {
         //arrange
         SortOrder sortOrder = SortOrderTestDouble.Stub();
+        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
         const int Offset = 10;
 
         // act
         FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
             sortOrder: sortOrder,
+            searchCriteria: searchCriteria,
             offset: Offset);
 
         // assert
         request.SortOrder.Should().NotBeNull();
+        request.SearchCriteria.Should().NotBeNull();
         request.Offset.Should().Be(Offset);
     }
 
@@ -74,12 +85,16 @@ public class FurtherEducationSearchRequestTests
     {
         // act
         SortOrder sortOrder = SortOrderTestDouble.Stub();
+        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
+
         FurtherEducationSearchRequest request = new(
             searchKeywords: "searchKeyword",
+            searchCriteria: searchCriteria,
             sortOrder: sortOrder);
 
         // assert
         request.SortOrder.Should().NotBeNull();
+        request.SearchCriteria.Should().NotBeNull();
         request.Offset.Should().Be(0);  //value of zero ensures no records are skipped
     }
 }

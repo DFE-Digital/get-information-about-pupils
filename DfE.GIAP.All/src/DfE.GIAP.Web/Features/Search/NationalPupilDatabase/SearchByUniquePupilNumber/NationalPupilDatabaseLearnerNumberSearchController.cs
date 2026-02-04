@@ -11,7 +11,9 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
@@ -47,6 +49,7 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
     private readonly ISelectionManager _selectionManager;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly AzureAppSettings _appSettings;
+    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
 
     public string PageHeading => ApplicationLabels.SearchNPDWithUpnPageHeading;
     public string SearchAction => "NationalPupilDatabase";
@@ -81,7 +84,8 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IJsonSerializer jsonSerializer,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        IEventLogger eventLogger)
+        IEventLogger eventLogger,
+        ISearchCriteriaProvider searchCriteriaProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -121,6 +125,9 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
+
+        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
+        _searchCriteriaProvider = searchCriteriaProvider;
     }
 
 
@@ -548,10 +555,13 @@ public class NationalPupilDatabaseLearnerNumberSearchController : Controller
                 filterValues: learnerNumberArray)
         ];
 
+        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("npd-upn");
+
         NationalPupilDatabaseSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
             new NationalPupilDatabaseSearchRequest(
                 searchKeywords: string.Join(" AND ", learnerNumberArray),
                 filterRequests: filterRequests,
+                searchCriteria: searchCriteria,
                 sortOrder: sortOrder,
                 model.Offset));
 

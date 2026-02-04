@@ -75,7 +75,9 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        FurtherEducationSearchRequest request = new(searchKeywords: "test", sortOrder);
+        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
+
+        FurtherEducationSearchRequest request = new(searchKeywords: "test", searchCriteria, sortOrder);
 
         // act
         FurtherEducationSearchResponse response = await sut.HandleRequestAsync(request);

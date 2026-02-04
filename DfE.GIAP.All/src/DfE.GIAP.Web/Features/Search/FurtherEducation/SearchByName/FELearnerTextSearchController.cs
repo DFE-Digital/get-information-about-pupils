@@ -8,7 +8,9 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -62,6 +64,7 @@ public class FELearnerTextSearchController : Controller
 
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
+    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
 
     public FELearnerTextSearchController(
         ISessionProvider sessionProvider,
@@ -81,7 +84,8 @@ public class FELearnerTextSearchController : Controller
         ITextSearchSelectionManager selectionManager,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
-        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+        ISearchCriteriaProvider searchCriteriaProvider)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
@@ -115,6 +119,9 @@ public class FELearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
+
+        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
+        _searchCriteriaProvider = searchCriteriaProvider;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -674,11 +681,14 @@ public class FELearnerTextSearchController : Controller
                     searchKey: "further-education",
                     sortOrder: (sortField, sortDirection)));
 
+        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("further-education-text");
+
         FurtherEducationSearchResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new FurtherEducationSearchRequest(
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
+                    searchCriteria: searchCriteria,
                     sortOrder: sortOrder,
                     offset: model.Offset));
 

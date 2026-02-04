@@ -11,12 +11,14 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Download;
 using DfE.GIAP.Service.Download.CTF;
 using DfE.GIAP.Service.Search;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -53,12 +55,17 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
     private readonly Mock<IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>> _mockUseCase = new();
 
     private readonly Mock<
-    IMapper<
-        NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
+        IMapper<
+            NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
+
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
 
     public NationalPupilDatabaseLearnerNumberSearchControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         NationalPupilDatabaseSearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
@@ -1596,7 +1603,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             jsonSerializerMock.Object,
             mockDownloadPupilDataUseCase.Object,
-            mockEventLogger.Object)
+            mockEventLogger.Object,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {

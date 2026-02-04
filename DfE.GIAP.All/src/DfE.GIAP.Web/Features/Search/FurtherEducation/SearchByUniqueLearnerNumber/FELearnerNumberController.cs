@@ -10,7 +10,9 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -45,7 +47,7 @@ public class FELearnerNumberController : Controller
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-
+    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
     private readonly IEventLogger _eventLogger;
     private readonly bool _showMiddleNames = false;
     public const int PAGESIZE = 20;
@@ -72,7 +74,8 @@ public class FELearnerNumberController : Controller
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
-        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase)
+        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+        ISearchCriteriaProvider searchCriteriaProvider)
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
@@ -101,6 +104,9 @@ public class FELearnerNumberController : Controller
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
+
+        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
+        _searchCriteriaProvider = searchCriteriaProvider;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -431,6 +437,8 @@ public class FELearnerNumberController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
+        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("further-education-uln");
+
         SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
             new SortOrderRequest(
                 searchKey: "further-education",
@@ -451,6 +459,7 @@ public class FELearnerNumberController : Controller
                 new FurtherEducationSearchRequest(
                     searchKeywords: string.Join(" AND ", learnerNumberArray),
                     filterRequests: filterRequests,
+                    searchCriteria: searchCriteria,
                     sortOrder: sortOrder,
                     offset: model.Offset));
 

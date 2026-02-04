@@ -8,7 +8,9 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Service.Search;
@@ -56,6 +58,8 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
 
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
+    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
+
     public string LearnerNumberLabel => Global.LearnerNumberLabel;
 
     public string SearchSessionKey => Global.PPNonUpnSearchSessionKey;
@@ -85,7 +89,8 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
         IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
-        IFiltersRequestFactory filtersRequestBuilder)
+        IFiltersRequestFactory filtersRequestBuilder,
+        ISearchCriteriaProvider searchCriteriaProvider)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -120,6 +125,9 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
         _filtersRequestBuilder = filtersRequestBuilder;
+
+        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
+        _searchCriteriaProvider = searchCriteriaProvider;
     }
 
     [Route(Routes.PupilPremium.NonUPN)]
@@ -721,11 +729,14 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
                     searchKey: "pupil-premium",
                     sortOrder: (sortField, sortDirection)));
 
+        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("pupil-premium-text");
+
         PupilPremiumSearchResponse searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new PupilPremiumSearchRequest(
                     searchKeywords: model.SearchText,
                     filterRequests: filterRequests,
+                    searchCriteria: searchCriteria,
                     sortOrder: sortOrder,
                     offset: model.Offset));
 
