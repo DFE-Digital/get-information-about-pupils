@@ -20,11 +20,11 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    public SessionQueryResponse<TSessionObject> Handle(SessionCacheKey sessionCacheKey)
+    public SessionQueryResponse<TSessionObject> Handle(SessionCacheKey key)
     {
         ISession session = _sessionProvider.GetSession();
 
-        if (!session.TryGetValue(sessionCacheKey.Value, out byte[] value))
+        if (!session.TryGetValue(key.Value, out byte[] value))
         {
             return SessionQueryResponse<TSessionObject>.CreateWithNoValue();
         }

@@ -19,7 +19,7 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    public void StoreInSession(SessionCacheKey sessionCacheKey, TValue value)
+    public void StoreInSession(SessionCacheKey key, TValue value)
     {
         ArgumentNullException.ThrowIfNull(value);
 
@@ -28,7 +28,7 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
         _sessionProvider
             .GetSession()
             .SetString(
-                key: sessionCacheKey.Value,
+                key: key.Value,
                 value: json);
     }
 }
