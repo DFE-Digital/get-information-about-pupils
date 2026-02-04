@@ -123,5 +123,8 @@ public static class Routes
         public const string NonULNSexFilter = "/search/fe-non-uln/sex-filter";
         public const string DownloadNonUlnRequest = "download-nonuln-fe";
         public const string DownloadNonUlnFile = "download-nonuln-fe-file";
+        public const string SearchUlnControllerName = "FELearnerNumber";
+        public const string SearchUlnActionName = "PupilUlnSearch";
+        public const string DownloadSelectedUlnData = "download-uln-file";
     }
 }

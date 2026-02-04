@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
@@ -1372,8 +1371,8 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
 
         // assert
         RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal(UniqueLearnerNumberLabels.SearchUlnActionName, redirectResult.ActionName);
-        Assert.Equal(UniqueLearnerNumberLabels.SearchUlnControllerName, redirectResult.ControllerName);
+        Assert.Equal(Routes.FurtherEducation.SearchUlnActionName, redirectResult.ActionName);
+        Assert.Equal(Routes.FurtherEducation.SearchUlnControllerName, redirectResult.ControllerName);
     }
 
     [Fact]
