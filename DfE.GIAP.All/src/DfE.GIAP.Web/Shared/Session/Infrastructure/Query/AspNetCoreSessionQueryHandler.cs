@@ -22,6 +22,8 @@ public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQuer
 
     public SessionQueryResponse<TSessionObject> Handle(SessionCacheKey key)
     {
+        ArgumentNullException.ThrowIfNull(key);
+
         ISession session = _sessionProvider.GetSession();
 
         if (!session.TryGetValue(key.Value, out byte[] value))

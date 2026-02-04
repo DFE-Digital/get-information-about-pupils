@@ -21,6 +21,7 @@ public sealed class AspNetCoreSessionCommandHandler<TValue> : ISessionCommandHan
 
     public void StoreInSession(SessionCacheKey key, TValue value)
     {
+        ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(value);
 
         string json = _sessionObjectSerializer.Serialize(value);
