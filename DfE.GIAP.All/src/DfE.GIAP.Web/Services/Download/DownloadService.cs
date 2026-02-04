@@ -1,10 +1,9 @@
 ﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Domain.Models.Common;
-using Microsoft.Extensions.Options;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Services.ApiProcessor;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Services.Download;
 
@@ -35,7 +34,7 @@ public class DownloadService : IDownloadService
         var getCSVFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "csv" };
-        var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+        var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(new Uri(getCSVFile), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         string loggingBatchId = Guid.NewGuid().ToString();
         foreach (string dataset in requestBody.DataTypes)
@@ -65,7 +64,7 @@ public class DownloadService : IDownloadService
         var getTABFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, ConfirmationGiven = confirmationGiven, FileType = "tab" };
-        var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getTABFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+        var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(new Uri(getTABFile), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         string loggingBatchId = Guid.NewGuid().ToString();
         foreach (string dataset in requestBody.DataTypes)
@@ -90,7 +89,7 @@ public class DownloadService : IDownloadService
         var getCSVFile = _azureAppSettings.DownloadPupilsByUPNsCSVUrl;
 
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, DataTypes = selectedDownloadOptions, FileType = "csv", CheckOnly = true };
-        var response = await _apiProcessorService.PostAsync<DownloadRequest, IEnumerable<CheckDownloadDataType>>(getCSVFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
+        var response = await _apiProcessorService.PostAsync<DownloadRequest, IEnumerable<CheckDownloadDataType>>(new Uri(getCSVFile), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
         return response;
     }

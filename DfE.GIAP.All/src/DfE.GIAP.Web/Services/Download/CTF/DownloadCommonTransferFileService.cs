@@ -43,7 +43,7 @@ public class DownloadCommonTransferFileService : IDownloadCommonTransferFileServ
             SortOrder = sortOrder
         };
 
-        ReturnFile response = await _apiProcessorService.PostAsync<CommonTransferFile, ReturnFile>(getCTFFile.ConvertToUri(),
+        ReturnFile response = await _apiProcessorService.PostAsync<CommonTransferFile, ReturnFile>(new Uri(getCTFFile),
                                                                                             requestBody,
                                                                                             azureFunctionHeaderDetails)
                                                  .ConfigureAwait(false);
