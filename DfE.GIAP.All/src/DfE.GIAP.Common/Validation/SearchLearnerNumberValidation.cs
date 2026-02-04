@@ -1,44 +1,30 @@
 ﻿using DfE.GIAP.Common.Helpers;
 using System.ComponentModel.DataAnnotations;
 
-namespace DfE.GIAP.Common.Validation
+namespace DfE.GIAP.Common.Validation;
+
+public class SearchLearnerNumberValidation : ValidationAttribute
 {
-    public class SearchLearnerNumberValidation : ValidationAttribute
+    
+    protected override ValidationResult IsValid(object x, ValidationContext context)
     {
-        private readonly string _MaximumLearnerNumbersPerSearch;
+        
+        var learnerNumber = context.ObjectType.GetProperty("LearnerNumberLabel").GetValue(context.ObjectInstance, null);
 
-        public SearchLearnerNumberValidation(string MaximumLearnerNumbers)
+        if (x == null)
         {
-            _MaximumLearnerNumbersPerSearch = MaximumLearnerNumbers;
+            return GetValidationResultError("EmptyUpn", $"You have not entered any {learnerNumber}s");
         }
 
-        protected override ValidationResult IsValid(object x, ValidationContext context)
-        {
-            var property = context.ObjectType.GetProperty(_MaximumLearnerNumbersPerSearch);
-            int.TryParse(property.GetValue(context.ObjectInstance, null).ToString(), out int propertyMaximumPerSearch);
+        string upnParam = SecurityHelper.SanitizeText(x.ToString());
 
-            var learnerNumber = context.ObjectType.GetProperty("LearnerNumberLabel").GetValue(context.ObjectInstance, null);
+        var upnsList = ValidationHelper.FormatUPNULNSearchInput(upnParam);
 
-            if (x == null)
-            {
-                return GetValidationResultError("EmptyUpn", $"You have not entered any {learnerNumber}s");
-            }
+        return ValidationResult.Success;
+    }
 
-            string upnParam = SecurityHelper.SanitizeText(x.ToString());
-
-            var upnsList = ValidationHelper.FormatUPNULNSearchInput(upnParam);
-
-            if (upnsList.Count > propertyMaximumPerSearch)
-            {
-                return GetValidationResultError("UpnExceededMaximumThreshold", $"More than {propertyMaximumPerSearch} {learnerNumber}s have been entered, please review and reduce to the maximum of {propertyMaximumPerSearch}");
-            }
-
-            return ValidationResult.Success;
-        }
-
-        private static ValidationResult GetValidationResultError(string key, string text)
-        {
-            return new ValidationResult($"{text}", new string[] { $"{key}" });
-        }
+    private static ValidationResult GetValidationResultError(string key, string text)
+    {
+        return new ValidationResult($"{text}", new string[] { $"{key}" });
     }
 }

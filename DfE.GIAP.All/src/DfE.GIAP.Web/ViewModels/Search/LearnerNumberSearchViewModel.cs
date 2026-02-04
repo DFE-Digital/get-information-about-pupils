@@ -20,7 +20,7 @@ public class LearnerNumberSearchViewModel
 
     public string LearnerNumberLabel { get; set; }
 
-    [SearchLearnerNumberValidation("MaximumLearnerNumbersPerSearch")]
+    [SearchLearnerNumberValidation]
     [DataType(DataType.MultilineText)]
     public string LearnerNumber { get; set; }
     public string LearnerNumberIds { get; set; }

@@ -9,7 +9,6 @@ public class AzureAppSettings
     public bool IsSessionIdStoredInCookie { get; set; }
 
     public string DownloadPupilsByUPNsCSVUrl { get; set; }
-    public string DownloadPupilPremiumByUPNFforCSVUrl { get; set; }
     public string DownloadCommonTransferFileUrl { get; set; }
 
     //Further Education

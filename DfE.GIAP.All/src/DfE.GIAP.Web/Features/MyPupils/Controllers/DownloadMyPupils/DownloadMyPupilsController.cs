@@ -251,6 +251,7 @@ public class DownloadMyPupilsController : Controller
             SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
         };
 
+
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
 
         SearchDownloadHelper.AddDownloadDataTypes(
