@@ -1,9 +1,7 @@
 ﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
@@ -11,7 +9,6 @@ using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
-using Moq;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
@@ -37,18 +34,7 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
                 .Build();
 
         services
-            .AddSearchCore(searchConfiguration)
-            // provider of Options 
-            .AddSingleton<ISearchCriteriaProvider>(sp =>
-            {
-                Mock<ISearchCriteriaProvider> provider = new();
-                provider
-                    .Setup(t => t.GetCriteria(It.IsAny<string>()))
-                    .Returns(SearchCriteriaTestDouble.Stub());
-
-                return provider.Object;
-            });
-
+            .AddSearchCore(searchConfiguration);
         return Task.CompletedTask;
     }
 
@@ -75,7 +61,9 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        FurtherEducationSearchRequest request = new(searchKeywords: "test", sortOrder);
+        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
+
+        FurtherEducationSearchRequest request = new(searchKeywords: "test", searchCriteria, sortOrder);
 
         // act
         FurtherEducationSearchResponse response = await sut.HandleRequestAsync(request);

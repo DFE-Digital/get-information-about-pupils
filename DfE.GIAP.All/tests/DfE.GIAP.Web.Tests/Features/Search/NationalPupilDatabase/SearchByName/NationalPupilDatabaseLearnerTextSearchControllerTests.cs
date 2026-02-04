@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
@@ -11,7 +11,9 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
@@ -56,6 +58,9 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
 
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
+
     public NationalPupilDatabaseLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
@@ -69,6 +74,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
 
         _mockSortOrderMapper.Map(
             Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         NationalPupilDatabaseSearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
@@ -1425,7 +1432,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
              _mockLearnerSearchResponseToViewModelMapper,
              _mockFiltersRequestMapper,
              _mockSortOrderMapper,
-             _mockFiltersRequestBuilder)
+             _mockFiltersRequestBuilder,
+             _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {

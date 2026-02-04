@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.Search.Options;
-using DfE.GIAP.Web.Features.Search.Services;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.Services;

@@ -12,8 +12,10 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
+using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Services.Download;
 using DfE.GIAP.Web.Services.Download.CTF;
@@ -53,9 +55,14 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
 
+    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+
+
     public NationalPupilDatabaseLearnerNumberSearchControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         NationalPupilDatabaseSearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
@@ -1561,7 +1568,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             jsonSerializerMock.Object,
             mockDownloadPupilDataUseCase.Object,
-            mockEventLogger.Object)
+            mockEventLogger.Object,
+            _mockSearchCriteriaProvider.Object)
         {
             ControllerContext = new ControllerContext()
             {
