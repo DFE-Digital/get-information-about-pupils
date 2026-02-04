@@ -136,8 +136,6 @@ public class DownloadService : IDownloadService
         var requestBody = new DownloadRequest { UPNs = selectedPupils, SortOrder = sortOrder, UserOrganisation = userOrganisation, ConfirmationGiven = confirmationGiven };
         var response = await _apiProcessorService.PostAsync<DownloadRequest, ReturnFile>(getFile.ConvertToUri(), requestBody, azureFunctionHeaderDetails).ConfigureAwait(false);
 
-        string loggingBatchId = Guid.NewGuid().ToString();
-
         _eventLogger.LogDownload(
             Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
             DownloadFileFormat.CSV,
