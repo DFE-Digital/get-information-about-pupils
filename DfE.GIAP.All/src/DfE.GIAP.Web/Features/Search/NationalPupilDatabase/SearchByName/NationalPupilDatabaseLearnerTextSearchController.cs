@@ -70,8 +70,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     public string RemoveActionUrl => $"/{Routes.Application.Search}/{Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN}";
 
 
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.NPD;
-
     public string SearchAction => Global.NPDNonUpnAction;
     public string SearchController => Global.NPDTextSearchController;
 

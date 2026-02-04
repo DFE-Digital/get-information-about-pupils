@@ -56,7 +56,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     public string FullTextLearnerSearchController => "Search";
     public string FullTextLearnerSearchAction => Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN;
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPageDownloadLinks.cshtml";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.NPD;
     public string SearchSessionKey => "SearchNPD_SearchText";
     public string SearchSessionSortField => "SearchNPD_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchNPD_SearchTextSortDirection";
@@ -420,7 +419,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, IndexType, 0, true).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -496,7 +495,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
             model = await GetPupilsForSearchBuilder(
                 model,
-                IndexType,
                 pageNumber,
                 notPaged).ConfigureAwait(false);
         }
@@ -522,7 +520,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     private async Task<LearnerNumberSearchViewModel> GetPupilsForSearchBuilder(
         LearnerNumberSearchViewModel model,
-        AzureSearchIndexType indexType,
         int pageNumber,
         bool first)
     {
