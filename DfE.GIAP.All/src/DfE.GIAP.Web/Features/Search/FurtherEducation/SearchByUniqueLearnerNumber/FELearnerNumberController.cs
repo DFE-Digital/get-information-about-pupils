@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
@@ -54,7 +53,7 @@ public class FELearnerNumberController : Controller
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
-    public string PageHeading => UniqueLearnerNumberLabels.SearchPupilUpnPageHeading;
+    public string PageHeading => "Search pupils with ULNs only";
     public string SearchAction => "PupilUlnSearch";
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchFurtherEducationDownloadLinks.cshtml";
     public string SearchSessionKey => "SearchULN_SearchText";
@@ -155,7 +154,7 @@ public class FELearnerNumberController : Controller
         );
     }
 
-    [Route(UniqueLearnerNumberLabels.ToDownloadSelectedULNData)]
+    [Route("download-uln")]
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedULNData(LearnerNumberSearchViewModel searchViewModel)
     {
@@ -179,7 +178,7 @@ public class FELearnerNumberController : Controller
         return await DownloadSelectedUlnDatabaseData(joinedSelectedPupils, searchViewModel.LearnerNumber, selectedPupils.Count);
     }
 
-    [Route(UniqueLearnerNumberLabels.DownloadSelectedUlnData)]
+    [Route(Routes.FurtherEducation.DownloadSelectedUlnData)]
     [HttpPost]
     public async Task<IActionResult> DownloadSelectedUlnDatabaseData(LearnerDownloadViewModel model)
     {
@@ -243,10 +242,10 @@ public class FELearnerNumberController : Controller
 
             return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
         }
-        return RedirectToAction(SearchAction, UniqueLearnerNumberLabels.SearchUlnControllerName);
+        return RedirectToAction(SearchAction, Routes.FurtherEducation.SearchUlnControllerName);
     }
 
-    [Route(UniqueLearnerNumberLabels.DownloadSelectedUlnData)]
+    [Route(Routes.FurtherEducation.DownloadSelectedUlnData)]
     [HttpGet]
     public async Task<IActionResult> DownloadSelectedUlnDatabaseData(string selectedPupilsJoined, string uln, int selectedPupilsCount)
     {
@@ -265,7 +264,7 @@ public class FELearnerNumberController : Controller
         PopulateNavigation(searchDownloadViewModel.NumberSearchViewModel);
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
         searchDownloadViewModel.SearchAction = SearchAction;
-        searchDownloadViewModel.DownloadRoute = UniqueLearnerNumberLabels.DownloadSelectedUlnData;
+        searchDownloadViewModel.DownloadRoute = Routes.FurtherEducation.DownloadSelectedUlnData;
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumberLabel = "ULN";
 
         string[] selectedPupils = selectedPupilsJoined.Split(',');
