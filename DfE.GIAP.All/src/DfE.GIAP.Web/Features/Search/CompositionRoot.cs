@@ -40,7 +40,6 @@ public static class CompositionRoot
 
         services
             .AddSearchOptions(configuration)
-            .AddSearchRules()
             .AddSort()
             .AddFilters();
 
@@ -117,12 +116,6 @@ public static class CompositionRoot
     private static IServiceCollection AddSort(this IServiceCollection services)
     {
         services.AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderRequestToSortOrderMapper>();
-        return services;
-    }
-
-    private static IServiceCollection AddSearchRules(this IServiceCollection services)
-    {
-        services.AddSingleton<ISearchRule, PartialWordMatchRule>();
         return services;
     }
 
