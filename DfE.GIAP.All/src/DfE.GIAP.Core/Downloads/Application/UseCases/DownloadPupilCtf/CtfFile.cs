@@ -40,13 +40,13 @@ public class CtfPupil
     public string UPN { get; set; } = string.Empty;
     public string Surname { get; set; } = string.Empty;
     public string Forename { get; set; } = string.Empty;
-    public DateTime DOB { get; set; }
-    public string? Gender { get; set; }
+    public string DOB { get; set; } = string.Empty; // Parse as: yyyy-MM-dd
     public string? Sex { get; set; }
 
     public List<CtfKeyStageAssessment> Assessments { get; set; } = new();
 }
 
+// Either: EYFSP/Phonics & KS1/KS2/KS2 MTC
 public class CtfKeyStageAssessment
 {
     public string Stage { get; set; } = string.Empty;
@@ -62,7 +62,8 @@ public class CtfKeyStageAssessment
 
 
 
-
+// Look to merge CtfBuilder and ICtfSerializer
+// e.g we can have xml/json/text implementations. e.g. xmlCtffBuilder, jsonCtfBuilder ect
 public interface ICtfBuilder
 {
     CtfFile Build(CtfHeader header, IEnumerable<CtfPupil> pupils);
@@ -135,7 +136,7 @@ public class XmlCtfSerializer : ICtfSerializer
             new XElement("UPN", pupil.UPN),
             new XElement("Surname", pupil.Surname),
             new XElement("Forename", pupil.Forename),
-            new XElement("DOB", pupil.DOB.ToString("yyyy-MM-dd")),
+            new XElement("DOB", pupil.DOB),
             new XElement("Sex", pupil.Sex),
             BuildAssessments(pupil.Assessments)
         );
@@ -174,7 +175,7 @@ public class XmlCtfSerializer : ICtfSerializer
 
 public interface IPupilCtfAggregator
 {
-    Task<PupilCtfAggregate> AggregateAsync(IEnumerable<string> selectedPupilIds);
+    Task<PupilCtfCollection> AggregateAsync(IEnumerable<string> selectedPupilIds);
 }
 
 public class PupilCtfAggregator : IPupilCtfAggregator
@@ -192,27 +193,48 @@ public class PupilCtfAggregator : IPupilCtfAggregator
         _blobStorageProvider = blobStorageProvider;
     }
 
-    public async Task<PupilCtfAggregate> AggregateAsync(IEnumerable<string> selectedPupilIds)
+    public async Task<PupilCtfCollection> AggregateAsync(IEnumerable<string> selectedPupilIds)
     {
         // 1. Fetch pupils from repository
         IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository
             .GetPupilsByIdsAsync(selectedPupilIds);
 
         // 2. Load mapping definitions from blob storage
-        using Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("CTF", "2022_data_definitions.json");
+        IEnumerable<string> availableCtfDefinitions = await _blobStorageProvider.ListBlobsByNamesAsync("giapdownloads", "CTF");
+
+        // Below gets a specific definitions, most recent only?
+        using Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("giapdownloads", "CTF/2022_data_definitions.json");
         using StreamReader reader = new(stream);
         string json = await reader.ReadToEndAsync();
-        List<DataMapperDefinition> dataMapperDefinitions = JsonConvert
-            .DeserializeObject<List<DataMapperDefinition>>(json) ?? [];
+        DataMapperDefinition dataMapperDefinitions = JsonConvert
+            .DeserializeObject<DataMapperDefinition>(json) ?? new();
+
+        // Loop through each pupil,
+        // map basic pupil details to CTF Pupil
+        // Map each assessment stage, ONLY if they have data
+        //      Map EYFPS entity
+        //      Map Phonics & KS1 (same time?)
+        //      Map KS2
+        //      Map MTC
+
+        // MTC binding rules:
+        // Sort MTC entries by ACADYR (a specific ACADYR date manipulation is done here)
+        // Loops through sorted MTC entries
+        //      Tracking the current MTC entries ACADYR year (same date manipulation)
+        //      Get DEFINITIONS where Stage (ks2) & Year (entry year) match
+        //      Makes entity into dictionary of string/value pair??
+        //      Creates stage element
+
 
         // 3. Map repository pupils → CTF pupils using definitions
+        // TODO: Figure out what mapping is required, and why. Scalable solution?
 
 
         throw new NotImplementedException();
     }
 }
 
-public class PupilCtfAggregate
+public class PupilCtfCollection
 {
     public List<CtfPupil> Pupils { get; init; } = new();
 
@@ -240,7 +262,7 @@ public class DefaultCtfFileNameProvider : ICtfFileNameProvider
 
 public class DataMapperDefinition
 {
-    public int? Year { get; set; }
+    public string? Year { get; set; }
     public List<DataMapperDefinitionRule>? Rules { get; set; }
 }
 

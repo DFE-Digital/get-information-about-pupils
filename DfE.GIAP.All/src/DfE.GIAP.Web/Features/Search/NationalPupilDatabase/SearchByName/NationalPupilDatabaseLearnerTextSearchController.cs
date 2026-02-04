@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using DownloadType = DfE.GIAP.Common.Enums.DownloadType;
 using DfE.GIAP.Web.Controllers.TextBasedSearch;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 
 namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 
@@ -64,6 +65,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : BaseLearn
 
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
+    private readonly IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> _downloadPupilCtfUseCase;
     private readonly IEventLogger _eventLogger;
 
     public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
@@ -75,6 +77,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : BaseLearn
        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
        IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
        IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+       IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase,
        IEventLogger eventLogger)
        : base(logger,
              paginatedSearch,
@@ -94,6 +97,9 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : BaseLearn
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilCtfUseCase);
+        _downloadPupilCtfUseCase = downloadPupilCtfUseCase;
 
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
@@ -210,7 +216,13 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : BaseLearn
 
     private async Task<IActionResult> DownloadNpdCommonTransferFileData(LearnerTextSearchViewModel model)
     {
-        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
+        var selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ?
+            RbacHelper.DecodeUpn(model.SelectedPupil) :
+            model.SelectedPupil;
+
+        //DownloadPupilCtfRequest request = new([selectedPupil]);
+        //DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
+
 
         var downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
                                                                 new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },

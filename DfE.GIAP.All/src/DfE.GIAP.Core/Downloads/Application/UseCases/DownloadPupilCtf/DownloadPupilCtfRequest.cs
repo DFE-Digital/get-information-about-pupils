@@ -19,7 +19,14 @@ public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, Downloa
 
     public async Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
     {
-        PupilCtfAggregate test = await _pupilCtfAggregator.AggregateAsync(request.SelectedPupils);
+        // TODO: Build CTF header
+
+        // Build CTF Pupil records
+        PupilCtfCollection ctfPupils = await _pupilCtfAggregator.AggregateAsync(request.SelectedPupils);
+
+        // Create CTF file w/name
+
+        // Return CTF file
         throw new NotImplementedException();
     }
 }
