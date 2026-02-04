@@ -1,6 +1,10 @@
 ﻿using System.Text;
 using System.Xml.Linq;
+using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
+using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 
@@ -175,53 +179,41 @@ public interface IPupilCtfAggregator
 
 public class PupilCtfAggregator : IPupilCtfAggregator
 {
-    //private readonly IPupilRepository _pupilRepository;
-    //private readonly IDataDefinitionBlobClient _dataDefinitionClient;
+    private readonly INationalPupilReadOnlyRepository _nationalPupilReadOnlyRepository;
+    private readonly IBlobStorageProvider _blobStorageProvider;
 
     public PupilCtfAggregator(
-        //IPupilRepository pupilRepository,
-        //IDataDefinitionBlobClient dataDefinitionClient
-        )
+        INationalPupilReadOnlyRepository nationalPupilReadOnlyRepository,
+        IBlobStorageProvider blobStorageProvider)
     {
-        //_pupilRepository = pupilRepository;
-        //_dataDefinitionClient = dataDefinitionClient;
+        ArgumentNullException.ThrowIfNull(nationalPupilReadOnlyRepository);
+        ArgumentNullException.ThrowIfNull(blobStorageProvider);
+        _nationalPupilReadOnlyRepository = nationalPupilReadOnlyRepository;
+        _blobStorageProvider = blobStorageProvider;
     }
 
     public async Task<PupilCtfAggregate> AggregateAsync(IEnumerable<string> selectedPupilIds)
     {
-        //var pupils = await _pupilRepository.GetPupilsByIdentifiersAsync(selectedPupilIds);
-        //var definitions = await _dataDefinitionClient.GetDataDefinitionsAsync();
+        // 1. Fetch pupils from repository
+        IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository
+            .GetPupilsByIdsAsync(selectedPupilIds);
 
-        // Transform repository models → CTF domain models
-        //var ctfPupils = pupils.Select(MapToCtfPupil).ToList();
+        // 2. Load mapping definitions from blob storage
+        using Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("CTF", "2022_data_definitions.json");
+        using StreamReader reader = new(stream);
+        string json = await reader.ReadToEndAsync();
+        List<DataMapperDefinition> dataMapperDefinitions = JsonConvert
+            .DeserializeObject<List<DataMapperDefinition>>(json) ?? [];
 
-        //var header = BuildHeader(definitions);
+        // 3. Map repository pupils → CTF pupils using definitions
 
-        //return new PupilCtfAggregate
-        //{
-        //    Header = header,
-        //    Pupils = ctfPupils
-        //};
 
-        throw new NotImplementedException();
-    }
-
-    private CtfPupil MapToCtfPupil(Pupil pupil)
-    {
-        // mapping logic / Inject mappers
-        throw new NotImplementedException();
-    }
-
-    private CtfHeader BuildHeader(List<DataDefinition> definitions)
-    {
-        // header construction logic here
         throw new NotImplementedException();
     }
 }
 
 public class PupilCtfAggregate
 {
-    public CtfHeader Header { get; init; } = new();
     public List<CtfPupil> Pupils { get; init; } = new();
 
     // Optional: if we want to expose helpers later
@@ -242,4 +234,22 @@ public class DefaultCtfFileNameProvider : ICtfFileNameProvider
         string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
         return $"pupil_ctf_{timestamp}.xml";
     }
+}
+
+
+
+public class DataMapperDefinition
+{
+    public int? Year { get; set; }
+    public List<DataMapperDefinitionRule>? Rules { get; set; }
+}
+
+public class DataMapperDefinitionRule
+{
+    public string? Stage { get; set; }
+    public string? Subject { get; set; }
+    public string? Method { get; set; }
+    public string? Component { get; set; }
+    public string? ResultQualifier { get; set; }
+    public string? ResultField { get; set; }
 }

@@ -9,8 +9,17 @@ public record DownloadPupilCtfResponse(
 
 public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>
 {
-    public Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
+    private readonly IPupilCtfAggregator _pupilCtfAggregator;
+
+    public DownloadPupilCtfUseCase(IPupilCtfAggregator pupilCtfAggregator)
     {
+        ArgumentNullException.ThrowIfNull(pupilCtfAggregator);
+        _pupilCtfAggregator = pupilCtfAggregator;
+    }
+
+    public async Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
+    {
+        PupilCtfAggregate test = await _pupilCtfAggregator.AggregateAsync(request.SelectedPupils);
         throw new NotImplementedException();
     }
 }
