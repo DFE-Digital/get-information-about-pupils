@@ -86,7 +86,7 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
     }
 
     [Fact]
-    public void Map_WithANullSearchResult_ThrowsInvalidOperationException()
+    public void Map_WithANullSearchResult_SkipsNullDocuments()
     {
         // arrange
         List<SearchResult<FurtherEducationLearnerDataTransferObject>> searchResultDocuments =
@@ -94,12 +94,18 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
                 .IncludeNullDocument()
                 .Create();
 
-        // act.
-        _searchResultsMapper
-            .Invoking(mapper =>
-                mapper.Map(PageableTestDouble.FromResults(searchResultDocuments)))
-                    .Should()
-                        .Throw<InvalidOperationException>()
-                        .WithMessage("Search result document object cannot be null.");
+        Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>> pageableSearchResults =
+            PageableTestDouble.FromResults(searchResultDocuments);
+
+        // act
+        FurtherEducationLearners? result =
+            _searchResultsMapper.Map(pageableSearchResults);
+
+        // assert
+        result.Should().NotBeNull();
+
+        // null document entries must be excluded
+        result.LearnerCollection.Should().HaveCount(
+            searchResultDocuments.Count(sr => sr.Document != null));
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -97,7 +99,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
     }
 
     [Fact]
-    public void Map_WithANullSearchResult_ThrowsInvalidOperationException()
+    public void Map_WithANullSearchResult_SkipsNullDocuments()
     {
         // arrange
         List<SearchResult<PupilPremiumLearnerDataTransferObject>> searchResultDocuments =
@@ -105,12 +107,17 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
                 .IncludeNullDocument()
                 .Create();
 
-        // act.
-        _searchResultsMapper
-            .Invoking(mapper =>
-                mapper.Map(PageableTestDouble.FromResults(searchResultDocuments)))
-                    .Should()
-                        .Throw<InvalidOperationException>()
-                        .WithMessage("Search result document object cannot be null.");
+        Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>> pageableSearchResults =
+            PageableTestDouble.FromResults(searchResultDocuments);
+
+        // act
+        PupilPremiumLearners result = _searchResultsMapper.Map(pageableSearchResults);
+
+        // assert
+        result.Should().NotBeNull();
+
+        // null document entries must be excluded
+        result.Values.Should().HaveCount(
+            searchResultDocuments.Count(sr => sr.Document != null));
     }
 }
