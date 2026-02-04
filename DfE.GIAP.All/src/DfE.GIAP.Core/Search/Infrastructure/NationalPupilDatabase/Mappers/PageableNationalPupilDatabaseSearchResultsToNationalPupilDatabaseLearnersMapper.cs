@@ -23,12 +23,26 @@ internal sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilD
             return NationalPupilDatabaseLearners.CreateEmpty();
         }
 
-        IEnumerable<NationalPupilDatabaseLearner>
-                mappedResults =
-                    input.Select((result) =>
-                        result.Document != null ?
-                            _searchResultToLearnerMapper.Map(result.Document) :
-                                throw new InvalidOperationException("Search result document object cannot be null."));
+        List<NationalPupilDatabaseLearner> mappedResults =
+            input.Select(result =>
+            {
+                if (result == null || result.Document == null)
+                {
+                    return null;
+                }
+
+                try
+                {
+                    return _searchResultToLearnerMapper.Map(result.Document);
+                }
+                catch
+                {
+                    return null;
+                }
+            })
+            .Where(learner => learner != null)
+            .ToList()!;
+
 
         return new NationalPupilDatabaseLearners(mappedResults);
     }

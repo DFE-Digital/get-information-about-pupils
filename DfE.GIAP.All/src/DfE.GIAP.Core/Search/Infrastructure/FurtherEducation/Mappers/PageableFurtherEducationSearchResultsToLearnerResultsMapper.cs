@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
@@ -46,10 +47,22 @@ public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper 
         {
             IEnumerable<FurtherEducationLearner> mappedResults =
                 input.Select(result =>
-                    result.Document != null
-                        ? _searchResultToLearnerMapper.Map(result.Document)
-                        : throw new InvalidOperationException(
-                            "Search result document object cannot be null."));
+                {
+                    if (result == null || result.Document == null)
+                    {
+                        return null;
+                    }
+
+                    try
+                    {
+                        return _searchResultToLearnerMapper.Map(result.Document);
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                })
+                .Where(learner => learner != null)!;
 
             learners = new FurtherEducationLearners(mappedResults);
         }
