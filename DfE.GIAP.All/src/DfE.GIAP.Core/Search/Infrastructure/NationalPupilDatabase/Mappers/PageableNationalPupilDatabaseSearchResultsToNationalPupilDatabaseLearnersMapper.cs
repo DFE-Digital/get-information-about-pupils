@@ -35,8 +35,9 @@ internal sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilD
                 {
                     return _searchResultToLearnerMapper.Map(result.Document);
                 }
-                catch
+                catch (Exception)
                 {
+                    // Swallow mapping errors for individual records; invalid results are skipped.
                     return null;
                 }
             })
