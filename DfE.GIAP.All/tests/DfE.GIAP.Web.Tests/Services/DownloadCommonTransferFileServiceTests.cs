@@ -14,13 +14,13 @@ public class DownloadCommonTransferFileServiceTests
     [Fact]
     public async Task DownloadCommonTransferFileService_Returns_DownloadedFile()
     {
-        var upns = new string[] { "TestUPN1", "TestUPN2" };
-        var localAuthorityNumber = "LANumber";
-        var establishmentNumber = "ESTNumber";
+        string[] upns = new string[] { "TestUPN1", "TestUPN2" };
+        string localAuthorityNumber = "LANumber";
+        string establishmentNumber = "ESTNumber";
         bool isOrganisationEstablishment = true;
 
-        var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "validClientId", SessionId = "000000" };
-        var expectedFileToBeReturned = new ReturnFile()
+        AzureFunctionHeaderDetails azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "validClientId", SessionId = "000000" };
+        ReturnFile expectedFileToBeReturned = new ReturnFile()
         {
             Bytes = new byte[200],
             FileName = "CTF",
@@ -28,24 +28,24 @@ public class DownloadCommonTransferFileServiceTests
             ResponseMessage = "File download successful"
         };
 
-        var mockHttpRequestSender = new Mock<IFakeHttpRequestSender>();
-        var mockHttpMessageHandler = new FakeHttpMessageHandler(mockHttpRequestSender.Object);
-        var httpClient = new HttpClient(mockHttpMessageHandler);
-        var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expectedFileToBeReturned)) };
+        Mock<IFakeHttpRequestSender> mockHttpRequestSender = new Mock<IFakeHttpRequestSender>();
+        using FakeHttpMessageHandler mockHttpMessageHandler = new FakeHttpMessageHandler(mockHttpRequestSender.Object);
+        using HttpClient httpClient = new HttpClient(mockHttpMessageHandler);
+        using HttpResponseMessage httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expectedFileToBeReturned)) };
         mockHttpRequestSender.Setup(x => x.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
-        var apiProcessorService = new ApiService(httpClient, null);
+        ApiService apiProcessorService = new ApiService(httpClient, null);
 
-        var url = "https://www.downloadsomefile.com";
-        var settings = new AzureAppSettings() { DownloadCommonTransferFileUrl = url };
-        var mockAppSettings = new Mock<IOptions<AzureAppSettings>>();
+        string url = "https://www.downloadsomefile.com";
+        AzureAppSettings settings = new AzureAppSettings() { DownloadCommonTransferFileUrl = url };
+        Mock<IOptions<AzureAppSettings>> mockAppSettings = new Mock<IOptions<AzureAppSettings>>();
         mockAppSettings.SetupGet(x => x.Value).Returns(settings);
         Mock<IEventLogger> eventLogger = new Mock<IEventLogger>();
 
-        var downloadCTFService = new DownloadCommonTransferFileService(apiProcessorService, mockAppSettings.Object, eventLogger.Object);
+        DownloadCommonTransferFileService downloadCTFService = new DownloadCommonTransferFileService(apiProcessorService, mockAppSettings.Object, eventLogger.Object);
 
         // Act
-        var actual = await downloadCTFService.GetCommonTransferFile(upns, upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+        ReturnFile actual = await downloadCTFService.GetCommonTransferFile(upns, upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);
