@@ -18,7 +18,7 @@ public class SearchLearnerNumberValidation : ValidationAttribute
 
         string upnParam = SecurityHelper.SanitizeText(x.ToString());
 
-        var upnsList = ValidationHelper.FormatUPNULNSearchInput(upnParam);
+        ValidationHelper.FormatUPNULNSearchInput(upnParam);
 
         return ValidationResult.Success;
     }
