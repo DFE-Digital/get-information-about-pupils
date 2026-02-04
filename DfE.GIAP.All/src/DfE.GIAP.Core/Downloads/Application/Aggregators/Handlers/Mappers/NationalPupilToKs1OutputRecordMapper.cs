@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using System.Globalization;
+using DfE.GIAP.Core.Common.Application.Helpers;
+using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 
 namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
@@ -20,7 +22,7 @@ public class NationalPupilToKs1OutputRecordMapper : IMapper<NationalPupil, IEnum
             UPN = ks1Entry?.UPN,
             SURNAME = ks1Entry?.SURNAME,
             FORENAMES = ks1Entry?.FORENAMES,
-            DOB = ks1Entry?.DOB?.ToShortDateString(),
+            DOB = ks1Entry?.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
             GENDER = ks1Entry?.GENDER,
             SEX = ks1Entry?.SEX,
             LA = ks1Entry?.LA,

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using DfE.GIAP.Core.Common.Application.Helpers;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
@@ -81,7 +83,7 @@ public sealed class NationalPupilToPhonicsOutputRecordMapperTests
         Assert.Equal(entry.UniquePupilNumber, mapped.Phonics_UPN);
         Assert.Equal(entry.SurName, mapped.Phonics_SURNAME);
         Assert.Equal(entry.ForeNames, mapped.Phonics_FORENAMES);
-        Assert.Equal(entry.DOB?.ToShortDateString(), mapped.Phonics_DOB);
+        Assert.Equal(entry.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture), mapped.Phonics_DOB);
         Assert.Equal(entry.SEX, mapped.Phonics_SEX);
         Assert.Equal(entry.LocalAuthority, mapped.Phonics_LA);
         Assert.Equal(entry.Establishment, mapped.Phonics_ESTAB);
