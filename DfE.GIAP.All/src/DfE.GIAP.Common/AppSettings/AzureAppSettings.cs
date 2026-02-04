@@ -11,9 +11,6 @@ public class AzureAppSettings
     public string DownloadPupilsByUPNsCSVUrl { get; set; }
     public string DownloadCommonTransferFileUrl { get; set; }
 
-    //Further Education
-    public string DownloadPupilsByULNsUrl { get; set; }
-
     //Downloads
     public int CommonTransferFileUPNLimit { get; set; }
     public int DownloadOptionsCheckLimit { get; set; }
