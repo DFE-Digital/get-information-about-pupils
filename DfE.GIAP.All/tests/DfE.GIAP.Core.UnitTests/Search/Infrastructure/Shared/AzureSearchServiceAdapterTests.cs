@@ -1,21 +1,21 @@
-﻿using Azure.Search.Documents.Models;
-using Azure;
+﻿using Azure;
+using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
+using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
+using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using FluentAssertions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
-using FluentAssertions;
-using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.Shared;
 
