@@ -102,7 +102,7 @@ public static class CompositionRoot
                     Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners>,
                     PageablePupilPremiumSearchResultsToLearnerResultsMapper>()
             .AddSingleton<
-                IMapper<
+                IMapperWithResult<
                     PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>,
                     PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper>();
         return services;
