@@ -123,7 +123,7 @@ public static class CompositionRoot
                     Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>,
                     PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper>()
             .AddSingleton<
-                IMapper<
+                IMapperWithResult<
                     NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>,
                     NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper>();
         return services;
