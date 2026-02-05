@@ -1,10 +1,10 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
+using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
 using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
-using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
 using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 
 
