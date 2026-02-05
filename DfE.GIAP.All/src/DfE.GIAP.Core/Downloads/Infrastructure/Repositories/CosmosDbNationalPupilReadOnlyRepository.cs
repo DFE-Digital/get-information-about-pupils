@@ -35,11 +35,6 @@ public class CosmosDbNationalPupilReadOnlyRepository : INationalPupilReadOnlyRep
                 return [];
 
             IEnumerable<string> formattedIds = pupilIds.Select(id => $"'{id}'");
-            //string query = $"SELECT c.UPN, c.Surname, c.Forename, c.Middlenames, c.Gender, c.Sex, c.DOB, " +
-            //    $"c.Census_Autumn, c.Census_Spring, c.Census_Summer, c.EYFSP, c.KS1, c.KS2, c.KS4, c.Phonics, c.MTC " +
-            //    $"FROM c " +
-            //    $"WHERE c.UPN IN ({string.Join(",", formattedIds)}) " +
-            //    $"ORDER BY c.UPN ASC";
 
             string query = $"SELECT * FROM c " +
                  $"WHERE c.UPN IN ({string.Join(",", formattedIds)}) " +

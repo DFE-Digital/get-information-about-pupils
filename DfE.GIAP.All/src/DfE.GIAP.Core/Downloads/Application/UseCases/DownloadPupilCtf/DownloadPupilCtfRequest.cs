@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
+﻿using System.Reflection.PortableExecutable;
+
+namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 
 public record DownloadPupilCtfRequest(IEnumerable<string> SelectedPupils) : IUseCaseRequest<DownloadPupilCtfResponse>;
 
@@ -9,24 +11,48 @@ public record DownloadPupilCtfResponse(
 
 public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>
 {
-    private readonly IPupilCtfAggregator _pupilCtfAggregator;
+    private readonly ICtfHeaderBuilder _ctfHeaderBuilder;
+    private readonly ICtfPupilBuilder _ctfPupilBuilder;
+    private readonly ICtfFormatter _ctfFormatter;
 
-    public DownloadPupilCtfUseCase(IPupilCtfAggregator pupilCtfAggregator)
+    public DownloadPupilCtfUseCase(
+        ICtfHeaderBuilder ctfHeaderBuilder,
+        ICtfPupilBuilder ctfPupilBuilder,
+        ICtfFormatter ctfFormatter)
     {
-        ArgumentNullException.ThrowIfNull(pupilCtfAggregator);
-        _pupilCtfAggregator = pupilCtfAggregator;
+        ArgumentNullException.ThrowIfNull(ctfHeaderBuilder);
+        ArgumentNullException.ThrowIfNull(ctfPupilBuilder);
+        ArgumentNullException.ThrowIfNull(ctfFormatter);
+        _ctfHeaderBuilder = ctfHeaderBuilder;
+        _ctfPupilBuilder = ctfPupilBuilder;
+        _ctfFormatter = ctfFormatter;
     }
 
     public async Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
     {
-        // TODO: Build CTF header
+        CtfHeaderContext context = new()
+        {
+            IsEstablishment = false,
+            SourceLEA = "SourceLEA",
+            SourceEstab = "SourceEstab",
+            SourceSchoolName = "SourceSchoolName",
+            DestLEA = "DestLEA",
+            DestEstab = "DestEstab",
+            AcademicYear = "AcademicYear"
+        };
 
-        // Build CTF Pupil records
-        PupilCtfCollection ctfPupils = await _pupilCtfAggregator.AggregateAsync(request.SelectedPupils);
+        CtfHeader ctfHeader = _ctfHeaderBuilder.Build(context);
+        IEnumerable<CtfPupil> ctfPupils = await _ctfPupilBuilder.Build(request.SelectedPupils);
 
-        // Create CTF file w/name
+        byte[] ctfFileContents = _ctfFormatter.Format(
+            header: ctfHeader,
+            pupils: ctfPupils);
 
-        // Return CTF file
-        throw new NotImplementedException();
+        return new DownloadPupilCtfResponse
+        {
+            FileContents = ctfFileContents,
+            FileName = "CTF.xml",
+            ContentType = _ctfFormatter.ContentType
+        };
     }
 }

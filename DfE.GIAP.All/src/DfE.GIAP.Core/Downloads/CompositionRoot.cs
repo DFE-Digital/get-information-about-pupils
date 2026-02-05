@@ -51,8 +51,9 @@ public static class CompositionRoot
 
         // WIP
         services.AddScoped<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>, DownloadPupilCtfUseCase>();
-        services.AddScoped<IPupilCtfAggregator, PupilCtfAggregator>();
-
+        services.AddScoped<ICtfHeaderBuilder, CtfHeaderBuilder>();
+        services.AddScoped<ICtfPupilBuilder, CtfPupilBuilder>();
+        services.AddScoped<ICtfFormatter, XmlCtfFormatter>();
 
         return services;
     }

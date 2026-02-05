@@ -3,7 +3,6 @@ using System.Xml.Linq;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
-using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
@@ -62,41 +61,26 @@ public class CtfKeyStageAssessment
 
 
 
-// Look to merge CtfBuilder and ICtfSerializer
-// e.g we can have xml/json/text implementations. e.g. xmlCtffBuilder, jsonCtfBuilder ect
-public interface ICtfBuilder
-{
-    CtfFile Build(CtfHeader header, IEnumerable<CtfPupil> pupils);
-}
 
-public class CtfBuilder : ICtfBuilder
+// OUTPUT FORMATTER
+public interface ICtfFormatter
 {
-    public CtfFile Build(CtfHeader header, IEnumerable<CtfPupil> pupils)
-    {
-        return new CtfFile
-        {
-            Header = header,
-            Pupils = pupils.ToList()
-        };
-    }
-}
-
-
-public interface ICtfSerializer
-{
-    byte[] Serialize(CtfFile file);
     string ContentType { get; }
+    byte[] Format(CtfHeader header, IEnumerable<CtfPupil> pupils);
 }
 
-public class XmlCtfSerializer : ICtfSerializer
+public class XmlCtfFormatter : ICtfFormatter
 {
     public string ContentType => "application/xml";
-    public byte[] Serialize(CtfFile file)
+
+    public byte[] Format(CtfHeader header, IEnumerable<CtfPupil> pupils)
     {
         XDocument xml = new XDocument(
             new XElement("CTfile",
-            BuildHeader(file.Header),
-            BuildPupilData(file.Pupils)));
+                BuildHeader(header),
+                BuildPupilData(pupils)
+            )
+        );
 
         return Encoding.UTF8.GetBytes(xml.ToString());
     }
@@ -173,17 +157,87 @@ public class XmlCtfSerializer : ICtfSerializer
 }
 
 
-public interface IPupilCtfAggregator
+
+// HEADER AGGREGATION
+public interface ICtfHeaderBuilder
 {
-    Task<PupilCtfCollection> AggregateAsync(IEnumerable<string> selectedPupilIds);
+    CtfHeader Build(CtfHeaderContext context);
 }
 
-public class PupilCtfAggregator : IPupilCtfAggregator
+public class CtfHeaderBuilder : ICtfHeaderBuilder
+{
+    public const string DescriptorEstablishment =
+        "This attainment data was obtained via the Searchable pupil data option of Get Information About Pupils";
+
+    public const string DescriptorNonEstablishment =
+        "This attainment data was obtained via the Get Information About Pupils school site";
+
+    public CtfHeader Build(CtfHeaderContext context)
+    {
+        DateTime now = DateTime.UtcNow;
+
+        return new CtfHeader
+        {
+            DocumentName = "Common Transfer File",
+            CtfVersion = "25.0", // TODO: Currently coming from config, changes every september(ish)
+            DateTime = now,
+            DocumentQualifier = "partial",
+            DataDescriptor = context.IsEstablishment
+                ? DescriptorEstablishment
+                : DescriptorNonEstablishment,
+            SupplierId = "GIAP",
+
+            SourceSchool = new CtfSchoolInfo
+            {
+                LEA = "XXX",
+                Estab = "XXXX",
+                SchoolName = "Get Information About Pupils",
+                AcademicYear = CalculateAcademicYear(now)
+            },
+
+            DestSchool = new CtfSchoolInfo
+            {
+                LEA = context.IsEstablishment ? context.DestLEA : "XXX",
+                Estab = context.IsEstablishment ? context.DestEstab : "XXXX"
+            }
+        };
+    }
+
+    private string CalculateAcademicYear(DateTime now)
+    {
+        int year = now.Month >= 9 ? now.Year : now.Year - 1;
+        return year.ToString();
+    }
+}
+
+public class CtfHeaderContext
+{
+    public bool IsEstablishment { get; set; }
+
+    public string SourceLEA { get; set; } = string.Empty;
+    public string SourceEstab { get; set; } = string.Empty;
+    public string SourceSchoolName { get; set; } = string.Empty;
+
+    public string DestLEA { get; set; } = string.Empty;
+    public string DestEstab { get; set; } = string.Empty;
+
+    public string AcademicYear { get; set; } = string.Empty;
+}
+
+
+
+// PUPIL AGGREGATIONS
+public interface ICtfPupilBuilder
+{
+    Task<IEnumerable<CtfPupil>> Build(IEnumerable<string> selectedPupilIds);
+}
+
+public class CtfPupilBuilder : ICtfPupilBuilder
 {
     private readonly INationalPupilReadOnlyRepository _nationalPupilReadOnlyRepository;
     private readonly IBlobStorageProvider _blobStorageProvider;
 
-    public PupilCtfAggregator(
+    public CtfPupilBuilder(
         INationalPupilReadOnlyRepository nationalPupilReadOnlyRepository,
         IBlobStorageProvider blobStorageProvider)
     {
@@ -193,24 +247,34 @@ public class PupilCtfAggregator : IPupilCtfAggregator
         _blobStorageProvider = blobStorageProvider;
     }
 
-    public async Task<PupilCtfCollection> AggregateAsync(IEnumerable<string> selectedPupilIds)
+    public async Task<IEnumerable<CtfPupil>> Build(IEnumerable<string> selectedPupilIds)
     {
-        // 1. Fetch pupils from repository
         IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository
             .GetPupilsByIdsAsync(selectedPupilIds);
 
-        // 2. Load mapping definitions from blob storage
-        IEnumerable<string> availableCtfDefinitions = await _blobStorageProvider.ListBlobsByNamesAsync("giapdownloads", "CTF");
+        IReadOnlyList<DataMapperDefinition> mapperDefinitions = await LoadMapperDefinitionsAsync();
 
-        // Below gets a specific definitions, most recent only?
-        using Stream stream = await _blobStorageProvider.DownloadBlobAsStreamAsync("giapdownloads", "CTF/2022_data_definitions.json");
-        using StreamReader reader = new(stream);
-        string json = await reader.ReadToEndAsync();
-        DataMapperDefinition dataMapperDefinitions = JsonConvert
-            .DeserializeObject<DataMapperDefinition>(json) ?? new();
+        List<CtfPupil> ctfPupils = new();
+        foreach (NationalPupil pupil in pupils)
+        {
+            CtfPupil ctfPupil = new()
+            {
+                UPN = pupil.Upn ?? string.Empty,
+                Surname = pupil.Surname ?? string.Empty,
+                Forename = pupil.Forename ?? string.Empty,
+                DOB = pupil.DOB.ToString("yyyy-MM-dd"),
+                Sex = pupil.Sex
+            };
 
-        // Loop through each pupil,
-        // map basic pupil details to CTF Pupil
+            // Add each stage assessment, only if they have data
+
+            ctfPupils.Add(ctfPupil);
+        }
+
+        return ctfPupils;
+
+        // Loop through each pupil - DONE
+        // map basic pupil details to CTF Pupil - DONE
         // Map each assessment stage, ONLY if they have data
         //      Map EYFPS entity
         //      Map Phonics & KS1 (same time?)
@@ -228,37 +292,28 @@ public class PupilCtfAggregator : IPupilCtfAggregator
 
         // 3. Map repository pupils → CTF pupils using definitions
         // TODO: Figure out what mapping is required, and why. Scalable solution?
-
-
-        throw new NotImplementedException();
     }
-}
 
-public class PupilCtfCollection
-{
-    public List<CtfPupil> Pupils { get; init; } = new();
-
-    // Optional: if we want to expose helpers later
-    public bool HasPupils => Pupils.Count > 0;
-}
-
-
-
-public interface ICtfFileNameProvider
-{
-    string GenerateFileName();
-}
-
-public class DefaultCtfFileNameProvider : ICtfFileNameProvider
-{
-    public string GenerateFileName()
+    private async Task<IReadOnlyList<DataMapperDefinition>> LoadMapperDefinitionsAsync()
     {
-        string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
-        return $"pupil_ctf_{timestamp}.xml";
+        IEnumerable<BlobItemMetadata> blobs =
+            await _blobStorageProvider.ListBlobsWithMetadataAsync("giapdownloads", "CTF");
+
+        IEnumerable<Task<DataMapperDefinition>> tasks = blobs.Select(async blob =>
+        {
+            using Stream stream = await _blobStorageProvider
+                .DownloadBlobAsStreamAsync("giapdownloads", blob.Name!);
+
+            using StreamReader reader = new(stream);
+            string json = await reader.ReadToEndAsync();
+
+            return JsonConvert.DeserializeObject<DataMapperDefinition>(json) ?? new();
+        });
+
+        return await Task.WhenAll(tasks);
     }
+
 }
-
-
 
 public class DataMapperDefinition
 {
