@@ -11,7 +11,7 @@
     <PackageReference Include="DfE.CleanArchitecture.Common.CrossCutting" Version="0.0.1-5" />
     <PackageReference Include="DfE.CleanArchitecture.Common.Domain" Version="0.0.1-5" />
     <PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="2.0.0-0" />
-    <PackageReference Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" Version="1.0.2-89" />
+    <PackageReference Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" Version="1.0.2-91" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />

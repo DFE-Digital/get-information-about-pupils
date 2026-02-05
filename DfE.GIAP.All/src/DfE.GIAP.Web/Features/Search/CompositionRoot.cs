@@ -1,6 +1,4 @@
-﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.SearchRules;
-using DfE.GIAP.Core.Search;
+﻿using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
