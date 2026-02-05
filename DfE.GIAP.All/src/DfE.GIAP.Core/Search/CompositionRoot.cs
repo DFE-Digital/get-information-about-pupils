@@ -79,7 +79,7 @@ public static class CompositionRoot
                     Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>,
                     PageableFurtherEducationSearchResultsToLearnerResultsMapper>()
             .AddSingleton<
-                IMapper<
+                IMapperWithResult<
                     FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>,
                     FurtherEducationSearchResultToLearnerMapper>();
 

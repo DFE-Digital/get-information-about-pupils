@@ -3,6 +3,7 @@ global using DfE.CleanArchitecture.Common.CrossCutting.ChainOfResponsibility.Cha
 global using DfE.CleanArchitecture.Common.CrossCutting.ChainOfResponsibility.Evaluator;
 global using DfE.CleanArchitecture.Common.CrossCutting.ChainOfResponsibility.Handlers;
 global using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
+
 global using DfE.CleanArchitecture.Common.CrossCutting.Specifcation;
 global using DfE.CleanArchitecture.Common.Domain;
 global using DfE.GIAP.Core.Common.CrossCutting;

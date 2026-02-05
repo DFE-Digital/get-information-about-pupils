@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 
@@ -9,33 +8,65 @@ namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 /// Maps a <see cref="FurtherEducationLearnerDataTransferObject"/> data transfer object
 /// into a domain-level <see cref="FurtherEducationLearner"/> model.
 /// </summary>
-internal sealed class FurtherEducationSearchResultToLearnerMapper : IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>
+internal sealed class FurtherEducationSearchResultToLearnerMapper : IMapperWithResult<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>
 {
-    /// <summary>
-    /// Converts a <see cref="FurtherEducationLearnerDataTransferObject"/> into a <see cref="FurtherEducationLearner"/>.
-    /// </summary>
-    /// <param name="input">The DTO representing a Further Education pupil.</param>
-    /// <returns>A mapped domain model representing the learner.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown if <paramref name="input"/> contains null or empty required fields.
-    /// </exception>
-    public FurtherEducationLearner Map(FurtherEducationLearnerDataTransferObject input)
+    public IMappedResult<FurtherEducationLearner> Map(FurtherEducationLearnerDataTransferObject input)
     {
-        // Defensive null checks for required fields
-        ArgumentNullException.ThrowIfNull(input);
-        ArgumentException.ThrowIfNullOrEmpty(input.ULN);
-        ArgumentException.ThrowIfNullOrEmpty(input.Forename);
-        ArgumentException.ThrowIfNullOrEmpty(input.Surname);
-        ArgumentNullException.ThrowIfNull(input.DOB);
+        (bool isValid, string error) = ValidateRequest(input);
 
-        // Construct domain model using validated input
-        return new FurtherEducationLearner(
-            new FurtherEducationLearnerIdentifier(input.ULN),
-            new LearnerName(input.Forename, input.Surname),
-            new LearnerCharacteristics(
-                input.DOB.Value,
-                new Sex(input.Sex)
-            )
-        );
+        if (!isValid)
+        {
+            return MappedResult<FurtherEducationLearner>.RequestError(error);
+        }
+
+        try
+        {
+            FurtherEducationLearner learner = new(
+                new FurtherEducationLearnerIdentifier(input.ULN!),
+                new LearnerName(input.Forename!, input.Surname!),
+                new LearnerCharacteristics(
+                    input.DOB!.Value,
+                    new Sex(input.Sex)
+                )
+            );
+
+            return MappedResult<FurtherEducationLearner>.Success(learner);
+        }
+        catch (Exception ex)
+        {
+            return MappedResult<FurtherEducationLearner>.MappingError(ex);
+        }
+    }
+
+
+
+    private static (bool, string error) ValidateRequest(FurtherEducationLearnerDataTransferObject input)
+    {
+        if (input == null)
+        {
+            return (false, "input cannot be null");
+        }
+
+        if (string.IsNullOrEmpty(input.ULN))
+        {
+            return (false, "input.ULN cannot be null");
+        }
+
+        if (string.IsNullOrEmpty(input.Forename))
+        {
+            return (false, "input.Forename cannot be null");
+        }
+
+        if (string.IsNullOrEmpty(input.Surname))
+        {
+            return (false, "input.Surname cannot be null");
+        }
+
+        if (input.DOB == null)
+        {
+            return (false, "input.DOB cannot be null");
+        }
+
+        return (true, string.Empty);
     }
 }
