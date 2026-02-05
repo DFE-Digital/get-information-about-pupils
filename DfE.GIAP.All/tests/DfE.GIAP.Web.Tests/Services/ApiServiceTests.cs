@@ -19,8 +19,8 @@ public sealed class ApiServiceTests
 
         Mock<IFakeHttpRequestSender> fakeHttpRequestSender = new();
         FakeHttpMessageHandler fakeHttpMessageHandler = new(fakeHttpRequestSender.Object);
-        HttpClient httpClient = new(fakeHttpMessageHandler);
-        HttpResponseMessage httpResponse = new() { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
+        using HttpClient httpClient = new(fakeHttpMessageHandler);
+        using HttpResponseMessage httpResponse = new() { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
         Mock<ILogger<ApiService>> fakeLogger = new();
 
         ApiService apiProcessorService = new(httpClient, fakeLogger.Object);
@@ -44,8 +44,8 @@ public sealed class ApiServiceTests
 
         Mock<IFakeHttpRequestSender> fakeHttpRequestSender = new();
         FakeHttpMessageHandler fakeHttpMessageHandler = new(fakeHttpRequestSender.Object);
-        HttpClient httpClient = new(fakeHttpMessageHandler);
-        HttpResponseMessage httpResponse = new() { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
+        using HttpClient httpClient = new(fakeHttpMessageHandler);
+        using HttpResponseMessage httpResponse = new() { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
         Mock<ILogger<ApiService>> fakeLogger = new();
 
         ApiService apiProcessorService = new(httpClient, fakeLogger.Object);
