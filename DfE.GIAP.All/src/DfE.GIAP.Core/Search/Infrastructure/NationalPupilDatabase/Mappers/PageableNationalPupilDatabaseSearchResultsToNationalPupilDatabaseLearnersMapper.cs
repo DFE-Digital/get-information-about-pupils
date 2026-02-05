@@ -6,10 +6,10 @@ using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObje
 namespace DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
 internal sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper : IMapper<Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>
 {
-    private readonly IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> _searchResultToLearnerMapper;
+    private readonly IMapperWithResult<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> _searchResultToLearnerMapper;
 
     public PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper(
-        IMapper<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> searchResultToLearnerMapper)
+        IMapperWithResult<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner> searchResultToLearnerMapper)
     {
         ArgumentNullException.ThrowIfNull(searchResultToLearnerMapper);
         _searchResultToLearnerMapper = searchResultToLearnerMapper;
@@ -24,26 +24,11 @@ internal sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilD
         }
 
         List<NationalPupilDatabaseLearner> mappedResults =
-            input.Select(result =>
-            {
-                if (result == null || result.Document == null)
-                {
-                    return null;
-                }
-
-                try
-                {
-                    return _searchResultToLearnerMapper.Map(result.Document);
-                }
-                catch (Exception)
-                {
-                    // Swallow mapping errors for individual records; invalid results are skipped.
-                    return null;
-                }
-            })
-            .Where(learner => learner != null)
-            .ToList()!;
-
+            input.Where(t => t != null && t.Document != null)
+                .Select(result => _searchResultToLearnerMapper.Map(result.Document))
+                .Where(response => response.HasResult)
+                .Select(resultLearner => resultLearner.Result!)
+                .ToList();
 
         return new NationalPupilDatabaseLearners(mappedResults);
     }
