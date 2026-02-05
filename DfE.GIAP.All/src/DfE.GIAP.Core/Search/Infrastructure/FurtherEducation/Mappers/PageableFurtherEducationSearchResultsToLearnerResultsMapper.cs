@@ -4,6 +4,9 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
+using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
+
 
 namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 
@@ -14,7 +17,7 @@ namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper :
     IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>
 {
-    private readonly IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> _searchResultToLearnerMapper;
+    private readonly IMapperWithResult<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> _searchResultToLearnerMapper;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PageableFurtherEducationSearchResultsToLearnerResultsMapper"/> class.
@@ -24,7 +27,7 @@ public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper 
     /// into <see cref="FurtherEducationLearner"/> domain objects.
     /// </param>
     public PageableFurtherEducationSearchResultsToLearnerResultsMapper(
-        IMapper<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> searchResultToLearnerMapper)
+        IMapperWithResult<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner> searchResultToLearnerMapper)
     {
         _searchResultToLearnerMapper = searchResultToLearnerMapper;
     }
@@ -46,25 +49,12 @@ public sealed class PageableFurtherEducationSearchResultsToLearnerResultsMapper 
         if (input.Any())
         {
             List<FurtherEducationLearner> mappedResults =
-                input.Select(result =>
-                {
-                    if (result == null || result.Document == null)
-                    {
-                        return null;
-                    }
-
-                    try
-                    {
-                        return _searchResultToLearnerMapper.Map(result.Document);
-                    }
-                    catch (Exception)
-                    {
-                        // Swallow mapping errors for individual records; invalid results are skipped.
-                        return null;
-                    }
-                })
-                .Where(learner => learner != null)
-                .ToList()!;
+                input
+                    .Where(t => t != null && t.Document != null)
+                    .Select(result => _searchResultToLearnerMapper.Map(result.Document))
+                    .Where(response => response.HasResult)
+                    .Select(resultLearner => resultLearner.Result!)
+                    .ToList();
 
             learners = new FurtherEducationLearners(mappedResults);
         }
