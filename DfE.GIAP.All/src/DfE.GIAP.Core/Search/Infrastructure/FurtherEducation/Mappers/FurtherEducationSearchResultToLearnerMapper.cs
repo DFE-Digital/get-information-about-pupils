@@ -10,7 +10,7 @@ namespace DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 /// </summary>
 internal sealed class FurtherEducationSearchResultToLearnerMapper : IMapperWithResult<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>
 {
-    IMappedResult<FurtherEducationLearner> IMapperWithResult<FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>.Map(FurtherEducationLearnerDataTransferObject input)
+    public IMappedResult<FurtherEducationLearner> Map(FurtherEducationLearnerDataTransferObject input)
     {
         (bool isValid, string error) = ValidateRequest(input);
 
