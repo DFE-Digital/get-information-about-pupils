@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Features.Logging;
-using DfE.GIAP.Web.Tests.Shared.Http;
+using DfE.GIAP.Web.Tests.Shared.HttpContext;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -86,14 +86,14 @@ public class BusinessEventFactoryTests
     public void CreateSignin_Returns_Model_With_PassedInData()
     {
         // Arrange
-        var userId = "signin-user";
-        var sessionId = "signin-session";
-        var urn = "signin-urn";
-        var orgName = "Signin Org";
-        var orgCategory = "Gov";
+        string userId = "signin-user";
+        string sessionId = "signin-session";
+        string urn = "signin-urn";
+        string orgName = "Signin Org";
+        string orgCategory = "Gov";
 
         // Act
-        var result = _sut.CreateSignin(userId, sessionId, urn, orgName, orgCategory);
+        SigninEvent result = _sut.CreateSignin(userId, sessionId, urn, orgName, orgCategory);
 
         // Assert: only check that passed-in data is attached
         Assert.Equal(userId, result.UserId);

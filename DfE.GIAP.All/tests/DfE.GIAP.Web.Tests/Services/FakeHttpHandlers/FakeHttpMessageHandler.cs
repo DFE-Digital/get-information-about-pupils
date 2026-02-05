@@ -2,19 +2,19 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DfE.GIAP.Service.Tests.FakeHttpHandlers
+namespace DfE.GIAP.Web.Tests.Services.FakeHttpHandlers;
+
+public class FakeHttpMessageHandler : HttpMessageHandler
 {
-    public class FakeHttpMessageHandler : HttpMessageHandler
+    private readonly IFakeHttpRequestSender _fakeHttpRequestSender;
+
+    public FakeHttpMessageHandler(IFakeHttpRequestSender fakeHttpRequestSender)
     {
-        private readonly IFakeHttpRequestSender _fakeHttpRequestSender;
+        _fakeHttpRequestSender = fakeHttpRequestSender;
+    }
 
-        public FakeHttpMessageHandler(IFakeHttpRequestSender fakeHttpRequestSender) {
-            _fakeHttpRequestSender = fakeHttpRequestSender;
-        }
-
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(_fakeHttpRequestSender.Send(request));        
-        }
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(_fakeHttpRequestSender.Send(request));
     }
 }

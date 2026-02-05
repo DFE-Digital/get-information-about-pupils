@@ -1,21 +1,20 @@
-﻿namespace DfE.GIAP.Service.Tests.Models
+﻿namespace DfE.GIAP.Web.Tests.Services.Models;
+
+public class ApiItemModel
 {
-    public class ApiItemModel
+    public int Id { get; set; }
+
+    public override bool Equals(object? obj)
     {
-        public int Id { get; set; }
-
-        public override bool Equals(object obj)
+        if (obj is ApiItemModel other)
         {
-            if (obj is ApiItemModel other)
-            {
-                return this.Id.Equals(other.Id);
-            }
-            else return false;
+            return Id.Equals(other.Id);
         }
+        else return false;
+    }
 
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 }

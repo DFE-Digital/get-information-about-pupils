@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace DfE.GIAP.Service.Tests.FakeHttpHandlers
+namespace DfE.GIAP.Web.Tests.Services.FakeHttpHandlers;
+
+public class FakeHttpRequestSender : IFakeHttpRequestSender
 {
-    public class FakeHttpRequestSender : IFakeHttpRequestSender
+    public HttpResponseMessage Send(HttpRequestMessage request)
     {
-        public HttpResponseMessage Send(HttpRequestMessage request) {
-            throw new NotImplementedException("Set this up in the method with our mocking framework");
-        }
+        throw new NotImplementedException("Set this up in the method with our mocking framework");
     }
 }

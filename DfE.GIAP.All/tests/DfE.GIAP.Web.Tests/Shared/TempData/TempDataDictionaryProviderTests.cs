@@ -1,9 +1,7 @@
 ﻿using DfE.GIAP.Web.Shared.TempData;
-using DfE.GIAP.Web.Tests.Shared.Http;
+using DfE.GIAP.Web.Tests.Shared.HttpContext;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Shared.TempData;
 
@@ -40,7 +38,7 @@ public sealed class TempDataDictionaryProviderTests
     {
         // Arrange
         Mock<IHttpContextAccessor> httpContextAccessorMock = new();
-        httpContextAccessorMock.Setup(x => x.HttpContext).Returns<HttpContext>(null!);
+        httpContextAccessorMock.Setup(x => x.HttpContext).Returns<Microsoft.AspNetCore.Http.HttpContext>(null!);
 
         Mock<ITempDataDictionaryFactory> tempDataDictionaryFactoryMock = new();
         TempDataDictionaryProvider sut = new(
@@ -51,7 +49,7 @@ public sealed class TempDataDictionaryProviderTests
         Assert.Throws<ArgumentNullException>(() => sut.GetTempData());
 
         tempDataDictionaryFactoryMock.Verify(
-            (factory) => factory.GetTempData(It.IsAny<HttpContext>()),
+            (factory) => factory.GetTempData(It.IsAny<Microsoft.AspNetCore.Http.HttpContext>()),
                 Times.Never);
     }
 
@@ -59,7 +57,7 @@ public sealed class TempDataDictionaryProviderTests
     public void GetTempData_Returns_TempDataDictionary_When_HttpContext_Is_Present()
     {
         // Arrange
-        HttpContext stubHttpContext = HttpContextTestDoubles.Stub();
+        Microsoft.AspNetCore.Http.HttpContext stubHttpContext = HttpContextTestDoubles.Stub();
 
         Mock<IHttpContextAccessor> httpContextAccessorMock = new();
         httpContextAccessorMock

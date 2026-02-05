@@ -30,7 +30,6 @@ namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByName;
 
 public sealed class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
-
     private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
     private readonly ILogger<FELearnerTextSearchController> _mockLogger = Substitute.For<ILogger<FELearnerTextSearchController>>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
@@ -979,13 +978,12 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
     }
 
     [Theory]
-    [InlineData(DownloadFileType.None, new string[] { "csv" }, new byte[0], Messages.Search.Errors.SelectFileType)]
-    [InlineData(DownloadFileType.CSV, null, new byte[0], Messages.Search.Errors.SelectOneOrMoreDataTypes)]
-    [InlineData(DownloadFileType.CSV, new string[] { "csv" }, null, Messages.Downloads.Errors.NoDataForSelectedPupils)]
+    [InlineData(DownloadFileType.None, new string[] { "csv" }, Messages.Search.Errors.SelectFileType)]
+    [InlineData(DownloadFileType.CSV, null, Messages.Search.Errors.SelectOneOrMoreDataTypes)]
+    [InlineData(DownloadFileType.CSV, new string[] { "csv" }, Messages.Downloads.Errors.NoDataForSelectedPupils)]
     public async Task DownloadSelectedFEDataULN_returns_correct_validation_error_message(
         DownloadFileType downloadFileType,
         string[]? selectedDownloadOptions,
-        byte[]? fileBytes,
         string errorMessage)
     {
         // arrange

@@ -59,13 +59,6 @@ public static class Global
     public const string FELearnerTextSearchAction = "FurtherEducationNonUlnSearch";
     public const string FENonUlnDownloadLinksView = "~/Views/Shared/LearnerText/_SearchFurtherEducationDownloadLinks.cshtml";
 
-    // My Pupil List
-    public const string MyPupilListControllerName = "SearchMyPupilList";
-    public const string MyPupilListAction = "MyPupilList";
-    public const string AddToPupilList = "AddToPupilList";
-    public const string MyPupilListDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
-    public const string MyPupilListDownloadCancellationReturnAction = "DownloadCancellationReturn";
-
     // Number Search
     public const string SearchView = "~/Views/Shared/LearnerNumber/Search.cshtml";
     public const string LearnerNumberSearchBoxView = "../Shared/LearnerNumber/_SearchBox";

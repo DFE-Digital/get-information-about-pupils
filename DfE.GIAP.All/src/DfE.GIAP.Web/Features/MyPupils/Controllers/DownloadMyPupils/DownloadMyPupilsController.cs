@@ -232,7 +232,8 @@ public class DownloadMyPupilsController : Controller
             return await GetDownloadNpdOptions(model.SelectedPupils);
         }
 
-        return RedirectToAction(Global.MyPupilListAction, Global.MyPupilListControllerName);
+        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+        return await GetDownloadNpdOptions(model.SelectedPupils);
     }
 
     private async Task<IActionResult> GetDownloadNpdOptions(string selectedPupilsJoined)

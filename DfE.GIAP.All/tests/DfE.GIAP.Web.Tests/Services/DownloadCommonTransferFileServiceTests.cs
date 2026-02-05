@@ -1,20 +1,20 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Tests.FakeHttpHandlers;
 using DfE.GIAP.Web.Services.ApiProcessor;
 using DfE.GIAP.Web.Services.Download.CTF;
+using DfE.GIAP.Web.Tests.Services.FakeHttpHandlers;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Service.Tests.Download;
+namespace DfE.GIAP.Web.Tests.Services;
 
 public class DownloadCommonTransferFileServiceTests
 {
     [Fact]
     public async Task DownloadCommonTransferFileService_Returns_DownloadedFile()
     {
-        string[] upns = new string[] { "TestUPN1", "TestUPN2" };
+        string[] upns = ["TestUPN1", "TestUPN2"];
         string localAuthorityNumber = "LANumber";
         string establishmentNumber = "ESTNumber";
         bool isOrganisationEstablishment = true;
@@ -45,7 +45,7 @@ public class DownloadCommonTransferFileServiceTests
         DownloadCommonTransferFileService downloadCTFService = new DownloadCommonTransferFileService(apiProcessorService, mockAppSettings.Object, eventLogger.Object);
 
         // Act
-        ReturnFile actual = await downloadCTFService.GetCommonTransferFile(upns, upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+        ReturnFile actual = await downloadCTFService.GetCommonTransferFile(upns, upns, localAuthorityNumber, establishmentNumber, isOrganisationEstablishment, azureFunctionHeaderDetails, Common.Enums.ReturnRoute.NationalPupilDatabase);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);

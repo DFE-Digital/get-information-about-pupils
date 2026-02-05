@@ -4,7 +4,7 @@ using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.SelectionState.Mapper;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.Mapper;
 public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
 {
     [Fact]
@@ -59,7 +59,7 @@ public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
         Assert.NotNull(response);
         Assert.Equivalent(selected, response.ExplicitSelections);
         Assert.Empty(response.DeselectedExceptions);
-        
+
     }
 }
 

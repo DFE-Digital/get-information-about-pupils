@@ -110,11 +110,11 @@ public sealed class GetMyPupilsPresentationServiceTests
     }
 
     [Theory]
-    [InlineData(0, 1)]
-    [InlineData(1, 1)]
-    [InlineData(100, 5)]
-    [InlineData(101, 6)]
-    public async Task GetMyPupils_Returns_PageSize_From_TotalPupilCount(int totalPupilCount, int expectedPages)
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    [InlineData(101)]
+    public async Task GetMyPupils_Returns_PageSize_From_TotalPupilCount(int totalPupilCount)
     {
         // Arrange
         const string userId = "userId";

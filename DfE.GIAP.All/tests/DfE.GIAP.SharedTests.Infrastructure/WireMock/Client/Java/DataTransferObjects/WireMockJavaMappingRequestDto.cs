@@ -2,6 +2,6 @@
 
 public sealed class WireMockJavaMappingRequestDto
 {
-    public WireMockJavaMappingRequestRequestModel request { get; set; }
-    public WireMockJavaMappingRequestResponseModel response { get; set; }
+    public WireMockJavaMappingRequestRequestModel? request { get; set; }
+    public WireMockJavaMappingRequestResponseModel? response { get; set; }
 }

@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.SelectionState.Mapper;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.Mapper;
 public sealed class MyPupilsPupilSelectionStateFromDtoMapperTests
 {
     [Fact]

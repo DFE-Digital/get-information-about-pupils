@@ -33,11 +33,11 @@ public class TraceLogFactoryTests
             .Setup(s => s.GetSessionValueOrDefault<string>(SessionKeys.CorrelationId))
             .Returns(correlationId);
 
-        Claim[] claims = new[]
-        {
+        Claim[] claims =
+        [
             new Claim(AuthClaimTypes.UserId, "user-1"),
             new Claim(AuthClaimTypes.SessionId, "sess-1")
-        };
+        ];
         ClaimsIdentity identity = new ClaimsIdentity(claims, "TestAuth");
         ClaimsPrincipal principal = new ClaimsPrincipal(identity);
 

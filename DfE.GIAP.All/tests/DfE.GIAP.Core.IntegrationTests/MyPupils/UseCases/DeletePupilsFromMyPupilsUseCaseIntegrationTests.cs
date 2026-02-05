@@ -34,7 +34,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
         List<AzureNpdSearchResponseDto> npdSearchindexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);
         List<AzureNpdSearchResponseDto> pupilPremiumIndexDtos = AzureNpdSearchResponseDtoTestDoubles.Generate(count: 10);
 
-        List<string> myPupilsUpns =
+        List<string?> myPupilsUpns =
             npdSearchindexDtos.Concat(pupilPremiumIndexDtos)
                 .Select(t => t.UPN)
                 .ToList();
@@ -45,13 +45,13 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
             MyPupilsDocumentDtoTestDoubles.Create(
                 myPupilId,
                 UniquePupilNumbers.Create(
-                    myPupilsUpns.Select(t => new UniquePupilNumber(t))));
+                    myPupilsUpns.Select(t => new UniquePupilNumber(t!))));
 
         await _cosmosDbFixture.InvokeAsync(
             databaseName: _cosmosDbFixture.DatabaseName,
             (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, myPupilsDocument));
 
-        _testContext = new MyPupilsTestContext(myPupilId.Value, myPupilsUpns);
+        _testContext = new MyPupilsTestContext(myPupilId.Value, myPupilsUpns!);
     }
 
     private sealed record MyPupilsTestContext(string MyPupilsId, List<string> MyPupilUpns);
