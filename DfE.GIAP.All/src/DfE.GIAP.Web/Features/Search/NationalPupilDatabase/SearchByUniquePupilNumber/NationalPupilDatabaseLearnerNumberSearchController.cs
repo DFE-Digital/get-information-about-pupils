@@ -23,7 +23,6 @@ using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.Services.Download;
 using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -42,7 +41,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
-    private readonly IDownloadService _downloadService;
     private readonly IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> _searchUseCase;
     private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
     private readonly IMapper<NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
@@ -69,7 +67,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     public NationalPupilDatabaseLearnerNumberSearchController(
         ILogger<NationalPupilDatabaseLearnerNumberSearchController> logger,
         IDownloadCommonTransferFileService ctfService,
-        IDownloadService downloadService,
         IUseCase<
             NationalPupilDatabaseSearchRequest,
             NationalPupilDatabaseSearchResponse> searchUseCase,
@@ -91,9 +88,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
         ArgumentNullException.ThrowIfNull(ctfService);
         _ctfService = ctfService;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(searchUseCase);
         _searchUseCase = searchUseCase;
@@ -239,7 +233,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             return await NationalPupilDatabase(model, model.PageNumber, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection), true);
         }
 
-        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(selected.ToArray(),
+        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile([.. selected],
                                                                 model.LearnerNumber.FormatLearnerNumbers(),
                                                                 User.GetLocalAuthorityNumberForEstablishment(),
                                                                 User.GetEstablishmentNumber(),
@@ -323,7 +317,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = [];
                 foreach (string datasetString in model.SelectedDownloadOptions)
                 {
                     if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
@@ -419,7 +413,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -493,10 +487,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             model.PageNumber = pageNumber;
             model.PageSize = PAGESIZE;
 
-            model = await GetPupilsForSearchBuilder(
-                model,
-                pageNumber,
-                notPaged).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, notPaged).ConfigureAwait(false);
         }
 
         HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);
@@ -520,7 +511,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     private async Task<LearnerNumberSearchViewModel> GetPupilsForSearchBuilder(
         LearnerNumberSearchViewModel model,
-        int pageNumber,
         bool first)
     {
         if (string.IsNullOrEmpty(model.LearnerNumber))
@@ -565,7 +555,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
         List<string> idList = SetLearnerNumberIds(result.Learners);
 
-        string[] combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
+        string[] combinedIdLearnerNumberArray = [.. learnerNumberArray, .. idList];
 
         if (first)
         {
@@ -590,9 +580,9 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         model.NotFound = notFound;
 #nullable restore
 
-        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates(learnerNumberArray.ToList());
+        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates([.. learnerNumberArray]);
 
-        if (duplicateLearnerNumbers.Any())
+        if (duplicateLearnerNumbers.Count > 0)
         {
             foreach (string learnerNumber in duplicateLearnerNumbers)
             {

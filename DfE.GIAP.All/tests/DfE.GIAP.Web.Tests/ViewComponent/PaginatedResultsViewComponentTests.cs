@@ -67,7 +67,7 @@ public class PaginatedResultsViewComponentTests
     {
         List<object[]> allData =
         [
-           new object[] { // 1
+           [ // 1
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -77,8 +77,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 2
+           ],
+           [ // 2
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -88,8 +88,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 3
+           ],
+           [ // 3
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -99,8 +99,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 4
+           ],
+           [ // 4
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -110,8 +110,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 5
+           ],
+           [ // 5
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -121,8 +121,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 6
+           ],
+           [ // 6
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -132,8 +132,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 7
+           ],
+           [ // 7
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -143,8 +143,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 8
+           ],
+           [ // 8
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -154,8 +154,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 1
                }
-           },
-              new object[] { // 9
+           ],
+              [ // 9
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -165,8 +165,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 2
                }
-           },
-                new object[] { // 10
+           ],
+                [ // 10
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -176,8 +176,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 3
                }
-           },
-                  new object[] { // 11
+           ],
+                  [ // 11
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -187,8 +187,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 7
                }
-           },
-                   new object[] { // 12
+           ],
+                   [ // 12
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -198,8 +198,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 8
                }
-           },
-                    new object[] { // 13
+           ],
+                    [ // 13
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -209,8 +209,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 9
                }
-           },
-           new object[] { // 14
+           ],
+           [ // 14
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -220,8 +220,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 1
                }
-           },
-           new object[] { // 15
+           ],
+           [ // 15
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -231,8 +231,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = false,
                    PageNumber = 0
                }
-           },
-           new object[] { // 16
+           ],
+           [ // 16
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -242,8 +242,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 2
                }
-           },
-           new object[] { // 17
+           ],
+           [ // 17
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -253,8 +253,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 5
                }
-           },
-           new object[] { // 18
+           ],
+           [ // 18
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -264,8 +264,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 6
                }
-           },
-           new object[] { // 19
+           ],
+           [ // 19
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -275,8 +275,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 7
                }
-           },
-           new object[] { // 20
+           ],
+           [ // 20
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -286,8 +286,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 8
                }
-           },
-           new object[] { // 21
+           ],
+           [ // 21
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -297,8 +297,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 9
                }
-           },
-           new object[] { // 22
+           ],
+           [ // 22
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -308,8 +308,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 3
                }
-           },
-           new object[] { // 23
+           ],
+           [ // 23
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -319,8 +319,8 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 4
                }
-           },
-           new object[] { // 24
+           ],
+           [ // 24
                new PaginatedResultTestData()
                {
                    PageSize = 20,
@@ -330,7 +330,7 @@ public class PaginatedResultsViewComponentTests
                    ShowPrevious = true,
                    PageNumber = 1
                }
-           },
+           ],
         ];
 
         return allData;

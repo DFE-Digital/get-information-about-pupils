@@ -65,7 +65,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
             PupilPremiumLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
         ISelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IJsonSerializer jsonSerializer,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
@@ -253,7 +252,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, 0, true).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -329,7 +328,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
             model = await GetPupilsForSearchBuilder(
                 model,
-                pageNumber,
                 notPaged).ConfigureAwait(false);
         }
 
@@ -376,7 +374,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
     private async Task<LearnerNumberSearchViewModel> GetPupilsForSearchBuilder(
        LearnerNumberSearchViewModel model,
-       int pageNumber,
        bool first)
     {
         if (string.IsNullOrEmpty(model.LearnerNumber))
@@ -421,7 +418,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         List<string> idList = SetLearnerNumberIds(result.Learners);
 
-        string[] combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
+        string[] combinedIdLearnerNumberArray = [.. learnerNumberArray, .. idList];
 
         if (first)
         {
@@ -446,9 +443,9 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         model.NotFound = notFound;
 #nullable restore
 
-        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates(learnerNumberArray.ToList());
+        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates([.. learnerNumberArray]);
 
-        if (duplicateLearnerNumbers.Any())
+        if (duplicateLearnerNumbers.Count > 0)
         {
             foreach (string learnerNumber in duplicateLearnerNumbers)
             {
@@ -458,7 +455,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         List<string> potentialErrorLearnerNumbers = learnerNumberArray.Distinct().ToList();
 
-        if (potentialErrorLearnerNumbers.Any())
+        if (potentialErrorLearnerNumbers.Count > 0)
         {
             foreach (string learnerNumber in potentialErrorLearnerNumbers)
             {

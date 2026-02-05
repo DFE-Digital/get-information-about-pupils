@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Moq;
 
-namespace DfE.GIAP.Web.Tests.Shared.Http;
+namespace DfE.GIAP.Web.Tests.Shared.HttpContext;
 internal static class IHttpContextAccessorTestDoubles
 {
     internal static Mock<IHttpContextAccessor> Default() => new();
 
-    internal static Mock<IHttpContextAccessor> WithHttpContext(HttpContext? httpContext)
+    internal static Mock<IHttpContextAccessor> WithHttpContext(Microsoft.AspNetCore.Http.HttpContext? httpContext)
     {
         Mock<IHttpContextAccessor> httpContextAccessorMock = Default();
         httpContextAccessorMock.SetupGet(t => t.HttpContext).Returns(httpContext);

@@ -17,7 +17,6 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.Services.Download;
 using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
@@ -31,13 +30,12 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByName;
+namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 
 public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<NationalPupilDatabaseLearnerNumberSearchController>>();
     private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
-    private readonly IDownloadService _mockDownloadService = Substitute.For<IDownloadService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
@@ -1556,7 +1554,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         return new NationalPupilDatabaseLearnerNumberSearchController(
             _mockLogger,
             _mockCtfService,
-            _mockDownloadService,
             _mockUseCase.Object,
             sortMapperMock.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,

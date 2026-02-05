@@ -5,7 +5,7 @@ using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils.Mapper;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Mapper;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.Mapper;
 public sealed class MyPupilModelToMyPupilsPresentationPupilModelMapperTests
 {
     [Fact]

@@ -1,9 +1,8 @@
 ﻿using System.Net.Http;
 
-namespace DfE.GIAP.Service.Tests.FakeHttpHandlers
+namespace DfE.GIAP.Web.Tests.Services.FakeHttpHandlers;
+
+public interface IFakeHttpRequestSender
 {
-    public interface IFakeHttpRequestSender
-    {
-        HttpResponseMessage Send(HttpRequestMessage request);
-    }
+    HttpResponseMessage Send(HttpRequestMessage request);
 }

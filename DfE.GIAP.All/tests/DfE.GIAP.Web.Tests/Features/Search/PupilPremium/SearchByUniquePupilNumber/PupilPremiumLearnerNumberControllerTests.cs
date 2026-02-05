@@ -26,14 +26,12 @@ using NSubstitute;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 
-public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
+public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<PupilPremiumLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerNumberSearchController>>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-    private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
     private readonly Mock<IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>> _mockUseCase = new();
-    private AzureAppSettings _mockAppSettings = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
@@ -325,7 +323,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
     public async Task PupilPremium_shows_error_if_no_UPNs_inputted()
     {
         // arrange
-        string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new();
 
         PupilPremiumLearnerNumberSearchController sut = GetController();
@@ -1400,7 +1397,6 @@ public class PupilPremiumLearnerNumberControllerTests : IClassFixture<PaginatedR
             mockMapper.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,
             _mockSelectionManager,
-            _mockAppOptions,
             _addPupilsUseCaseMock,
             jsonSerializerMock.Object,
             downloadPupilPremiumDataServiceMock.Object,

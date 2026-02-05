@@ -42,7 +42,7 @@ public sealed class SearchCriteriaProviderTests
         IOptions<SearchCriteriaOptions> options = OptionsTestDoubles.MockAs(searchCriteriaOptions);
 
         SearchCriteriaProvider provider = new(options);
-        Func<SearchCriteria> act = () => provider.GetCriteria(key);
+        Func<SearchCriteria> act = () => provider.GetCriteria(key!);
 
         // Act & Assert
         Assert.ThrowsAny<ArgumentException>(act);

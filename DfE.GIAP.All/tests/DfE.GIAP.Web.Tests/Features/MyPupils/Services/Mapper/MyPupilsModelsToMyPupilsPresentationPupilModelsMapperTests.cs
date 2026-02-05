@@ -7,7 +7,7 @@ using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils.Mapper;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.PresentationService.Mapper;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.Mapper;
 public sealed class MyPupilsModelsToMyPupilsPresentationPupilModelsMapperTests
 {
 
@@ -31,7 +31,7 @@ public sealed class MyPupilsModelsToMyPupilsPresentationPupilModelsMapperTests
         MyPupilModelsToMyPupilsPresentationPupilModelMapper mapper = new(mapperMock.Object);
 
         // Act
-        MyPupilsPresentationPupilModels mapped =  mapper.Map(null!);
+        MyPupilsPresentationPupilModels mapped = mapper.Map(null!);
 
         // Assert
         Assert.NotNull(mapped);

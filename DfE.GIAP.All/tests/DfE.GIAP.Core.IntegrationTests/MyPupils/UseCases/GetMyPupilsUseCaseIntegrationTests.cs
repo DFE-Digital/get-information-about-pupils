@@ -85,7 +85,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         List<UniquePupilNumber> allPupilUpns = npdResponse.value!
             .Select(t => t.UPN)
             .Concat(pupilPremiumResponse.value!.Select(t => t.UPN))
-            .Select(t => new UniquePupilNumber(t))
+            .Select(t => new UniquePupilNumber(t!))
             .ToList();
 
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
@@ -173,11 +173,11 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             {
                 UniquePupilNumber = new(input.UPN),
                 DateOfBirth = input.DOB ?? string.Empty,
-                Forename = input.Forename,
-                Surname = input.Surname,
+                Forename = input.Forename!,
+                Surname = input.Surname!,
                 Sex = input.Sex?.ToString() ?? string.Empty,
                 IsPupilPremium = false, // not used when asserting - not mapped from entity, rather that the pupil-premium index was called.
-                LocalAuthorityCode = int.Parse(input.LocalAuthority),
+                LocalAuthorityCode = int.Parse(input.LocalAuthority!),
             };
         }
     }

@@ -886,12 +886,9 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     }
 
     [Theory]
-    [InlineData(DownloadFileType.None, new byte[0])]
-    [InlineData(DownloadFileType.CSV, new byte[0])]
-    [InlineData(DownloadFileType.CSV, null)]
-    public async Task ToDownloadSelectedPupilPremiumDataUPN_returns_correct_validation_error_message(
-        DownloadFileType downloadFileType,
-        byte[]? fileBytes)
+    [InlineData(DownloadFileType.None)]
+    [InlineData(DownloadFileType.CSV)]
+    public async Task ToDownloadSelectedPupilPremiumDataUPN_returns_correct_validation_error_message(DownloadFileType downloadFileType)
     {
         // arrange
         string upn = _paginatedResultsFake.GetUpn();

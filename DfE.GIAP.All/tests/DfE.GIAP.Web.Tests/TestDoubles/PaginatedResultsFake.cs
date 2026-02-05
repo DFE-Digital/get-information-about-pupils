@@ -214,7 +214,7 @@ public static class PaginatedResultsFakeExtensions
 {
     public static void ToggleSelectAll(this PaginatedResponse response, bool selected)
     {
-        foreach (var learner in response.Learners)
+        foreach (Learner? learner in response.Learners)
         {
             learner.Selected = selected;
         }
@@ -222,7 +222,7 @@ public static class PaginatedResultsFakeExtensions
 
     public static void AssertSelected(this IEnumerable<Learner> learners, bool selected)
     {
-        foreach (var learner in learners)
+        foreach (Learner learner in learners)
         {
             Assert.Equal(selected, learner.Selected);
         }

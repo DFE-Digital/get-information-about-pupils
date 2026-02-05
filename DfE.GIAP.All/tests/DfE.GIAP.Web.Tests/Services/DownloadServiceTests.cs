@@ -2,14 +2,14 @@
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Service.Tests.FakeHttpHandlers;
 using DfE.GIAP.Web.Services.ApiProcessor;
 using DfE.GIAP.Web.Services.Download;
+using DfE.GIAP.Web.Tests.Services.FakeHttpHandlers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Service.Tests.Download;
+namespace DfE.GIAP.Web.Tests.Services;
 
 [Trait("Category", "Download Service Unit Tests")]
 public sealed class DownloadServiceTests
@@ -18,37 +18,37 @@ public sealed class DownloadServiceTests
     public async Task GetCSVFileReturnsCorrectReturnFile()
     {
         // Arrange
-        var upns = new string[] { "testupn1", "testupn2" };
-        var dataTypes = new string[] { "KS1", "KS2" };
+        string[] upns = ["testupn1", "testupn2"];
+        string[] dataTypes = ["KS1", "KS2"];
         bool confirmationGiven = true;
-        var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "12345", SessionId = "67890" };
-        var expected = new ReturnFile()
+        AzureFunctionHeaderDetails azureFunctionHeaderDetails = new() { ClientId = "12345", SessionId = "67890" };
+        ReturnFile expected = new()
         {
             Bytes = new byte[200],
             FileName = "Test-CSV-file",
             FileType = "csv",
-            RemovedUpns = new string[] { "removedupn1", "removedupn2" },
+            RemovedUpns = ["removedupn1", "removedupn2"],
             ResponseMessage = "Test response message"
         };
 
-        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
-        var httpClient = new HttpClient(fakeHttpMessageHandler);
-        var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
+        Mock<IFakeHttpRequestSender> fakeHttpRequestSender = new();
+        FakeHttpMessageHandler fakeHttpMessageHandler = new(fakeHttpRequestSender.Object);
+        HttpClient httpClient = new(fakeHttpMessageHandler);
+        HttpResponseMessage httpResponse = new() { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
         fakeHttpRequestSender.Setup(x => x.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
-        var apiProcessorService = new ApiService(httpClient, null);
+        ApiService apiProcessorService = new(httpClient, null);
 
-        var url = "https://www.somewhere.com";
-        var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url };
-        var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
+        string url = "https://www.somewhere.com";
+        AzureAppSettings urls = new() { DownloadPupilsByUPNsCSVUrl = url };
+        Mock<IOptions<AzureAppSettings>> fakeAppSettings = new();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
-        var eventLogging = new Mock<IEventLogger>();
+        Mock<IEventLogger> eventLogging = new();
 
-        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
+        DownloadService downloadService = new(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
-        var actual = await downloadService.GetCSVFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+        ReturnFile actual = await downloadService.GetCSVFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, ReturnRoute.NationalPupilDatabase);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);
@@ -63,37 +63,37 @@ public sealed class DownloadServiceTests
     public async Task GetTABFileReturnsCorrectReturnFile()
     {
         // Arrange
-        var upns = new string[] { "testupn1", "testupn2" };
-        var dataTypes = new string[] { "KS1", "KS2" };
+        string[] upns = ["testupn1", "testupn2"];
+        string[] dataTypes = ["KS1", "KS2"];
         bool confirmationGiven = true;
-        var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "12345", SessionId = "67890" };
-        var expected = new ReturnFile()
+        AzureFunctionHeaderDetails azureFunctionHeaderDetails = new() { ClientId = "12345", SessionId = "67890" };
+        ReturnFile expected = new()
         {
             Bytes = new byte[200],
             FileName = "Test-TAB-file",
             FileType = "tab",
-            RemovedUpns = new string[] { "removedupn1", "removedupn2" },
+            RemovedUpns = ["removedupn1", "removedupn2"],
             ResponseMessage = "Test response message"
         };
 
-        var fakeHttpRequestSender = new Mock<IFakeHttpRequestSender>();
-        var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender.Object);
-        var httpClient = new HttpClient(fakeHttpMessageHandler);
-        var httpResponse = new HttpResponseMessage { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
+        Mock<IFakeHttpRequestSender> fakeHttpRequestSender = new();
+        FakeHttpMessageHandler fakeHttpMessageHandler = new(fakeHttpRequestSender.Object);
+        HttpClient httpClient = new(fakeHttpMessageHandler);
+        HttpResponseMessage httpResponse = new() { Content = new StringContent(JsonConvert.SerializeObject(expected)) };
         fakeHttpRequestSender.Setup(x => x.Send(It.IsAny<HttpRequestMessage>())).Returns(httpResponse);
 
-        var apiProcessorService = new ApiService(httpClient, null);
+        ApiService apiProcessorService = new(httpClient, null);
 
-        var url = "https://www.somewhere.com";
-        var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url };
-        var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
+        string url = "https://www.somewhere.com";
+        AzureAppSettings urls = new() { DownloadPupilsByUPNsCSVUrl = url };
+        Mock<IOptions<AzureAppSettings>> fakeAppSettings = new();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
-        var eventLogging = new Mock<IEventLogger>();
-        var hostEnvironment = new Mock<IHostEnvironment>();
-        var downloadService = new DownloadService(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
+        Mock<IEventLogger> eventLogging = new();
+        Mock<IHostEnvironment> hostEnvironment = new();
+        DownloadService downloadService = new(fakeAppSettings.Object, apiProcessorService, eventLogging.Object);
 
         // Act
-        var actual = await downloadService.GetTABFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, GIAP.Common.Enums.ReturnRoute.NationalPupilDatabase);
+        ReturnFile actual = await downloadService.GetTABFile(upns, upns, dataTypes, confirmationGiven, azureFunctionHeaderDetails, ReturnRoute.NationalPupilDatabase);
 
         // Assert
         Assert.IsType<ReturnFile>(actual);
@@ -108,12 +108,12 @@ public sealed class DownloadServiceTests
     public async Task CheckForNoDataAvailable_returns_a_list_of_unavailable_data()
     {
         // arrange
-        var upns = new string[] { "testupn1", "testupn2" };
-        var dataTypes = new string[] { "KS1", "KS2" };
-        var azureFunctionHeaderDetails = new AzureFunctionHeaderDetails { ClientId = "12345", SessionId = "67890" };
+        string[] upns = ["testupn1", "testupn2"];
+        string[] dataTypes = ["KS1", "KS2"];
+        AzureFunctionHeaderDetails azureFunctionHeaderDetails = new() { ClientId = "12345", SessionId = "67890" };
 
-        
-        var mockApiService = new Mock<IApiService>();
+
+        Mock<IApiService> mockApiService = new();
         mockApiService.Setup(t =>
             t.PostAsync<DownloadRequest, IEnumerable<DownloadDataType>>(
                 It.IsAny<Uri>(),
@@ -121,16 +121,16 @@ public sealed class DownloadServiceTests
                 It.IsAny<AzureFunctionHeaderDetails>()))
             .ReturnsAsync(new List<DownloadDataType>() { DownloadDataType.EYFSP });
 
-        var url = "http://somewhere.net";
-        var urls = new AzureAppSettings() { DownloadPupilsByUPNsCSVUrl = url, DownloadOptionsCheckLimit = 500 };
-        var fakeAppSettings = new Mock<IOptions<AzureAppSettings>>();
-        var eventLogging = new Mock<IEventLogger>();
+        string url = "http://somewhere.net";
+        AzureAppSettings urls = new() { DownloadPupilsByUPNsCSVUrl = url, DownloadOptionsCheckLimit = 500 };
+        Mock<IOptions<AzureAppSettings>> fakeAppSettings = new();
+        Mock<IEventLogger> eventLogging = new();
         fakeAppSettings.SetupGet(x => x.Value).Returns(urls);
 
-        var sut = new DownloadService(fakeAppSettings.Object, mockApiService.Object, eventLogging.Object);
+        DownloadService sut = new(fakeAppSettings.Object, mockApiService.Object, eventLogging.Object);
 
         // act
-        var result = await sut.CheckForNoDataAvailable(upns, upns, dataTypes, azureFunctionHeaderDetails);
+        IEnumerable<CheckDownloadDataType> result = await sut.CheckForNoDataAvailable(upns, upns, dataTypes, azureFunctionHeaderDetails);
 
         // assert
         mockApiService.Verify(t =>
