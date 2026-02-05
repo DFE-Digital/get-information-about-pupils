@@ -8,7 +8,7 @@ internal sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearner
 {
     public IMappedResult<PupilPremiumLearner> Map(PupilPremiumLearnerDataTransferObject input)
     {
-        
+
         (bool isValid, string error) = ValidateRequest(input);
 
         if (!isValid)
@@ -36,7 +36,7 @@ internal sealed class PupilPremiumLearnerDataTransferObjectToPupilPremiumLearner
         catch (Exception ex)
         {
             return MappedResult<PupilPremiumLearner>.MappingError(ex);
-        
+
         }
     }
 
