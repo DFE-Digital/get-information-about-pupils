@@ -11,13 +11,10 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
-using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
-using DfE.GIAP.Core.Search.Infrastructure.PupilPremium;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
@@ -76,7 +73,7 @@ public static class CompositionRoot
             .AddScoped<
                 ISearchServiceAdapter<
                     FurtherEducationLearners, SearchFacets>,
-                    FurtherEducationAzureSearchServiceAdapter>()
+                    AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>>()
             .AddSingleton<
                 IMapper<
                     Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>,
@@ -99,7 +96,7 @@ public static class CompositionRoot
             .AddScoped<
                 ISearchServiceAdapter<
                     PupilPremiumLearners, SearchFacets>,
-                    PupilPremiumAzureSearchServiceAdaptor>()
+                    AzureSearchServiceAdaptor<PupilPremiumLearners, PupilPremiumLearnerDataTransferObject>>()
             .AddSingleton<
                 IMapper<
                     Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners>,
@@ -120,7 +117,7 @@ public static class CompositionRoot
                     NationalPupilDatabaseSearchUseCase>()
             .AddScoped<
                     ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>,
-                    NationalPupilDatabaseAzureSearchServiceAdaptor>()
+                    AzureSearchServiceAdaptor<NationalPupilDatabaseLearners, NationalPupilDatabaseLearnerDataTransferObject>>()
             .AddSingleton<
                 IMapper<
                     Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>,
@@ -150,9 +147,7 @@ public static class CompositionRoot
     private static IServiceCollection AddAzureServices(this IServiceCollection services, IConfiguration configuration)
     {
 
-        services
-            .AddScoped<IAzureSearchByKeywordService, AzureSearchByKeywordService>()
-            .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
+        services.AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
 
         // Register shared cognitive search and filter services.
         services.AddAzureSearchServices(configuration);
