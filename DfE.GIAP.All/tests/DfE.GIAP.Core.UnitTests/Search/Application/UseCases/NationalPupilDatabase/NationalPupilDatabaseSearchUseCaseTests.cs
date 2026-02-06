@@ -39,6 +39,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
 
         NationalPupilDatabaseSearchRequest request =
             new(
+                searchIndexKey: "key",
                 searchKeywords: "searchkeyword",
                 filterRequests: [FilterRequestTestDouble.Fake()],
                 searchCriteria: _searchCriteriaStub,
@@ -56,6 +57,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             searchServiceAdapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()), Times.Once());
 
         // assert
+        adapterRequest!.SearchIndexKey.Should().Be(request.SearchIndexKey);
         adapterRequest!.SearchKeyword.Should().Be(request.SearchKeywords);
         adapterRequest!.SearchFields.Should().BeEquivalentTo(_searchCriteriaStub.SearchFields);
         adapterRequest!.Facets.Should().BeEquivalentTo(_searchCriteriaStub.Facets);
@@ -70,6 +72,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
         NationalPupilDatabaseSearchRequest request = new(
+            searchIndexKey: "key",
             searchKeywords: "searchkeyword",
             searchCriteria: _searchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());
@@ -121,6 +124,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
         NationalPupilDatabaseSearchRequest request = new(
+            searchIndexKey: "key",
             searchKeywords: "searchkeyword",
             searchCriteria: _searchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());
@@ -153,6 +157,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
         NationalPupilDatabaseSearchRequest request = new(
+            searchIndexKey: "key",
             searchKeywords: "searchkeyword",
             searchCriteria: _searchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());

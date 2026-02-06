@@ -543,6 +543,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
         NationalPupilDatabaseSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
             new NationalPupilDatabaseSearchRequest(
+                searchIndexKey: "npd-upn",
                 searchKeywords: string.Join(" AND ", learnerNumberArray),
                 filterRequests: filterRequests,
                 searchCriteria: searchCriteria,
