@@ -6,6 +6,7 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
@@ -76,6 +77,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
+    private readonly IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> _downloadPupilCtfUseCase;
     private readonly IEventLogger _eventLogger;
 
     private readonly
@@ -101,6 +103,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
+        IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase,
         IEventLogger eventLogger,
         IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> searchUseCase,
         IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
@@ -129,6 +132,9 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilCtfUseCase);
+        _downloadPupilCtfUseCase = downloadPupilCtfUseCase;
 
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
@@ -426,6 +432,13 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
 
+        DownloadPupilCtfRequest request = new([selectedPupil]);
+        DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
+
+        if (response.FileContents is not null)
+            return File(response.FileContents, response.ContentType, response.FileName);
+
+
         ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
                                                                 new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },
                                                                 User.GetLocalAuthorityNumberForEstablishment(),
@@ -623,7 +636,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     #region WIP inherited legacy methods
 
-    
+
     private async Task<IActionResult> Search(bool? returnToSearch)
     {
         LearnerTextSearchViewModel model = new();
@@ -781,8 +794,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         TempData.SetPersistedObject(
             model.SelectedSexValues,
             PersistedSelectedSexFiltersKey);
-   
-    
+
+
     private IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
     {
         LearnerTextSearchViewModel searchViewModel = new LearnerTextSearchViewModel()
@@ -861,7 +874,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         {
             foreach (Learner learner in viewModel.Learners.Where((t) => !string.IsNullOrEmpty(t.LearnerNumberId)))
             {
-                
+
                 learner.Selected = selected.Contains(learner.LearnerNumberId);
             }
         }
@@ -936,7 +949,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             currentFilters.Where((currentFilterDetail) => currentFilterDetail.FilterType == FilterType.Sex)
                 .Select(currentFilterDetail => currentFilterDetail.FilterName)
                 .ToList()
-                .ForEach( (sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
+                .ForEach((sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
 
             model.SelectedSexValues = null;
         }
