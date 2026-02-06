@@ -27,8 +27,10 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
     {
         IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository.GetPupilsByIdsAsync(selectedPupilIds);
         IReadOnlyList<DataMapperDefinition> mapperDefinitions = await LoadMapperDefinitionsAsync();
+
+        // TEMP solution while we have Multifile definitions in place
         DataMapperDefinition latestDefinition = mapperDefinitions
-            .OrderByDescending(d => int.Parse(d.Year!))
+            .OrderByDescending(d => d.Year is not null ? int.Parse(d.Year!) : 0)
             .First();
 
         List<CtfPupil> ctfPupils = new();
