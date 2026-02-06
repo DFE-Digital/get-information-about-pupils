@@ -7,10 +7,10 @@ namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 public record NationalPupilDatabaseSearchRequest : IUseCaseRequest<NationalPupilDatabaseSearchResponse>
 {
     public NationalPupilDatabaseSearchRequest(
-        string searchIndexKey, 
-        string searchKeywords, 
-        SearchCriteria searchCriteria, 
-        SortOrder sortOrder, 
+        string searchIndexKey,
+        string searchKeywords,
+        SearchCriteria searchCriteria,
+        SortOrder sortOrder,
         int offset = 0)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(searchIndexKey);
