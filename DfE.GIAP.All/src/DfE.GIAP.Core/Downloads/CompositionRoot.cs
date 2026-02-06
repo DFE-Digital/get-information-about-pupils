@@ -4,6 +4,8 @@ using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
+using DfE.GIAP.Core.Downloads.Application.Ctf;
+using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
 using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
@@ -52,7 +54,7 @@ public static class CompositionRoot
         // WIP
         services.AddScoped<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>, DownloadPupilCtfUseCase>();
         services.AddScoped<ICtfHeaderBuilder, CtfHeaderBuilder>();
-        services.AddScoped<ICtfPupilBuilder, CtfPupilBuilder>();
+        services.AddScoped<ICtfPupilBuilder, SingleFileCtfPupilBuilder>();
         services.AddScoped<ICtfFormatter, XmlCtfFormatter>();
 
         return services;
