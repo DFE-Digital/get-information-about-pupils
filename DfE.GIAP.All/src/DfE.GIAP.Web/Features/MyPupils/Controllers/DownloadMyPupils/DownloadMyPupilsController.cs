@@ -257,7 +257,7 @@ public class DownloadMyPupilsController : Controller
 
                 if (response is null)
                 {
-                    return base.RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
                 }
 
                 if (response.FileContents is not null)
