@@ -26,7 +26,7 @@ internal sealed class NationalPupilDatabaseSearchUseCase : IUseCase<NationalPupi
             SearchResults<NationalPupilDatabaseLearners, SearchFacets>? searchResults =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
-                        searchIndexKey: "npd",
+                        request.SearchIndexKey,
                         request.SearchKeywords,
                         request.SearchCriteria.SearchFields,
                         request.SortOrder,

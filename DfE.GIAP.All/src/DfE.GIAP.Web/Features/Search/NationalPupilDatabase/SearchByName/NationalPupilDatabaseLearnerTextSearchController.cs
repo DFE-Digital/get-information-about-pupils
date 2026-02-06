@@ -827,6 +827,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         NationalPupilDatabaseSearchResponse searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new NationalPupilDatabaseSearchRequest(
+                    searchIndexKey: "npd-text",
                     searchKeywords: model.SearchText,
                     searchCriteria: searchCriteria,
                     filterRequests: filterRequests,

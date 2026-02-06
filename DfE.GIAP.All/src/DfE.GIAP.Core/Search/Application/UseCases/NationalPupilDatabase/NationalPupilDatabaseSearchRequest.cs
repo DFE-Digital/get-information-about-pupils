@@ -6,8 +6,16 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 public record NationalPupilDatabaseSearchRequest : IUseCaseRequest<NationalPupilDatabaseSearchResponse>
 {
-    public NationalPupilDatabaseSearchRequest(string searchKeywords, SearchCriteria searchCriteria, SortOrder sortOrder, int offset = 0)
+    public NationalPupilDatabaseSearchRequest(
+        string searchIndexKey,
+        string searchKeywords,
+        SearchCriteria searchCriteria,
+        SortOrder sortOrder,
+        int offset = 0)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(searchIndexKey);
+        SearchIndexKey = searchIndexKey;
+
         ArgumentException.ThrowIfNullOrWhiteSpace(searchKeywords);
         SearchKeywords = searchKeywords;
 
@@ -20,11 +28,12 @@ public record NationalPupilDatabaseSearchRequest : IUseCaseRequest<NationalPupil
     }
 
     public NationalPupilDatabaseSearchRequest(
+        string searchIndexKey,
         string searchKeywords,
         IList<FilterRequest> filterRequests,
         SearchCriteria searchCriteria,
         SortOrder sortOrder,
-        int offset = 0) : this(searchKeywords, searchCriteria, sortOrder, offset)
+        int offset = 0) : this(searchIndexKey, searchKeywords, searchCriteria, sortOrder, offset)
     {
         ArgumentNullException.ThrowIfNull(filterRequests);
         FilterRequests = filterRequests;
@@ -35,7 +44,7 @@ public record NationalPupilDatabaseSearchRequest : IUseCaseRequest<NationalPupil
 
     [Range(0, int.MaxValue, ErrorMessage = "Offset must be non-negative.")]
     public int Offset { get; }
-
+    public string SearchIndexKey { get; }
     public IList<FilterRequest>? FilterRequests { get; }
 
     public SortOrder SortOrder { get; }
