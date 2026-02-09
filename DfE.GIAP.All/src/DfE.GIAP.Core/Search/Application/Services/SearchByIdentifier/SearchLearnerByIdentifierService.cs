@@ -26,7 +26,7 @@ internal sealed class SearchLearnerByIdentifierService<TResponse> : ISearchLearn
         FilterRequest? filterByIdentifier =
             request.SearchCriteria.SearchFields.Count == 1 ?
              new FilterRequest(
-                 filterName: request.SearchCriteria.SearchFields[0], 
+                 filterName: request.SearchCriteria.SearchFields[0],
                  filterValues: request.Identifiers.Select(t => (object)t).ToList())
                 : null;
 
@@ -39,7 +39,7 @@ internal sealed class SearchLearnerByIdentifierService<TResponse> : ISearchLearn
                         searchKeyword: string.Join(" AND ", request.Identifiers),
                         searchFields: request.SearchCriteria.SearchFields,
                         sortOrdering: request.Sort,
-                        resultsSize: request.SearchCriteria.Size,
+                        size: request.SearchCriteria.Size,
                         facets: request.SearchCriteria.Facets,
                         searchFilterRequests: filterByIdentifier is null ? null : [filterByIdentifier],
                         includeTotalCount: request.SearchCriteria.IncludeTotalCount,

@@ -51,8 +51,11 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
 
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
 
-    private readonly ISortOrderFactory _mockSortOrderFactgory =
-        Substitute.For<ISortOrderFactory> ();
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<ISearchIndexOptionsProvider> _searchIndexOptionsProviderMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
 
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -65,7 +68,22 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             validSortFields: ["Surname", "DOB", "Forename"]
         );
 
-        _mockSortOrderFactgory.Create(Arg.Any<SortOptions>(), Arg.Any<(string?, string?)>()).Returns(stubSortOrder);
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(), 
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchIndexOptionsProviderMock.Setup(
+            indexOptionsProvider => 
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper => 
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
 
         FurtherEducationSearchByNameResponse response =
             FurtherEducationSearchByNameResponseTestDouble.CreateSuccessResponse();
@@ -1166,15 +1184,15 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             _mockUseCase,
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
-            _mockSortOrderFactgory,
+            _sortOrderFactoryMock.Object,
             _mockFiltersRequestBuilder,
             _mockLogger,
             _mockSelectionManager,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             mockDownloadPupilDataUseCase.Object,
-            new Mock<ISearchIndexOptionsProvider>().Object,
-            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
+            _searchIndexOptionsProviderMock.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = new ControllerContext()
             {
@@ -1184,7 +1202,7 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
         };
     }
 
-    private SearchFilters SetDobFilters(int day, int month, int year)
+    private static SearchFilters SetDobFilters(int day, int month, int year)
     {
         return new SearchFilters()
         {

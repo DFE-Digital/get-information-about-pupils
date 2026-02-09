@@ -8,11 +8,11 @@ namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByNam
 public record FurtherEducationSearchByNameRequest : IUseCaseRequest<FurtherEducationSearchByNameResponse>
 {
     public string? SearchKeywords { get; init; }
-    
+
     public SearchCriteria? SearchCriteria { get; init; }
-    
+
     public SortOrder? SortOrder { get; init; }
-    
+
     public IList<FilterRequest>? FilterRequests { get; init; }
 
     public int Offset { get; init; }

@@ -12,8 +12,8 @@ public sealed class SearchIndexOptionsProvider : ISearchIndexOptionsProvider
 
     public SearchIndexOptions GetOptions(string key)
     {
-        
-        if(_searchOptions.Indexes is null)
+
+        if (_searchOptions.Indexes is null)
         {
             throw new ArgumentException("Indexes cannot be keyed as null");
         }

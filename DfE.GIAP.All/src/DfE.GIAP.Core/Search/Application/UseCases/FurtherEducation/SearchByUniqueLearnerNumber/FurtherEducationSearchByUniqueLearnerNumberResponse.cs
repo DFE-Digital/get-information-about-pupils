@@ -9,7 +9,7 @@ public record FurtherEducationSearchByUniqueLearnerNumberResponse
         LearnerSearchResults = learners ?? FurtherEducationLearners.CreateEmpty();
         TotalNumberOfResults = new(searchResultCount);
     }
-    
+
     public FurtherEducationLearners LearnerSearchResults { get; }
 
     public SearchResultCount TotalNumberOfResults { get; }

@@ -25,8 +25,8 @@ internal sealed class NationalPupilDatabaseSearchByUniquePupilNumberUseCase : IU
                     sort: request.Sort!,
                     offset: request.Offset));
 
-            return new NationalPupilDatabaseSearchByUniquePupilNumberResponse(
-                    response.LearnerSearchResults,
-                    response.TotalNumberOfResults);
+        return new NationalPupilDatabaseSearchByUniquePupilNumberResponse(
+                response.LearnerSearchResults,
+                response.TotalNumberOfResults);
     }
 }

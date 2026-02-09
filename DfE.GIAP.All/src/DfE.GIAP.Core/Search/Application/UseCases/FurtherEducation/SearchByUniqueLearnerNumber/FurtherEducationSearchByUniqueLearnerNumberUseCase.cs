@@ -25,7 +25,7 @@ internal sealed class FurtherEducationSearchByUniqueLearnerNumberUseCase : IUseC
                 request.Offset));
 
         return new FurtherEducationSearchByUniqueLearnerNumberResponse(
-            searchResponse.LearnerSearchResults, 
+            searchResponse.LearnerSearchResults,
             searchResponse.TotalNumberOfResults);
     }
 }

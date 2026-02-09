@@ -31,7 +31,7 @@ internal sealed class SearchLearnerByNameService<TSearchResponse> : ISearchLearn
                         searchKeyword: request.SearchKeywords,
                         searchFields: request.SearchCriteria.SearchFields,
                         sortOrdering: request.SortOrder,
-                        resultsSize: request.SearchCriteria.Size,
+                        size: request.SearchCriteria.Size,
                         facets: request.SearchCriteria.Facets,
                         searchFilterRequests: request.FilterRequests,
                         includeTotalCount: request.SearchCriteria.IncludeTotalCount,

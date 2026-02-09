@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 
 internal sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
     IMapper<
-        Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, 
+        Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>,
         PupilPremiumLearners>
 {
     private readonly IMapperWithResult<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner> _searchResultToLearnerMapper;

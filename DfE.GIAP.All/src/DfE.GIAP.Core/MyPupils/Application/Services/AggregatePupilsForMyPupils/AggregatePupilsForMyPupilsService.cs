@@ -43,7 +43,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
         ArgumentNullException.ThrowIfNull(npdLearnerToPupilMapper);
         _npdLearnerToPupilMapper = npdLearnerToPupilMapper;
-        
+
         ArgumentNullException.ThrowIfNull(getPupilPremiumLearnersUseCase);
         _pupilPremiumSearchServiceAdaptor = getPupilPremiumLearnersUseCase;
 
@@ -112,7 +112,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
                 // Deduplicate
                 .GroupBy(pupil => pupil.Identifier.Value)
                 // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
-                .Select(groupedIdentifiers  =>
+                .Select(groupedIdentifiers =>
                     groupedIdentifiers.OrderByDescending(
                         (pupil) => pupil.IsOfPupilType(PupilType.PupilPremium)).First());
 

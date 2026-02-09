@@ -6,7 +6,6 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
@@ -14,6 +13,7 @@ using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
+using DfE.GIAP.Web.Features.Search.Options.Search;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
@@ -46,8 +46,8 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
                 .Build();
 
         services
-            .AddOptions<AzureSearchOptions>()
-            .Bind(indexConfiguration.GetSection(nameof(AzureSearchOptions)));
+            .AddOptions<SearchOptions>()
+            .Bind(indexConfiguration.GetSection(nameof(SearchOptions)));
 
         services
             .AddOptions<AzureSearchConnectionOptions>()

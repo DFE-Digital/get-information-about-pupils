@@ -66,12 +66,12 @@ public sealed class SearchServiceAdapterRequest
     /// <param name="offset">Specifies how many results to skip in the returned dataset. Defaults to zero.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="searchKeyword"/> is null or whitespace.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="searchFields"/> or <paramref name="facets"/> is null or empty.</exception>
-    public SearchServiceAdapterRequest(        
+    public SearchServiceAdapterRequest(
         string index,
         string searchKeyword,
         IList<string> searchFields,
         SortOrder sortOrdering,
-        int resultsSize,
+        int size,
         IList<string>? facets = null,
         IList<FilterRequest>? searchFilterRequests = null,
         bool includeTotalCount = true,
@@ -80,23 +80,29 @@ public sealed class SearchServiceAdapterRequest
         ArgumentException.ThrowIfNullOrWhiteSpace(index);
         Index = index;
 
-        SearchKeyword = !string.IsNullOrWhiteSpace(searchKeyword)
-            ? searchKeyword
-            : throw new ArgumentException(
-                $"{nameof(searchKeyword)} cannot be null or whitespace.", nameof(searchKeyword));
+        ArgumentException.ThrowIfNullOrWhiteSpace(searchKeyword);
+        SearchKeyword = searchKeyword;
 
-        SearchFields = searchFields?.Count > 0
-            ? searchFields
-            : throw new ArgumentException(
+        if (searchFields is null || searchFields.Count == 0)
+        {
+            throw new ArgumentException(
                 $"A valid {nameof(searchFields)} argument must be provided.", nameof(searchFields));
+        }
+        SearchFields = searchFields;
+
+        ArgumentNullException.ThrowIfNull(sortOrdering);
         SortOrdering = sortOrdering;
 
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(resultsSize);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(size);
+        Size = size;
 
-        Size = resultsSize;
         Facets = facets ?? [];
+
         SearchFilterRequests = searchFilterRequests ?? [];
+
         IncludeTotalCount = includeTotalCount;
+
+        ArgumentOutOfRangeException.ThrowIfNegative(offset);
         Offset = offset;
     }
 

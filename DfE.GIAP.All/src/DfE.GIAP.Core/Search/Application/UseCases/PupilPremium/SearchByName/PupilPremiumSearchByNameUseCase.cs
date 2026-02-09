@@ -17,7 +17,7 @@ internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSea
 
     public async Task<PupilPremiumSearchByNameResponse> HandleRequestAsync(PupilPremiumSearchByNameRequest request)
     {
-        SearchResponse<PupilPremiumLearners, SearchFacets> response = 
+        SearchResponse<PupilPremiumLearners, SearchFacets> response =
             await _searchForLearnerByNameService.SearchAsync(
                 new SearchLearnerByNameRequest(
                     searchKeywords: request.SearchKeywords!,
@@ -27,8 +27,8 @@ internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSea
                     offset: request.Offset));
 
         return new PupilPremiumSearchByNameResponse(
-            response.LearnerSearchResults, 
-            response.FacetedResults, 
+            response.LearnerSearchResults,
+            response.FacetedResults,
             response.TotalNumberOfResults);
     }
 }

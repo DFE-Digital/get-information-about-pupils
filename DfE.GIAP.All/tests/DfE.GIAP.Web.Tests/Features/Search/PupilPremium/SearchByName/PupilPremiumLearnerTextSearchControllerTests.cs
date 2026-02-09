@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
@@ -6,13 +5,17 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Web.Features.Search.Options.Sort;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.TestDoubles;
@@ -23,12 +26,6 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
-using DfE.GIAP.Web.Features.Search.Shared.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Web.Features.Search.Options.Search;
-using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Web.Features.Search.Options.Sort;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 
@@ -52,8 +49,11 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
 
-    private readonly ISortOrderFactory _mockSortOrderMapper =
-        Substitute.For<ISortOrderFactory>();
+    private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
+
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
 
     public PupilPremiumLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -66,8 +66,22 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             validSortFields: ["Surname", "DOB", "Forename"]
         );
 
-        _mockSortOrderMapper.Create(
-            Arg.Any<SortOptions>(), Arg.Any<(string?, string?)>()).Returns(stubSortOrder);
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
 
         PupilPremiumSearchByNameResponse response =
             PupilPremiumSearchByNameResponseTestDouble.CreateSuccessResponse();
@@ -1329,10 +1343,10 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _mockUseCase,
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
-            new Mock<ISortOrderFactory>().Object,
+            _sortOrderFactoryMock.Object,
             _mockFiltersRequestBuilder,
-            new Mock<ISearchIndexOptionsProvider>().Object,
-            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

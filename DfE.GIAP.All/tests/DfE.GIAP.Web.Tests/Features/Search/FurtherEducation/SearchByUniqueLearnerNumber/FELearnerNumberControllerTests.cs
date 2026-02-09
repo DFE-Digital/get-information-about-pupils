@@ -6,9 +6,11 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
@@ -50,14 +52,39 @@ public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResu
 
     private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
 
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
 
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        SortOrder stubSortOrder = new(
+            sortField: "Surname",
+            sortDirection: "asc",
+            validSortFields: ["Surname", "DOB", "Forename"]
+        );
+
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
+
         FurtherEducationSearchByUniqueLearnerNumberResponse response =
             FurtherEducationSearchByUniqueLearnerNumberTestDouble.CreateSuccessResponse();
-
-        //_searchindexOptionsProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchByUniqueLearnerNumberRequest>()).Returns(response);
@@ -1528,25 +1555,18 @@ public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResu
         mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
             .ReturnsAsync(downloadPupilDataResponse);
 
-        IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
-
-        Mock<ISortOrderFactory> mockSortOrderFactory = new();
-
-        mockSortOrderFactory
-            .Setup((mapper) => mapper.Create(It.IsAny<SortOptions>(), It.IsAny<(string?, string?)>()))
-            .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
-
         return new FELearnerNumberController(
             _mockUseCase,
             _mockLearnerNumberSearchResponseToViewModelMapper,
-            mockSortOrderFactory.Object,
+            _sortOrderFactoryMock.Object,
             _mockLogger,
             _mockSelectionManager,
             _mockAppOptions,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             mockDownloadPupilDataUseCase.Object,
-            _searchindexOptionsProvider.Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = context
         };

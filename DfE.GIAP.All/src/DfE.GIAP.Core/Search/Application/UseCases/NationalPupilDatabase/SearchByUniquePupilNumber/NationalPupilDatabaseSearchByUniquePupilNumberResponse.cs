@@ -9,7 +9,7 @@ public record NationalPupilDatabaseSearchByUniquePupilNumberResponse
         LearnerSearchResults = learners ?? NationalPupilDatabaseLearners.CreateEmpty();
         TotalNumberOfResults = new(results);
     }
-    
+
     public NationalPupilDatabaseLearners LearnerSearchResults { get; }
 
     public SearchResultCount TotalNumberOfResults { get; }

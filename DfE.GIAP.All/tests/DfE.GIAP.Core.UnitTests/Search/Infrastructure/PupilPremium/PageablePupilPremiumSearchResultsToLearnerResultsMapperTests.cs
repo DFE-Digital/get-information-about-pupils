@@ -1,8 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -11,16 +9,13 @@ using FluentAssertions;
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.PupilPremium;
 public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
 {
-    private readonly
-        IMapper<
-            Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearnerSearchResults> _searchResultsMapper;
+    private readonly PageablePupilPremiumSearchResultsToLearnerResultsMapper _searchResultsMapper;
 
     public PageablePupilPremiumSearchResultsToLearnerResultsMapperTests()
     {
         _searchResultsMapper =
-            new PageablePupilPremiumSearchResultsToLearnerResultsMapper(
-                new PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper()
-        );
+            new(
+                new PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper());
     }
 
     [Fact]
@@ -36,7 +31,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
             PageableTestDouble.FromResults(searchResultDocuments);
 
         // act
-        PupilPremiumLearnerSearchResults? mappedResult =
+        PupilPremiumLearners? mappedResult =
             _searchResultsMapper.Map(pageableSearchResults);
 
         // assert
@@ -77,7 +72,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
                 .Create();
 
         // act
-        PupilPremiumLearnerSearchResults? result =
+        PupilPremiumLearners? result =
             _searchResultsMapper.Map(
                 PageableTestDouble.FromResults(emptySearchResultDocuments));
 
@@ -111,7 +106,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
             PageableTestDouble.FromResults(searchResultDocuments);
 
         // act
-        PupilPremiumLearnerSearchResults result = _searchResultsMapper.Map(pageableSearchResults);
+        PupilPremiumLearners result = _searchResultsMapper.Map(pageableSearchResults);
 
         // assert
         result.Should().NotBeNull();

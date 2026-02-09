@@ -21,14 +21,14 @@ internal sealed class FurtherEducationSearchByNameUseCase : IUseCase<FurtherEduc
         SearchResponse<FurtherEducationLearners, SearchFacets> response = await _searchForLearnerByNameService.SearchAsync(
             new SearchLearnerByNameRequest(
                 request.SearchKeywords!,
-                request.SearchCriteria!, 
+                request.SearchCriteria!,
                 request.SortOrder!,
                 request.FilterRequests,
                 request.Offset));
 
         return new FurtherEducationSearchByNameResponse(
-            response.LearnerSearchResults, 
-            response.FacetedResults, 
+            response.LearnerSearchResults,
+            response.FacetedResults,
             response.TotalNumberOfResults);
     }
 }

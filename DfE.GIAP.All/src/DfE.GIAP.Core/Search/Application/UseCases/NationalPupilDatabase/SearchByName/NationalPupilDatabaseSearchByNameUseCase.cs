@@ -17,18 +17,18 @@ internal sealed class NationalPupilDatabaseSearchByNameUseCase : IUseCase<Nation
 
     public async Task<NationalPupilDatabaseSearchByNameResponse> HandleRequestAsync(NationalPupilDatabaseSearchByNameRequest request)
     {
-        SearchResponse<NationalPupilDatabaseLearners, SearchFacets> response = 
+        SearchResponse<NationalPupilDatabaseLearners, SearchFacets> response =
             await _searchForLearnerByNameService.SearchAsync(
                 new SearchLearnerByNameRequest(
                     request.SearchKeywords!,
-                    request.SearchCriteria!, 
+                    request.SearchCriteria!,
                     request.SortOrder!,
                     request.FilterRequests,
                     request.Offset));
 
         return new NationalPupilDatabaseSearchByNameResponse(
-            response.LearnerSearchResults, 
-            response.FacetedResults, 
+            response.LearnerSearchResults,
+            response.FacetedResults,
             response.TotalNumberOfResults);
     }
 }

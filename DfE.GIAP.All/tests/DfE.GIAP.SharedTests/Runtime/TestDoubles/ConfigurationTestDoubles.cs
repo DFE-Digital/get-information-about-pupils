@@ -49,18 +49,18 @@ public static class ConfigurationTestDoubles
         Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {
             // AzureSearchOptions: Parameters controlling search behavior
-            ["AzureSearchOptions:Indexes:further-education:SearchIndex"] = "FE_INDEX_NAME",
-            ["AzureSearchOptions:Indexes:further-education:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Indexes:further-education:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:Indexes:further-education:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["AzureSearchOptions:Indexes:npd:SearchIndex"] = "NPD_INDEX_NAME",
-            ["AzureSearchOptions:Indexes:npd:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Indexes:npd:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:Indexes:npd:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["AzureSearchOptions:Indexes:pupil-premium:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
-            ["AzureSearchOptions:Indexes:pupil-premium:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Indexes:pupil-premium:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:Indexes:pupil-premium:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:further-education:SearchCriteria:SearchIndex"] = "FE_INDEX_NAME",
+            ["SearchOptions:Indexes:further-education:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["SearchOptions:Indexes:further-education:SearchCriteria:Size"] = "40000",                  // Max number of results
+            ["SearchOptions:Indexes:further-education:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:npd:SearchCriteria:SearchIndex"] = "NPD_INDEX_NAME",
+            ["SearchOptions:Indexes:npd:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["SearchOptions:Indexes:npd:SearchCriteria:Size"] = "40000",                  // Max number of results
+            ["SearchOptions:Indexes:npd:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
+            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:Size"] = "40000",                  // Max number of results
+            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);

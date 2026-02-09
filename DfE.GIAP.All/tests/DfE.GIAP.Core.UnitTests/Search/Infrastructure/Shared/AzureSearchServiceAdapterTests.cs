@@ -8,11 +8,11 @@ using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
-using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
+using DfE.GIAP.Web.Features.Search.Options.Search;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
@@ -23,7 +23,7 @@ public sealed class AzureSearchServiceAdaptorTests
 {
     private readonly string _mockIndexKey = "further-education";
 
-    private readonly AzureSearchOptions _searchOptions = SearchOptionsTestDouble.Stub();
+    private readonly SearchOptions _searchOptions = SearchOptionsTestDouble.Stub();
 
     private readonly Mock<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>> _mockFacetsMapper =
         FacetResultToLearnerFacetsMapperTestDouble.DefaultMock();
@@ -46,33 +46,12 @@ public sealed class AzureSearchServiceAdaptorTests
     {
         // Arrange
         ISearchByKeywordService nullService = null!;
-        IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
+        IOptions<SearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
 
         // Act
         Func<AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>> act =
             () => new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
                 nullService,
-                options,
-                _mockFacetsMapper.Object,
-                _searchOptionsBuilder,
-                CreateDtoToResultMapper());
-
-        // Assert
-        Assert.Throws<ArgumentNullException>(act);
-    }
-
-    [Fact]
-    public void Ctor_Throws_When_Options_Is_Null()
-    {
-        // Arrange
-        ISearchByKeywordService service = SearchServiceTestDouble.DefaultMock();
-        IOptions<AzureSearchOptions> nullOptions = OptionsTestDoubles.MockNullOptions<AzureSearchOptions>();
-
-        // Act
-        Func<AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>> act =
-            () => new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
-                service,
-                nullOptions,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
                 CreateDtoToResultMapper());
@@ -86,14 +65,13 @@ public sealed class AzureSearchServiceAdaptorTests
     {
         // Arrange
         ISearchByKeywordService service = SearchServiceTestDouble.DefaultMock();
-        IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
+        IOptions<SearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
         IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> nullMapper = null!;
 
         // Act
         Func<AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>> act =
             () => new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
                 service,
-                options,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
                 nullMapper);
@@ -117,7 +95,7 @@ public sealed class AzureSearchServiceAdaptorTests
                     new SearchResultFakeBuilder<FurtherEducationLearnerDataTransferObject>()
                         .WithSearchResults(fakeLearner)
                         .Create(),
-                    IndexOptions.Size,
+                    IndexOptions.SearchCriteria!.Size,
                     facets: null,
                     coverage: null,
                     rawResponse: responseMock.Object),
@@ -126,33 +104,31 @@ public sealed class AzureSearchServiceAdaptorTests
         Mock<ISearchByKeywordService> mockKeywordService =
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
-        IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
+        IOptions<SearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
 
-        IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>
-            dtoMapper = CreateDtoToResultMapper();
+        IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> dtoMapper = CreateDtoToResultMapper();
 
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
-            new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
+            new(
                 mockKeywordService.Object,
-                options,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
                 dtoMapper);
 
         SearchServiceAdapterRequest request =
-            SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockIndexKey);
+            SearchServiceAdapterRequestTestDouble.Stub(_mockIndexKey);
 
         // Act
-        _ = await sut.SearchAsync(request);
+        await sut.SearchAsync(request);
 
         SearchByKeywordServiceTestDouble.keywordPassedToSearchService.Should().Be(request.SearchKeyword);
-        SearchByKeywordServiceTestDouble.indexPassedToSearchService.Should().Be(IndexOptions.SearchIndex);
+        SearchByKeywordServiceTestDouble.indexPassedToSearchService.Should().Be(request.Index);
 
-        SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.Size.Should().Be(IndexOptions.Size);
+        SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.Size.Should().Be(request.Size);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.SearchMode.Should()
-            .Be((SearchMode)IndexOptions.SearchMode);
+            .Be((SearchMode)IndexOptions.SearchCriteria!.SearchMode);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.IncludeTotalCount.Should()
-            .Be(IndexOptions.IncludeTotalCount);
+            .Be(request.IncludeTotalCount);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.SearchFields.Should()
             .BeEquivalentTo(request.SearchFields);
         SearchByKeywordServiceTestDouble.searchOptionsPassedToSearchService!.Facets.Should()
@@ -197,18 +173,15 @@ public sealed class AzureSearchServiceAdaptorTests
         Mock<ISearchByKeywordService> mockKeywordService =
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
-        IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
-
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
             new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
                 mockKeywordService.Object,
-                options,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
                 CreateDtoToResultMapper());
 
         SearchServiceAdapterRequest request =
-            SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockIndexKey);
+            SearchServiceAdapterRequestTestDouble.Stub(_mockIndexKey);
 
         // Act
         ISearchResults<FurtherEducationLearners, SearchFacets> result =
@@ -242,18 +215,15 @@ public sealed class AzureSearchServiceAdaptorTests
         Mock<ISearchByKeywordService> mockKeywordService =
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
-        IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
-
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
             new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
                 mockKeywordService.Object,
-                options,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
                 CreateDtoToResultMapper());
 
         SearchServiceAdapterRequest request =
-            SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockIndexKey);
+            SearchServiceAdapterRequestTestDouble.Stub(_mockIndexKey);
 
         // Act
         ISearchResults<FurtherEducationLearners, SearchFacets> result =
@@ -293,18 +263,15 @@ public sealed class AzureSearchServiceAdaptorTests
         Mock<ISearchByKeywordService> mockKeywordService =
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
-        IOptions<AzureSearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
-
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
             new(
                 mockKeywordService.Object,
-                options,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
                 throwingMapper.Object);
 
         SearchServiceAdapterRequest request =
-            SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockIndexKey);
+            SearchServiceAdapterRequestTestDouble.Stub(_mockIndexKey);
 
         // Act & Assert
         return sut.Invoking(s => s.SearchAsync(request))

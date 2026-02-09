@@ -42,9 +42,38 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
         IMapper<
             PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
 
+    private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
+
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
+
     public PupilPremiumLearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        SortOrder stubSortOrder = new(
+            sortField: "Surname",
+            sortDirection: "asc",
+            validSortFields: ["Surname", "DOB", "Forename"]
+        );
+
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
 
         PupilPremiumSearchByUniquePupilNumberResponse response =
             PupilPremiumSearchByUniquePupilNumberResponseTestDouble.CreateSuccessResponse();
@@ -1383,23 +1412,17 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
 
-        IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
-        Mock<ISortOrderFactory> sortOrderFactoryMock = new();
-        sortOrderFactoryMock
-            .Setup((mapper) => mapper.Create(It.IsAny<SortOptions>(), It.IsAny<(string?, string?)>()))
-            .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
-
         return new PupilPremiumLearnerNumberSearchController(
             _mockLogger,
             _mockUseCase.Object,
-            sortOrderFactoryMock.Object,
+            _sortOrderFactoryMock.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,
             _mockSelectionManager,
             _addPupilsUseCaseMock,
             jsonSerializerMock.Object,
             downloadPupilPremiumDataServiceMock.Object,
-            new Mock<ISearchIndexOptionsProvider>().Object,
-            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

@@ -14,7 +14,7 @@ public record FurtherEducationSearchByNameResponse
     }
 
     public FurtherEducationLearners LearnerSearchResults { get; }
-    
+
     public SearchFacets FacetedResults { get; }
 
     public SearchResultCount TotalNumberOfResults { get; }

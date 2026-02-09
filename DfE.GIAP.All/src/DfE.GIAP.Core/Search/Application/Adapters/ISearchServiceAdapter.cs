@@ -28,5 +28,7 @@ public interface ISearchServiceAdapter<TSearchResult, TFacetResult>
     /// retrieved from the underlying search engine (e.g., Azure Cognitive Search).
     /// </returns>
     Task<ISearchResults<TSearchResult, TFacetResult>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest);
+
+    // TODO CANCELLATION TOKEN
 }
 

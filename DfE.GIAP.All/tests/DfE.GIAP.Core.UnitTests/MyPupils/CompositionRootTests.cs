@@ -1,5 +1,10 @@
-﻿using Azure.Search.Documents;
+﻿using Azure;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Models;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
+using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Providers;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
@@ -10,14 +15,22 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.Core.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Extensions;
+using DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
 using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.Web.Features.Search.Options.Search;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
+using SearchOptions = DfE.GIAP.Web.Features.Search.Options.Search.SearchOptions;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
 public sealed class CompositionRootTests
@@ -38,6 +51,7 @@ public sealed class CompositionRootTests
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithAzureSearchConnectionOptions()
                 .WithSearchOptions()
+                .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
 
         IServiceCollection services =
@@ -46,19 +60,27 @@ public sealed class CompositionRootTests
                 .AddFeaturesSharedServices();
 
         // TODO TEMP while the dependency on AzureSearch for MyPupils exists
-        services.AddOptions<SearchOptions>()
-            .Configure<IConfiguration>((settings, configuration) =>
-                configuration
-                    .GetSection(nameof(SearchOptions))
-                    .Bind(settings));
 
-        services.AddOptions<AzureSearchConnectionOptions>()
-            .Configure<IConfiguration>((settings, configuration) =>
-                configuration
-                    .GetSection(nameof(AzureSearchConnectionOptions))
-                    .Bind(settings));
+        services.AddSingleton<ISearchIndexOptionsProvider, SearchIndexOptionsProvider>();
 
-        services.AddMyPupilsCore();
+        services
+            .AddOptions<SearchOptions>()
+            .Bind(configuration.GetSection(nameof(SearchOptions)));
+
+        services.AddSingleton<SearchOptions>(sp => sp.GetRequiredService<IOptions<SearchOptions>>().Value);
+
+        services
+            .AddOptions<AzureSearchConnectionOptions>()
+            .Bind(configuration.GetSection(nameof(AzureSearchConnectionOptions)));
+        // END TODO TEMP
+
+        services.AddSearchCore(configuration);
+        services.RemoveAll<ISearchIndexNamesProvider>();
+        services.AddSingleton<ISearchIndexNamesProvider, FakeSearchIndexNamesProvider>();
+        services
+            .AddNationalPupilDatabaseSearch()
+            .AddPupilPremiumSearch()
+            .AddMyPupilsCore();
 
         // Act
         IServiceProvider provider = services.BuildServiceProvider();
@@ -86,4 +108,10 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IEnumerable<SearchClient>>());
     }
+
+    private sealed class FakeSearchIndexNamesProvider : ISearchIndexNamesProvider
+    {
+        public IEnumerable<string> GetIndexNames() => [];
+    }
+
 }

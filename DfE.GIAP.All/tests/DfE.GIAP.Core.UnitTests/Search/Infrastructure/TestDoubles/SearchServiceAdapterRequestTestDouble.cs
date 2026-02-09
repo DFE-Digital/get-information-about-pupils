@@ -17,13 +17,16 @@ internal static class SearchServiceAdapterRequestTestDouble
     /// </summary>
     /// <param name="filters">Optional list of filter requests to include in the stub.</param>
     /// <returns>A preconfigured search request object for test use.</returns>
-    public static SearchServiceAdapterRequest Stub(string searchIndexKey, IList<FilterRequest>? filters = null) =>
+    public static SearchServiceAdapterRequest Stub(string index, IList<FilterRequest>? filters = null) =>
         new(
-            searchIndexKey: searchIndexKey,                                     // Stubbed index-key for index-options lookup
+            index,                                     // Stubbed index-key for index-options lookup
             "searchKeyword",                                    // Simulated keyword for search input
             ["searchField1", "searchField2"],                   // Fields to search against
             new SortOrder("DOB", "asc", ["DOB", "Surname"]),    // Sort by DOB ascending, fallback to Surname
+            10,
             ["facet1", "facet2"],                               // Facets to include in the response
-            filters                                             // Optional filters injected for test specificity
+            filters,                                             // Optional filters injected for test specificity
+            includeTotalCount: true,
+            offset: 0
         );
 }

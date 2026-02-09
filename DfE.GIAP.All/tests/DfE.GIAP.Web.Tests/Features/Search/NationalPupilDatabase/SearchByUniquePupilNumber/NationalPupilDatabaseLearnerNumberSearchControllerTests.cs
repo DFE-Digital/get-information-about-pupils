@@ -58,9 +58,39 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
 
+    private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
+
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
+
     public NationalPupilDatabaseLearnerNumberSearchControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
+
+        SortOrder stubSortOrder = new(
+            sortField: "Surname",
+            sortDirection: "asc",
+            validSortFields: ["Surname", "DOB", "Forename"]
+        );
+
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
+
 
         NationalPupilDatabaseSearchByUniquePupilNumberResponse response =
             NationalPupilDatabaseSearchByUniquePupilNumberResponseTestDouble.CreateSuccessResponse();
@@ -1545,17 +1575,11 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
                 return true;
             });
 
-        IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
-        Mock<ISortOrderFactory> sortOrderFactory = new();
-        sortOrderFactory
-            .Setup((mapper) => mapper.Create(It.IsAny<SortOptions>(), It.IsAny<(string?, string?)>()))
-            .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
-
         return new NationalPupilDatabaseLearnerNumberSearchController(
             _mockLogger,
             _mockCtfService,
             _mockUseCase.Object,
-            sortOrderFactory.Object,
+            _sortOrderFactoryMock.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,
             _mockSelectionManager,
             _mockAppOptions,
@@ -1564,8 +1588,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             jsonSerializerMock.Object,
             mockDownloadPupilDataUseCase.Object,
             mockEventLogger.Object,
-            new Mock<ISearchIndexOptionsProvider>().Object,
-            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

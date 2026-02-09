@@ -16,7 +16,7 @@ internal sealed class PupilPremiumSearchByUniquePupilNumberUseCase : IUseCase<Pu
 
     public async Task<PupilPremiumSearchByUniquePupilNumberResponse> HandleRequestAsync(PupilPremiumSearchByUniquePupilNumberRequest request)
     {
-        SearchResponse<PupilPremiumLearners, SearchFacets> response = 
+        SearchResponse<PupilPremiumLearners, SearchFacets> response =
             await _searchLearnerByIdentifierService.SearchAsync(
                 new SearchLearnersByIdentifierRequest(
                     identifiers: request.UniquePupilNumbers!,

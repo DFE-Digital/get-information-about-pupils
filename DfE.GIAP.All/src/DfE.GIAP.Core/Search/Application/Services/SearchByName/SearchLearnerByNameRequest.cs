@@ -13,8 +13,7 @@ public record SearchLearnerByNameRequest
         IList<FilterRequest>? filters = null,
         int offset = 0)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(searchKeywords);
-        SearchKeywords = searchKeywords;
+        SearchKeywords = searchKeywords ?? string.Empty;
 
         ArgumentNullException.ThrowIfNull(searchCriteria);
         SearchCriteria = searchCriteria;
