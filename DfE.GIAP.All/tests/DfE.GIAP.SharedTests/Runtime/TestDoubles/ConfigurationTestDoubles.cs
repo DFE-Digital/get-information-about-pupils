@@ -44,7 +44,7 @@ public static class ConfigurationTestDoubles
         return builder;
     }
 
-    public static IConfigurationBuilder WithAzureSearchOptions(this IConfigurationBuilder builder)
+    public static IConfigurationBuilder WithSearchOptions(this IConfigurationBuilder builder)
     {
         Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {

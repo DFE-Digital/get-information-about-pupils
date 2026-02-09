@@ -5,11 +5,11 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 public record NationalPupilDatabaseSearchByNameResponse
 {
-    public NationalPupilDatabaseSearchByNameResponse(NationalPupilDatabaseLearners? learners, SearchFacets? facets, SearchResultCount searchResultCount)
+    public NationalPupilDatabaseSearchByNameResponse(NationalPupilDatabaseLearners? learners, SearchFacets? facets, int totalResultsCount)
     {
         LearnerSearchResults = learners ?? NationalPupilDatabaseLearners.CreateEmpty();
         FacetedResults = facets ?? SearchFacets.CreateEmpty();
-        TotalNumberOfResults = searchResultCount;
+        TotalNumberOfResults = new(totalResultsCount);
     }
 
     public NationalPupilDatabaseLearners LearnerSearchResults { get; }

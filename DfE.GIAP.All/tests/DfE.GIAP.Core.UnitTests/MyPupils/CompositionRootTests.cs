@@ -12,7 +12,6 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Configuration;
@@ -38,7 +37,7 @@ public sealed class CompositionRootTests
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithAzureSearchConnectionOptions()
-                .WithAzureSearchOptions()
+                .WithSearchOptions()
                 .Build();
 
         IServiceCollection services =
@@ -47,10 +46,10 @@ public sealed class CompositionRootTests
                 .AddFeaturesSharedServices();
 
         // TODO TEMP while the dependency on AzureSearch for MyPupils exists
-        services.AddOptions<AzureSearchOptions>()
+        services.AddOptions<SearchOptions>()
             .Configure<IConfiguration>((settings, configuration) =>
                 configuration
-                    .GetSection(nameof(AzureSearchOptions))
+                    .GetSection(nameof(SearchOptions))
                     .Bind(settings));
 
         services.AddOptions<AzureSearchConnectionOptions>()

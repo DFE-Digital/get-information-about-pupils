@@ -7,16 +7,18 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
+using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Web.Features.Search.Options.Sort;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Services.Download.CTF;
-using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -48,10 +50,10 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     private readonly IMapper<Dictionary<string, string[]>, IList<FilterRequest>> _mockFiltersRequestMapper =
         Substitute.For<IMapper<Dictionary<string, string[]>, IList<FilterRequest>>>();
 
-    private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
+    private readonly IFiltersRequestFactory _mockFiltersRequestFactory = Substitute.For<IFiltersRequestFactory>();
 
-    private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
-        Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
+    private readonly ISortOrderFactory _mockSortOrderFactory =
+        Substitute.For<ISortOrderFactory>();
 
 
     public NationalPupilDatabaseLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
@@ -65,11 +67,11 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
             validSortFields: ["Surname", "DOB", "Forename"]
         );
 
-        _mockSortOrderMapper.Map(
-            Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+        _mockSortOrderFactory.Create(
+            Arg.Any<SortOptions>(), Arg.Any<(string?, string?)>()).Returns(stubSortOrder);
 
-        SearchResponse response =
-            NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
+        NationalPupilDatabaseSearchByNameResponse response =
+            NationalPupilDatabaseSearchByNameResponseTestDoubles.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<NationalPupilDatabaseSearchByNameRequest>()).Returns(response);
@@ -1412,7 +1414,10 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
              _mockLearnerSearchResponseToViewModelMapper,
              _mockFiltersRequestMapper,
              new Mock<ISortOrderFactory>().Object,
-             _mockFiltersRequestBuilder)
+             _mockFiltersRequestFactory,
+             new Mock<ISearchIndexOptionsProvider>().Object,
+             new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
+            
         {
             ControllerContext = new ControllerContext()
             {

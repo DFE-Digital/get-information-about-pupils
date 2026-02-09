@@ -1,10 +1,11 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
-using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByName;
+using DfE.GIAP.Web.Tests.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 
@@ -31,11 +32,9 @@ public sealed class NationalPupilDatabaseLearnerNumericSearchMappingContextToVie
 
         List<NationalPupilDatabaseLearner> learners = NationalPupilDatabaseLearnerTestDoubles.FakeMany(domainLearners.Count);
 
-        SearchResponse response =
-            NationalPupilDatabaseSearchResponseTestDoubles.Create(
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse response =
+            NationalPupilDatabaseSearchByUniquePupilNumberResponseTestDouble.Create(
                 learners: new NationalPupilDatabaseLearners(learners),
-                facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
-                status: SearchResponseStatus.Success,
                 totalResults: learners.Count);
 
         Mock<IMapper<NationalPupilDatabaseLearner, Learner>> learnerMapper = new();

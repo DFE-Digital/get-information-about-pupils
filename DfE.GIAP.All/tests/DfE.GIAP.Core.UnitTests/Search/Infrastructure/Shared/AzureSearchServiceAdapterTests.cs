@@ -23,7 +23,7 @@ public sealed class AzureSearchServiceAdaptorTests
 {
     private readonly string _mockIndexKey = "further-education";
 
-    private readonly AzureSearchOptions _searchOptions = AzureSearchOptionsTestDouble.Stub();
+    private readonly AzureSearchOptions _searchOptions = SearchOptionsTestDouble.Stub();
 
     private readonly Mock<IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets>> _mockFacetsMapper =
         FacetResultToLearnerFacetsMapperTestDouble.DefaultMock();

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+﻿using DfE.GIAP.Web.Features.Search.Options.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 
@@ -7,13 +7,13 @@ namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 /// This test double isolates configuration dependencies, enabling deterministic test behavior
 /// without relying on external config files or runtime bindings.
 /// </summary>
-internal static class AzureSearchOptionsTestDouble
+internal static class SearchOptionsTestDouble
 {
     /// <summary>
     /// Returns a stubbed <see cref="AzureSearchOptions"/> object with default values
     /// tailored for testing the "Further Education" search index.
     /// </summary>
-    public static AzureSearchOptions Stub()
+    public static SearchOptions Stub()
     {
         Dictionary<string, SearchIndexOptions> indexes = new()
         {
@@ -21,15 +21,18 @@ internal static class AzureSearchOptionsTestDouble
                 "further-education",
                 new SearchIndexOptions()
                 {
-                    SearchMode = 0,                         // Default search mode (e.g., 'Any' or 'All' depending on enum)
-                    Size = 100,                             // Max number of results to return
-                    IncludeTotalCount = true,               // Enables total count metadata in search response
-                    SearchIndex = "idx-further-education"   // Target index for test scenarios
+                    SearchCriteria = new SearchCriteriaOptions()
+                    {
+                        SearchMode = 0,// Default search mode (e.g., 'Any' or 'All' depending on enum)
+                        Size = 100, // Max number of results to return
+                        IncludeTotalCount = true, // Enables total count metadata in search response
+                        SearchIndex = "idx-further-education" // Target index for test scenarios
+                    }
                 }
             }
         };
 
-        return new AzureSearchOptions()
+        return new SearchOptions()
         {
             Indexes = indexes
         };

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
+namespace DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 /// <summary>
 /// Provides scaffolds for creating <see cref="SearchFacet"/> and <see cref="SearchFacets"/> objects.
@@ -51,5 +51,15 @@ public static class SearchFacetsTestDouble
         }
 
         return new(searchFacets: facetList);
+    }
+
+    public static SearchFacets Stub()
+    {
+        List<SearchFacet> facets =
+        [
+            CreateFacet(name: "name", value: "value1", count: 1)
+        ];
+
+        return new SearchFacets(facets);
     }
 }

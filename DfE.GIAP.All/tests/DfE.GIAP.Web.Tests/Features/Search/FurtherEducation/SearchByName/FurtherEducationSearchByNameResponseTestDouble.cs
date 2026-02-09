@@ -4,8 +4,9 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
+namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByName;
 
 /// <summary>
 /// Provides scaffolds for creating <see cref="FurtherEducationSearchByNameResponse"/> objects for unit testing.
@@ -26,7 +27,6 @@ public static class FurtherEducationSearchByNameResponseTestDouble
     public static FurtherEducationSearchByNameResponse Create(
         FurtherEducationLearners learners,
         SearchFacets facets,
-        SearchResponseStatus status = SearchResponseStatus.Success,
         int? totalResults = null) =>
             new(learners, facets, totalResults ?? learners.Count);
 
@@ -50,14 +50,7 @@ public static class FurtherEducationSearchByNameResponseTestDouble
         );
 
         // Construct a sample facet group with one region facet
-        SearchFacets facets = new(
-            [
-                new("Region",
-                [
-                    new FacetResult("North", 10)
-                ])
-            ]
-        );
+        SearchFacets facets = SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 10);
 
         // Return a success response with the sample learner and facet
         return new FurtherEducationSearchByNameResponse(learners, facets, learners.Count);

@@ -1,28 +1,28 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Web.Features.Search.Options.Sort;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
-using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
 
@@ -33,7 +33,8 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
     private readonly ILogger<PupilPremiumLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerNumberSearchController>>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
-    private readonly Mock<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchResponse>> _mockUseCase = new();
+    private readonly Mock<IUseCase<
+        PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse>> _mockUseCase = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
@@ -41,23 +42,18 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
         IMapper<
             PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
 
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
-
-
     public PupilPremiumLearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
 
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
-
-        PupilPremiumSearchResponse response =
-            PupilPremiumSearchResponseTestDouble.CreateSuccessResponse();
+        PupilPremiumSearchByUniquePupilNumberResponse response =
+            PupilPremiumSearchByUniquePupilNumberResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase
             .Setup(
                 (useCase)
                     => useCase.HandleRequestAsync(
-                        It.IsAny<PupilPremiumSearchByNameRequest>()))
+                        It.IsAny<PupilPremiumSearchByUniquePupilNumberRequest>()))
             .ReturnsAsync(response);
 
         _mockLearnerNumberSearchResponseToViewModelMapper
@@ -1388,21 +1384,22 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
             .ReturnsAsync(responseStubNoData);
 
         IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
-        Mock<IMapper<SortOrderRequest, SortOrder>> mockMapper = new();
-        mockMapper
-            .Setup((mapper) => mapper.Map(It.IsAny<SortOrderRequest>()))
+        Mock<ISortOrderFactory> sortOrderFactoryMock = new();
+        sortOrderFactoryMock
+            .Setup((mapper) => mapper.Create(It.IsAny<SortOptions>(), It.IsAny<(string?, string?)>()))
             .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
 
         return new PupilPremiumLearnerNumberSearchController(
             _mockLogger,
             _mockUseCase.Object,
-            new Mock<ISortOrderFactory>().Object,
+            sortOrderFactoryMock.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,
             _mockSelectionManager,
             _addPupilsUseCaseMock,
             jsonSerializerMock.Object,
             downloadPupilPremiumDataServiceMock.Object,
-            _mockSearchCriteriaProvider.Object)
+            new Mock<ISearchIndexOptionsProvider>().Object,
+            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
         {
             ControllerContext = new ControllerContext()
             {

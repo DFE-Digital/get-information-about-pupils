@@ -83,7 +83,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
         ISortOrderFactory sortOrderFactory,
-        IFiltersRequestFactory filtersRequestBuilder,
+        IFiltersRequestFactory filtersRequestFactory,
         ISearchIndexOptionsProvider searchIndexOptionsProvider,
         IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
@@ -108,14 +108,14 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         ArgumentNullException.ThrowIfNull(learnerSearchResponseToViewModelMapper);
         _learnerSearchResponseToViewModelMapper = learnerSearchResponseToViewModelMapper;
 
-        ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
+        ArgumentNullException.ThrowIfNull(filtersRequestFactory);
         _filtersRequestMapper = filtersRequestMapper;
 
         ArgumentNullException.ThrowIfNull(sortOrderFactory);
         _sortOrdeFactory = sortOrderFactory;
 
-        ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
-        _filtersRequestBuilder = filtersRequestBuilder;
+        ArgumentNullException.ThrowIfNull(filtersRequestFactory);
+        _filtersRequestBuilder = filtersRequestFactory;
 
         ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
         _searchIndexOptionsProvider = searchIndexOptionsProvider;

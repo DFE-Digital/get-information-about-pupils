@@ -4,10 +4,10 @@ using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 public record PupilPremiumSearchByUniquePupilNumberResponse
 {
-    internal PupilPremiumSearchByUniquePupilNumberResponse(PupilPremiumLearners? learners, SearchResultCount searchResultCount)
+    internal PupilPremiumSearchByUniquePupilNumberResponse(PupilPremiumLearners? learners, int? totalResultsCount)
     {
         LearnerSearchResults = learners ?? PupilPremiumLearners.CreateEmpty();
-        TotalNumberOfResults = searchResultCount;
+        TotalNumberOfResults = new(totalResultsCount);
     }
 
     public PupilPremiumLearners LearnerSearchResults { get; }

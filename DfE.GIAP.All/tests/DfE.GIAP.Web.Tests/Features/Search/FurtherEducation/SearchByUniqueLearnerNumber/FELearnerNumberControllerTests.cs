@@ -7,19 +7,15 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Domain.Search.Learner;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
-using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.Options.Sort;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -32,7 +28,7 @@ using NSubstitute;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 
-public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
+public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
     
@@ -58,8 +54,8 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
-        FurtherEducationSearchByNameResponse response =
-            FurtherEducationSearchByNameResponseTestDouble.CreateSuccessResponse();
+        FurtherEducationSearchByUniqueLearnerNumberResponse response =
+            FurtherEducationSearchByUniqueLearnerNumberTestDouble.CreateSuccessResponse();
 
         //_searchindexOptionsProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 

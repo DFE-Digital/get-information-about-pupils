@@ -15,7 +15,6 @@ using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +26,9 @@ using NSubstitute;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Web.Features.Search.Options.Sort;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 
@@ -39,8 +41,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
-    private readonly IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchResponse>>();
+    private readonly IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse> _mockUseCase =
+        Substitute.For<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse>>();
 
     private readonly IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -50,11 +52,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
 
-    private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
-        Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
-
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
-
+    private readonly ISortOrderFactory _mockSortOrderMapper =
+        Substitute.For<ISortOrderFactory>();
 
     public PupilPremiumLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -67,13 +66,11 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             validSortFields: ["Surname", "DOB", "Forename"]
         );
 
-        _mockSortOrderMapper.Map(
-            Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+        _mockSortOrderMapper.Create(
+            Arg.Any<SortOptions>(), Arg.Any<(string?, string?)>()).Returns(stubSortOrder);
 
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
-
-        PupilPremiumSearchResponse response =
-            PupilPremiumSearchResponseTestDouble.CreateSuccessResponse();
+        PupilPremiumSearchByNameResponse response =
+            PupilPremiumSearchByNameResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<PupilPremiumSearchByNameRequest>()).Returns(response);
@@ -1334,7 +1331,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _mockFiltersRequestMapper,
             new Mock<ISortOrderFactory>().Object,
             _mockFiltersRequestBuilder,
-            _mockSearchCriteriaProvider.Object)
+            new Mock<ISearchIndexOptionsProvider>().Object,
+            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
         {
             ControllerContext = new ControllerContext()
             {

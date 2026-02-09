@@ -1,29 +1,25 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 
-namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
-public static class PupilPremiumSearchResponseTestDouble
+namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
+public static class PupilPremiumSearchByNameResponseTestDouble
 {
-    public static PupilPremiumSearchResponse Create(
-        PupilPremiumLearnerSearchResults learners,
+    public static PupilPremiumSearchByNameResponse Create(
+        PupilPremiumLearners learners,
         SearchFacets facets,
         SearchResponseStatus status = SearchResponseStatus.Success,
         int? totalResults = null) =>
-            new(status, totalResults ?? learners.Count)
-            {
-                LearnerSearchResults = learners,
-                FacetedResults = facets
-            };
+            new(learners, facets, totalResults ?? learners.Count);
 
-    public static PupilPremiumSearchResponse CreateSuccessResponse()
+    public static PupilPremiumSearchByNameResponse CreateSuccessResponse()
     {
         // Construct a sample learner with basic identity and characteristics
-        PupilPremiumLearnerSearchResults learners = new(
+        PupilPremiumLearners learners = new(
             [new(
                 UniquePupilNumberTestDoubles.Generate(),
                 new LearnerName("Alice", "Smith"),
@@ -46,10 +42,6 @@ public static class PupilPremiumSearchResponseTestDouble
         );
 
         // Return a success response with the sample learner and facet
-        return new PupilPremiumSearchResponse(SearchResponseStatus.Success, learners.Count)
-        {
-            LearnerSearchResults = learners,
-            FacetedResults = facets
-        };
+        return new PupilPremiumSearchByNameResponse(learners, facets, learners.Count);
     }
 }
