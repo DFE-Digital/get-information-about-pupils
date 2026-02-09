@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using FluentAssertions;
@@ -11,7 +11,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.FurtherEducation;
 
 public sealed class FurtherEducationSearchUseCaseTests
 {
-    private readonly SearchResults<FurtherEducationLearners, SearchFacets> _searchResults;
+    private readonly ISearchResults<FurtherEducationLearners, SearchFacets> _searchResults;
     private readonly SearchCriteria _furtherEducationSearchCriteriaStub;
 
     public FurtherEducationSearchUseCaseTests()
@@ -37,7 +37,7 @@ public sealed class FurtherEducationSearchUseCaseTests
                 adapterRequest = input;
             });
 
-        FurtherEducationSearchRequest request =
+        FurtherEducationSearchByNameRequest request =
             new(
                 searchKeywords: "searchkeyword",
                 searchCriteria: _furtherEducationSearchCriteriaStub,
@@ -45,11 +45,11 @@ public sealed class FurtherEducationSearchUseCaseTests
                 sortOrder: SortOrderTestDouble.Stub()
             );
 
-        FurtherEducationSearchUseCase useCase =
+        SearchLearnersUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        FurtherEducationSearchResponse response =
+        FurtherEducationSearchByNameResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify
@@ -70,16 +70,16 @@ public sealed class FurtherEducationSearchUseCaseTests
         Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchkeyword",
             searchCriteria: _furtherEducationSearchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());
 
-        FurtherEducationSearchUseCase useCase =
+        SearchLearnersUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        FurtherEducationSearchResponse response =
+        FurtherEducationSearchByNameResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify
@@ -88,7 +88,7 @@ public sealed class FurtherEducationSearchUseCaseTests
 
         // assert
         response.Status.Should().Be(SearchResponseStatus.Success);
-        response.LearnerSearchResults!.LearnerCollection.Should().Contain(_searchResults.Results!.LearnerCollection);
+        response.LearnerSearchResults!.Learners.Should().Contain(_searchResults.Results!.Learners);
         response.FacetedResults!.Facets.Should().Contain(_searchResults.FacetResults!.Facets);
     }
 
@@ -99,11 +99,11 @@ public sealed class FurtherEducationSearchUseCaseTests
         Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        FurtherEducationSearchUseCase useCase =
+        SearchLearnersUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        FurtherEducationSearchResponse response =
+        FurtherEducationSearchByNameResponse response =
             await useCase.HandleRequestAsync(request: null!);
 
         // verify
@@ -122,7 +122,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchkeyword",
             searchCriteria: _furtherEducationSearchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());
@@ -131,11 +131,11 @@ public sealed class FurtherEducationSearchUseCaseTests
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ThrowsAsync(new ApplicationException());
 
-        FurtherEducationSearchUseCase useCase =
+        SearchLearnersUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        FurtherEducationSearchResponse response =
+        FurtherEducationSearchByNameResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify
@@ -154,7 +154,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         Mock<ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchkeyword",
             searchCriteria: _furtherEducationSearchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());
@@ -163,11 +163,11 @@ public sealed class FurtherEducationSearchUseCaseTests
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ReturnsAsync(FurtherEducationSearchResultsTestDoubles.StubWithNoResults);
 
-        FurtherEducationSearchUseCase useCase =
+        SearchLearnersUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        FurtherEducationSearchResponse response =
+        FurtherEducationSearchByNameResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify

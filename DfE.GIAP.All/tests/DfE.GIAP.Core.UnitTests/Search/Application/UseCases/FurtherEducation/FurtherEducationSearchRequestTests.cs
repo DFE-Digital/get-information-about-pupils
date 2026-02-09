@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using FluentAssertions;
@@ -19,7 +19,7 @@ public class FurtherEducationSearchRequestTests
         SortOrder sortOrder = SortOrderTestDouble.Stub();
 
         // act
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchKeyword",
             filterRequests: filterRequests,
             searchCriteria: searchCriteria,
@@ -48,7 +48,7 @@ public class FurtherEducationSearchRequestTests
         SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
 
         // act
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchKeyword",
             searchCriteria: searchCriteria,
             sortOrder: sortOrder);
@@ -68,7 +68,7 @@ public class FurtherEducationSearchRequestTests
         const int Offset = 10;
 
         // act
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchKeyword",
             sortOrder: sortOrder,
             searchCriteria: searchCriteria,
@@ -87,7 +87,7 @@ public class FurtherEducationSearchRequestTests
         SortOrder sortOrder = SortOrderTestDouble.Stub();
         SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
 
-        FurtherEducationSearchRequest request = new(
+        FurtherEducationSearchByNameRequest request = new(
             searchKeywords: "searchKeyword",
             searchCriteria: searchCriteria,
             sortOrder: sortOrder);

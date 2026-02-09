@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.Search.Application.Adapters;
 /// Facilitates compatibility between internal search mechanisms and the expected result schema for prototype-level integrations.
 /// </summary>
 /// <typeparam name="TSearchResult">
-/// Defines the shape of each item returned in the search results.
+/// Defines the structure of outputted search results with the search operation.
 /// </typeparam>
 /// <typeparam name="TFacetResult">
 /// Defines the structure of facet groupings associated with the search operation.
@@ -24,9 +24,9 @@ public interface ISearchServiceAdapter<TSearchResult, TFacetResult>
     /// for the search operation.
     /// </param>
     /// <returns>
-    /// A <see cref="SearchResults{TSearchResult, TFacetResult}"/> containing matched items and any associated facets
+    /// A <see cref="ISearchResults{TSearchResult, TFacetResult}"/> containing matched items and any associated facets
     /// retrieved from the underlying search engine (e.g., Azure Cognitive Search).
     /// </returns>
-    Task<SearchResults<TSearchResult, TFacetResult>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest);
+    Task<ISearchResults<TSearchResult, TFacetResult>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest);
 }
 

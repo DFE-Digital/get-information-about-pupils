@@ -1,7 +1,6 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
@@ -10,7 +9,7 @@ using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
 internal static class NationalPupilDatabaseSearchResponseTestDoubles
 {
-    public static NationalPupilDatabaseSearchResponse Create(
+    public static SearchResponse Create(
         NationalPupilDatabaseLearners learners,
         SearchFacets facets,
         SearchResponseStatus status = SearchResponseStatus.Success,
@@ -20,7 +19,7 @@ internal static class NationalPupilDatabaseSearchResponseTestDoubles
             FacetedResults = facets
         };
 
-    public static NationalPupilDatabaseSearchResponse CreateSuccessResponse()
+    public static SearchResponse CreateSuccessResponse()
     {
         // Construct a sample learner with basic identity and characteristics
         Faker faker = new();
@@ -39,7 +38,7 @@ internal static class NationalPupilDatabaseSearchResponseTestDoubles
         SearchFacets facets = SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 10);
 
         // Return a success response with the sample learner and facet
-        return new NationalPupilDatabaseSearchResponse(SearchResponseStatus.Success, learners.Count)
+        return new SearchResponse(SearchResponseStatus.Success, learners.Count)
         {
             LearnerSearchResults = learners,
             FacetedResults = facets

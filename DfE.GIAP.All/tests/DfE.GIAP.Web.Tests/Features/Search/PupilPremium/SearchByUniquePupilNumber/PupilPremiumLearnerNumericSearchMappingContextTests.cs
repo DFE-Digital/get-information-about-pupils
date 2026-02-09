@@ -33,7 +33,7 @@ public sealed class PupilPremiumLearnerNumericSearchMappingContextTests
 
         PupilPremiumSearchResponse response =
             PupilPremiumSearchResponseTestDouble.Create(
-                learners: new PupilPremiumLearners(pupilPremiumLearners),
+                learners: new PupilPremiumLearnerSearchResults(pupilPremiumLearners),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
                 status: SearchResponseStatus.Success,
                 totalResults: pupilPremiumLearners.Count);

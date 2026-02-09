@@ -10,11 +10,12 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -48,8 +49,8 @@ public class FELearnerTextSearchController : Controller
     private readonly ILogger<FELearnerTextSearchController> _logger;
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly IUseCase<
-        FurtherEducationSearchRequest,
-        FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
+        FurtherEducationSearchByNameRequest,
+        FurtherEducationSearchByNameResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         FurtherEducationLearnerTextSearchMappingContext,
@@ -59,33 +60,36 @@ public class FELearnerTextSearchController : Controller
         Dictionary<string, string[]>,
         IList<FilterRequest>> _filtersRequestMapper;
 
-    private readonly IMapper<
-        SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly ISortOrderFactory _sortOrderFactory;
 
-    private readonly IFiltersRequestFactory _filtersRequestBuilder;
+    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
+
+    private readonly IFiltersRequestFactory _filtersRequestFactory;
+    
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
+
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
 
     public FELearnerTextSearchController(
         ISessionProvider sessionProvider,
         IUseCase<
-            FurtherEducationSearchRequest,
-            FurtherEducationSearchResponse> furtherEducationSearchUseCase,
+            FurtherEducationSearchByNameRequest,
+            FurtherEducationSearchByNameResponse> furtherEducationSearchUseCase,
         IMapper<
             FurtherEducationLearnerTextSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<
             Dictionary<string, string[]>,
             IList<FilterRequest>> filtersRequestMapper,
-        IMapper<
-            SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestBuilder,
         ILogger<FELearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
@@ -102,14 +106,14 @@ public class FELearnerTextSearchController : Controller
         ArgumentNullException.ThrowIfNull(filtersRequestMapper);
         _filtersRequestMapper = filtersRequestMapper;
 
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrderFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
 
         ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
-        _filtersRequestBuilder = filtersRequestBuilder;
+        _filtersRequestFactory = filtersRequestBuilder;
 
         ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
         _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
@@ -120,8 +124,11 @@ public class FELearnerTextSearchController : Controller
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
 
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -670,27 +677,29 @@ public class FELearnerTextSearchController : Controller
 
         }
 
+        SearchIndexOptions indexOptions = _searchIndexOptionsProvider.GetOptions(key: "further-education-text");
+
         IList<FilterRequest> filterRequests =
             _filtersRequestMapper.Map(
-                _filtersRequestBuilder
+                _filtersRequestFactory
                     .GenerateFilterRequest(model, currentFilters));
 
         SortOrder sortOrder =
-            _sortOrderViewModelToRequestMapper.Map(
-                new SortOrderRequest(
-                    searchKey: "further-education",
-                    sortOrder: (sortField, sortDirection)));
+            _sortOrderFactory.Create(
+                options: indexOptions.SortOptions, 
+                sort: (sortField, sortDirection));
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("further-education-text");
-
-        FurtherEducationSearchResponse searchResponse =
+        
+        FurtherEducationSearchByNameResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
-                new FurtherEducationSearchRequest(
-                    searchKeywords: model.SearchText,
-                    filterRequests: filterRequests,
-                    searchCriteria: searchCriteria,
-                    sortOrder: sortOrder,
-                    offset: model.Offset));
+                new FurtherEducationSearchByNameRequest()
+                {
+                    SearchKeywords = model.SearchText,
+                    FilterRequests = filterRequests,
+                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(indexOptions.SearchCriteria),
+                    SortOrder = sortOrder,
+                    Offset = model.Offset
+                });
 
         return _learnerSearchResponseToViewModelMapper.Map(
             FurtherEducationLearnerTextSearchMappingContext.Create(model, searchResponse));

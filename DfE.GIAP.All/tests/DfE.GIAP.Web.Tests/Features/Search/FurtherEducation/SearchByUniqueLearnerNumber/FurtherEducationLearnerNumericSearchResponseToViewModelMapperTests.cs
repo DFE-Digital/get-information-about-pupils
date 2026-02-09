@@ -1,8 +1,8 @@
 ﻿using Bogus;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
@@ -35,8 +35,8 @@ public class FurtherEducationLearnerNumericSearchResponseToViewModelMapperTests
         List<FurtherEducationLearner> applicationModelLearners =
             FurtherEducationLearnerCollectionTestDouble.CreateLearnersStub(learnerFakes);
 
-        FurtherEducationSearchResponse response =
-            FurtherEducationSearchResponseTestDouble.Create(
+        FurtherEducationSearchByNameResponse response =
+            FurtherEducationSearchByNameResponseTestDouble.Create(
                 learners: new FurtherEducationLearners([applicationModelLearners[0]]),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
                 status: SearchResponseStatus.Success,

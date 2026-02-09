@@ -8,12 +8,11 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
-using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Services.Download.CTF;
@@ -40,8 +39,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     private readonly SearchFiltersFakeData _searchFiltersFake;
 
 
-    private readonly IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>>();
+    private readonly IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> _mockUseCase =
+        Substitute.For<IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse>>();
 
     private readonly IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -53,8 +52,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
 
     private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
         Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
-
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
 
 
     public NationalPupilDatabaseLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
@@ -71,13 +68,11 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
         _mockSortOrderMapper.Map(
             Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
 
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
-
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<NationalPupilDatabaseSearchRequest>()).Returns(response);
+            Arg.Any<NationalPupilDatabaseSearchByNameRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<NationalPupilDatabaseLearnerTextSearchMappingContext>()).Returns(
@@ -1416,9 +1411,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
              _mockUseCase,
              _mockLearnerSearchResponseToViewModelMapper,
              _mockFiltersRequestMapper,
-             _mockSortOrderMapper,
-             _mockFiltersRequestBuilder,
-             _mockSearchCriteriaProvider.Object)
+             new Mock<ISortOrderFactory>().Object,
+             _mockFiltersRequestBuilder)
         {
             ControllerContext = new ControllerContext()
             {

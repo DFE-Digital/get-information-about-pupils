@@ -6,13 +6,16 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Web.Features.Search.Options.Sort;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
@@ -38,8 +41,8 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
 
-    private readonly IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>();
+    private readonly IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse> _mockUseCase =
+        Substitute.For<IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse>>();
 
     private readonly IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -49,10 +52,8 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
 
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
 
-    private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
-        Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
-
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+    private readonly ISortOrderFactory _mockSortOrderFactgory =
+        Substitute.For<ISortOrderFactory> ();
 
     public FELearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -65,17 +66,13 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             validSortFields: ["Surname", "DOB", "Forename"]
         );
 
-        _mockSortOrderMapper.Map(
-            Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+        _mockSortOrderFactgory.Create(Arg.Any<SortOptions>(), Arg.Any<(string?, string?)>()).Returns(stubSortOrder);
 
-        _mockSearchCriteriaProvider = new();
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
-
-        FurtherEducationSearchResponse response =
-            FurtherEducationSearchResponseTestDouble.CreateSuccessResponse();
+        FurtherEducationSearchByNameResponse response =
+            FurtherEducationSearchByNameResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<FurtherEducationSearchRequest>()).Returns(response);
+            Arg.Any<FurtherEducationSearchByNameRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<FurtherEducationLearnerTextSearchMappingContext>()).Returns(
@@ -1170,14 +1167,15 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             _mockUseCase,
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
-            _mockSortOrderMapper,
+            _mockSortOrderFactgory,
             _mockFiltersRequestBuilder,
             _mockLogger,
             _mockSelectionManager,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             mockDownloadPupilDataUseCase.Object,
-            _mockSearchCriteriaProvider.Object)
+            new Mock<ISearchIndexOptionsProvider>().Object,
+            new Mock<IMapper<SearchCriteriaOptions, SearchCriteria>>().Object)
         {
             ControllerContext = new ControllerContext()
             {

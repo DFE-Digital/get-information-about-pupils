@@ -13,7 +13,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
 {
     private readonly
         IMapper<
-            Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners> _searchResultsMapper;
+            Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearnerSearchResults> _searchResultsMapper;
 
     public PageablePupilPremiumSearchResultsToLearnerResultsMapperTests()
     {
@@ -36,7 +36,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
             PageableTestDouble.FromResults(searchResultDocuments);
 
         // act
-        PupilPremiumLearners? mappedResult =
+        PupilPremiumLearnerSearchResults? mappedResult =
             _searchResultsMapper.Map(pageableSearchResults);
 
         // assert
@@ -77,7 +77,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
                 .Create();
 
         // act
-        PupilPremiumLearners? result =
+        PupilPremiumLearnerSearchResults? result =
             _searchResultsMapper.Map(
                 PageableTestDouble.FromResults(emptySearchResultDocuments));
 
@@ -111,7 +111,7 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
             PageableTestDouble.FromResults(searchResultDocuments);
 
         // act
-        PupilPremiumLearners result = _searchResultsMapper.Map(pageableSearchResults);
+        PupilPremiumLearnerSearchResults result = _searchResultsMapper.Map(pageableSearchResults);
 
         // assert
         result.Should().NotBeNull();

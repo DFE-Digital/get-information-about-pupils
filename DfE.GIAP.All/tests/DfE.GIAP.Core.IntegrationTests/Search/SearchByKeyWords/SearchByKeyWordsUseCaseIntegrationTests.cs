@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
-public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
+public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly WireMockServerFixture _searchIndexFixture;
 
@@ -53,8 +53,8 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
 
-        IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> sut =
-            ResolveApplicationType<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>()!;
+        IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse> sut =
+            ResolveApplicationType<IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse>>()!;
 
         SortOrder sortOrder = new(
             sortField: "Forename",
@@ -63,15 +63,19 @@ public class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 
         SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
 
-        FurtherEducationSearchRequest request = new(searchKeywords: "test", searchCriteria, sortOrder);
+        FurtherEducationSearchByNameRequest request = new()
+        {
+            SearchKeywords = "test",
+            SearchCriteria = searchCriteria,
+            SortOrder = sortOrder
+        };
 
         // act
-        FurtherEducationSearchResponse response = await sut.HandleRequestAsync(request);
+        FurtherEducationSearchByNameResponse response = await sut.HandleRequestAsync(request);
 
         // assert
         Assert.NotNull(response);
         Assert.NotNull(response.LearnerSearchResults);
-        Assert.Equal(SearchResponseStatus.Success, response.Status);
         Assert.Equal(10, response.TotalNumberOfResults);
     }
 }

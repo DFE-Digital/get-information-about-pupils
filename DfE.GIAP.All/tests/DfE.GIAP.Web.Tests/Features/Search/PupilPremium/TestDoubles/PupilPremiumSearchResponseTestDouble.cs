@@ -10,7 +10,7 @@ namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
 public static class PupilPremiumSearchResponseTestDouble
 {
     public static PupilPremiumSearchResponse Create(
-        PupilPremiumLearners learners,
+        PupilPremiumLearnerSearchResults learners,
         SearchFacets facets,
         SearchResponseStatus status = SearchResponseStatus.Success,
         int? totalResults = null) =>
@@ -23,7 +23,7 @@ public static class PupilPremiumSearchResponseTestDouble
     public static PupilPremiumSearchResponse CreateSuccessResponse()
     {
         // Construct a sample learner with basic identity and characteristics
-        PupilPremiumLearners learners = new(
+        PupilPremiumLearnerSearchResults learners = new(
             [new(
                 UniquePupilNumberTestDoubles.Generate(),
                 new LearnerName("Alice", "Smith"),

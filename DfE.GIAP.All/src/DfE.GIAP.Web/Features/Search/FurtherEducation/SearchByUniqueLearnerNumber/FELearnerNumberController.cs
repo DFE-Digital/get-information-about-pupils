@@ -11,10 +11,13 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -33,20 +36,26 @@ public class FELearnerNumberController : Controller
     protected readonly ISelectionManager _selectionManager;
 
     private readonly IUseCase<
-        FurtherEducationSearchRequest,
-        FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
+        FurtherEducationSearchByUniqueLearnerNumberRequest,
+        FurtherEducationSearchByUniqueLearnerNumberResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         FurtherEducationLearnerNumericSearchMappingContext,
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
 
-    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly IMapper<
+        SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
+
+    private readonly ISortOrderFactory _sortOrderFactory;
+
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
 
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+    
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
+
     private readonly IEventLogger _eventLogger;
     private readonly bool _showMiddleNames = false;
     public const int PAGESIZE = 20;
@@ -62,19 +71,19 @@ public class FELearnerNumberController : Controller
 
     public FELearnerNumberController(
         IUseCase<
-            FurtherEducationSearchRequest,
-            FurtherEducationSearchResponse> furtherEducationSearchUseCase,
+            FurtherEducationSearchByUniqueLearnerNumberRequest,
+            FurtherEducationSearchByUniqueLearnerNumberResponse> furtherEducationSearchUseCase,
         IMapper<
             FurtherEducationLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
-        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        ISortOrderFactory sortOrderFactory,
         ILogger<FELearnerNumberController> logger,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider)
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
@@ -82,8 +91,8 @@ public class FELearnerNumberController : Controller
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
 
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrderFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -104,8 +113,8 @@ public class FELearnerNumberController : Controller
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
 
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -433,32 +442,23 @@ public class FELearnerNumberController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("further-education-uln");
-
-        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
-            new SortOrderRequest(
-                searchKey: "further-education",
-                sortOrder: (model.SortField, model.SortDirection)));
-
-        IList<FilterRequest> filterRequests =
-        [
-            new FilterRequest(
-                filterName: "ULN",
-                filterValues: learnerNumberArray
-            )
-        ];
-
         _eventLogger.LogSearch(SearchIdentifierType.ULN, false, new());
 
-        FurtherEducationSearchResponse searchResponse =
-            await _furtherEducationSearchUseCase.HandleRequestAsync(
-                new FurtherEducationSearchRequest(
-                    searchKeywords: string.Join(" AND ", learnerNumberArray),
-                    filterRequests: filterRequests,
-                    searchCriteria: searchCriteria,
-                    sortOrder: sortOrder,
-                    offset: model.Offset));
+        SearchIndexOptions indexOptions = _searchIndexOptionsProvider.GetOptions("further-education-uln");
 
+        SortOrder sortOrder = 
+            _sortOrderFactory.Create(
+                options: indexOptions.SortOptions, sort: (model.SortField, model.SortDirection));
+
+        FurtherEducationSearchByUniqueLearnerNumberResponse searchResponse =
+            await _furtherEducationSearchUseCase.HandleRequestAsync(
+                new FurtherEducationSearchByUniqueLearnerNumberRequest()
+                {
+                    UniqueLearnerNumbers = learnerNumberArray,
+                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(indexOptions.SearchCriteria),
+                    Sort = sortOrder,
+                    Offset = model.Offset
+                });
 
         LearnerNumberSearchViewModel result =
             _learnerNumericSearchResponseToViewModelMapper.Map(

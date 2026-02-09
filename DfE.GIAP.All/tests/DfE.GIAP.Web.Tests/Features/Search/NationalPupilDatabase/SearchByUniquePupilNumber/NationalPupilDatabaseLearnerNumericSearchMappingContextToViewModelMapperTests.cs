@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
@@ -32,7 +31,7 @@ public sealed class NationalPupilDatabaseLearnerNumericSearchMappingContextToVie
 
         List<NationalPupilDatabaseLearner> learners = NationalPupilDatabaseLearnerTestDoubles.FakeMany(domainLearners.Count);
 
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.Create(
                 learners: new NationalPupilDatabaseLearners(learners),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),

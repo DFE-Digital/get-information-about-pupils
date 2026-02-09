@@ -17,7 +17,7 @@ public sealed class SearchResultsTests
         SearchFacets facets = SearchFacetsTestDouble.Stub();
 
         // act
-        SearchResults<FurtherEducationLearners, SearchFacets> result =
+        ISearchResults<FurtherEducationLearners, SearchFacets> result =
             new()
             {
                 Results = learners,
@@ -33,7 +33,7 @@ public sealed class SearchResultsTests
     public void Properties_WhenUninitialized_ShouldBeNull()
     {
         // act
-        SearchResults<FurtherEducationLearners, SearchFacets> result = new();
+        ISearchResults<FurtherEducationLearners, SearchFacets> result = new();
 
         // Assert
         result.Results.Should().BeNull();
@@ -48,7 +48,7 @@ public sealed class SearchResultsTests
         Dictionary<string, int> dummyFacets = new() { { "X", 1 }, { "Y", 2 } };
 
         // act
-        SearchResults<List<string>, Dictionary<string, int>> result = new()
+        ISearchResults<List<string>, Dictionary<string, int>> result = new()
         {
             Results = dummyResults,
             FacetResults = dummyFacets

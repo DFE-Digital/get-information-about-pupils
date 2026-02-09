@@ -26,7 +26,7 @@ public sealed class FurtherEducationLearnersTests
 
         // Assert
         result.Count.Should().Be(1);
-        result.LearnerCollection.Should().ContainSingle()
+        result.Learners.Should().ContainSingle()
             .Which.Should().Be(learner);
     }
 
@@ -38,7 +38,7 @@ public sealed class FurtherEducationLearnersTests
 
         // Assert
         result.Count.Should().Be(0);
-        result.LearnerCollection.Should().BeEmpty();
+        result.Learners.Should().BeEmpty();
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public sealed class FurtherEducationLearnersTests
 
         // Assert
         result.Count.Should().Be(0);
-        result.LearnerCollection.Should().BeEmpty();
+        result.Learners.Should().BeEmpty();
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public sealed class FurtherEducationLearnersTests
 
         // Assert
         result.Count.Should().Be(0);
-        result.LearnerCollection.Should().BeEmpty();
+        result.Learners.Should().BeEmpty();
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public sealed class FurtherEducationLearnersTests
 
         // act
         Action mutate = () =>
-            ((List<FurtherEducationLearner>)result.LearnerCollection).Add(learner);
+            ((List<FurtherEducationLearner>)result.Learners).Add(learner);
 
         // Assert
         mutate.Should().Throw<InvalidCastException>(); // AsReadOnly returns ReadOnlyCollection, not List

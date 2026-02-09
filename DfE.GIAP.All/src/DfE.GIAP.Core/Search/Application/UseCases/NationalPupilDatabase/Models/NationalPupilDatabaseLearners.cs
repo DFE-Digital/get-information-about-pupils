@@ -1,5 +1,8 @@
-﻿namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
-public record NationalPupilDatabaseLearners
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Services;
+
+namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+public record NationalPupilDatabaseLearners : IHasSearchResults
 {
     public NationalPupilDatabaseLearners() : this([])
     {

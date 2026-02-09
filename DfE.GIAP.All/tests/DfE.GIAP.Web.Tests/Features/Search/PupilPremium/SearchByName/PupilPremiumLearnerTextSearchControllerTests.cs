@@ -7,7 +7,6 @@ using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -25,6 +24,9 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 
@@ -37,8 +39,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
-    private readonly IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>>();
+    private readonly IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchResponse> _mockUseCase =
+        Substitute.For<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchResponse>>();
 
     private readonly IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -74,7 +76,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             PupilPremiumSearchResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<PupilPremiumSearchRequest>()).Returns(response);
+            Arg.Any<PupilPremiumSearchByNameRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<PupilPremiumLearnerTextSearchMappingContext>()).Returns(
@@ -1330,7 +1332,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _mockUseCase,
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
-            _mockSortOrderMapper,
+            new Mock<ISortOrderFactory>().Object,
             _mockFiltersRequestBuilder,
             _mockSearchCriteriaProvider.Object)
         {

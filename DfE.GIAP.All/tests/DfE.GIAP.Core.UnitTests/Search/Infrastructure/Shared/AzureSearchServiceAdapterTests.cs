@@ -31,7 +31,7 @@ public sealed class AzureSearchServiceAdaptorTests
     private readonly ISearchOptionsBuilder _searchOptionsBuilder =
         new SearchOptionsBuilder(FilterExpressionTestDouble.Mock());
 
-    private AzureSearchIndexOptions IndexOptions =>
+    private SearchIndexOptions IndexOptions =>
         _searchOptions.Indexes![_mockIndexKey];
 
     private static IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>
@@ -211,7 +211,7 @@ public sealed class AzureSearchServiceAdaptorTests
             SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockIndexKey);
 
         // Act
-        SearchResults<FurtherEducationLearners, SearchFacets> result =
+        ISearchResults<FurtherEducationLearners, SearchFacets> result =
             await sut.SearchAsync(request);
 
         // Assert
@@ -256,7 +256,7 @@ public sealed class AzureSearchServiceAdaptorTests
             SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: _mockIndexKey);
 
         // Act
-        SearchResults<FurtherEducationLearners, SearchFacets> result =
+        ISearchResults<FurtherEducationLearners, SearchFacets> result =
             await sut.SearchAsync(request);
 
         // Assert

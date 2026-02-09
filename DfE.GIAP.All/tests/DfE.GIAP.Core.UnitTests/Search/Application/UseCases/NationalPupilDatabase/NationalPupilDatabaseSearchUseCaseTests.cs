@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles;
 using FluentAssertions;
@@ -10,7 +10,7 @@ using FluentAssertions;
 namespace DfE.GIAP.Core.UnitTests.Search.Application.UseCases.NationalPupilDatabase;
 public sealed class NationalPupilDatabaseSearchUseCaseTests
 {
-    private readonly SearchResults<NationalPupilDatabaseLearners, SearchFacets> _searchResults;
+    private readonly ISearchResults<NationalPupilDatabaseLearners, SearchFacets> _searchResults;
     private readonly SearchCriteria _searchCriteriaStub;
 
     public NationalPupilDatabaseSearchUseCaseTests()
@@ -37,7 +37,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             })
             .ReturnsAsync(_searchResults);
 
-        NationalPupilDatabaseSearchRequest request =
+        NationalPupilDatabaseSearchByNameRequest request =
             new(
                 searchIndexKey: "key",
                 searchKeywords: "searchkeyword",
@@ -46,10 +46,10 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
                 sortOrder: SortOrderTestDouble.Stub()
             );
 
-        NationalPupilDatabaseSearchUseCase useCase = new(mockSearchServiceAdapter.Object);
+        NationalPupilDatabaseSearchByNameUseCase useCase = new(mockSearchServiceAdapter.Object);
 
         // act
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify
@@ -71,16 +71,16 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
         Mock<ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        NationalPupilDatabaseSearchRequest request = new(
+        NationalPupilDatabaseSearchByNameRequest request = new(
             searchIndexKey: "key",
             searchKeywords: "searchkeyword",
             searchCriteria: _searchCriteriaStub,
             sortOrder: SortOrderTestDouble.Stub());
 
-        NationalPupilDatabaseSearchUseCase useCase = new(mockSearchServiceAdapter.Object);
+        NationalPupilDatabaseSearchByNameUseCase useCase = new(mockSearchServiceAdapter.Object);
 
         // act
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify
@@ -100,11 +100,11 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
         Mock<ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        NationalPupilDatabaseSearchUseCase useCase =
+        NationalPupilDatabaseSearchByNameUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             await useCase.HandleRequestAsync(request: null!);
 
         // verify
@@ -123,7 +123,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
         Mock<ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        NationalPupilDatabaseSearchRequest request = new(
+        NationalPupilDatabaseSearchByNameRequest request = new(
             searchIndexKey: "key",
             searchKeywords: "searchkeyword",
             searchCriteria: _searchCriteriaStub,
@@ -133,11 +133,11 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ThrowsAsync(new ApplicationException());
 
-        NationalPupilDatabaseSearchUseCase useCase =
+        NationalPupilDatabaseSearchByNameUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify
@@ -156,7 +156,7 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
         Mock<ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>> mockSearchServiceAdapter =
             SearchServiceAdapterTestDouble.MockFor(_searchResults);
 
-        NationalPupilDatabaseSearchRequest request = new(
+        NationalPupilDatabaseSearchByNameRequest request = new(
             searchIndexKey: "key",
             searchKeywords: "searchkeyword",
             searchCriteria: _searchCriteriaStub,
@@ -166,11 +166,11 @@ public sealed class NationalPupilDatabaseSearchUseCaseTests
             .Setup(adapter => adapter.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
             .ReturnsAsync(NationalPupilDatabaseSearchResultsTestDoubles.StubWithNoResults());
 
-        NationalPupilDatabaseSearchUseCase useCase =
+        NationalPupilDatabaseSearchByNameUseCase useCase =
             new(mockSearchServiceAdapter.Object);
 
         // act
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             await useCase.HandleRequestAsync(request);
 
         // verify

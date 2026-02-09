@@ -9,13 +9,14 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -37,8 +38,8 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupils;
 
     private readonly IUseCase<
-        PupilPremiumSearchRequest,
-        PupilPremiumSearchResponse> _searchUseCase;
+        PupilPremiumSearchByNameRequest,
+        PupilPremiumSearchByNameResponse> _searchUseCase;
 
     private readonly IMapper<
         PupilPremiumLearnerTextSearchMappingContext,
@@ -48,11 +49,11 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         Dictionary<string, string[]>,
         IList<FilterRequest>> _filtersRequestMapper;
 
-    private readonly IMapper<
-        SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly ISortOrderFactory _sortOrdeFactory;
 
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
+    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     public string LearnerNumberLabel => Global.LearnerNumberLabel;
 
@@ -78,12 +79,13 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         ISessionProvider sessionProvider,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils,
-        IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse> searchUseCase,
+        IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse> searchUseCase,
         IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
-        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestBuilder,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -109,14 +111,17 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
         _filtersRequestMapper = filtersRequestMapper;
 
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrdeFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
         _filtersRequestBuilder = filtersRequestBuilder;
 
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
     [Route(Routes.PupilPremium.NonUPN)]
@@ -712,22 +717,23 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
                _filtersRequestBuilder
                    .GenerateFilterRequest(model, currentFilters));
 
+        SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "pupil-premium-text");
+
         SortOrder sortOrder =
-            _sortOrderViewModelToRequestMapper.Map(
-                new SortOrderRequest(
-                    searchKey: "pupil-premium",
-                    sortOrder: (sortField, sortDirection)));
+            _sortOrdeFactory.Create(
+                    options: options.SortOptions,
+                    sort: (sortField, sortDirection));
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("pupil-premium-text");
-
-        PupilPremiumSearchResponse searchResponse =
+        PupilPremiumSearchByNameResponse searchResponse =
             await _searchUseCase.HandleRequestAsync(
-                new PupilPremiumSearchRequest(
-                    searchKeywords: model.SearchText,
-                    filterRequests: filterRequests,
-                    searchCriteria: searchCriteria,
-                    sortOrder: sortOrder,
-                    offset: model.Offset));
+                new PupilPremiumSearchByNameRequest()
+                {
+                    SearchKeywords = model.SearchText,
+                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(options.SearchCriteria),
+                    SortOrder = sortOrder,
+                    FilterRequests = filterRequests,
+                    Offset = model.Offset
+                });
 
         LearnerTextSearchViewModel viewModel = _learnerSearchResponseToViewModelMapper.Map(
             PupilPremiumLearnerTextSearchMappingContext.Create(model, searchResponse));

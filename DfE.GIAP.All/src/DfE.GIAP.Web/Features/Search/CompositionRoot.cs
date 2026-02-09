@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
@@ -12,7 +11,7 @@ using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
@@ -22,6 +21,7 @@ using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.ViewModels.Search;
+using Microsoft.Extensions.Options;
 using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Features.Search;
@@ -51,22 +51,23 @@ public static class CompositionRoot
     private static IServiceCollection AddSearchOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddOptions<SearchCriteriaOptions>()
-            .Bind(configuration.GetSection(nameof(SearchCriteriaOptions)));
+            .AddOptions<SearchOptions>()
+            .Bind(configuration.GetSection(nameof(SearchOptions)));
 
-        services
-            .AddOptions<SortFieldOptions>()
-            .Bind(configuration.GetSection(nameof(SortFieldOptions)));
+        // Register strongly typed configuration instances.
+        services.AddSingleton(
+            serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<SearchOptions>>().Value);
 
-        services.AddSingleton<ISearchCriteriaProvider, SearchCriteriaProvider>();
+        services.AddSingleton<ISearchIndexOptionsProvider, SearchIndexOptionsProvider>();
 
         return services;
     }
 
     private static IServiceCollection AddFurtherEducationSearches(this IServiceCollection services)
     {
-        services.AddSingleton<IMapper<
-            FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
+        services.AddSingleton<
+            IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
             FurtherEducationLearnerTextSearchResponseToViewModelMapper>();
 
         services.AddSingleton<IMapper<
@@ -82,16 +83,16 @@ public static class CompositionRoot
 
     private static IServiceCollection AddPupilPremiumSearches(this IServiceCollection services)
     {
-        services.AddSingleton<IMapper<
-            PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
+        services.AddSingleton<
+            IMapper<PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
             PupilPremiumLearnerNumericSearchMappingContextToViewModelMapper>();
 
         services.AddSingleton<
             IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
             PupilPremiumLearnerTextSearchMappingContextToViewModelMapper>();
 
-        services.AddSingleton<IMapper<
-            PupilPremiumLearner, Learner>,
+        services.AddSingleton<
+            IMapper<PupilPremiumLearner, Learner>,
             PupilPremiumLearnerToLearnerMapper>();
 
         return services;
@@ -99,16 +100,16 @@ public static class CompositionRoot
 
     private static IServiceCollection AddNationalPupilDatabaseSearches(this IServiceCollection services)
     {
-        services.AddSingleton<IMapper<
-            NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
+        services.AddSingleton<
+            IMapper<NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>,
             NationalPupilDatabaseLearnerNumericSearchMappingContextToViewModelMapper>();
 
-        services.AddSingleton<IMapper<
-            NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
+        services.AddSingleton<
+            IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>,
             NationalPupilDatabaseLearnerTextSearchMappingContextToViewModelMapper>();
 
-        services.AddSingleton<IMapper<
-            NationalPupilDatabaseLearner, Learner>,
+        services.AddSingleton<
+            IMapper<NationalPupilDatabaseLearner, Learner>,
             NationalPupilDatabaseLearnerToLearnerMapper>();
 
         return services;
@@ -116,27 +117,27 @@ public static class CompositionRoot
 
     private static IServiceCollection AddSort(this IServiceCollection services)
     {
-        services.AddSingleton<IMapper<SortOrderRequest, SortOrder>, SortOrderRequestToSortOrderMapper>();
+        services.AddSingleton<ISortOrderFactory, SortOrderFactory>();
         return services;
     }
 
     private static IServiceCollection AddFilters(this IServiceCollection services)
     {
 
-        services.AddSingleton<IMapper<
-            FilterData, FilterRequest>,
+        services.AddSingleton<
+            IMapper<FilterData, FilterRequest>,
             FilterRequestMapper>();
 
-        services.AddSingleton<IMapper<
-            Dictionary<string, string[]>, IList<FilterRequest>>,
+        services.AddSingleton<
+            IMapper<Dictionary<string, string[]>, IList<FilterRequest>>,
             FiltersRequestMapper>();
 
-        services.AddSingleton<IMapper<
-            SearchFacet, FilterData>,
+        services.AddSingleton<
+            IMapper<SearchFacet, FilterData>,
             FilterResponseMapper>();
 
-        services.AddSingleton<IMapper<
-            SearchFacets, List<FilterData>>,
+        services.AddSingleton<
+            IMapper<SearchFacets, List<FilterData>>,
             FiltersResponseMapper>();
 
         services.AddSingleton<IFiltersRequestFactory, FiltersRequestFactory>();

@@ -41,7 +41,7 @@ public class CompositionRootTests : IClassFixture<ConfigBuilder>, IClassFixture<
             SearchServiceAdapterRequestTestDouble.Stub(searchIndexKey: "further-education");
 
         // act
-        SearchResults<FurtherEducationLearners, SearchFacets> response =
+        ISearchResults<FurtherEducationLearners, SearchFacets> response =
             await adapter.SearchAsync(searchServiceAdapterRequest);
 
         // assert

@@ -7,11 +7,13 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
@@ -31,7 +33,7 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
     private readonly ILogger<PupilPremiumLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerNumberSearchController>>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
-    private readonly Mock<IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>> _mockUseCase = new();
+    private readonly Mock<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchResponse>> _mockUseCase = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
@@ -55,7 +57,7 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
             .Setup(
                 (useCase)
                     => useCase.HandleRequestAsync(
-                        It.IsAny<PupilPremiumSearchRequest>()))
+                        It.IsAny<PupilPremiumSearchByNameRequest>()))
             .ReturnsAsync(response);
 
         _mockLearnerNumberSearchResponseToViewModelMapper
@@ -1394,7 +1396,7 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
         return new PupilPremiumLearnerNumberSearchController(
             _mockLogger,
             _mockUseCase.Object,
-            mockMapper.Object,
+            new Mock<ISortOrderFactory>().Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,
             _mockSelectionManager,
             _addPupilsUseCaseMock,

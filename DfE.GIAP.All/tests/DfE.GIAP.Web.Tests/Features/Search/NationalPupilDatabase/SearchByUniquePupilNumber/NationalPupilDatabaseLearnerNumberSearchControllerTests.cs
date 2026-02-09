@@ -9,7 +9,7 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles;
@@ -47,7 +47,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
     private readonly Mock<
         IUseCase<
-            NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>> _mockUseCase = new();
+            NationalPupilDatabaseSearchByNameRequest, SearchResponse>> _mockUseCase = new();
 
     private readonly Mock<
         IMapper<
@@ -62,14 +62,14 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
         _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
 
-        NationalPupilDatabaseSearchResponse response =
+        SearchResponse response =
             NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
 
         _mockUseCase
             .Setup(
                 (useCase)
                     => useCase.HandleRequestAsync(
-                        It.IsAny<NationalPupilDatabaseSearchRequest>()))
+                        It.IsAny<NationalPupilDatabaseSearchByNameRequest>()))
             .ReturnsAsync(response);
 
         _mockLearnerNumberSearchResponseToViewModelMapper

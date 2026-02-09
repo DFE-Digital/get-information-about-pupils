@@ -1,19 +1,17 @@
 ﻿using Azure.Search.Documents;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
@@ -78,7 +76,8 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>());
 
         Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsApplicationService>());
-        Assert.NotNull(provider.GetService<IMapper<AzureIndexEntityWithPupilType, Pupil>>());
+        Assert.NotNull(provider.GetService<IMapper<PupilPremiumLearner, Pupil>>());
+        Assert.NotNull(provider.GetService<IMapper<NationalPupilDatabaseLearner, Pupil>>());
 
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
@@ -86,7 +85,6 @@ public sealed class CompositionRootTests
 
         Assert.NotNull(provider.GetService<IMyPupilsWriteOnlyRepository>());
 
-        Assert.NotNull(provider.GetService<ISearchClientProvider>());
         Assert.NotNull(provider.GetService<IEnumerable<SearchClient>>());
     }
 }

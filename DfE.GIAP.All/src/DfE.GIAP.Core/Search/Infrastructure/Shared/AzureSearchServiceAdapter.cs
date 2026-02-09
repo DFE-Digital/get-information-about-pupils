@@ -6,9 +6,6 @@ using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options.Extensions;
-using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.Shared;
@@ -22,7 +19,6 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
 {
     private readonly ISearchByKeywordService _searchByKeywordService;
     private readonly IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> _facetsMapper;
-    private readonly AzureSearchOptions _azureSearchOptions;
     private readonly ISearchOptionsBuilder _searchOptionsBuilder;
     private readonly IMapper<Pageable<SearchResult<TDataTransferObject>>, TResults> _dtoToOutputModelMapper;
 
@@ -36,15 +32,10 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
     /// <param name="searchOptionsBuilder">Builder for constructing query parameters passed into Azure Search.</param>
     public AzureSearchServiceAdaptor(
         ISearchByKeywordService searchByKeywordService,
-        IOptions<AzureSearchOptions> azureSearchOptions,
         IMapper<Dictionary<string, IList<AzureFacetResult>>, SearchFacets> facetsMapper,
         ISearchOptionsBuilder searchOptionsBuilder,
         IMapper<Pageable<SearchResult<TDataTransferObject>>, TResults> dtoToOutputModelMapper)
     {
-        ArgumentNullException.ThrowIfNull(azureSearchOptions);
-        ArgumentNullException.ThrowIfNull(azureSearchOptions.Value);
-        _azureSearchOptions = azureSearchOptions.Value;
-
         ArgumentNullException.ThrowIfNull(searchByKeywordService);
         _searchByKeywordService = searchByKeywordService;
 
@@ -70,16 +61,16 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
     /// <exception cref="ApplicationException">
     /// Thrown when the Azure Search service fails to return valid results.
     /// </exception>
-    public async Task<SearchResults<TResults, SearchFacets>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest)
+    public async Task<ISearchResults<TResults, SearchFacets>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
-        AzureSearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
+        //AzureSearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
 
         SearchOptions searchOptions =
             _searchOptionsBuilder
-                .WithSearchMode((SearchMode)indexOptions.SearchMode)
-                .WithSize(indexOptions.Size)
+                .WithSearchMode(SearchMode.Any)
+                .WithSize(searchServiceAdapterRequest.Size)
                 .WithOffset(searchServiceAdapterRequest.Offset)
-                .WithIncludeTotalCount(indexOptions.IncludeTotalCount)
+                .WithIncludeTotalCount(searchServiceAdapterRequest.IncludeTotalCount)
                 .WithSearchFields(searchServiceAdapterRequest.SearchFields)
                 .WithFacets(searchServiceAdapterRequest.Facets)
                 .WithFilters(searchServiceAdapterRequest.SearchFilterRequests)
@@ -88,8 +79,8 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
 
         Response<SearchResults<TDataTransferObject>> searchResults =
             await _searchByKeywordService.SearchAsync<TDataTransferObject>(
-                searchServiceAdapterRequest.SearchKeyword,
-                indexOptions.SearchIndex,
+                searchKeyword: searchServiceAdapterRequest.SearchKeyword,
+                searchIndex: searchServiceAdapterRequest.Index,
                 searchOptions) ?? throw new InvalidOperationException(
                         $"Unable to derive search results based on input {searchServiceAdapterRequest.SearchKeyword}.");
 
