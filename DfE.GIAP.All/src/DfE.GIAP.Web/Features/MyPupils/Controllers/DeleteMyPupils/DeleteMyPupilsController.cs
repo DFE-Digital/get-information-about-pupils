@@ -72,7 +72,7 @@ public class DeleteMyPupilsController : Controller
                     MessageLevel.Error,
                     "There has been a problem with your delete selections. Please try again."));
 
-            return RedirectToGetMyPupils(queryRequest);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(queryRequest);
         }
 
         MyPupilsPupilSelectionState selectionState = _getMyPupilsSelectionState.GetPupilSelections();
@@ -84,7 +84,7 @@ public class DeleteMyPupilsController : Controller
                     MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
 
-            return RedirectToGetMyPupils(queryRequest);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(queryRequest);
         }
 
         string userId = User.GetUserId();
@@ -97,19 +97,6 @@ public class DeleteMyPupilsController : Controller
                 MessageLevel.Info,
                 $"Selected MyPupils were deleted from user: {userId}."));
 
-        return RedirectToGetMyPupils(queryRequest);
-    }
-
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto request)
-    {
-        return RedirectToAction(
-            actionName: "Index",
-            controllerName: "GetMyPupils",
-            new
-            {
-                request.PageNumber,
-                request.SortField,
-                request.SortDirection
-            });
+        return MyPupilsRedirectHelpers.RedirectToGetMyPupils(queryRequest);
     }
 }

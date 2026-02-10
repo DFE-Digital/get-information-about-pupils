@@ -46,24 +46,11 @@ public class UpdateMyPupilsController : Controller
                     level: MessageLevel.Error,
                     message: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
 
-            return RedirectToGetMyPupils(query);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
         }
 
         _updateMyPupilsSelectionsCommandHandler.Handle(formDto);
 
-        return RedirectToGetMyPupils(query);
-    }
-
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto query)
-    {
-        return RedirectToAction(
-            actionName: "Index",
-            controllerName: "GetMyPupils",
-            new
-            {
-                query.PageNumber,
-                query.SortField,
-                query.SortDirection
-            });
+        return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
     }
 }
