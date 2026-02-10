@@ -85,15 +85,15 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
         SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
 
-            NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
-            await _npdSearchServiceAdaptor.HandleRequestAsync(
-                new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
-                {
-                    UniquePupilNumbers = myPupilUniquePupilNumbers,
-                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(npdIndexOptions.SearchCriteria!),
-                    Offset = 0,
-                    Sort = sortOrder
-                });
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
+        await _npdSearchServiceAdaptor.HandleRequestAsync(
+            new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
+            {
+                UniquePupilNumbers = myPupilUniquePupilNumbers,
+                SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(npdIndexOptions.SearchCriteria!),
+                Offset = 0,
+                Sort = sortOrder
+            });
 
         SearchIndexOptions pupilPremiumIndexOptions = _searchIndexOptionsProvider.GetOptions("pupil-premium-upn");
 

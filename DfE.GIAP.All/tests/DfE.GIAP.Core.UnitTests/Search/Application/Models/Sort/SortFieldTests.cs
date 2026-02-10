@@ -48,18 +48,17 @@ public sealed class SortFieldTests
     }
 
     [Fact]
-    public void Constructor_WithDuplicateValidFields_ShouldThrowArgumentException()
+    public void Constructor_WithDuplicateValidFields_ShouldDeduplicate()
     {
         // arrange
         HashSet<string> validFields = ["DOB", "dob"];
 
         // act
-        Action act = () => new SortField("DOB", validFields);
+        SortField sort = new("DOB", validFields);
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*contains duplicate entries*")
-            .And.ParamName.Should().Be("validSortFields");
+        string validField = Assert.Single(sort.ValidFields);
+        Assert.Equal("DOB", validField);
     }
 
     [Fact]
