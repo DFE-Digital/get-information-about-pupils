@@ -63,8 +63,6 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
     /// </exception>
     public async Task<ISearchResults<TResults, SearchFacets>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
-        //AzureSearchIndexOptions indexOptions = _azureSearchOptions.GetIndexOptions(searchServiceAdapterRequest.SearchIndexKey);
-
         SearchOptions searchOptions =
             _searchOptionsBuilder
                 .WithSearchMode(SearchMode.Any)
