@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Features.Search.Options.Search;
+﻿using DfE.GIAP.Core.Search.Application.Options.Search;
+
+namespace DfE.GIAP.Web.Features.Search.Options.Search;
 
 public sealed class SearchIndexOptionsProvider : ISearchIndexOptionsProvider
 {

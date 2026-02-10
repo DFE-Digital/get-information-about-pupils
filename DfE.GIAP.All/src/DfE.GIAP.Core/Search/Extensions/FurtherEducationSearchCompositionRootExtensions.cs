@@ -11,22 +11,16 @@ using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Core.Search.Extensions;
 internal static class FurtherEducationSearchCompositionRootExtensions
 {
-    internal static IServiceCollection AddFurtherEducationSearch(this IServiceCollection services)
-    {
-        services
-            .AddSearchByName()
-            .AddSearchByUpn()
-            .AddInfrastructure();
 
-        return services;
-    }
-
-    private static IServiceCollection AddSearchByName(this IServiceCollection services)
+    public static IServiceCollection AddFurtherEducationSearchByName(this IServiceCollection services)
     {
+        services.TryAddFurtherEducationSearchInfrastructure();
+
         services
             .AddScoped<
                 IUseCase<
@@ -40,8 +34,10 @@ internal static class FurtherEducationSearchCompositionRootExtensions
         return services;
     }
 
-    private static IServiceCollection AddSearchByUpn(this IServiceCollection services)
+    public static IServiceCollection AddFurtherEducationSearchByUniqueLearnerNumber(this IServiceCollection services)
     {
+        services.TryAddFurtherEducationSearchInfrastructure();
+
         services
             .AddScoped<
                 IUseCase<
@@ -55,19 +51,19 @@ internal static class FurtherEducationSearchCompositionRootExtensions
         return services;
     }
 
-    private static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    private static IServiceCollection TryAddFurtherEducationSearchInfrastructure(this IServiceCollection services)
     {
         services
-            .AddScoped<
+            .TryAddScoped<
                 ISearchServiceAdapter<FurtherEducationLearners, SearchFacets>,
-                AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>>()
+                AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>>();
 
-            .AddSingleton<
+        services.TryAddScoped<
                 IMapper<
                     Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>,
-                    PageableFurtherEducationSearchResultsToLearnerResultsMapper>()
+                    PageableFurtherEducationSearchResultsToLearnerResultsMapper>();
 
-            .AddSingleton<
+        services.TryAddSingleton<
                 IMapperWithResult<
                     FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>,
                     FurtherEducationSearchResultToLearnerMapper>();

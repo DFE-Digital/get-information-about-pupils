@@ -49,39 +49,21 @@ public static class ConfigurationTestDoubles
         Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {
             // AzureSearchOptions: Parameters controlling search behavior
-            ["SearchOptions:Indexes:further-education:SearchCriteria:SearchIndex"] = "FE_INDEX_NAME",
-            ["SearchOptions:Indexes:further-education:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["SearchOptions:Indexes:further-education:SearchCriteria:Size"] = "40000",                  // Max number of results
-            ["SearchOptions:Indexes:further-education:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["SearchOptions:Indexes:npd:SearchCriteria:SearchIndex"] = "NPD_INDEX_NAME",
-            ["SearchOptions:Indexes:npd:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["SearchOptions:Indexes:npd:SearchCriteria:Size"] = "40000",                  // Max number of results
-            ["SearchOptions:Indexes:npd:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
-            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:Size"] = "40000",                  // Max number of results
-            ["SearchOptions:Indexes:pupil-premium:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:SearchIndex"] = "FE_INDEX_NAME",
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:Size"] = "40000",                  // Max number of results
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchIndex"] = "NPD_INDEX_NAME",
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:Size"] = "40000",                  // Max number of results
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:Size"] = "40000",                  // Max number of results
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
-
-        return builder;
-    }
-
-    public static IConfigurationBuilder WithSearchCriteriaOptions(this IConfigurationBuilder builder)
-    {
-        Dictionary<string, string?> searchCriteriaStub = new()
-        {
-            // SearchCriteria: Fields and facets used in search queries
-            ["SearchCriteriaOptions:Criteria:further-education:SearchFields:0"] = "Forename",
-            ["SearchCriteriaOptions:Criteria:further-education::SearchFields:1"] = "Surname",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:0"] = "ForenameLC",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:1"] = "SurnameLC",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:2"] = "Gender",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:3"] = "Sex",
-        };
-
-        builder.AddInMemoryCollection(searchCriteriaStub);
 
         return builder;
     }

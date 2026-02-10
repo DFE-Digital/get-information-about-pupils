@@ -9,6 +9,7 @@ using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.SearchFilterExpressions;
 using DfE.GIAP.Web.Features.Search.Options.Search;
+using DfE.GIAP.Web.Features.Search.SearchOptionsExtensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
@@ -33,6 +34,9 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(configuration);
 
         services
+            .AddSearchOptions(configuration);
+        
+        services
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
 
         services.AddSingleton<IMapper<SearchCriteriaOptions, SearchCriteria>, SearchCriteriaOptionsToSearchCriteriaMapper>();
@@ -41,9 +45,12 @@ public static class CompositionRoot
         services.AddAzureSearchFilterServices(configuration);
 
         services
-            .AddNationalPupilDatabaseSearch()
-            .AddPupilPremiumSearch()
-            .AddFurtherEducationSearch()
+            .AddNationalPupilDatabaseSearchByName()
+            .AddNationalPupilDatabaseSearchByUpn()
+            .AddPupilPremiumSearchByName()
+            .AddPupilPremiumSearchByUpn()
+            .AddFurtherEducationSearchByName()
+            .AddFurtherEducationSearchByUniqueLearnerNumber()
             .AddFilterExpressions()
             .AddSingleton<
                 IMapper<

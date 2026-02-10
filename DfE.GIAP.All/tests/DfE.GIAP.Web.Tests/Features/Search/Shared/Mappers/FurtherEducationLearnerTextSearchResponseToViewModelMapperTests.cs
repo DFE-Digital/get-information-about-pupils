@@ -72,8 +72,8 @@ public class FurtherEducationLearnerTextSearchResponseToViewModelMapperTests
             PageSize = 1
         };
 
-        FurtherEducationLearnerTextSearchResponseToViewModelMapper.FurtherEducationLearnerTextSearchMappingContext context =
-            FurtherEducationLearnerTextSearchResponseToViewModelMapper.FurtherEducationLearnerTextSearchMappingContext.Create(model, response);
+        FurtherEducationLearnerTextSearchMappingContext context =
+            FurtherEducationLearnerTextSearchMappingContext.Create(model, response);
 
         FurtherEducationLearnerTextSearchResponseToViewModelMapper mapper = new(learnerMapper.Object, filtersMapper.Object);
 

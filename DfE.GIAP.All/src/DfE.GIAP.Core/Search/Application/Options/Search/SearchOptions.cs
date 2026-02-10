@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DfE.GIAP.Core.Search.Application.Options.Search;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Search.Options.Search;
 

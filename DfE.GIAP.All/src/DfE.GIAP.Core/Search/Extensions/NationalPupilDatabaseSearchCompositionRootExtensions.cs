@@ -11,22 +11,15 @@ using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObje
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Core.Search.Extensions;
 internal static class NationalPupilDatabaseSearchCompositionRootExtensions
 {
-    internal static IServiceCollection AddNationalPupilDatabaseSearch(this IServiceCollection services)
+    public static IServiceCollection AddNationalPupilDatabaseSearchByName(this IServiceCollection services)
     {
-        services
-            .AddInfrastructure()
-            .AddSearchByName()
-            .AddSearchByUpn();
+        services.TryAddNationalPupilDatabaseSearchInfrastructure();
 
-        return services;
-    }
-
-    private static IServiceCollection AddSearchByName(this IServiceCollection services)
-    {
         services
             .AddScoped<
                 IUseCase<
@@ -40,8 +33,10 @@ internal static class NationalPupilDatabaseSearchCompositionRootExtensions
         return services;
     }
 
-    private static IServiceCollection AddSearchByUpn(this IServiceCollection services)
+    public static IServiceCollection AddNationalPupilDatabaseSearchByUpn(this IServiceCollection services)
     {
+        services.TryAddNationalPupilDatabaseSearchInfrastructure();
+
         services
             .AddScoped<
                 IUseCase<
@@ -55,19 +50,20 @@ internal static class NationalPupilDatabaseSearchCompositionRootExtensions
         return services;
     }
 
-    private static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    private static IServiceCollection TryAddNationalPupilDatabaseSearchInfrastructure(this IServiceCollection services)
     {
         services
-            .AddScoped<
+            .TryAddScoped<
                 ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>,
-                AzureSearchServiceAdaptor<NationalPupilDatabaseLearners, NationalPupilDatabaseLearnerDataTransferObject>>()
+                AzureSearchServiceAdaptor<NationalPupilDatabaseLearners, NationalPupilDatabaseLearnerDataTransferObject>>();
 
-            .AddSingleton<
+        services
+            .TryAddSingleton<
                 IMapper<
                     Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>,
-                    PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper>()
+                    PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper>();
 
-            .AddSingleton<
+        services.TryAddSingleton<
                 IMapperWithResult<
                     NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>,
                     NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper>();

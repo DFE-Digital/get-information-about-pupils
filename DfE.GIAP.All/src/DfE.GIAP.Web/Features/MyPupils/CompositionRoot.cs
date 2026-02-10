@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+using DfE.GIAP.Web.Features.Search.SearchOptionsExtensions;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
@@ -29,11 +30,12 @@ namespace DfE.GIAP.Web.Features.MyPupils;
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddMyPupils(this IServiceCollection services)
+    public static IServiceCollection AddMyPupils(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services
+            .AddSearchOptions(configuration)
             .AddMyPupilsCore();
            
         services

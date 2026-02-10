@@ -7,7 +7,6 @@ using DfE.GIAP.SharedTests.Infrastructure.WireMock;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
@@ -29,7 +28,6 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithSearchOptions()
                 .WithAzureSearchConnectionOptions()
-                .WithSearchCriteriaOptions()
                 .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
 
@@ -61,7 +59,7 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        SearchCriteria searchCriteria = SearchCriteriaTestDouble.Stub();
+        SearchCriteria searchCriteria = new() { Index = "FE_INDEX_NAME" };
 
         FurtherEducationSearchByNameRequest request = new()
         {

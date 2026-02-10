@@ -11,21 +11,16 @@ using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Core.Search.Extensions;
 internal static class PupilPremiumSearchCompositionRootExtensions
 {
-    internal static IServiceCollection AddPupilPremiumSearch(this IServiceCollection services)
+    public static IServiceCollection AddPupilPremiumSearchByName(this IServiceCollection services)
     {
-        services.AddSearchByName()
-            .AddSearchByUpn()
-            .AddInfrastructure();
 
-        return services;
-    }
+        services.TryAddPupilPremiumSearchInfrastructure();
 
-    private static IServiceCollection AddSearchByName(this IServiceCollection services)
-    {
         services
             .AddScoped<
                 IUseCase<
@@ -39,8 +34,10 @@ internal static class PupilPremiumSearchCompositionRootExtensions
         return services;
     }
 
-    private static IServiceCollection AddSearchByUpn(this IServiceCollection services)
+    public static IServiceCollection AddPupilPremiumSearchByUpn(this IServiceCollection services)
     {
+        services.TryAddPupilPremiumSearchInfrastructure();
+
         services
             .AddScoped<
                 IUseCase<
@@ -54,18 +51,18 @@ internal static class PupilPremiumSearchCompositionRootExtensions
         return services;
     }
 
-    private static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    private static IServiceCollection TryAddPupilPremiumSearchInfrastructure(this IServiceCollection services)
     {
         services
-            .AddScoped<
+            .TryAddScoped<
                 ISearchServiceAdapter<PupilPremiumLearners, SearchFacets>,
-                AzureSearchServiceAdaptor<PupilPremiumLearners, PupilPremiumLearnerDataTransferObject>>()
+                AzureSearchServiceAdaptor<PupilPremiumLearners, PupilPremiumLearnerDataTransferObject>>();
 
-            .AddSingleton<
+        services.TryAddSingleton<
                 IMapper<Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners>,
-                PageablePupilPremiumSearchResultsToLearnerResultsMapper>()
+                PageablePupilPremiumSearchResultsToLearnerResultsMapper>();
 
-            .AddSingleton<
+        services.TryAddSingleton<
                 IMapperWithResult<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>,
                 PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper>();
         return services;

@@ -11,18 +11,16 @@ using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
+using DfE.GIAP.Web.Features.Search.SearchOptionsExtensions;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.ViewModels.Search;
-using Microsoft.Extensions.Options;
-using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 namespace DfE.GIAP.Web.Features.Search;
 
@@ -48,21 +46,7 @@ public static class CompositionRoot
         return services;
     }
 
-    private static IServiceCollection AddSearchOptions(this IServiceCollection services, IConfiguration configuration)
-    {
-        services
-            .AddOptions<SearchOptions>()
-            .Bind(configuration.GetSection(nameof(SearchOptions)));
 
-        // Register strongly typed configuration instances.
-        services.AddSingleton(
-            serviceProvider =>
-                serviceProvider.GetRequiredService<IOptions<SearchOptions>>().Value);
-
-        services.AddSingleton<ISearchIndexOptionsProvider, SearchIndexOptionsProvider>();
-
-        return services;
-    }
 
     private static IServiceCollection AddFurtherEducationSearches(this IServiceCollection services)
     {

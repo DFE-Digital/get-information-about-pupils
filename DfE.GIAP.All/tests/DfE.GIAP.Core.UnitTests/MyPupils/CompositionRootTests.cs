@@ -77,10 +77,7 @@ public sealed class CompositionRootTests
         services.AddSearchCore(configuration);
         services.RemoveAll<ISearchIndexNamesProvider>();
         services.AddSingleton<ISearchIndexNamesProvider, FakeSearchIndexNamesProvider>();
-        services
-            .AddNationalPupilDatabaseSearch()
-            .AddPupilPremiumSearch()
-            .AddMyPupilsCore();
+        services.AddMyPupilsCore();
 
         // Act
         IServiceProvider provider = services.BuildServiceProvider();
