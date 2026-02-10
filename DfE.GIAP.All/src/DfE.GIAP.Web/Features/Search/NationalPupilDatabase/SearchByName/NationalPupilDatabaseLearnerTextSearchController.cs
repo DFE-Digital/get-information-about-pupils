@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
@@ -14,13 +13,14 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -30,7 +30,6 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using DownloadType = DfE.GIAP.Common.Enums.DownloadType;
 
 namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
@@ -80,7 +79,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     private readonly
         IUseCase<
-            NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> _searchUseCase;
+            NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> _searchUseCase;
 
     private readonly
         IMapper<
@@ -88,11 +87,12 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     private readonly IMapper<
         Dictionary<string, string[]>, IList<FilterRequest>> _filtersRequestMapper;
-    private readonly IMapper<
-        SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+
+    private readonly ISortOrderFactory _sortOrderFactory;
 
     private readonly IFiltersRequestFactory _filtersRequestBuilder;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
+    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
@@ -102,12 +102,13 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
         IEventLogger eventLogger,
-        IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> searchUseCase,
+        IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> searchUseCase,
         IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
-        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestBuilder,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -142,14 +143,17 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         ArgumentNullException.ThrowIfNull(filtersRequestMapper);
         _filtersRequestMapper = filtersRequestMapper;
 
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrderFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(filtersRequestBuilder);
         _filtersRequestBuilder = filtersRequestBuilder;
 
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
     [Route(Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN)]
@@ -816,23 +820,25 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 _filtersRequestBuilder
                     .GenerateFilterRequest(model, currentFilters));
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("npd-text");
+        SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "npd-text");
+
+        SearchCriteria searchCriteria = _criteriaOptionsToCriteriaMapper.Map(options.SearchCriteria);
 
         SortOrder sortOrder =
-            _sortOrderViewModelToRequestMapper.Map(
-                new SortOrderRequest(
-                    searchKey: "npd",
-                    sortOrder: (sortField, sortDirection)));
+            _sortOrderFactory.Create(
+                options: options.SortOptions, 
+                sort: (sortField, sortDirection));
 
-        NationalPupilDatabaseSearchResponse searchResponse =
+        NationalPupilDatabaseSearchByNameResponse searchResponse =
             await _searchUseCase.HandleRequestAsync(
-                new NationalPupilDatabaseSearchRequest(
-                    searchIndexKey: "npd-text",
-                    searchKeywords: model.SearchText,
-                    searchCriteria: searchCriteria,
-                    filterRequests: filterRequests,
-                    sortOrder: sortOrder,
-                    offset: model.Offset));
+                new NationalPupilDatabaseSearchByNameRequest()
+                {
+                    SearchKeywords = model.SearchText,
+                    SearchCriteria = searchCriteria,
+                    SortOrder = sortOrder,
+                    FilterRequests = filterRequests,
+                    Offset = model.Offset
+                });
 
         LearnerTextSearchViewModel viewModel = _learnerSearchResponseToViewModelMapper.Map(
             NationalPupilDatabaseLearnerTextSearchMappingContext.Create(model, searchResponse));

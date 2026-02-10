@@ -6,7 +6,7 @@ using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
+using DfE.GIAP.Core.Search;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock;
@@ -41,19 +41,17 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
         IConfiguration indexConfiguration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
-                .WithAzureSearchOptions()
+                .WithSearchOptions()
                 .WithAzureSearchConnectionOptions()
+                .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
-
-        services
-            .AddOptions<AzureSearchOptions>()
-            .Bind(indexConfiguration.GetSection(nameof(AzureSearchOptions)));
 
         services
             .AddOptions<AzureSearchConnectionOptions>()
             .Bind(indexConfiguration.GetSection(nameof(AzureSearchConnectionOptions)));
 
         services
+            .AddSearchCore(indexConfiguration)
             .AddMyPupilsCore();
     }
 
@@ -62,6 +60,9 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     {
         HttpMappingRequest request = HttpMappingRequest.Create(
             httpMappingFiles: [
+                new HttpMappingFile(
+                    key: "get-indexnames",
+                    fileName: "get_searchindex_names.json"),
                 new HttpMappingFile(
                     key: "npd",
                     fileName: "npd_searchindex_returns_many_pupils.json"),
@@ -140,6 +141,15 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
+
+        HttpMappingRequest request = HttpMappingRequest.Create(
+            httpMappingFiles: [
+                new HttpMappingFile(
+                    key: "get-indexnames",
+                    fileName: "get_searchindex_names.json") ]);
+
+        HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
+
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsDocumentDto document =

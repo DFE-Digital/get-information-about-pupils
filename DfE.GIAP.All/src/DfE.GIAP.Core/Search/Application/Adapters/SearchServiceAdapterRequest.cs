@@ -4,20 +4,24 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 namespace DfE.GIAP.Core.Search.Application.Adapters;
 
 /// <summary>
-/// Represents the parameters required to execute a search query within the Further Education search service.
+/// Represents the parameters required to execute a search query within the search service.
 /// Includes search keywords, field targets, facet specifications, and optional filters to tailor the query.
 /// </summary>
 public sealed class SearchServiceAdapterRequest
 {
     /// <summary>
-    /// A key that is used to lookup the SearchIndex to search against
+    /// 
     /// </summary>
-    public string SearchIndexKey { get; }
-
+    public string Index { get; }
     /// <summary>
     /// The keyword or phrase used to perform the search.
     /// </summary>
     public string SearchKeyword { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public int Size { get; }
 
     /// <summary>
     /// The number of search results to skip. Default is zero, indicating that no records will be omitted from the beginning of the result set.
@@ -47,6 +51,11 @@ public sealed class SearchServiceAdapterRequest
     public SortOrder SortOrdering { get; }
 
     /// <summary>
+    /// 
+    /// </summary>
+    public bool IncludeTotalCount { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SearchServiceAdapterRequest"/> class,
     /// ensuring all required fields are populated and immutable for consistent query execution.
     /// </summary>
@@ -58,31 +67,42 @@ public sealed class SearchServiceAdapterRequest
     /// <exception cref="ArgumentException">Thrown when <paramref name="searchKeyword"/> is null or whitespace.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="searchFields"/> or <paramref name="facets"/> is null or empty.</exception>
     public SearchServiceAdapterRequest(
-        string searchIndexKey,
+        string index,
         string searchKeyword,
         IList<string> searchFields,
         SortOrder sortOrdering,
+        int size,
         IList<string>? facets = null,
         IList<FilterRequest>? searchFilterRequests = null,
+        bool includeTotalCount = true,
         int offset = 0)
     {
-        SearchIndexKey = !string.IsNullOrWhiteSpace(searchIndexKey) ?
-            searchIndexKey :
-            throw new ArgumentException($"{nameof(searchIndexKey)} cannot be null or whitespace.", searchIndexKey);
+        ArgumentException.ThrowIfNullOrWhiteSpace(index);
+        Index = index;
 
-        SearchKeyword = !string.IsNullOrWhiteSpace(searchKeyword)
-            ? searchKeyword
-            : throw new ArgumentException(
-                $"{nameof(searchKeyword)} cannot be null or whitespace.", nameof(searchKeyword));
+        ArgumentException.ThrowIfNullOrWhiteSpace(searchKeyword);
+        SearchKeyword = searchKeyword;
 
-        SearchFields = searchFields?.Count > 0
-            ? searchFields
-            : throw new ArgumentException(
+        if (searchFields is null || searchFields.Count == 0)
+        {
+            throw new ArgumentException(
                 $"A valid {nameof(searchFields)} argument must be provided.", nameof(searchFields));
+        }
+        SearchFields = searchFields;
 
+        ArgumentNullException.ThrowIfNull(sortOrdering);
         SortOrdering = sortOrdering;
+
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(size);
+        Size = size;
+
         Facets = facets ?? [];
+
         SearchFilterRequests = searchFilterRequests ?? [];
+
+        IncludeTotalCount = includeTotalCount;
+
+        ArgumentOutOfRangeException.ThrowIfNegative(offset);
         Offset = offset;
     }
 
@@ -91,12 +111,14 @@ public sealed class SearchServiceAdapterRequest
     /// needing to use the constructor directly. Improves readability and usability for consumers of the API.
     /// </summary>
     public static SearchServiceAdapterRequest Create(
-        string searchIndexKey,
+        string index,
         string searchKeyword,
         IList<string> searchFields,
         IList<string> facets,
+        int resultsSize,
         SortOrder sortOrdering,
         IList<FilterRequest>? searchFilterRequests = null,
+        bool includeTotalCount = true,
         int offset = 0)
-            => new(searchIndexKey, searchKeyword, searchFields, sortOrdering, facets, searchFilterRequests, offset);
+            => new(index, searchKeyword, searchFields, sortOrdering, resultsSize, facets, searchFilterRequests, includeTotalCount, offset);
 }

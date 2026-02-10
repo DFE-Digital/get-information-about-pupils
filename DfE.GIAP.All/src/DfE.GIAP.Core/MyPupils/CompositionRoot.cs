@@ -1,19 +1,18 @@
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Application.Mapper;
 using DfE.GIAP.Core.MyPupils.Application.Options;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mapper;
+using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mappers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Read;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.MyPupils;
@@ -47,7 +46,8 @@ public static class CompositionRoot
             .AddScoped<IAggregatePupilsForMyPupilsApplicationService, AggregatePupilsForMyPupilsApplicationService>()
             .AddSingleton<IOrderPupilsHandler, OrderPupilsHandler>()
             .AddSingleton<IPaginatePupilsHandler, PaginatePupilsHandler>()
-            .AddSingleton<IMapper<AzureIndexEntityWithPupilType, Pupil>, AzureIndexEntityWithPupilTypeToPupilMapper>();
+            .AddSingleton<IMapper<NationalPupilDatabaseLearner, Pupil>, NationalPupilDatabaseLearnerToPupilMapper>()
+            .AddSingleton<IMapper<PupilPremiumLearner, Pupil>, PupilPremiumLearnerToPupilMapper>();
 
         return services;
     }
@@ -57,10 +57,7 @@ public static class CompositionRoot
         services
             .AddScoped<IMyPupilsReadOnlyRepository, CosmosDbMyPupilsReadOnlyRepository>()
             .AddScoped<IMyPupilsWriteOnlyRepository, CosmosDbMyPupilsWriteOnlyRepository>()
-            .AddSingleton<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>, MyPupilsAggregateToMyPupilsDocumentDtoMapper>()
-            // Temporary SearchClients and SearchClientProvider
-            // Note: depends on the infrastructure.cognitivesearch packages being registered
-            .AddSearchClients();
+            .AddSingleton<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>, MyPupilsAggregateToMyPupilsDocumentDtoMapper>();
 
         return services;
     }

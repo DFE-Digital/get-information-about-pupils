@@ -38,12 +38,12 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
 
         // assert
         mappedResult.Should().NotBeNull();
-        mappedResult.LearnerCollection.Should().HaveCount(searchResultDocuments.Count);
+        mappedResult.Learners.Should().HaveCount(searchResultDocuments.Count);
 
         foreach (SearchResult<FurtherEducationLearnerDataTransferObject> searchResult in searchResultDocuments)
         {
             FurtherEducationLearner? learner =
-                mappedResult.LearnerCollection.ToList()
+                mappedResult.Learners.ToList()
                     .Find(learner =>
                         learner.Identifier.UniqueLearnerNumber.ToString().Trim() == searchResult.Document.ULN);
 
@@ -70,7 +70,7 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
 
         // assert
         result.Should().NotBeNull();
-        result.LearnerCollection.Should().HaveCount(0);
+        result.Learners.Should().HaveCount(0);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
         result.Should().NotBeNull();
 
         // null document entries must be excluded
-        result.LearnerCollection.Should().HaveCount(
+        result.Learners.Should().HaveCount(
             searchResultDocuments.Count(sr => sr.Document != null));
     }
 }

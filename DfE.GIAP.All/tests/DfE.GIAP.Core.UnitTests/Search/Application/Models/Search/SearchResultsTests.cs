@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Search;
@@ -45,7 +46,11 @@ public sealed class SearchResultsTests
     {
         // arrange
         List<string> dummyResults = ["A", "B"];
-        Dictionary<string, int> dummyFacets = new() { { "X", 1 }, { "Y", 2 } };
+        Dictionary<string, int> dummyFacets = new()
+        {
+            { "X", 1 },
+            { "Y", 2 }
+        };
 
         // act
         SearchResults<List<string>, Dictionary<string, int>> result = new()

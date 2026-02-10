@@ -44,44 +44,28 @@ public static class ConfigurationTestDoubles
         return builder;
     }
 
-    public static IConfigurationBuilder WithAzureSearchOptions(this IConfigurationBuilder builder)
+    public static IConfigurationBuilder WithSearchOptions(this IConfigurationBuilder builder)
     {
         Dictionary<string, string?> azureSearchConnectionStubConfig = new()
         {
             // AzureSearchOptions: Parameters controlling search behavior
-            ["AzureSearchOptions:Indexes:further-education:SearchIndex"] = "FE_INDEX_NAME",
-            ["AzureSearchOptions:Indexes:further-education:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Indexes:further-education:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:Indexes:further-education:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["AzureSearchOptions:Indexes:npd:SearchIndex"] = "NPD_INDEX_NAME",
-            ["AzureSearchOptions:Indexes:npd:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Indexes:npd:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:Indexes:npd:IncludeTotalCount"] = "true",      // Whether to include result count
-            ["AzureSearchOptions:Indexes:pupil-premium:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
-            ["AzureSearchOptions:Indexes:pupil-premium:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
-            ["AzureSearchOptions:Indexes:pupil-premium:Size"] = "40000",                  // Max number of results
-            ["AzureSearchOptions:Indexes:pupil-premium:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:SearchIndex"] = "FE_INDEX_NAME",
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:SearchMode"] = "0",
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:Size"] = "40000",
+            ["SearchOptions:Indexes:further-education-text:SearchCriteria:IncludeTotalCount"] = "true",
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchIndex"] = "NPD_INDEX_NAME",
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchMode"] = "0",
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:Size"] = "40000",
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:IncludeTotalCount"] = "true",
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchFields:0"] = "field1",
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchMode"] = "0",
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:Size"] = "40000",
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:IncludeTotalCount"] = "true",
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchFields:0"] = "field2",
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
-
-        return builder;
-    }
-
-    public static IConfigurationBuilder WithSearchCriteriaOptions(this IConfigurationBuilder builder)
-    {
-        Dictionary<string, string?> searchCriteriaStub = new()
-        {
-            // SearchCriteria: Fields and facets used in search queries
-            ["SearchCriteriaOptions:Criteria:further-education:SearchFields:0"] = "Forename",
-            ["SearchCriteriaOptions:Criteria:further-education::SearchFields:1"] = "Surname",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:0"] = "ForenameLC",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:1"] = "SurnameLC",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:2"] = "Gender",
-            ["SearchCriteriaOptions:Criteria:further-education::Facets:3"] = "Sex",
-        };
-
-        builder.AddInMemoryCollection(searchCriteriaStub);
 
         return builder;
     }

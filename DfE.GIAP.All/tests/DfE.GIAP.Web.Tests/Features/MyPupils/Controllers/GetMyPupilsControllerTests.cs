@@ -1,15 +1,12 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.SharedTests.Common;
+﻿using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
 public sealed class GetMyPupilsControllerTests

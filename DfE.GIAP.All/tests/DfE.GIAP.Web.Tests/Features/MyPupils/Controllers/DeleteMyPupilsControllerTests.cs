@@ -3,7 +3,6 @@ using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
@@ -12,8 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
 public sealed class DeleteMyPupilsControllerTests

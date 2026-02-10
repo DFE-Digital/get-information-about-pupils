@@ -14,7 +14,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 public static class SearchServiceAdapterTestDouble
 {
     public static Mock<ISearchServiceAdapter<TResults, SearchFacets>> MockFor<TResults>(
-        SearchResults<TResults, SearchFacets> searchResults)
+        ISearchResults<TResults, SearchFacets> searchResults)
     {
         Mock<ISearchServiceAdapter<TResults, SearchFacets>> mock = new();
 

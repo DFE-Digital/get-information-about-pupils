@@ -1,10 +1,11 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
+using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 
@@ -31,11 +32,9 @@ public sealed class PupilPremiumLearnerNumericSearchMappingContextTests
 
         List<PupilPremiumLearner> pupilPremiumLearners = PupilPremiumLearnerTestDoubles.FakeMany(domainLearners.Count);
 
-        PupilPremiumSearchResponse response =
-            PupilPremiumSearchResponseTestDouble.Create(
+        PupilPremiumSearchByUniquePupilNumberResponse response =
+            PupilPremiumSearchByUniquePupilNumberResponseTestDouble.Create(
                 learners: new PupilPremiumLearners(pupilPremiumLearners),
-                facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
-                status: SearchResponseStatus.Success,
                 totalResults: pupilPremiumLearners.Count);
 
         Mock<IMapper<PupilPremiumLearner, Learner>> learnerMapper = new();

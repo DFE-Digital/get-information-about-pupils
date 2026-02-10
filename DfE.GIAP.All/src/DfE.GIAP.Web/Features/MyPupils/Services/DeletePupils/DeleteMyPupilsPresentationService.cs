@@ -1,10 +1,9 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 
-namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.DeletePupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 
 public class DeleteMyPupilsPresentationService : IDeleteMyPupilsPresentationService
 {

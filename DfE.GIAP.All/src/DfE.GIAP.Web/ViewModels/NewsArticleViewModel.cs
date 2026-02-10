@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DfE.GIAP.Web.Constants;
 
-namespace DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
+namespace DfE.GIAP.Web.ViewModels;
 
 public class NewsArticleViewModel
 {

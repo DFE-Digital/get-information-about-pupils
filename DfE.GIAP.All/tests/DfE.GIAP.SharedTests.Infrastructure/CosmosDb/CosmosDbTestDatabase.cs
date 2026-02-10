@@ -1,9 +1,6 @@
 ﻿using System.Net;
-using System.Text;
 using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json.Linq;
-using Xunit;
 using PartitionKey = Microsoft.Azure.Cosmos.PartitionKey;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
