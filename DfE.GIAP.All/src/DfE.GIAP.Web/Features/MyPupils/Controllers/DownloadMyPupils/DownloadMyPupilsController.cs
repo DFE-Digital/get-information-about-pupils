@@ -7,7 +7,6 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
@@ -16,8 +15,6 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 using DfE.GIAP.Web.Helpers;
-using DfE.GIAP.Web.Helpers.SearchDownload;
-using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -30,22 +27,19 @@ namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
 public class DownloadMyPupilsController : Controller
 {
     private readonly ILogger<DownloadMyPupilsController> _logger;
-    private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly AzureAppSettings _appSettings;
-    private readonly IDownloadCommonTransferFileService _ctfService;
+    private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadUseCase;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
-    
 
     public DownloadMyPupilsController(
         ILogger<DownloadMyPupilsController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
-        IDownloadCommonTransferFileService ctfService,
         IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler,
@@ -62,9 +56,6 @@ public class DownloadMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
-
-        ArgumentNullException.ThrowIfNull(ctfService);
-        _ctfService = ctfService;
 
         ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
         _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
@@ -86,60 +77,6 @@ public class DownloadMyPupilsController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToDownloadCommonTransferFileData(
-        MyPupilsFormStateRequestDto updateForm,
-        MyPupilsQueryRequestDto query)
-    {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
-
-        if (updatedPupils.Count == 0)
-        {
-            _myPupilsLogSink.AddMessage(
-                new MyPupilsMessage(
-                    MessageLevel.Error,
-                    Messages.Common.Errors.NoPupilsSelected));
-
-            return RedirectToGetMyPupils(query);
-        }
-
-        if (updatedPupils.Count > _appSettings.CommonTransferFileUPNLimit)
-        {
-            _myPupilsLogSink.AddMessage(
-            new MyPupilsMessage(
-                MessageLevel.Error,
-                Messages.Downloads.Errors.UPNLimitExceeded));
-
-            return RedirectToGetMyPupils(query);
-        }
-
-        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
-            [.. updatedPupils],
-            [.. updatedPupils],
-            User.GetLocalAuthorityNumberForEstablishment(),
-            User.GetEstablishmentNumber(),
-            User.IsOrganisationEstablishment(),
-            AzureFunctionHeaderDetails.Create(
-                User.GetUserId(),
-                User.GetSessionId()),
-            ReturnRoute.MyPupilList);
-
-        if (downloadFile.Bytes != null)
-        {
-            return SearchDownloadHelper.DownloadFile(downloadFile);
-        }
-
-        _myPupilsLogSink.AddMessage(
-            new MyPupilsMessage(
-                MessageLevel.Error,
-                Messages.Downloads.Errors.NoDataForSelectedPupils));
-
-        return RedirectToGetMyPupils(query);
-    }
-
-
-    [HttpPost]
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(
@@ -156,7 +93,7 @@ public class DownloadMyPupilsController : Controller
                     MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
 
-            return RedirectToGetMyPupils(query);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
         }
 
         DownloadPupilPremiumFilesResponse response = await
@@ -179,7 +116,7 @@ public class DownloadMyPupilsController : Controller
                     MessageLevel.Error,
                     Messages.Downloads.Errors.NoDataForSelectedPupils));
 
-            return RedirectToGetMyPupils(query);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
         }
 
         return response.GetResult();
@@ -199,7 +136,7 @@ public class DownloadMyPupilsController : Controller
                     MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
 
-            return RedirectToGetMyPupils(query);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
         }
 
         return await GetDownloadNpdOptions(string.Join(",", updatedPupils));
@@ -344,18 +281,5 @@ public class DownloadMyPupilsController : Controller
                 .ToList();
 
         return allSelectedPupils;
-    }
-
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto request)
-    {
-        return RedirectToAction(
-            actionName: "Index",
-            controllerName: Routes.MyPupilList.GetMyPupilsController,
-            new
-            {
-                request.PageNumber,
-                request.SortField,
-                request.SortDirection
-            });
     }
 }
