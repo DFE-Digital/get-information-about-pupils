@@ -30,7 +30,7 @@ public sealed class SortField
     /// Thrown if <paramref name="validSortFields"/> is null, empty, or contains duplicates.
     /// Thrown if <paramref name="sortField"/> is not included in the allowed list.
     /// </exception>
-    public SortField(string sortField, IReadOnlyList<string> validSortFields)
+    public SortField(string sortField, IReadOnlySet<string> validSortFields)
     {
         ArgumentException.ThrowIfNullOrEmpty(sortField);
 
@@ -38,12 +38,6 @@ public sealed class SortField
         {
             throw new ArgumentException(
                 "Valid sort fields list cannot be null or empty.", nameof(validSortFields));
-        }
-
-        if (HasDuplicates(validSortFields))
-        {
-            throw new ArgumentException(
-                "Valid sort fields list contains duplicate entries (case-insensitive).", nameof(validSortFields));
         }
 
         _validSortFields =
@@ -72,24 +66,6 @@ public sealed class SortField
     public IReadOnlyCollection<string> ValidFields => _validSortFields;
 
     /// <summary>
-    /// Checks whether the provided list contains duplicate entries (case-insensitive).
-    /// </summary>
-    /// <param name="fields">The list of field names to validate.</param>
-    /// <returns>True if duplicates are found; otherwise false.</returns>
-    /// <summary>
-    /// Checks whether the provided list contains duplicate entries (case-insensitive).
-    /// </summary>
-    /// <param name="fields">The list of field names to validate.</param>
-    /// <returns>True if duplicates are found; otherwise false.</returns>
-    private static bool HasDuplicates(IReadOnlyList<string> fields)
-    {
-        HashSet<string> duplicates =
-            new(StringComparer.OrdinalIgnoreCase);
-
-        return fields.Any(field => !duplicates.Add(field));
-    }
-
-    /// <summary>
     /// Static factory method for creating a <see cref="SortField"/> instance.
     /// Improves readability and discoverability when constructing validated sort fields.
     /// </summary>
@@ -97,5 +73,5 @@ public sealed class SortField
     /// <param name="validFields">The list of allowed field names.</param>
     /// <returns>A validated <see cref="SortField"/> instance.</returns>
     public static SortField Create(
-        string field, IReadOnlyList<string> validFields) => new(field, validFields);
+        string field, IReadOnlySet<string> validFields) => new(field, validFields);
 }

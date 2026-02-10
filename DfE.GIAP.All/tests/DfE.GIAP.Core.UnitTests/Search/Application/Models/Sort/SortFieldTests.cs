@@ -9,7 +9,7 @@ public sealed class SortFieldTests
     public void Constructor_WithValidField_ShouldInitializeCorrectly()
     {
         // arrange
-        List<string> validFields = ["Surname", "DOB", "Forename"];
+        HashSet<string> validFields = ["Surname", "DOB", "Forename"];
         string inputField = "DOB";
 
         // act
@@ -25,7 +25,7 @@ public sealed class SortFieldTests
     public void Constructor_WithNullField_ShouldThrowArgumentNullException()
     {
         // arrange
-        List<string> validFields = ["Surname", "DOB"];
+        HashSet<string> validFields = ["Surname", "DOB"];
 
         // act
         Action act = () => new SortField(null!, validFields);
@@ -39,7 +39,7 @@ public sealed class SortFieldTests
     public void Constructor_WithEmptyValidFields_ShouldThrowArgumentException()
     {
         // act
-        Action act = () => new SortField("Surname", new List<string>());
+        Action act = () => new SortField("Surname", new HashSet<string>());
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -51,7 +51,7 @@ public sealed class SortFieldTests
     public void Constructor_WithDuplicateValidFields_ShouldThrowArgumentException()
     {
         // arrange
-        List<string> validFields = ["DOB", "dob"];
+        HashSet<string> validFields = ["DOB", "dob"];
 
         // act
         Action act = () => new SortField("DOB", validFields);
@@ -66,7 +66,7 @@ public sealed class SortFieldTests
     public void Constructor_WithInvalidField_ShouldThrowArgumentException()
     {
         // arrange
-        List<string> validFields = ["Surname", "DOB"];
+        HashSet<string> validFields = ["Surname", "DOB"];
 
         // act
         Action act = () => new SortField("Age", validFields);
@@ -81,7 +81,7 @@ public sealed class SortFieldTests
     public void IsValid_ShouldReturnTrueForCaseInsensitiveMatch()
     {
         // arrange
-        List<string> validFields = ["Surname", "DOB"];
+        HashSet<string> validFields = ["Surname", "DOB"];
         SortField sortField = new("DOB", validFields);
 
         // act & Assert
@@ -94,7 +94,7 @@ public sealed class SortFieldTests
     public void Create_ShouldReturnValidSortFieldInstance()
     {
         // arrange
-        List<string> validFields = ["Level", "Subject"];
+        HashSet<string> validFields = ["Level", "Subject"];
 
         // act
         SortField sortField = SortField.Create("Level", validFields);

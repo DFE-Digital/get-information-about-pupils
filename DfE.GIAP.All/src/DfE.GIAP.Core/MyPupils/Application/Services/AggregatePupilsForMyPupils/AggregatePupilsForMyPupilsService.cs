@@ -85,7 +85,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
         SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
+            NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
             await _npdSearchServiceAdaptor.HandleRequestAsync(
                 new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
                 {

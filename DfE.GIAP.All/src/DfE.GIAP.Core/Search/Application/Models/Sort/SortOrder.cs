@@ -30,9 +30,9 @@ public sealed class SortOrder
     /// <exception cref="ArgumentException">
     /// Thrown if the field or direction is invalid according to their respective validators.
     /// </exception>
-    public SortOrder(string sortField, string sortDirection, IReadOnlyList<string> validSortFields)
+    public SortOrder(string sortField, string sortDirection, IEnumerable<string> validSortFields)
     {
-        _field = SortField.Create(sortField, validSortFields);
+        _field = SortField.Create(sortField, validSortFields.ToHashSet());
         _direction = SortDirection.Create(sortDirection);
     }
 

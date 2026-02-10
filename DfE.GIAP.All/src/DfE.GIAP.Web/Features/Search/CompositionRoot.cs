@@ -14,7 +14,6 @@ using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumb
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Features.Search.SearchOptionsExtensions;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.FilterRegistration;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
@@ -34,7 +33,6 @@ public static class CompositionRoot
         services.AddSearchCore(configuration);
 
         services
-            .AddSearchOptions(configuration)
             .AddSort()
             .AddFilters();
 
