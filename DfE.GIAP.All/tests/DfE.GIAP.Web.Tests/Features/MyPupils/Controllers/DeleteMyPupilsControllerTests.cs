@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Options;
-using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
@@ -21,7 +20,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: null!,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -37,25 +35,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: null!,
-            messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
-            pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_Options_Value_Is_Null()
-    {
-        // Arrange
-        IOptions<MyPupilsOptions> nullValueOptions = OptionsTestDoubles.MockNullOptions<MyPupilsOptions>();
-
-        Func<DeleteMyPupilsController> construct = () => new(
-            logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: nullValueOptions,
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -71,7 +50,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: null!,
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -89,7 +67,6 @@ public sealed class DeleteMyPupilsControllerTests
 
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: nullValueOptions,
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -105,7 +82,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: null!,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -121,7 +97,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: null!,
@@ -137,7 +112,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -161,7 +135,6 @@ public sealed class DeleteMyPupilsControllerTests
             logger: loggerFake,
             messageSink: messageSinkMock.Object,
             deleteService: deleteServiceMock.Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
@@ -205,7 +178,6 @@ public sealed class DeleteMyPupilsControllerTests
             messageSink: messageSinkMock.Object,
             deleteService: deleteServiceMock.Object,
             pupilSelectionStateProvider: providerMock.Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
 
         // Act
@@ -252,7 +224,6 @@ public sealed class DeleteMyPupilsControllerTests
         messageSink: messageSinkMock.Object,
         deleteService: deleteServiceMock.Object,
         pupilSelectionStateProvider: providerMock.Object,
-        options: OptionsTestDoubles.Default<MyPupilsOptions>(),
         messagingOptions: messagingOptionsStub);
 
         HttpContext httpContextStub = sut.StubHttpContext();

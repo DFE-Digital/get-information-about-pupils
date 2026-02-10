@@ -5,6 +5,8 @@ using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using FluentAssertions;
 
+namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.PupilPremium;
+
 public sealed class PupilPremiumSearchResultToLearnerMapperTests
 {
     private readonly PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper _sut;
