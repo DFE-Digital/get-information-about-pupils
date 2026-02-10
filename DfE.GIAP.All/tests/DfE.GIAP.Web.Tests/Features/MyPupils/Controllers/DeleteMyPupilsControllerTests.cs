@@ -30,22 +30,7 @@ public sealed class DeleteMyPupilsControllerTests
     }
 
     [Fact]
-    public void Constructor_Throws_When_Options_Is_Null()
-    {
-        // Arrange
-        Func<DeleteMyPupilsController> construct = () => new(
-            logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
-            pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_LoggingOptions_Is_Null()
+    public void Constructor_Throws_When_MessagingOptions_Is_Null()
     {
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
@@ -60,7 +45,7 @@ public sealed class DeleteMyPupilsControllerTests
     }
 
     [Fact]
-    public void Constructor_Throws_When_LoggingOptions_Value_Is_Null()
+    public void Constructor_Throws_When_MessagingOptions_Value_Is_Null()
     {
         // Arrange
         IOptions<MyPupilsMessagingOptions> nullValueOptions = OptionsTestDoubles.MockNullOptions<MyPupilsMessagingOptions>();
