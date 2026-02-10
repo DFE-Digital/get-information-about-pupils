@@ -55,12 +55,12 @@ public class DeleteMyPupilsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Route(Routes.MyPupilList.DeleteMyPupilsRoute)]
-    public async Task<IActionResult> Delete(
+    [Route(Routes.MyPupilList.DeleteMyPupilsControllerAction)]
+    public async Task<IActionResult> Index(
         [FromForm] List<string>? SelectedPupils,
         MyPupilsQueryRequestDto? queryRequest)
     {
-        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(DeleteMyPupilsController), nameof(Delete));
+        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(DeleteMyPupilsController), nameof(Index));
 
         SelectedPupils ??= [];
         queryRequest ??= new();

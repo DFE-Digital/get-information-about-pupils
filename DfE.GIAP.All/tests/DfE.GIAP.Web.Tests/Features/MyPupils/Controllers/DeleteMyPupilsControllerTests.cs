@@ -168,7 +168,7 @@ public sealed class DeleteMyPupilsControllerTests
         sut.AddModelStateError();
 
         // Act
-        IActionResult response = await sut.Delete([], It.IsAny<MyPupilsQueryRequestDto>());
+        IActionResult response = await sut.Index([], It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
         Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
@@ -210,7 +210,7 @@ public sealed class DeleteMyPupilsControllerTests
 
         // Act
         IActionResult response =
-            await sut.Delete(
+            await sut.Index(
                 SelectedPupils: [],
                 It.IsAny<MyPupilsQueryRequestDto>());
 
@@ -266,7 +266,7 @@ public sealed class DeleteMyPupilsControllerTests
         };
         List<string> selectedPupils = ["a"];
 
-        IActionResult response = await sut.Delete(selectedPupils, query);
+        IActionResult response = await sut.Index(selectedPupils, query);
 
         // Assert
         const string userIdStub = "00000000-0000-0000-0000-000000000000";

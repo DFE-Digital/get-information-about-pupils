@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
+﻿using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 
@@ -15,7 +16,7 @@ public record MyPupilsViewModel
     public bool HasPupils => CurrentPageOfPupils.Count > 0;
     public bool MorePagesAvailable => CurrentPageOfPupils.Count == DEFAULT_PAGE_SIZE;
     public string PageHeading => "My pupil list";
-    public string UpdateFormController => "UpdateMyPupils";
+    public string UpdateFormController => Routes.MyPupilList.UpdateMyPupilsControllerName;
     public string UpdateFormAction => "Index";
     public string UniquePupilNumberLabel => "UPN";
 }

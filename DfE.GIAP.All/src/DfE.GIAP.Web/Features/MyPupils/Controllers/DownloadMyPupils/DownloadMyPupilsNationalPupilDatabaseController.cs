@@ -24,24 +24,22 @@ using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
 
 [Route(Routes.MyPupilList.MyPupilsBase)]
-public class DownloadMyPupilsController : Controller
+public class DownloadMyPupilsNationalPupilDatabaseController : Controller
 {
-    private readonly ILogger<DownloadMyPupilsController> _logger;
+    private readonly ILogger<DownloadMyPupilsNationalPupilDatabaseController> _logger;
     private readonly AzureAppSettings _appSettings;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
-    private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadUseCase;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
 
-    public DownloadMyPupilsController(
-        ILogger<DownloadMyPupilsController> logger,
+    public DownloadMyPupilsNationalPupilDatabaseController(
+        ILogger<DownloadMyPupilsNationalPupilDatabaseController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
         IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
-        IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
@@ -60,9 +58,6 @@ public class DownloadMyPupilsController : Controller
         ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
         _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
 
-        ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
-        _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
-
         ArgumentNullException.ThrowIfNull(updateMyPupilsPupilSelectionsCommandHandler);
         _updateMyPupilsPupilSelectionsCommandHandler = updateMyPupilsPupilSelectionsCommandHandler;
 
@@ -77,53 +72,7 @@ public class DownloadMyPupilsController : Controller
     }
 
     [HttpPost]
-    [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToDownloadSelectedPupilPremiumDataUPN(
-        MyPupilsFormStateRequestDto updateForm,
-        MyPupilsQueryRequestDto query,
-        CancellationToken ctx = default)
-    {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
-
-        if (updatedPupils.Count == 0)
-        {
-            _myPupilsLogSink.AddMessage(
-                new MyPupilsMessage(
-                    MessageLevel.Error,
-                    Messages.Common.Errors.NoPupilsSelected));
-
-            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
-        }
-
-        DownloadPupilPremiumFilesResponse response = await
-            _downloadPupilPremiumDataForPupilsService.DownloadAsync(
-                updatedPupils,
-                Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
-                ctx);
-
-        if (response is null)
-        {
-            return RedirectToAction(
-                actionName: Routes.Application.Error,
-                controllerName: Routes.Application.Home);
-        }
-
-        if (!response.HasData)
-        {
-            _myPupilsLogSink.AddMessage(
-                new MyPupilsMessage(
-                    MessageLevel.Error,
-                    Messages.Downloads.Errors.NoDataForSelectedPupils));
-
-            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
-        }
-
-        return response.GetResult();
-    }
-
-    [HttpPost]
-    [Route(Routes.MyPupilList.DownloadOptionsRoute)]
+    [Route(Routes.MyPupilList.DownloadNpdOptionsRoute)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> GetDownloadNpdOptions(MyPupilsFormStateRequestDto updateForm, MyPupilsQueryRequestDto query)
     {
@@ -144,7 +93,7 @@ public class DownloadMyPupilsController : Controller
 
 
     [HttpPost]
-    [Route(Routes.MyPupilList.DownloadConfirmRoute)]
+    [Route(Routes.MyPupilList.DownloadNpdConfirmRoute)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
@@ -236,7 +185,7 @@ public class DownloadMyPupilsController : Controller
             SelectedPupilsCount = selectedPupils.Length,
             DownloadFileType = DownloadFileType.CSV,
             ShowTABDownloadType = true,
-            DownloadRoute = Routes.MyPupilList.DownloadConfirmRoute,
+            DownloadRoute = Routes.MyPupilList.DownloadNpdConfirmRoute,
             SearchResultPageHeading = ApplicationLabels.SearchMyPupilListPageHeading
         };
 

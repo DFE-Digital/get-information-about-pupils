@@ -17,14 +17,14 @@ namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
 [Route(Routes.MyPupilList.MyPupilsBase)]
 public class DownloadMyPupilsCommonTransferFileController : Controller
 {
-    private readonly ILogger<DownloadMyPupilsController> _logger;
+    private readonly ILogger<DownloadMyPupilsNationalPupilDatabaseController> _logger;
     private readonly AzureAppSettings _azureAppSettings;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
 
-    public DownloadMyPupilsCommonTransferFileController(ILogger<DownloadMyPupilsController> logger,
+    public DownloadMyPupilsCommonTransferFileController(ILogger<DownloadMyPupilsNationalPupilDatabaseController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
         IDownloadCommonTransferFileService ctfService,
