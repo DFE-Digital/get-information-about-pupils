@@ -11,7 +11,7 @@ internal sealed class DeselectAllPupilsCommandHandler : IEvaluationHandler<Updat
             return HandlerResultValueTaskFactory.FailedWithNullArgument(nameof(input));
         }
 
-        if (input.UpdateRequest.SelectAllState != MyPupilsFormSelectionModeRequestDto.DeselectAll)
+        if (input.UpdateRequest.SelectAllState != MyPupilsPupilSelectionModeRequestDto.DeselectAll)
         {
             return HandlerResultValueTaskFactory.Skipped();
         }

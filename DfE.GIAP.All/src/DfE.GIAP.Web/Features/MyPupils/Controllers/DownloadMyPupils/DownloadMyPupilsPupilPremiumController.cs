@@ -4,8 +4,7 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
+using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
@@ -14,16 +13,14 @@ public class DownloadMyPupilsPupilPremiumController : Controller
 {
     private readonly ILogger<DownloadMyPupilsNationalPupilDatabaseController> _logger;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
-    private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
+    private readonly IUpsertSelectedPupilsIdentifiersPresentationService _upsertSelectedPupilsPresentationService;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
-    private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
 
     public DownloadMyPupilsPupilPremiumController(
         ILogger<DownloadMyPupilsNationalPupilDatabaseController> logger,
         IMyPupilsMessageSink myPupilsLogSink,
-        IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
-        IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler)
+        IUpsertSelectedPupilsIdentifiersPresentationService upsertSelectedPupilsPresentationService)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -31,26 +28,28 @@ public class DownloadMyPupilsPupilPremiumController : Controller
         ArgumentNullException.ThrowIfNull(myPupilsLogSink);
         _myPupilsLogSink = myPupilsLogSink;
 
-        ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
-        _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
-
+        
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
         _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
 
-        ArgumentNullException.ThrowIfNull(updateMyPupilsPupilSelectionsCommandHandler);
-        _updateMyPupilsPupilSelectionsCommandHandler = updateMyPupilsPupilSelectionsCommandHandler;
+        ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
+        _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
     }
 
     [HttpPost]
     [Route(Routes.PupilPremium.LearnerNumberDownloadRequest)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(
-        MyPupilsFormStateRequestDto? updateForm,
+        MyPupilsPupilSelectionsRequestDto? selectionsDto,
         MyPupilsQueryRequestDto? query,
         CancellationToken ctx = default)
     {
         query ??= new();
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
+
+        List<string> updatedPupils =
+            await _upsertSelectedPupilsPresentationService.UpsertAsync(
+                userId: User.GetUserId(),
+                selectionsDto);
 
         if (updatedPupils.Count == 0)
         {
@@ -86,19 +85,5 @@ public class DownloadMyPupilsPupilPremiumController : Controller
         }
 
         return response.GetResult();
-    }
-
-    private async Task<List<string>> UpsertSelectedPupilsAsync(MyPupilsFormStateRequestDto updateForm)
-    {
-        if (updateForm != null)
-        {
-            await _updateMyPupilsPupilSelectionsCommandHandler.Handle(updateForm);
-        }
-
-        List<string> allSelectedPupils =
-            (await _getSelectedPupilsPresentationHandler.GetSelectedPupilsAsync(userId: User.GetUserId()))
-                .ToList();
-
-        return allSelectedPupils;
     }
 }

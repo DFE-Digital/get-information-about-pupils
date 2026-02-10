@@ -2,7 +2,7 @@
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
-public record MyPupilsFormStateRequestDto
+public record MyPupilsPupilSelectionsRequestDto
 {
     // TODO consider CustomModelBinding to SelectAllState, which is what should be used in Controller to pass down OR Mapper
     [FromForm]
@@ -16,19 +16,19 @@ public record MyPupilsFormStateRequestDto
     [FromForm]
     public List<string> CurrentPupils { get; set; } = [];
 
-    public MyPupilsFormSelectionModeRequestDto SelectAllState
+    public MyPupilsPupilSelectionModeRequestDto SelectAllState
     {
         get
         {
             if (SelectAll.HasValue && SelectAll.Value)
             {
-                return MyPupilsFormSelectionModeRequestDto.SelectAll;
+                return MyPupilsPupilSelectionModeRequestDto.SelectAll;
             }
             if (SelectAll.HasValue && !SelectAll.Value)
             {
-                return MyPupilsFormSelectionModeRequestDto.DeselectAll;
+                return MyPupilsPupilSelectionModeRequestDto.DeselectAll;
             }
-            return MyPupilsFormSelectionModeRequestDto.ManualSelection; ;
+            return MyPupilsPupilSelectionModeRequestDto.ManualSelection; ;
         }
     }
 }

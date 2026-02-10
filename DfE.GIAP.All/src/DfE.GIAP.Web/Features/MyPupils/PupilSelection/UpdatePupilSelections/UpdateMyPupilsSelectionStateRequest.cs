@@ -4,15 +4,15 @@ namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 
 public record UpdateMyPupilsSelectionStateRequest
 {
-    public UpdateMyPupilsSelectionStateRequest(MyPupilsFormStateRequestDto updateRequest, MyPupilsPupilSelectionState currentState)
+    public UpdateMyPupilsSelectionStateRequest(MyPupilsPupilSelectionsRequestDto selectionsDto, MyPupilsPupilSelectionState currentState)
     {
-        ArgumentNullException.ThrowIfNull(updateRequest);
-        UpdateRequest = updateRequest;
+        ArgumentNullException.ThrowIfNull(selectionsDto);
+        UpdateRequest = selectionsDto;
 
         ArgumentNullException.ThrowIfNull(currentState);
         State = currentState;
     }
 
-    public MyPupilsFormStateRequestDto UpdateRequest { get; init; }
+    public MyPupilsPupilSelectionsRequestDto UpdateRequest { get; init; }
     public MyPupilsPupilSelectionState State { get; init; }
 }

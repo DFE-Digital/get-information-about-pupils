@@ -9,11 +9,9 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
+using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +27,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
     private readonly ILogger<DownloadMyPupilsNationalPupilDatabaseController> _logger;
     private readonly AzureAppSettings _appSettings;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
-    private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
-    private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
+    private readonly IUpsertSelectedPupilsIdentifiersPresentationService _upsertSelectedPupilsPresentationService;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadUseCase;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
@@ -39,8 +36,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
         ILogger<DownloadMyPupilsNationalPupilDatabaseController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
-        IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
-        IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler,
+        IUpsertSelectedPupilsIdentifiersPresentationService upsertSelectedPupilsPresentationService,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadUseCase,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IEventLogger eventLogger)
@@ -51,15 +47,12 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
         ArgumentNullException.ThrowIfNull(myPupilsLogSink);
         _myPupilsLogSink = myPupilsLogSink;
 
+        ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
+        _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
+        
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
-
-        ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
-        _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
-
-        ArgumentNullException.ThrowIfNull(updateMyPupilsPupilSelectionsCommandHandler);
-        _updateMyPupilsPupilSelectionsCommandHandler = updateMyPupilsPupilSelectionsCommandHandler;
 
         ArgumentNullException.ThrowIfNull(downloadUseCase);
         _downloadUseCase = downloadUseCase;
@@ -74,9 +67,12 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
     [HttpPost]
     [Route(Routes.MyPupilList.DownloadNpdOptionsRoute)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> GetDownloadNpdOptions(MyPupilsFormStateRequestDto updateForm, MyPupilsQueryRequestDto query)
+    public async Task<IActionResult> GetDownloadNpdOptions(MyPupilsPupilSelectionsRequestDto selectionsDto, MyPupilsQueryRequestDto query)
     {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
+        List<string> updatedPupils = 
+            await _upsertSelectedPupilsPresentationService.UpsertAsync(
+                userId: User.GetUserId(), 
+                selectionsDto);
 
         if (updatedPupils.Count == 0)
         {
@@ -215,20 +211,5 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
         }
 
         return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
-    }
-
-
-    private async Task<List<string>> UpsertSelectedPupilsAsync(MyPupilsFormStateRequestDto updateForm)
-    {
-        if (updateForm != null)
-        {
-            await _updateMyPupilsPupilSelectionsCommandHandler.Handle(updateForm);
-        }
-
-        List<string> allSelectedPupils =
-            (await _getSelectedPupilsPresentationHandler.GetSelectedPupilsAsync(userId: User.GetUserId()))
-                .ToList();
-
-        return allSelectedPupils;
     }
 }

@@ -5,8 +5,7 @@ using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
-using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
+using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Services.Download.CTF;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +20,13 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
     private readonly AzureAppSettings _azureAppSettings;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IDownloadCommonTransferFileService _ctfService;
-    private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
-    private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
+    private readonly IUpsertSelectedPupilsIdentifiersPresentationService _upsertSelectedPupilsPresentationService;
 
     public DownloadMyPupilsCommonTransferFileController(ILogger<DownloadMyPupilsNationalPupilDatabaseController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
         IDownloadCommonTransferFileService ctfService,
-        IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
-        IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler)
+        IUpsertSelectedPupilsIdentifiersPresentationService upsertSelectedPupilsPresentationService)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -44,23 +41,23 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
         ArgumentNullException.ThrowIfNull(ctfService);
         _ctfService = ctfService;
 
-        ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
-        _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
-
-        ArgumentNullException.ThrowIfNull(updateMyPupilsPupilSelectionsCommandHandler);
-        _updateMyPupilsPupilSelectionsCommandHandler = updateMyPupilsPupilSelectionsCommandHandler;
+        ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
+        _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
     }
     
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(
-        MyPupilsFormStateRequestDto updateFormRequest,
+        MyPupilsPupilSelectionsRequestDto selectionsDto,
         MyPupilsQueryRequestDto? query)
     {
         query ??= new();
 
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateFormRequest);
+        List<string> updatedPupils = 
+            await _upsertSelectedPupilsPresentationService.UpsertAsync(
+                userId: User.GetUserId(), 
+                selectionsDto);
 
         if (updatedPupils.Count == 0)
         {
@@ -104,19 +101,5 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
                 Messages.Downloads.Errors.NoDataForSelectedPupils));
 
         return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
-    }
-
-    private async Task<List<string>> UpsertSelectedPupilsAsync(MyPupilsFormStateRequestDto updateForm)
-    {
-        if (updateForm != null)
-        {
-            await _updateMyPupilsPupilSelectionsCommandHandler.Handle(updateForm);
-        }
-
-        List<string> allSelectedPupils =
-            (await _getSelectedPupilsPresentationHandler.GetSelectedPupilsAsync(userId: User.GetUserId()))
-                .ToList();
-
-        return allSelectedPupils;
     }
 }
