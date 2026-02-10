@@ -19,14 +19,12 @@ public class DeleteMyPupilsController : Controller
 {
     private readonly ILogger<DeleteMyPupilsController> _logger;
     private readonly MyPupilsMessagingOptions _loggingOptions;
-    private readonly MyPupilsOptions _options;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsSelectionState;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IDeleteMyPupilsPresentationService _deleteService;
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
-        IOptions<MyPupilsOptions> options,
         IOptions<MyPupilsMessagingOptions> messagingOptions,
         IMyPupilsMessageSink messageSink,
         IDeleteMyPupilsPresentationService deleteService,
@@ -34,10 +32,6 @@ public class DeleteMyPupilsController : Controller
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Value);
-        _options = options.Value;
 
         ArgumentNullException.ThrowIfNull(messagingOptions);
         ArgumentNullException.ThrowIfNull(messagingOptions.Value);
