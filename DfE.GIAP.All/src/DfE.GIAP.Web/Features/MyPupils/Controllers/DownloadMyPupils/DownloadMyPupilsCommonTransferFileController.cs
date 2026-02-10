@@ -1,12 +1,8 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
-using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
-using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
@@ -35,10 +31,23 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
         IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler)
     {
+        ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
+
+        ArgumentNullException.ThrowIfNull(azureAppSettings);
+        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _azureAppSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(myPupilsLogSink);
         _myPupilsLogSink = myPupilsLogSink;
+
+        ArgumentNullException.ThrowIfNull(ctfService);
         _ctfService = ctfService;
+
+        ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
+        _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
+
+        ArgumentNullException.ThrowIfNull(updateMyPupilsPupilSelectionsCommandHandler);
         _updateMyPupilsPupilSelectionsCommandHandler = updateMyPupilsPupilSelectionsCommandHandler;
     }
     
@@ -46,10 +55,12 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToDownloadCommonTransferFileData(
-        MyPupilsFormStateRequestDto updateForm,
+        MyPupilsFormStateRequestDto updateFormRequest,
         MyPupilsQueryRequestDto query)
     {
-        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateForm);
+        query ??= new();
+
+        List<string> updatedPupils = await UpsertSelectedPupilsAsync(updateFormRequest);
 
         if (updatedPupils.Count == 0)
         {

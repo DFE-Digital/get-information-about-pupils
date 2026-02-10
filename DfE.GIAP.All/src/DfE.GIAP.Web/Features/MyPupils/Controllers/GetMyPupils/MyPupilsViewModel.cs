@@ -16,8 +16,6 @@ public record MyPupilsViewModel
     public bool HasPupils => CurrentPageOfPupils.Count > 0;
     public bool MorePagesAvailable => CurrentPageOfPupils.Count == DEFAULT_PAGE_SIZE;
     public string PageHeading => "My pupil list";
-    public string DownloadController => Routes.MyPupilList.DownloadMyPupilsController;
-    public string DeleteMyPupilsController => Routes.MyPupilList.DeleteMyPupilsController;
     public string UpdateFormController => "UpdateMyPupils";
     public string UpdateFormAction => "Index";
     public string UniquePupilNumberLabel => "UPN";
