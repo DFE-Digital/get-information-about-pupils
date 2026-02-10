@@ -34,9 +34,9 @@ internal sealed class UpdateMyPupilsPupilSelectionsCommandHandler : IUpdateMyPup
         _selectionsSessionCacheKey = new(options.Value.SelectionsSessionKey);
     }
 
-    public async Task Handle(MyPupilsFormStateRequestDto formDto)
+    public async Task Handle(MyPupilsPupilSelectionsRequestDto selectionsDto)
     {
-        UpdateMyPupilsSelectionStateRequest updateRequest = new(formDto, _getPupilSelectionsProvider.GetPupilSelections());
+        UpdateMyPupilsSelectionStateRequest updateRequest = new(selectionsDto, _getPupilSelectionsProvider.GetPupilSelections());
 
         await _evaluator.EvaluateAsync(updateRequest);
 

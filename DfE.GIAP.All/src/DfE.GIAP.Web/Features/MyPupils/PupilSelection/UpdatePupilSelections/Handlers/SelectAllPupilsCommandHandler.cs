@@ -11,7 +11,7 @@ internal sealed class SelectAllPupilsCommandHandler : IEvaluationHandler<UpdateM
             return HandlerResultValueTaskFactory.FailedWithNullArgument(nameof(input));
         }
 
-        if (input.UpdateRequest.SelectAllState != MyPupilsFormSelectionModeRequestDto.SelectAll)
+        if (input.UpdateRequest.SelectAllState != MyPupilsPupilSelectionModeRequestDto.SelectAll)
         {
             return HandlerResultValueTaskFactory.Skipped();
         }

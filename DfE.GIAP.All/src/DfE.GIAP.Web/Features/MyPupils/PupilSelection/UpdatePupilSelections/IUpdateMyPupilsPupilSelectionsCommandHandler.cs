@@ -4,5 +4,5 @@ namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 
 public interface IUpdateMyPupilsPupilSelectionsCommandHandler
 {
-    Task Handle(MyPupilsFormStateRequestDto request);
+    Task Handle(MyPupilsPupilSelectionsRequestDto selectionsDto);
 }

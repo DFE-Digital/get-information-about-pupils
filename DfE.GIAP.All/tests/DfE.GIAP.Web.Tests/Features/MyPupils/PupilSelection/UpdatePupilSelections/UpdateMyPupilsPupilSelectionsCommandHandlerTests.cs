@@ -5,7 +5,6 @@ using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Options;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
-using HandlebarsDotNet;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.UpdatePupilSelections;
@@ -132,7 +131,7 @@ public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
                 evaluatorMock.Object,
                 options);
 
-        MyPupilsFormStateRequestDto request = new();
+        MyPupilsPupilSelectionsRequestDto request = new();
 
         // Act
         await sut.Handle(request);
