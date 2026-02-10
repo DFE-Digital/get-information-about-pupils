@@ -173,7 +173,7 @@ public sealed class AzureSearchServiceAdaptorTests
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
-            new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
+            new(
                 mockKeywordService.Object,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
@@ -215,7 +215,7 @@ public sealed class AzureSearchServiceAdaptorTests
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
-            new AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject>(
+            new(
                 mockKeywordService.Object,
                 _mockFacetsMapper.Object,
                 _searchOptionsBuilder,
