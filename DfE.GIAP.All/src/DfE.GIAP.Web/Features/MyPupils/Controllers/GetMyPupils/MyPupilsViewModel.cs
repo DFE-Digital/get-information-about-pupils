@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
+﻿using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 

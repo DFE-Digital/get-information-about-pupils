@@ -54,9 +54,9 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ToDownloadCommonTransferFileData(
+    public async Task<IActionResult> Index(
         MyPupilsFormStateRequestDto updateFormRequest,
-        MyPupilsQueryRequestDto query)
+        MyPupilsQueryRequestDto? query)
     {
         query ??= new();
 

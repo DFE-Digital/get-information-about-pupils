@@ -39,7 +39,7 @@
             <div class="govuk-grid-row download-block">
                 <div class="govuk-grid-column-one-quarter download-block">
                     <button asp-controller="@Routes.MyPupilList.DownloadMyPupilsCommonTransferFileControllerName"
-                            asp-action="ToDownloadCommonTransferFileData"
+                            asp-action="@Routes.MyPupilList.DownloadMyPupilsCommonTransferFileAction"
                             asp-route-pageNumber="@Model.PageNumber"
                             asp-route-sortField="@Model.SortField"
                             asp-route-sortDirection="@Model.SortDirection"

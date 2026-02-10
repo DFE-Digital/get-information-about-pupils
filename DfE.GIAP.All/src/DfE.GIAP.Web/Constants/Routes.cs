@@ -68,6 +68,7 @@ public static class Routes
         public const string DownloadOptionsRoute = "download-npd";
         public const string DownloadMyPupilsController = "DownloadMyPupils";
         public const string DownloadMyPupilsCommonTransferFileControllerName = "DownloadMyPupilsCommonTransferFile";
+        public const string DownloadMyPupilsCommonTransferFileAction = "Index";
         public const string DownloadNpdOptionsControllerAction = "GetDownloadNpdOptions";
         public const string DownloadPupilPremiumControllerAction = "ToDownloadSelectedPupilPremiumDataUPN";
         
