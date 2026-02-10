@@ -105,8 +105,6 @@ public sealed class AzureSearchServiceAdaptorTests
         Mock<ISearchByKeywordService> mockKeywordService =
             SearchByKeywordServiceTestDouble.MockFor(searchResponse);
 
-        IOptions<SearchOptions> options = OptionsTestDoubles.MockAs(_searchOptions);
-
         IMapper<Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners> dtoMapper = CreateDtoToResultMapper();
 
         AzureSearchServiceAdaptor<FurtherEducationLearners, FurtherEducationLearnerDataTransferObject> sut =
