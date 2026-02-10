@@ -440,7 +440,11 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
 
-        DownloadPupilCtfRequest request = new([selectedPupil]);
+        DownloadPupilCtfRequest request = new(
+            SelectedPupils: [selectedPupil],
+            IsEstablishment: User.IsOrganisationEstablishment(),
+            LocalAuthoriyNumber: User.GetLocalAuthorityNumberForEstablishment(),
+            EstablishmentNumber: User.GetEstablishmentNumber());
         DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
         if (response.FileContents is not null)

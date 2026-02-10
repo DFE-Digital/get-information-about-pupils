@@ -33,7 +33,7 @@ builder.Services
     .AddUserDependencies()
     .AddNewsArticleDependencies()
     .AddPrePreparedDownloadsDependencies()
-    .AddDownloadDependencies()
+    .AddDownloadDependencies(configuration)
     .AddScoped<IDownloadPupilPremiumPupilDataService, DownloadPupilPremiumPupilDataService>()
     .AddAuthDependencies(configuration)
     .AddMyPupils()

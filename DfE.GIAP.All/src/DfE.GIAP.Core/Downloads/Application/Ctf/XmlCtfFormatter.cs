@@ -20,7 +20,7 @@ public class XmlCtfFormatter : ICtfFormatter
         return Encoding.UTF8.GetBytes(xml.ToString());
     }
 
-    private XElement BuildHeader(CtfHeader header)
+    private static XElement BuildHeader(CtfHeader header)
     {
         return new XElement("Header",
             new XElement("DocumentName", header.DocumentName),

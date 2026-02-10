@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
+﻿using Microsoft.Extensions.Options;
+
+namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
 
 public class CtfHeaderBuilder : ICtfHeaderBuilder
 {
@@ -7,15 +9,22 @@ public class CtfHeaderBuilder : ICtfHeaderBuilder
 
     public const string DescriptorNonEstablishment =
         "This attainment data was obtained via the Get Information About Pupils school site";
+    private CtfOptions _ctfOptions { get; set; }
 
-    public CtfHeader Build(CtfContext context)
+    public CtfHeaderBuilder(IOptions<CtfOptions> options)
+    {
+        _ctfOptions = options.Value;
+        ArgumentException.ThrowIfNullOrWhiteSpace(_ctfOptions.Version);
+    }
+
+    public CtfHeader Build(ICtfHeaderContext context)
     {
         DateTime now = DateTime.UtcNow;
 
         return new CtfHeader
         {
             DocumentName = "Common Transfer File",
-            CtfVersion = "25.0", // TODO: Currently coming from config, changes every september(ish)
+            CtfVersion = _ctfOptions.Version, // Changes every september(ish)
             DateTime = now,
             DocumentQualifier = "partial",
             DataDescriptor = context.IsEstablishment
@@ -33,8 +42,8 @@ public class CtfHeaderBuilder : ICtfHeaderBuilder
 
             DestSchool = new CtfSchoolInfo
             {
-                LEA = context.IsEstablishment ? context.DestLEA : "XXX",
-                Estab = context.IsEstablishment ? context.DestEstab : "XXXX"
+                LEA = context.IsEstablishment ? context.LocalAuthorityNumber : "XXX",
+                Estab = context.IsEstablishment ? context.EstablishedNumber : "XXXX"
             }
         };
     }

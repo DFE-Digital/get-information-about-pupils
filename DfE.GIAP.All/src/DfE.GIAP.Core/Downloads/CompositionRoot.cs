@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Aggregators;
@@ -21,41 +22,42 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Downloads;
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddDownloadDependencies(this IServiceCollection services)
+    public static IServiceCollection AddDownloadDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
         return services
-            .RegisteApplicationDependencies()
+            .RegisteApplicationDependencies(configuration)
             .RegisteInfrastructureDependencies();
     }
 
     // Application
-    private static IServiceCollection RegisteApplicationDependencies(this IServiceCollection services)
+    private static IServiceCollection RegisteApplicationDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         return services
             .RegisterApplicationDatasetEvaluatorsAndHandlers()
             .RegisterApplicationAggregatorsAndHandlers()
             .RegisterApplicationMappers()
-            .RegisteApplicationUseCases();
+            .RegisteApplicationUseCases(configuration);
     }
 
 
-    private static IServiceCollection RegisteApplicationUseCases(this IServiceCollection services)
+    private static IServiceCollection RegisteApplicationUseCases(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>, GetAvailableDatasetsForPupilsUseCase>();
         services.AddScoped<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>, DownloadPupilDataUseCase>();
 
         // WIP
+        services.Configure<CtfOptions>(configuration.GetSection("CtfOptions"));
         services.AddScoped<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>, DownloadPupilCtfUseCase>();
         services.AddScoped<ICtfHeaderBuilder, CtfHeaderBuilder>();
-        //services.AddScoped<ICtfPupilBuilder, SingleFileCtfPupilBuilder>();
-        services.AddScoped<ICtfPupilBuilder, MultiFileCtfPupilBuilder>();
+        services.AddScoped<ICtfPupilBuilder, YearlyFileCtfPupilBuilder>();
         services.AddScoped<ICtfFormatter, XmlCtfFormatter>();
 
         return services;

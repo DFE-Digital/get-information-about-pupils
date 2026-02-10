@@ -8,12 +8,12 @@ using Newtonsoft.Json;
 
 namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
 
-public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
+public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
 {
     private readonly INationalPupilReadOnlyRepository _nationalPupilReadOnlyRepository;
     private readonly IBlobStorageProvider _blobStorageProvider;
 
-    public SingleFileCtfPupilBuilder(
+    public YearlyFileCtfPupilBuilder(
         INationalPupilReadOnlyRepository nationalPupilReadOnlyRepository,
         IBlobStorageProvider blobStorageProvider)
     {
@@ -26,10 +26,9 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
     public async Task<IEnumerable<CtfPupil>> Build(IEnumerable<string> selectedPupilIds)
     {
         IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository.GetPupilsByIdsAsync(selectedPupilIds);
-        IReadOnlyList<DataMapperDefinition> mapperDefinitions = await LoadMapperDefinitionsAsync();
+        IReadOnlyList<DataSchemaDefinition> schemaDefinitions = await LoadScehmaDefinitionsAsync();
 
-        // TEMP solution while we have Multifile definitions in place
-        DataMapperDefinition latestDefinition = mapperDefinitions
+        DataSchemaDefinition latestSchemaDefinition = schemaDefinitions
             .OrderByDescending(d => d.Year is not null ? int.Parse(d.Year!) : 0)
             .First();
 
@@ -55,7 +54,7 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
                 {
                     string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
                     ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestDefinition, "ENG", year));
+                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
                 }
             }
 
@@ -69,7 +68,7 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
                 {
                     string year = ToAcademicYearEnd(latestEntry.AcademicYear).ToString();
                     ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestDefinition, "ENG", year));
+                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
                 }
 
             }
@@ -84,7 +83,7 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
                 {
                     string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
                     ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestDefinition, "ENG", year));
+                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
                 }
             }
 
@@ -98,7 +97,7 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
                 {
                     string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
                     ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestDefinition, "ENG", year));
+                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
                 }
             }
 
@@ -112,7 +111,7 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
                 {
                     string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
                     ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestDefinition, "ENG", year));
+                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
                 }
             }
 
@@ -124,12 +123,12 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
 
 
 
-    private async Task<IReadOnlyList<DataMapperDefinition>> LoadMapperDefinitionsAsync()
+    private async Task<IReadOnlyList<DataSchemaDefinition>> LoadScehmaDefinitionsAsync()
     {
         IEnumerable<BlobItemMetadata> blobs =
             await _blobStorageProvider.ListBlobsWithMetadataAsync("giapdownloads", "CTF");
 
-        IEnumerable<Task<DataMapperDefinition>> tasks = blobs.Select(async blob =>
+        IEnumerable<Task<DataSchemaDefinition>> tasks = blobs.Select(async blob =>
         {
             using Stream stream = await _blobStorageProvider
                 .DownloadBlobAsStreamAsync("giapdownloads", blob.Name!);
@@ -137,7 +136,7 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
             using StreamReader reader = new(stream);
             string json = await reader.ReadToEndAsync();
 
-            return JsonConvert.DeserializeObject<DataMapperDefinition>(json) ?? new();
+            return JsonConvert.DeserializeObject<DataSchemaDefinition>(json) ?? new();
         });
 
         return await Task.WhenAll(tasks);
@@ -158,16 +157,18 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
 
     private IEnumerable<CtfKeyStageAssessment> BuildStageAssessments(
         object entry,
-        DataMapperDefinition definition,
+        DataSchemaDefinition definition,
         string locale,
         string year)
     {
-        foreach (DataMapperDefinitionRule rule in definition.Rules ?? Enumerable.Empty<DataMapperDefinitionRule>())
+        foreach (DataSchemaDefinitionRule rule in definition.Rules ?? Enumerable.Empty<DataSchemaDefinitionRule>())
         {
             if (string.IsNullOrWhiteSpace(rule.ResultField))
                 continue;
 
-            string? result = GetValue(entry, rule.ResultField);
+            string normalisedField = NormaliseResultField(rule.ResultField);
+
+            string? result = GetValue(entry, normalisedField);
             if (string.IsNullOrWhiteSpace(result))
                 continue;
 
@@ -186,6 +187,18 @@ public class SingleFileCtfPupilBuilder : ICtfPupilBuilder
         }
     }
 
+
+    private static string NormaliseResultField(string field)
+    {
+        if (string.IsNullOrWhiteSpace(field))
+            return field;
+
+        // Legacy pattern: $ks1_math_outcome -> math_outcome
+        if (field.StartsWith("$") && field.Contains("_"))
+            return field[(field.IndexOf("_") + 1)..];
+
+        return field;
+    }
 
     private static readonly Dictionary<(Type, string), Func<object, string?>> _accessorCache = new();
     private string? GetValue(object entry, string? field)

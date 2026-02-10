@@ -1,12 +1,12 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Ctf;
 
-public class DataMapperDefinition
+public class DataSchemaDefinition
 {
     public string? Year { get; set; }
-    public List<DataMapperDefinitionRule>? Rules { get; set; }
+    public List<DataSchemaDefinitionRule>? Rules { get; set; }
 }
 
-public class DataMapperDefinitionRule
+public class DataSchemaDefinitionRule
 {
     public string Stage { get; set; } = string.Empty;
     public string Subject { get; set; } = string.Empty;

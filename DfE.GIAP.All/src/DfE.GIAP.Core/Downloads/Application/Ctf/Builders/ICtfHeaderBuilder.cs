@@ -2,5 +2,5 @@
 
 public interface ICtfHeaderBuilder
 {
-    CtfHeader Build(CtfContext context);
+    CtfHeader Build(ICtfHeaderContext context);
 }

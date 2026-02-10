@@ -24,18 +24,13 @@ public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, Downloa
 
     public async Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
     {
-        CtfContext context = new()
-        {
-            IsEstablishment = false,
-            SourceLEA = "SourceLEA",
-            SourceEstab = "SourceEstab",
-            SourceSchoolName = "SourceSchoolName",
-            DestLEA = "DestLEA",
-            DestEstab = "DestEstab",
-            AcademicYear = "AcademicYear"
-        };
 
-        CtfHeader ctfHeader = _ctfHeaderBuilder.Build(context);
+        CtfHeader ctfHeader = _ctfHeaderBuilder.Build(new ClaimsCtfHeaderContext()
+        {
+            IsEstablishment = request.IsEstablishment,
+            LocalAuthorityNumber = request.LocalAuthoriyNumber,
+            EstablishedNumber = request.EstablishmentNumber
+        });
         IEnumerable<CtfPupil> ctfPupils = await _ctfPupilBuilder.Build(request.SelectedPupils);
 
         byte[] ctfFileContents = _ctfFormatter.Format(
