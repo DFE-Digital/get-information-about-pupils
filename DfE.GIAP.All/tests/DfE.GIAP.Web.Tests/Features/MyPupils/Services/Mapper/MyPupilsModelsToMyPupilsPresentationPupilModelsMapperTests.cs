@@ -1,11 +1,8 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils.Mapper;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services.Mapper;
 public sealed class MyPupilsModelsToMyPupilsPresentationPupilModelsMapperTests

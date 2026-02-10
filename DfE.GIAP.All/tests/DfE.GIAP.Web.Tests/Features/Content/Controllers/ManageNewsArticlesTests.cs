@@ -8,6 +8,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Content.Controllers;
+using DfE.GIAP.Web.ViewModels;
 using DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

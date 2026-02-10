@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 

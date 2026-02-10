@@ -7,7 +7,6 @@ global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
 global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Options;
-global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Server;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Linq;
 global using WireMock.Admin.Mappings;

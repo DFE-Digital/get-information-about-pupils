@@ -68,7 +68,7 @@ public sealed class SortFieldTests
         HashSet<string> validFields = ["Surname", "DOB"];
 
         // act
-        Action act = () => new SortField("Age", validFields);
+        Func<SortField> act = () => new("Age", validFields);
 
         // Assert
         act.Should().Throw<ArgumentException>()
