@@ -631,6 +631,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         PopulatePageText(model);
         PopulateNavigation(model);
         model.LearnerNumberLabel = LearnerNumberLabel;
+        model.PageSize = PAGESIZE;
 
         if (returnToSearch ?? false)
         {
@@ -649,7 +650,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 model.SortField,
                 model.SortDirection);
             model.PageNumber = 0;
-            model.PageSize = PAGESIZE;
         }
 
         if (!returnToSearch.HasValue)
