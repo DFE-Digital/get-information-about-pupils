@@ -11,14 +11,12 @@ using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.SearchDownload;
-using DfE.GIAP.Web.Services.Download;
 using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -35,26 +33,25 @@ public class DownloadMyPupilsController : Controller
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly AzureAppSettings _appSettings;
     private readonly IDownloadCommonTransferFileService _ctfService;
-    private readonly IDownloadService _downloadService;
     private readonly IGetSelectedPupilsUniquePupilNumbersPresentationService _getSelectedPupilsPresentationHandler;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadUseCase;
-    private readonly IEventLogger _eventLogger;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+    private readonly IEventLogger _eventLogger;
+    
 
     public DownloadMyPupilsController(
         ILogger<DownloadMyPupilsController> logger,
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
         IDownloadCommonTransferFileService ctfService,
-        IDownloadService downloadService,
         IGetSelectedPupilsUniquePupilNumbersPresentationService getSelectedPupilsPresentationHandler,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadUseCase,
-        IEventLogger eventLogger,
-        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
+        IEventLogger eventLogger)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -68,9 +65,6 @@ public class DownloadMyPupilsController : Controller
 
         ArgumentNullException.ThrowIfNull(ctfService);
         _ctfService = ctfService;
-
-        ArgumentNullException.ThrowIfNull(downloadService);
-        _downloadService = downloadService;
 
         ArgumentNullException.ThrowIfNull(getSelectedPupilsPresentationHandler);
         _getSelectedPupilsPresentationHandler = getSelectedPupilsPresentationHandler;
@@ -217,79 +211,81 @@ public class DownloadMyPupilsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadSelectedNationalPupilDatabaseData(LearnerDownloadViewModel model)
     {
-        if (!string.IsNullOrEmpty(model.SelectedPupils))
+        if (string.IsNullOrEmpty(model.SelectedPupils))
         {
-            string[] selectedPupils = model.SelectedPupils.Split(',');
-
-            if (model.SelectedDownloadOptions == null)
-            {
-                model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
-            }
-            else if (model.DownloadFileType != DownloadFileType.None)
-            {
-                // Note: Applied from Search impl
-                List<Dataset> selectedDatasets =
-                    model.SelectedDownloadOptions
-                        .Where(datasetString => Enum.TryParse(datasetString, ignoreCase: true, out Dataset _))
-                        .Select(datasetString => Enum.Parse<Dataset>(datasetString, ignoreCase: true))
-                        .ToList();
-
-                DownloadPupilDataRequest request = new(
-                   SelectedPupils: selectedPupils,
-                   SelectedDatasets: selectedDatasets,
-                   DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
-                   FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
-
-                DownloadPupilDataResponse response = await _downloadUseCase.HandleRequestAsync(request);
-
-                string loggingBatchId = Guid.NewGuid().ToString();
-
-                IEnumerable<Core.Common.CrossCutting.Logging.Events.Dataset> datasetsToLog = model.SelectedDownloadOptions
-                    .Select(dataset => new
-                    {
-                        Success = Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset Parsed),
-                        Parsed
-                    })
-                    .Where(x => x.Success)
-                    .Select(x => x.Parsed);
-
-                foreach (Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum in datasetsToLog)
-                {
-                    _eventLogger.LogDownload(
-                        Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
-                        model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
-                        DownloadEventType.NPD,
-                        loggingBatchId,
-                        datasetEnum);
-                }
-                // End: applied from Search
-
-                if (response is null)
-                {
-                    return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
-                }
-
-                if (response.FileContents is not null)
-                {
-                    model.ErrorDetails = null;
-                    return File(response.FileContents, response.ContentType, response.FileName);
-                }
-                else
-                {
-                    model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-                }
-            }
-            else
-            {
-                model.ErrorDetails = Messages.Search.Errors.SelectFileType;
-            }
-
+            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
             TempData["ErrorDetails"] = model.ErrorDetails;
-            
             return await GetDownloadNpdOptions(model.SelectedPupils);
         }
 
-        model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+        string[] selectedPupils = model.SelectedPupils.Split(',');
+
+        if (model.SelectedDownloadOptions == null)
+        {
+            model.ErrorDetails = Messages.Search.Errors.SelectOneOrMoreDataTypes;
+            TempData["ErrorDetails"] = model.ErrorDetails;
+            return await GetDownloadNpdOptions(model.SelectedPupils);
+        }
+
+        if (model.DownloadFileType != DownloadFileType.None)
+        {
+            // Note: Applied from Search impl
+            List<Dataset> selectedDatasets =
+                model.SelectedDownloadOptions
+                    .Where(datasetString => Enum.TryParse(datasetString, ignoreCase: true, out Dataset _))
+                    .Select(datasetString => Enum.Parse<Dataset>(datasetString, ignoreCase: true))
+                    .ToList();
+
+            DownloadPupilDataRequest request = new(
+               SelectedPupils: selectedPupils,
+               SelectedDatasets: selectedDatasets,
+               DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+               FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
+
+            DownloadPupilDataResponse response = await _downloadUseCase.HandleRequestAsync(request);
+
+            string loggingBatchId = Guid.NewGuid().ToString();
+
+            IEnumerable<Core.Common.CrossCutting.Logging.Events.Dataset> datasetsToLog = model.SelectedDownloadOptions
+                .Select(dataset => new
+                {
+                    Success = Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset Parsed),
+                    Parsed
+                })
+                .Where(x => x.Success)
+                .Select(x => x.Parsed);
+
+            foreach (Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum in datasetsToLog)
+            {
+                _eventLogger.LogDownload(
+                    Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
+                    model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
+                    DownloadEventType.NPD,
+                    loggingBatchId,
+                    datasetEnum);
+            }
+            // End: applied from Search
+
+            if (response is null)
+            {
+                return RedirectToAction(Routes.Application.Error, Routes.Application.Home);
+            }
+
+            if (response.FileContents is not null)
+            {
+                model.ErrorDetails = null;
+                return File(response.FileContents, response.ContentType, response.FileName);
+            }
+            else
+            {
+                model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+                TempData["ErrorDetails"] = model.ErrorDetails;
+                return await GetDownloadNpdOptions(model.SelectedPupils);
+            }
+        }
+        
+        model.ErrorDetails = Messages.Search.Errors.SelectFileType;
+        TempData["ErrorDetails"] = model.ErrorDetails;
         return await GetDownloadNpdOptions(model.SelectedPupils);
     }
 
