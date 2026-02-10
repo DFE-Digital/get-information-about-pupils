@@ -84,7 +84,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
         SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse npdSearchResponse =
         await _npdSearchServiceAdaptor.HandleRequestAsync(
             new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
             {
@@ -107,7 +107,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
                 });
 
         IEnumerable<Pupil> allPupils =
-            (searchResponse.LearnerSearchResults?.Values.Select(_npdLearnerToPupilMapper.Map) ?? [])
+            (npdSearchResponse.LearnerSearchResults?.Values.Select(_npdLearnerToPupilMapper.Map) ?? [])
                 .Concat(pupilPremiumSearchResponse.LearnerSearchResults?.Values.Select(_pupilPremiumLearnerToPupilMapper.Map) ?? [])
                 // Deduplicate
                 .GroupBy(pupil => pupil.Identifier.Value)
