@@ -35,7 +35,7 @@ public static class CompositionRoot
 
         services
             .AddSearchOptions(configuration);
-        
+
         services
             .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
 

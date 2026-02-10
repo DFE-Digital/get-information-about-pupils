@@ -143,7 +143,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         // Arrange
 
         HttpMappingRequest request = HttpMappingRequest.Create(
-            httpMappingFiles: [ 
+            httpMappingFiles: [
                 new HttpMappingFile(
                     key: "get-indexnames",
                     fileName: "get_searchindex_names.json") ]);
