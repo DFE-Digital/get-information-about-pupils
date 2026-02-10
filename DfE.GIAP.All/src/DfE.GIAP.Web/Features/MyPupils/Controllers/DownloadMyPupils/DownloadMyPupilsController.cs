@@ -276,12 +276,10 @@ public class DownloadMyPupilsController : Controller
                 model.ErrorDetails = null;
                 return File(response.FileContents, response.ContentType, response.FileName);
             }
-            else
-            {
-                model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-                TempData["ErrorDetails"] = model.ErrorDetails;
-                return await GetDownloadNpdOptions(model.SelectedPupils);
-            }
+
+            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
+            TempData["ErrorDetails"] = model.ErrorDetails;
+            return await GetDownloadNpdOptions(model.SelectedPupils);
         }
         
         model.ErrorDetails = Messages.Search.Errors.SelectFileType;
