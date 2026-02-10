@@ -570,11 +570,13 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             }
             else if (model.DownloadFileType != DownloadFileType.None)
             {
-                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = new();
+                List<Core.Downloads.Application.Enums.Dataset> selectedDatasets = [];
                 foreach (string datasetString in model.SelectedDownloadOptions)
                 {
                     if (Enum.TryParse(datasetString, ignoreCase: true, out Core.Downloads.Application.Enums.Dataset dataset))
+                    {
                         selectedDatasets.Add(dataset);
+                    }
                 }
 
                 DownloadPupilDataRequest request = new(
@@ -616,8 +618,11 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             }
 
             TempData["ErrorDetails"] = model.ErrorDetails;
+
             if (HttpContext.Session.Keys.Contains(SearchSessionKey))
+            {
                 model.TextSearchViewModel.SearchText = HttpContext.Session.GetString(SearchSessionKey);
+            }    
 
             return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.TextSearchViewModel.SearchText);
         }
