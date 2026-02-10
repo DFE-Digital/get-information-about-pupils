@@ -171,7 +171,7 @@ public sealed class DeleteMyPupilsControllerTests
         IActionResult response = await sut.Index([], It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
-        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+        Assert.Equal("DeleteMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
         messageSinkMock.Verify(
@@ -215,7 +215,7 @@ public sealed class DeleteMyPupilsControllerTests
                 It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
-        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+        Assert.Equal("DeleteMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
         providerMock.Verify(provider => provider.GetPupilSelections(), Times.Once);
@@ -271,7 +271,7 @@ public sealed class DeleteMyPupilsControllerTests
         // Assert
         const string userIdStub = "00000000-0000-0000-0000-000000000000";
 
-        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+        Assert.Equal("DeleteMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response, query);
 
         providerMock.Verify(provider => provider.GetPupilSelections(), Times.Once);
