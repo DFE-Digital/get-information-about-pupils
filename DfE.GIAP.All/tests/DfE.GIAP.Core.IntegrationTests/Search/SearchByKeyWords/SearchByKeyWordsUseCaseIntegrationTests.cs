@@ -59,7 +59,12 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
             sortDirection: "desc",
             validSortFields: ["Forename", "Surname"]);
 
-        SearchCriteria searchCriteria = new() { Index = "FE_INDEX_NAME" };
+        SearchCriteria searchCriteria = new()
+        {
+            Index = "FE_INDEX_NAME",
+            SearchFields = ["field1"],
+            Size = 20
+        };
 
         FurtherEducationSearchByNameRequest request = new()
         {

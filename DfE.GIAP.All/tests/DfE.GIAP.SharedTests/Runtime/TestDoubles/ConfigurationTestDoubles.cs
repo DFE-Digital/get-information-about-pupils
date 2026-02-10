@@ -57,10 +57,12 @@ public static class ConfigurationTestDoubles
             ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
             ["SearchOptions:Indexes:npd-upn:SearchCriteria:Size"] = "40000",                  // Max number of results
             ["SearchOptions:Indexes:npd-upn:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:npd-upn:SearchCriteria:SearchFields:0"] = "field1",      // Whether to include result count
             ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchIndex"] = "PUPIL_PREMIUM_INDEX_NAME",
             ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchMode"] = "0",                // Typically represents 'Any' or 'All'
             ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:Size"] = "40000",                  // Max number of results
             ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:IncludeTotalCount"] = "true",      // Whether to include result count
+            ["SearchOptions:Indexes:pupil-premium-upn:SearchCriteria:SearchFields:0"] = "field2",      // Whether to include result count
         };
 
         builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
