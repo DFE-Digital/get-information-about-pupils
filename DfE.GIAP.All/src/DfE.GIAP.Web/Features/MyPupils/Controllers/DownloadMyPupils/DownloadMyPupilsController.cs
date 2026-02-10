@@ -1,9 +1,12 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -13,6 +16,7 @@ using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Services.Download;
 using DfE.GIAP.Web.Services.Download.CTF;
@@ -37,6 +41,7 @@ public class DownloadMyPupilsController : Controller
     private readonly IUpdateMyPupilsPupilSelectionsCommandHandler _updateMyPupilsPupilSelectionsCommandHandler;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadUseCase;
     private readonly IEventLogger _eventLogger;
+    private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
 
     public DownloadMyPupilsController(
         ILogger<DownloadMyPupilsController> logger,
@@ -48,7 +53,8 @@ public class DownloadMyPupilsController : Controller
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
         IUpdateMyPupilsPupilSelectionsCommandHandler updateMyPupilsPupilSelectionsCommandHandler,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadUseCase,
-        IEventLogger eventLogger)
+        IEventLogger eventLogger,
+        IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -80,6 +86,9 @@ public class DownloadMyPupilsController : Controller
 
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
+
+        ArgumentNullException.ThrowIfNull(getAvailableDatasetsForPupilsUseCase);
+        _getAvailableDatasetsForPupilsUseCase = getAvailableDatasetsForPupilsUseCase;
     }
 
     [HttpPost]
@@ -303,29 +312,26 @@ public class DownloadMyPupilsController : Controller
 
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
 
-        SearchDownloadHelper.AddDownloadDataTypes(
-            searchDownloadViewModel,
-            User,
-            User.GetOrganisationLowAge(),
-            User.GetOrganisationHighAge(),
-            User.IsOrganisationLocalAuthority(),
-            User.IsOrganisationAllAges());
-
         ModelState.Clear();
 
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
-            string[] downloadTypeArray = searchDownloadViewModel.SearchDownloadDatatypes.Select(d => d.Value).ToArray();
+            GetAvailableDatasetsForPupilsRequest request = new(
+                DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                SelectedPupils: selectedPupils,
+                AuthorisationContext: new HttpClaimsAuthorisationContext(User));
 
-            IEnumerable<CheckDownloadDataType> disabledTypes = await _downloadService.CheckForNoDataAvailable(
-                selectedPupils,
-                selectedPupils,
-                downloadTypeArray,
-                AzureFunctionHeaderDetails.Create(
-                    User.GetUserId(),
-                    User.GetSessionId()));
+            GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
 
-            SearchDownloadHelper.DisableDownloadDataTypes(searchDownloadViewModel, disabledTypes);
+            foreach (AvailableDatasetResult datasetResult in response.AvailableDatasets)
+            {
+                searchDownloadViewModel.SearchDownloadDatatypes.Add(new SearchDownloadDataType
+                {
+                    Name = StringHelper.StringValueOfEnum(datasetResult.Dataset),
+                    Value = datasetResult.Dataset.ToString(),
+                    Disabled = !datasetResult.CanDownload || !datasetResult.HasData,
+                });
+            }
         }
 
         return View(Global.MPLDownloadNPDOptionsView, searchDownloadViewModel);
