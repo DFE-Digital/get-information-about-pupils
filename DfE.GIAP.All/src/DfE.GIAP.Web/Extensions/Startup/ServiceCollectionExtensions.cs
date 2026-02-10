@@ -41,7 +41,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
-        services.AddScoped<IDownloadService, DownloadService>();
         services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
