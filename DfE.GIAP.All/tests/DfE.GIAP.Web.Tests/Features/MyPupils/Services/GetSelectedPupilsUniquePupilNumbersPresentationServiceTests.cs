@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;

@@ -3,7 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+namespace DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 
 public sealed class GetSelectedPupilsUniquePupilNumbersPresentationService : IGetSelectedPupilsUniquePupilNumbersPresentationService
 {

@@ -1,39 +1,64 @@
-using Azure.Search.Documents;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.DataTransferObjects;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.MyPupils.Infrastructure.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 // TODO this COULD be replaced with a CosmosDb implementation to avoid what it previously used - AzureSearch
 internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
-    private const int UpnQueryLimit = 4000; // TODO pulled from FA
-    private readonly ISearchClientProvider _searchClientProvider;
-    private readonly IMapper<AzureIndexEntityWithPupilType, Pupil> _dtoToEntityMapper;
+    private const int UpnQueryLimit = 4000;
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
+    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> _npdSearchServiceAdaptor;
+    private readonly IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse> _pupilPremiumSearchServiceAdaptor;
+    private readonly IMapper<NationalPupilDatabaseLearner, Pupil> _npdLearnerToPupilMapper;
+    private readonly IMapper<PupilPremiumLearner, Pupil> _pupilPremiumLearnerToPupilMapper;
     private readonly IOrderPupilsHandler _orderPupilsHandler;
     private readonly IPaginatePupilsHandler _paginatePupilsHandler;
+    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     public AggregatePupilsForMyPupilsApplicationService(
-        ISearchClientProvider searchClientProvider,
-        IMapper<AzureIndexEntityWithPupilType, Pupil> dtoToEntityMapper,
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> getNpdLearnersUseCase,
+        IMapper<NationalPupilDatabaseLearner, Pupil> npdLearnerToPupilMapper,
+        IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse> getPupilPremiumLearnersUseCase,
+        IMapper<PupilPremiumLearner, Pupil> pupilPremiumLearnerToPupilMapper,
         IOrderPupilsHandler orderPupilsHandler,
-        IPaginatePupilsHandler paginatePupilsHandler)
+        IPaginatePupilsHandler paginatePupilsHandler,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
-        ArgumentNullException.ThrowIfNull(searchClientProvider);
-        _searchClientProvider = searchClientProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
 
-        ArgumentNullException.ThrowIfNull(dtoToEntityMapper);
-        _dtoToEntityMapper = dtoToEntityMapper;
+        ArgumentNullException.ThrowIfNull(getNpdLearnersUseCase);
+        _npdSearchServiceAdaptor = getNpdLearnersUseCase;
+
+        ArgumentNullException.ThrowIfNull(npdLearnerToPupilMapper);
+        _npdLearnerToPupilMapper = npdLearnerToPupilMapper;
+
+        ArgumentNullException.ThrowIfNull(getPupilPremiumLearnersUseCase);
+        _pupilPremiumSearchServiceAdaptor = getPupilPremiumLearnersUseCase;
+
+        ArgumentNullException.ThrowIfNull(pupilPremiumLearnerToPupilMapper);
+
+        _pupilPremiumLearnerToPupilMapper = pupilPremiumLearnerToPupilMapper;
 
         ArgumentNullException.ThrowIfNull(orderPupilsHandler);
         _orderPupilsHandler = orderPupilsHandler;
 
         ArgumentNullException.ThrowIfNull(paginatePupilsHandler);
         _paginatePupilsHandler = paginatePupilsHandler;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(
@@ -48,69 +73,59 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             return [];
         }
 
-        List<AzureIndexEntityWithPupilType> allResults = [];
+        const string defaultSort = "search.score()";
 
-        const int maxIndexQuerySize = 500;
-        foreach (UniquePupilNumber[] upnBatch in uniquePupilNumbers.GetUniquePupilNumbers().Chunk(maxIndexQuerySize))
-        {
-            SearchOptions searchOptions = CreateSearchClientOptions(upnBatch);
+        SortOrder sortOrder = new(
+            sortField: defaultSort,
+            sortDirection: "desc",
+            validSortFields: [defaultSort]);
 
-            IEnumerable<AzureIndexEntityWithPupilType> npdResults =
-                (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("npd", searchOptions))
-                    .ToDecoratedSearchIndexDto(PupilType.NationalPupilDatabase);
+        string[] myPupilUniquePupilNumbers = uniquePupilNumbers.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
 
-            IEnumerable<AzureIndexEntityWithPupilType> ppResults =
-                (await _searchClientProvider.InvokeSearchAsync<AzureIndexEntity>("pupil-premium", searchOptions))
-                    .ToDecoratedSearchIndexDto(PupilType.PupilPremium);
+        SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
 
-            allResults.AddRange(npdResults);
-            allResults.AddRange(ppResults);
-        }
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
+        await _npdSearchServiceAdaptor.HandleRequestAsync(
+            new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
+            {
+                UniquePupilNumbers = myPupilUniquePupilNumbers,
+                SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(npdIndexOptions.SearchCriteria!),
+                Offset = 0,
+                Sort = sortOrder
+            });
 
-        IEnumerable<Pupil> distinctResults = allResults
-            // Deduplicate
-            .GroupBy(p => p.SearchIndexDto.UPN)
-            // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
-            .Select(groupedByUpn =>
-                groupedByUpn.OrderByDescending(x => x.PupilType == PupilType.PupilPremium).First())
-            .Select(_dtoToEntityMapper.Map);
+        SearchIndexOptions pupilPremiumIndexOptions = _searchIndexOptionsProvider.GetOptions("pupil-premium-upn");
+
+        PupilPremiumSearchByUniquePupilNumberResponse pupilPremiumSearchResponse =
+            await _pupilPremiumSearchServiceAdaptor.HandleRequestAsync(
+                new PupilPremiumSearchByUniquePupilNumberRequest()
+                {
+                    UniquePupilNumbers = myPupilUniquePupilNumbers,
+                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(pupilPremiumIndexOptions.SearchCriteria!),
+                    Sort = sortOrder,
+                    Offset = 0,
+                });
+
+        IEnumerable<Pupil> allPupils =
+            (searchResponse.LearnerSearchResults?.Values.Select(_npdLearnerToPupilMapper.Map) ?? [])
+                .Concat(pupilPremiumSearchResponse.LearnerSearchResults?.Values.Select(_pupilPremiumLearnerToPupilMapper.Map) ?? [])
+                // Deduplicate
+                .GroupBy(pupil => pupil.Identifier.Value)
+                // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
+                .Select(groupedIdentifiers =>
+                    groupedIdentifiers.OrderByDescending(
+                        (pupil) => pupil.IsOfPupilType(PupilType.PupilPremium)).First());
 
         // If no query, return ALL results
         if (query is null)
         {
-            return distinctResults;
+            return allPupils;
         }
 
         // Order, then paginate
-        return
-            _paginatePupilsHandler.PaginatePupils(
-                _orderPupilsHandler.Order(distinctResults, query.Order), query.PaginateOptions);
-    }
 
+        IEnumerable<Pupil> orderedPupils = _orderPupilsHandler.Order(allPupils, query.Order);
 
-    internal static SearchOptions CreateSearchClientOptions(IEnumerable<UniquePupilNumber> upns)
-    {
-        const string UpnIndexField = "UPN";
-
-        string filter = upns.Count() > 1
-            ? $"search.in({UpnIndexField}, '{string.Join(",", upns.Select(t => t.Value))}')"
-            : $"UPN eq '{upns.First()}'";
-
-        SearchOptions options = new()
-        {
-            Filter = filter
-        };
-
-        options.SearchFields.Add(UpnIndexField);
-        options.Select.Add(UpnIndexField);
-        options.Select.Add("Surname");
-        options.Select.Add("Forename");
-        options.Select.Add("Sex");
-        options.Select.Add("DOB");
-        options.Select.Add("LocalAuthority");
-        options.Select.Add("id");
-        //options.OrderBy.Add($"{UpnIndexField} asc"); // is score deterministic enough?
-
-        return options;
+        return _paginatePupilsHandler.PaginatePupils(orderedPupils, query.PaginateOptions);
     }
 }

@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 internal static class NationalPupilDatabaseSearchResultsTestDoubles
@@ -17,6 +18,6 @@ internal static class NationalPupilDatabaseSearchResultsTestDoubles
         new()
         {
             Results = new([]),      // Unpopulated learner results
-            FacetResults = SearchFacetsTestDouble.Stub()   // Populated facet results
+            FacetResults = SearchFacets.CreateEmpty()   // Empty facet results
         };
 }

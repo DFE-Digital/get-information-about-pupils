@@ -6,16 +6,18 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -28,32 +30,64 @@ using NSubstitute;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 
-public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
+public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
+    
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
+    
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private readonly IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<FurtherEducationSearchRequest, FurtherEducationSearchResponse>>();
+    
+    private readonly IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse> _mockUseCase =
+        Substitute.For<IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse>>();
+
     private AzureAppSettings _mockAppSettings = new();
+    
     private readonly IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
         Substitute.For<IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
+    
     private readonly SessionFake _mockSession = new();
+    
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+    private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
 
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
 
     public FELearnerNumberControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
-        FurtherEducationSearchResponse response =
-            FurtherEducationSearchResponseTestDouble.CreateSuccessResponse();
 
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
+        SortOrder stubSortOrder = new(
+            sortField: "Surname",
+            sortDirection: "asc",
+            validSortFields: ["Surname", "DOB", "Forename"]
+        );
+
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
+
+        FurtherEducationSearchByUniqueLearnerNumberResponse response =
+            FurtherEducationSearchByUniqueLearnerNumberTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<FurtherEducationSearchRequest>()).Returns(response);
+            Arg.Any<FurtherEducationSearchByUniqueLearnerNumberRequest>()).Returns(response);
 
         _mockLearnerNumberSearchResponseToViewModelMapper.Map(
             Arg.Any<FurtherEducationLearnerNumericSearchMappingContext>()).Returns(
@@ -1521,25 +1555,18 @@ public class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake
         mockDownloadPupilDataUseCase.Setup(repo => repo.HandleRequestAsync(It.IsAny<DownloadPupilDataRequest>()))
             .ReturnsAsync(downloadPupilDataResponse);
 
-        IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
-
-        Mock<IMapper<SortOrderRequest, SortOrder>> mockMapper = new();
-
-        mockMapper
-            .Setup((mapper) => mapper.Map(It.IsAny<SortOrderRequest>()))
-            .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
-
         return new FELearnerNumberController(
             _mockUseCase,
             _mockLearnerNumberSearchResponseToViewModelMapper,
-            mockMapper.Object,
+            _sortOrderFactoryMock.Object,
             _mockLogger,
             _mockSelectionManager,
             _mockAppOptions,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
             mockDownloadPupilDataUseCase.Object,
-            _mockSearchCriteriaProvider.Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = context
         };

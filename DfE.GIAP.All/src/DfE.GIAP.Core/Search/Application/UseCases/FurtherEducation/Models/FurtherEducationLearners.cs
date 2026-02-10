@@ -1,51 +1,22 @@
-﻿namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+﻿using DfE.GIAP.Core.Search.Application.Services;
 
-/// <summary>
-/// Encapsulates the results of a further education learner search.
-/// Provides a read-only collection interface and ensures immutability at the boundary.
-/// </summary>
-public sealed class FurtherEducationLearners
+namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+
+public sealed class FurtherEducationLearners : IHasSearchResults
 {
-    // Internal mutable list to hold search results; encapsulated within the class
-    private readonly List<FurtherEducationLearner> _learners;
-
-    /// <summary>
-    /// Read-only view of the learner results.
-    /// Guarantees that consumers cannot modify the internal list.
-    /// </summary>
-    public IReadOnlyCollection<FurtherEducationLearner> LearnerCollection => _learners.AsReadOnly();
-
-    /// <summary>
-    /// Returns the number of learners in the collection.
-    /// Safely handles null by returning 0 if <c>_learners</c> is not initialized.
-    /// Supports diagnostic clarity and avoids null reference exceptions during result evaluation.
-    /// </summary>
-    public int Count => _learners?.Count ?? 0;
-
-
-    /// <summary>
-    /// Default constructor.
-    /// Initializes an empty result set.
-    /// </summary>
-    public FurtherEducationLearners()
+    public FurtherEducationLearners() : this([])
     {
-        _learners = [];
     }
 
-    /// <summary>
-    /// Constructs the result set from an incoming sequence of learners.
-    /// Uses defensive programming to handle potential null inputs.
-    /// </summary>
-    /// <param name="learners">Sequence of learners to populate the result set.</param>
     public FurtherEducationLearners(IEnumerable<FurtherEducationLearner> learners)
     {
-        _learners = learners?.ToList() ?? [];
+        Learners = (learners?.ToList() ?? []).AsReadOnly();
     }
 
-    /// <summary>
-    /// Static factory method to create an empty result set.
-    /// Improves readability and conveys intent more clearly than a constructor.
-    /// </summary>
+    public IReadOnlyCollection<FurtherEducationLearner> Learners { get; }
+
+    public int Count => Learners?.Count ?? 0;
+
     public static FurtherEducationLearners CreateEmpty() => new();
 }
 

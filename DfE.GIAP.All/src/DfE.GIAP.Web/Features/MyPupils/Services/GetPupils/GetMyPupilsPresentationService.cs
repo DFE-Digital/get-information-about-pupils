@@ -7,7 +7,7 @@ using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 
-namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 public sealed class GetMyPupilsPresentationService : IGetMyPupilsPresentationService
 {
     private readonly IUseCase<GetMyPupilsRequest, GetMyPupilsResponse> _getMyPupilsUseCase;

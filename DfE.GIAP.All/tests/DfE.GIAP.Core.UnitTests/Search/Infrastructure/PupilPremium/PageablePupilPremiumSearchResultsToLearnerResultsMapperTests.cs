@@ -1,8 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
@@ -11,16 +9,13 @@ using FluentAssertions;
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.PupilPremium;
 public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
 {
-    private readonly
-        IMapper<
-            Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners> _searchResultsMapper;
+    private readonly PageablePupilPremiumSearchResultsToLearnerResultsMapper _searchResultsMapper;
 
     public PageablePupilPremiumSearchResultsToLearnerResultsMapperTests()
     {
         _searchResultsMapper =
-            new PageablePupilPremiumSearchResultsToLearnerResultsMapper(
-                new PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper()
-        );
+            new(
+                new PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper());
     }
 
     [Fact]

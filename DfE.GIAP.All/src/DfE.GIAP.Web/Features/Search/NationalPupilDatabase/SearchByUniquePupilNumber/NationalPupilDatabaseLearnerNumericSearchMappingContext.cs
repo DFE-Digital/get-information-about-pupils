@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+﻿using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
@@ -7,7 +7,7 @@ public record NationalPupilDatabaseLearnerNumericSearchMappingContext
 {
     public NationalPupilDatabaseLearnerNumericSearchMappingContext(
         LearnerNumberSearchViewModel model,
-        NationalPupilDatabaseSearchResponse response)
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse response)
     {
         ArgumentNullException.ThrowIfNull(model);
         Model = model;
@@ -17,9 +17,9 @@ public record NationalPupilDatabaseLearnerNumericSearchMappingContext
     }
 
     public LearnerNumberSearchViewModel Model { get; }
-    public NationalPupilDatabaseSearchResponse Response { get; }
+    public NationalPupilDatabaseSearchByUniquePupilNumberResponse Response { get; }
 
     public static NationalPupilDatabaseLearnerNumericSearchMappingContext Create(
         LearnerNumberSearchViewModel model,
-        NationalPupilDatabaseSearchResponse response) => new(model, response);
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse response) => new(model, response);
 }

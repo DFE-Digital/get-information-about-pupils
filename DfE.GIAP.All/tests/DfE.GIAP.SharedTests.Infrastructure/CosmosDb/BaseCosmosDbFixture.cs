@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
-using Xunit;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 

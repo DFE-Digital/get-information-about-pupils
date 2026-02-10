@@ -8,18 +8,20 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Shared.Serializer;
-using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -47,29 +49,54 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
     private readonly Mock<
         IUseCase<
-            NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>> _mockUseCase = new();
+            NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse>> _mockUseCase = new();
 
     private readonly Mock<
         IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
 
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+    private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
 
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
+
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
 
     public NationalPupilDatabaseLearnerNumberSearchControllerTests(PaginatedResultsFake paginatedResultsFake)
     {
         _paginatedResultsFake = paginatedResultsFake;
 
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
+        SortOrder stubSortOrder = new(
+            sortField: "Surname",
+            sortDirection: "asc",
+            validSortFields: ["Surname", "DOB", "Forename"]
+        );
 
-        NationalPupilDatabaseSearchResponse response =
-            NationalPupilDatabaseSearchResponseTestDoubles.CreateSuccessResponse();
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
+
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
+
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
+
+
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse response =
+            NationalPupilDatabaseSearchByUniquePupilNumberResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase
             .Setup(
                 (useCase)
                     => useCase.HandleRequestAsync(
-                        It.IsAny<NationalPupilDatabaseSearchRequest>()))
+                        It.IsAny<NationalPupilDatabaseSearchByUniquePupilNumberRequest>()))
             .ReturnsAsync(response);
 
         _mockLearnerNumberSearchResponseToViewModelMapper
@@ -1545,17 +1572,11 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
                 return true;
             });
 
-        IReadOnlyList<string> validSortFields = new List<string> { "MockSortField" };
-        Mock<IMapper<SortOrderRequest, SortOrder>> sortMapperMock = new();
-        sortMapperMock
-            .Setup((mapper) => mapper.Map(It.IsAny<SortOrderRequest>()))
-            .Returns(new SortOrder(validSortFields[0], "asc", validSortFields));
-
         return new NationalPupilDatabaseLearnerNumberSearchController(
             _mockLogger,
             _mockCtfService,
             _mockUseCase.Object,
-            sortMapperMock.Object,
+            _sortOrderFactoryMock.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,
             _mockSelectionManager,
             _mockAppOptions,
@@ -1564,7 +1585,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             jsonSerializerMock.Object,
             mockDownloadPupilDataUseCase.Object,
             mockEventLogger.Object,
-            _mockSearchCriteriaProvider.Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = new ControllerContext()
             {

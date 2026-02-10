@@ -13,12 +13,14 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SearchDownload;
@@ -41,13 +43,12 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
-    private readonly IUseCase<NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse> _searchUseCase;
-    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> _searchUseCase;
+    private readonly ISortOrderFactory _sortOrderFactory;
     private readonly IMapper<NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
     private readonly ISelectionManager _selectionManager;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly AzureAppSettings _appSettings;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
 
     public string PageHeading => ApplicationLabels.SearchNPDWithUpnPageHeading;
     public string SearchAction => "NationalPupilDatabase";
@@ -63,14 +64,15 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     private readonly IJsonSerializer _jsonSerializer;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
     private readonly IEventLogger _eventLogger;
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
+    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     public NationalPupilDatabaseLearnerNumberSearchController(
         ILogger<NationalPupilDatabaseLearnerNumberSearchController> logger,
         IDownloadCommonTransferFileService ctfService,
         IUseCase<
-            NationalPupilDatabaseSearchRequest,
-            NationalPupilDatabaseSearchResponse> searchUseCase,
-        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+            NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> searchUseCase,
+        ISortOrderFactory sortOrderFactory,
         IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
@@ -81,7 +83,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         IJsonSerializer jsonSerializer,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
         IEventLogger eventLogger,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -92,8 +95,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         ArgumentNullException.ThrowIfNull(searchUseCase);
         _searchUseCase = searchUseCase;
 
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrderFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
@@ -116,11 +119,15 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
+
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
 
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
 
@@ -527,28 +534,21 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             searchText = model.LearnerIdSearchResult;
         }
 
-        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
-            new SortOrderRequest(
-                searchKey: "npd",
-                sortOrder: (model.SortField, model.SortDirection)));
+        SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "npd-upn");
 
-        IList<FilterRequest> filterRequests =
-        [
-            new FilterRequest(
-                filterName: "UPN",
-                filterValues: learnerNumberArray)
-        ];
+        SortOrder sortOrder = _sortOrderFactory.Create(
+            options: options.SortOptions, 
+            sort: (model.SortField, model.SortDirection));
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("npd-upn");
-
-        NationalPupilDatabaseSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
-            new NationalPupilDatabaseSearchRequest(
-                searchIndexKey: "npd-upn",
-                searchKeywords: string.Join(" AND ", learnerNumberArray),
-                filterRequests: filterRequests,
-                searchCriteria: searchCriteria,
-                sortOrder: sortOrder,
-                model.Offset));
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse = 
+            await _searchUseCase.HandleRequestAsync(
+                new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
+                {
+                    UniquePupilNumbers = learnerNumberArray,
+                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(options.SearchCriteria),
+                    Sort = sortOrder,
+                    Offset = model.Offset
+                });
 
         LearnerNumberSearchViewModel result =
             _learnerNumericSearchResponseToViewModelMapper.Map(

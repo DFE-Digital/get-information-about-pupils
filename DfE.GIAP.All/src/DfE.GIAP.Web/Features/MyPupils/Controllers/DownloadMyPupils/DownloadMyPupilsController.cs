@@ -8,11 +8,11 @@ using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
+using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Services.Download;
 using DfE.GIAP.Web.Services.Download.CTF;
@@ -22,7 +22,7 @@ using Microsoft.Extensions.Options;
 using Dataset = DfE.GIAP.Core.Downloads.Application.Enums.Dataset;
 using MessageLevel = DfE.GIAP.Web.Features.MyPupils.Messaging.MessageLevel;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Areas.DownloadMyPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
 
 [Route(Routes.MyPupilList.MyPupilsBase)]
 public class DownloadMyPupilsController : Controller
@@ -332,7 +332,7 @@ public class DownloadMyPupilsController : Controller
     }
 
 
-    private async Task<List<string>> UpsertSelectedPupilsAsync(MyPupilsFormStateRequestDto? updateForm)
+    private async Task<List<string>> UpsertSelectedPupilsAsync(MyPupilsFormStateRequestDto updateForm)
     {
         if (updateForm != null)
         {
