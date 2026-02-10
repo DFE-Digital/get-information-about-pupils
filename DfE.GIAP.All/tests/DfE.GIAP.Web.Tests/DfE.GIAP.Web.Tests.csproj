@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Moq" />
+    <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,7 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
-    <ProjectReference Include="..\DfE.GIAP.Service.Tests\DfE.GIAP.Service.Tests.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
     <ProjectReference Include="..\..\src\DfE.GIAP.Web\DfE.GIAP.Web.csproj" />
   </ItemGroup>

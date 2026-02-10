@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.Mapper;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Features.MyPupils.Messaging;
+namespace DfE.GIAP.Web.Tests.Features.MyPupils.Messaging.Mapper;
 public sealed class MyPupilsMessageDtoToMyPupilsMessageMapperTests
 {
     [Fact]

@@ -32,4 +32,6 @@ public sealed class SearchFacets
     {
         _searchFacets = [.. searchFacets];
     }
+
+    public static SearchFacets CreateEmpty() => new([]);
 }

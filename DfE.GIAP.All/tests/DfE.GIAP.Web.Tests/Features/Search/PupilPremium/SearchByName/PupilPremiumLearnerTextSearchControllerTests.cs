@@ -1,30 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.Options;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.Tests.Features.Search.PupilPremium.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NSubstitute;
 
@@ -34,15 +33,13 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 {
     private readonly ILogger<PupilPremiumLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerTextSearchController>>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
-    private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    private AzureAppSettings _mockAppSettings = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
-    private readonly IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse> _mockUseCase =
-        Substitute.For<IUseCase<PupilPremiumSearchRequest, PupilPremiumSearchResponse>>();
+    private readonly IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse> _mockUseCase =
+        Substitute.For<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse>>();
 
     private readonly IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -52,11 +49,11 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
     private readonly IFiltersRequestFactory _mockFiltersRequestBuilder = Substitute.For<IFiltersRequestFactory>();
 
-    private readonly IMapper<SortOrderRequest, SortOrder> _mockSortOrderMapper =
-        Substitute.For<IMapper<SortOrderRequest, SortOrder>>();
+    private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();
 
-    private readonly Mock<ISearchCriteriaProvider> _mockSearchCriteriaProvider = new();
+    private readonly Mock<ISortOrderFactory> _sortOrderFactoryMock = new();
 
+    private readonly Mock<IMapper<SearchCriteriaOptions, SearchCriteria>> _criteriaOptionsToCriteriaMock = new();
 
     public PupilPremiumLearnerTextSearchControllerTests(PaginatedResultsFake paginatedResultsFake, SearchFiltersFakeData searchFiltersFake)
     {
@@ -69,16 +66,28 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             validSortFields: ["Surname", "DOB", "Forename"]
         );
 
-        _mockSortOrderMapper.Map(
-            Arg.Any<SortOrderRequest>()).Returns(stubSortOrder);
+        _sortOrderFactoryMock.Setup(
+            t => t.Create(
+                    It.IsAny<SortOptions>(),
+                    It.IsAny<(string?, string?)>()))
+                .Returns(stubSortOrder);
 
-        _mockSearchCriteriaProvider.Setup(t => t.GetCriteria(It.IsAny<string>())).Returns(SearchCriteriaTestDouble.Stub());
+        _searchindexOptionsProvider.Setup(
+            indexOptionsProvider =>
+                indexOptionsProvider.GetOptions(It.IsAny<string>()))
+                    .Returns(new SearchIndexOptions());
 
-        PupilPremiumSearchResponse response =
-            PupilPremiumSearchResponseTestDouble.CreateSuccessResponse();
+        _criteriaOptionsToCriteriaMock.Setup(
+            criteriaOptionsMapper =>
+                criteriaOptionsMapper.Map(
+                    It.IsAny<SearchCriteriaOptions>()))
+                        .Returns(SearchCriteriaTestDouble.Stub());
+
+        PupilPremiumSearchByNameResponse response =
+            PupilPremiumSearchByNameResponseTestDouble.CreateSuccessResponse();
 
         _mockUseCase.HandleRequestAsync(
-            Arg.Any<PupilPremiumSearchRequest>()).Returns(response);
+            Arg.Any<PupilPremiumSearchByNameRequest>()).Returns(response);
 
         _mockLearnerSearchResponseToViewModelMapper.Map(
             Arg.Any<PupilPremiumLearnerTextSearchMappingContext>()).Returns(
@@ -890,12 +899,9 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     }
 
     [Theory]
-    [InlineData(DownloadFileType.None, new byte[0])]
-    [InlineData(DownloadFileType.CSV, new byte[0])]
-    [InlineData(DownloadFileType.CSV, null)]
-    public async Task ToDownloadSelectedPupilPremiumDataUPN_returns_correct_validation_error_message(
-        DownloadFileType downloadFileType,
-        byte[]? fileBytes)
+    [InlineData(DownloadFileType.None)]
+    [InlineData(DownloadFileType.CSV)]
+    public async Task ToDownloadSelectedPupilPremiumDataUPN_returns_correct_validation_error_message(DownloadFileType downloadFileType)
     {
         // arrange
         string upn = _paginatedResultsFake.GetUpn();
@@ -1306,15 +1312,6 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     {
         ClaimsPrincipal user = UserClaimsPrincipalFake.GetAdminUserClaimsPrincipal();
 
-        _mockAppSettings = new AzureAppSettings()
-        {
-            MaximumUPNsPerSearch = 4000,
-            DownloadOptionsCheckLimit = 500,
-            MaximumNonUPNResults = 100
-        };
-
-        _mockAppOptions.Value.Returns(_mockAppSettings);
-
         DefaultHttpContext httpContextStub = new()
         {
             User = user,
@@ -1339,7 +1336,6 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
         return new PupilPremiumLearnerTextSearchController(
             _mockLogger,
-            _mockAppOptions,
             _mockSelectionManager,
             _mockSessionProvider.Object,
             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
@@ -1347,9 +1343,10 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _mockUseCase,
             _mockLearnerSearchResponseToViewModelMapper,
             _mockFiltersRequestMapper,
-            _mockSortOrderMapper,
+            _sortOrderFactoryMock.Object,
             _mockFiltersRequestBuilder,
-            _mockSearchCriteriaProvider.Object)
+            _searchindexOptionsProvider.Object,
+            _criteriaOptionsToCriteriaMock.Object)
         {
             ControllerContext = new ControllerContext()
             {
@@ -1378,18 +1375,5 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
                 DobYear = year
             }
         };
-    }
-
-    /*https://bytelanguage.net/2020/07/31/writing-unit-test-for-model-validation/*/
-
-    private static void MockModelState<TModel, TController>(TModel model, TController controller) where TController : ControllerBase
-    {
-        ValidationContext validationContext = new(model!, null, null);
-        List<ValidationResult> validationResults = [];
-        Validator.TryValidateObject(model!, validationContext, validationResults, true);
-        foreach (ValidationResult validationResult in validationResults)
-        {
-            controller.ModelState.AddModelError(validationResult.MemberNames.First(), validationResult.ErrorMessage!);
-        }
     }
 }

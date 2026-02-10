@@ -5,13 +5,15 @@ using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
 
-public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
-    IMapper<Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners>
+internal sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
+    IMapper<
+        Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>,
+        PupilPremiumLearners>
 {
-    private readonly IMapper<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner> _searchResultToLearnerMapper;
+    private readonly IMapperWithResult<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner> _searchResultToLearnerMapper;
 
     public PageablePupilPremiumSearchResultsToLearnerResultsMapper(
-        IMapper<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner> searchResultToLearnerMapper)
+        IMapperWithResult<PupilPremiumLearnerDataTransferObject, PupilPremiumLearner> searchResultToLearnerMapper)
     {
         ArgumentNullException.ThrowIfNull(searchResultToLearnerMapper);
         _searchResultToLearnerMapper = searchResultToLearnerMapper;
@@ -25,26 +27,12 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapper :
         if (input.Any())
         {
             List<PupilPremiumLearner> mappedResults =
-                input.Select(result =>
-                {
-                    if (result == null || result.Document == null)
-                    {
-                        return null;
-                    }
-
-                    try
-                    {
-                        return _searchResultToLearnerMapper.Map(result.Document);
-                    }
-                    catch (Exception)
-                    {
-                        // Swallow mapping errors for individual records; invalid results are skipped.
-                        return null;
-                    }
-                })
-                .Where(learner => learner != null)
-                .ToList()!;
-
+                input
+                    .Where(t => t != null && t.Document != null)
+                    .Select(result => _searchResultToLearnerMapper.Map(result.Document))
+                    .Where(response => response.HasResult)
+                    .Select(resultLearner => resultLearner.Result!)
+                    .ToList();
 
             learners = new PupilPremiumLearners(mappedResults);
         }

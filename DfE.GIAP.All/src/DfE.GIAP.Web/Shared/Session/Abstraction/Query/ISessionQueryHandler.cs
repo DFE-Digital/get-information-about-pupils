@@ -2,5 +2,5 @@
 
 public interface ISessionQueryHandler<TSessionObject> where TSessionObject : class
 {
-    SessionQueryResponse<TSessionObject> Handle();
+    SessionQueryResponse<TSessionObject> Handle(SessionCacheKey key);
 }

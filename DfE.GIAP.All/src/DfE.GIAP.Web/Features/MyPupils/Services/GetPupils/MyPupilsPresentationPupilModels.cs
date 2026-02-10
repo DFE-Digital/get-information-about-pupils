@@ -1,4 +1,4 @@
-namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 
 public sealed record MyPupilsPresentationPupilModels
 {

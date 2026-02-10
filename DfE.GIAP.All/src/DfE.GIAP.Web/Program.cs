@@ -36,7 +36,7 @@ builder.Services
     .AddDownloadDependencies(configuration)
     .AddScoped<IDownloadPupilPremiumPupilDataService, DownloadPupilPremiumPupilDataService>()
     .AddAuthDependencies(configuration)
-    .AddMyPupils()
+    .AddMyPupils(configuration)
     .AddSearch(configuration);
 
 builder.Services

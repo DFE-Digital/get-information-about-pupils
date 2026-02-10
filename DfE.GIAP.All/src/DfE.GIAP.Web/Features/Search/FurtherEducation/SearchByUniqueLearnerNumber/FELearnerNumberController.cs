@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Constants.Search.FurtherEducation;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
@@ -9,13 +8,13 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -34,27 +33,33 @@ public class FELearnerNumberController : Controller
     protected readonly ISelectionManager _selectionManager;
 
     private readonly IUseCase<
-        FurtherEducationSearchRequest,
-        FurtherEducationSearchResponse> _furtherEducationSearchUseCase;
+        FurtherEducationSearchByUniqueLearnerNumberRequest,
+        FurtherEducationSearchByUniqueLearnerNumberResponse> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         FurtherEducationLearnerNumericSearchMappingContext,
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
 
-    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly IMapper<
+        SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
+
+    private readonly ISortOrderFactory _sortOrderFactory;
+
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
 
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
+    
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
+
     private readonly IEventLogger _eventLogger;
     private readonly bool _showMiddleNames = false;
     public const int PAGESIZE = 20;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
-    public string PageHeading => UniqueLearnerNumberLabels.SearchPupilUpnPageHeading;
+    public string PageHeading => "Search pupils with ULNs only";
     public string SearchAction => "PupilUlnSearch";
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchFurtherEducationDownloadLinks.cshtml";
     public string SearchSessionKey => "SearchULN_SearchText";
@@ -63,19 +68,20 @@ public class FELearnerNumberController : Controller
 
     public FELearnerNumberController(
         IUseCase<
-            FurtherEducationSearchRequest,
-            FurtherEducationSearchResponse> furtherEducationSearchUseCase,
+            FurtherEducationSearchByUniqueLearnerNumberRequest,
+            FurtherEducationSearchByUniqueLearnerNumberResponse> furtherEducationSearchUseCase,
         IMapper<
             FurtherEducationLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
-        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+        ISortOrderFactory sortOrderFactory,
         ILogger<FELearnerNumberController> logger,
         ISelectionManager selectionManager,
         IOptions<AzureAppSettings> azureAppSettings,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
@@ -83,8 +89,8 @@ public class FELearnerNumberController : Controller
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
 
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrderFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -105,8 +111,11 @@ public class FELearnerNumberController : Controller
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
 
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
     private bool HasAccessToFurtherEducationSearch =>
@@ -155,7 +164,7 @@ public class FELearnerNumberController : Controller
         );
     }
 
-    [Route(UniqueLearnerNumberLabels.ToDownloadSelectedULNData)]
+    [Route("download-uln")]
     [HttpPost]
     public async Task<IActionResult> ToDownloadSelectedULNData(LearnerNumberSearchViewModel searchViewModel)
     {
@@ -179,7 +188,7 @@ public class FELearnerNumberController : Controller
         return await DownloadSelectedUlnDatabaseData(joinedSelectedPupils, searchViewModel.LearnerNumber, selectedPupils.Count);
     }
 
-    [Route(UniqueLearnerNumberLabels.DownloadSelectedUlnData)]
+    [Route(Routes.FurtherEducation.DownloadSelectedUlnData)]
     [HttpPost]
     public async Task<IActionResult> DownloadSelectedUlnDatabaseData(LearnerDownloadViewModel model)
     {
@@ -243,10 +252,10 @@ public class FELearnerNumberController : Controller
 
             return await DownloadSelectedUlnDatabaseData(model.SelectedPupils, model.LearnerNumber, model.SelectedPupilsCount);
         }
-        return RedirectToAction(SearchAction, UniqueLearnerNumberLabels.SearchUlnControllerName);
+        return RedirectToAction(SearchAction, Routes.FurtherEducation.SearchUlnControllerName);
     }
 
-    [Route(UniqueLearnerNumberLabels.DownloadSelectedUlnData)]
+    [Route(Routes.FurtherEducation.DownloadSelectedUlnData)]
     [HttpGet]
     public async Task<IActionResult> DownloadSelectedUlnDatabaseData(string selectedPupilsJoined, string uln, int selectedPupilsCount)
     {
@@ -260,13 +269,12 @@ public class FELearnerNumberController : Controller
             ShowTABDownloadType = false
         };
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumULNsPerSearch;
         ModelState.Clear();
 
         PopulateNavigation(searchDownloadViewModel.NumberSearchViewModel);
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumber = selectedPupilsJoined.Replace(",", "\r\n");
         searchDownloadViewModel.SearchAction = SearchAction;
-        searchDownloadViewModel.DownloadRoute = UniqueLearnerNumberLabels.DownloadSelectedUlnData;
+        searchDownloadViewModel.DownloadRoute = Routes.FurtherEducation.DownloadSelectedUlnData;
         searchDownloadViewModel.NumberSearchViewModel.LearnerNumberLabel = "ULN";
 
         string[] selectedPupils = selectedPupilsJoined.Split(',');
@@ -306,7 +314,6 @@ public class FELearnerNumberController : Controller
         PopulateNavigation(model);
         PopulateSorting(model, HttpContext.Session.GetString(SearchSessionSortField), HttpContext.Session.GetString(SearchSessionSortDirection));
         ClearSortingDataFromSession();
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
 
         model.ShowMiddleNames = _showMiddleNames;
 
@@ -350,7 +357,6 @@ public class FELearnerNumberController : Controller
         PopulateNavigation(model);
         PopulateSorting(model, sortField, sortDirection);
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _appSettings.MaximumUPNsPerSearch;
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");
@@ -437,32 +443,23 @@ public class FELearnerNumberController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("further-education-uln");
-
-        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
-            new SortOrderRequest(
-                searchKey: "further-education",
-                sortOrder: (model.SortField, model.SortDirection)));
-
-        IList<FilterRequest> filterRequests =
-        [
-            new FilterRequest(
-                filterName: "ULN",
-                filterValues: learnerNumberArray
-            )
-        ];
-
         _eventLogger.LogSearch(SearchIdentifierType.ULN, false, new());
 
-        FurtherEducationSearchResponse searchResponse =
-            await _furtherEducationSearchUseCase.HandleRequestAsync(
-                new FurtherEducationSearchRequest(
-                    searchKeywords: string.Join(" AND ", learnerNumberArray),
-                    filterRequests: filterRequests,
-                    searchCriteria: searchCriteria,
-                    sortOrder: sortOrder,
-                    offset: model.Offset));
+        SearchIndexOptions indexOptions = _searchIndexOptionsProvider.GetOptions("further-education-uln");
 
+        SortOrder sortOrder = 
+            _sortOrderFactory.Create(
+                options: indexOptions.SortOptions, sort: (model.SortField, model.SortDirection));
+
+        FurtherEducationSearchByUniqueLearnerNumberResponse searchResponse =
+            await _furtherEducationSearchUseCase.HandleRequestAsync(
+                new FurtherEducationSearchByUniqueLearnerNumberRequest()
+                {
+                    UniqueLearnerNumbers = learnerNumberArray,
+                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(indexOptions.SearchCriteria),
+                    Sort = sortOrder,
+                    Offset = model.Offset
+                });
 
         LearnerNumberSearchViewModel result =
             _learnerNumericSearchResponseToViewModelMapper.Map(

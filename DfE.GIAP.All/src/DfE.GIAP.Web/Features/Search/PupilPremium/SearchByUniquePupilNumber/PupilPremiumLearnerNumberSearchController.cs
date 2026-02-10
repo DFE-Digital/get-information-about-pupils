@@ -1,25 +1,24 @@
 ﻿using System.Text.RegularExpressions;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
-using DfE.GIAP.Web.Features.Search.Options;
+using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
@@ -34,26 +33,25 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     private readonly ILogger<PupilPremiumLearnerNumberSearchController> _logger;
 
     private readonly IUseCase<
-        PupilPremiumSearchRequest,
-        PupilPremiumSearchResponse> _searchUseCase;
+        PupilPremiumSearchByUniquePupilNumberRequest,
+        PupilPremiumSearchByUniquePupilNumberResponse> _searchUseCase;
 
     private readonly IMapper<
         PupilPremiumLearnerNumericSearchMappingContext,
         LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
 
     private readonly ISelectionManager _selectionManager;
-    private readonly IOptions<AzureAppSettings> _azureAppSettings;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IJsonSerializer _jsonSerializer;
     private readonly IDownloadPupilPremiumPupilDataService _downloadPupilPremiumDataForPupilsService;
-    private readonly ISearchCriteriaProvider _searchCriteriaProvider;
-    private readonly IMapper<SortOrderRequest, SortOrder> _sortOrderViewModelToRequestMapper;
+    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
+    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
+    private readonly ISortOrderFactory _sortOrderFactory;
 
     public string SearchAction => nameof(PupilPremium);
     public string FullTextLearnerSearchController => Global.PPTextSearchController;
     public string FullTextLearnerSearchAction => "NonUpnPupilPremiumDatabase";
     public string DownloadLinksPartial => "~/Views/Shared/LearnerNumber/_SearchPupilPremiumDownloadLinks.cshtml";
-    public AzureSearchIndexType IndexType => AzureSearchIndexType.PupilPremium;
     public string SearchSessionKey => "SearchPPUPN_SearchText";
     public string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
@@ -61,18 +59,18 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     public PupilPremiumLearnerNumberSearchController(
         ILogger<PupilPremiumLearnerNumberSearchController> logger,
         IUseCase<
-            PupilPremiumSearchRequest,
-            PupilPremiumSearchResponse> searchUseCase,
-        IMapper<SortOrderRequest, SortOrder> sortOrderViewModelToRequestMapper,
+            PupilPremiumSearchByUniquePupilNumberRequest,
+            PupilPremiumSearchByUniquePupilNumberResponse> searchUseCase,
+        ISortOrderFactory sortOrderFactory,
         IMapper<
             PupilPremiumLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
         ISelectionManager selectionManager,
-        IOptions<AzureAppSettings> azureAppSettings,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IJsonSerializer jsonSerializer,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
-        ISearchCriteriaProvider searchCriteriaProvider)
+        ISearchIndexOptionsProvider searchIndexOptionsProvider,
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -83,10 +81,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
 
-        ArgumentNullException.ThrowIfNull(azureAppSettings);
-        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        _azureAppSettings = azureAppSettings;
-
         ArgumentNullException.ThrowIfNull(addPupilsToMyPupilsUseCase);
         _addPupilsToMyPupilsUseCase = addPupilsToMyPupilsUseCase;
 
@@ -95,15 +89,18 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
         _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
+
+        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
+        _searchIndexOptionsProvider = searchIndexOptionsProvider;
+
+        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
+        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
         
-        ArgumentNullException.ThrowIfNull(sortOrderViewModelToRequestMapper);
-        _sortOrderViewModelToRequestMapper = sortOrderViewModelToRequestMapper;
+        ArgumentNullException.ThrowIfNull(sortOrderFactory);
+        _sortOrderFactory = sortOrderFactory;
 
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
-
-        ArgumentNullException.ThrowIfNull(searchCriteriaProvider);
-        _searchCriteriaProvider = searchCriteriaProvider;
     }
 
 
@@ -253,7 +250,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
             HttpContext.Session.GetString(SearchSessionSortDirection));
 
         ClearSortingDataFromSession();
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _azureAppSettings.Value.MaximumUPNsPerSearch;
 
         SetModelApplicationLabels(model);
 
@@ -261,7 +257,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         {
             ModelState.Clear();
             model.LearnerNumber = HttpContext.Session.GetString(SearchSessionKey);
-            model = await GetPupilsForSearchBuilder(model, IndexType, 0, true).ConfigureAwait(false);
+            model = await GetPupilsForSearchBuilder(model, true).ConfigureAwait(false);
             model.PageNumber = 0;
             model.PageSize = PAGESIZE;
         }
@@ -287,7 +283,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         PopulateNavigation(model);
         PopulateSorting(model, sortField, sortDirection);
 
-        LearnerNumberSearchViewModel.MaximumLearnerNumbersPerSearch = _azureAppSettings.Value.MaximumUPNsPerSearch;
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");
@@ -338,8 +333,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
             model = await GetPupilsForSearchBuilder(
                 model,
-                IndexType,
-                pageNumber,
                 notPaged).ConfigureAwait(false);
         }
 
@@ -386,8 +379,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
     private async Task<LearnerNumberSearchViewModel> GetPupilsForSearchBuilder(
        LearnerNumberSearchViewModel model,
-       AzureSearchIndexType indexType,
-       int pageNumber,
        bool first)
     {
         if (string.IsNullOrEmpty(model.LearnerNumber))
@@ -404,27 +395,20 @@ public class PupilPremiumLearnerNumberSearchController : Controller
             searchText = model.LearnerIdSearchResult;
         }
 
-        SortOrder sortOrder = _sortOrderViewModelToRequestMapper.Map(
-            new SortOrderRequest(
-                searchKey: "pupil-premium",
-                sortOrder: (model.SortField, model.SortDirection)));
+        SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "pupil-premium-upn");
 
-        IList<FilterRequest> filterRequests =
-        [
-            new FilterRequest(
-                filterName: "UPN",
-                filterValues: learnerNumberArray)
-        ];
+        SortOrder sortOrder = _sortOrderFactory.Create(
+            options.SortOptions, 
+            sort: (model.SortField, model.SortDirection));
 
-        SearchCriteria searchCriteria = _searchCriteriaProvider.GetCriteria("pupil-premium-upn");
-
-        PupilPremiumSearchResponse searchResponse = await _searchUseCase.HandleRequestAsync(
-            new PupilPremiumSearchRequest(
-                searchKeywords: string.Join(" AND ", learnerNumberArray),
-                filterRequests: filterRequests,
-                searchCriteria: searchCriteria,
-                sortOrder: sortOrder,
-                model.Offset));
+        PupilPremiumSearchByUniquePupilNumberResponse searchResponse = await _searchUseCase.HandleRequestAsync(
+            new PupilPremiumSearchByUniquePupilNumberRequest()
+            {
+                UniquePupilNumbers = learnerNumberArray,
+                SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(options.SearchCriteria),
+                Sort = sortOrder,
+                Offset = model.Offset
+            });
 
         LearnerNumberSearchViewModel result =
             _learnerNumericSearchResponseToViewModelMapper.Map(
@@ -432,7 +416,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         List<string> idList = SetLearnerNumberIds(result.Learners);
 
-        string[] combinedIdLearnerNumberArray = learnerNumberArray.Concat(idList).ToArray();
+        string[] combinedIdLearnerNumberArray = [.. learnerNumberArray, .. idList];
 
         if (first)
         {
@@ -457,9 +441,9 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         model.NotFound = notFound;
 #nullable restore
 
-        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates(learnerNumberArray.ToList());
+        List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates([.. learnerNumberArray]);
 
-        if (duplicateLearnerNumbers.Any())
+        if (duplicateLearnerNumbers.Count > 0)
         {
             foreach (string learnerNumber in duplicateLearnerNumbers)
             {
@@ -469,7 +453,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         List<string> potentialErrorLearnerNumbers = learnerNumberArray.Distinct().ToList();
 
-        if (potentialErrorLearnerNumbers.Any())
+        if (potentialErrorLearnerNumbers.Count > 0)
         {
             foreach (string learnerNumber in potentialErrorLearnerNumbers)
             {

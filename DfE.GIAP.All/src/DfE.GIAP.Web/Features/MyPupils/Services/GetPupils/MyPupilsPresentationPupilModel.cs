@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 
 public record MyPupilsPresentationPupilModel
 {

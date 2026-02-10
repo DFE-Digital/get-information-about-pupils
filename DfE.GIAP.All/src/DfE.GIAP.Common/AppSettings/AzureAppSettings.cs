@@ -8,24 +8,8 @@ public class AzureAppSettings
     //Common
     public bool IsSessionIdStoredInCookie { get; set; }
 
-    //Search
-    public int MaximumNonUPNResults { get; set; }
-    public int MaximumUPNsPerSearch { get; set; }
-    public int MaximumULNsPerSearch { get; set; }
-
-    //Azure Function Urls
-    public string CreateOrUpdateUserProfileUrl { get; set; }
     public string DownloadPupilsByUPNsCSVUrl { get; set; }
-    public string DownloadPupilPremiumByUPNFforCSVUrl { get; set; }
     public string DownloadCommonTransferFileUrl { get; set; }
-    public string GetUserProfileUrl { get; set; }
-    public string LoggingEventUrl { get; set; }
-
-    //Further Education
-    public string DownloadPupilsByULNsUrl { get; set; }
-
-    // Paginated Search
-    public string PaginatedSearchUrl { get; set; }
 
     //Downloads
     public int CommonTransferFileUPNLimit { get; set; }

@@ -5,9 +5,9 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Moq;
 using Xunit;
@@ -110,11 +110,11 @@ public sealed class GetMyPupilsPresentationServiceTests
     }
 
     [Theory]
-    [InlineData(0, 1)]
-    [InlineData(1, 1)]
-    [InlineData(100, 5)]
-    [InlineData(101, 6)]
-    public async Task GetMyPupils_Returns_PageSize_From_TotalPupilCount(int totalPupilCount, int expectedPages)
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    [InlineData(101)]
+    public async Task GetMyPupils_Returns_PageSize_From_TotalPupilCount(int totalPupilCount)
     {
         // Arrange
         const string userId = "userId";

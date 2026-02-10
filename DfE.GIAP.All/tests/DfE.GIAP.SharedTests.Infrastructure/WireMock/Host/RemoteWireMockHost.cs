@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Server;
+﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Host;
 
 internal class RemoteWireMockHost : IWireMockHost
 {

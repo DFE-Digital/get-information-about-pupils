@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;

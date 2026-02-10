@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+﻿using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 

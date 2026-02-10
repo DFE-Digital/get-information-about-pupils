@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Web.ViewModels.PrePreparedDownload;
+namespace DfE.GIAP.Web.ViewModels.PreparedDownload;
 
 [ExcludeFromCodeCoverage]
 public class PreparedDownloadsViewModel

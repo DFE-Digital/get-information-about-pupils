@@ -17,7 +17,10 @@ public static class SearchCriteriaTestDouble
     /// </summary>
     public static SearchCriteria Stub() => new()
     {
+        Index = "IndexName",
         Facets = ["FIELD1", "FIELD2", "FIELD3"],       // Simulated facet fields
-        SearchFields = ["FACET1", "FACET2", "FACET3"]  // Simulated searchable fields
+        SearchFields = ["FACET1", "FACET2", "FACET3"],  // Simulated searchable fields
+        Size = 100,
+        IncludeTotalCount = true
     };
 }

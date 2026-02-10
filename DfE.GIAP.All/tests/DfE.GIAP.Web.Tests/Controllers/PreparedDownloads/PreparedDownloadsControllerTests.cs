@@ -1,21 +1,14 @@
-﻿using System.Security.Claims;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
-using DfE.GIAP.Domain.Models.User;
 using DfE.GIAP.Web.Controllers.PreparedDownload;
-using DfE.GIAP.Web.Tests.Shared.Http;
+using DfE.GIAP.Web.Tests.Shared.HttpContext;
 using DfE.GIAP.Web.Tests.TestDoubles;
-using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
-using Microsoft.AspNetCore.Http;
+using DfE.GIAP.Web.ViewModels.PreparedDownload;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using Xunit;
-using static DfE.GIAP.Web.Constants.DsiKeys;
 
-namespace DfE.GIAP.Web.Tests.Controllers.PrePreparedDownloads;
+namespace DfE.GIAP.Web.Tests.Controllers.PreparedDownloads;
 
 [Trait("PreparedDownloads", "PreparedDownloads Controller Unit Tests")]
 public class PreparedDownloadsControllerTests

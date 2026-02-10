@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Web.Shared.Session.Abstraction;
+﻿using System.Text;
+using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 
 namespace DfE.GIAP.Web.Shared.Session.Infrastructure.Query;
@@ -6,38 +7,33 @@ namespace DfE.GIAP.Web.Shared.Session.Infrastructure.Query;
 public sealed class AspNetCoreSessionQueryHandler<TSessionObject> : ISessionQueryHandler<TSessionObject> where TSessionObject : class
 {
     private readonly IAspNetCoreSessionProvider _sessionProvider;
-    private readonly ISessionObjectKeyResolver _sessionKeyResolver;
     private readonly ISessionObjectSerializer<TSessionObject> _sessionObjectSerializer;
 
     public AspNetCoreSessionQueryHandler(
         IAspNetCoreSessionProvider sessionProvider,
-        ISessionObjectKeyResolver sessionKeyResolver,
         ISessionObjectSerializer<TSessionObject> sessionObjectSerializer)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
 
-        ArgumentNullException.ThrowIfNull(sessionKeyResolver);
-        _sessionKeyResolver = sessionKeyResolver;
-
         ArgumentNullException.ThrowIfNull(sessionObjectSerializer);
         _sessionObjectSerializer = sessionObjectSerializer;
     }
 
-    public SessionQueryResponse<TSessionObject> Handle()
+    public SessionQueryResponse<TSessionObject> Handle(SessionCacheKey key)
     {
+        ArgumentNullException.ThrowIfNull(key);
+
         ISession session = _sessionProvider.GetSession();
 
-        string sessionObjectAccessKey = _sessionKeyResolver.Resolve<TSessionObject>();
-
-        if (string.IsNullOrWhiteSpace(sessionObjectAccessKey) || !session.TryGetValue(sessionObjectAccessKey, out byte[] _))
+        if (!session.TryGetValue(key.Value, out byte[] value))
         {
             return SessionQueryResponse<TSessionObject>.CreateWithNoValue();
         }
 
-        string sessionValue = session.GetString(sessionObjectAccessKey);
-
-        TSessionObject outputValue = _sessionObjectSerializer.Deserialize(sessionValue)!;
+        TSessionObject outputValue =
+            _sessionObjectSerializer.Deserialize(
+                input: Encoding.UTF8.GetString(value))!;
 
         return SessionQueryResponse<TSessionObject>.Create(outputValue);
     }

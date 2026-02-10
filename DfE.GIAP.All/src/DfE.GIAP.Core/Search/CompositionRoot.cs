@@ -1,33 +1,15 @@
-﻿using Azure;
-using Azure.Search.Documents.Models;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch;
+﻿using Dfe.Data.Common.Infrastructure.CognitiveSearch;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.Filtering.FilterExpressions.Factories;
-using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation;
-using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
-using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase;
-using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
-using DfE.GIAP.Core.Search.Infrastructure.PupilPremium;
-using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
-using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
-using DfE.GIAP.Core.Search.Infrastructure.Shared;
+using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Extensions;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Options;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.SearchFilterExpressions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 
 namespace DfE.GIAP.Core.Search;
@@ -49,114 +31,29 @@ public static class CompositionRoot
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        // Register core search services and mappers.
         services
-            .AddSearchOptions(configuration)
-            .AddAzureServices(configuration)
-            .AddNationalPupilDatabaseSearchAdaptors()
-            .AddPupilPremiumSearchAdaptors()
-            .AddFurtherEducationSearchAdaptors()
-            .AddFilterExpressions()
+            .AddSearchOptions(configuration);
 
+        services
+            .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
+
+        services.AddSingleton<IMapper<SearchCriteriaOptions, SearchCriteria>, SearchCriteriaOptionsToSearchCriteriaMapper>();
+        // Register shared cognitive search and filter services.
+        services.AddAzureSearchServices(configuration);
+        services.AddAzureSearchFilterServices(configuration);
+
+        services
+            .AddNationalPupilDatabaseSearchByName()
+            .AddNationalPupilDatabaseSearchByUpn()
+            .AddPupilPremiumSearchByName()
+            .AddPupilPremiumSearchByUpn()
+            .AddFurtherEducationSearchByName()
+            .AddFurtherEducationSearchByUniqueLearnerNumber()
+            .AddFilterExpressions()
             .AddSingleton<
                 IMapper<
                     Dictionary<string, IList<AzureFacetResult>>, SearchFacets>,
                     AzureSearchFacetResultsToEstablishmentFacetsMapper>();
-
-        return services;
-    }
-
-    private static IServiceCollection AddFurtherEducationSearchAdaptors(this IServiceCollection services)
-    {
-        services
-            .AddScoped<
-                IUseCase<
-                    FurtherEducationSearchRequest, FurtherEducationSearchResponse>,
-                    FurtherEducationSearchUseCase>()
-            .AddScoped<
-                ISearchServiceAdapter<
-                    FurtherEducationLearners, SearchFacets>,
-                    FurtherEducationAzureSearchServiceAdapter>()
-            .AddSingleton<
-                IMapper<
-                    Pageable<SearchResult<FurtherEducationLearnerDataTransferObject>>, FurtherEducationLearners>,
-                    PageableFurtherEducationSearchResultsToLearnerResultsMapper>()
-            .AddSingleton<
-                IMapper<
-                    FurtherEducationLearnerDataTransferObject, FurtherEducationLearner>,
-                    FurtherEducationSearchResultToLearnerMapper>();
-
-        return services;
-    }
-
-    private static IServiceCollection AddPupilPremiumSearchAdaptors(this IServiceCollection services)
-    {
-        services
-            .AddScoped<
-                IUseCase<
-                    PupilPremiumSearchRequest, PupilPremiumSearchResponse>,
-                    PupilPremiumSearchUseCase>()
-            .AddScoped<
-                ISearchServiceAdapter<
-                    PupilPremiumLearners, SearchFacets>,
-                    PupilPremiumAzureSearchServiceAdaptor>()
-            .AddSingleton<
-                IMapper<
-                    Pageable<SearchResult<PupilPremiumLearnerDataTransferObject>>, PupilPremiumLearners>,
-                    PageablePupilPremiumSearchResultsToLearnerResultsMapper>()
-            .AddSingleton<
-                IMapper<
-                    PupilPremiumLearnerDataTransferObject, PupilPremiumLearner>,
-                    PupilPremiumLearnerDataTransferObjectToPupilPremiumLearnerMapper>();
-        return services;
-    }
-
-    private static IServiceCollection AddNationalPupilDatabaseSearchAdaptors(this IServiceCollection services)
-    {
-        services
-            .AddScoped<
-                IUseCase<
-                    NationalPupilDatabaseSearchRequest, NationalPupilDatabaseSearchResponse>,
-                    NationalPupilDatabaseSearchUseCase>()
-            .AddScoped<
-                    ISearchServiceAdapter<NationalPupilDatabaseLearners, SearchFacets>,
-                    NationalPupilDatabaseAzureSearchServiceAdaptor>()
-            .AddSingleton<
-                IMapper<
-                    Pageable<SearchResult<NationalPupilDatabaseLearnerDataTransferObject>>, NationalPupilDatabaseLearners>,
-                    PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper>()
-            .AddSingleton<
-                IMapper<
-                    NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>,
-                    NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper>();
-        return services;
-    }
-
-    private static IServiceCollection AddSearchOptions(this IServiceCollection services, IConfiguration configuration)
-    {
-        // Bind Azure Search configuration options.
-        services
-            .AddOptions<AzureSearchOptions>()
-            .Bind(configuration.GetSection(nameof(AzureSearchOptions)));
-
-        // Register strongly typed configuration instances.
-        services.AddSingleton(
-            serviceProvider =>
-                serviceProvider.GetRequiredService<IOptions<AzureSearchOptions>>().Value);
-
-        return services;
-    }
-
-    private static IServiceCollection AddAzureServices(this IServiceCollection services, IConfiguration configuration)
-    {
-
-        services
-            .AddScoped<IAzureSearchByKeywordService, AzureSearchByKeywordService>()
-            .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
-
-        // Register shared cognitive search and filter services.
-        services.AddAzureSearchServices(configuration);
-        services.AddAzureSearchFilterServices(configuration);
 
         return services;
     }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Moq;
+﻿using Moq;
 
 namespace DfE.GIAP.SharedTests.Runtime.TestDoubles;
 public static class OptionsTestDoubles

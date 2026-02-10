@@ -1,21 +1,22 @@
 ﻿using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.DataTransferObjects;
 using DfE.GIAP.Web.Features.MyPupils.Messaging.Mapper;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.DeletePupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.ClearPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Options;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
-using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilIdentifiers;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils.Mapper;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
@@ -28,11 +29,12 @@ namespace DfE.GIAP.Web.Features.MyPupils;
 
 public static class CompositionRoot
 {
-    public static IServiceCollection AddMyPupils(this IServiceCollection services)
+    public static IServiceCollection AddMyPupils(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services
+            .AddSearchOptions(configuration)
             .AddMyPupilsCore();
            
         services
@@ -46,6 +48,7 @@ public static class CompositionRoot
     private static IServiceCollection AddMyPupilsPresentationServices(this IServiceCollection services)
     {
         services.AddOptions<MyPupilsMessagingOptions>();
+        services.AddOptions<MyPupilSelectionOptions>();
 
         // PresentationService
         services

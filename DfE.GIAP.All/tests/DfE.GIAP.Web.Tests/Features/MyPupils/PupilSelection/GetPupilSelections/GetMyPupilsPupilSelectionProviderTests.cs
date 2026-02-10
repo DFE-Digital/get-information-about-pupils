@@ -1,6 +1,8 @@
-﻿using DfE.GIAP.SharedTests.TestDoubles;
+﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
+using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Options;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
@@ -16,8 +18,32 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
     {
         // Act Assert
         Assert.Throws<ArgumentNullException>(() =>
-            new GetMyPupilsPupilSelectionProvider(null));
+            new GetMyPupilsPupilSelectionProvider(
+                null,
+                OptionsTestDoubles.Default<MyPupilSelectionOptions>()));
     }
+
+    [Fact]
+    public void Constructor_Throws_When_Options_Is_Null()
+    {
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new GetMyPupilsPupilSelectionProvider(
+                ISessionQueryHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
+                null!));
+    }
+
+
+    [Fact]
+    public void Constructor_Throws_When_OptionsValue_Is_Null()
+    {
+        // Act Assert
+        Assert.Throws<ArgumentNullException>(() =>
+            new GetMyPupilsPupilSelectionProvider(
+                ISessionQueryHandlerTestDoubles.Default<MyPupilsPupilSelectionState>().Object,
+                OptionsTestDoubles.MockNullOptions<MyPupilSelectionOptions>()));
+    }
+
 
     [Fact]
     public void GetState_ReturnsDefaultStates_WhenSessionResponsesAreEmpty()
@@ -29,7 +55,9 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandlerMock =
             ISessionQueryHandlerTestDoubles.MockFor(selectionState);
 
-        GetMyPupilsPupilSelectionProvider sut = new(selectionStateHandlerMock.Object);
+        GetMyPupilsPupilSelectionProvider sut = new(
+            selectionStateHandlerMock.Object,
+            OptionsTestDoubles.Default<MyPupilSelectionOptions>());
 
         // Act
         MyPupilsPupilSelectionState result = sut.GetPupilSelections();
@@ -59,7 +87,9 @@ public sealed class GetMyPupilsPupilSelectionProviderTests
         Mock<ISessionQueryHandler<MyPupilsPupilSelectionState>> selectionStateHandler =
             ISessionQueryHandlerTestDoubles.MockFor(expectedSelectionState);
 
-        GetMyPupilsPupilSelectionProvider sut = new(selectionStateHandler.Object);
+        GetMyPupilsPupilSelectionProvider sut = new(
+            selectionStateHandler.Object,
+            OptionsTestDoubles.Default<MyPupilSelectionOptions>());
 
         // Act
         MyPupilsPupilSelectionState response = sut.GetPupilSelections();

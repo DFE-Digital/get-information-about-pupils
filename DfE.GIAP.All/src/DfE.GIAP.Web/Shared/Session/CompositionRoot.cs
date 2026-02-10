@@ -9,7 +9,6 @@ public static class CompositionRoot
     public static IServiceCollection AddAspNetCoreSessionServices(this IServiceCollection services)
     {
         services.TryAddScoped<IAspNetCoreSessionProvider, AspNetCoreSessionProvider>();
-        services.TryAddSingleton<ISessionObjectKeyResolver, SessionObjectKeyResolver>();
         return services;
     }
 }
