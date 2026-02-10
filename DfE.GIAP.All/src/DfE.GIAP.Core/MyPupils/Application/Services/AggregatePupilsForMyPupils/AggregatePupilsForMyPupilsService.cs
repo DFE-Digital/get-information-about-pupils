@@ -10,7 +10,6 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 // TODO this COULD be replaced with a CosmosDb implementation to avoid what it previously used - AzureSearch

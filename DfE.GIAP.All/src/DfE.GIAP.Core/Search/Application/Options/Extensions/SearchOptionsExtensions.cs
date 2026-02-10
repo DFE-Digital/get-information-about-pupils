@@ -1,7 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 
-namespace DfE.GIAP.Web.Features.Search.Options.Extensions;
+namespace DfE.GIAP.Core.Search.Application.Options.Extensions;
 /// <summary>
 /// Provides extension methods for retrieving AzureSearchIndex options from AzureSearch configuration.
 /// </summary>

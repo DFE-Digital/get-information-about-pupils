@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 internal static class MyPupilsPresentationPupilModelsTestDoubles

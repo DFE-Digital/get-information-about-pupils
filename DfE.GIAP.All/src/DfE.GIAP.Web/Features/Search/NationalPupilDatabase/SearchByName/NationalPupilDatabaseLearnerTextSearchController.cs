@@ -21,7 +21,6 @@ using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.Options;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;

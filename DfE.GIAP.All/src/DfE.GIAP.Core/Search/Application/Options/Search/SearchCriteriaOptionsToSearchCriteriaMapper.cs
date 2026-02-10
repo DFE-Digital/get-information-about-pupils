@@ -1,5 +1,4 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 
 namespace DfE.GIAP.Core.Search.Application.Options.Search;
 internal sealed class SearchCriteriaOptionsToSearchCriteriaMapper : IMapper<SearchCriteriaOptions, SearchCriteria>

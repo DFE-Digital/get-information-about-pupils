@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+﻿using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Options;
 using DfE.GIAP.Web.Shared.Session.Abstraction;

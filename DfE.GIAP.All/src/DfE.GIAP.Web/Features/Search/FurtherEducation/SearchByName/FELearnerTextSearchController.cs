@@ -14,7 +14,6 @@ using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;

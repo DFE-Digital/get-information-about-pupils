@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
-namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Server;
+namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Host;
 internal class LocalProcessWireMockServerHost : IWireMockHost
 {
     private readonly Uri _serverUri;

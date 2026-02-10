@@ -13,7 +13,6 @@ using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;

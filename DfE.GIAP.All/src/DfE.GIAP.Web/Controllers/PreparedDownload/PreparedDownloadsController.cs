@@ -6,7 +6,7 @@ using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Web.ViewModels.PrePreparedDownload;
+using DfE.GIAP.Web.ViewModels.PreparedDownload;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Controllers.PreparedDownload;

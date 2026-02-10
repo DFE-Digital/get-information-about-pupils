@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Features.MyPupils.Areas.UpdateForm;
+namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
 public record MyPupilsFormStateRequestDto
 {

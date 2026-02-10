@@ -9,14 +9,13 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.Options.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
-using DfE.GIAP.Web.Features.Search.Options.Search;
-using DfE.GIAP.Web.Features.Search.Options.Sort;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Tests.TestDoubles;

@@ -17,20 +17,20 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Extensions;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
 using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
-using DfE.GIAP.Web.Features.Search.Options.Search;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
-using SearchOptions = DfE.GIAP.Web.Features.Search.Options.Search.SearchOptions;
+using SearchOptions = DfE.GIAP.Core.Search.Application.Options.Search.SearchOptions;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
 public sealed class CompositionRootTests

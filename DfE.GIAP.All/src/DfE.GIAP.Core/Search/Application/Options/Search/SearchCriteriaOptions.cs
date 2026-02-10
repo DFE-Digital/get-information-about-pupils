@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DfE.GIAP.Web.Features.Search.Options.Search;
+namespace DfE.GIAP.Core.Search.Application.Options.Search;
 
 public sealed class SearchCriteriaOptions
 {

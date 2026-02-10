@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.Controllers;
-using DfE.GIAP.Web.Features.MyPupils.PresentationService.GetPupils;
+using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;

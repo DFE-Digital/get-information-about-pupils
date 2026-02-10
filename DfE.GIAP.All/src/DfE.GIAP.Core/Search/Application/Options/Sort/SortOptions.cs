@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Web.Features.Search.Options.Sort;
+﻿namespace DfE.GIAP.Core.Search.Application.Options.Sort;
 
 public sealed class SortOptions
 {

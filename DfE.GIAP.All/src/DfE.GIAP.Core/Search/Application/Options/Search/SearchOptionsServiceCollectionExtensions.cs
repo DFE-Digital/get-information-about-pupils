@@ -1,10 +1,8 @@
-﻿using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Web.Features.Search.Options.Search;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace DfE.GIAP.Web.Features.Search.SearchOptionsExtensions;
+namespace DfE.GIAP.Core.Search.Application.Options.Search;
 
 public static class SearchOptionsServiceCollectionExtensions
 {
