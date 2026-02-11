@@ -17,7 +17,9 @@ internal sealed class SearchLearnerByNameService<TSearchResponse> : ISearchLearn
 
     public async Task<SearchResponse<TSearchResponse, SearchFacets>> SearchAsync(SearchLearnerByNameRequest request)
     {
-        if (request == null || string.IsNullOrWhiteSpace(request.SearchKeywords))
+        if (request == null 
+            || string.IsNullOrWhiteSpace(request.SearchKeywords) ||
+                request.SearchKeywords.Trim() == "*")
         {
             return new(SearchResponseStatus.InvalidRequest);
         }

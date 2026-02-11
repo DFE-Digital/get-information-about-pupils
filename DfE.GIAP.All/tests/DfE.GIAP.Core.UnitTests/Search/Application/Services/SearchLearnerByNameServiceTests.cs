@@ -48,7 +48,9 @@ public sealed class SearchLearnerByNameServiceTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("\n")]
-    public async Task SearchAsync_Returns_InvalidRequest_When_SearchKeywords_Is_Null_Or_Whitespace(string? keywords)
+    [InlineData("*")]
+    [InlineData("  * ")]
+    public async Task SearchAsync_Returns_InvalidRequest_When_SearchKeywords_Is_Null_Whitespace_Or_Wildcarded(string? keywords)
     {
         // Arrange
         Mock<ISearchServiceAdapter<FakeLearnerSearchResponse, SearchFacets>> adapter = new();
