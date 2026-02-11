@@ -126,8 +126,9 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             MyPupilsModel? actual = getMyPupilsResponse.MyPupils.Values.Single(pupil => pupil.UniquePupilNumber.Equals(expectedPupil.UniquePupilNumber));
 
             Assert.NotNull(actual);
-            Assert.Equal(expectedPupil.Forename, actual.Forename);
-            Assert.Equal(expectedPupil.Surname, actual.Surname);
+            // names may have been normalised
+            Assert.Equivalent(expectedPupil.Forename, actual.Forename);
+            Assert.Equivalent(expectedPupil.Surname, actual.Surname);
             Assert.Equal(expectedPupil.DateOfBirth, actual.DateOfBirth);
             Assert.Equal(expectedPupil.Sex, actual.Sex);
             Assert.Equal(expectedPupil.LocalAuthorityCode, actual.LocalAuthorityCode);
