@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
+﻿using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;

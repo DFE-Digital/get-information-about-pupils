@@ -5,6 +5,7 @@ using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Common.Helpers.Rbac;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.Models.Search;
@@ -622,7 +623,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             if (HttpContext.Session.Keys.Contains(SearchSessionKey))
             {
                 model.TextSearchViewModel.SearchText = HttpContext.Session.GetString(SearchSessionKey);
-            }    
+            }
 
             return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.TextSearchViewModel.SearchText);
         }
@@ -632,7 +633,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     #region WIP inherited legacy methods
 
-    
+
     private async Task<IActionResult> Search(bool? returnToSearch)
     {
         LearnerTextSearchViewModel model = new();
@@ -790,8 +791,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         TempData.SetPersistedObject(
             model.SelectedSexValues,
             PersistedSelectedSexFiltersKey);
-   
-    
+
+
     private IActionResult ConfirmationForStarredPupil(StarredPupilConfirmationViewModel model)
     {
         LearnerTextSearchViewModel searchViewModel = new LearnerTextSearchViewModel()
@@ -831,7 +832,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         SortOrder sortOrder =
             _sortOrderFactory.Create(
-                options: options.SortOptions, 
+                options: options.SortOptions,
                 sort: (sortField, sortDirection));
 
         NationalPupilDatabaseSearchByNameResponse searchResponse =
@@ -872,7 +873,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         {
             foreach (Learner learner in viewModel.Learners.Where((t) => !string.IsNullOrEmpty(t.LearnerNumberId)))
             {
-                
+
                 learner.Selected = selected.Contains(learner.LearnerNumberId);
             }
         }
@@ -947,7 +948,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             currentFilters.Where((currentFilterDetail) => currentFilterDetail.FilterType == FilterType.Sex)
                 .Select(currentFilterDetail => currentFilterDetail.FilterName)
                 .ToList()
-                .ForEach( (sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
+                .ForEach((sex) => currentFilters = RemoveFilterValue(sex, currentFilters, model));
 
             model.SelectedSexValues = null;
         }

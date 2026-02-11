@@ -1,5 +1,5 @@
 ﻿using System.IO.Compression;
-using DfE.GIAP.Core.Downloads.Application.FileExports;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.FileExports;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 

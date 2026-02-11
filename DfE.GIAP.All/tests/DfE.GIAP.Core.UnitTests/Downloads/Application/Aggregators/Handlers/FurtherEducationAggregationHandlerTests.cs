@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Aggregators;
-using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
+﻿using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
-using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
