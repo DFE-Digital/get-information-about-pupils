@@ -6,6 +6,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.Options.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
@@ -124,14 +125,12 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
 
     private static SortOrder CreateSortOrder(SearchIndexOptions options)
     {
-        (string field, string direction) =
-            (options.SortOptions!.GetDefaultSort().field ?? string.Empty,
-            options.SortOptions!.GetDefaultSort().direction ?? string.Empty);
+        (string field, string direction) sortOptions = (options.SortOptions ?? new SortOptions()).GetDefaultSort();
 
         SortOrder sortOrder = new(
-           sortField: field,
-           sortDirection: direction,
-           validSortFields: [field]);
+           sortField: sortOptions.field,
+           sortDirection: sortOptions.direction,
+           validSortFields: [sortOptions.field]);
 
         return sortOrder;
     }
