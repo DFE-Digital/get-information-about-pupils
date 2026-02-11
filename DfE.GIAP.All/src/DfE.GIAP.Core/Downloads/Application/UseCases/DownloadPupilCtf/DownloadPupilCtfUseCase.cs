@@ -23,8 +23,8 @@ public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, Downloa
     public async Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
-        if (!request.SelectedPupils.Any())
-            ArgumentException.ThrowIfNullOrEmpty(nameof(request.SelectedPupils));
+        if (request.SelectedPupils is null || !request.SelectedPupils.Any())
+            throw new ArgumentException("At least one pupil must be selected.", nameof(request.SelectedPupils));
 
         CtfFile ctfFile = await _ctfFileAggregator.AggregateFileAsync(new ClaimsCtfHeaderContext()
         {
