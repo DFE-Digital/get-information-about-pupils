@@ -10,7 +10,8 @@ public class OptionsCtfVersionProvider : ICtfVersionProvider
     public OptionsCtfVersionProvider(IOptions<CtfOptions> options)
     {
         _options = options.Value;
-        ArgumentException.ThrowIfNullOrWhiteSpace(_options.Version);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(_options.Version);
     }
+
     public string GetVersion() => _options.Version;
 }
