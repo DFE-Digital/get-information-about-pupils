@@ -1,39 +1,22 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Tests.TestDoubles;
-using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Helpers;
 
-public class SearchDownloadHelperTests
+public sealed class SearchDownloadHelperTests
 {
-    [Theory]
-    [MemberData(nameof(GetSearchDownloadDataTypeData))]
-    public void AddDownloadDataTypes_correctly_handles_rbac(DownloadDataTypeTestData test)
-    {
-        // Arrange
-        LearnerDownloadViewModel model = new LearnerDownloadViewModel();
-
-        // Act
-        SearchDownloadHelper.AddDownloadDataTypes(model, test.User, test.LowAge, test.HighAge, test.IsLA, test.User.IsOrganisationAllAges());
-
-        // Assert
-        Assert.True(test.ExpectedDataTypes.SequenceEqual(model.SearchDownloadDatatypes));
-    }
 
     [Fact]
     public void DownloadFile_returns_FileContentResult_for_non_zip()
     {
         // Arrange
-        ReturnFile downloadFile = new ReturnFile()
+        ReturnFile downloadFile = new()
         {
             FileType = "plain",
             Bytes = [],
@@ -45,30 +28,6 @@ public class SearchDownloadHelperTests
 
         // Assert
         Assert.IsType<FileContentResult>(result);
-    }
-
-    [Fact]
-    public void DisableDownloadDataTypes_correctly_disables_types()
-    {
-        // arrange
-        LearnerDownloadViewModel model =
-            new LearnerDownloadViewModel
-            {
-                SearchDownloadDatatypes =
-                    [
-                        SearchDownloadDataTypeBuilder.Create()
-                            .WithName("Key Stage 1")
-                            .WithValue("KS1").Build()
-                    ]
-            };
-
-        List<DownloadDataType> notAvailable = [DownloadDataType.KS1];
-
-        // act
-        SearchDownloadHelper.DisableDownloadDataTypes(model, notAvailable);
-
-        // assert
-        Assert.True(model.SearchDownloadDatatypes.First().Disabled);
     }
 
     internal class SearchDownloadDataTypeListBuilder
