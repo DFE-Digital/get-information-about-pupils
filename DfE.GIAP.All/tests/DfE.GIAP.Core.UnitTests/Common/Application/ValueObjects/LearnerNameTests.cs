@@ -161,7 +161,7 @@ public sealed class LearnerNameTests
     [Theory]
     [InlineData("d'amore-smith", "D'Amore-Smith")]
     [InlineData("o'neill-jones", "O'Neill-Jones")]
-    [InlineData("jean d'amore-smith", "Jean D'Amore-Smith")] // if your constructor trims & normalises internally
+    [InlineData("jean d'amore-smith", "Jean D'Amore-Smith")]
     public void Constructor_WithApostrophesAndHyphens_ShouldNormaliseEachSegment(string inputSurname, string expectedSurname)
     {
         // arrange
@@ -186,7 +186,7 @@ public sealed class LearnerNameTests
         const string surname = "Smith";
 
         // act
-        LearnerName learnerName = new LearnerName(firstName, middleInput, surname);
+        LearnerName learnerName = new(firstName, middleInput, surname);
 
         // assert
         Assert.Equal("Alice", learnerName.FirstName);
