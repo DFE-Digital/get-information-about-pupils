@@ -5,14 +5,14 @@ namespace DfE.GIAP.Core.MyPupils.Domain.Entities;
 public sealed class Pupil : Entity<UniquePupilNumber>
 {
     private readonly PupilType _pupilType;
-    private readonly PupilName _name;
+    private readonly LearnerName _name;
     private readonly DateOfBirth? _dateOfBirth;
     private readonly Sex? _sex;
 
     public Pupil(
         UniquePupilNumber identifier,
         PupilType pupilType,
-        PupilName name,
+        LearnerName name,
         DateTime? dateOfBirth,
         Sex? sex,
         LocalAuthorityCode? localAuthorityCode)
@@ -26,7 +26,7 @@ public sealed class Pupil : Entity<UniquePupilNumber>
         LocalAuthorityCode = localAuthorityCode?.Code ?? null;
     }
 
-    public string Forename => _name.Forename;
+    public string Forename => _name.FirstName;
     public string Surname => _name.Surname;
     public DateTime? TryParseDateOfBirth()
     {

@@ -57,7 +57,7 @@ internal sealed class PupilBuilder
 
     internal Pupil Build()
     {
-        PupilName name = new(
+        LearnerName name = new(
             _firstName ?? "Default first name",
             _surname ?? "Default surname");
 

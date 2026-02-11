@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.MyPupils.Domain.Entities;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
@@ -12,7 +13,9 @@ internal sealed class PupilPremiumLearnerToPupilMapper : IMapper<PupilPremiumLea
         return new Pupil(
             input.Identifier,
             PupilType.PupilPremium,
-            new PupilName(input.Name.FirstName, input.Name.Surname),
+            new LearnerName(
+                firstName: input.Name.FirstName,
+                surname: input.Name.Surname),
             input.Characteristics.BirthDate,
             input.Characteristics.Sex,
             input.LocalAuthority);
