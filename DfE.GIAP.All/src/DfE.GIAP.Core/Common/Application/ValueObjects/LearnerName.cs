@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
+﻿using System.Text;
+
+namespace DfE.GIAP.Core.Common.Application.ValueObjects;
 
 /// <summary>
 /// Represents a learner's name as a domain value object.
@@ -59,6 +61,8 @@ public sealed class LearnerName : ValueObject<LearnerName>
         yield return Surname;
     }
 
+
+
     private static string NormaliseName(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -66,33 +70,86 @@ public sealed class LearnerName : ValueObject<LearnerName>
             return string.Empty;
         }
 
-        string trimmedInput = input.Trim();
+        // Collapse all internal whitespace runs to a single space
+        string trimmedInput = CollapseWhitespace(input.Trim());
+
 
         if (trimmedInput.Length == 1)
         {
             return char.ToUpperInvariant(trimmedInput[0]).ToString();
         }
 
-        if (!trimmedInput.Contains('-'))
-        {
-            return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1).ToLowerInvariant();
-        }
-
-        // Handle double or triple barrel names
-        string[] parts = trimmedInput.Split('-', StringSplitOptions.RemoveEmptyEntries);
-
-        for (int index = 0; index < parts.Length; index++)
-        {
-            string part = parts[index].Trim();
-
-            if (part.Length == 0)
-            {
-                continue;
-            }
-
-            parts[index] = char.ToUpperInvariant(part[0]) + part.Substring(1).ToLowerInvariant();
-        }
-
-        return string.Join("-", parts);
+        // Include space as a delimiter alongside apostrophe and hyphen
+        return NormaliseWithDelimiters(trimmedInput, [' ', '-', '\'']);
     }
+
+    private static string CollapseWhitespace(string value)
+    {
+        // This simple loop collapses consecutive spaces.
+        StringBuilder sb = new(value.Length);
+
+        bool prevWasSpace = false;
+
+        for (int i = 0; i < value.Length; i++)
+        {
+            char c = value[i];
+            if (!char.IsWhiteSpace(c))
+            {
+                sb.Append(c);
+                prevWasSpace = false;
+            }
+            else
+            {
+                if (!prevWasSpace)
+                {
+                    sb.Append(' ');
+                    prevWasSpace = true;
+                }
+            }
+        }
+
+        return sb.ToString().Trim();
+    }
+
+    private static string NormaliseWithDelimiters(string input, char[] delimiters)
+    {
+        List<string> result = [];
+
+        int start = 0;
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            char currentCharacter = input[i];
+            if (Array.IndexOf(delimiters, currentCharacter) >= 0)
+            {
+                // Add the part before the delimiter
+                result.Add(NormalisePart(input.Substring(start, i - start)));
+
+                // Add the delimiter itself (preserve single spaces/hyphens/apostrophes)
+                result.Add(input[i].ToString());
+
+                // Move start past the delimiter
+                start = i + 1;
+            }
+        }
+
+        // Add the last section
+        result.Add(NormalisePart(input.Substring(start)));
+
+        return string.Concat(result);
+    }
+
+    private static string NormalisePart(string part)
+    {
+        part = part.Trim();
+        if (part.Length == 0) return string.Empty;
+
+        if (part.Length == 1)
+        {
+            return char.ToUpperInvariant(part[0]).ToString();
+        }
+
+        return char.ToUpperInvariant(part[0]) + part.Substring(1).ToLowerInvariant();
+    }
+
 }
