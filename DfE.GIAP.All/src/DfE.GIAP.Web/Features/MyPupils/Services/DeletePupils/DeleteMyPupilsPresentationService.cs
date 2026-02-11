@@ -36,8 +36,8 @@ public class DeleteMyPupilsPresentationService : IDeleteMyPupilsPresentationServ
 
         await _deletePupilsUseCase.HandleRequestAsync(
             new DeletePupilsFromMyPupilsRequest(
-                UserId: userId,
-                DeletePupilUpns: selectedPupilsToDelete.Distinct()));
+                userId: userId,
+                deletePupilUpns: selectedPupilsToDelete.Distinct()));
 
         _clearSelectionsHandler.Handle();
     }
