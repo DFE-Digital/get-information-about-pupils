@@ -67,7 +67,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext!.MyPupilsId,
-            DeletePupilUpns: [deletePupilIdentifier]);
+            deletePupilUpns: [deletePupilIdentifier]);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -104,7 +104,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         DeletePupilsFromMyPupilsRequest request = new(
             _testContext.MyPupilsId,
-            DeletePupilUpns: deleteMultiplePupilIdentifiers);
+            deletePupilUpns: deleteMultiplePupilIdentifiers);
 
         // Act
         await sut.HandleRequestAsync(request);

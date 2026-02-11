@@ -97,7 +97,7 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
             writeRepositoryMock.Object,
             mapperMock.Object);
 
-        DeletePupilsFromMyPupilsRequest request = new(userId!, DeletePupilUpns: []);
+        DeletePupilsFromMyPupilsRequest request = new(userId!, deletePupilUpns: []);
 
         // Act Assert
 
@@ -124,8 +124,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
 
         const string userId = "id";
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: userId,
-            DeletePupilUpns: []);
+            userId: userId,
+            deletePupilUpns: []);
 
         // Act
         await sut.HandleRequestAsync(request);
@@ -172,8 +172,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
                 .ToList();
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: myPupils.AggregateId.Value,
-            DeletePupilUpns: deletePupilUpnsDoNotExistInAggregate);
+            userId: myPupils.AggregateId.Value,
+            deletePupilUpns: deletePupilUpnsDoNotExistInAggregate);
 
         // Act 
         await Assert.ThrowsAsync<ArgumentException>(() => useCase.HandleRequestAsync(request));
@@ -222,8 +222,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
                 .ToList();
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: myPupilsId.Value,
-            DeletePupilUpns: deletePupilIdentifiers);
+            userId: myPupilsId.Value,
+            deletePupilUpns: deletePupilIdentifiers);
 
         // Act
         await useCase.HandleRequestAsync(request);
@@ -281,8 +281,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseTests
                 .ToList();
 
         DeletePupilsFromMyPupilsRequest request = new(
-            UserId: myPupilsId.Value,
-            DeletePupilUpns: deletePupilIdentifiers);
+            userId: myPupilsId.Value,
+            deletePupilUpns: deletePupilIdentifiers);
 
         // Act
         await useCase.HandleRequestAsync(request);
