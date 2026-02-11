@@ -76,7 +76,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
-    private readonly IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> _downloadPupilCtfUseCase;
     private readonly IEventLogger _eventLogger;
 
     private readonly
@@ -103,7 +102,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
-        IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase,
         IEventLogger eventLogger,
         IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> searchUseCase,
         IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
@@ -133,9 +131,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         ArgumentNullException.ThrowIfNull(downloadPupilDataUseCase);
         _downloadPupilDataUseCase = downloadPupilDataUseCase;
-
-        ArgumentNullException.ThrowIfNull(downloadPupilCtfUseCase);
-        _downloadPupilCtfUseCase = downloadPupilCtfUseCase;
 
         ArgumentNullException.ThrowIfNull(eventLogger);
         _eventLogger = eventLogger;
@@ -436,17 +431,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
 
-        DownloadPupilCtfRequest request = new(
-            SelectedPupils: [selectedPupil],
-            IsEstablishment: User.IsOrganisationEstablishment(),
-            LocalAuthoriyNumber: User.GetLocalAuthorityNumberForEstablishment(),
-            EstablishmentNumber: User.GetEstablishmentNumber());
-        DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
-
-        if (response.FileContents is not null)
-            return File(response.FileContents, response.ContentType, response.FileName);
-
-
         ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
                                                                 new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },
                                                                 User.GetLocalAuthorityNumberForEstablishment(),
@@ -639,7 +623,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             if (HttpContext.Session.Keys.Contains(SearchSessionKey))
             {
                 model.TextSearchViewModel.SearchText = HttpContext.Session.GetString(SearchSessionKey);
-            }    
+            }
 
             return await DownloadSelectedNationalPupilDatabaseData(model.SelectedPupils, model.TextSearchViewModel.SearchText);
         }
@@ -848,7 +832,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         SortOrder sortOrder =
             _sortOrderFactory.Create(
-                options: options.SortOptions, 
+                options: options.SortOptions,
                 sort: (sortField, sortDirection));
 
         NationalPupilDatabaseSearchByNameResponse searchResponse =

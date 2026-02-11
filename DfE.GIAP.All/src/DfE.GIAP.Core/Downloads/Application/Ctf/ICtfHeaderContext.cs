@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
+﻿namespace DfE.GIAP.Core.Downloads.Application.Ctf;
 
 public interface ICtfHeaderContext
 {

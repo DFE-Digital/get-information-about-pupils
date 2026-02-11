@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
-
-namespace DfE.GIAP.Core.Downloads.Application.Ctf;
+﻿namespace DfE.GIAP.Core.Downloads.Application.Ctf;
 
 public class ClaimsCtfHeaderContext : ICtfHeaderContext
 {

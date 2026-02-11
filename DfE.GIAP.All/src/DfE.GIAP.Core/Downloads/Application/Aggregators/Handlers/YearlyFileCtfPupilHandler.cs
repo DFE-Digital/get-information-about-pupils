@@ -1,19 +1,20 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
+using DfE.GIAP.Core.Downloads.Application.Ctf;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 
-public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
+public class YearlyFileCtfPupilHandler : ICtfPupilHandler
 {
     private readonly INationalPupilReadOnlyRepository _nationalPupilReadOnlyRepository;
     private readonly IBlobStorageProvider _blobStorageProvider;
 
-    public YearlyFileCtfPupilBuilder(
+    public YearlyFileCtfPupilHandler(
         INationalPupilReadOnlyRepository nationalPupilReadOnlyRepository,
         IBlobStorageProvider blobStorageProvider)
     {
@@ -23,7 +24,7 @@ public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
         _blobStorageProvider = blobStorageProvider;
     }
 
-    public async Task<IEnumerable<CtfPupil>> Build(IEnumerable<string> selectedPupilIds)
+    public async Task<IEnumerable<CtfPupil>> BuildAsync(IEnumerable<string> selectedPupilIds)
     {
         IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository.GetPupilsByIdsAsync(selectedPupilIds);
         IReadOnlyList<DataSchemaDefinition> schemaDefinitions = await LoadScehmaDefinitionsAsync();

@@ -1,19 +1,20 @@
 ﻿using System.Text;
 using System.Xml.Linq;
+using DfE.GIAP.Core.Downloads.Application.Ctf;
 
-namespace DfE.GIAP.Core.Downloads.Application.Ctf;
+namespace DfE.GIAP.Core.Downloads.Application.FileExports;
 
 public class XmlCtfFormatter : ICtfFormatter
 {
     public string ContentType => "application/xml";
 
-    public byte[] Format(CtfHeader header, IEnumerable<CtfPupil> pupils)
+    public byte[] Format(CtfFile ctfFile)
     {
         XDocument xml = new XDocument(
             new XDeclaration("1.0", "UTF-8", null),
             new XElement("CTfile",
-                BuildHeader(header),
-                BuildPupilData(pupils)
+                BuildHeader(ctfFile.Header),
+                BuildPupilData(ctfFile.Pupils)
             )
         );
 

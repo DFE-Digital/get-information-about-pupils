@@ -1,20 +1,20 @@
-﻿using Microsoft.Extensions.Options;
+﻿using DfE.GIAP.Core.Downloads.Application.Ctf;
+using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
+namespace DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
 
-public class CtfHeaderBuilder : ICtfHeaderBuilder
+public class CtfHeaderHandler : ICtfHeaderHandler
 {
+    private readonly ICtfVersionProvider _versionProvider;
     public const string DescriptorEstablishment =
         "This attainment data was obtained via the Searchable pupil data option of Get Information About Pupils";
-
     public const string DescriptorNonEstablishment =
         "This attainment data was obtained via the Get Information About Pupils school site";
-    private CtfOptions _ctfOptions { get; set; }
 
-    public CtfHeaderBuilder(IOptions<CtfOptions> options)
+    public CtfHeaderHandler(ICtfVersionProvider versionProvider)
     {
-        _ctfOptions = options.Value;
-        ArgumentException.ThrowIfNullOrWhiteSpace(_ctfOptions.Version);
+        ArgumentNullException.ThrowIfNull(versionProvider);
+        _versionProvider = versionProvider;
     }
 
     public CtfHeader Build(ICtfHeaderContext context)
@@ -24,7 +24,7 @@ public class CtfHeaderBuilder : ICtfHeaderBuilder
         return new CtfHeader
         {
             DocumentName = "Common Transfer File",
-            CtfVersion = _ctfOptions.Version, // Changes every september(ish)
+            CtfVersion = _versionProvider.GetVersion(), // Changes every september(ish)
             DateTime = now,
             DocumentQualifier = "partial",
             DataDescriptor = context.IsEstablishment
@@ -53,4 +53,21 @@ public class CtfHeaderBuilder : ICtfHeaderBuilder
         int year = now.Month >= 9 ? now.Year : now.Year - 1;
         return year.ToString();
     }
+}
+
+public interface ICtfVersionProvider
+{
+    string GetVersion();
+}
+
+public class OptionsCtfVersionProvider : ICtfVersionProvider
+{
+    private readonly CtfOptions _options;
+
+    public OptionsCtfVersionProvider(IOptions<CtfOptions> options)
+    {
+        _options = options.Value;
+        ArgumentException.ThrowIfNullOrWhiteSpace(_options.Version);
+    }
+    public string GetVersion() => _options.Version;
 }

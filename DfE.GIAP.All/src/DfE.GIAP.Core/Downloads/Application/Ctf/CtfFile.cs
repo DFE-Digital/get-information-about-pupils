@@ -1,10 +1,6 @@
 ﻿namespace DfE.GIAP.Core.Downloads.Application.Ctf;
 
-public class CtfFile
-{
-    public CtfHeader Header { get; set; } = new();
-    public List<CtfPupil> Pupils { get; set; } = new();
-}
+public record CtfFile(CtfHeader Header, IEnumerable<CtfPupil> Pupils);
 
 public class CtfHeader
 {
