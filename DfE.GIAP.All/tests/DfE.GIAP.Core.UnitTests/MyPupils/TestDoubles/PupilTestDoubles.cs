@@ -42,7 +42,7 @@ public static class PupilTestDoubles
 
                 string forename = faker.Name.FirstName();
                 string surname = faker.Name.LastName();
-                PupilName name = new(forename, surname);
+                LearnerName name = new(forename, surname);
 
                 DateTime dob = faker.Date.Past(yearsToGoBack: 18, DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(5));
 

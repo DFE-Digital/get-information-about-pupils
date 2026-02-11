@@ -97,6 +97,34 @@ public sealed class LearnerNameTests
         Assert.True(equalityCheckInstanceA.Equals(equalityCheckInstanceB));
     }
 
+    [Theory]
+    [InlineData("john", "doe")]
+    [InlineData("john", "Doe")]
+    [InlineData("John", "doe")]
+    public void Equality_WithSameNormalisedFirstLastValues_ShouldBeEqual(string firstName, string lastName)
+    {
+        // Arrange
+        LearnerName inputName = new(firstName, lastName);
+        LearnerName comparator = new("John", "Doe");
+
+        // Act Assert
+        Assert.Equal(inputName, comparator);
+    }
+
+    [Theory]
+    [InlineData("john", "smith", "doe")]
+    [InlineData("john", "Smith", "Doe")]
+    [InlineData("John", "SMiTh", "doe")]
+    public void Equality_WithSameNormalisedFirstMiddleLastValues_ShouldBeEqual(string firstName, string middleName, string lastName)
+    {
+        // Arrange
+        LearnerName inputName = new(firstName, middleName, lastName);
+        LearnerName comparator = new("John", "Smith", "Doe");
+
+        // Act Assert
+        Assert.Equal(inputName, comparator);
+    }
+
     [Fact]
     public void Equality_WithDifferentFirstNames_SameLastNames_ShouldNotBeEqual()
     {

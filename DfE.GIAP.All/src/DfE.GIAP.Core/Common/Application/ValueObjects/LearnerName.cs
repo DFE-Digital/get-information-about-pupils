@@ -36,16 +36,14 @@ public sealed class LearnerName : ValueObject<LearnerName>
 
     public LearnerName(string firstName, string? middleName, string surname)
     {
-
         ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
-        FirstName = firstName;
+        FirstName = NormaliseName(firstName);
 
         ArgumentException.ThrowIfNullOrWhiteSpace(surname);
-        Surname = surname;
+        Surname = NormaliseName(surname);
 
-        MiddleNames =
-            string.IsNullOrWhiteSpace(middleName) ?
-                string.Empty : middleName;
+        // Middlename is optional
+        MiddleNames = NormaliseName(middleName);
     }
 
     /// <summary>
@@ -59,5 +57,42 @@ public sealed class LearnerName : ValueObject<LearnerName>
         yield return FirstName;
         yield return MiddleNames;
         yield return Surname;
+    }
+
+    private static string NormaliseName(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return string.Empty;
+        }
+
+        string trimmedInput = input.Trim();
+
+        if (trimmedInput.Length == 1)
+        {
+            return char.ToUpperInvariant(trimmedInput[0]).ToString();
+        }
+
+        if (!trimmedInput.Contains('-'))
+        {
+            return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1).ToLowerInvariant();
+        }
+
+        // Handle double or triple barrel names
+        string[] parts = trimmedInput.Split('-', StringSplitOptions.RemoveEmptyEntries);
+
+        for (int index = 0; index < parts.Length; index++)
+        {
+            string part = parts[index].Trim();
+
+            if (part.Length == 0)
+            {
+                continue;
+            }
+
+            parts[index] = char.ToUpperInvariant(part[0]) + part.Substring(1).ToLowerInvariant();
+        }
+
+        return string.Join("-", parts);
     }
 }
