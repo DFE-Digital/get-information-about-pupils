@@ -114,7 +114,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
     private static string NormaliseWithDelimiters(string input, char[] delimiters)
     {
         List<string> result = [];
-        
+
         int start = 0;
 
         for (int i = 0; i < input.Length; i++)
