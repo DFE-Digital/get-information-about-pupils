@@ -22,6 +22,10 @@ public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, Downloa
 
     public async Task<DownloadPupilCtfResponse> HandleRequestAsync(DownloadPupilCtfRequest request)
     {
+        ArgumentNullException.ThrowIfNull(request);
+        if (!request.SelectedPupils.Any())
+            ArgumentException.ThrowIfNullOrEmpty(nameof(request.SelectedPupils));
+
         CtfFile ctfFile = await _ctfFileAggregator.AggregateFileAsync(new ClaimsCtfHeaderContext()
         {
             IsEstablishment = request.IsEstablishment,
@@ -29,13 +33,10 @@ public class DownloadPupilCtfUseCase : IUseCase<DownloadPupilCtfRequest, Downloa
             EstablishedNumber = request.EstablishmentNumber
         }, request.SelectedPupils);
 
-        byte[] ctfFileContents = _ctfFormatter.Format(ctfFile);
+        MemoryStream stream = new();
+        await _ctfFormatter.FormatAsync(ctfFile, stream);
+        stream.Position = 0;
 
-        return new DownloadPupilCtfResponse
-        {
-            FileContents = ctfFileContents,
-            FileName = "CTF.xml",
-            ContentType = _ctfFormatter.ContentType
-        }; 
+        return new DownloadPupilCtfResponse(stream, "CTF.xml", _ctfFormatter.ContentType);
     }
 }

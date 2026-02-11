@@ -3,11 +3,11 @@
 namespace DfE.GIAP.Core.Downloads.Application.Ctf.Formatters;
 
 /// <summary>
-/// Defines a formatter that serializes a CTF (Common Transfer File) file to a specific content type.
+/// Defines a formatter that serialises CTF files to a specific media type and writes the formatted output to a stream.
 /// </summary>
-/// <remarks>Implementations of this interface provide formatting logic for converting CTF files into various
-/// output formats, such as binary or text representations. The formatter's content type indicates the MIME type of the
-/// formatted output.</remarks>
+/// <remarks>Implementations of this interface enable conversion of CTF files into various output formats, such as
+/// text or binary representations, for use in different applications or protocols. The formatter exposes its supported
+/// media type through the ContentType property.</remarks>
 public interface ICtfFormatter
 {
     /// <summary>
@@ -16,9 +16,10 @@ public interface ICtfFormatter
     string ContentType { get; }
 
     /// <summary>
-    /// Formats the specified CTF file and returns its serialized binary representation.
+    /// Asynchronously formats the specified CTF file and writes the formatted output to the provided stream.
     /// </summary>
-    /// <param name="ctfFile">The CTF file to format. Cannot be null.</param>
-    /// <returns>A byte array containing the formatted binary data of the specified CTF file.</returns>
-    byte[] Format(CtfFile ctfFile);
+    /// <param name="file">The CTF file to format. Cannot be null.</param>
+    /// <param name="output">The stream to which the formatted output will be written. Must be writable and cannot be null.</param>
+    /// <returns>A task that represents the asynchronous formatting operation.</returns>
+    Task FormatAsync(CtfFile file, Stream output);
 }

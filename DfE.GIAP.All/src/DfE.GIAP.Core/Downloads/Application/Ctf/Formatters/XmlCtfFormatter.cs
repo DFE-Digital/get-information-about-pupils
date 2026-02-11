@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using System.Xml.Linq;
+using System.Xml;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
 
 namespace DfE.GIAP.Core.Downloads.Application.Ctf.Formatters;
@@ -8,86 +8,121 @@ public class XmlCtfFormatter : ICtfFormatter
 {
     public string ContentType => "application/xml";
 
-    public byte[] Format(CtfFile ctfFile)
+    public async Task FormatAsync(CtfFile file, Stream output)
     {
-        XDocument xml = new XDocument(
-            new XDeclaration("1.0", "UTF-8", null),
-            new XElement("CTfile",
-                BuildHeader(ctfFile.Header),
-                BuildPupilData(ctfFile.Pupils)
-            )
-        );
+        XmlWriterSettings settings = new()
+        {
+            Async = true,
+            Encoding = Encoding.UTF8,
+            Indent = true
+        };
 
-        return Encoding.UTF8.GetBytes(xml.ToString());
+        using XmlWriter writer = XmlWriter.Create(output, settings);
+
+        await writer.WriteStartDocumentAsync();
+        await writer.WriteStartElementAsync(null, "CTfile", null);
+
+        await WriteHeaderAsync(writer, file.Header);
+        await WritePupilsAsync(writer, file.Pupils);
+
+        await writer.WriteEndElementAsync(); // CTfile
+        await writer.WriteEndDocumentAsync();
     }
 
-    private static XElement BuildHeader(CtfHeader header)
+    private static async Task WriteHeaderAsync(XmlWriter writer, CtfHeader header)
     {
-        return new XElement("Header",
-            new XElement("DocumentName", header.DocumentName),
-            new XElement("CTFversion", header.CtfVersion),
-            new XElement("DateTime", header.DateTime.ToString("yyyy-MM-ddTHH:mm:ss")),
-            new XElement("DocumentQualifier", header.DocumentQualifier),
-            new XElement("DataDescriptor", header.DataDescriptor),
-            new XElement("SupplierID", header.SupplierId),
-            new XElement("SourceSchool",
-                new XElement("LEA", header.SourceSchool.LEA),
-                new XElement("Estab", header.SourceSchool.Estab),
-                new XElement("SchoolName", header.SourceSchool.SchoolName),
-                new XElement("AcademicYear", header.SourceSchool.AcademicYear)
-            ),
-            new XElement("DestSchool",
-                new XElement("LEA", header.DestSchool.LEA),
-                new XElement("Estab", header.DestSchool.Estab)
-            )
-        );
+        await writer.WriteStartElementAsync(prefix: null, localName: "Header", ns: null);
+
+        await WriteElementIfNotNullAsync(writer, "DocumentName", header.DocumentName);
+        await WriteElementIfNotNullAsync(writer, "CTFversion", header.CtfVersion);
+        await WriteElementIfNotNullAsync(writer, "DateTime", header.DateTime.ToString("yyyy-MM-ddTHH:mm:ss"));
+        await WriteElementIfNotNullAsync(writer, "DocumentQualifier", header.DocumentQualifier);
+        await WriteElementIfNotNullAsync(writer, "DataDescriptor", header.DataDescriptor);
+        await WriteElementIfNotNullAsync(writer, "SupplierID", header.SupplierId);
+
+        await writer.WriteStartElementAsync(prefix: null, localName: "SourceSchool", ns: null);
+        await WriteElementIfNotNullAsync(writer, "LEA", header.SourceSchool.LEA);
+        await WriteElementIfNotNullAsync(writer, "Estab", header.SourceSchool.Estab);
+        await WriteElementIfNotNullAsync(writer, "SchoolName", header.SourceSchool.SchoolName);
+        await WriteElementIfNotNullAsync(writer, "AcademicYear", header.SourceSchool.AcademicYear);
+        await writer.WriteEndElementAsync();
+
+        await writer.WriteStartElementAsync(prefix: null, localName: "DestSchool", ns: null);
+        await WriteElementIfNotNullAsync(writer, "LEA", header.DestSchool.LEA);
+        await WriteElementIfNotNullAsync(writer, "Estab", header.DestSchool.Estab);
+        await writer.WriteEndElementAsync();
+
+        await writer.WriteEndElementAsync(); // Header
     }
 
-    private XElement BuildPupilData(IEnumerable<CtfPupil> pupils)
+    private async Task WritePupilsAsync(XmlWriter writer, IEnumerable<CtfPupil> pupils)
     {
-        return new XElement("CTFpupilData",
-            pupils.Select(BuildPupil)
-        );
+        await writer.WriteStartElementAsync(prefix: null, localName: "CTFpupilData", ns: null);
+
+        foreach (CtfPupil pupil in pupils)
+        {
+            await writer.WriteStartElementAsync(prefix: null, localName: "Pupil", ns: null);
+
+            await WriteElementIfNotNullAsync(writer, "UPN", pupil.UPN);
+            await WriteElementIfNotNullAsync(writer, "Surname", pupil.Surname);
+            await WriteElementIfNotNullAsync(writer, "Forename", pupil.Forename);
+            await WriteElementIfNotNullAsync(writer, "DOB", pupil.DOB);
+            await WriteElementIfNotNullAsync(writer, "Sex", pupil.Sex);
+
+            await WriteAssessmentsAsync(writer, pupil.Assessments);
+
+            await writer.WriteEndElementAsync(); // Pupil
+        }
+
+        await writer.WriteEndElementAsync(); // CTFpupilData
     }
 
-    private XElement BuildPupil(CtfPupil pupil)
+    private static async Task WriteAssessmentsAsync(XmlWriter writer, IEnumerable<CtfKeyStageAssessment> assessments)
     {
-        return new XElement("Pupil",
-            new XElement("UPN", pupil.UPN),
-            new XElement("Surname", pupil.Surname),
-            new XElement("Forename", pupil.Forename),
-            new XElement("DOB", pupil.DOB),
-            new XElement("Sex", pupil.Sex),
-            BuildAssessments(pupil.Assessments)
-        );
+        await writer.WriteStartElementAsync(prefix: null, localName: "StageAssessments", ns: null);
+
+        foreach (IGrouping<string, CtfKeyStageAssessment> group in assessments.GroupBy(a => a.Stage))
+        {
+            await writer.WriteStartElementAsync(prefix: null, localName: "KeyStage", ns: null);
+
+            await WriteElementIfNotNullAsync(writer, "Stage", group.Key);
+
+            foreach (CtfKeyStageAssessment assessment in group)
+            {
+                await writer.WriteStartElementAsync(prefix: null, localName: "StageAssessment", ns: null);
+
+                await WriteElementIfNotNullAsync(writer, "Locale", assessment.Locale);
+                await WriteElementIfNotNullAsync(writer, "Year", assessment.Year);
+                await WriteElementIfNotNullAsync(writer, "Subject", assessment.Subject);
+                await WriteElementIfNotNullAsync(writer, "Method", assessment.Method);
+                await WriteElementIfNotNullAsync(writer, "Component", assessment.Component);
+                await WriteElementIfNotNullAsync(writer, "ResultStatus", assessment.ResultStatus);
+                await WriteElementIfNotNullAsync(writer, "ResultQualifier", assessment.ResultQualifier);
+                await WriteElementIfNotNullAsync(writer, "Result", assessment.Result);
+
+                await writer.WriteEndElementAsync(); // StageAssessment
+            }
+
+            await writer.WriteEndElementAsync(); // KeyStage
+        }
+
+        await writer.WriteEndElementAsync(); // StageAssessments
     }
 
-    private XElement BuildAssessments(IEnumerable<CtfKeyStageAssessment> assessments)
-    {
-        if (!assessments.Any())
-            return new XElement("StageAssessments");
 
-        return new XElement("StageAssessments",
-            assessments.GroupBy(a => a.Stage).Select(stageGroup =>
-                new XElement("KeyStage",
-                    new XElement("Stage", stageGroup.Key),
-                    stageGroup.Select(BuildAssessment)
-                )
-            )
-        );
-    }
-
-    private XElement BuildAssessment(CtfKeyStageAssessment assessment)
+    private static async Task WriteElementIfNotNullAsync(
+        XmlWriter writer,
+        string name,
+        string? value)
     {
-        return new XElement("StageAssessment",
-            new XElement("Locale", assessment.Locale),
-            new XElement("Year", assessment.Year),
-            new XElement("Subject", assessment.Subject),
-            new XElement("Method", assessment.Method),
-            new XElement("Component", assessment.Component),
-            new XElement("ResultStatus", assessment.ResultStatus),
-            new XElement("ResultQualifier", assessment.ResultQualifier),
-            new XElement("Result", assessment.Result)
+        if (value is null)
+            return;
+
+        await writer.WriteElementStringAsync(
+            prefix: null,
+            localName: name,
+            ns: null,
+            value: value
         );
     }
 }

@@ -6,6 +6,7 @@ using DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Formatters;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+using DfE.GIAP.Core.Downloads.Application.Ctf.Versioning;
 using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers;
 using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers.Mappers;
@@ -54,9 +55,11 @@ public static class CompositionRoot
         // WIP
         services.Configure<CtfOptions>(configuration.GetSection("CtfOptions"));
         services.AddScoped<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>, DownloadPupilCtfUseCase>();
+        services.AddScoped<ICtfFileBuilder, CtfFileBuilder>();
         services.AddScoped<ICtfHeaderBuilder, CtfHeaderBuilder>();
         services.AddScoped<ICtfPupilBuilder, YearlyFileCtfPupilBuilder>();
         services.AddScoped<ICtfFormatter, XmlCtfFormatter>();
+        services.AddScoped<ICtfVersionProvider, OptionsCtfVersionProvider>();
 
         return services;
     }
