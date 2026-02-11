@@ -1,6 +1,6 @@
 ﻿namespace DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 
-public enum MyPupilsFormSelectionModeRequestDto
+public enum MyPupilsPupilSelectionModeRequestDto
 {
     SelectAll,
     DeselectAll,

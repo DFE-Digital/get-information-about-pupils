@@ -33,37 +33,24 @@ public class UpdateMyPupilsController : Controller
     // Prevent browser-caching from back button presenting stale state
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     [ValidateAntiForgeryToken]
-    public IActionResult Index(MyPupilsFormStateRequestDto formDto, MyPupilsQueryRequestDto query)
+    public IActionResult Index(MyPupilsPupilSelectionsRequestDto selectionsDto, MyPupilsQueryRequestDto query)
     {
         _logger.LogInformation("{Controller}.{Action} POST method called", nameof(UpdateMyPupilsController), nameof(Index));
 
         query ??= new();
 
-        if (formDto is null || !ModelState.IsValid)
+        if (selectionsDto is null || !ModelState.IsValid)
         {
             _myPupilsLogSink.AddMessage(
                 new MyPupilsMessage(
                     level: MessageLevel.Error,
                     message: PupilHelper.GenerateValidationMessageUpnSearch(ModelState)));
 
-            return RedirectToGetMyPupils(query);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
         }
 
-        _updateMyPupilsSelectionsCommandHandler.Handle(formDto);
+        _updateMyPupilsSelectionsCommandHandler.Handle(selectionsDto);
 
-        return RedirectToGetMyPupils(query);
-    }
-
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto query)
-    {
-        return RedirectToAction(
-            actionName: "Index",
-            controllerName: "GetMyPupils",
-            new
-            {
-                query.PageNumber,
-                query.SortField,
-                query.SortDirection
-            });
+        return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
     }
 }

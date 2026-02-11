@@ -4,8 +4,6 @@ using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
 public sealed class UpdateMyPupilsControllerTests
@@ -72,7 +70,7 @@ public sealed class UpdateMyPupilsControllerTests
         Assert.Equal("UpdateMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
-        handlerMock.Verify(t => t.Handle(It.IsAny<MyPupilsFormStateRequestDto>()), Times.Never);
+        handlerMock.Verify(t => t.Handle(It.IsAny<MyPupilsPupilSelectionsRequestDto>()), Times.Never);
     }
 
     [Fact]
@@ -99,7 +97,7 @@ public sealed class UpdateMyPupilsControllerTests
             SortField = "any_field"
         };
 
-        MyPupilsFormStateRequestDto request = new();
+        MyPupilsPupilSelectionsRequestDto request = new();
 
         IActionResult response = sut.Index(request, query);
 
@@ -109,7 +107,7 @@ public sealed class UpdateMyPupilsControllerTests
 
         handlerMock.Verify((handler)
             => handler.Handle(
-                It.Is<MyPupilsFormStateRequestDto>(
+                It.Is<MyPupilsPupilSelectionsRequestDto>(
                     (req) => ReferenceEquals(request, req))), Times.Once);
 
         messageSinkMock.Verify(t => t.AddMessage(It.IsAny<MyPupilsMessage>()), Times.Never);

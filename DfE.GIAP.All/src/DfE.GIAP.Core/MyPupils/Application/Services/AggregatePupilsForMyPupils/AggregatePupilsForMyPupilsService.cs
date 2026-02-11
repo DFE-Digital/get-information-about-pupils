@@ -6,6 +6,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.Options.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
@@ -73,25 +74,18 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             return [];
         }
 
-        const string defaultSort = "search.score()";
-
-        SortOrder sortOrder = new(
-            sortField: defaultSort,
-            sortDirection: "desc",
-            validSortFields: [defaultSort]);
-
         string[] myPupilUniquePupilNumbers = uniquePupilNumbers.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
 
         SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse npdSearchResponse =
         await _npdSearchServiceAdaptor.HandleRequestAsync(
             new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
             {
                 UniquePupilNumbers = myPupilUniquePupilNumbers,
                 SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(npdIndexOptions.SearchCriteria!),
+                Sort = CreateSortOrder(npdIndexOptions),
                 Offset = 0,
-                Sort = sortOrder
             });
 
         SearchIndexOptions pupilPremiumIndexOptions = _searchIndexOptionsProvider.GetOptions("pupil-premium-upn");
@@ -102,12 +96,12 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
                 {
                     UniquePupilNumbers = myPupilUniquePupilNumbers,
                     SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(pupilPremiumIndexOptions.SearchCriteria!),
-                    Sort = sortOrder,
+                    Sort = CreateSortOrder(pupilPremiumIndexOptions),
                     Offset = 0,
                 });
 
         IEnumerable<Pupil> allPupils =
-            (searchResponse.LearnerSearchResults?.Values.Select(_npdLearnerToPupilMapper.Map) ?? [])
+            (npdSearchResponse.LearnerSearchResults?.Values.Select(_npdLearnerToPupilMapper.Map) ?? [])
                 .Concat(pupilPremiumSearchResponse.LearnerSearchResults?.Values.Select(_pupilPremiumLearnerToPupilMapper.Map) ?? [])
                 // Deduplicate
                 .GroupBy(pupil => pupil.Identifier.Value)
@@ -127,5 +121,17 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
         IEnumerable<Pupil> orderedPupils = _orderPupilsHandler.Order(allPupils, query.Order);
 
         return _paginatePupilsHandler.PaginatePupils(orderedPupils, query.PaginateOptions);
+    }
+
+    private static SortOrder CreateSortOrder(SearchIndexOptions options)
+    {
+        (string field, string direction) sortOptions = (options.SortOptions ?? new SortOptions()).GetDefaultSort();
+
+        SortOrder sortOrder = new(
+           sortField: sortOptions.field,
+           sortDirection: sortOptions.direction,
+           validSortFields: [sortOptions.field]);
+
+        return sortOrder;
     }
 }

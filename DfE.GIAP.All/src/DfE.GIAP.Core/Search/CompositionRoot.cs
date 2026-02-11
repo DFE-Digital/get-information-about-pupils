@@ -35,7 +35,7 @@ public static class CompositionRoot
             .AddSearchOptions(configuration);
 
         services
-            .AddScoped<ISearchOptionsBuilder, SearchOptionsBuilder>();
+            .AddTransient<ISearchOptionsBuilder, SearchOptionsBuilder>();
 
         services.AddSingleton<IMapper<SearchCriteriaOptions, SearchCriteria>, SearchCriteriaOptionsToSearchCriteriaMapper>();
         // Register shared cognitive search and filter services.

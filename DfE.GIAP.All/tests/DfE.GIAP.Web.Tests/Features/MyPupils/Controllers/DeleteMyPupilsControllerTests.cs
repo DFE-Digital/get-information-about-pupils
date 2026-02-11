@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.MyPupils.Application.Options;
-using DfE.GIAP.SharedTests.Runtime.TestDoubles;
+﻿using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Features.MyPupils.Controllers;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.DeleteMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
@@ -21,7 +20,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: null!,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -32,46 +30,11 @@ public sealed class DeleteMyPupilsControllerTests
     }
 
     [Fact]
-    public void Constructor_Throws_When_Options_Is_Null()
+    public void Constructor_Throws_When_MessagingOptions_Is_Null()
     {
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: null!,
-            messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
-            pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_Options_Value_Is_Null()
-    {
-        // Arrange
-        IOptions<MyPupilsOptions> nullValueOptions = OptionsTestDoubles.MockNullOptions<MyPupilsOptions>();
-
-        Func<DeleteMyPupilsController> construct = () => new(
-            logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: nullValueOptions,
-            messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
-            messageSink: new Mock<IMyPupilsMessageSink>().Object,
-            deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
-            pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
-
-        // Act Assert
-        Assert.Throws<ArgumentNullException>(construct);
-    }
-
-    [Fact]
-    public void Constructor_Throws_When_LoggingOptions_Is_Null()
-    {
-        // Arrange
-        Func<DeleteMyPupilsController> construct = () => new(
-            logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: null!,
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -82,14 +45,13 @@ public sealed class DeleteMyPupilsControllerTests
     }
 
     [Fact]
-    public void Constructor_Throws_When_LoggingOptions_Value_Is_Null()
+    public void Constructor_Throws_When_MessagingOptions_Value_Is_Null()
     {
         // Arrange
         IOptions<MyPupilsMessagingOptions> nullValueOptions = OptionsTestDoubles.MockNullOptions<MyPupilsMessagingOptions>();
 
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: nullValueOptions,
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -105,7 +67,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: null!,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -121,7 +82,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: null!,
@@ -137,7 +97,6 @@ public sealed class DeleteMyPupilsControllerTests
         // Arrange
         Func<DeleteMyPupilsController> construct = () => new(
             logger: new Mock<ILogger<DeleteMyPupilsController>>().Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             messageSink: new Mock<IMyPupilsMessageSink>().Object,
             deleteService: new Mock<IDeleteMyPupilsPresentationService>().Object,
@@ -161,17 +120,16 @@ public sealed class DeleteMyPupilsControllerTests
             logger: loggerFake,
             messageSink: messageSinkMock.Object,
             deleteService: deleteServiceMock.Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>(),
             pupilSelectionStateProvider: new Mock<IGetMyPupilsPupilSelectionProvider>().Object);
 
         sut.AddModelStateError();
 
         // Act
-        IActionResult response = await sut.Delete([], It.IsAny<MyPupilsQueryRequestDto>());
+        IActionResult response = await sut.Index([], It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
-        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+        Assert.Equal("DeleteMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
         messageSinkMock.Verify(
@@ -205,17 +163,16 @@ public sealed class DeleteMyPupilsControllerTests
             messageSink: messageSinkMock.Object,
             deleteService: deleteServiceMock.Object,
             pupilSelectionStateProvider: providerMock.Object,
-            options: OptionsTestDoubles.Default<MyPupilsOptions>(),
             messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
 
         // Act
         IActionResult response =
-            await sut.Delete(
+            await sut.Index(
                 SelectedPupils: [],
                 It.IsAny<MyPupilsQueryRequestDto>());
 
         // Assert
-        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+        Assert.Equal("DeleteMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response);
 
         providerMock.Verify(provider => provider.GetPupilSelections(), Times.Once);
@@ -252,7 +209,6 @@ public sealed class DeleteMyPupilsControllerTests
         messageSink: messageSinkMock.Object,
         deleteService: deleteServiceMock.Object,
         pupilSelectionStateProvider: providerMock.Object,
-        options: OptionsTestDoubles.Default<MyPupilsOptions>(),
         messagingOptions: messagingOptionsStub);
 
         HttpContext httpContextStub = sut.StubHttpContext();
@@ -266,12 +222,12 @@ public sealed class DeleteMyPupilsControllerTests
         };
         List<string> selectedPupils = ["a"];
 
-        IActionResult response = await sut.Delete(selectedPupils, query);
+        IActionResult response = await sut.Index(selectedPupils, query);
 
         // Assert
         const string userIdStub = "00000000-0000-0000-0000-000000000000";
 
-        Assert.Equal("DeleteMyPupilsController.Delete POST method called", loggerFake.Logs.Single());
+        Assert.Equal("DeleteMyPupilsController.Index POST method called", loggerFake.Logs.Single());
         ActionResultAssertionHelpers.AssertRedirectToGetMyPupils(response, query);
 
         providerMock.Verify(provider => provider.GetPupilSelections(), Times.Once);

@@ -38,8 +38,8 @@
         {
             <div class="govuk-grid-row download-block">
                 <div class="govuk-grid-column-one-quarter download-block">
-                    <button asp-controller="@Model.DownloadController"
-                            asp-action="ToDownloadCommonTransferFileData"
+                    <button asp-controller="@Routes.MyPupilList.DownloadMyPupilsCommonTransferFileControllerName"
+                            asp-action="@Routes.MyPupilList.DownloadMyPupilsCommonTransferFileAction"
                             asp-route-pageNumber="@Model.PageNumber"
                             asp-route-sortField="@Model.SortField"
                             asp-route-sortDirection="@Model.SortDirection"
@@ -52,8 +52,8 @@
                     </button>
                 </div>
                 <div class="govuk-grid-column-one-quarter">
-                    <button asp-controller="@Model.DownloadController"
-                            asp-action="@Routes.MyPupilList.DownloadNpdOptionsControllerAction"
+                    <button asp-controller="@Routes.MyPupilList.DownloadNpdControllerName"
+                            asp-action="@Routes.MyPupilList.DownloadMyPupilsNpdOptionsControllerAction"
                             id="download--selected--npd--data--link"
                             type="submit"
                             class="govuk-list webapp-button-as-link">
@@ -61,8 +61,8 @@
                     </button>
                 </div>
                 <div class="govuk-grid-column-one-quarter">
-                    <button asp-controller="@Model.DownloadController"
-                            asp-action="@Routes.MyPupilList.DownloadPupilPremiumControllerAction"
+                    <button asp-controller="@Routes.MyPupilList.DownloadMyPupilsPupilPremiumControllerName"
+                            asp-action="@Routes.MyPupilList.DownloadMyPupilsPupilPremiumControllerAction"
                             id="download--selected--pp--data--link"
                             type="submit"
                             class="govuk-list webapp-button-as-link">
@@ -90,8 +90,8 @@
                 </div>
 
                 <div class="govuk-grid-column-one-quarter">
-                    <button asp-controller="@Model.DeleteMyPupilsController"
-                            asp-action="Delete"
+                    <button asp-controller="@Routes.MyPupilList.DeleteMyPupilsController"
+                            asp-action="@Routes.MyPupilList.DeleteMyPupilsControllerAction"
                             asp-route-pageNumber="@Model.PageNumber"
                             asp-route-sortField="@Model.SortField"
                             asp-route-sortDirection="@Model.SortDirection"

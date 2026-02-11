@@ -61,14 +61,21 @@ public static class Routes
 
         public const string GetMyPupilsController = "GetMyPupils";
 
-        public const string DeleteMyPupilsRoute = "delete";
         public const string DeleteMyPupilsController = "DeleteMyPupils";
+        public const string DeleteMyPupilsControllerAction = "Index";
 
-        public const string DownloadConfirmRoute = "download-npd-selected";
-        public const string DownloadOptionsRoute = "download-npd";
-        public const string DownloadMyPupilsController = "DownloadMyPupils";
-        public const string DownloadNpdOptionsControllerAction = "GetDownloadNpdOptions";
-        public const string DownloadPupilPremiumControllerAction = "ToDownloadSelectedPupilPremiumDataUPN";
+        public const string UpdateMyPupilsControllerName = "UpdateMyPupils";
+
+        public const string DownloadNpdControllerName = "DownloadMyPupilsNationalPupilDatabase";
+        public const string DownloadNpdOptionsRoute = "download-npd";
+        public const string DownloadNpdConfirmRoute = "download-npd-selected";
+
+        public const string DownloadMyPupilsCommonTransferFileControllerName = "DownloadMyPupilsCommonTransferFile";
+        public const string DownloadMyPupilsCommonTransferFileAction = "Index";
+        public const string DownloadMyPupilsNpdOptionsControllerAction = "GetDownloadNpdOptions";
+
+        public const string DownloadMyPupilsPupilPremiumControllerName = "DownloadMyPupilsPupilPremium";
+        public const string DownloadMyPupilsPupilPremiumControllerAction = "Index";
         
         public const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
     }

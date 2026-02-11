@@ -19,14 +19,12 @@ public class DeleteMyPupilsController : Controller
 {
     private readonly ILogger<DeleteMyPupilsController> _logger;
     private readonly MyPupilsMessagingOptions _loggingOptions;
-    private readonly MyPupilsOptions _options;
     private readonly IGetMyPupilsPupilSelectionProvider _getMyPupilsSelectionState;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
     private readonly IDeleteMyPupilsPresentationService _deleteService;
 
     public DeleteMyPupilsController(
         ILogger<DeleteMyPupilsController> logger,
-        IOptions<MyPupilsOptions> options,
         IOptions<MyPupilsMessagingOptions> messagingOptions,
         IMyPupilsMessageSink messageSink,
         IDeleteMyPupilsPresentationService deleteService,
@@ -34,10 +32,6 @@ public class DeleteMyPupilsController : Controller
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Value);
-        _options = options.Value;
 
         ArgumentNullException.ThrowIfNull(messagingOptions);
         ArgumentNullException.ThrowIfNull(messagingOptions.Value);
@@ -55,12 +49,12 @@ public class DeleteMyPupilsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Route(Routes.MyPupilList.DeleteMyPupilsRoute)]
-    public async Task<IActionResult> Delete(
+    [Route(Routes.MyPupilList.DeleteMyPupilsControllerAction)]
+    public async Task<IActionResult> Index(
         [FromForm] List<string>? SelectedPupils,
         MyPupilsQueryRequestDto? queryRequest)
     {
-        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(DeleteMyPupilsController), nameof(Delete));
+        _logger.LogInformation("{Controller}.{Action} POST method called", nameof(DeleteMyPupilsController), nameof(Index));
 
         SelectedPupils ??= [];
         queryRequest ??= new();
@@ -72,7 +66,7 @@ public class DeleteMyPupilsController : Controller
                     MessageLevel.Error,
                     "There has been a problem with your delete selections. Please try again."));
 
-            return RedirectToGetMyPupils(queryRequest);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(queryRequest);
         }
 
         MyPupilsPupilSelectionState selectionState = _getMyPupilsSelectionState.GetPupilSelections();
@@ -84,7 +78,7 @@ public class DeleteMyPupilsController : Controller
                     MessageLevel.Error,
                     Messages.Common.Errors.NoPupilsSelected));
 
-            return RedirectToGetMyPupils(queryRequest);
+            return MyPupilsRedirectHelpers.RedirectToGetMyPupils(queryRequest);
         }
 
         string userId = User.GetUserId();
@@ -97,19 +91,6 @@ public class DeleteMyPupilsController : Controller
                 MessageLevel.Info,
                 $"Selected MyPupils were deleted from user: {userId}."));
 
-        return RedirectToGetMyPupils(queryRequest);
-    }
-
-    private RedirectToActionResult RedirectToGetMyPupils(MyPupilsQueryRequestDto request)
-    {
-        return RedirectToAction(
-            actionName: "Index",
-            controllerName: "GetMyPupils",
-            new
-            {
-                request.PageNumber,
-                request.SortField,
-                request.SortDirection
-            });
+        return MyPupilsRedirectHelpers.RedirectToGetMyPupils(queryRequest);
     }
 }

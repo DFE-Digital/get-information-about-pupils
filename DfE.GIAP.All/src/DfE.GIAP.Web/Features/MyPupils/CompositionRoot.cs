@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils.Mapper;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetSelectedPupilUpns;
+using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session.Abstraction;
 using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
@@ -50,16 +51,16 @@ public static class CompositionRoot
         services.AddOptions<MyPupilsMessagingOptions>();
         services.AddOptions<MyPupilSelectionOptions>();
 
-        // PresentationService
+        // PresentationServices
         services
             .AddSingleton<IMapper<MyPupilsModels, MyPupilsPresentationPupilModels>, MyPupilModelsToMyPupilsPresentationPupilModelMapper>()
             .AddSingleton<IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>, MyPupilModelToMyPupilsPresentationPupilModelMapper>()
             .AddScoped<IMapper<MyPupilsPresentationResponse, MyPupilsViewModel>, MyPupilsPresentationResponseToMyPupilsViewModelMapper>()
             .AddScoped<IGetMyPupilsPresentationService, GetMyPupilsPresentationService>()
             .AddScoped<IGetSelectedPupilsUniquePupilNumbersPresentationService, GetSelectedPupilsUniquePupilNumbersPresentationService>()
+            .AddScoped<IUpsertSelectedPupilsIdentifiersPresentationService, UpsertSelectedPupilsPresentationService>()
             .AddScoped<IDeleteMyPupilsPresentationService, DeleteMyPupilsPresentationService>();
             
-
         // MessagingSink
         services
             .AddScoped<IMyPupilsMessageSink, MyPupilsTempDataMessageSink>()
