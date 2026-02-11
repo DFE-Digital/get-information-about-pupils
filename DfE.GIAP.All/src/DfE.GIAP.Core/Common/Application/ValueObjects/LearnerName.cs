@@ -59,6 +59,7 @@ public sealed class LearnerName : ValueObject<LearnerName>
         yield return Surname;
     }
 
+
     private static string NormaliseName(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -73,26 +74,52 @@ public sealed class LearnerName : ValueObject<LearnerName>
             return char.ToUpperInvariant(trimmedInput[0]).ToString();
         }
 
-        if (!trimmedInput.Contains('-'))
+        // Normalise by splitting on hyphen and apostrophe, but preserving delimiters. e.g. O'Neil, Smith-Jones
+        return NormaliseWithDelimiters(trimmedInput, ['-', '\'']);
+    }
+
+    private static string NormaliseWithDelimiters(string input, char[] delimiters)
+    {
+        List<string> result = [];
+
+        int start = 0;
+
+        for (int index = 0; index < input.Length; index++)
         {
-            return char.ToUpperInvariant(trimmedInput[0]) + trimmedInput.Substring(1).ToLowerInvariant();
-        }
-
-        // Handle double or triple barrel names
-        string[] parts = trimmedInput.Split('-', StringSplitOptions.RemoveEmptyEntries);
-
-        for (int index = 0; index < parts.Length; index++)
-        {
-            string part = parts[index].Trim();
-
-            if (part.Length == 0)
+            char currentCharacter = input[index];
+            if (delimiters.Contains(currentCharacter))
             {
-                continue;
-            }
+                // Add the part before the delimiter
+                result.Add(NormalisePart(input.Substring(start, index - start)));
 
-            parts[index] = char.ToUpperInvariant(part[0]) + part.Substring(1).ToLowerInvariant();
+                // Add the delimiter itself
+                result.Add(currentCharacter.ToString());
+
+                // Move start past the delimiter
+                start = index + 1;
+            }
         }
 
-        return string.Join("-", parts);
+        // Add the last section
+        result.Add(NormalisePart(input.Substring(start)));
+
+        return string.Concat(result);
+    }
+
+    private static string NormalisePart(string part)
+    {
+        part = part.Trim();
+
+        if (part.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        if (part.Length == 1)
+        {
+            return char.ToUpperInvariant(part[0]).ToString();
+        }
+
+        return char.ToUpperInvariant(part[0]) + part.Substring(1).ToLowerInvariant();
     }
 }
