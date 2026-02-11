@@ -1,19 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
-using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
-using DfE.GIAP.Core.Downloads.Application.Aggregators;
-using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
-using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers.Mappers;
-using DfE.GIAP.Core.Downloads.Application.Ctf;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Availability;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
+﻿using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Application.Availability;
+using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.Availability.Access.Rules;
+using DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
+using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
+using DfE.GIAP.Core.Downloads.Application.Ctf.Formatters;
+using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers.Mappers;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.DownloadOutputs;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Enums;
-using DfE.GIAP.Core.Downloads.Application.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Models;
-using DfE.GIAP.Core.Downloads.Application.Models.DownloadOutputs;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -55,8 +54,8 @@ public static class CompositionRoot
         // WIP
         services.Configure<CtfOptions>(configuration.GetSection("CtfOptions"));
         services.AddScoped<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>, DownloadPupilCtfUseCase>();
-        services.AddScoped<ICtfHeaderHandler, CtfHeaderHandler>();
-        services.AddScoped<ICtfPupilHandler, YearlyFileCtfPupilHandler>();
+        services.AddScoped<ICtfHeaderBuilder, CtfHeaderBuilder>();
+        services.AddScoped<ICtfPupilBuilder, YearlyFileCtfPupilBuilder>();
         services.AddScoped<ICtfFormatter, XmlCtfFormatter>();
 
         return services;

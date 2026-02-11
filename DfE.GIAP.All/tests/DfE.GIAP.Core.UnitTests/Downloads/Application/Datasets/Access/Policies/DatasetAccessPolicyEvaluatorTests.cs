@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Policies;
-using DfE.GIAP.Core.Downloads.Application.Datasets.Access.Rules;
+﻿using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.Availability.Access.Rules;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 

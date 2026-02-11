@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Aggregators;
-using DfE.GIAP.Core.Downloads.Application.Aggregators.Handlers;
+﻿using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
+using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 
 

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Datasets.Availability.Handlers;
+﻿using DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
