@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Common.AppSettings;
+namespace DfE.GIAP.Web.Config;
 
 [ExcludeFromCodeCoverage]
 public class AzureAppSettings

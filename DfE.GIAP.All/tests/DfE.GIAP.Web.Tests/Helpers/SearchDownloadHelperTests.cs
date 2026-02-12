@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Mvc;

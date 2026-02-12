@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace DfE.GIAP.Common.Helpers;
+namespace DfE.GIAP.Web.Helpers;
 
 public static class StringHelper
 {

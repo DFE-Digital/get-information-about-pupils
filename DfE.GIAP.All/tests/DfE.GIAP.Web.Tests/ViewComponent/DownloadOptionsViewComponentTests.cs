@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;

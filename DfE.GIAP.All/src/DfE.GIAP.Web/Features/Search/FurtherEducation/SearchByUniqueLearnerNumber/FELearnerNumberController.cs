@@ -1,19 +1,19 @@
 ﻿using System.Text.RegularExpressions;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -518,7 +518,7 @@ public class FELearnerNumberController : Controller
 
         // ensure that the selections are set appropriately
         HashSet<string> selected = GetSelected(combinedIdLearnerNumberArray);
-        foreach (Domain.Search.Learner.Learner learner in result.Learners)
+        foreach (Learner learner in result.Learners)
         {
             learner.Selected = selected.Contains(learner.LearnerNumberId);
         }
@@ -529,10 +529,10 @@ public class FELearnerNumberController : Controller
     }
 
     private static List<string> SetLearnerNumberIds(
-        IEnumerable<Domain.Search.Learner.Learner> learners)
+        IEnumerable<Learner> learners)
     {
         List<string> idList = [];
-        foreach (Domain.Search.Learner.Learner learner in learners)
+        foreach (Learner learner in learners)
         {
             switch (learner.LearnerNumber)
             {
@@ -557,11 +557,11 @@ public class FELearnerNumberController : Controller
     /// <param name="learners"></param>
     /// <returns></returns>
     private static HashSet<string> GetLearnerNumbers(
-        IEnumerable<Domain.Search.Learner.Learner> learners)
+        IEnumerable<Learner> learners)
     {
         HashSet<string> learnerNumbers = [];
 
-        foreach (Domain.Search.Learner.Learner learner in learners)
+        foreach (Learner learner in learners)
         {
             learnerNumbers.Add(learner.LearnerNumber);
         }
@@ -575,11 +575,11 @@ public class FELearnerNumberController : Controller
     /// <param name="learners"></param>
     /// <returns></returns>
     private static HashSet<string> GetLearnerNumberIds(
-        IEnumerable<Domain.Search.Learner.Learner> learners)
+        IEnumerable<Learner> learners)
     {
         HashSet<string> learnerNumberIds = [];
 
-        foreach (Domain.Search.Learner.Learner learner in learners)
+        foreach (Learner learner in learners)
         {
             learnerNumberIds.Add(learner.LearnerNumberId);
         }
@@ -593,7 +593,7 @@ public class FELearnerNumberController : Controller
     /// <param name="learners"></param>
     /// <returns></returns>
     private static string GetLearnerIdsAsString(
-        IEnumerable<Domain.Search.Learner.Learner> learners) =>
+        IEnumerable<Learner> learners) =>
             string.Join(",", learners.Select(learner => learner.Id));
 
     #endregion Private Methods

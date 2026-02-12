@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Domain.Search.Learner;
+﻿using DfE.GIAP.Web.Features.Search.LegacyModels;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 using DfE.GIAP.Web.ViewModels.Search;
 using Xunit;

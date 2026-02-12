@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
-using DfE.GIAP.Common.Helpers.Rbac;
-using DfE.GIAP.Domain.Models.Search;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
+using DfE.GIAP.Web.Helpers;
 using Xunit;
 
 namespace DfE.GIAP.Common.Tests.Helpers;

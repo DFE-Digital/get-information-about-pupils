@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace DfE.GIAP.Domain.Search.Learner;
+namespace DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 
 [ExcludeFromCodeCoverage]
 public class PaginatedResponse

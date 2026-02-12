@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Configuration;

@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Filters.Mappers;
 using Xunit;
 using FacetResult = DfE.GIAP.Core.Search.Application.Models.Search.Facets.FacetResult;

@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Services.ApiProcessor;
 using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Tests.Services.FakeHttpHandlers;
