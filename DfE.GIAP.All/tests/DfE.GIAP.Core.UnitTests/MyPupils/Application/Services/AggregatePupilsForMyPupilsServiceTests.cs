@@ -167,7 +167,7 @@ public sealed class AggregatePupilsForMyPupilsApplicationServiceTests
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(3));
 
-        using var cts = new CancellationTokenSource();
+        using CancellationTokenSource cts = new CancellationTokenSource();
 
         // Act
         IEnumerable<Pupil> result = await sut.GetPupilsAsync(
