@@ -1,12 +1,7 @@
-﻿using Azure;
-using Azure.Search.Documents;
-using Azure.Search.Documents.Models;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
-using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Providers;
+﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.MyPupils;
 using DfE.GIAP.Core.MyPupils.Application.Options;
+using DfE.GIAP.Core.MyPupils.Application.Ports;
 using DfE.GIAP.Core.MyPupils.Application.Repositories;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -15,22 +10,14 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
-using DfE.GIAP.Core.Search;
-using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
-using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Extensions;
-using DfE.GIAP.Core.Search.Infrastructure.Shared.Mappers;
 using DfE.GIAP.SharedTests.Runtime;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
-using SearchOptions = DfE.GIAP.Core.Search.Application.Options.Search.SearchOptions;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
 public sealed class CompositionRootTests
@@ -49,34 +36,14 @@ public sealed class CompositionRootTests
         // Arrange
         IConfiguration configuration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
-                .WithAzureSearchConnectionOptions()
-                .WithSearchOptions()
-                .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
 
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
                 .AddAspNetCoreRuntimeProvidedServices(configuration)
-                .AddFeaturesSharedServices();
+                .AddFeaturesSharedServices()
+                .AddMyPupilsCoreFakeAdaptors();
 
-        // TODO TEMP while the dependency on AzureSearch for MyPupils exists
-
-        services.AddSingleton<ISearchIndexOptionsProvider, SearchIndexOptionsProvider>();
-
-        services
-            .AddOptions<SearchOptions>()
-            .Bind(configuration.GetSection(nameof(SearchOptions)));
-
-        services.AddSingleton<SearchOptions>(sp => sp.GetRequiredService<IOptions<SearchOptions>>().Value);
-
-        services
-            .AddOptions<AzureSearchConnectionOptions>()
-            .Bind(configuration.GetSection(nameof(AzureSearchConnectionOptions)));
-        // END TODO TEMP
-
-        services.AddSearchCore(configuration);
-        services.RemoveAll<ISearchIndexNamesProvider>();
-        services.AddSingleton<ISearchIndexNamesProvider, FakeSearchIndexNamesProvider>();
         services.AddMyPupilsCore();
 
         // Act
@@ -94,21 +61,18 @@ public sealed class CompositionRootTests
         Assert.NotNull(provider.GetService<IUseCaseRequestOnly<DeletePupilsFromMyPupilsRequest>>());
 
         Assert.NotNull(provider.GetService<IAggregatePupilsForMyPupilsApplicationService>());
-        Assert.NotNull(provider.GetService<IMapper<PupilPremiumLearner, Pupil>>());
-        Assert.NotNull(provider.GetService<IMapper<NationalPupilDatabaseLearner, Pupil>>());
 
+        Assert.NotNull(provider.GetService<IMapper<IEnumerable<string>, UniquePupilNumbers>>());
 
         Assert.NotNull(provider.GetService<IMyPupilsReadOnlyRepository>());
         Assert.NotNull(provider.GetService<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>>());
 
         Assert.NotNull(provider.GetService<IMyPupilsWriteOnlyRepository>());
 
-        Assert.NotNull(provider.GetService<IEnumerable<SearchClient>>());
-    }
-
-    private sealed class FakeSearchIndexNamesProvider : ISearchIndexNamesProvider
-    {
-        public IEnumerable<string> GetIndexNames() => [];
+        Assert.NotNull(provider.GetService<IQueryMyPupilsPort>());
+        Assert.NotNull(provider.GetService<IMapper<PupilPremiumLearner, Pupil>>());
+        Assert.NotNull(provider.GetService<IMapper<NationalPupilDatabaseLearner, Pupil>>());
     }
 
 }
+
