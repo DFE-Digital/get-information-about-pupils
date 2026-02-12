@@ -44,8 +44,6 @@ public static class CompositionRoot
         return services;
     }
 
-
-
     private static IServiceCollection AddFurtherEducationSearches(this IServiceCollection services)
     {
         services.AddSingleton<
