@@ -1,18 +1,18 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 
-namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Mappers;
-internal sealed class PupilPremiumLearnerToPupilMapper : IMapper<PupilPremiumLearner, Pupil>
+namespace DfE.GIAP.Core.MyPupils.Infrastructure.Adaptors;
+internal sealed class NationalPupilDatabaseLearnerToPupilMapper : IMapper<NationalPupilDatabaseLearner, Pupil>
 {
-    public Pupil Map(PupilPremiumLearner input)
+    public Pupil Map(NationalPupilDatabaseLearner input)
     {
         ArgumentNullException.ThrowIfNull(input);
 
         return new Pupil(
             input.Identifier,
-            PupilType.PupilPremium,
+            PupilType.NationalPupilDatabase,
             new LearnerName(
                 firstName: input.Name.FirstName,
                 surname: input.Name.Surname),

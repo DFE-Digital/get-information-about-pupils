@@ -1,65 +1,30 @@
 using DfE.GIAP.Core.Common.Application.ValueObjects;
+using DfE.GIAP.Core.MyPupils.Application.Ports;
 using DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
-using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
-using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.Models.Sort;
-using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Core.Search.Application.Options.Sort;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils;
-// TODO this COULD be replaced with a CosmosDb implementation to avoid what it previously used - AzureSearch
 internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregatePupilsForMyPupilsApplicationService
 {
     private const int UpnQueryLimit = 4000;
-    private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
-    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> _npdSearchServiceAdaptor;
-    private readonly IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse> _pupilPremiumSearchServiceAdaptor;
-    private readonly IMapper<NationalPupilDatabaseLearner, Pupil> _npdLearnerToPupilMapper;
-    private readonly IMapper<PupilPremiumLearner, Pupil> _pupilPremiumLearnerToPupilMapper;
+    private readonly IQueryMyPupilsPort _queryMyPupilsPort;
     private readonly IOrderPupilsHandler _orderPupilsHandler;
     private readonly IPaginatePupilsHandler _paginatePupilsHandler;
-    private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     public AggregatePupilsForMyPupilsApplicationService(
-        ISearchIndexOptionsProvider searchIndexOptionsProvider,
-        IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> getNpdLearnersUseCase,
-        IMapper<NationalPupilDatabaseLearner, Pupil> npdLearnerToPupilMapper,
-        IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse> getPupilPremiumLearnersUseCase,
-        IMapper<PupilPremiumLearner, Pupil> pupilPremiumLearnerToPupilMapper,
+        IQueryMyPupilsPort queryMyPupilsPort,
         IOrderPupilsHandler orderPupilsHandler,
-        IPaginatePupilsHandler paginatePupilsHandler,
-        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
+        IPaginatePupilsHandler paginatePupilsHandler)
     {
-        ArgumentNullException.ThrowIfNull(searchIndexOptionsProvider);
-        _searchIndexOptionsProvider = searchIndexOptionsProvider;
-
-        ArgumentNullException.ThrowIfNull(getNpdLearnersUseCase);
-        _npdSearchServiceAdaptor = getNpdLearnersUseCase;
-
-        ArgumentNullException.ThrowIfNull(npdLearnerToPupilMapper);
-        _npdLearnerToPupilMapper = npdLearnerToPupilMapper;
-
-        ArgumentNullException.ThrowIfNull(getPupilPremiumLearnersUseCase);
-        _pupilPremiumSearchServiceAdaptor = getPupilPremiumLearnersUseCase;
-
-        ArgumentNullException.ThrowIfNull(pupilPremiumLearnerToPupilMapper);
-
-        _pupilPremiumLearnerToPupilMapper = pupilPremiumLearnerToPupilMapper;
+        ArgumentNullException.ThrowIfNull(queryMyPupilsPort);
+        _queryMyPupilsPort = queryMyPupilsPort;
 
         ArgumentNullException.ThrowIfNull(orderPupilsHandler);
         _orderPupilsHandler = orderPupilsHandler;
 
         ArgumentNullException.ThrowIfNull(paginatePupilsHandler);
         _paginatePupilsHandler = paginatePupilsHandler;
-
-        ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
-        _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
     }
 
     public async Task<IEnumerable<Pupil>> GetPupilsAsync(
@@ -74,41 +39,9 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             return [];
         }
 
-        string[] myPupilUniquePupilNumbers = uniquePupilNumbers.GetUniquePupilNumbers().Select(t => t.Value).ToArray();
-
-        SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
-
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse npdSearchResponse =
-        await _npdSearchServiceAdaptor.HandleRequestAsync(
-            new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
-            {
-                UniquePupilNumbers = myPupilUniquePupilNumbers,
-                SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(npdIndexOptions.SearchCriteria!),
-                Sort = CreateSortOrder(npdIndexOptions),
-                Offset = 0,
-            });
-
-        SearchIndexOptions pupilPremiumIndexOptions = _searchIndexOptionsProvider.GetOptions("pupil-premium-upn");
-
-        PupilPremiumSearchByUniquePupilNumberResponse pupilPremiumSearchResponse =
-            await _pupilPremiumSearchServiceAdaptor.HandleRequestAsync(
-                new PupilPremiumSearchByUniquePupilNumberRequest()
-                {
-                    UniquePupilNumbers = myPupilUniquePupilNumbers,
-                    SearchCriteria = _criteriaOptionsToCriteriaMapper.Map(pupilPremiumIndexOptions.SearchCriteria!),
-                    Sort = CreateSortOrder(pupilPremiumIndexOptions),
-                    Offset = 0,
-                });
-
         IEnumerable<Pupil> allPupils =
-            (npdSearchResponse.LearnerSearchResults?.Values.Select(_npdLearnerToPupilMapper.Map) ?? [])
-                .Concat(pupilPremiumSearchResponse.LearnerSearchResults?.Values.Select(_pupilPremiumLearnerToPupilMapper.Map) ?? [])
-                // Deduplicate
-                .GroupBy(pupil => pupil.Identifier.Value)
-                // Ensure PupilPremium is chosen if a PupilPremium record exists, so display of IsPupilPremium : Yes|No is accurate
-                .Select(groupedIdentifiers =>
-                    groupedIdentifiers.OrderByDescending(
-                        (pupil) => pupil.IsOfPupilType(PupilType.PupilPremium)).First());
+            await _queryMyPupilsPort.QueryAsync(uniquePupilNumbers, ctx);
+
 
         // If no query, return ALL results
         if (query is null)
@@ -121,17 +54,5 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
         IEnumerable<Pupil> orderedPupils = _orderPupilsHandler.Order(allPupils, query.Order);
 
         return _paginatePupilsHandler.PaginatePupils(orderedPupils, query.PaginateOptions);
-    }
-
-    private static SortOrder CreateSortOrder(SearchIndexOptions options)
-    {
-        (string field, string direction) sortOptions = (options.SortOptions ?? new SortOptions()).GetDefaultSort();
-
-        SortOrder sortOrder = new(
-           sortField: sortOptions.field,
-           sortDirection: sortOptions.direction,
-           validSortFields: [sortOptions.field]);
-
-        return sortOrder;
     }
 }
