@@ -34,6 +34,7 @@ public class CookiesController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     [Route("CookiePreferences")]
     public IActionResult CookiePreferences(CookieUseViewModel viewModel)
     {
@@ -51,6 +52,7 @@ public class CookiesController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     [Route("AcceptCookies")]
     public IActionResult AcceptCookies([FromQuery] string returnUrl)
     {
