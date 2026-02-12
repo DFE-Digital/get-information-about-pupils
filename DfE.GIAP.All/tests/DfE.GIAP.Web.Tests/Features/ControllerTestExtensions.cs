@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Extensions;
+namespace DfE.GIAP.Web.Tests.Features;
 internal static class ControllerTestExtensions
 {
     internal static HttpContext StubHttpContext<T>(this T controller) where T : ControllerBase
@@ -59,4 +59,4 @@ internal static class ControllerTestExtensions
 
         return controller;
     }
-} 
+}

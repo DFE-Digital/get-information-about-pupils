@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Providers.Cookie;
 
-namespace DfE.GIAP.Web.Controllers;
+namespace DfE.GIAP.Web.Features;
 
 [Route(Routes.Application.Consent)]
 public class ConsentController : Controller

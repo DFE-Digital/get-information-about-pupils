@@ -2,13 +2,13 @@
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
-using DfE.GIAP.Web.Controllers.PreparedDownload;
+using DfE.GIAP.Web.Features.Downloads.Controllers;
 using DfE.GIAP.Web.Tests.Shared.HttpContext;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.PreparedDownload;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Tests.Controllers.PreparedDownloads;
+namespace DfE.GIAP.Web.Tests.Features.Download;
 
 [Trait("PreparedDownloads", "PreparedDownloads Controller Unit Tests")]
 public class PreparedDownloadsControllerTests

@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Consent;
+namespace DfE.GIAP.Web.Tests.Features;
 
 public sealed class ConsentControllerTests
 {

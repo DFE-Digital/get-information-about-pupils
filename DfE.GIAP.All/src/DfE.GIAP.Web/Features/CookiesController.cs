@@ -6,7 +6,7 @@ using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Controllers;
+namespace DfE.GIAP.Web.Features;
 
 [AllowWithoutConsent]
 public class CookiesController : Controller

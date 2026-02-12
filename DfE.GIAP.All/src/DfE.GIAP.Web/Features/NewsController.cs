@@ -6,7 +6,7 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Controllers;
+namespace DfE.GIAP.Web.Features;
 
 [Route(Routes.Application.News)]
 public class NewsController : Controller

@@ -2,13 +2,13 @@
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Features;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.News;
+namespace DfE.GIAP.Web.Tests.Features;
 
 [Trait("Category", "News Controller Unit Tests")]
 public class NewsControllerTests

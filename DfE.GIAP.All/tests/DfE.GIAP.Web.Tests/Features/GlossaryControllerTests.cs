@@ -3,13 +3,13 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
-using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Features;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Glossary;
+namespace DfE.GIAP.Web.Tests.Features;
 
 [Trait("Category", "Glossary Controller Unit Tests")]
 public class GlossaryControllerTests
