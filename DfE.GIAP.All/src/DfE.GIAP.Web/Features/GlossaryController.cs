@@ -1,24 +1,22 @@
 ﻿using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.PreparedDownloads.Application.Enums;
 using DfE.GIAP.Core.PreparedDownloads.Application.FolderPath;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.DownloadPreparedFile;
 using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
-using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
-using DfE.GIAP.Web.ViewModels.PreparedDownload;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Controllers.PreparedDownload;
+namespace DfE.GIAP.Web.Features;
 
-[Route(Routes.PrePreparedDownloads.PreparedDownloadsController)]
-public class PreparedDownloadsController : Controller
+public class GlossaryController : Controller
 {
     private readonly IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> _getPrePreparedFilesUseCase;
     private readonly IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> _downloadPrePreparedFileUseCase;
     private readonly IEventLogger _eventLogger;
 
-    public PreparedDownloadsController(
+    public GlossaryController(
         IUseCase<GetPreparedFilesRequest, GetPreparedFilesResponse> getPrePreparedFilesUseCase,
         IUseCase<DownloadPreparedFileRequest, DownloadPreparedFileResponse> downloadPrePreparedFileUseCase,
         IEventLogger eventLogger)
@@ -33,22 +31,20 @@ public class PreparedDownloadsController : Controller
         _eventLogger = eventLogger;
     }
 
+    [AllowWithoutConsent]
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        BlobStoragePathContext pathContext = BlobStoragePathContext.Create(
-            organisationScope: User.GetOrganisationScope(),
-            uniqueIdentifier: User.GetUniqueIdentifier(),
-            localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
-            uniqueReferenceNumber: User.GetUniqueReferenceNumber());
+        BlobStoragePathContext pathContext = BlobStoragePathContext
+             .Create(OrganisationScope.AllUsers);
 
         GetPreparedFilesRequest request = new(pathContext);
         GetPreparedFilesResponse response = await _getPrePreparedFilesUseCase
             .HandleRequestAsync(request);
 
-        PreparedDownloadsViewModel model = new()
+        GlossaryViewModel model = new()
         {
-            PreparedDownloadFiles = response.BlobStorageItems
+            PreparedMetadataFiles = response.BlobStorageItems
             .Select(item => new PreparedFileViewModel
             {
                 Name = item.Name,
@@ -61,20 +57,17 @@ public class PreparedDownloadsController : Controller
         return View(model);
     }
 
-    [Route(Routes.PrePreparedDownloads.DownloadPrePreparedFileAction)]
-    public async Task<FileStreamResult> DownloadPrePreparedFile(string name)
+    [HttpGet]
+    public async Task<FileStreamResult> GetBulkUploadTemplateFile(string name)
     {
-        BlobStoragePathContext pathContext = BlobStoragePathContext.Create(
-            organisationScope: User.GetOrganisationScope(),
-            uniqueIdentifier: User.GetUniqueIdentifier(),
-            localAuthorityNumber: User.GetLocalAuthorityNumberForLocalAuthority(),
-            uniqueReferenceNumber: User.GetUniqueReferenceNumber());
+        BlobStoragePathContext pathContext = BlobStoragePathContext
+            .Create(OrganisationScope.AllUsers);
 
         DownloadPreparedFileRequest request = new(name, pathContext);
         DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
             .HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(DownloadType.Prepared, DownloadFileFormat.CSV);
+        _eventLogger.LogDownload(DownloadType.Metadata, DownloadFileFormat.CSV);
 
         return new FileStreamResult(response.FileStream, response.ContentType)
         {
@@ -82,3 +75,4 @@ public class PreparedDownloadsController : Controller
         };
     }
 }
+

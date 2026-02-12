@@ -2,7 +2,7 @@
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Features;
 using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Middleware;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DfE.GIAP.Web.Controllers;
+namespace DfE.GIAP.Web.Features;
 
 public class PrivacyController : Controller
 {

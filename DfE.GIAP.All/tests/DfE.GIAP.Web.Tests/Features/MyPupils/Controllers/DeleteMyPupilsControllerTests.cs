@@ -5,7 +5,6 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
-using DfE.GIAP.Web.Tests.Controllers.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

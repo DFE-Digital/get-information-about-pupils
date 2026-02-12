@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Web.Constants;
-using DfE.GIAP.Web.Controllers;
+using DfE.GIAP.Web.Features;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.Cookies;
+namespace DfE.GIAP.Web.Tests.Features;
 
 [Trait("Category", "Cookies Controller Unit Tests")]
 public class CookiesControllerTests

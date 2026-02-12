@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Web.Controllers;
 using DfE.GIAP.Web.Features.Auth.Infrastructure.Config;
+using DfE.GIAP.Web.Features.Auth.Presentation.Controllers;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers;
+namespace DfE.GIAP.Web.Tests.Features.Auth;
 
 [Trait("Category", "Authentication Controller Unit Tests")]
 
