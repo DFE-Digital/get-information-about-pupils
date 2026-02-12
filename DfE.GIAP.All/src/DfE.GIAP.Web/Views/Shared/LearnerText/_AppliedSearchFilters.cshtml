@@ -1,4 +1,5 @@
-﻿@model LearnerTextSearchViewModel
+﻿@using DfE.GIAP.Web.Features.Search.LegacyModels
+@model LearnerTextSearchViewModel
 
 <form action="@Model.RedirectUrls.RemoveAction" method="POST">
 
@@ -8,7 +9,7 @@
     <div class="govuk-form-group">
         @foreach (var item in Model.SearchFilters.CurrentFiltersApplied)
         {
-            if (item.FilterType == DfE.GIAP.Core.Models.Search.FilterType.Dob)
+            if (item.FilterType == FilterType.Dob)
             {
                 <div class="webapp-filter-item" title="Date of birth: @item.FilterName">
                     <button type="submit" id="results-button--search-@item.FilterType-@item.FilterName.Replace('/', '-')" title="Remove item" aria-label="Remove item" name="searchByRemove" value="@item.FilterName" aria-describedby="results-button--search-@item.FilterType-@item.FilterName.Replace('/', '-')-describe">

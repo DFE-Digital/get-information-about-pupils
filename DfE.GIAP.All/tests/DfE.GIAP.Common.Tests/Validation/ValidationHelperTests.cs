@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Common.Helpers;
+﻿using DfE.GIAP.Web.Helpers;
 using Xunit;
 
 namespace DfE.GIAP.Common.Tests.Validation;

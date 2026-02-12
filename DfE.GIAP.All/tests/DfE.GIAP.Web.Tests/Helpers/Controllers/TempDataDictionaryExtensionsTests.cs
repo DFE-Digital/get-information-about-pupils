@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Models.Search;
+﻿using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;

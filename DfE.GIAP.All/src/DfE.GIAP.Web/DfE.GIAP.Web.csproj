@@ -13,9 +13,6 @@
     <None Remove="Views\Search\Download\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Controllers\TestController.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Remove="Views\Shared\LearnerText\_Results.cshtml" />
   </ItemGroup>
   <ItemGroup>

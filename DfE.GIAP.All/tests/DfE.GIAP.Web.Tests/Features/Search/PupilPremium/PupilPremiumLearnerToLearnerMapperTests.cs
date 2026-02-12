@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.PupilPremium;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium;

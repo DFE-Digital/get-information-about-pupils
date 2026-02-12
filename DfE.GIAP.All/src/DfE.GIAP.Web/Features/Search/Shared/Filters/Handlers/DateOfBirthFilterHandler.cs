@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.ViewModels.Search;
 

@@ -6,4 +6,4 @@ global using DfE.GIAP.Web.Shared.Session.Abstraction.Command;
 global using DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
 global using Moq;
 global using Xunit;
-global using static DfE.GIAP.Web.Tests.Controllers.Extensions.ControllerTestExtensions;
+global using static DfE.GIAP.Web.Tests.Features.ControllerTestExtensions;

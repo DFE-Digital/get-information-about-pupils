@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Domain.Search.Learner;
-using Xunit;
+﻿using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 
