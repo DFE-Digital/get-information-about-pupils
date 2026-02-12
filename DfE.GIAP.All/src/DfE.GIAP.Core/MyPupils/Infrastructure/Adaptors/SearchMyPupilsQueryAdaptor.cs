@@ -12,6 +12,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Adaptors;
+// TODO this COULD be replaced with a CosmosDb implementation to avoid what it previously used - AzureSearch
 internal sealed class QueryMyPupilsSearchAdaptor : IQueryMyPupilsPort
 {
     private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
