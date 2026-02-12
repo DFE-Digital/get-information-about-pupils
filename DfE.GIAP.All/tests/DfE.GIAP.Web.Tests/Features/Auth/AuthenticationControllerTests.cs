@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
-using Moq;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.Auth;
 

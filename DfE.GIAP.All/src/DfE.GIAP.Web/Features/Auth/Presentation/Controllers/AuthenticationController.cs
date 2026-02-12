@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace DfE.GIAP.Web.Controllers;
+namespace DfE.GIAP.Web.Features.Auth.Presentation.Controllers;
 
 [Route(Routes.Authentication.AuthenticationController)]
 public class AuthenticationController : Controller

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace DfE.GIAP.Web.Tests.Controllers.News;
+namespace DfE.GIAP.Web.Tests.Features;
 
 [Trait("Category", "News Controller Unit Tests")]
 public class NewsControllerTests
