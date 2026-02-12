@@ -19,7 +19,6 @@ public static class DateTimeHelper
         }
         catch (Exception e)
         {
-            var dateError = e.Message;
             return string.Empty;
         }
         return dateFormated;
