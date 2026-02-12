@@ -92,12 +92,12 @@ internal sealed class QueryMyPupilsSearchAdaptor : IQueryMyPupilsPort
 
     private static SortOrder CreateSortOrder(SearchIndexOptions options)
     {
-        (string field, string direction) sortOptions = (options.SortOptions ?? new SortOptions()).GetDefaultSort();
+        (string field, string direction) = (options.SortOptions ?? new SortOptions()).GetDefaultSort();
 
         SortOrder sortOrder = new(
-           sortField: sortOptions.field,
-           sortDirection: sortOptions.direction,
-           validSortFields: [sortOptions.field]);
+           sortField: field,
+           sortDirection: direction,
+           validSortFields: [field]);
 
         return sortOrder;
     }
