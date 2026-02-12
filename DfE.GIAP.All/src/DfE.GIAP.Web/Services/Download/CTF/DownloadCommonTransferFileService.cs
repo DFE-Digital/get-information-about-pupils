@@ -1,11 +1,10 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers;
+﻿using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.Download;
-using Microsoft.Extensions.Options;
-using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Services.ApiProcessor;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Services.Download.CTF;
 

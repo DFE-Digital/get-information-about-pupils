@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium;
 

@@ -1,15 +1,14 @@
-﻿using DfE.GIAP.Common.Helpers;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace DfE.GIAP.Common.Validation;
+namespace DfE.GIAP.Web.Helpers;
 
 public class SearchLearnerNumberValidation : ValidationAttribute
 {
-    
+
     protected override ValidationResult IsValid(object x, ValidationContext context)
     {
-        
-        var learnerNumber = context.ObjectType.GetProperty("LearnerNumberLabel").GetValue(context.ObjectInstance, null);
+
+        object learnerNumber = context.ObjectType.GetProperty("LearnerNumberLabel").GetValue(context.ObjectInstance, null);
 
         if (x == null)
         {

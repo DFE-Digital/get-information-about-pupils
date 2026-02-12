@@ -1,8 +1,8 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Tests.Features.Search.PupilPremium;

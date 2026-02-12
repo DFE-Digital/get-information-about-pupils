@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Common.Enums;
+﻿namespace DfE.GIAP.Web.Constants;
 
 public class AzureSearchFields
 {

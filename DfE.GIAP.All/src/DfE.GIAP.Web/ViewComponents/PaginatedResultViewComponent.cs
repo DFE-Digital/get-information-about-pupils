@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Domain.Search.Learner;
+﻿using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.ViewComponents;

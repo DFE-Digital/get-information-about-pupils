@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.Shared.Mappers;
@@ -29,7 +30,7 @@ public sealed class LearnerToViewModelMapperTests
                 sex: Sex.Female);
 
         // act
-        Domain.Search.Learner.Learner result = _mapper.Map(applicationModellearner);
+        Learner result = _mapper.Map(applicationModellearner);
 
         // assert
         Assert.Equal("1234567890", result.Id);

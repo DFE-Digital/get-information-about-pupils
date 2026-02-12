@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Core.Models.Search;
+namespace DfE.GIAP.Web.Features.Search.LegacyModels;
 
 [ExcludeFromCodeCoverage]
 [Serializable]

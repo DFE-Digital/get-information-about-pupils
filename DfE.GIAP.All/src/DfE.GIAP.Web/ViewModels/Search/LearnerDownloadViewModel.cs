@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 

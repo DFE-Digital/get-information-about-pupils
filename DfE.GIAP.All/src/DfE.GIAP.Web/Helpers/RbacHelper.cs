@@ -1,11 +1,8 @@
-﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Domain.Models.Search;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using System.Text;
+using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 
-namespace DfE.GIAP.Common.Helpers.Rbac;
+namespace DfE.GIAP.Web.Helpers;
 
 public static class RbacHelper
 {
@@ -69,7 +66,7 @@ public static class RbacHelper
         IEnumerable<string> unencryptedLearnerNumbers = learnerNumbers.Where(l => !l.Contains(Global.EncodedSuffixMarker));
         IEnumerable<string> decryptedLearnerNumbers = from learner in learnerNumbers
                                                       where learner.Contains(Global.EncodedSuffixMarker)
-                                                      select RbacHelper.DecodeUpn(learner);
+                                                      select DecodeUpn(learner);
 
         IEnumerable<string> unionPageLearnerNumbers = unencryptedLearnerNumbers.Union(decryptedLearnerNumbers);
 

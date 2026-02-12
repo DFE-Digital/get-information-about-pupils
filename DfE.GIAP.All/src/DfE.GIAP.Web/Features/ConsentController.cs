@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Web.Constants;
+﻿using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.ViewModels;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Providers.Cookie;
+using DfE.GIAP.Web.Config;
 
 namespace DfE.GIAP.Web.Features;
 

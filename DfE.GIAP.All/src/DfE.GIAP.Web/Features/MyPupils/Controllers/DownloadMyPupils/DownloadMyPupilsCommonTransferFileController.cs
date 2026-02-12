@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
