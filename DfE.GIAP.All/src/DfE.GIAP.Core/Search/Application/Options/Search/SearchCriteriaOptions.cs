@@ -11,14 +11,8 @@ public sealed class SearchCriteriaOptions
     /// see documentation for details</a>
     /// </summary>
     public int SearchMode { get; set; }
-
-    [JsonProperty(nameof(SearchFields))]
     public List<string>? SearchFields { get; set; }
-
     public int Size { get; set; }
-
     public bool IncludeTotalCount { get; set; }
-
-    [JsonProperty(nameof(Facets))]
     public List<string>? Facets { get; set; }
 }
