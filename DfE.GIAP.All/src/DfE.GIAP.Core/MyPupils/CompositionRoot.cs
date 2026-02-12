@@ -58,7 +58,7 @@ public static class CompositionRoot
             .AddScoped<IMyPupilsReadOnlyRepository, CosmosDbMyPupilsReadOnlyRepository>()
             .AddScoped<IMyPupilsWriteOnlyRepository, CosmosDbMyPupilsWriteOnlyRepository>()
             .AddSingleton<IMapper<MyPupilsAggregate, MyPupilsDocumentDto>, MyPupilsAggregateToMyPupilsDocumentDtoMapper>();
-            
+
         services.TryAddScoped<IQueryMyPupilsPort, QueryMyPupilsSearchAdaptor>();
         services.TryAddSingleton<IMapper<NationalPupilDatabaseLearner, Pupil>, NationalPupilDatabaseLearnerToPupilMapper>();
         services.TryAddSingleton<IMapper<PupilPremiumLearner, Pupil>, PupilPremiumLearnerToPupilMapper>();

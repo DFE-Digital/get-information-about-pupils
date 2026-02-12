@@ -17,7 +17,7 @@ public sealed class AggregatePupilsForMyPupilsApplicationServiceTests
     public void Constuctor_Throws_When_QueryPort_Is_Null()
     {
         // Arrange
-        
+
         Func<AggregatePupilsForMyPupilsApplicationService> construct = () =>
             new(
                 queryMyPupilsPort: null!,
@@ -163,16 +163,16 @@ public sealed class AggregatePupilsForMyPupilsApplicationServiceTests
         AggregatePupilsForMyPupilsApplicationService sut =
             new(queryPort.Object, order.Object, paginate.Object);
 
-        UniquePupilNumbers requestUpns = 
+        UniquePupilNumbers requestUpns =
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(3));
-        
+
         CancellationTokenSource cts = new();
 
         // Act
         IEnumerable<Pupil> result = await sut.GetPupilsAsync(
-            uniquePupilNumbers: requestUpns, 
-            query: null, 
+            uniquePupilNumbers: requestUpns,
+            query: null,
             ctx: cts.Token);
 
         // Assert
@@ -233,7 +233,7 @@ public sealed class AggregatePupilsForMyPupilsApplicationServiceTests
         AggregatePupilsForMyPupilsApplicationService sut =
             new(queryPort.Object, order.Object, paginate.Object);
 
-        UniquePupilNumbers request = 
+        UniquePupilNumbers request =
             UniquePupilNumbers.Create(
                 UniquePupilNumberTestDoubles.Generate(6));
 

@@ -40,7 +40,7 @@ internal sealed class AggregatePupilsForMyPupilsApplicationService : IAggregateP
             return [];
         }
 
-        IEnumerable<Pupil> allPupils = 
+        IEnumerable<Pupil> allPupils =
             await _queryMyPupilsPort.QueryAsync(uniquePupilNumbers, ctx);
 
 
