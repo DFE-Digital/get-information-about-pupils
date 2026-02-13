@@ -44,7 +44,7 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
         ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
         _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
     }
-    
+
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [ValidateAntiForgeryToken]
@@ -54,9 +54,9 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
     {
         query ??= new();
 
-        List<string> updatedPupils = 
+        List<string> updatedPupils =
             await _upsertSelectedPupilsPresentationService.UpsertAsync(
-                userId: User.GetUserId(), 
+                userId: User.GetUserId(),
                 selectionsDto);
 
         if (updatedPupils.Count == 0)

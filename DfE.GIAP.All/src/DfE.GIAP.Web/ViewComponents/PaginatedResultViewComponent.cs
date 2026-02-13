@@ -53,7 +53,7 @@ public class PaginatedResultViewComponent : ViewComponent
 
     private List<int> GetAvailablePages(int numberOfPages, int pageNumber)
     {
-        var available = new List<int>();
+        List<int> available = new List<int>();
 
         if (numberOfPages <= 5)
         {

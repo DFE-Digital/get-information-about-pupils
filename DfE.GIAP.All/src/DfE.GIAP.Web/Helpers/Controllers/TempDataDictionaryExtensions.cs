@@ -33,7 +33,8 @@ public static class TempDataDictionaryExtensions
     {
         TViewModel viewModel = default;
 
-        if (HasTempDataValue(tempData, persistenceKey)){
+        if (HasTempDataValue(tempData, persistenceKey))
+        {
             viewModel = tempData[persistenceKey] as TViewModel;
             SetRequestPersistence(tempData, keepTempDataBetweenRequests);
         }

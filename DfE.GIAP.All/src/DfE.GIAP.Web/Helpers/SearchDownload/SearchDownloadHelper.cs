@@ -11,7 +11,7 @@ public static class SearchDownloadHelper
     /// </summary>
     public static IActionResult DownloadFile(ReturnFile downloadFile)
     {
-        string contentType = 
+        string contentType =
             downloadFile.FileType == FileType.ZipFile
                 ? FileType.ZipContentType
                 : $"text/{downloadFile.FileType}";

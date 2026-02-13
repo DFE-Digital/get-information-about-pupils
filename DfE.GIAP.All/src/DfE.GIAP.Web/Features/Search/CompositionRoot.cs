@@ -40,7 +40,7 @@ public static class CompositionRoot
             .AddNationalPupilDatabaseSearches()
             .AddPupilPremiumSearches()
             .AddFurtherEducationSearches();
-            
+
         return services;
     }
 

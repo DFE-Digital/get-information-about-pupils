@@ -512,7 +512,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         GetPersistedSexFiltersForViewModel(model);
         model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
         model.LearnerNumberLabel = LearnerNumberLabel;
-        
+
         if (resetSelection || searchByRemove != null)
         {
             _selectionManager.Clear();
@@ -633,7 +633,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         {
             model.SortDirection = HttpContext.Session.GetString(SortDirectionKey);
         }
-            
+
         if (HttpContext.Session.Keys.Contains(SortFieldKey))
         {
             model.SortField = HttpContext.Session.GetString(SortFieldKey);
@@ -819,7 +819,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         return currentFilters;
     }
 
-        private static void PopulatePageText(LearnerTextSearchViewModel model)
+    private static void PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
         model.ShowMiddleNames = true;

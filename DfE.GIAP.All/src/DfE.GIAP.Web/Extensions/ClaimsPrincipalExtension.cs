@@ -65,9 +65,9 @@ public static class ClaimsPrincipalExtension
     {
         if (principal.IsOrganisationEstablishment())
         {
-            var highAge = principal.GetClaimValue(AuthClaimTypes.OrganisationHighAge);
+            string highAge = principal.GetClaimValue(AuthClaimTypes.OrganisationHighAge);
 
-            if (int.TryParse(highAge, out var age) && age >= 14)
+            if (int.TryParse(highAge, out int age) && age >= 14)
             {
                 return true;
             }
@@ -80,7 +80,7 @@ public static class ClaimsPrincipalExtension
     {
         if (principal.IsOrganisationEstablishment())
         {
-            var establishmentTypeId = principal.GetClaimValue(AuthClaimTypes.OrganisationEstablishmentTypeId);
+            string establishmentTypeId = principal.GetClaimValue(AuthClaimTypes.OrganisationEstablishmentTypeId);
 
             return establishmentTypeId == EstablishmentType.FurtherEducation ||
                    establishmentTypeId == EstablishmentType.FurtherEducationString;
@@ -216,7 +216,7 @@ public static class ClaimsPrincipalExtension
 
     public static List<string> GetAcademyListForUser(this ClaimsPrincipal principal)
     {
-        var academyList = new List<string>();
+        List<string> academyList = new List<string>();
 
         if (principal.IsAdmin())
         {

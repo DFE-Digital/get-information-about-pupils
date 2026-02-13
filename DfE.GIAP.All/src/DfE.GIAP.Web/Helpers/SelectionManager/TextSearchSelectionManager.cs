@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Helpers.SelectionManager;
 
@@ -14,16 +14,16 @@ public class TextSearchSelectionManager : ITextSearchSelectionManager
     {
         this.context = contextAccessor.HttpContext;
     }
-  
+
     public void Add(string selectedLearnerNumber)
     {
-        var inSession = GetSelectedFromSession();
+        string inSession = GetSelectedFromSession();
 
         if (!inSession.Contains(selectedLearnerNumber))
         {
-            inSession= selectedLearnerNumber;
+            inSession = selectedLearnerNumber;
         }
-        
+
         UpdateSession(inSession);
     }
 
@@ -48,6 +48,6 @@ public class TextSearchSelectionManager : ITextSearchSelectionManager
     private void UpdateSession(string selected)
     {
         context.Session.SetString(SelectedKey, JsonConvert.SerializeObject(selected));
-    }   
- 
+    }
+
 }

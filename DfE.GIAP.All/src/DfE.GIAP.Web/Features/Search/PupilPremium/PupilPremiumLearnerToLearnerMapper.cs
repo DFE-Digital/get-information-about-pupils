@@ -22,7 +22,7 @@ internal sealed class PupilPremiumLearnerToLearnerMapper : IMapper<PupilPremiumL
 
             DOB = input.Characteristics.BirthDate,
 
-            LocalAuthority = input.LocalAuthority.Code.ToString()            
+            LocalAuthority = input.LocalAuthority.Code.ToString()
         };
 
         return learner;

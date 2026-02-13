@@ -17,7 +17,7 @@ public static class PupilHelper
         if (selectedPupils is null || selectedPupils.Length < 1)
             return false;
 
-        foreach (var item in selectedPupils.ToList())
+        foreach (string item in selectedPupils.ToList())
         {
             if (item.Contains(Global.EncodedSuffixMarker))
             {
@@ -35,9 +35,9 @@ public static class PupilHelper
         if (modelState.ErrorCount == 0)
             return errorMessage;
 
-        foreach (var state in modelState.Values)
+        foreach (ModelStateEntry state in modelState.Values)
         {
-            foreach (var error in state.Errors)
+            foreach (ModelError error in state.Errors)
             {
                 if (error.ErrorMessage.Contains("<span style='display:none'>1</span>")
                     || error.ErrorMessage.Contains("You have not entered any UPNs"))
@@ -74,9 +74,9 @@ public static class PupilHelper
         if (modelState.ErrorCount == 0)
             return errorMessage;
 
-        foreach (var state in modelState.Values)
+        foreach (ModelStateEntry state in modelState.Values)
         {
-            foreach (var error in state.Errors)
+            foreach (ModelError error in state.Errors)
             {
                 if (error.ErrorMessage.Contains("<span style='display:none'>1</span>")
                     || error.ErrorMessage.Contains("You have not entered any ULNs"))
@@ -111,7 +111,7 @@ public static class PupilHelper
 
     public static void ConvertFilterNameToCustomDOBFilterText(string dobValue, out int day, out int month, out int year)
     {
-        var dobParts = dobValue.Split("/");
+        string[] dobParts = dobValue.Split("/");
         switch (dobParts.Length)
         {
             case 1:
@@ -137,7 +137,7 @@ public static class PupilHelper
     public static bool IsValidateDate(string tempDate)
     {
         DateTime fromDateValue;
-        var formats = new[] { "dd/MM/yyyy", "yyyy-MM-dd" };
+        string[] formats = new[] { "dd/MM/yyyy", "yyyy-MM-dd" };
         if (DateTime.TryParseExact(tempDate, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out fromDateValue))
         {
             return true;

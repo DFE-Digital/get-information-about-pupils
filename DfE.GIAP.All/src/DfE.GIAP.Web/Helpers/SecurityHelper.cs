@@ -11,7 +11,7 @@ public static class SecurityHelper
     /// <returns>Cleaned text</returns>
     public static string SanitizeText(string text)
     {
-        var sanitizer = new HtmlSanitizer();
+        HtmlSanitizer sanitizer = new HtmlSanitizer();
         sanitizer.AllowedAttributes.Add("class");
         return sanitizer.Sanitize(text);
     }

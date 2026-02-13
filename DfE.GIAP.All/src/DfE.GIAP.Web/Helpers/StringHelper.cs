@@ -14,7 +14,7 @@ public static class StringHelper
     public static string ToSearchText(this string upns)
     {
         if (string.IsNullOrEmpty(upns)) return null;
-        var upnString = upns.Replace("\r", string.Empty)
+        string upnString = upns.Replace("\r", string.Empty)
                            .Trim()
                            .Replace("\n", ",");
         return upnString;

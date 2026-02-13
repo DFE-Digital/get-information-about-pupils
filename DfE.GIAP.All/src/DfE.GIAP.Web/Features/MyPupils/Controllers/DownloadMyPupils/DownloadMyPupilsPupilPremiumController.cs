@@ -28,7 +28,7 @@ public class DownloadMyPupilsPupilPremiumController : Controller
         ArgumentNullException.ThrowIfNull(myPupilsLogSink);
         _myPupilsLogSink = myPupilsLogSink;
 
-        
+
         ArgumentNullException.ThrowIfNull(downloadPupilPremiumDataForPupilsService);
         _downloadPupilPremiumDataForPupilsService = downloadPupilPremiumDataForPupilsService;
 

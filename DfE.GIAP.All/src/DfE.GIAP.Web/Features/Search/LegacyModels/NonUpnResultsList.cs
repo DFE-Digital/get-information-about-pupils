@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Search.LegacyModels;
 
