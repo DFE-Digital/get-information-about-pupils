@@ -47,7 +47,7 @@ public class PaginatedResultsViewComponentTests
         ViewViewComponentResult viewComponentResult = Assert.IsType<ViewViewComponentResult>(result);
         Assert.NotNull(viewComponentResult.ViewData);
 
-        PaginatedResultModel model = Assert.IsType<PaginatedResultModel>(viewComponentResult.ViewData.Model);                
+        PaginatedResultModel model = Assert.IsType<PaginatedResultModel>(viewComponentResult.ViewData.Model);
         Assert.Equal(learners, model.Learners);
         Assert.Equal(pageLearnerNumbers, model.PageLearnerNumbers);
         Assert.Equal(showMiddleNames, model.ShowMiddleNames);

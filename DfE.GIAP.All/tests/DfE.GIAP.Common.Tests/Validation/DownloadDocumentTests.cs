@@ -9,10 +9,10 @@ public class DownloadDocumentTests
 {
     [Theory]
     [InlineData(DownloadDataType.EYFSP, 2, 15)]
-    [InlineData(DownloadDataType.EYFSP,10,17)]
+    [InlineData(DownloadDataType.EYFSP, 10, 17)]
     public void EarlyYearsFoundationStagePupil_Validation_Should_Pass(DownloadDataType type, int statutoryLowAge, int statutoryHighAge)
     {
-        bool result = DownloadValidation.ValidateDownloadDataType( type, statutoryLowAge,  statutoryHighAge);
+        bool result = DownloadValidation.ValidateDownloadDataType(type, statutoryLowAge, statutoryHighAge);
         Assert.True(result);
     }
 

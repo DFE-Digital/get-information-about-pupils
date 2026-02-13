@@ -263,7 +263,7 @@ public sealed class MyPupilsTempDataMessageSinkTests
         string? capturedJson = null;
 
         Mock<ITempDataDictionary> tempDataMock = new();
-        
+
         tempDataMock.Setup(
             (tempData) =>
                 tempData.Peek(options.Value.MessagesKey)).Returns(stored);
@@ -371,7 +371,7 @@ public sealed class MyPupilsTempDataMessageSinkTests
         Mock<IJsonSerializer> jsonSerializerMock = new();
 
         const string serialisedMessagesJsonStub = @"Test json";
-        
+
         object? capturedSerializedMessages = null;
         jsonSerializerMock
             .Setup((serialiser) => serialiser.Serialize(It.IsAny<object>()))

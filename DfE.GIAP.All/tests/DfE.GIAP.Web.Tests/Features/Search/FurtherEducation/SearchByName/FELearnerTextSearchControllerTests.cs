@@ -70,17 +70,17 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
 
         _sortOrderFactoryMock.Setup(
             t => t.Create(
-                    It.IsAny<SortOptions>(), 
+                    It.IsAny<SortOptions>(),
                     It.IsAny<(string?, string?)>()))
                 .Returns(stubSortOrder);
 
         _searchIndexOptionsProviderMock.Setup(
-            indexOptionsProvider => 
+            indexOptionsProvider =>
                 indexOptionsProvider.GetOptions(It.IsAny<string>()))
                     .Returns(new SearchIndexOptions());
 
         _criteriaOptionsToCriteriaMock.Setup(
-            criteriaOptionsMapper => 
+            criteriaOptionsMapper =>
                 criteriaOptionsMapper.Map(
                     It.IsAny<SearchCriteriaOptions>()))
                         .Returns(SearchCriteriaTestDouble.Stub());

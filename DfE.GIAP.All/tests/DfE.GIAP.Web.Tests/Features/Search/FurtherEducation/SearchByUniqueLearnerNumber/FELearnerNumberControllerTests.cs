@@ -33,21 +33,21 @@ namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByUniqueLear
 public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<FELearnerNumberController> _mockLogger = Substitute.For<ILogger<FELearnerNumberController>>();
-    
+
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
-    
+
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
-    
+
     private readonly IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse> _mockUseCase =
         Substitute.For<IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse>>();
 
     private AzureAppSettings _mockAppSettings = new();
-    
+
     private readonly IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _mockLearnerNumberSearchResponseToViewModelMapper =
         Substitute.For<IMapper<FurtherEducationLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>>();
-    
+
     private readonly SessionFake _mockSession = new();
-    
+
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
     private readonly Mock<ISearchIndexOptionsProvider> _searchindexOptionsProvider = new();

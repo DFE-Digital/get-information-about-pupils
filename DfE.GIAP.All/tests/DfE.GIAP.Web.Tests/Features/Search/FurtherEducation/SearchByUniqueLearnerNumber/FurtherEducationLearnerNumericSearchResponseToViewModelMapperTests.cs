@@ -41,7 +41,7 @@ public class FurtherEducationLearnerNumericSearchResponseToViewModelMapperTests
 
         FurtherEducationSearchByUniqueLearnerNumberResponse response =
             FurtherEducationSearchByUniqueLearnerNumberTestDouble.Create(
-                learners: new FurtherEducationLearners([applicationModelLearners[0]]), 
+                learners: new FurtherEducationLearners([applicationModelLearners[0]]),
                 totalResults: 1);
 
         Mock<IMapper<FurtherEducationLearner, Learner>> learnerMapper =

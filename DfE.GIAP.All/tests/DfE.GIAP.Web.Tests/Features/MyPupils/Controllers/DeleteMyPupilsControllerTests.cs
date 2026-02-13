@@ -157,12 +157,12 @@ public sealed class DeleteMyPupilsControllerTests
             .Setup(provider => provider.GetPupilSelections())
             .Returns(stateStub);
 
-            DeleteMyPupilsController sut = new(
-            logger: loggerFake,
-            messageSink: messageSinkMock.Object,
-            deleteService: deleteServiceMock.Object,
-            pupilSelectionStateProvider: providerMock.Object,
-            messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
+        DeleteMyPupilsController sut = new(
+        logger: loggerFake,
+        messageSink: messageSinkMock.Object,
+        deleteService: deleteServiceMock.Object,
+        pupilSelectionStateProvider: providerMock.Object,
+        messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
 
         // Act
         IActionResult response =

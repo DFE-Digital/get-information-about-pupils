@@ -5,7 +5,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueL
 namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
 public static class FurtherEducationSearchByUniqueLearnerNumberTestDouble
 {
-    
+
     public static FurtherEducationSearchByUniqueLearnerNumberResponse Create(
         FurtherEducationLearners learners,
         int? totalResults = null) =>
