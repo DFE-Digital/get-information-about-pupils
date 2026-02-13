@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Web.Extensions;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Web.Extensions;
 
 namespace DfE.GIAP.Web.Features.Auth.Application.PostTokenHandlers;
 

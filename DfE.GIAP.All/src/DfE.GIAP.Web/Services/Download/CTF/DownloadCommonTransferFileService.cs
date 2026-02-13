@@ -32,8 +32,8 @@ public class DownloadCommonTransferFileService : IDownloadCommonTransferFileServ
                                                         AzureFunctionHeaderDetails azureFunctionHeaderDetails,
                                                         ReturnRoute returnRoute)
     {
-        var getCTFFile = _azureAppSettings.DownloadCommonTransferFileUrl;
-        var requestBody = new CommonTransferFile
+        string getCTFFile = _azureAppSettings.DownloadCommonTransferFileUrl;
+        CommonTransferFile requestBody = new CommonTransferFile
         {
             UPNs = upns,
             EstablishmentNumber = establishmentNumber,

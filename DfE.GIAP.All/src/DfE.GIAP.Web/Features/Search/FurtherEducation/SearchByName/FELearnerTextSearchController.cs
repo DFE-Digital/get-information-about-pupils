@@ -64,7 +64,7 @@ public class FELearnerTextSearchController : Controller
     private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     private readonly IFiltersRequestFactory _filtersRequestFactory;
-    
+
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
 
     private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
@@ -685,10 +685,10 @@ public class FELearnerTextSearchController : Controller
 
         SortOrder sortOrder =
             _sortOrderFactory.Create(
-                options: indexOptions.SortOptions, 
+                options: indexOptions.SortOptions,
                 sort: (sortField, sortDirection));
 
-        
+
         FurtherEducationSearchByNameResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new FurtherEducationSearchByNameRequest()

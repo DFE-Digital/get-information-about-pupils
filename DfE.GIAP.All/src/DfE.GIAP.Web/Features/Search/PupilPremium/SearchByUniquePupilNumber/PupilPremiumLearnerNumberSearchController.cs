@@ -93,7 +93,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
         _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
-        
+
         ArgumentNullException.ThrowIfNull(sortOrderFactory);
         _sortOrderFactory = sortOrderFactory;
 
@@ -396,7 +396,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "pupil-premium-upn");
 
         SortOrder sortOrder = _sortOrderFactory.Create(
-            options.SortOptions, 
+            options.SortOptions,
             sort: (model.SortField, model.SortDirection));
 
         PupilPremiumSearchByUniquePupilNumberResponse searchResponse = await _searchUseCase.HandleRequestAsync(

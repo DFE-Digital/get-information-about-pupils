@@ -37,7 +37,7 @@ public static class CompositionRoot
         services
             .AddSearchOptions(configuration)
             .AddMyPupilsCore();
-           
+
         services
             .AddMyPupilsSelectionStateHandlers()
             .AddMyPupilsPresentationServices();
@@ -60,7 +60,7 @@ public static class CompositionRoot
             .AddScoped<IGetSelectedPupilsUniquePupilNumbersPresentationService, GetSelectedPupilsUniquePupilNumbersPresentationService>()
             .AddScoped<IUpsertSelectedPupilsIdentifiersPresentationService, UpsertSelectedPupilsPresentationService>()
             .AddScoped<IDeleteMyPupilsPresentationService, DeleteMyPupilsPresentationService>();
-            
+
         // MessagingSink
         services
             .AddScoped<IMyPupilsMessageSink, MyPupilsTempDataMessageSink>()
@@ -117,7 +117,7 @@ public static class CompositionRoot
 
                 return handlerChainBuilder.Build();
             });
-            
+
         return services;
     }
 }

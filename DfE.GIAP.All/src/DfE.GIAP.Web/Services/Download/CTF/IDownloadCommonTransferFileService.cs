@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Domain.Models.Common;
 
 namespace DfE.GIAP.Web.Services.Download.CTF;
 

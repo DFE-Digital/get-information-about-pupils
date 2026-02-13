@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Common.Enums;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Common.Enums;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 

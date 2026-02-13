@@ -48,7 +48,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
 
         ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
         _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
-        
+
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
@@ -68,9 +68,9 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> GetDownloadNpdOptions(MyPupilsPupilSelectionsRequestDto selectionsDto, MyPupilsQueryRequestDto query)
     {
-        List<string> updatedPupils = 
+        List<string> updatedPupils =
             await _upsertSelectedPupilsPresentationService.UpsertAsync(
-                userId: User.GetUserId(), 
+                userId: User.GetUserId(),
                 selectionsDto);
 
         if (updatedPupils.Count == 0)
@@ -162,7 +162,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
             TempData["ErrorDetails"] = model.ErrorDetails;
             return await GetDownloadNpdOptions(model.SelectedPupils);
         }
-        
+
         model.ErrorDetails = Messages.Search.Errors.SelectFileType;
         TempData["ErrorDetails"] = model.ErrorDetails;
         return await GetDownloadNpdOptions(model.SelectedPupils);

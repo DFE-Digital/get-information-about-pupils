@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Domain.Models.Common;
-using System.Net;
+﻿using System.Net;
+using DfE.GIAP.Domain.Models.Common;
 
 namespace DfE.GIAP.Web.Services.ApiProcessor;
 

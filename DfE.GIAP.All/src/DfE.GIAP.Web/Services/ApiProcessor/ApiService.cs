@@ -23,15 +23,15 @@ public class ApiService : IApiService
         where TApiModel : class
     {
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
 
         request.Headers.Accept.Clear();
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
 
         try
         {
-            var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-            var responseString = response.Content != null ?
+            HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
+            string responseString = response.Content != null ?
                 await response.Content.ReadAsStringAsync().ConfigureAwait(false) : string.Empty;
 
             if (response.StatusCode != HttpStatusCode.NotFound)
@@ -43,7 +43,7 @@ public class ApiService : IApiService
         }
         catch (Exception ex)
         {
-            var sanitizedUrl = url.AbsoluteUri.Replace("\n", "").Replace("\r", "");
+            string sanitizedUrl = url.AbsoluteUri.Replace("\n", "").Replace("\r", "");
             _logger.LogError(ex, $"Exception getting data '{ex.Message}' from {sanitizedUrl}.");
         }
 
@@ -62,7 +62,7 @@ public class ApiService : IApiService
         HttpResponseMessage response = null;
         try
         {
-            using var request = new HttpRequestMessage
+            using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 RequestUri = url,
@@ -91,7 +91,7 @@ public class ApiService : IApiService
         HttpResponseMessage response = null;
         try
         {
-            using var request = new HttpRequestMessage
+            using HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
                 RequestUri = url,
@@ -110,8 +110,8 @@ public class ApiService : IApiService
                 response.EnsureSuccessStatusCode();
             }
 
-            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var responseModel = JsonConvert.DeserializeObject<TResponseModel>(responseContent);
+            string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            TResponseModel responseModel = JsonConvert.DeserializeObject<TResponseModel>(responseContent);
             return responseModel;
         }
         catch (Exception ex)

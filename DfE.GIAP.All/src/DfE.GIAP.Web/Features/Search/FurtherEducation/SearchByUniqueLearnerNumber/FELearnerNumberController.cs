@@ -50,7 +50,7 @@ public class FELearnerNumberController : Controller
     private readonly IUseCase<
         GetAvailableDatasetsForPupilsRequest,
         GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
-    
+
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
 
     private readonly IEventLogger _eventLogger;
@@ -447,7 +447,7 @@ public class FELearnerNumberController : Controller
 
         SearchIndexOptions indexOptions = _searchIndexOptionsProvider.GetOptions("further-education-uln");
 
-        SortOrder sortOrder = 
+        SortOrder sortOrder =
             _sortOrderFactory.Create(
                 options: indexOptions.SortOptions, sort: (model.SortField, model.SortDirection));
 

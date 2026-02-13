@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Helpers.SelectionManager;
 
@@ -20,12 +20,12 @@ public class NotSelectedManager : ISelectionManager
     {
         this.context = contextAccessor.HttpContext;
     }
-  
+
     public void AddAll(IEnumerable<string> upns)
     {
         // if it exists, remove it.
-        var inSession = GetFromSession();
-        foreach (var upn in upns)
+        HashSet<string> inSession = GetFromSession();
+        foreach (string upn in upns)
         {
             if (inSession.Contains(upn))
             {
@@ -37,8 +37,8 @@ public class NotSelectedManager : ISelectionManager
 
     public void RemoveAll(IEnumerable<string> upns)
     {
-        var inSession = GetFromSession();
-        foreach (var upn in upns)
+        HashSet<string> inSession = GetFromSession();
+        foreach (string upn in upns)
         {
             if (!inSession.Contains(upn))
             {
@@ -59,15 +59,15 @@ public class NotSelectedManager : ISelectionManager
     public HashSet<string> GetSelected(string[] available)
     {
         // compare available and remove everything that exists in session..
-        var inSession = GetFromSession();
+        HashSet<string> inSession = GetFromSession();
         return available.Except(inSession).ToHashSet<string>();
     }
 
     private void UpdateSession(HashSet<string> notSelected)
     {
         context.Session.SetString(NotSelectedKey, JsonConvert.SerializeObject(notSelected));
-    }   
-    
+    }
+
     private HashSet<string> GetFromSession()
     {
         if (context.Session.Keys.Contains(NotSelectedKey))

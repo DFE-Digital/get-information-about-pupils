@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Web.ViewModels.Search;
-using DfE.GIAP.Web.Features.Search.LegacyModels;
+﻿using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
+using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Features.Search.Shared.Filters.Handlers;
 

@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Common.Enums;
+﻿using System.Collections.Generic;
+using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace DfE.GIAP.Web.ViewComponents;
 

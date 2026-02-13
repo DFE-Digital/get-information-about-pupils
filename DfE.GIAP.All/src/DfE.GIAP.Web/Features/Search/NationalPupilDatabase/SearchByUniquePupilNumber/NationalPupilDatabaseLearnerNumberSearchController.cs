@@ -534,10 +534,10 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "npd-upn");
 
         SortOrder sortOrder = _sortOrderFactory.Create(
-            options: options.SortOptions, 
+            options: options.SortOptions,
             sort: (model.SortField, model.SortDirection));
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse = 
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
                 {
