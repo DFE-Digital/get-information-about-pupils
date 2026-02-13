@@ -1,22 +1,20 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace DfE.GIAP.Domain.Models.Common
+namespace DfE.GIAP.Domain.Models.Common;
+
+[ExcludeFromCodeCoverage]
+public class AzureFunctionHeaderDetails
 {
-    [ExcludeFromCodeCoverage]
-    public class AzureFunctionHeaderDetails
+    public string ClientId { get; set; }
+
+    public string SessionId { get; set; }
+
+    public static AzureFunctionHeaderDetails Create(string clientId, string sessionId)
     {
-        public string ClientId { get; set; }
-
-        public string SessionId { get; set; }
-
-        public static AzureFunctionHeaderDetails Create(string clientId, string sessionId)
+        return new AzureFunctionHeaderDetails
         {
-            return new AzureFunctionHeaderDetails
-            {
-                ClientId = clientId,
-                SessionId = sessionId
-            };
-        }
+            ClientId = clientId,
+            SessionId = sessionId
+        };
     }
-
 }
