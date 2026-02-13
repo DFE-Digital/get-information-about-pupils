@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase;

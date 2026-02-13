@@ -4,10 +4,10 @@ using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Features.Search.FurtherEducation;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
@@ -40,11 +40,9 @@ public static class CompositionRoot
             .AddNationalPupilDatabaseSearches()
             .AddPupilPremiumSearches()
             .AddFurtherEducationSearches();
-            
+
         return services;
     }
-
-
 
     private static IServiceCollection AddFurtherEducationSearches(this IServiceCollection services)
     {

@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Domain.Search.Learner;
+﻿using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.ViewComponents;
@@ -53,7 +53,7 @@ public class PaginatedResultViewComponent : ViewComponent
 
     private List<int> GetAvailablePages(int numberOfPages, int pageNumber)
     {
-        var available = new List<int>();
+        List<int> available = new List<int>();
 
         if (numberOfPages <= 5)
         {

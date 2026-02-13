@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Domain.Models.Common;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
@@ -44,7 +44,7 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
         ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
         _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
     }
-    
+
     [HttpPost]
     [Route(Routes.DownloadCommonTransferFile.DownloadCommonTransferFileAction)]
     [ValidateAntiForgeryToken]
@@ -54,9 +54,9 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
     {
         query ??= new();
 
-        List<string> updatedPupils = 
+        List<string> updatedPupils =
             await _upsertSelectedPupilsPresentationService.UpsertAsync(
-                userId: User.GetUserId(), 
+                userId: User.GetUserId(),
                 selectionsDto);
 
         if (updatedPupils.Count == 0)

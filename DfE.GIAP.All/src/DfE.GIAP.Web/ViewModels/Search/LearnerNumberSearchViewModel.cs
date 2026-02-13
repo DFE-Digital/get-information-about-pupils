@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Common.Validation;
-using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
+using DfE.GIAP.Web.Helpers;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 

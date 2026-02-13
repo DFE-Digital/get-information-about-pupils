@@ -1,21 +1,20 @@
-﻿using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
-namespace DfE.GIAP.Domain.Models.Common
+namespace DfE.GIAP.Domain.Models.Common;
+
+[ExcludeFromCodeCoverage]
+public class DownloadRequest
 {
-    [ExcludeFromCodeCoverage]
-    public class DownloadRequest
-    {
-        [JsonProperty("UPNs")]
-        public string[] UPNs { get; set; }
+    [JsonProperty("UPNs")]
+    public string[] UPNs { get; set; }
 
-        public string[] SortOrder { get; set; }
+    public string[] SortOrder { get; set; }
 
-        [JsonProperty("DataTypes")]
-        public string[] DataTypes { get; set; }
+    [JsonProperty("DataTypes")]
+    public string[] DataTypes { get; set; }
 
-        public bool ConfirmationGiven { get; set; }
-        public string FileType { get; set; }
-        public bool CheckOnly { get; set; }
-    }
+    public bool ConfirmationGiven { get; set; }
+    public string FileType { get; set; }
+    public bool CheckOnly { get; set; }
 }

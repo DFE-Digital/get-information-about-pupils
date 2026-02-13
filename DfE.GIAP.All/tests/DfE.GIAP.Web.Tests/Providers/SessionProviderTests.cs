@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Web.Providers.Session;
+﻿using System.Text;
+using System.Text.Json;
+using DfE.GIAP.Web.Providers.Session;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using System.Text;
-using System.Text.Json;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Providers;

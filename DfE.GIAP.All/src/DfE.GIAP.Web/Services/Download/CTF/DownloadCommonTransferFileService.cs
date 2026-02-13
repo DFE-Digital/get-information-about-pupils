@@ -1,11 +1,10 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Helpers;
+﻿using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Domain.Models.Download;
-using Microsoft.Extensions.Options;
-using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Services.ApiProcessor;
+using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Services.Download.CTF;
 
@@ -33,8 +32,8 @@ public class DownloadCommonTransferFileService : IDownloadCommonTransferFileServ
                                                         AzureFunctionHeaderDetails azureFunctionHeaderDetails,
                                                         ReturnRoute returnRoute)
     {
-        var getCTFFile = _azureAppSettings.DownloadCommonTransferFileUrl;
-        var requestBody = new CommonTransferFile
+        string getCTFFile = _azureAppSettings.DownloadCommonTransferFileUrl;
+        CommonTransferFile requestBody = new CommonTransferFile
         {
             UPNs = upns,
             EstablishmentNumber = establishmentNumber,

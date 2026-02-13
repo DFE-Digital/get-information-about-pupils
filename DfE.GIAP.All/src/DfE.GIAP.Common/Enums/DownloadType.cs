@@ -1,10 +1,9 @@
-﻿namespace DfE.GIAP.Common.Enums
+﻿namespace DfE.GIAP.Common.Enums;
+
+public enum DownloadType
 {
-    public enum DownloadType
-    {
-        NPD,
-        CTF,
-        PupilPremium,
-        FurtherEducation
-    }
+    NPD,
+    CTF,
+    PupilPremium,
+    FurtherEducation
 }

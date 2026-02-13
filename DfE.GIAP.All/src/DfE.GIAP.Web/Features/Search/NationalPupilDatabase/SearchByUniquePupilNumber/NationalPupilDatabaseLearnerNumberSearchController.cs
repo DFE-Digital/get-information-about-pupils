@@ -1,25 +1,22 @@
 ﻿using System.Text.RegularExpressions;
-using DfE.GIAP.Common.AppSettings;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
-using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -537,10 +534,10 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "npd-upn");
 
         SortOrder sortOrder = _sortOrderFactory.Create(
-            options: options.SortOptions, 
+            options: options.SortOptions,
             sort: (model.SortField, model.SortDirection));
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse = 
+        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
                 {

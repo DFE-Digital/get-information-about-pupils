@@ -76,7 +76,7 @@ public static class Routes
 
         public const string DownloadMyPupilsPupilPremiumControllerName = "DownloadMyPupilsPupilPremium";
         public const string DownloadMyPupilsPupilPremiumControllerAction = "Index";
-        
+
         public const string MyPupilsView = "~/Views/MyPupilList/Index.cshtml";
     }
 

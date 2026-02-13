@@ -1,9 +1,6 @@
 ﻿using System.Text.Json;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
-using DfE.GIAP.Common.Helpers.Rbac;
-using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -11,12 +8,14 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
@@ -513,7 +512,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         GetPersistedSexFiltersForViewModel(model);
         model.SearchText = SecurityHelper.SanitizeText(model.SearchText);
         model.LearnerNumberLabel = LearnerNumberLabel;
-        
+
         if (resetSelection || searchByRemove != null)
         {
             _selectionManager.Clear();
@@ -634,7 +633,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         {
             model.SortDirection = HttpContext.Session.GetString(SortDirectionKey);
         }
-            
+
         if (HttpContext.Session.Keys.Contains(SortFieldKey))
         {
             model.SortField = HttpContext.Session.GetString(SortFieldKey);
@@ -820,7 +819,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         return currentFilters;
     }
 
-        private static void PopulatePageText(LearnerTextSearchViewModel model)
+    private static void PopulatePageText(LearnerTextSearchViewModel model)
     {
         model.PageHeading = ApplicationLabels.SearchPupilPremiumWithOutUpnPageHeading;
         model.ShowMiddleNames = true;

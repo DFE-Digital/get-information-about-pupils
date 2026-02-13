@@ -255,6 +255,7 @@
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Change your cookie settings</h2>
             <form asp-controller="Cookies" asp-action="CookiePreferences" method="POST">
+                @Html.AntiForgeryToken();
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">

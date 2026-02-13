@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Core.Models.Search;
-using DfE.GIAP.Domain.Search.Learner;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Common.Enums;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 

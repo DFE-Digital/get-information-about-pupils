@@ -72,7 +72,7 @@ public sealed class AspNetCoreSessionQueryHandlerTests
     {
         // Arrange
         const string stubSessionObjectKey = "test-key";
-        
+
         Mock<ISession> sessionMock = ISessionTestDoubles.MockForTryGetValue(key: stubSessionObjectKey, true);
         Mock<IAspNetCoreSessionProvider> sessionProviderMock = IAspNetCoreSessionProviderTestDoubles.MockWithSession(sessionMock.Object);
 

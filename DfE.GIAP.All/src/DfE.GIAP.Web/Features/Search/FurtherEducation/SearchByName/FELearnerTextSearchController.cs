@@ -1,12 +1,10 @@
 ﻿using System.Text.Json;
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
@@ -14,6 +12,7 @@ using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
@@ -65,7 +64,7 @@ public class FELearnerTextSearchController : Controller
     private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     private readonly IFiltersRequestFactory _filtersRequestFactory;
-    
+
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
 
     private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
@@ -686,10 +685,10 @@ public class FELearnerTextSearchController : Controller
 
         SortOrder sortOrder =
             _sortOrderFactory.Create(
-                options: indexOptions.SortOptions, 
+                options: indexOptions.SortOptions,
                 sort: (sortField, sortDirection));
 
-        
+
         FurtherEducationSearchByNameResponse searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new FurtherEducationSearchByNameRequest()

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DfE.GIAP.Web.Providers.Cookie;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Xunit;
-using DfE.GIAP.Web.Providers.Cookie;
 
 namespace DfE.GIAP.Web.Tests.Providers;
 

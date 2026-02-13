@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Common.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DfE.GIAP.Web.Constants;
 
 namespace DfE.GIAP.Web.Helpers.PaginatedResultView;
 

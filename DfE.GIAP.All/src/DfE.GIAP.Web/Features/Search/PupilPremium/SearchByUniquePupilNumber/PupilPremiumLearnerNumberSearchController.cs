@@ -1,19 +1,17 @@
 ﻿using System.Text.RegularExpressions;
 using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
-using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
-using DfE.GIAP.Domain.Search.Learner;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
+using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Shared.Serializer;
@@ -95,7 +93,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
         _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
-        
+
         ArgumentNullException.ThrowIfNull(sortOrderFactory);
         _sortOrderFactory = sortOrderFactory;
 
@@ -398,7 +396,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         SearchIndexOptions options = _searchIndexOptionsProvider.GetOptions(key: "pupil-premium-upn");
 
         SortOrder sortOrder = _sortOrderFactory.Create(
-            options.SortOptions, 
+            options.SortOptions,
             sort: (model.SortField, model.SortDirection));
 
         PupilPremiumSearchByUniquePupilNumberResponse searchResponse = await _searchUseCase.HandleRequestAsync(

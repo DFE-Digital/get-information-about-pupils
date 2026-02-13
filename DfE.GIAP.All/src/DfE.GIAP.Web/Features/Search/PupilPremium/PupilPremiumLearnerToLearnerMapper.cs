@@ -1,5 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
-using DfE.GIAP.Domain.Search.Learner;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium;
 
@@ -22,7 +22,7 @@ internal sealed class PupilPremiumLearnerToLearnerMapper : IMapper<PupilPremiumL
 
             DOB = input.Characteristics.BirthDate,
 
-            LocalAuthority = input.LocalAuthority.Code.ToString()            
+            LocalAuthority = input.LocalAuthority.Code.ToString()
         };
 
         return learner;

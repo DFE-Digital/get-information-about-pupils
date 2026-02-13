@@ -6,6 +6,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
@@ -34,16 +35,16 @@ public class FurtherEducationLearnerNumericSearchResponseToViewModelMapperTests
             FakeFurtherEducationLearnerDataTestDouble.CreateFurtherEducationLearnerFake(faker)
         ];
 
-        List<Domain.Search.Learner.Learner> domainLearners = LearnerTestDouble.CreateLearnersStub(learnerFakes);
+        List<Learner> domainLearners = LearnerTestDouble.CreateLearnersStub(learnerFakes);
         List<FurtherEducationLearner> applicationModelLearners =
             FurtherEducationLearnerCollectionTestDouble.CreateLearnersStub(learnerFakes);
 
         FurtherEducationSearchByUniqueLearnerNumberResponse response =
             FurtherEducationSearchByUniqueLearnerNumberTestDouble.Create(
-                learners: new FurtherEducationLearners([applicationModelLearners[0]]), 
+                learners: new FurtherEducationLearners([applicationModelLearners[0]]),
                 totalResults: 1);
 
-        Mock<IMapper<FurtherEducationLearner, Domain.Search.Learner.Learner>> learnerMapper =
+        Mock<IMapper<FurtherEducationLearner, Learner>> learnerMapper =
             FurtherEducationLearnerMapperToLearnerTestDoubles.MockForMultiple(new[]
             {
                 (applicationModelLearners[0], domainLearners[0]),
@@ -64,7 +65,7 @@ public class FurtherEducationLearnerNumericSearchResponseToViewModelMapperTests
         LearnerNumberSearchViewModel result = mapper.Map(context);
 
         // assert
-        Domain.Search.Learner.Learner mappedLearner = result.Learners.Single();
+        Learner mappedLearner = result.Learners.Single();
         Assert.Equal(applicationModelLearners[0].Identifier.UniqueLearnerNumber.ToString().Trim(), mappedLearner.Id);
         Assert.Equal(1, result.Total);
     }

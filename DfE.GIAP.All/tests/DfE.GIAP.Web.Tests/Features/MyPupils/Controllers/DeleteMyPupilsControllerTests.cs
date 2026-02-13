@@ -5,7 +5,6 @@ using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.GetPupilSelections;
 using DfE.GIAP.Web.Features.MyPupils.Services.DeletePupils;
-using DfE.GIAP.Web.Tests.Controllers.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -158,12 +157,12 @@ public sealed class DeleteMyPupilsControllerTests
             .Setup(provider => provider.GetPupilSelections())
             .Returns(stateStub);
 
-            DeleteMyPupilsController sut = new(
-            logger: loggerFake,
-            messageSink: messageSinkMock.Object,
-            deleteService: deleteServiceMock.Object,
-            pupilSelectionStateProvider: providerMock.Object,
-            messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
+        DeleteMyPupilsController sut = new(
+        logger: loggerFake,
+        messageSink: messageSinkMock.Object,
+        deleteService: deleteServiceMock.Object,
+        pupilSelectionStateProvider: providerMock.Object,
+        messagingOptions: OptionsTestDoubles.Default<MyPupilsMessagingOptions>());
 
         // Act
         IActionResult response =

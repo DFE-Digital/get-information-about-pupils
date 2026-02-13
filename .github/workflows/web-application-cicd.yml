@@ -37,12 +37,6 @@ jobs:
       - name: Verify formatting
         run: |
           dotnet format ${{ env.SOLUTION_DIRECTORY }} \
-          --include \
-            ${{ env.SOLUTION_DIRECTORY }}/src/DfE.GIAP.Core/ \
-            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/ \
-            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.IntegrationTests/ \
-            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests/ \
-            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.SharedTests.Infrastructure/ \
             --verbosity detailed \
             --verify-no-changes
 

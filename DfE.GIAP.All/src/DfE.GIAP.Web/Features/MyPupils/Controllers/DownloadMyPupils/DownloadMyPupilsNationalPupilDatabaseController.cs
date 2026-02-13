@@ -1,17 +1,16 @@
-﻿using DfE.GIAP.Common.AppSettings;
-using DfE.GIAP.Common.Constants;
+﻿using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Common.Helpers;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
-using DfE.GIAP.Core.Models.Search;
+using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +48,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
 
         ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
         _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
-        
+
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
         _appSettings = azureAppSettings.Value;
@@ -69,9 +68,9 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> GetDownloadNpdOptions(MyPupilsPupilSelectionsRequestDto selectionsDto, MyPupilsQueryRequestDto query)
     {
-        List<string> updatedPupils = 
+        List<string> updatedPupils =
             await _upsertSelectedPupilsPresentationService.UpsertAsync(
-                userId: User.GetUserId(), 
+                userId: User.GetUserId(),
                 selectionsDto);
 
         if (updatedPupils.Count == 0)
@@ -163,7 +162,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
             TempData["ErrorDetails"] = model.ErrorDetails;
             return await GetDownloadNpdOptions(model.SelectedPupils);
         }
-        
+
         model.ErrorDetails = Messages.Search.Errors.SelectFileType;
         TempData["ErrorDetails"] = model.ErrorDetails;
         return await GetDownloadNpdOptions(model.SelectedPupils);
