@@ -1180,7 +1180,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
 
             });
 
-        string ? surnameFilter = null;
+        string? surnameFilter = null;
         string? middlenameFilter = null;
         string? forenameFilter = null;
         string? searchByRemove = null;

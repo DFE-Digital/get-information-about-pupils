@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Web.Features.Auth.Application.Claims;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using DfE.GIAP.Web.Features.Auth.Application.Claims;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 

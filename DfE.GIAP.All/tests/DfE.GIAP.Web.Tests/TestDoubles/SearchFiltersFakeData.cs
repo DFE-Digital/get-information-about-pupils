@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Web.Features.Search.LegacyModels;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 

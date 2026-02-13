@@ -123,25 +123,25 @@ public sealed class SearchDownloadHelperTests
             };
     }
 
-    
+
     private static readonly List<SearchDownloadDataType> _expectedAdminDataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    
+
     private static readonly List<SearchDownloadDataType> _expectedLADataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    
+
     private static readonly List<SearchDownloadDataType> _expectedMATAllAgesDataTypes =
        SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
             .Build();
 
-    
+
     private static readonly List<SearchDownloadDataType> _expected2to5DataTypes =
         SearchDownloadDataTypeListBuilder.Create()
             .WithDefaultSearchDownloadDataTypeList()
@@ -203,7 +203,7 @@ public sealed class SearchDownloadHelperTests
                 ])
             .Build();
 
-    
+
     private static readonly List<SearchDownloadDataType> _expectedFEDataTypes =
         [
             SearchDownloadDataTypeBuilder.Create()

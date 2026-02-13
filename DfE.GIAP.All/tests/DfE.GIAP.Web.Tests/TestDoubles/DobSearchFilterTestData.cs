@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Features.Search.LegacyModels;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 
-public class  DobSearchFilterTestData : IEnumerable<object[]>
+public class DobSearchFilterTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {

@@ -1,10 +1,10 @@
-﻿using DfE.GIAP.Web.Features.Search.LegacyModels;
+﻿using System;
+using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using NSubstitute;
-using System;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Helpers.Controllers;

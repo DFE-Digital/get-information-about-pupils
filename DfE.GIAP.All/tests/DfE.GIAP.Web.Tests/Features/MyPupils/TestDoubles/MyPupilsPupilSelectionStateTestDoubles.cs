@@ -13,7 +13,7 @@ public static class MyPupilsPupilSelectionStateTestDoubles
     {
         MyPupilsPupilSelectionState state = MyPupilsPupilSelectionState.CreateDefault();
 
-        if(mode == SelectionMode.All)
+        if (mode == SelectionMode.All)
         {
             state.SelectAll();
         }
