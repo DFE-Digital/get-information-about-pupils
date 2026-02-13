@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Common.Enums;
+﻿using System;
+using System.ComponentModel;
+using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Common.Validation;
 using DfE.GIAP.Web.Helpers;
-using System;
-using System.ComponentModel;
 using Xunit;
 
 namespace DfE.GIAP.Common.Tests.Helpers;
@@ -18,8 +18,8 @@ public sealed class StringHelperTests
     [Fact]
     public void FormatUpns_returns_array_if_upns_exist()
     {
-        var upnString = "123\r\n234\r\n345 \r";
-        var upnArray = upnString.FormatLearnerNumbers();
+        string upnString = "123\r\n234\r\n345 \r";
+        string[] upnArray = upnString.FormatLearnerNumbers();
         Assert.Equal("123", upnArray[0]);
         Assert.Equal("234", upnArray[1]);
         Assert.Equal("345", upnArray[2]);
