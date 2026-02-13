@@ -1,7 +1,4 @@
-﻿using System.Text;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java.DataTransferObjects;
-using Newtonsoft.Json;
+﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java.DataTransferObjects;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java;
 public sealed class WireMockJavaRemoteClient : IWireMockRemoteClient
@@ -38,4 +35,10 @@ public sealed class WireMockJavaRemoteClient : IWireMockRemoteClient
 
         return _client.PostAsync(_serverOptions.MappingEndpoint, content);
     }
+}
+
+
+public interface IMapper<in Tin, out TOut>
+{
+    TOut Map(Tin input);
 }
