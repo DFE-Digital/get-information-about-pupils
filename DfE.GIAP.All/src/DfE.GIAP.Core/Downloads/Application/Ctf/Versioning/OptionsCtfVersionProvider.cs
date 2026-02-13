@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Options;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Downloads.Application.Ctf.Versioning;
@@ -10,7 +10,8 @@ public class OptionsCtfVersionProvider : ICtfVersionProvider
     public OptionsCtfVersionProvider(IOptions<CtfOptions> options)
     {
         _options = options.Value;
-        ArgumentException.ThrowIfNullOrWhiteSpace(_options.Version);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(_options.Version);
     }
+
     public string GetVersion() => _options.Version;
 }

@@ -5,7 +5,7 @@ using DfE.GIAP.Core.Downloads.Application.Availability.Access.Rules;
 using DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Formatters;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+using DfE.GIAP.Core.Downloads.Application.Ctf.Options;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Versioning;
 using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
 using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers;
@@ -40,10 +40,11 @@ public static class CompositionRoot
     private static IServiceCollection RegisteApplicationDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         return services
-            .RegisterApplicationDatasetEvaluatorsAndHandlers()
-            .RegisterApplicationAggregatorsAndHandlers()
+            .RegisteApplicationUseCases(configuration)
             .RegisterApplicationMappers()
-            .RegisteApplicationUseCases(configuration);
+            .RegisterApplicationCtfDependencies(configuration)
+            .RegisterApplicationDatasetEvaluatorsAndHandlers()
+            .RegisterApplicationAggregatorsAndHandlers();
     }
 
 
@@ -51,18 +52,28 @@ public static class CompositionRoot
     {
         services.AddScoped<IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse>, GetAvailableDatasetsForPupilsUseCase>();
         services.AddScoped<IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse>, DownloadPupilDataUseCase>();
-
-        // WIP
-        services.Configure<CtfOptions>(configuration.GetSection("CtfOptions"));
         services.AddScoped<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>, DownloadPupilCtfUseCase>();
+
+        return services;
+    }
+
+    private static IServiceCollection RegisterApplicationCtfDependencies(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<CtfOptions>(configuration.GetSection(CtfOptions.SectionName));
+        services.Configure<CtfSchemaCacheOptions>(configuration.GetSection(CtfSchemaCacheOptions.SectionName));
+
         services.AddScoped<ICtfFileBuilder, CtfFileBuilder>();
         services.AddScoped<ICtfHeaderBuilder, CtfHeaderBuilder>();
         services.AddScoped<ICtfPupilBuilder, YearlyFileCtfPupilBuilder>();
         services.AddScoped<ICtfFormatter, XmlCtfFormatter>();
         services.AddScoped<ICtfVersionProvider, OptionsCtfVersionProvider>();
 
+        services.AddSingleton<IPropertyValueAccessor, CachePropertyValueAccessor>();
+        services.AddSingleton<IDataSchemaProvider, CacheBlobDataSchemaProvider>();
+
         return services;
     }
+
 
     private static IServiceCollection RegisterApplicationAggregatorsAndHandlers(this IServiceCollection services)
     {
