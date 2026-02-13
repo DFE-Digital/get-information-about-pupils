@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Options;
 using DfE.GIAP.Core.Downloads.Application.Ctf.Versioning;
 using Microsoft.Extensions.Options;
 

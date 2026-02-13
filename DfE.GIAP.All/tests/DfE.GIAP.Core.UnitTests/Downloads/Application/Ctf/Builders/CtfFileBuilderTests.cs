@@ -12,8 +12,7 @@ public class CtfFileBuilderTests
         ICtfHeaderBuilder headerBuilder = null!;
         ICtfPupilBuilder pupilBuilder = new Mock<ICtfPupilBuilder>().Object;
 
-        Action act = new Action(() =>
-            new CtfFileBuilder(headerBuilder, pupilBuilder));
+        Action act = new Action(() => new CtfFileBuilder(headerBuilder, pupilBuilder));
 
         Assert.Throws<ArgumentNullException>(act);
     }
@@ -24,72 +23,13 @@ public class CtfFileBuilderTests
         ICtfHeaderBuilder headerBuilder = new Mock<ICtfHeaderBuilder>().Object;
         ICtfPupilBuilder pupilBuilder = null!;
 
-        Action act = new Action(() =>
-            new CtfFileBuilder(headerBuilder, pupilBuilder));
+        Action act = new Action(() => new CtfFileBuilder(headerBuilder, pupilBuilder));
 
         Assert.Throws<ArgumentNullException>(act);
     }
 
     [Fact]
-    public async Task AggregateFileAsync_CallsHeaderBuilder()
-    {
-        Mock<ICtfHeaderBuilder> headerBuilderMock = new();
-        Mock<ICtfPupilBuilder> pupilBuilderMock = new();
-
-        ICtfHeaderContext headerContext = new Mock<ICtfHeaderContext>().Object;
-        IEnumerable<string> selectedPupils = new List<string> { "A", "B" };
-
-        CtfHeader expectedHeader = new();
-        IEnumerable<CtfPupil> expectedPupils = new List<CtfPupil>();
-
-        headerBuilderMock
-            .Setup(h => h.Build(headerContext))
-            .Returns(expectedHeader);
-
-        pupilBuilderMock
-            .Setup(p => p.BuildAsync(selectedPupils))
-            .ReturnsAsync(expectedPupils);
-
-        CtfFileBuilder builder = new(
-            headerBuilderMock.Object,
-            pupilBuilderMock.Object);
-
-        CtfFile result = await builder.AggregateFileAsync(headerContext, selectedPupils);
-
-        headerBuilderMock.Verify(h => h.Build(headerContext), Times.Once());
-    }
-
-    [Fact]
-    public async Task AggregateFileAsync_CallsPupilBuilder()
-    {
-        Mock<ICtfHeaderBuilder> headerBuilderMock = new();
-        Mock<ICtfPupilBuilder> pupilBuilderMock = new();
-
-        ICtfHeaderContext headerContext = new Mock<ICtfHeaderContext>().Object;
-        IEnumerable<string> selectedPupils = new List<string> { "A", "B" };
-
-        CtfHeader expectedHeader = new();
-        IEnumerable<CtfPupil> expectedPupils = new List<CtfPupil>();
-
-        headerBuilderMock
-            .Setup(h => h.Build(headerContext))
-            .Returns(expectedHeader);
-
-        pupilBuilderMock
-            .Setup(p => p.BuildAsync(selectedPupils))
-            .ReturnsAsync(expectedPupils);
-
-        CtfFileBuilder builder = new(
-            headerBuilderMock.Object,
-            pupilBuilderMock.Object);
-
-        CtfFile result = await builder.AggregateFileAsync(headerContext, selectedPupils);
-
-        pupilBuilderMock.Verify(p => p.BuildAsync(selectedPupils), Times.Once());
-    }
-
-    [Fact]
-    public async Task AggregateFileAsync_ReturnsCtfFileWithHeaderAndPupils()
+    public async Task AggregateFileAsync_BuildsHeaderAndPupils_AndReturnsCtfFile()
     {
         Mock<ICtfHeaderBuilder> headerBuilderMock = new();
         Mock<ICtfPupilBuilder> pupilBuilderMock = new();
@@ -117,6 +57,9 @@ public class CtfFileBuilderTests
             pupilBuilderMock.Object);
 
         CtfFile result = await builder.AggregateFileAsync(headerContext, selectedPupils);
+
+        headerBuilderMock.Verify(h => h.Build(headerContext), Times.Once());
+        pupilBuilderMock.Verify(p => p.BuildAsync(selectedPupils), Times.Once());
 
         Assert.Equal(expectedHeader, result.Header);
         Assert.Equal(expectedPupils, result.Pupils);

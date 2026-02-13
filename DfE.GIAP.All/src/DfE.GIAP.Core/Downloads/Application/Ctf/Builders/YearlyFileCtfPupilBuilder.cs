@@ -1,149 +1,93 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
 using DfE.GIAP.Core.Downloads.Application.Models;
-using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
-using Newtonsoft.Json;
 
 namespace DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
 
 public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
 {
     private readonly INationalPupilReadOnlyRepository _nationalPupilReadOnlyRepository;
-    private readonly IBlobStorageProvider _blobStorageProvider;
+    private readonly IDataSchemaProvider _schemaProvider;
+    private readonly IPropertyValueAccessor _valueAccessor;
 
     public YearlyFileCtfPupilBuilder(
         INationalPupilReadOnlyRepository nationalPupilReadOnlyRepository,
-        IBlobStorageProvider blobStorageProvider)
+        IDataSchemaProvider schemaProvider,
+        IPropertyValueAccessor valueAccessor)
     {
         ArgumentNullException.ThrowIfNull(nationalPupilReadOnlyRepository);
-        ArgumentNullException.ThrowIfNull(blobStorageProvider);
+        ArgumentNullException.ThrowIfNull(schemaProvider);
+        ArgumentNullException.ThrowIfNull(valueAccessor);
+
         _nationalPupilReadOnlyRepository = nationalPupilReadOnlyRepository;
-        _blobStorageProvider = blobStorageProvider;
+        _schemaProvider = schemaProvider;
+        _valueAccessor = valueAccessor;
     }
 
     public async Task<IEnumerable<CtfPupil>> BuildAsync(IEnumerable<string> selectedPupilIds)
     {
-        IEnumerable<NationalPupil> pupils = await _nationalPupilReadOnlyRepository.GetPupilsByIdsAsync(selectedPupilIds);
-        IReadOnlyList<DataSchemaDefinition> schemaDefinitions = await LoadScehmaDefinitionsAsync();
+        IEnumerable<NationalPupil> pupils =
+            await _nationalPupilReadOnlyRepository.GetPupilsByIdsAsync(selectedPupilIds);
 
-        DataSchemaDefinition latestSchemaDefinition = schemaDefinitions
-            .OrderByDescending(d => d.Year is not null ? int.Parse(d.Year!) : 0)
-            .First();
-
-        List<CtfPupil> ctfPupils = new();
+        List<CtfPupil> results = new();
         foreach (NationalPupil pupil in pupils)
         {
-            CtfPupil ctfPupil = new()
-            {
-                UPN = pupil.Upn ?? "",
-                Surname = pupil.Surname ?? "",
-                Forename = pupil.Forename ?? "",
-                DOB = pupil.DOB.ToString("yyyy-MM-dd"),
-                Sex = pupil.Sex
-            };
+            CtfPupil ctf = CreateBasePupil(pupil);
 
-            if (pupil.HasEYFSPData)
-            {
-                EarlyYearsFoundationStageProfileEntry? latestEntry = pupil.EarlyYearsFoundationStageProfile!
-                    .OrderByDescending(e => ToAcademicYearEnd(e.ACADYR))
-                    .FirstOrDefault();
+            await AddLatestAssessment(pupil.HasEYFSPData, pupil.EarlyYearsFoundationStageProfile, e => e.ACADYR, ctf);
+            await AddLatestAssessment(pupil.HasPhonicsData, pupil.Phonics, e => e.AcademicYear, ctf);
+            await AddLatestAssessment(pupil.HasKeyStage1Data, pupil.KeyStage1, e => e.ACADYR, ctf);
+            await AddLatestAssessment(pupil.HasKeyStage2Data, pupil.KeyStage2, e => e.ACADYR, ctf);
+            await AddLatestAssessment(pupil.HasMtcData, pupil.MTC, e => e.ACADYR, ctf);
 
-                if (latestEntry is not null)
-                {
-                    string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
-                    ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
-                }
-            }
-
-            if (pupil.HasPhonicsData)
-            {
-                PhonicsEntry? latestEntry = pupil.Phonics!
-                    .OrderByDescending(e => ToAcademicYearEnd(e.AcademicYear))
-                    .FirstOrDefault();
-
-                if (latestEntry is not null)
-                {
-                    string year = ToAcademicYearEnd(latestEntry.AcademicYear).ToString();
-                    ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
-                }
-
-            }
-
-            if (pupil.HasKeyStage1Data)
-            {
-                KeyStage1Entry? latestEntry = pupil.KeyStage1!
-                    .OrderByDescending(e => ToAcademicYearEnd(e.ACADYR))
-                    .FirstOrDefault();
-
-                if (latestEntry is not null)
-                {
-                    string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
-                    ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
-                }
-            }
-
-            if (pupil.HasKeyStage2Data)
-            {
-                KeyStage2Entry? latestEntry = pupil.KeyStage2!
-                    .OrderByDescending(e => ToAcademicYearEnd(e.ACADYR))
-                    .FirstOrDefault();
-
-                if (latestEntry is not null)
-                {
-                    string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
-                    ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
-                }
-            }
-
-            if (pupil.HasMtcData)
-            {
-                MtcEntry? latestEntry = pupil.MTC!
-                    .OrderByDescending(e => ToAcademicYearEnd(e.ACADYR))
-                    .FirstOrDefault();
-
-                if (latestEntry is not null)
-                {
-                    string year = ToAcademicYearEnd(latestEntry.ACADYR).ToString();
-                    ctfPupil.Assessments.AddRange(
-                        BuildStageAssessments(latestEntry, latestSchemaDefinition, "ENG", year));
-                }
-            }
-
-            ctfPupils.Add(ctfPupil);
+            results.Add(ctf);
         }
 
-        return ctfPupils;
+        return results;
     }
 
-
-
-    private async Task<IReadOnlyList<DataSchemaDefinition>> LoadScehmaDefinitionsAsync()
+    private static CtfPupil CreateBasePupil(NationalPupil pupil)
     {
-        IEnumerable<BlobItemMetadata> blobs =
-            await _blobStorageProvider.ListBlobsWithMetadataAsync("giapdownloads", "CTF");
-
-        IEnumerable<Task<DataSchemaDefinition>> tasks = blobs.Select(async blob =>
+        return new CtfPupil
         {
-            using Stream stream = await _blobStorageProvider
-                .DownloadBlobAsStreamAsync("giapdownloads", blob.Name!);
-
-            using StreamReader reader = new(stream);
-            string json = await reader.ReadToEndAsync();
-
-            return JsonConvert.DeserializeObject<DataSchemaDefinition>(json) ?? new();
-        });
-
-        return await Task.WhenAll(tasks);
+            UPN = pupil.Upn ?? "",
+            Surname = pupil.Surname ?? "",
+            Forename = pupil.Forename ?? "",
+            DOB = pupil.DOB.ToString("yyyy-MM-dd"),
+            Sex = pupil.Sex
+        };
     }
 
-    public int ToAcademicYearEnd(string? acadYr)
+    private async Task AddLatestAssessment<TEntry>(
+        bool hasData,
+        IEnumerable<TEntry>? entries,
+        Func<TEntry, string?> yearSelector,
+        CtfPupil target)
+    {
+        if (!hasData || entries is null)
+            return;
+
+        TEntry? latest = entries
+            .OrderByDescending(e => ToAcademicYearEnd(yearSelector(e)))
+            .FirstOrDefault();
+
+        if (latest is null)
+            return;
+
+        int academicYear = ToAcademicYearEnd(yearSelector(latest));
+        string yearString = academicYear.ToString();
+
+        DataSchemaDefinition? schema =
+            await _schemaProvider.GetSchemaByYearAsync(academicYear);
+
+        if (schema is null)
+            return;
+
+        target.Assessments.AddRange(
+            BuildStageAssessments(latest, schema, "ENG", yearString));
+    }
+
+    public static int ToAcademicYearEnd(string? acadYr)
     {
         if (string.IsNullOrWhiteSpace(acadYr))
             return 0;
@@ -154,7 +98,6 @@ public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
 
         return int.TryParse(parts[1], out int endYear) ? endYear : 0;
     }
-
 
     private IEnumerable<CtfKeyStageAssessment> BuildStageAssessments(
         object entry,
@@ -168,8 +111,8 @@ public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
                 continue;
 
             string normalisedField = NormaliseResultField(rule.ResultField);
+            string? result = _valueAccessor.GetValue(entry, normalisedField);
 
-            string? result = GetValue(entry, normalisedField);
             if (string.IsNullOrWhiteSpace(result))
                 continue;
 
@@ -188,46 +131,15 @@ public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
         }
     }
 
-
     private static string NormaliseResultField(string field)
     {
         if (string.IsNullOrWhiteSpace(field))
             return field;
 
-        // Legacy pattern: $ks1_math_outcome -> math_outcome
-        if (field.StartsWith("$") && field.Contains("_"))
-            return field[(field.IndexOf("_") + 1)..];
+        if (field.StartsWith('$') && field.Contains('_'))
+            return field[(field.IndexOf('_') + 1)..];
 
         return field;
     }
-
-    private static readonly Dictionary<(Type, string), Func<object, string?>> _accessorCache = new();
-    private string? GetValue(object entry, string? field)
-    {
-        if (string.IsNullOrWhiteSpace(field))
-            return null;
-
-        Type type = entry.GetType();
-        (Type type, string field) key = (type, field);
-
-        if (!_accessorCache.TryGetValue(key, out Func<object, string?>? getter))
-        {
-            PropertyInfo? prop = type.GetProperty(field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-            if (prop is null)
-                return null;
-
-            ParameterExpression param = Expression.Parameter(typeof(object), "obj");
-            UnaryExpression cast = Expression.Convert(param, type);
-            MemberExpression access = Expression.Property(cast, prop);
-
-            Expression body = access.Type == typeof(string)
-                ? access
-                : Expression.Call(access, "ToString", Type.EmptyTypes);
-
-            getter = Expression.Lambda<Func<object, string?>>(body, param).Compile();
-            _accessorCache[key] = getter;
-        }
-
-        return getter(entry);
-    }
 }
+
