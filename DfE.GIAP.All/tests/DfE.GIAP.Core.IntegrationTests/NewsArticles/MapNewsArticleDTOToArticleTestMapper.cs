@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
+using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles;
 internal sealed class MapNewsArticleDtoToArticleTestMapper : IMapper<NewsArticleDto, NewsArticle>

@@ -9,11 +9,6 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
-using DfE.GIAP.SharedTests.Runtime.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
