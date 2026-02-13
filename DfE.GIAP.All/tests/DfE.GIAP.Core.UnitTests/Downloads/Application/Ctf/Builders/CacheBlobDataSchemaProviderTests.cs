@@ -39,14 +39,20 @@ public class CacheBlobDataSchemaProviderTests
         };
 
         blobMock
-            .Setup(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"))
+            .Setup(x => x.ListBlobsWithMetadataAsync(
+                "giapdownloads",
+                "CTF",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(blobList);
 
         DataSchemaDefinition schema = new DataSchemaDefinition { Year = "2023" };
         string json = Newtonsoft.Json.JsonConvert.SerializeObject(schema);
 
         blobMock
-            .Setup(x => x.DownloadBlobAsStreamAsync("giapdownloads", "schema1.json"))
+            .Setup(x => x.DownloadBlobAsStreamAsync(
+                "giapdownloads",
+                "schema1.json",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateJsonStream(json));
 
         CacheBlobDataSchemaProvider provider =
@@ -58,7 +64,11 @@ public class CacheBlobDataSchemaProviderTests
         // Assert
         Assert.Single(result);
         Assert.Equal("2023", result[0].Year);
-        blobMock.Verify(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"), Times.Once);
+        blobMock.Verify(x => x.ListBlobsWithMetadataAsync(
+            "giapdownloads",
+            "CTF",
+            It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]
@@ -73,14 +83,20 @@ public class CacheBlobDataSchemaProviderTests
         };
 
         blobMock
-            .Setup(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"))
+            .Setup(x => x.ListBlobsWithMetadataAsync(
+                "giapdownloads",
+                "CTF",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(blobList);
 
         DataSchemaDefinition schema = new DataSchemaDefinition { Year = "2024" };
         string json = Newtonsoft.Json.JsonConvert.SerializeObject(schema);
 
         blobMock
-            .Setup(x => x.DownloadBlobAsStreamAsync("giapdownloads", "schema.json"))
+            .Setup(x => x.DownloadBlobAsStreamAsync(
+                "giapdownloads",
+                "schema.json",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateJsonStream(json));
 
         CacheBlobDataSchemaProvider provider =
@@ -94,7 +110,11 @@ public class CacheBlobDataSchemaProviderTests
 
         // Assert
         Assert.Equal(first, second);
-        blobMock.Verify(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"), Times.Once);
+        blobMock.Verify(x => x.ListBlobsWithMetadataAsync(
+            "giapdownloads",
+            "CTF",
+            It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]
@@ -109,7 +129,10 @@ public class CacheBlobDataSchemaProviderTests
         };
 
         blobMock
-            .Setup(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"))
+            .Setup(x => x.ListBlobsWithMetadataAsync(
+                "giapdownloads",
+                "CTF",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(blobList);
 
         DataSchemaDefinition schema1 = new DataSchemaDefinition { Year = "2021" };
@@ -118,13 +141,14 @@ public class CacheBlobDataSchemaProviderTests
         string json1 = Newtonsoft.Json.JsonConvert.SerializeObject(schema1);
         string json2 = Newtonsoft.Json.JsonConvert.SerializeObject(schema2);
 
-        // First call returns schema1
         blobMock
-            .SetupSequence(x => x.DownloadBlobAsStreamAsync("giapdownloads", "schema.json"))
+            .SetupSequence(x => x.DownloadBlobAsStreamAsync(
+                "giapdownloads",
+                "schema.json",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateJsonStream(json1))
             .ReturnsAsync(CreateJsonStream(json2));
 
-        // Cache expires immediately
         CacheBlobDataSchemaProvider provider =
             new CacheBlobDataSchemaProvider(blobMock.Object, CreateOptions(0));
 
@@ -135,7 +159,12 @@ public class CacheBlobDataSchemaProviderTests
         // Assert
         Assert.Equal("2021", first[0].Year);
         Assert.Equal("2022", second[0].Year);
-        blobMock.Verify(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"), Times.Exactly(2));
+
+        blobMock.Verify(x => x.ListBlobsWithMetadataAsync(
+            "giapdownloads",
+            "CTF",
+            It.IsAny<CancellationToken>()),
+            Times.Exactly(2));
     }
 
     [Fact]
@@ -151,7 +180,10 @@ public class CacheBlobDataSchemaProviderTests
         };
 
         blobMock
-            .Setup(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"))
+            .Setup(x => x.ListBlobsWithMetadataAsync(
+                "giapdownloads",
+                "CTF",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(blobList);
 
         DataSchemaDefinition schema2020 = new DataSchemaDefinition { Year = "2020" };
@@ -161,11 +193,17 @@ public class CacheBlobDataSchemaProviderTests
         string json2021 = Newtonsoft.Json.JsonConvert.SerializeObject(schema2021);
 
         blobMock
-            .Setup(x => x.DownloadBlobAsStreamAsync("giapdownloads", "schema1.json"))
+            .Setup(x => x.DownloadBlobAsStreamAsync(
+                "giapdownloads",
+                "schema1.json",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateJsonStream(json2020));
 
         blobMock
-            .Setup(x => x.DownloadBlobAsStreamAsync("giapdownloads", "schema2.json"))
+            .Setup(x => x.DownloadBlobAsStreamAsync(
+                "giapdownloads",
+                "schema2.json",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateJsonStream(json2021));
 
         CacheBlobDataSchemaProvider provider =
@@ -191,14 +229,20 @@ public class CacheBlobDataSchemaProviderTests
         };
 
         blobMock
-            .Setup(x => x.ListBlobsWithMetadataAsync("giapdownloads", "CTF"))
+            .Setup(x => x.ListBlobsWithMetadataAsync(
+                "giapdownloads",
+                "CTF",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(blobList);
 
         DataSchemaDefinition schema = new DataSchemaDefinition { Year = "2020" };
         string json = Newtonsoft.Json.JsonConvert.SerializeObject(schema);
 
         blobMock
-            .Setup(x => x.DownloadBlobAsStreamAsync("giapdownloads", "schema.json"))
+            .Setup(x => x.DownloadBlobAsStreamAsync(
+                "giapdownloads",
+                "schema.json",
+                It.IsAny<CancellationToken>()))
             .ReturnsAsync(CreateJsonStream(json));
 
         CacheBlobDataSchemaProvider provider =
