@@ -1,19 +1,16 @@
-﻿using System.Text;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java.DataTransferObjects;
-using Newtonsoft.Json;
+﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java.DataTransferObjects;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java;
-public sealed class WireMockJavaRemoteClient : IWireMockRemoteClient
+internal sealed class WireMockJavaRemoteClient : IWireMockRemoteClient
 {
     private readonly HttpClient _client;
     private readonly RemoteWireMockHostServerOptions _serverOptions;
-    private readonly IMapper<MappingModel, WireMockJavaMappingRequestDto> _mappingModelToWireMockJavaMappingRequestMapper;
+    private readonly MappingModelToWireMockJavaMappingRequestMapper _mappingModelToWireMockJavaMappingRequestMapper;
 
     public WireMockJavaRemoteClient(
         HttpClient client,
         RemoteWireMockHostServerOptions serverOptions,
-        IMapper<MappingModel, WireMockJavaMappingRequestDto> mappingModelToWireMockJavaMappingRequestMapper)
+        MappingModelToWireMockJavaMappingRequestMapper mappingModelToWireMockJavaMappingRequestMapper)
     {
         Guard.ThrowIfNull(client, nameof(client));
         _client = client;
