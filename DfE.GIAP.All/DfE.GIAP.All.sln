@@ -3,9 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.36119.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{971AF695-5D06-4FEF-A4C0-E9B1FE394D35}"
-	ProjectSection(SolutionItems) = preProject
-		src\Directory.Packages.props = src\Directory.Packages.props
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.Web", "src\DfE.GIAP.Web\DfE.GIAP.Web.csproj", "{9F6FAD20-1A02-475A-B6DE-37040B8BE925}"
 EndProject
@@ -14,9 +11,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.Common", "src\DfE.GIAP.Common\DfE.GIAP.Common.csproj", "{36131CCF-92AD-4C59-A41B-C9A9293FBBC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F4F1F2D7-154D-48C3-A42F-A2360D16E3E7}"
-	ProjectSection(SolutionItems) = preProject
-		tests\Directory.Packages.props = tests\Directory.Packages.props
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.Web.Tests", "tests\DfE.GIAP.Web.Tests\DfE.GIAP.Web.Tests.csproj", "{2BF44C52-6CC7-4635-81ED-2AC15868C317}"
 EndProject
@@ -32,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\.editorconfig = ..\.editorconfig
 		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DfE.GIAP.SharedTests.Infrastructure", "tests\DfE.GIAP.SharedTests.Infrastructure\DfE.GIAP.SharedTests.Infrastructure.csproj", "{16FA5A82-EF01-4103-B2C3-DBF8C5AE1CFB}"

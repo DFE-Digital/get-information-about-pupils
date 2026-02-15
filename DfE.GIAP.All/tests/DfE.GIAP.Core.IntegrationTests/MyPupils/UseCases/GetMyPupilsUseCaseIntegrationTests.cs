@@ -1,4 +1,5 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
+using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
