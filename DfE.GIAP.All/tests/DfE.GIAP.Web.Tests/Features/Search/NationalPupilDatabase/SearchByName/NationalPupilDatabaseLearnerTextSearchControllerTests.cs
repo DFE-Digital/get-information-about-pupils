@@ -846,44 +846,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
 
     }
 
-    [Theory]
-    [InlineData("A203102209083")]
-    [InlineData("QTIwMzEwMjIwOTA4Mw==-GIAP")]
-    public async Task DownloadNpdCommonTransferFileData_returns_data(string upn)
-    {
-        // Arrange
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        searchViewModel.StarredPupilConfirmationViewModel = new StarredPupilConfirmationViewModel()
-        {
-            ConfirmationGiven = true
-        };
-        _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-
-        _mockCtfService.GetCommonTransferFile(
-        Arg.Any<string[]>(),
-        Arg.Any<string[]>(),
-        Arg.Any<string>(),
-        Arg.Any<string>(),
-        Arg.Any<bool>(),
-        Arg.Any<AzureFunctionHeaderDetails>(),
-        Arg.Any<ReturnRoute>()
-        ).Returns(new ReturnFile()
-        {
-            FileName = "test",
-            FileType = FileType.ZipFile,
-            Bytes = []
-        });
-
-        // Act
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
-
-        // Assert
-        Assert.IsType<FileContentResult>(result);
-    }
-
     [Fact]
     public async Task DownloadNpdCommonTransferFileData_returns_search_page_with_error_if_no_pupil_selected()
     {
@@ -939,43 +901,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     }
 
     [Fact]
-    public async Task DownloadNpdCommonTransferFileData_returns_to_search_page_if_download_null()
-    {
-        // Arrange
-        string upn = _paginatedResultsFake.GetUpn();
-        string searchText = "John Smith";
-        LearnerTextSearchViewModel searchViewModel = SetupLearnerTextSearchViewModel(searchText, _searchFiltersFake.GetSearchFilters());
-        _mockSelectionManager.GetSelectedFromSession().Returns(upn);
-
-        _mockCtfService.GetCommonTransferFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string>(),
-            Arg.Any<string>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>()
-            ).Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = null
-            });
-
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        // Act
-        IActionResult result = await sut.ToDownloadNpdCommonTransferFileData(searchViewModel);
-
-        // Assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.NonUpnSearchView, viewResult.ViewName);
-
-        LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
-        AssertAbstractValues(sut, model);
-    }
-
-    [Fact]
     public async Task DownloadFileConfirmationReturn_returns_starred_pupil_confirmation_if_confirmation_not_provided()
     {
         // Arrange
@@ -998,41 +923,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
         Assert.Equal(_paginatedResultsFake.GetBase64EncodedUpn(), starredPupilViewModel.SelectedPupil);
-    }
-
-    [Fact]
-    public async Task DownloadFileConfirmationReturn_returns_CTF_file_if_confirmation_provided()
-    {
-        // Arrange
-        StarredPupilConfirmationViewModel starredPupilConfirmationViewModel = new()
-        {
-            SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
-            ConfirmationGiven = true,
-            DownloadType = Common.Enums.DownloadType.CTF
-        };
-
-        _mockCtfService.GetCommonTransferFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string>(),
-            Arg.Any<string>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>()
-            ).Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        NationalPupilDatabaseLearnerTextSearchController sut = GetController();
-
-        // Act
-        IActionResult result = await sut.DownloadFileConfirmationReturn(starredPupilConfirmationViewModel);
-
-        // Assert
-        Assert.IsType<FileContentResult>(result);
     }
 
     [Fact]
@@ -1435,7 +1325,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
              _sortOrderFactoryMock.Object,
              _mockFiltersRequestFactory,
              _searchindexOptionsProvider.Object,
-             _criteriaOptionsToCriteriaMock.Object)
+             _criteriaOptionsToCriteriaMock.Object,
+             new Mock<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>>().Object)
 
         {
             ControllerContext = new ControllerContext()
