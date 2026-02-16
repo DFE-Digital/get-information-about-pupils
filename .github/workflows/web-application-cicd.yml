@@ -380,55 +380,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  ##  PLACEHOLDERS FOR ADDITIONAL TESTS
-  #  integration_test_env_test:
-  #    needs: smoke_test_env_test
-  #    concurrency:
-  #      group: deploy-and-test-test
-  #    permissions:
-  #      contents: read  # Required to check out the code.
-  #    runs-on: ubuntu-latest
-  #    environment: test
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v6
-  #      - name: Run integration tests
-  #        uses: ./.github/actions/integration-test
-  #        with:
-  #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
-
-  #  accessibility_test_env_test:
-  #    needs: smoke_test_env_test
-  #    concurrency:
-  #      group: deploy-and-test-test
-  #    permissions:
-  #      contents: read  # Required to check out the code.
-  #    runs-on: ubuntu-latest
-  #    environment: test
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v6
-  #      - name: Run accessibility tests
-  #        uses: ./.github/actions/accessibility-test
-  #        with:
-  #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
-
-  #  performance_test_env_test:
-  #    needs: smoke_test_env_test
-  #    concurrency:
-  #      group: deploy-and-test-test
-  #    permissions:
-  #      contents: read  # Required to check out the code.
-  #    runs-on: ubuntu-latest
-  #    environment: test
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v6
-  #      - name: Run performance tests
-  #        uses: ./.github/actions/performance-test
-  #        with:
-  #          app_url: ${{ needs.deploy_env_test.outputs.app_url }}
-
   ####
   ## Pre-Production Environment
   ####
@@ -441,7 +392,6 @@ jobs:
     permissions:
       contents: read  # Required to check out the code.
       id-token: write # Required for OIDC authentication with Azure
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment: preproduction
     outputs:
@@ -472,37 +422,6 @@ jobs:
         uses: ./.github/actions/smoke-test
         with:
           url: ${{ needs.deploy_preprod.outputs.app_url }}
-
-  ##  PLACEHOLDERS FOR ADDITIONAL TESTS
-  #  performance_test_env_preproduction:
-  #    needs: smoke_test_env_preproduction
-  #    concurrency:
-  #      group: deploy-and-test-preproduction
-  #    permissions:
-  #      contents: read  # Required to check out the code.
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v6
-  #      - name: Run performance tests
-  #        uses: ./.github/actions/performance-test
-  #        with:
-  #          app_url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
-
-  #  security_test_env_preproduction:
-  #    needs: smoke_test_env_preproduction
-  #    concurrency:
-  #      group: deploy-and-test-preproduction
-  #    permissions:
-  #      contents: read  # Required to check out the code.
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v6
-  #      - name: Run security tests
-  #        uses: ./.github/actions/security-test
-  #        with:
-  #          app_url: ${{ needs.deploy_env_preproduction.outputs.app_url }}
 
   ####
   ## Production Environment
@@ -545,20 +464,3 @@ jobs:
         uses: ./.github/actions/smoke-test
         with:
           url: ${{ needs.deploy_prod.outputs.app_url }}
-
-##  PLACEHOLDERS FOR ADDITIONAL TESTS
-#  security_test_env_production:
-#    needs: smoke_test_env_production
-#    concurrency:
-#      group: deploy-and-test-production
-#    permissions:
-#      contents: read  # Required to check out the code.
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v6
-#      - name: Run security tests
-#        uses: ./.github/actions/security-test
-#        with:
-#          app_url: ${{ needs.deploy_env_production.outputs.app_url }}
-
