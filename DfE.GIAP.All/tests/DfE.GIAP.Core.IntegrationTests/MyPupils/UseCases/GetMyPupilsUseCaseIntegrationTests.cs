@@ -1,4 +1,5 @@
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword.Options;
+using DfE.CleanArchitecture.Common.CrossCutting.Mapper;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.IntegrationTests.DataTransferObjects;
 using DfE.GIAP.Core.IntegrationTests.TestHarness;
@@ -9,11 +10,6 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.DataTransferObjects;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
-using DfE.GIAP.SharedTests.Runtime.TestDoubles;
-using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
