@@ -3,6 +3,7 @@ using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -12,7 +13,6 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
-using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -22,7 +22,6 @@ using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
-using DfE.GIAP.Web.Helpers.SearchDownload;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Services.Download.CTF;
@@ -73,6 +72,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
     private readonly IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> _downloadPupilDataUseCase;
+    private readonly IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> _downloadPupilCtfUseCase;
     private readonly IEventLogger _eventLogger;
 
     private readonly
@@ -106,7 +106,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestBuilder,
         ISearchIndexOptionsProvider searchIndexOptionsProvider,
-        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper,
+        IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -152,6 +153,9 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
         _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilCtfUseCase);
+        _downloadPupilCtfUseCase = downloadPupilCtfUseCase;
     }
 
     [Route(Routes.NationalPupilDatabase.NationalPupilDatabaseNonUPN)]
@@ -428,24 +432,18 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     {
         string selectedPupil = PupilHelper.CheckIfStarredPupil(model.SelectedPupil) ? RbacHelper.DecodeUpn(model.SelectedPupil) : model.SelectedPupil;
 
-        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(new string[] { selectedPupil },
-                                                                new string[] { ValidationHelper.IsValidUpn(selectedPupil) ? selectedPupil : "0" },
-                                                                User.GetLocalAuthorityNumberForEstablishment(),
-                                                                User.GetEstablishmentNumber(),
-                                                                User.IsOrganisationEstablishment(),
-                                                                AzureFunctionHeaderDetails.Create(User.GetUserId(), User.GetSessionId()),
-                                                                ReturnRoute.NationalPupilDatabase);
+        DownloadPupilCtfRequest request = new(
+            SelectedPupils: [selectedPupil],
+            IsEstablishment: User.IsOrganisationEstablishment(),
+            LocalAuthoriyNumber: User.GetLocalAuthorityNumberForEstablishment(),
+            EstablishmentNumber: User.GetEstablishmentNumber());
 
-        if (downloadFile.Bytes != null)
-        {
-            return SearchDownloadHelper.DownloadFile(downloadFile);
-        }
-        else
-        {
-            model.ErrorDetails = Messages.Downloads.Errors.NoDataForSelectedPupils;
-        }
+        DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        return await ReturnToSearch(model);
+        return File(
+            fileStream: response.FileStream,
+            contentType: response.ContentType,
+            fileDownloadName: response.FileName);
     }
 
     [Route(Routes.NationalPupilDatabase.DownloadNonUPNConfirmationReturn)]

@@ -2,6 +2,7 @@
 using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
@@ -1207,43 +1208,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         Assert.Equal(Messages.Common.Errors.MyPupilListLimitExceeded, model.ErrorDetails);
     }
 
-    [Fact]
-    public async Task DownloadCommonTransferFileData_returns_data()
-    {
-        // arrange
-        _mockCtfService.GetCommonTransferFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string>(),
-            Arg.Any<string>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>()
-            ).Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
-
-        string upns = _paginatedResultsFake.GetUpns();
-        LearnerNumberSearchViewModel inputModel = new()
-        {
-            LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
-        };
-
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(_paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToHashSet());
-
-        // act
-        NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
-
-        IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
-
-        // assert
-        Assert.IsType<FileContentResult>(result);
-    }
 
     [Fact]
     public async Task DownloadCommonTransferFileData_returns_search_page_with_error_if_no_pupil_selected()
@@ -1279,52 +1243,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         Assert.True(model.NoPupilSelected);
     }
 
-    [Fact]
-    public async Task DownloadCommonTransferFileData_returns_to_search_page_if_download_null()
-    {
-        string upns = _paginatedResultsFake.GetUpns();
-        LearnerNumberSearchViewModel inputModel = new()
-        {
-            LearnerNumberIds = upns,
-            SelectedPupil = _paginatedResultsFake.GetUpns().FormatLearnerNumbers().ToList(),
-            PageLearnerNumbers = string.Join(',', upns.FormatLearnerNumbers())
-        };
-
-        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(upns.FormatLearnerNumbers().ToHashSet());
-
-        _mockCtfService.GetCommonTransferFile(
-         Arg.Any<string[]>(),
-         Arg.Any<string[]>(),
-         Arg.Any<string>(),
-         Arg.Any<string>(),
-         Arg.Any<bool>(),
-         Arg.Any<AzureFunctionHeaderDetails>(),
-         Arg.Any<ReturnRoute>()
-         ).Returns(new ReturnFile()
-         {
-             FileName = "test",
-             FileType = FileType.ZipFile,
-             Bytes = null
-         });
-
-        NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
-
-        _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
-        _mockSession.SetString(
-            _paginatedResultsFake.TotalSearchResultsSessionKey,
-            _paginatedResultsFake.TotalSearchResultsSessionValue);
-
-        // act
-        IActionResult result = await sut.DownloadCommonTransferFileData(inputModel);
-
-        // assert
-        ViewResult viewResult = Assert.IsType<ViewResult>(result);
-        Assert.Equal(Global.SearchView, viewResult.ViewName);
-
-        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
-        AssertAbstractValues(sut, model);
-        Assert.Equal(Messages.Downloads.Errors.NoDataForSelectedPupils, model.ErrorDetails);
-    }
 
     [Fact]
     public async Task DownloadCommonTransferFileData_exceeding_commonTransferFileUPNLimit_returns_to_search_page_with_errorDetails()
@@ -1586,7 +1504,8 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
             mockDownloadPupilDataUseCase.Object,
             mockEventLogger.Object,
             _searchindexOptionsProvider.Object,
-            _criteriaOptionsToCriteriaMock.Object)
+            _criteriaOptionsToCriteriaMock.Object,
+            new Mock<IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse>>().Object)
         {
             ControllerContext = new ControllerContext()
             {
