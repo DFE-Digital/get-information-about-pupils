@@ -38,8 +38,10 @@ public static class CompositionRoot
             .AddTransient<ISearchOptionsBuilder, SearchOptionsBuilder>();
 
         services.AddSingleton<IMapper<SearchCriteriaOptions, SearchCriteria>, SearchCriteriaOptionsToSearchCriteriaMapper>();
+
         // Register shared cognitive search and filter services.
         services.AddAzureSearchServices(configuration);
+        services.AddAzureIndexNamesConfigurationProvider(configuration);
         services.AddAzureSearchFilterServices(configuration);
 
         services
