@@ -3,10 +3,6 @@ using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
-using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
-using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
@@ -27,6 +23,7 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
         IConfiguration searchConfiguration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithSearchOptions()
+                .WithSearchIndexNameOptions()
                 .WithAzureSearchConnectionOptions()
                 .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
