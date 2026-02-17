@@ -13,7 +13,6 @@ public static class Global
 
     // NPD
     public const string LearnerNumberLabel = "UPN";
-    public const string SearchControllerName = "Search";
     public const string NPDLearnerNumberSearchController = "NationalPupilDatabaseLearnerNumberSearch";
     public const string NPDLearnerNumberSearchAction = "NationalPupilDatabase";
     public const string NPDLearnerTextSearchDatabaseName = "NonUpnDatabaseName";
@@ -27,9 +26,6 @@ public static class Global
     public const string NPDNonUpnSortFieldSessionKey = "SearchNonUPN_SortField";
     public const string NPDDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
     public const string NPDDownloadCancellationReturnAction = "DownloadCancellationReturn";
-    public const string NPDCTFDownloadConfirmationReturnAction = "DownloadNpdCommonTransferFileDataReturn";
-    public const string NationalPupilDatabaseView = "~/Views/Search/Upn/NationalPupilDatabase.cshtml";
-    public const string StarredPupilConfirmationView = "~/Views/Search/Common/_StarredPupilConfirmation.cshtml";
     public const string NPDNonUpnDownloadLinksView = "~/Views/Shared/LearnerText/_SearchPageDownloadLinks.cshtml";
 
     // Pupil Premium
@@ -37,14 +33,12 @@ public static class Global
     public const string PPNonUpnSearchFiltersSessionKey = "SearchPPNonUPN_SearchFilters";
     public const string PPNonUpnSortDirectionSessionKey = "SearchPPNonUPN_SortDirection";
     public const string PPNonUpnSortFieldSessionKey = "SearchPPNonUPN_SortField";
-    public const string PPAction = "PupilPremium";
     public const string PPTextSearchController = "PupilPremiumLearnerTextSearch";
     public const string PPNonUpnAction = "NonUpnPupilPremiumDatabase";
     public const string PPLearnerTextSearchDatabaseName = "NonUpnDatabaseName";
     public const string PPLearnerNumberSearchController = "PupilPremiumLearnerNumberSearch";
     public const string PPDownloadConfirmationReturnAction = "DownloadFileConfirmationReturn";
     public const string PPDownloadCancellationReturnAction = "DownloadCancellationReturn";
-    public const string PPView = "~/Views/Search/Upn/PupilPremium.cshtml";
     public const string PPNonUpnDownloadLinksView = "~/Views/Shared/LearnerText/_SearchPupilPremiumDownloadLinks.cshtml";
 
     // Further Education
@@ -61,12 +55,10 @@ public static class Global
 
     // Number Search
     public const string SearchView = "~/Views/Shared/LearnerNumber/Search.cshtml";
-    public const string LearnerNumberSearchBoxView = "../Shared/LearnerNumber/_SearchBox";
     public const string LearnerNumberSearchBoxViewDownloads = "../Shared/LearnerNumber/_SearchBoxDownloads";
     public const string DownloadNPDOptionsView = "../Shared/LearnerNumber/DownloadOptions";
 
     // Text Search
     public const string MPLDownloadNPDOptionsView = "../MyPupilList/DownloadOptions";
     public const string NonLearnerNumberDownloadOptionsView = "../Shared/LearnerText/DownloadOptions";
-    public const string LearnerTextControllerName = "BaseLearnerTextSearch";
 }

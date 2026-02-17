@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-namespace DfE.GIAP.Web.Constants;
+﻿namespace DfE.GIAP.Web.Constants;
 
 public static class Routes
 {

@@ -37,12 +37,6 @@ public static class ClaimsPrincipalExtension
         return catId == OrganisationCategory.SingleAcademyTrust;
     }
 
-    public static bool IsOrganisationFurtherEducation(this ClaimsPrincipal principal)
-    {
-        string catId = principal.GetClaimValue(AuthClaimTypes.OrganisationCategoryId);
-        return catId == OrganisationCategory.FurtherEducation;
-    }
-
     public static bool IsOrganisationAllAges(this ClaimsPrincipal principal)
     {
         return principal.GetOrganisationHighAge() == 0 && principal.GetOrganisationLowAge() == 0;
@@ -95,14 +89,6 @@ public static class ClaimsPrincipalExtension
         return organisationName == DsiKeys.Common.DepartmentForEducation;
     }
 
-    public static bool IsCurrentDepartmentUser(this ClaimsPrincipal principal)
-    {
-        //NOTE: DfE user is set up as a LA with 001 as the LA number.
-
-        string localAuthorityNumber = principal.GetLocalAuthorityNumberForLocalAuthority();
-        return localAuthorityNumber == DsiKeys.Common.DepartmentId;
-    }
-
     public static bool IsAuthenticated(this ClaimsPrincipal principal)
     {
         return principal.Identity?.IsAuthenticated ?? false;
@@ -123,7 +109,6 @@ public static class ClaimsPrincipalExtension
         return principal.IsInRole(AuthRoles.User);
     }
 
-
     public static string GetSessionId(this ClaimsPrincipal principal)
     {
         return principal.GetClaimValue(AuthClaimTypes.SessionId);
@@ -137,21 +122,6 @@ public static class ClaimsPrincipalExtension
     public static string GetUserEmail(this ClaimsPrincipal principal)
     {
         return principal.GetClaimValue(ClaimTypes.Email);
-    }
-
-    public static string GetUserGivenName(this ClaimsPrincipal principal)
-    {
-        return principal.GetClaimValue(ClaimTypes.GivenName);
-    }
-
-    public static string GetUserSurname(this ClaimsPrincipal principal)
-    {
-        return principal.GetClaimValue(ClaimTypes.Surname);
-    }
-
-    public static string GetOrganisationId(this ClaimsPrincipal principal)
-    {
-        return principal.GetClaimValue(AuthClaimTypes.OrganisationId);
     }
 
     public static string GetOrganisationCategoryID(this ClaimsPrincipal principal)
@@ -209,33 +179,6 @@ public static class ClaimsPrincipalExtension
         return principal.GetClaimValue(AuthClaimTypes.UniqueIdentifier);
     }
 
-    public static string GetUKProviderReferenceNumber(this ClaimsPrincipal principal)
-    {
-        return principal.GetClaimValue(AuthClaimTypes.UKProviderReferenceNumber);
-    }
-
-    public static List<string> GetAcademyListForUser(this ClaimsPrincipal principal)
-    {
-        List<string> academyList = new List<string>();
-
-        if (principal.IsAdmin())
-        {
-            academyList.Add("MAT");
-            academyList.Add("SAT");
-        }
-
-        if (principal.IsApprover())
-        {
-            if (principal.IsOrganisationMultiAcademyTrust())
-                academyList.Add("MAT");
-
-            if (principal.IsOrganisationSingleAcademyTrust())
-                academyList.Add("SAT");
-        }
-
-        return academyList;
-    }
-
     public static OrganisationScope GetOrganisationScope(this ClaimsPrincipal principal)
     {
         if (principal.IsOrganisationLocalAuthority())
@@ -251,17 +194,5 @@ public static class ClaimsPrincipalExtension
             return OrganisationScope.Establishment;
 
         throw new NotImplementedException();
-    }
-
-    public static string GetUserRole(this ClaimsPrincipal principal)
-    {
-        if (principal.IsAdmin())
-            return AuthRoles.Admin;
-        if (principal.IsApprover())
-            return AuthRoles.Approver;
-        if (principal.IsNormal())
-            return AuthRoles.User;
-
-        return string.Empty;
     }
 }
