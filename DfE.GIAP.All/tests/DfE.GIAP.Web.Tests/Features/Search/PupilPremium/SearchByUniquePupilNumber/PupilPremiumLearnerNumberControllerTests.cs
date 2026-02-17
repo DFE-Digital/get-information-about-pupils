@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
@@ -1411,7 +1410,7 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
         downloadPupilPremiumDataServiceMock
             .Setup(service => service.DownloadAsync(
                 It.IsAny<IEnumerable<string>>(),
-                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadOperationType>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
 

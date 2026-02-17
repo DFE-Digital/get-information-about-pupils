@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Common.Constants.AzureFunction;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace DfE.GIAP.Web.Tests.TestDoubles;
 
@@ -11,7 +10,7 @@ public class SessionFake : ISession
         Values = [];
     }
 
-    public string Id => HeaderDetails.SessionId;
+    public string Id => string.Empty;
 
     public bool IsAvailable => true;
 

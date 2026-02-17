@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
@@ -14,8 +12,8 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
@@ -26,10 +24,9 @@ using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using DownloadType = DfE.GIAP.Common.Enums.DownloadType;
+using DownloadType = DfE.GIAP.Web.Enums.DownloadType;
 
 namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 
@@ -40,7 +37,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
     private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _logger;
     private readonly ITextSearchSelectionManager _selectionManager;
-    private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly ISessionProvider _sessionProvider;
 
     public string PageHeading => ApplicationLabels.SearchNPDWithOutUpnPageHeading;
@@ -96,7 +92,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
-        IDownloadCommonTransferFileService ctfService,
         ISessionProvider sessionProvider,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -116,9 +111,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
-
-        ArgumentNullException.ThrowIfNull(ctfService);
-        _ctfService = ctfService;
 
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
@@ -420,7 +412,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         if (PupilHelper.CheckIfStarredPupil(selectedPupil) && !model.StarredPupilConfirmationViewModel.ConfirmationGiven)
         {
             PopulateConfirmationNavigation(model.StarredPupilConfirmationViewModel);
-            model.StarredPupilConfirmationViewModel.DownloadType = Common.Enums.DownloadType.CTF;
+            model.StarredPupilConfirmationViewModel.DownloadType = DownloadType.CTF;
             model.StarredPupilConfirmationViewModel.SelectedPupil = selectedPupil;
             return ConfirmationForStarredPupil(model.StarredPupilConfirmationViewModel);
         }
@@ -442,7 +434,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
+        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return File(
             fileStream: response.FileStream,
@@ -537,7 +529,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
         GetAvailableDatasetsForPupilsRequest request = new(
-           DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+           DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
            SelectedPupils: new List<string> { selectedPupil },
            AuthorisationContext: new HttpClaimsAuthorisationContext(User));
         GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
@@ -582,7 +574,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 DownloadPupilDataRequest request = new(
                    SelectedPupils: [selectedPupil],
                    SelectedDatasets: selectedDatasets,
-                   DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                   DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
                    FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
@@ -594,7 +586,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                             model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
                             DownloadEventType.NPD,
                             loggingBatchId,

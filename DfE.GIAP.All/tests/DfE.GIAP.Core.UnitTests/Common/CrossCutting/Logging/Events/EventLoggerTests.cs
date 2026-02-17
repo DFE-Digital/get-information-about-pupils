@@ -55,13 +55,13 @@ public class EventLoggerTests
     {
         // Arrange
         DownloadEvent fakeEvent = new("user", "session", "desc", "urn", "org", "cat",
-            new DownloadPayload(DownloadType.Search, DownloadFileFormat.CSV, DownloadEventType.NPD, "batch", Dataset.KS1));
+            new DownloadPayload(DownloadOperationType.Search, DownloadFileFormat.CSV, DownloadEventType.NPD, "batch", Dataset.KS1));
         _businessEventFactoryMock
-            .Setup(f => f.CreateDownload(DownloadType.Search, DownloadFileFormat.CSV, DownloadEventType.NPD, "batch", Dataset.KS1))
+            .Setup(f => f.CreateDownload(DownloadOperationType.Search, DownloadFileFormat.CSV, DownloadEventType.NPD, "batch", Dataset.KS1))
             .Returns(fakeEvent);
 
         // Act
-        _sut.LogDownload(DownloadType.Search, DownloadFileFormat.CSV, DownloadEventType.NPD, "batch", Dataset.KS1);
+        _sut.LogDownload(DownloadOperationType.Search, DownloadFileFormat.CSV, DownloadEventType.NPD, "batch", Dataset.KS1);
 
         // Assert
         _sinkMock.Verify(s => s.Log(fakeEvent), Times.Once);

@@ -1,9 +1,8 @@
-﻿using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.ViewComponents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
-using Xunit;
 using static DfE.GIAP.Web.ViewComponents.DownloadOptionsViewComponent;
 
 namespace DfE.GIAP.Web.Tests.ViewComponent;

@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -11,8 +9,8 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
@@ -24,7 +22,6 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
-using static DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName.FurtherEducationLearnerTextSearchResponseToViewModelMapper;
 
 
 namespace DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
@@ -226,7 +223,7 @@ public class FELearnerTextSearchController : Controller
         };
 
         GetAvailableDatasetsForPupilsRequest request = new(
-            DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+            DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
             SelectedPupils: [selectedPupil],
             AuthorisationContext: new HttpClaimsAuthorisationContext(User));
 
@@ -284,7 +281,7 @@ public class FELearnerTextSearchController : Controller
                 DownloadPupilDataRequest request = new(
                     SelectedPupils: selectedPupils,
                     SelectedDatasets: selectedDatasets,
-                    DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+                    DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
                     FileFormat: FileFormat.Csv);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
@@ -296,7 +293,7 @@ public class FELearnerTextSearchController : Controller
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                             DownloadFileFormat.CSV,
                             DownloadEventType.FE,
                             loggingBatchId,

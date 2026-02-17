@@ -42,9 +42,9 @@ public sealed class PupilPremiumAggregationHandlerTests
         PupilPremiumAggregationHandler handler =
             new(mockRepository.Object, mockMapper.Object);
 
-        DownloadType result = handler.SupportedDownloadType;
+        PupilDownloadType result = handler.SupportedDownloadType;
 
-        Assert.Equal(DownloadType.PupilPremium, result);
+        Assert.Equal(PupilDownloadType.PupilPremium, result);
     }
 
     [Fact]

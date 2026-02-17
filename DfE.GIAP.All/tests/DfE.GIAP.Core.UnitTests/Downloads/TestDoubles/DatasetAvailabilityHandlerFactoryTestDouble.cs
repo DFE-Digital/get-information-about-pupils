@@ -9,19 +9,19 @@ internal class DatasetAvailabilityHandlerFactoryTestDouble
     public static IDatasetAvailabilityHandlerFactory WithHandlers(params IDatasetAvailabilityHandler[] handlers) =>
         new StubFactory(handlers.ToDictionary(h => h.SupportedDownloadType));
 
-    public static IDatasetAvailabilityHandlerFactory WithHandler(DownloadType type, IDatasetAvailabilityHandler handler) =>
-        new StubFactory(new Dictionary<DownloadType, IDatasetAvailabilityHandler> { [type] = handler });
+    public static IDatasetAvailabilityHandlerFactory WithHandler(PupilDownloadType type, IDatasetAvailabilityHandler handler) =>
+        new StubFactory(new Dictionary<PupilDownloadType, IDatasetAvailabilityHandler> { [type] = handler });
 
     private sealed class StubFactory : IDatasetAvailabilityHandlerFactory
     {
-        private readonly IDictionary<DownloadType, IDatasetAvailabilityHandler> _handlers;
+        private readonly IDictionary<PupilDownloadType, IDatasetAvailabilityHandler> _handlers;
 
-        public StubFactory(IDictionary<DownloadType, IDatasetAvailabilityHandler> handlers)
+        public StubFactory(IDictionary<PupilDownloadType, IDatasetAvailabilityHandler> handlers)
         {
             _handlers = handlers;
         }
 
-        public IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(DownloadType type)
+        public IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(PupilDownloadType type)
         {
             if (_handlers.TryGetValue(type, out IDatasetAvailabilityHandler? handler))
                 return handler;

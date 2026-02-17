@@ -69,13 +69,13 @@ public class BusinessEventFactoryTests
 
         // Act
         DownloadEvent result = _sut.CreateDownload(
-            DownloadType.Search,
+            DownloadOperationType.Search,
             DownloadFileFormat.CSV,
             DownloadEventType.NPD,
             batchId,
             dataset);
 
-        Assert.Equal(DownloadType.Search, result.Payload.DownloadType);
+        Assert.Equal(DownloadOperationType.Search, result.Payload.DownloadType);
         Assert.Equal(DownloadFileFormat.CSV, result.Payload.DownloadFileFormat);
         Assert.Equal(DownloadEventType.NPD, result.Payload.DownloadEventType);
         Assert.Equal(batchId, result.Payload.BatchId);

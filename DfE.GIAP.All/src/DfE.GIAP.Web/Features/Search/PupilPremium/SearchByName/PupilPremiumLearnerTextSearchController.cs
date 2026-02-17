@@ -1,16 +1,14 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
-using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -368,7 +366,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
             pupilUpns: [selectedPupil],
-            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
             ctx);
 
         if (result.HasData)

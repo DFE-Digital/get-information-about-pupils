@@ -30,7 +30,7 @@ public interface IEventLogger
     /// <param name="batchId">An optional batch identifier associated with the download. If provided, links the event to a specific batch
     /// operation.</param>
     /// <param name="dataset">An optional dataset related to the download event. If specified, associates the event with a particular dataset.</param>
-    void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+    void LogDownload(DownloadOperationType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null);
 
     /// <summary>

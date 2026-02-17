@@ -6,7 +6,7 @@ namespace DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
 
 public class FurtherEducationDatasetHandler : IDatasetAvailabilityHandler
 {
-    public DownloadType SupportedDownloadType => DownloadType.FurtherEducation;
+    public PupilDownloadType SupportedDownloadType => PupilDownloadType.FurtherEducation;
     private readonly IFurtherEducationReadOnlyRepository _furtherEducationReadOnlyRepository;
 
     public FurtherEducationDatasetHandler(IFurtherEducationReadOnlyRepository furtherEducationReadOnlyRepository)

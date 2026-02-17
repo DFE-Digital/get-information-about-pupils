@@ -5,6 +5,6 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 
 public record GetAvailableDatasetsForPupilsRequest(
-    DownloadType DownloadType,
+    PupilDownloadType DownloadType,
     IEnumerable<string> SelectedPupils,
     IAuthorisationContext AuthorisationContext) : IUseCaseRequest<GetAvailableDatasetsForPupilsResponse>;

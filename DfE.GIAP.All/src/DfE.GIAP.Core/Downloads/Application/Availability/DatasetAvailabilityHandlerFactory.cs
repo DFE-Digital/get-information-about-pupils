@@ -5,7 +5,7 @@ namespace DfE.GIAP.Core.Downloads.Application.Availability;
 
 public class DatasetAvailabilityHandlerFactory : IDatasetAvailabilityHandlerFactory
 {
-    private readonly IDictionary<DownloadType, IDatasetAvailabilityHandler> _handlers;
+    private readonly IDictionary<PupilDownloadType, IDatasetAvailabilityHandler> _handlers;
 
     public DatasetAvailabilityHandlerFactory(IEnumerable<IDatasetAvailabilityHandler> checkers)
     {
@@ -15,7 +15,7 @@ public class DatasetAvailabilityHandlerFactory : IDatasetAvailabilityHandlerFact
             checker => checker);
     }
 
-    public IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(DownloadType type)
+    public IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(PupilDownloadType type)
     {
         if (_handlers.TryGetValue(type, out IDatasetAvailabilityHandler? handler))
             return handler;

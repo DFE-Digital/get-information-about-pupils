@@ -3,7 +3,7 @@ using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using Microsoft.AspNetCore.Mvc;
-using DownloadType = DfE.GIAP.Core.Common.CrossCutting.Logging.Events.DownloadType;
+using DownloadOperationType = DfE.GIAP.Core.Common.CrossCutting.Logging.Events.DownloadOperationType;
 
 namespace DfE.GIAP.Web.Tests.Features.Download;
 
@@ -55,7 +55,7 @@ public sealed class DownloadPupilPremiumPupilDataServiceTests
                 "UPN-2"
             ];
 
-        DownloadType downloadEventType = DownloadType.Search;
+        DownloadOperationType downloadEventType = DownloadOperationType.Search;
 
         DownloadPupilDataResponse useCaseResponse =
             new(FileContents: [0x01, 0x02], FileName: "pupil-premium.csv", ContentType: "text/csv");
@@ -82,7 +82,7 @@ public sealed class DownloadPupilPremiumPupilDataServiceTests
                 req.SelectedPupils.SequenceEqual(expectedUpns) &&
                 req.SelectedDatasets.Count() == 1 &&
                 req.SelectedDatasets.Contains(Core.Downloads.Application.Enums.Dataset.PP) &&
-                req.DownloadType == Core.Downloads.Application.Enums.DownloadType.PupilPremium &&
+                req.DownloadType == Core.Downloads.Application.Enums.PupilDownloadType.PupilPremium &&
                 req.FileFormat == FileFormat.Csv
             )), Times.Once);
 

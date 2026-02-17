@@ -64,7 +64,7 @@ public sealed class FurtherEducationAggregationHandlerTests
         FurtherEducationAggregationHandler handler =
             new(mockRepository.Object, mockPpMapper.Object, mockSenMapper.Object);
 
-        Assert.Equal(DownloadType.FurtherEducation, handler.SupportedDownloadType);
+        Assert.Equal(PupilDownloadType.FurtherEducation, handler.SupportedDownloadType);
     }
 
     [Fact]

@@ -4,6 +4,6 @@ namespace DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
 
 public interface IDatasetAvailabilityHandler
 {
-    DownloadType SupportedDownloadType { get; }
+    PupilDownloadType SupportedDownloadType { get; }
     Task<IEnumerable<Dataset>> GetAvailableDatasetsAsync(IEnumerable<string> pupilIds);
 }

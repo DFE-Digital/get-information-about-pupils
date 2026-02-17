@@ -9,7 +9,6 @@ public class AzureAppSettings
     public bool IsSessionIdStoredInCookie { get; set; }
 
     //Downloads
-    public string DownloadCommonTransferFileUrl { get; set; }
     public int CommonTransferFileUPNLimit { get; set; }
     public int DownloadOptionsCheckLimit { get; set; }
 

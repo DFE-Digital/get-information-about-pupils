@@ -8,7 +8,7 @@ namespace DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers
 
 public class NationalPupilDatabaseAggregationHandler : IPupilDatasetAggregationHandler
 {
-    public DownloadType SupportedDownloadType => DownloadType.NPD;
+    public PupilDownloadType SupportedDownloadType => PupilDownloadType.NPD;
 
     private readonly INationalPupilReadOnlyRepository _npdReadRepository;
     private readonly IMapper<NationalPupil, IEnumerable<CensusAutumnOutputRecord>> _autumnMapper;
