@@ -1,6 +1,4 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -18,6 +16,7 @@ using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;

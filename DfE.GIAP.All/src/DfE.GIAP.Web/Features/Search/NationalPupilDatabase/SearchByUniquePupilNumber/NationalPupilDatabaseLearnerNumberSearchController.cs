@@ -1,6 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
@@ -15,6 +13,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;

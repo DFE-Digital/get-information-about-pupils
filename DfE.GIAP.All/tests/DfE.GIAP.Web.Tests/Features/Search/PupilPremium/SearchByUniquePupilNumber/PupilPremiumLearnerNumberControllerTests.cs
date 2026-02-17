@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;

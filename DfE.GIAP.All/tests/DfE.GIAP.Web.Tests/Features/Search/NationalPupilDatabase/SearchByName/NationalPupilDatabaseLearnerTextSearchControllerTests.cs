@@ -842,7 +842,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
 
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(Common.Enums.DownloadType.NPD, starredPupilViewModel.DownloadType);
+        Assert.Equal(Web.Enums.DownloadType.NPD, starredPupilViewModel.DownloadType);
         Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
 
     }
@@ -897,7 +897,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
 
         LearnerTextSearchViewModel model = Assert.IsType<LearnerTextSearchViewModel>(viewResult.Model);
         StarredPupilConfirmationViewModel starredPupilViewModel = model.StarredPupilConfirmationViewModel;
-        Assert.Equal(Common.Enums.DownloadType.CTF, starredPupilViewModel.DownloadType);
+        Assert.Equal(Web.Enums.DownloadType.CTF, starredPupilViewModel.DownloadType);
         Assert.Equal(upn, starredPupilViewModel.SelectedPupil);
     }
 
@@ -934,7 +934,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
         {
             SelectedPupil = _paginatedResultsFake.GetBase64EncodedUpn(),
             ConfirmationGiven = true,
-            DownloadType = Common.Enums.DownloadType.NPD
+            DownloadType = Web.Enums.DownloadType.NPD
         };
 
         ITempDataProvider tempDataProvider = Substitute.For<ITempDataProvider>();

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Common.Enums;
+﻿namespace DfE.GIAP.Web.Enums;
 
 public enum DownloadType
 {

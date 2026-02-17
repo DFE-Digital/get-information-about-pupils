@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
@@ -12,6 +10,7 @@ using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;

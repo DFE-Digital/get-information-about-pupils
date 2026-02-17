@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace DfE.GIAP.Common.Enums;
+namespace DfE.GIAP.Web.Enums;
 
 public enum DownloadFileType
 {

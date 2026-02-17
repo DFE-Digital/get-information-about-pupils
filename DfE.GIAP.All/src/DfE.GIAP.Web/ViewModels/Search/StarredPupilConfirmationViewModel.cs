@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using DfE.GIAP.Common.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using DfE.GIAP.Web.Enums;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 

@@ -1,4 +1,4 @@
-﻿namespace DfE.GIAP.Common.Constants;
+﻿namespace DfE.GIAP.Web.Constants;
 
 public static class Global
 {

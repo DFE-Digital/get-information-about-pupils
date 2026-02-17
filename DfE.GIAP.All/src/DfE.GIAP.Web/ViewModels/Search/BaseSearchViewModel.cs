@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using DfE.GIAP.Common.Enums;
 
 namespace DfE.GIAP.Web.ViewModels.Search;
 

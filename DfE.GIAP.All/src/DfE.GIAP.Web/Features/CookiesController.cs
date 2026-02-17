@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Web.Constants;
+﻿using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.ViewModels;

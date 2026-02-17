@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using Ganss.Xss;
 
 namespace DfE.GIAP.Web.Helpers.TextSanitiser;
+
 internal sealed class HtmlTextSanitiser : ITextSanitiserHandler
 {
     private static readonly HtmlSanitizer s_htmlSanitizer = new();
