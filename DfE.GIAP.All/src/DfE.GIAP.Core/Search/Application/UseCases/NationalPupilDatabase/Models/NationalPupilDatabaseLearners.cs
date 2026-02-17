@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
-using DfE.GIAP.Core.Search.Application.Services;
+﻿using DfE.GIAP.Core.Search.Application.Services;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 public record NationalPupilDatabaseLearners : IHasSearchResults
@@ -18,5 +17,6 @@ public record NationalPupilDatabaseLearners : IHasSearchResults
 
     public int Count => Values.Count;
 
+    public static NationalPupilDatabaseLearners Create(IEnumerable<NationalPupilDatabaseLearner> learners) => new(learners);
     public static NationalPupilDatabaseLearners CreateEmpty() => new();
 }

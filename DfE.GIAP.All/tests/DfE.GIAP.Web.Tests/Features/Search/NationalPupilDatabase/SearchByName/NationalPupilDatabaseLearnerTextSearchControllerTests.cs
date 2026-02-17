@@ -11,9 +11,12 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Web.Features.Search.Shared.Filters;
@@ -43,8 +46,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
     private readonly SearchFiltersFakeData _searchFiltersFake;
 
 
-    private readonly IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> _mockUseCase =
-        Substitute.For<IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse>>();
+    private readonly IUseCase<NationalPupilDatabaseSearchByNameRequest, SearchResponse<NationalPupilDatabaseLearners>> _mockUseCase =
+        Substitute.For<IUseCase<NationalPupilDatabaseSearchByNameRequest, SearchResponse<NationalPupilDatabaseLearners>>>();
 
     private readonly IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -89,8 +92,10 @@ public sealed class NationalPupilDatabaseLearnerTextSearchControllerTests : ICla
                         .Returns(SearchCriteriaTestDouble.Stub());
 
 
-        NationalPupilDatabaseSearchByNameResponse response =
-            NationalPupilDatabaseSearchByNameResponseTestDoubles.CreateSuccessResponse();
+        SearchResponse<NationalPupilDatabaseLearners> response = SearchResponse<NationalPupilDatabaseLearners>.Create(
+            NationalPupilDatabaseLearners.Create([NationalPupilDatabaseLearnerTestDoubles.Fake()]),
+            SearchFacetsTestDouble.Stub(),
+            totalResults: 1);
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<NationalPupilDatabaseSearchByNameRequest>()).Returns(response);

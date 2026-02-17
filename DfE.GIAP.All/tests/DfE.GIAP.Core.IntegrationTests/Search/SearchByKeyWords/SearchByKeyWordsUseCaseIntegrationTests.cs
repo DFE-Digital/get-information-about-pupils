@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using Microsoft.Extensions.Configuration;
 
@@ -48,8 +49,8 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
 
         HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
 
-        IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse> sut =
-            ResolveApplicationType<IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse>>()!;
+        IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>> sut =
+            ResolveApplicationType<IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>>>()!;
 
         SortOrder sortOrder = new(
             sortField: "Forename",
@@ -71,7 +72,7 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
         };
 
         // act
-        FurtherEducationSearchByNameResponse response = await sut.HandleRequestAsync(request);
+        SearchResponse<FurtherEducationLearners> response = await sut.HandleRequestAsync(request);
 
         // assert
         Assert.NotNull(response);

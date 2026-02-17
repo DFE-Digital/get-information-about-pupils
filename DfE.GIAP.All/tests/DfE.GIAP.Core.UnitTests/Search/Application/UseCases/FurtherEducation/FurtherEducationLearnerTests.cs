@@ -12,7 +12,7 @@ public sealed class FurtherEducationLearnersTests
         // arrange
         FurtherEducationLearner learner =
             new(
-                new FurtherEducationLearnerIdentifier("1234567890"),
+                new FurtherEducationUniqueLearnerIdentifier("1234567890"),
                 new LearnerName("Alice", "Smith"),
                 new LearnerCharacteristics(
                     new DateTime(2005, 6, 1),
@@ -68,7 +68,7 @@ public sealed class FurtherEducationLearnersTests
     {
         // arrange
         FurtherEducationLearner learner = new(
-            new FurtherEducationLearnerIdentifier("1234567890"),
+            new FurtherEducationUniqueLearnerIdentifier("1234567890"),
             new LearnerName("Bob", "Jones"),
             new LearnerCharacteristics(
                 new DateTime(2004, 3, 15),

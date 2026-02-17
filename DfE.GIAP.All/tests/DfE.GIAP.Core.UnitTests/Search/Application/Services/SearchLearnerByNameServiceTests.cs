@@ -37,7 +37,7 @@ public sealed class SearchLearnerByNameServiceTests
         SearchLearnerByNameService<FakeLearnerSearchResponse> sut = new(adapter.Object);
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request: null!);
+        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request: null!);
 
         // Assert
         Assert.Equal(SearchResponseStatus.InvalidRequest, response.Status);
@@ -60,7 +60,7 @@ public sealed class SearchLearnerByNameServiceTests
         SearchLearnerByNameRequest request = new(keywords!, SearchCriteriaTestDouble.Stub(), SortOrderTestDouble.Stub());
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
 
         // Assert
         Assert.Equal(SearchResponseStatus.InvalidRequest, response.Status);
@@ -89,7 +89,7 @@ public sealed class SearchLearnerByNameServiceTests
         SearchLearnerByNameRequest request = new("search-keywords", SearchCriteriaTestDouble.Stub(), SortOrderTestDouble.Stub());
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
 
         // Assert
         Assert.Equal(SearchResponseStatus.Success, response.Status);
@@ -120,7 +120,7 @@ public sealed class SearchLearnerByNameServiceTests
         SearchLearnerByNameRequest request = new("search-keywords", SearchCriteriaTestDouble.Stub(), SortOrderTestDouble.Stub());
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
 
         // Assert
         Assert.Equal(SearchResponseStatus.NoResultsFound, response.Status);
@@ -144,7 +144,7 @@ public sealed class SearchLearnerByNameServiceTests
         SearchLearnerByNameRequest request = new("search-keywords", SearchCriteriaTestDouble.Stub(), SortOrderTestDouble.Stub());
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
 
         // Assert
         Assert.Equal(SearchResponseStatus.NoResultsFound, response.Status);
@@ -165,7 +165,7 @@ public sealed class SearchLearnerByNameServiceTests
         SearchLearnerByNameRequest request = new("search-keywords", SearchCriteriaTestDouble.Stub(), SortOrderTestDouble.Stub());
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
 
         // Assert
         Assert.Equal(SearchResponseStatus.SearchServiceError, response.Status);
@@ -208,7 +208,7 @@ public sealed class SearchLearnerByNameServiceTests
             offset: requestOffset);
 
         // Act
-        SearchResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        await sut.SearchAsync(request);
 
         // Assert
         Assert.NotNull(captured);

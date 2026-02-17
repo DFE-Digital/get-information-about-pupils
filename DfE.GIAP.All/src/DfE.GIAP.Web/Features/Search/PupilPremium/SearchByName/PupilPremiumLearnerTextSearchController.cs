@@ -7,6 +7,8 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -38,7 +40,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
     private readonly IUseCase<
         PupilPremiumSearchByNameRequest,
-        PupilPremiumSearchByNameResponse> _searchUseCase;
+        SearchResponse<PupilPremiumLearners>> _searchUseCase;
 
     private readonly IMapper<
         PupilPremiumLearnerTextSearchMappingContext,
@@ -78,7 +80,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         ISessionProvider sessionProvider,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupils,
-        IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse> searchUseCase,
+        IUseCase<PupilPremiumSearchByNameRequest, SearchResponse<PupilPremiumLearners>> searchUseCase,
         IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
         ISortOrderFactory sortOrderFactory,
@@ -723,7 +725,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
                     options: options.SortOptions,
                     sort: (sortField, sortDirection));
 
-        PupilPremiumSearchByNameResponse searchResponse =
+        SearchResponse<PupilPremiumLearners> searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new PupilPremiumSearchByNameRequest()
                 {

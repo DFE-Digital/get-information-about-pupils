@@ -7,8 +7,11 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
@@ -32,7 +35,7 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
     private readonly Mock<IUseCase<
-        PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse>> _mockUseCase = new();
+        PupilPremiumSearchByUniquePupilNumberRequest, SearchResponse<PupilPremiumLearners>>> _mockUseCase = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
 
@@ -73,8 +76,10 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
                     It.IsAny<SearchCriteriaOptions>()))
                         .Returns(SearchCriteriaTestDouble.Stub());
 
-        PupilPremiumSearchByUniquePupilNumberResponse response =
-            PupilPremiumSearchByUniquePupilNumberResponseTestDouble.CreateSuccessResponse();
+        SearchResponse<PupilPremiumLearners> response = SearchResponse<PupilPremiumLearners>.Create(
+            PupilPremiumLearners.Create(PupilPremiumLearnerTestDoubles.FakeMany()),
+            SearchFacetsTestDouble.Stub(),
+            totalResults: 1);
 
         _mockUseCase
             .Setup(

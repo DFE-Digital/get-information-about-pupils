@@ -23,7 +23,7 @@ public static class FurtherEducationLearnerTestDouble
         // Instantiate a Bogus faker for generating realistic fake data
         Faker faker = new();
 
-        FurtherEducationLearnerIdentifier learnerIdentifier = FurtherEducationLearnerIdentifierTestDouble.FakeIdentifier(faker);
+        FurtherEducationUniqueLearnerIdentifier learnerIdentifier = FurtherEducationLearnerIdentifierTestDouble.FakeIdentifier(faker);
         LearnerName learnerName = LearnerNameTestDouble.FakeName(faker);
         LearnerCharacteristics learnerCharacteristics = LearnerCharacteristicsTestDouble.FakeCharacteristics(faker);
 

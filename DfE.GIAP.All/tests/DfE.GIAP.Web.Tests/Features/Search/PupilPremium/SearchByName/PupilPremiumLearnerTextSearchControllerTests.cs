@@ -8,8 +8,11 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -38,8 +41,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
     private readonly SearchFiltersFakeData _searchFiltersFake;
     private readonly Mock<ISessionProvider> _mockSessionProvider = new();
 
-    private readonly IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse> _mockUseCase =
-        Substitute.For<IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse>>();
+    private readonly IUseCase<PupilPremiumSearchByNameRequest, SearchResponse<PupilPremiumLearners>> _mockUseCase =
+        Substitute.For<IUseCase<PupilPremiumSearchByNameRequest, SearchResponse<PupilPremiumLearners>>>();
 
     private readonly IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<PupilPremiumLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -83,8 +86,10 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
                     It.IsAny<SearchCriteriaOptions>()))
                         .Returns(SearchCriteriaTestDouble.Stub());
 
-        PupilPremiumSearchByNameResponse response =
-            PupilPremiumSearchByNameResponseTestDouble.CreateSuccessResponse();
+        SearchResponse<PupilPremiumLearners> response = SearchResponse<PupilPremiumLearners>.Create(
+            PupilPremiumLearners.Create(PupilPremiumLearnerTestDoubles.FakeMany()),
+            SearchFacetsTestDouble.Stub(),
+            totalResults: 1);
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<PupilPremiumSearchByNameRequest>()).Returns(response);

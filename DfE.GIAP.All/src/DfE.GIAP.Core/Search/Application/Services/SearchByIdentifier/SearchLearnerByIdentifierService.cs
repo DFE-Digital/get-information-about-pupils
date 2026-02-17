@@ -15,11 +15,11 @@ internal sealed class SearchLearnerByIdentifierService<TResponse> : ISearchLearn
         _searchServiceAdapter = searchServiceAdapter;
     }
 
-    public async Task<SearchResponse<TResponse, SearchFacets>> SearchAsync(SearchLearnersByIdentifierRequest request)
+    public async Task<SearchServiceResponse<TResponse, SearchFacets>> SearchAsync(SearchLearnersByIdentifierRequest request)
     {
         if (request == null || request.Identifiers.Count == 0)
         {
-            return new SearchResponse<TResponse, SearchFacets>(SearchResponseStatus.InvalidRequest);
+            return new SearchServiceResponse<TResponse, SearchFacets>(SearchResponseStatus.InvalidRequest);
         }
 
         // TODO understand if this is neccesary when we are searching for the identifier in `SearchFields`?

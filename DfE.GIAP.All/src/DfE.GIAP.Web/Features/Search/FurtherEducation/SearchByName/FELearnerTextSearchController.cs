@@ -9,7 +9,9 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -49,7 +51,7 @@ public class FELearnerTextSearchController : Controller
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly IUseCase<
         FurtherEducationSearchByNameRequest,
-        FurtherEducationSearchByNameResponse> _furtherEducationSearchUseCase;
+        SearchResponse<FurtherEducationLearners>> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         FurtherEducationLearnerTextSearchMappingContext,
@@ -73,7 +75,7 @@ public class FELearnerTextSearchController : Controller
         ISessionProvider sessionProvider,
         IUseCase<
             FurtherEducationSearchByNameRequest,
-            FurtherEducationSearchByNameResponse> furtherEducationSearchUseCase,
+            SearchResponse<FurtherEducationLearners>> furtherEducationSearchUseCase,
         IMapper<
             FurtherEducationLearnerTextSearchMappingContext,
             LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
@@ -689,7 +691,7 @@ public class FELearnerTextSearchController : Controller
                 sort: (sortField, sortDirection));
 
 
-        FurtherEducationSearchByNameResponse searchResponse =
+        SearchResponse<FurtherEducationLearners> searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new FurtherEducationSearchByNameRequest()
                 {

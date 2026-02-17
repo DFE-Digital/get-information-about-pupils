@@ -6,7 +6,7 @@ namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 /// Represents a learner in the Further Education domain.
 /// Encapsulates identity, name, and core characteristics.
 /// </summary>
-public sealed class FurtherEducationLearner : Entity<FurtherEducationLearnerIdentifier>
+public sealed class FurtherEducationLearner : Entity<FurtherEducationUniqueLearnerIdentifier>
 {
     /// <summary>
     /// Gets the learner's full name.
@@ -28,7 +28,7 @@ public sealed class FurtherEducationLearner : Entity<FurtherEducationLearnerIden
     /// Thrown if <paramref name="name"/> or <paramref name="learnerCharacteristics"/> is null.
     /// </exception>
     public FurtherEducationLearner(
-        FurtherEducationLearnerIdentifier learnerIdentifier,
+        FurtherEducationUniqueLearnerIdentifier learnerIdentifier,
         LearnerName name,
         LearnerCharacteristics learnerCharacteristics) : base(learnerIdentifier)
     {

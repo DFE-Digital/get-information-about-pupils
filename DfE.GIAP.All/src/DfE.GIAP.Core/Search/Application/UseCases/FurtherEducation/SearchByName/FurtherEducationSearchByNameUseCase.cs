@@ -1,10 +1,11 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
-internal sealed class FurtherEducationSearchByNameUseCase : IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse>
+internal sealed class FurtherEducationSearchByNameUseCase : IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>>
 {
     private readonly ISearchLearnerByNameService<FurtherEducationLearners> _searchForLearnerByNameService;
 
@@ -14,11 +15,11 @@ internal sealed class FurtherEducationSearchByNameUseCase : IUseCase<FurtherEduc
         _searchForLearnerByNameService = searchForLearnerByNameService;
     }
 
-    public async Task<FurtherEducationSearchByNameResponse> HandleRequestAsync(FurtherEducationSearchByNameRequest request)
+    public async Task<SearchResponse<FurtherEducationLearners>> HandleRequestAsync(FurtherEducationSearchByNameRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        SearchResponse<FurtherEducationLearners, SearchFacets> response = await _searchForLearnerByNameService.SearchAsync(
+        SearchServiceResponse<FurtherEducationLearners, SearchFacets> response = await _searchForLearnerByNameService.SearchAsync(
             new SearchLearnerByNameRequest(
                 request.SearchKeywords!,
                 request.SearchCriteria!,
@@ -26,9 +27,10 @@ internal sealed class FurtherEducationSearchByNameUseCase : IUseCase<FurtherEduc
                 request.FilterRequests,
                 request.Offset));
 
-        return new FurtherEducationSearchByNameResponse(
-            response.LearnerSearchResults,
-            response.FacetedResults,
-            response.TotalNumberOfResults);
+        return
+            SearchResponse<FurtherEducationLearners>.Create(
+                response.LearnerSearchResults ?? FurtherEducationLearners.CreateEmpty(),
+                response.FacetedResults,
+                response.TotalNumberOfResults);
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
 using DfE.GIAP.Core.Search.Infrastructure.Shared;
@@ -24,7 +26,7 @@ internal static class FurtherEducationSearchCompositionRootExtensions
         services
             .AddScoped<
                 IUseCase<
-                    FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse>,
+                    FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>>,
                     FurtherEducationSearchByNameUseCase>()
 
             .AddScoped<
@@ -41,7 +43,7 @@ internal static class FurtherEducationSearchCompositionRootExtensions
         services
             .AddScoped<
                 IUseCase<
-                    FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse>,
+                    FurtherEducationSearchByUniqueLearnerNumberRequest, SearchResponse<FurtherEducationLearners>>,
                     FurtherEducationSearchByUniqueLearnerNumberUseCase>()
 
             .AddScoped<

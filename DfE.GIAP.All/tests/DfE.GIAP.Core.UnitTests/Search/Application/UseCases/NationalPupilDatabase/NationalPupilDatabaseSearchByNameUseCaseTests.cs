@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
@@ -85,7 +86,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         ISearchResults<NationalPupilDatabaseLearners, SearchFacets> noResults =
             NationalPupilDatabaseSearchResultsTestDoubles.StubWithNoResults();
 
-        SearchResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.NoResultsFound, 0)
             {
                 LearnerSearchResults = noResults.Results!,
@@ -106,7 +107,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         };
 
         // Act
-        NationalPupilDatabaseSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<NationalPupilDatabaseLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);
@@ -130,7 +131,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         SearchFacets facets = NationalPupilDatabaseSearchResultsTestDoubles.Stub().FacetResults!;
         int totalNumberOfResults = 42;
 
-        SearchResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.Success, totalNumberOfResults)
             {
                 LearnerSearchResults = learners,
@@ -154,7 +155,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         NationalPupilDatabaseSearchByNameUseCase useCase = new(mockService.Object);
 
         // Act
-        NationalPupilDatabaseSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<NationalPupilDatabaseLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);
@@ -185,7 +186,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
 
         int totalNumberOfResults = 11;
 
-        SearchResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.Success, totalNumberOfResults)
             {
                 LearnerSearchResults = stubResults.Results!,
@@ -208,7 +209,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         NationalPupilDatabaseSearchByNameUseCase useCase = new(mockService.Object);
 
         // Act
-        NationalPupilDatabaseSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<NationalPupilDatabaseLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);

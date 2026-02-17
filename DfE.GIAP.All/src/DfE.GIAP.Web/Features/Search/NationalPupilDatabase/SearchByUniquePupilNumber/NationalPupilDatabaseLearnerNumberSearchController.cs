@@ -11,6 +11,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
@@ -39,7 +40,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _logger;
     private readonly IDownloadCommonTransferFileService _ctfService;
-    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> _searchUseCase;
+    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>> _searchUseCase;
     private readonly ISortOrderFactory _sortOrderFactory;
     private readonly IMapper<NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
     private readonly ISelectionManager _selectionManager;
@@ -68,7 +69,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         ILogger<NationalPupilDatabaseLearnerNumberSearchController> logger,
         IDownloadCommonTransferFileService ctfService,
         IUseCase<
-            NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> searchUseCase,
+            NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>> searchUseCase,
         ISortOrderFactory sortOrderFactory,
         IMapper<
             NationalPupilDatabaseLearnerNumericSearchMappingContext,
@@ -539,7 +540,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
             options: options.SortOptions,
             sort: (model.SortField, model.SortDirection));
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse searchResponse =
+        SearchResponse<NationalPupilDatabaseLearners> searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
                 {

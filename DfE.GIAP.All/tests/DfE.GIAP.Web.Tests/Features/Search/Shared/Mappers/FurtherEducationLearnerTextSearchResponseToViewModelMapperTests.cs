@@ -3,11 +3,9 @@ using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
-using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
-using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -49,9 +47,9 @@ public class FurtherEducationLearnerTextSearchResponseToViewModelMapperTests
         List<FurtherEducationLearner> applicationModelLearners =
             FurtherEducationLearnerCollectionTestDouble.CreateLearnersStub(learnerFakes);
 
-        FurtherEducationSearchByNameResponse response =
-            FurtherEducationSearchByNameResponseTestDouble.Create(
-                learners: new FurtherEducationLearners([applicationModelLearners[0]]),
+        SearchResponse<FurtherEducationLearners> response =
+            SearchResponse<FurtherEducationLearners>.Create(
+                FurtherEducationLearners.Create([applicationModelLearners[0]]),
                 facets: SearchFacetsTestDouble.CreateSingleFacetGroup("Region", "North", 1),
                 totalResults: 1);
 
