@@ -6,7 +6,6 @@ using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
-using DfE.GIAP.Web.Services.Download.CTF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -24,7 +23,6 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
     public DownloadMyPupilsCommonTransferFileController(
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
-        IDownloadCommonTransferFileService ctfService,
         IUpsertSelectedPupilsIdentifiersPresentationService upsertSelectedPupilsPresentationService,
         IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase,
         IEventLogger eventLogger)

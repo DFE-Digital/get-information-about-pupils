@@ -24,7 +24,6 @@ using DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupilNumb
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
@@ -41,7 +40,6 @@ namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase.SearchByUniqu
 public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IClassFixture<PaginatedResultsFake>
 {
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _mockLogger = Substitute.For<ILogger<NationalPupilDatabaseLearnerNumberSearchController>>();
-    private readonly IDownloadCommonTransferFileService _mockCtfService = Substitute.For<IDownloadCommonTransferFileService>();
     private readonly ISelectionManager _mockSelectionManager = Substitute.For<ISelectionManager>();
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsUseCaseMock = Substitute.For<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>();
@@ -1252,20 +1250,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
     public async Task DownloadCommonTransferFileData_exceeding_commonTransferFileUPNLimit_returns_to_search_page_with_errorDetails()
     {
         // arrange
-        _mockCtfService.GetCommonTransferFile(
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string>(),
-            Arg.Any<string>(),
-            Arg.Any<bool>(),
-            Arg.Any<AzureFunctionHeaderDetails>(),
-            Arg.Any<ReturnRoute>()
-            ).Returns(new ReturnFile()
-            {
-                FileName = "test",
-                FileType = FileType.ZipFile,
-                Bytes = []
-            });
 
         string upns = _paginatedResultsFake.GetUpns();
         LearnerNumberSearchViewModel inputModel = new()
@@ -1496,7 +1480,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
         return new NationalPupilDatabaseLearnerNumberSearchController(
             _mockLogger,
-            _mockCtfService,
             _mockUseCase.Object,
             _sortOrderFactoryMock.Object,
             _mockLearnerNumberSearchResponseToViewModelMapper.Object,

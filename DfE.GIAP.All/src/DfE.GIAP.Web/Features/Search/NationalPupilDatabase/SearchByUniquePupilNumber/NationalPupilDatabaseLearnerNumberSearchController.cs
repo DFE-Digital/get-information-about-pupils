@@ -22,7 +22,6 @@ using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
-using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
     private readonly ILogger<NationalPupilDatabaseLearnerNumberSearchController> _logger;
-    private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>> _searchUseCase;
     private readonly ISortOrderFactory _sortOrderFactory;
     private readonly IMapper<NationalPupilDatabaseLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel> _learnerNumericSearchResponseToViewModelMapper;
@@ -67,7 +65,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     public NationalPupilDatabaseLearnerNumberSearchController(
         ILogger<NationalPupilDatabaseLearnerNumberSearchController> logger,
-        IDownloadCommonTransferFileService ctfService,
         IUseCase<
             NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>> searchUseCase,
         ISortOrderFactory sortOrderFactory,
@@ -87,9 +84,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
-
-        ArgumentNullException.ThrowIfNull(ctfService);
-        _ctfService = ctfService;
 
         ArgumentNullException.ThrowIfNull(searchUseCase);
         _searchUseCase = searchUseCase;

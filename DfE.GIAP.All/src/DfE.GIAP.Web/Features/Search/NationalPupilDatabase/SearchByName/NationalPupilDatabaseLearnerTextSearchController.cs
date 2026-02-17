@@ -14,7 +14,6 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -26,7 +25,6 @@ using DfE.GIAP.Web.Helpers.Controllers;
 using DfE.GIAP.Web.Helpers.Search;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.Services.Download.CTF;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Mvc;
 using DownloadType = DfE.GIAP.Common.Enums.DownloadType;
@@ -40,7 +38,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
     private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _logger;
     private readonly ITextSearchSelectionManager _selectionManager;
-    private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly ISessionProvider _sessionProvider;
 
     public string PageHeading => ApplicationLabels.SearchNPDWithOutUpnPageHeading;
@@ -96,7 +93,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
-        IDownloadCommonTransferFileService ctfService,
         ISessionProvider sessionProvider,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -116,9 +112,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
-
-        ArgumentNullException.ThrowIfNull(ctfService);
-        _ctfService = ctfService;
 
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
