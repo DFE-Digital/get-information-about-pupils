@@ -70,6 +70,20 @@ public static class ConfigurationTestDoubles
         return builder;
     }
 
+    public static IConfigurationBuilder WithSearchIndexNameOptions(this IConfigurationBuilder builder)
+    {
+        Dictionary<string, string?> azureSearchConnectionStubConfig = new()
+        {
+            ["SearchIndexNamesOptions:Names:0"] = "FE_INDEX_NAME",
+            ["SearchIndexNamesOptions:Names:1"] = "NPD_INDEX_NAME",
+            ["SearchIndexNamesOptions:Names:2"] = "PUPIL_PREMIUM_INDEX_NAME",
+        };
+
+        builder.AddInMemoryCollection(azureSearchConnectionStubConfig);
+
+        return builder;
+    }
+
     public static IConfigurationBuilder WithLocalCosmosDbOptions(this IConfigurationBuilder builder)
     {
         Dictionary<string, string?> configurationOptions = new()

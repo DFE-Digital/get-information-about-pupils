@@ -38,6 +38,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         IConfiguration indexConfiguration =
             ConfigurationTestDoubles.DefaultConfigurationBuilder()
                 .WithSearchOptions()
+                .WithSearchIndexNameOptions()
                 .WithAzureSearchConnectionOptions()
                 .WithFilterKeyToFilterExpressionMapOptions()
                 .Build();
