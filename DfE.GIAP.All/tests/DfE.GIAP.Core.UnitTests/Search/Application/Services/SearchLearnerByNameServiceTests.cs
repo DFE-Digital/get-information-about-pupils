@@ -208,7 +208,7 @@ public sealed class SearchLearnerByNameServiceTests
             offset: requestOffset);
 
         // Act
-        SearchServiceResponse<FakeLearnerSearchResponse, SearchFacets> response = await sut.SearchAsync(request);
+        await sut.SearchAsync(request);
 
         // Assert
         Assert.NotNull(captured);
