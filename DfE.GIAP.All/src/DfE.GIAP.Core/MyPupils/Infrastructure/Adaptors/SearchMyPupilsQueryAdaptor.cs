@@ -16,17 +16,17 @@ namespace DfE.GIAP.Core.MyPupils.Infrastructure.Adaptors;
 internal sealed class QueryMyPupilsSearchAdaptor : IQueryMyPupilsPort
 {
     private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
-    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> _getNpdLearnersUseCase;
+    private readonly IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>> _getNpdLearnersUseCase;
     private readonly IMapper<NationalPupilDatabaseLearner, Pupil> _npdLearnerToPupilMapper;
-    private readonly IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse> _getPupilPremiumLearnersUseCase;
+    private readonly IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, SearchResponse<PupilPremiumLearners>> _getPupilPremiumLearnersUseCase;
     private readonly IMapper<PupilPremiumLearner, Pupil> _pupilPremiumLearnerToPupilMapper;
     private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
     public QueryMyPupilsSearchAdaptor(
         ISearchIndexOptionsProvider searchIndexOptionsProvider,
-        IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse> getNpdLearnersUseCase,
+        IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>> getNpdLearnersUseCase,
         IMapper<NationalPupilDatabaseLearner, Pupil> npdLearnerToPupilMapper,
-        IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse> getPupilPremiumLearnersUseCase,
+        IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, SearchResponse<PupilPremiumLearners>> getPupilPremiumLearnersUseCase,
         IMapper<PupilPremiumLearner, Pupil> pupilPremiumLearnerToPupilMapper,
         IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
     {
@@ -55,7 +55,7 @@ internal sealed class QueryMyPupilsSearchAdaptor : IQueryMyPupilsPort
 
         SearchIndexOptions npdIndexOptions = _searchIndexOptionsProvider.GetOptions("npd-upn");
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse npdSearchResponse =
+        SearchResponse<NationalPupilDatabaseLearners> npdSearchResponse =
         await _getNpdLearnersUseCase.HandleRequestAsync(
             new NationalPupilDatabaseSearchByUniquePupilNumberRequest()
             {
@@ -67,7 +67,7 @@ internal sealed class QueryMyPupilsSearchAdaptor : IQueryMyPupilsPort
 
         SearchIndexOptions pupilPremiumIndexOptions = _searchIndexOptionsProvider.GetOptions("pupil-premium-upn");
 
-        PupilPremiumSearchByUniquePupilNumberResponse pupilPremiumSearchResponse =
+        SearchResponse<PupilPremiumLearners> pupilPremiumSearchResponse =
             await _getPupilPremiumLearnersUseCase.HandleRequestAsync(
                 new PupilPremiumSearchByUniquePupilNumberRequest()
                 {

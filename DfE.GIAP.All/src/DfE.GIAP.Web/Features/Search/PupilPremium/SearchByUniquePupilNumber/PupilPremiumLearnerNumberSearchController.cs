@@ -5,6 +5,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
@@ -32,7 +33,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
     private readonly IUseCase<
         PupilPremiumSearchByUniquePupilNumberRequest,
-        PupilPremiumSearchByUniquePupilNumberResponse> _searchUseCase;
+        SearchResponse<PupilPremiumLearners>> _searchUseCase;
 
     private readonly IMapper<
         PupilPremiumLearnerNumericSearchMappingContext,
@@ -58,7 +59,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         ILogger<PupilPremiumLearnerNumberSearchController> logger,
         IUseCase<
             PupilPremiumSearchByUniquePupilNumberRequest,
-            PupilPremiumSearchByUniquePupilNumberResponse> searchUseCase,
+            SearchResponse<PupilPremiumLearners>> searchUseCase,
         ISortOrderFactory sortOrderFactory,
         IMapper<
             PupilPremiumLearnerNumericSearchMappingContext,
@@ -399,7 +400,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
             options.SortOptions,
             sort: (model.SortField, model.SortDirection));
 
-        PupilPremiumSearchByUniquePupilNumberResponse searchResponse = await _searchUseCase.HandleRequestAsync(
+        SearchResponse<PupilPremiumLearners> searchResponse = await _searchUseCase.HandleRequestAsync(
             new PupilPremiumSearchByUniquePupilNumberRequest()
             {
                 UniquePupilNumbers = learnerNumberArray,

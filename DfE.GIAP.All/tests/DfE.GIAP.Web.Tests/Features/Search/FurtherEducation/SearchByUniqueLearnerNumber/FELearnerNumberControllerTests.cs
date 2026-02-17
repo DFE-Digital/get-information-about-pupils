@@ -8,8 +8,10 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
@@ -18,6 +20,7 @@ using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.SelectionManager;
+using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -38,8 +41,8 @@ public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResu
 
     private readonly IOptions<AzureAppSettings> _mockAppOptions = Substitute.For<IOptions<AzureAppSettings>>();
 
-    private readonly IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse> _mockUseCase =
-        Substitute.For<IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse>>();
+    private readonly IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, SearchResponse<FurtherEducationLearners>> _mockUseCase =
+        Substitute.For<IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, SearchResponse<FurtherEducationLearners>>>();
 
     private AzureAppSettings _mockAppSettings = new();
 
@@ -83,8 +86,12 @@ public sealed class FELearnerNumberControllerTests : IClassFixture<PaginatedResu
                     It.IsAny<SearchCriteriaOptions>()))
                         .Returns(SearchCriteriaTestDouble.Stub());
 
-        FurtherEducationSearchByUniqueLearnerNumberResponse response =
-            FurtherEducationSearchByUniqueLearnerNumberTestDouble.CreateSuccessResponse();
+        SearchResponse<FurtherEducationLearners> response =
+            SearchResponse<FurtherEducationLearners>.Create(
+                FurtherEducationLearners.Create(
+                    [FurtherEducationLearnerTestDouble.Stub()]),
+                    SearchFacetsTestDouble.Stub(),
+                    totalResults: 1);
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchByUniqueLearnerNumberRequest>()).Returns(response);

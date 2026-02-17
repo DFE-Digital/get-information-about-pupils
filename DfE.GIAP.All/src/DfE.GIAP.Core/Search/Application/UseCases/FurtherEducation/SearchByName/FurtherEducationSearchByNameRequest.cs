@@ -2,10 +2,11 @@
 using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 
-public record FurtherEducationSearchByNameRequest : IUseCaseRequest<FurtherEducationSearchByNameResponse>
+public record FurtherEducationSearchByNameRequest : IUseCaseRequest<SearchResponse<FurtherEducationLearners>>
 {
     public string? SearchKeywords { get; init; }
 

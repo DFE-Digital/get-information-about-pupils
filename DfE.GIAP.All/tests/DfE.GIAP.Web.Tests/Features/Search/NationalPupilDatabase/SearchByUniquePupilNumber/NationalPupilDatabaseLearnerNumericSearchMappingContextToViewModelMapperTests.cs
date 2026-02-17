@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
@@ -32,9 +33,9 @@ public sealed class NationalPupilDatabaseLearnerNumericSearchMappingContextToVie
 
         List<NationalPupilDatabaseLearner> learners = NationalPupilDatabaseLearnerTestDoubles.FakeMany(domainLearners.Count);
 
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse response =
-            NationalPupilDatabaseSearchByUniquePupilNumberResponseTestDouble.Create(
-                learners: new NationalPupilDatabaseLearners(learners),
+        SearchResponse<NationalPupilDatabaseLearners> response =
+            SearchResponse<NationalPupilDatabaseLearners>.Create(
+                NationalPupilDatabaseLearners.Create(learners),
                 totalResults: learners.Count);
 
         Mock<IMapper<NationalPupilDatabaseLearner, Learner>> learnerMapper = new();

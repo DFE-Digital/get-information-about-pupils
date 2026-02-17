@@ -14,12 +14,6 @@ namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 public static class FakeFurtherEducationLearnerDataTestDouble
 {
     /// <summary>
-    /// Generates a valid ULN (Unique Learner Number) as a string.
-    /// </summary>
-    public static string CreateUniqueLearnerNumber(Faker faker) =>
-        faker.Random.Int(1000000000, 2146999999).ToString();
-
-    /// <summary>
     /// Generates a full learner identity tuple using randomized values.
     /// </summary>
     /// <returns>
@@ -32,7 +26,7 @@ public static class FakeFurtherEducationLearnerDataTestDouble
         LearnerCharacteristics characteristics = LearnerCharacteristicsTestDouble.FakeCharacteristics(faker);
 
         return (
-            Uln: CreateUniqueLearnerNumber(faker),
+            Uln: FurtherEducationUniqueLearnerNumberIdentifierTestDoubles.CreateUniqueLearnerNumber(faker),
             name.FirstName,
             name.Surname,
             characteristics.BirthDate,

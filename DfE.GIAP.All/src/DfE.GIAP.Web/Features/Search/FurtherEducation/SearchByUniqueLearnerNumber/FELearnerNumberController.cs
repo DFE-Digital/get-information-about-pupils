@@ -8,6 +8,7 @@ using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
@@ -34,7 +35,7 @@ public class FELearnerNumberController : Controller
 
     private readonly IUseCase<
         FurtherEducationSearchByUniqueLearnerNumberRequest,
-        FurtherEducationSearchByUniqueLearnerNumberResponse> _furtherEducationSearchUseCase;
+        SearchResponse<FurtherEducationLearners>> _furtherEducationSearchUseCase;
 
     private readonly IMapper<
         FurtherEducationLearnerNumericSearchMappingContext,
@@ -69,7 +70,7 @@ public class FELearnerNumberController : Controller
     public FELearnerNumberController(
         IUseCase<
             FurtherEducationSearchByUniqueLearnerNumberRequest,
-            FurtherEducationSearchByUniqueLearnerNumberResponse> furtherEducationSearchUseCase,
+            SearchResponse<FurtherEducationLearners>> furtherEducationSearchUseCase,
         IMapper<
             FurtherEducationLearnerNumericSearchMappingContext,
             LearnerNumberSearchViewModel> learnerNumericSearchResponseToViewModelMapper,
@@ -451,7 +452,7 @@ public class FELearnerNumberController : Controller
             _sortOrderFactory.Create(
                 options: indexOptions.SortOptions, sort: (model.SortField, model.SortDirection));
 
-        FurtherEducationSearchByUniqueLearnerNumberResponse searchResponse =
+        SearchResponse<FurtherEducationLearners> searchResponse =
             await _furtherEducationSearchUseCase.HandleRequestAsync(
                 new FurtherEducationSearchByUniqueLearnerNumberRequest()
                 {

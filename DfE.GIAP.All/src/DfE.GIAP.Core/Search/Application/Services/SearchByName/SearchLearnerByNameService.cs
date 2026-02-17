@@ -15,7 +15,7 @@ internal sealed class SearchLearnerByNameService<TSearchResponse> : ISearchLearn
         _searchServiceAdapter = searchServiceAdapter;
     }
 
-    public async Task<SearchResponse<TSearchResponse, SearchFacets>> SearchAsync(SearchLearnerByNameRequest request)
+    public async Task<SearchServiceResponse<TSearchResponse, SearchFacets>> SearchAsync(SearchLearnerByNameRequest request)
     {
         if (request == null
             || string.IsNullOrWhiteSpace(request.SearchKeywords) ||

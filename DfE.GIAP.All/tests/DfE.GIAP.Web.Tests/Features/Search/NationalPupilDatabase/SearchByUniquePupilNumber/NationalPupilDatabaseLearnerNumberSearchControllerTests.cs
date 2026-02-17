@@ -11,9 +11,12 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
 using DfE.GIAP.Domain.Models.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.Learner;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
@@ -50,7 +53,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
     private readonly Mock<
         IUseCase<
-            NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse>> _mockUseCase = new();
+            NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>>> _mockUseCase = new();
 
     private readonly Mock<
         IMapper<
@@ -89,9 +92,10 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
                     It.IsAny<SearchCriteriaOptions>()))
                         .Returns(SearchCriteriaTestDouble.Stub());
 
-
-        NationalPupilDatabaseSearchByUniquePupilNumberResponse response =
-            NationalPupilDatabaseSearchByUniquePupilNumberResponseTestDouble.CreateSuccessResponse();
+        SearchResponse<NationalPupilDatabaseLearners> response = SearchResponse<NationalPupilDatabaseLearners>.Create(
+            NationalPupilDatabaseLearners.Create([NationalPupilDatabaseLearnerTestDoubles.Fake()]),
+            SearchFacetsTestDouble.Stub(),
+            totalResults: 1);
 
         _mockUseCase
             .Setup(

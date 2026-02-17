@@ -22,7 +22,7 @@ internal sealed class FurtherEducationSearchResultToLearnerMapper : IMapperWithR
         try
         {
             FurtherEducationLearner learner = new(
-                new FurtherEducationLearnerIdentifier(input.ULN!),
+                new FurtherEducationUniqueLearnerIdentifier(input.ULN!),
                 new LearnerName(input.Forename!, input.Surname!),
                 new LearnerCharacteristics(
                     input.DOB!.Value,

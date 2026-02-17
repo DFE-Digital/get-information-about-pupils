@@ -1,49 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Bogus;
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.SharedTests.Common;
+using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 
-/// <summary>
-/// Provides a reusable test double for constructing <see cref="FurtherEducationLearner"/> domain objects.
-/// Centralizes learner scaffolding for unit tests to improve readability and reduce duplication.
-/// </summary>
 [ExcludeFromCodeCoverage]
 public static class FurtherEducationLearnerTestDouble
 {
-    /// <summary>
-    /// Creates a <see cref="FurtherEducationLearnerIdentifier"/> from a unique learner number.
-    /// Encapsulates identity logic for symbolic traceability in tests.
-    /// </summary>
-    private static FurtherEducationLearnerIdentifier Identifier(string uniqueLearnerNumber) =>
-        new(uniqueLearnerNumber);
-
-    /// <summary>
-    /// Constructs a <see cref="LearnerName"/> from first and last name.
-    /// Supports semantic clarity when asserting name-based behavior.
-    /// </summary>
-    private static LearnerName Name(string firstname, string surname) =>
-        new(firstname, surname);
-
-    /// <summary>
-    /// Builds a <see cref="LearnerCharacteristics"/> object from birth date and gender.
-    /// Enables characteristic-based filtering and diagnostics in test scenarios.
-    /// </summary>
-    private static LearnerCharacteristics Characteristics(
-        DateTime birthDate,
-        Sex gender) =>
-        new(birthDate, gender);
-
-    /// <summary>
-    /// Creates a fully populated <see cref="FurtherEducationLearner"/> instance for use in unit tests.
-    /// Combines identity, name, and characteristics into a single domain object.
-    /// </summary>
-    /// <param name="uniqueLearnerNumber">Unique learner identifier for symbolic traceability.</param>
-    /// <param name="firstname">First name of the learner.</param>
-    /// <param name="surname">Last name of the learner.</param>
-    /// <param name="birthDate">Date of birth for age-based diagnostics.</param>
-    /// <param name="sex">Gender for demographic filtering and assertions.</param>
-    /// <returns>A scaffolded <see cref="FurtherEducationLearner"/> domain object.</returns>
     public static FurtherEducationLearner Stub(
         string uniqueLearnerNumber,
         string firstname,
@@ -51,12 +17,24 @@ public static class FurtherEducationLearnerTestDouble
         DateTime birthDate,
         Sex sex)
     {
-        // Construct domain components using helper methods for modularity and reuse
-        FurtherEducationLearnerIdentifier learnerIdentifier = Identifier(uniqueLearnerNumber);
-        LearnerName learnerName = Name(firstname, surname);
-        LearnerCharacteristics learnerCharacteristics = Characteristics(birthDate, sex);
+
+        FurtherEducationUniqueLearnerIdentifier learnerIdentifier = new(uniqueLearnerNumber);
+        LearnerName learnerName = new(firstname, surname);
+        LearnerCharacteristics learnerCharacteristics = new(birthDate, sex);
 
         // Compose and return the full Learner object
         return new(learnerIdentifier, learnerName, learnerCharacteristics);
+    }
+
+    public static FurtherEducationLearner Stub()
+    {
+        Faker faker = new();
+
+        return Stub(
+            FurtherEducationUniqueLearnerNumberIdentifierTestDoubles.CreateUniqueLearnerNumber(faker),
+            faker.Name.FirstName(),
+            faker.Name.LastName(),
+            DateTimeTestDoubles.GenerateDateOfBirthForAgeOf(13),
+            Sex.Male);
     }
 }

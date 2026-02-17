@@ -18,5 +18,7 @@ public sealed class FurtherEducationLearners : IHasSearchResults
     public int Count => Learners?.Count ?? 0;
 
     public static FurtherEducationLearners CreateEmpty() => new();
+
+    public static FurtherEducationLearners Create(IEnumerable<FurtherEducationLearner> learners) => new(learners);
 }
 

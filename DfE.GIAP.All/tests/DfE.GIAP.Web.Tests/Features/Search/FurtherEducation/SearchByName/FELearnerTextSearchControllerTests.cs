@@ -9,8 +9,11 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.SharedTests.TestDoubles;
+using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -18,6 +21,7 @@ using DfE.GIAP.Web.Features.Search.Shared.Filters;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Providers.Session;
+using DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.TestDoubles;
 using DfE.GIAP.Web.Tests.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
@@ -40,8 +44,8 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
     private readonly PaginatedResultsFake _paginatedResultsFake;
     private readonly SearchFiltersFakeData _searchFiltersFake;
 
-    private readonly IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse> _mockUseCase =
-        Substitute.For<IUseCase<FurtherEducationSearchByNameRequest, FurtherEducationSearchByNameResponse>>();
+    private readonly IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>> _mockUseCase =
+        Substitute.For<IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>>>();
 
     private readonly IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel> _mockLearnerSearchResponseToViewModelMapper =
         Substitute.For<IMapper<FurtherEducationLearnerTextSearchMappingContext, LearnerTextSearchViewModel>>();
@@ -85,8 +89,12 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
                     It.IsAny<SearchCriteriaOptions>()))
                         .Returns(SearchCriteriaTestDouble.Stub());
 
-        FurtherEducationSearchByNameResponse response =
-            FurtherEducationSearchByNameResponseTestDouble.CreateSuccessResponse();
+        SearchResponse<FurtherEducationLearners> response =
+            SearchResponse<FurtherEducationLearners>.Create(
+                FurtherEducationLearners.Create(
+                    [FurtherEducationLearnerTestDouble.Stub()]),
+                    SearchFacetsTestDouble.Stub(),
+                    totalResults: 1);
 
         _mockUseCase.HandleRequestAsync(
             Arg.Any<FurtherEducationSearchByNameRequest>()).Returns(response);

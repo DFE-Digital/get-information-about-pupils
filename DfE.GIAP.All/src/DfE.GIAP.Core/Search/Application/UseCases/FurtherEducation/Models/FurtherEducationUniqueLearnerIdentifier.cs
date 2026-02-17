@@ -4,7 +4,7 @@
 /// Represents a learner's unique identifier (ULN) as a value object.
 /// Ensures the ULN is a valid 10-digit integer.
 /// </summary>
-public sealed class FurtherEducationLearnerIdentifier : ValueObject<FurtherEducationLearnerIdentifier>
+public sealed class FurtherEducationUniqueLearnerIdentifier : ValueObject<FurtherEducationUniqueLearnerIdentifier>
 {
     /// <summary>
     /// Gets the parsed Unique Learner Number (ULN) as an integer.
@@ -12,14 +12,14 @@ public sealed class FurtherEducationLearnerIdentifier : ValueObject<FurtherEduca
     public long UniqueLearnerNumber { get; }
 
     /// <summary>
-    /// Constructs a new <see cref="FurtherEducationLearnerIdentifier"/> from a string input.
+    /// Constructs a new <see cref="FurtherEducationUniqueLearnerIdentifier"/> from a string input.
     /// Validates that the input is a non-null, 10-digit numeric string.
     /// </summary>
     /// <param name="uniqueLearnerNumber">The ULN string to validate and parse.</param>
     /// <exception cref="ArgumentException">
     /// Thrown when the input is null, not 10 digits, or not numeric.
     /// </exception>
-    public FurtherEducationLearnerIdentifier(string uniqueLearnerNumber)
+    public FurtherEducationUniqueLearnerIdentifier(string uniqueLearnerNumber)
     {
         // Check for null, empty, or whitespace input.
         if (string.IsNullOrWhiteSpace(uniqueLearnerNumber))

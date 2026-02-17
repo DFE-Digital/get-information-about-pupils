@@ -12,7 +12,9 @@ using DfE.GIAP.Core.Search.Application.Models.Filter;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
@@ -77,7 +79,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
     private readonly
         IUseCase<
-            NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> _searchUseCase;
+            NationalPupilDatabaseSearchByNameRequest, SearchResponse<NationalPupilDatabaseLearners>> _searchUseCase;
 
     private readonly
         IMapper<
@@ -100,7 +102,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
         IUseCase<DownloadPupilDataRequest, DownloadPupilDataResponse> downloadPupilDataUseCase,
         IEventLogger eventLogger,
-        IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse> searchUseCase,
+        IUseCase<NationalPupilDatabaseSearchByNameRequest, SearchResponse<NationalPupilDatabaseLearners>> searchUseCase,
         IMapper<NationalPupilDatabaseLearnerTextSearchMappingContext, LearnerTextSearchViewModel> learnerSearchResponseToViewModelMapper,
         IMapper<Dictionary<string, string[]>, IList<FilterRequest>> filtersRequestMapper,
         ISortOrderFactory sortOrderFactory,
@@ -832,7 +834,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 options: options.SortOptions,
                 sort: (sortField, sortDirection));
 
-        NationalPupilDatabaseSearchByNameResponse searchResponse =
+        SearchResponse<NationalPupilDatabaseLearners> searchResponse =
             await _searchUseCase.HandleRequestAsync(
                 new NationalPupilDatabaseSearchByNameRequest()
                 {

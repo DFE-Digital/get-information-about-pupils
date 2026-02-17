@@ -84,7 +84,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         ISearchResults<FurtherEducationLearners, SearchFacets> noResults =
             FurtherEducationSearchResultsTestDoubles.StubWithNoResults();
 
-        SearchResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.NoResultsFound, 0)
             {
                 LearnerSearchResults = noResults.Results!,
@@ -105,7 +105,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         };
 
         // Act
-        FurtherEducationSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<FurtherEducationLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);
@@ -130,7 +130,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         SearchFacets facets = stub.FacetResults!;
         int totalNumberOfResults = 42;
 
-        SearchResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.Success, totalNumberOfResults)
             {
                 LearnerSearchResults = learners,
@@ -154,7 +154,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         FurtherEducationSearchByNameUseCase useCase = new(mockService.Object);
 
         // Act
-        FurtherEducationSearchByNameResponse response =
+        SearchResponse<FurtherEducationLearners> response =
             await useCase.HandleRequestAsync(request);
 
         // Verify
@@ -186,7 +186,7 @@ public sealed class FurtherEducationSearchUseCaseTests
 
         int totalNumberOfResults = 11;
 
-        SearchResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.Success, totalNumberOfResults)
             {
                 LearnerSearchResults = stubResults.Results!,
@@ -210,7 +210,7 @@ public sealed class FurtherEducationSearchUseCaseTests
             new FurtherEducationSearchByNameUseCase(mockService.Object);
 
         // Act
-        FurtherEducationSearchByNameResponse response =
+        SearchResponse<FurtherEducationLearners> response =
             await useCase.HandleRequestAsync(request);
 
         // Verify

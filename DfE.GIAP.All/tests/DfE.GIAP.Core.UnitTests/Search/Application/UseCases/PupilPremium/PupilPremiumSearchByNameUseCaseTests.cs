@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
@@ -83,7 +84,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         ISearchResults<PupilPremiumLearners, SearchFacets> noResults =
             PupilPremiumSearchResultsTestDoubles.StubWithNoResults();
 
-        SearchResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.NoResultsFound, 0)
             {
                 LearnerSearchResults = noResults.Results!,
@@ -105,7 +106,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         };
 
         // Act
-        PupilPremiumSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<PupilPremiumLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);
@@ -130,7 +131,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         SearchFacets facets = stub.FacetResults!;
         int totalNumberOfResults = 42;
 
-        SearchResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.Success, totalNumberOfResults)
             {
                 LearnerSearchResults = learners,
@@ -154,7 +155,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         PupilPremiumSearchByNameUseCase useCase = new(mockService.Object);
 
         // Act
-        PupilPremiumSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<PupilPremiumLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);
@@ -185,7 +186,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
 
         int totalNumberOfResults = 11;
 
-        SearchResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
+        SearchServiceResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
             new(SearchResponseStatus.Success, totalNumberOfResults)
             {
                 LearnerSearchResults = stubResults.Results!,
@@ -208,7 +209,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         PupilPremiumSearchByNameUseCase useCase = new(mockService.Object);
 
         // Act
-        PupilPremiumSearchByNameResponse response = await useCase.HandleRequestAsync(request);
+        SearchResponse<PupilPremiumLearners> response = await useCase.HandleRequestAsync(request);
 
         // Verify
         mockService.Verify(s => s.SearchAsync(It.IsAny<SearchLearnerByNameRequest>()), Times.Once);

@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
@@ -32,9 +33,9 @@ public sealed class PupilPremiumLearnerNumericSearchMappingContextTests
 
         List<PupilPremiumLearner> pupilPremiumLearners = PupilPremiumLearnerTestDoubles.FakeMany(domainLearners.Count);
 
-        PupilPremiumSearchByUniquePupilNumberResponse response =
-            PupilPremiumSearchByUniquePupilNumberResponseTestDouble.Create(
-                learners: new PupilPremiumLearners(pupilPremiumLearners),
+        SearchResponse<PupilPremiumLearners> response =
+            SearchResponse<PupilPremiumLearners>.Create(
+                PupilPremiumLearners.Create(pupilPremiumLearners),
                 totalResults: pupilPremiumLearners.Count);
 
         Mock<IMapper<PupilPremiumLearner, Learner>> learnerMapper = new();

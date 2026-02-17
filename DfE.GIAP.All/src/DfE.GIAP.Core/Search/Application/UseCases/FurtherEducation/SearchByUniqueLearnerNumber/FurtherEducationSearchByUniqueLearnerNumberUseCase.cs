@@ -1,10 +1,11 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
-internal sealed class FurtherEducationSearchByUniqueLearnerNumberUseCase : IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, FurtherEducationSearchByUniqueLearnerNumberResponse>
+internal sealed class FurtherEducationSearchByUniqueLearnerNumberUseCase : IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, SearchResponse<FurtherEducationLearners>>
 {
     private readonly ISearchLearnersByIdentifierService<FurtherEducationLearners> _searchLearnerByIdentifierService;
 
@@ -13,19 +14,19 @@ internal sealed class FurtherEducationSearchByUniqueLearnerNumberUseCase : IUseC
         ArgumentNullException.ThrowIfNull(searchLearnerByIdentifierService);
         _searchLearnerByIdentifierService = searchLearnerByIdentifierService;
     }
-    public async Task<FurtherEducationSearchByUniqueLearnerNumberResponse> HandleRequestAsync(FurtherEducationSearchByUniqueLearnerNumberRequest request)
+    public async Task<SearchResponse<FurtherEducationLearners>> HandleRequestAsync(FurtherEducationSearchByUniqueLearnerNumberRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        SearchResponse<FurtherEducationLearners, SearchFacets> searchResponse = await _searchLearnerByIdentifierService.SearchAsync(
+        SearchServiceResponse<FurtherEducationLearners, SearchFacets> searchResponse = await _searchLearnerByIdentifierService.SearchAsync(
             new SearchLearnersByIdentifierRequest(
                 request.UniqueLearnerNumbers!,
                 request.SearchCriteria!,
                 request.Sort!,
                 request.Offset));
 
-        return new FurtherEducationSearchByUniqueLearnerNumberResponse(
-            searchResponse.LearnerSearchResults,
-            searchResponse.TotalNumberOfResults);
+        return SearchResponse<FurtherEducationLearners>.Create(
+            searchResponse.LearnerSearchResults ?? FurtherEducationLearners.CreateEmpty(),
+            totalResults: searchResponse.TotalNumberOfResults);
     }
 }

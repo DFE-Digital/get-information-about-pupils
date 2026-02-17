@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByName;
 using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Features.Search.FurtherEducation.SearchByName;
@@ -19,7 +21,7 @@ public sealed class FurtherEducationLearnerTextSearchMappingContext
     /// The search response returned from the application layer.
     /// Contains learner results, facet filters, and meta-data such as total counts.
     /// </summary>
-    public FurtherEducationSearchByNameResponse Response { get; init; }
+    public SearchResponse<FurtherEducationLearners> Response { get; init; }
 
     /// <summary>
     /// Constructs a new <see cref="FurtherEducationLearnerTextSearchMappingContext"/> with required inputs.
@@ -32,7 +34,7 @@ public sealed class FurtherEducationLearnerTextSearchMappingContext
     /// </exception>
     public FurtherEducationLearnerTextSearchMappingContext(
         LearnerTextSearchViewModel model,
-        FurtherEducationSearchByNameResponse response)
+        SearchResponse<FurtherEducationLearners> response)
     {
         Model = model ?? throw new ArgumentNullException(nameof(model));
         Response = response ?? throw new ArgumentNullException(nameof(response));
@@ -47,6 +49,6 @@ public sealed class FurtherEducationLearnerTextSearchMappingContext
     /// <returns>A new instance of <see cref="FurtherEducationLearnerTextSearchMappingContext"/>.</returns>
     public static FurtherEducationLearnerTextSearchMappingContext Create(
         LearnerTextSearchViewModel model,
-        FurtherEducationSearchByNameResponse response) =>
+        SearchResponse<FurtherEducationLearners> response) =>
         new(model, response);
 }

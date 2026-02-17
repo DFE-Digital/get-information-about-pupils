@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium;
-using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Features.Search.PupilPremium.SearchByUniquePupilNumber;
@@ -8,11 +8,11 @@ public record PupilPremiumLearnerNumericSearchMappingContext
 {
     public LearnerNumberSearchViewModel Model { get; init; }
 
-    public PupilPremiumSearchByUniquePupilNumberResponse Response { get; init; }
+    public SearchResponse<PupilPremiumLearners> Response { get; init; }
 
     public PupilPremiumLearnerNumericSearchMappingContext(
         LearnerNumberSearchViewModel model,
-        PupilPremiumSearchByUniquePupilNumberResponse response)
+        SearchResponse<PupilPremiumLearners> response)
     {
         ArgumentNullException.ThrowIfNull(model);
         Model = model;
@@ -23,6 +23,6 @@ public record PupilPremiumLearnerNumericSearchMappingContext
 
     public static PupilPremiumLearnerNumericSearchMappingContext Create(
         LearnerNumberSearchViewModel model,
-        PupilPremiumSearchByUniquePupilNumberResponse response) =>
+        SearchResponse<PupilPremiumLearners> response) =>
         new(model, response);
 }

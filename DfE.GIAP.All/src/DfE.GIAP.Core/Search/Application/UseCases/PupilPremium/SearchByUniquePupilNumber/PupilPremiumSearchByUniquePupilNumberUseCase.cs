@@ -1,10 +1,11 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
-internal sealed class PupilPremiumSearchByUniquePupilNumberUseCase : IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, PupilPremiumSearchByUniquePupilNumberResponse>
+internal sealed class PupilPremiumSearchByUniquePupilNumberUseCase : IUseCase<PupilPremiumSearchByUniquePupilNumberRequest, SearchResponse<PupilPremiumLearners>>
 {
     private readonly ISearchLearnersByIdentifierService<PupilPremiumLearners> _searchLearnerByIdentifierService;
 
@@ -14,9 +15,9 @@ internal sealed class PupilPremiumSearchByUniquePupilNumberUseCase : IUseCase<Pu
         _searchLearnerByIdentifierService = searchLearnerByIdentifierService;
     }
 
-    public async Task<PupilPremiumSearchByUniquePupilNumberResponse> HandleRequestAsync(PupilPremiumSearchByUniquePupilNumberRequest request)
+    public async Task<SearchResponse<PupilPremiumLearners>> HandleRequestAsync(PupilPremiumSearchByUniquePupilNumberRequest request)
     {
-        SearchResponse<PupilPremiumLearners, SearchFacets> response =
+        SearchServiceResponse<PupilPremiumLearners, SearchFacets> response =
             await _searchLearnerByIdentifierService.SearchAsync(
                 new SearchLearnersByIdentifierRequest(
                     identifiers: request.UniquePupilNumbers!,
@@ -24,6 +25,8 @@ internal sealed class PupilPremiumSearchByUniquePupilNumberUseCase : IUseCase<Pu
                     sort: request.Sort!,
                     offset: request.Offset));
 
-        return new PupilPremiumSearchByUniquePupilNumberResponse(response.LearnerSearchResults, response.TotalNumberOfResults);
+        return SearchResponse<PupilPremiumLearners>.Create(
+            response.LearnerSearchResults ?? PupilPremiumLearners.CreateEmpty(),
+            totalResults: response.TotalNumberOfResults);
     }
 }

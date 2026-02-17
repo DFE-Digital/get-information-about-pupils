@@ -1,9 +1,9 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search;
 
 namespace DfE.GIAP.Core.Search.Application.Services;
-public record SearchResponse<TResponse, TFacets>
+public record SearchServiceResponse<TResponse, TFacets>
 {
-    public SearchResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
+    public SearchServiceResponse(SearchResponseStatus status, int? totalNumberOfResults = null)
     {
         Status = status;
         TotalNumberOfResults = new(totalNumberOfResults);

@@ -1,9 +1,11 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
 using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
+using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
@@ -23,7 +25,7 @@ internal static class NationalPupilDatabaseSearchCompositionRootExtensions
         services
             .AddScoped<
                 IUseCase<
-                    NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse>,
+                    NationalPupilDatabaseSearchByNameRequest, SearchResponse<NationalPupilDatabaseLearners>>,
                     NationalPupilDatabaseSearchByNameUseCase>()
 
             .AddScoped<
@@ -40,7 +42,7 @@ internal static class NationalPupilDatabaseSearchCompositionRootExtensions
         services
             .AddScoped<
                 IUseCase<
-                    NationalPupilDatabaseSearchByUniquePupilNumberRequest, NationalPupilDatabaseSearchByUniquePupilNumberResponse>,
+                    NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>>,
                     NationalPupilDatabaseSearchByUniquePupilNumberUseCase>()
 
             .AddScoped<

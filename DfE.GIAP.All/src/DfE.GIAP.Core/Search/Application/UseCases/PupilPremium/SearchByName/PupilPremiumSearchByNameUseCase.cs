@@ -1,10 +1,11 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
-internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSearchByNameRequest, PupilPremiumSearchByNameResponse>
+internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSearchByNameRequest, SearchResponse<PupilPremiumLearners>>
 {
     private readonly ISearchLearnerByNameService<PupilPremiumLearners> _searchForLearnerByNameService;
 
@@ -15,9 +16,9 @@ internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSea
         _searchForLearnerByNameService = searchForLearnerByNameService;
     }
 
-    public async Task<PupilPremiumSearchByNameResponse> HandleRequestAsync(PupilPremiumSearchByNameRequest request)
+    public async Task<SearchResponse<PupilPremiumLearners>> HandleRequestAsync(PupilPremiumSearchByNameRequest request)
     {
-        SearchResponse<PupilPremiumLearners, SearchFacets> response =
+        SearchServiceResponse<PupilPremiumLearners, SearchFacets> response =
             await _searchForLearnerByNameService.SearchAsync(
                 new SearchLearnerByNameRequest(
                     searchKeywords: request.SearchKeywords!,
@@ -26,8 +27,8 @@ internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSea
                     filters: request.FilterRequests,
                     offset: request.Offset));
 
-        return new PupilPremiumSearchByNameResponse(
-            response.LearnerSearchResults,
+        return SearchResponse<PupilPremiumLearners>.Create(
+            response.LearnerSearchResults ?? PupilPremiumLearners.CreateEmpty(),
             response.FacetedResults,
             response.TotalNumberOfResults);
     }

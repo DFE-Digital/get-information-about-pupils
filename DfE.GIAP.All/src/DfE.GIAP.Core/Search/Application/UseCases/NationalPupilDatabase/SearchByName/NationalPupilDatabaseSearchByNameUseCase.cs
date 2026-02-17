@@ -1,10 +1,11 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
+﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
-internal sealed class NationalPupilDatabaseSearchByNameUseCase : IUseCase<NationalPupilDatabaseSearchByNameRequest, NationalPupilDatabaseSearchByNameResponse>
+internal sealed class NationalPupilDatabaseSearchByNameUseCase : IUseCase<NationalPupilDatabaseSearchByNameRequest, SearchResponse<NationalPupilDatabaseLearners>>
 {
     private readonly ISearchLearnerByNameService<NationalPupilDatabaseLearners> _searchForLearnerByNameService;
 
@@ -15,9 +16,9 @@ internal sealed class NationalPupilDatabaseSearchByNameUseCase : IUseCase<Nation
         _searchForLearnerByNameService = searchForLearnerByNameService;
     }
 
-    public async Task<NationalPupilDatabaseSearchByNameResponse> HandleRequestAsync(NationalPupilDatabaseSearchByNameRequest request)
+    public async Task<SearchResponse<NationalPupilDatabaseLearners>> HandleRequestAsync(NationalPupilDatabaseSearchByNameRequest request)
     {
-        SearchResponse<NationalPupilDatabaseLearners, SearchFacets> response =
+        SearchServiceResponse<NationalPupilDatabaseLearners, SearchFacets> response =
             await _searchForLearnerByNameService.SearchAsync(
                 new SearchLearnerByNameRequest(
                     request.SearchKeywords!,
@@ -26,8 +27,8 @@ internal sealed class NationalPupilDatabaseSearchByNameUseCase : IUseCase<Nation
                     request.FilterRequests,
                     request.Offset));
 
-        return new NationalPupilDatabaseSearchByNameResponse(
-            response.LearnerSearchResults,
+        return SearchResponse<NationalPupilDatabaseLearners>.Create(
+            response.LearnerSearchResults ?? NationalPupilDatabaseLearners.CreateEmpty(),
             response.FacetedResults,
             response.TotalNumberOfResults);
     }

@@ -35,4 +35,5 @@ public record PupilPremiumLearners : IHasSearchResults
     /// Improves readability and conveys intent more clearly than a constructor.
     /// </summary>
     public static PupilPremiumLearners CreateEmpty() => new();
+    public static PupilPremiumLearners Create(IEnumerable<PupilPremiumLearner> learners) => new(learners);
 }
