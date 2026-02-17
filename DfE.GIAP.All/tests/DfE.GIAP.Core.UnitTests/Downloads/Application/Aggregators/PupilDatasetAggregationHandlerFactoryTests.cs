@@ -14,14 +14,14 @@ public sealed class PupilDatasetAggregationHandlerFactoryTests
     {
         // Arrange
         Mock<IPupilDatasetAggregationHandler> handlerMock = new();
-        handlerMock.Setup(h => h.SupportedDownloadType).Returns(DownloadType.FurtherEducation);
+        handlerMock.Setup(h => h.SupportedDownloadType).Returns(PupilDownloadType.FurtherEducation);
 
         // Act
         PupilDatasetAggregationHandlerFactory sut = new(new[] { handlerMock.Object });
 
         // Assert
         Task<PupilDatasetCollection> resultTask = sut.AggregateAsync(
-            DownloadType.FurtherEducation,
+            PupilDownloadType.FurtherEducation,
             Enumerable.Empty<string>(),
             Enumerable.Empty<Dataset>());
 
@@ -33,10 +33,10 @@ public sealed class PupilDatasetAggregationHandlerFactoryTests
     {
         // Arrange
         Mock<IPupilDatasetAggregationHandler> handler1 = new();
-        handler1.Setup(h => h.SupportedDownloadType).Returns(DownloadType.FurtherEducation);
+        handler1.Setup(h => h.SupportedDownloadType).Returns(PupilDownloadType.FurtherEducation);
 
         Mock<IPupilDatasetAggregationHandler> handler2 = new();
-        handler2.Setup(h => h.SupportedDownloadType).Returns(DownloadType.FurtherEducation);
+        handler2.Setup(h => h.SupportedDownloadType).Returns(PupilDownloadType.FurtherEducation);
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() =>
@@ -55,14 +55,14 @@ public sealed class PupilDatasetAggregationHandlerFactoryTests
 
         Mock<IPupilDatasetAggregationHandler> handlerMock = new();
         handlerMock.Setup(h => h.SupportedDownloadType)
-            .Returns(DownloadType.FurtherEducation);
+            .Returns(PupilDownloadType.FurtherEducation);
         handlerMock.Setup(h => h.AggregateAsync(pupilIds, datasets, default))
             .ReturnsAsync(expectedResult);
 
         PupilDatasetAggregationHandlerFactory sut = new(new[] { handlerMock.Object });
 
         // Act
-        PupilDatasetCollection result = await sut.AggregateAsync(DownloadType.FurtherEducation, pupilIds, datasets);
+        PupilDatasetCollection result = await sut.AggregateAsync(PupilDownloadType.FurtherEducation, pupilIds, datasets);
 
         // Assert
         Assert.Same(expectedResult, result);
@@ -77,7 +77,7 @@ public sealed class PupilDatasetAggregationHandlerFactoryTests
         Dataset[] datasets = new[] { Dataset.SEN };
 
         Mock<IPupilDatasetAggregationHandler> handlerMock = new Mock<IPupilDatasetAggregationHandler>();
-        handlerMock.Setup(h => h.SupportedDownloadType).Returns(DownloadType.FurtherEducation);
+        handlerMock.Setup(h => h.SupportedDownloadType).Returns(PupilDownloadType.FurtherEducation);
         handlerMock.Setup(h => h.AggregateAsync(It.IsAny<IEnumerable<string>>(),
                                                 It.IsAny<IEnumerable<Dataset>>(),
                                                 default))
@@ -86,7 +86,7 @@ public sealed class PupilDatasetAggregationHandlerFactoryTests
         PupilDatasetAggregationHandlerFactory sut = new(new[] { handlerMock.Object });
 
         // Act
-        await sut.AggregateAsync(DownloadType.FurtherEducation, pupilIds, datasets);
+        await sut.AggregateAsync(PupilDownloadType.FurtherEducation, pupilIds, datasets);
 
         // Assert
         handlerMock.Verify(h => h.AggregateAsync(
@@ -102,13 +102,13 @@ public sealed class PupilDatasetAggregationHandlerFactoryTests
         // Arrange
         Mock<IPupilDatasetAggregationHandler> handlerMock = new();
         handlerMock.Setup(h => h.SupportedDownloadType)
-            .Returns(DownloadType.FurtherEducation);
+            .Returns(PupilDownloadType.FurtherEducation);
 
         PupilDatasetAggregationHandlerFactory factory = new(new[] { handlerMock.Object });
 
         // Act
         NotSupportedException ex = await Assert.ThrowsAsync<NotSupportedException>(() =>
-            factory.AggregateAsync(DownloadType.PupilPremium, Enumerable.Empty<string>(), Enumerable.Empty<Dataset>()));
+            factory.AggregateAsync(PupilDownloadType.PupilPremium, Enumerable.Empty<string>(), Enumerable.Empty<Dataset>()));
 
         // Assert
         Assert.Contains("No pupil aggregator handler registered", ex.Message);

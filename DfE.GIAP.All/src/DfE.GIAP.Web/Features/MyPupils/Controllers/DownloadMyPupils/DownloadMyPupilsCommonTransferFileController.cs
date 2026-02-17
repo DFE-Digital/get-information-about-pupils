@@ -87,7 +87,7 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
 
         DownloadPupilCtfResponse downloadPupilCtfResponse = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(DownloadType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
+        _eventLogger.LogDownload(DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return File(
             fileStream: downloadPupilCtfResponse.FileStream,

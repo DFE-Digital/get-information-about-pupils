@@ -119,7 +119,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
             DownloadPupilDataRequest request = new(
                SelectedPupils: selectedPupils,
                SelectedDatasets: selectedDatasets,
-               DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+               DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
                FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
 
             DownloadPupilDataResponse response = await _downloadUseCase.HandleRequestAsync(request);
@@ -138,7 +138,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
             foreach (Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum in datasetsToLog)
             {
                 _eventLogger.LogDownload(
-                    Core.Common.CrossCutting.Logging.Events.DownloadType.MyPupils,
+                    Core.Common.CrossCutting.Logging.Events.DownloadOperationType.MyPupils,
                     model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
                     DownloadEventType.NPD,
                     loggingBatchId,
@@ -191,7 +191,7 @@ public class DownloadMyPupilsNationalPupilDatabaseController : Controller
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
             GetAvailableDatasetsForPupilsRequest request = new(
-                DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
                 SelectedPupils: selectedPupils,
                 AuthorisationContext: new HttpClaimsAuthorisationContext(User));
 

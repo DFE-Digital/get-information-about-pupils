@@ -8,7 +8,7 @@ namespace DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers
 
 public class PupilPremiumAggregationHandler : IPupilDatasetAggregationHandler
 {
-    public DownloadType SupportedDownloadType => DownloadType.PupilPremium;
+    public PupilDownloadType SupportedDownloadType => PupilDownloadType.PupilPremium;
 
     private readonly IPupilPremiumReadOnlyRepository _ppReadRepository;
     private readonly IMapper<PupilPremiumPupil, IEnumerable<PupilPremiumOutputRecord>> _ppMapper;

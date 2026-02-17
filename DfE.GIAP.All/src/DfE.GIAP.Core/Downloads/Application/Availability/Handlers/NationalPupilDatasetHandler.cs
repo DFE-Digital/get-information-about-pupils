@@ -6,7 +6,7 @@ namespace DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
 
 public class NationalPupilDatasetHandler : IDatasetAvailabilityHandler
 {
-    public DownloadType SupportedDownloadType => DownloadType.NPD;
+    public PupilDownloadType SupportedDownloadType => PupilDownloadType.NPD;
     private readonly INationalPupilReadOnlyRepository _nationalPupilDatabaseReadOnlyRepository;
 
     public NationalPupilDatasetHandler(INationalPupilReadOnlyRepository nationalPupilDatabaseReadOnlyRepository)

@@ -7,18 +7,18 @@ namespace DfE.GIAP.Core.Downloads.Application.Availability;
 /// </summary>
 public static class AvailableDatasetsByDownloadType
 {
-    private static readonly Dictionary<DownloadType, HashSet<Dataset>> _map = new()
+    private static readonly Dictionary<PupilDownloadType, HashSet<Dataset>> _map = new()
     {
-        [DownloadType.FurtherEducation] = new()
+        [PupilDownloadType.FurtherEducation] = new()
         {
             Dataset.FE_PP,
             Dataset.SEN
         },
-        [DownloadType.PupilPremium] = new()
+        [PupilDownloadType.PupilPremium] = new()
         {
             Dataset.PP
         },
-        [DownloadType.NPD] = new()
+        [PupilDownloadType.NPD] = new()
         {
             Dataset.Census_Autumn,
             Dataset.Census_Spring,
@@ -35,7 +35,7 @@ public static class AvailableDatasetsByDownloadType
     /// <summary>
     /// Returns the list of datasets supported for a given download type.
     /// </summary>
-    public static IReadOnlyCollection<Dataset> GetSupportedDatasets(DownloadType type)
+    public static IReadOnlyCollection<Dataset> GetSupportedDatasets(PupilDownloadType type)
     {
         return _map.TryGetValue(type, out HashSet<Dataset>? datasets)
             ? datasets

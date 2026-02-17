@@ -3,5 +3,5 @@
 /// <summary>
 /// Specifies the type of download operation to perform.
 /// </summary>
-public enum DownloadType { Search, Prepared, Metadata, MyPupils }
+public enum DownloadOperationType { Search, Prepared, Metadata, MyPupils }
 

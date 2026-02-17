@@ -223,7 +223,7 @@ public class FELearnerTextSearchController : Controller
         };
 
         GetAvailableDatasetsForPupilsRequest request = new(
-            DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+            DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
             SelectedPupils: [selectedPupil],
             AuthorisationContext: new HttpClaimsAuthorisationContext(User));
 
@@ -281,7 +281,7 @@ public class FELearnerTextSearchController : Controller
                 DownloadPupilDataRequest request = new(
                     SelectedPupils: selectedPupils,
                     SelectedDatasets: selectedDatasets,
-                    DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+                    DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
                     FileFormat: FileFormat.Csv);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
@@ -293,7 +293,7 @@ public class FELearnerTextSearchController : Controller
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                             DownloadFileFormat.CSV,
                             DownloadEventType.FE,
                             loggingBatchId,

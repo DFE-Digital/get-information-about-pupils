@@ -434,7 +434,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
+        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return File(
             fileStream: response.FileStream,
@@ -529,7 +529,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
         GetAvailableDatasetsForPupilsRequest request = new(
-           DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+           DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
            SelectedPupils: new List<string> { selectedPupil },
            AuthorisationContext: new HttpClaimsAuthorisationContext(User));
         GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
@@ -574,7 +574,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                 DownloadPupilDataRequest request = new(
                    SelectedPupils: [selectedPupil],
                    SelectedDatasets: selectedDatasets,
-                   DownloadType: Core.Downloads.Application.Enums.DownloadType.NPD,
+                   DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
                    FileFormat: model.DownloadFileType == DownloadFileType.CSV ? FileFormat.Csv : FileFormat.Tab);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
@@ -586,7 +586,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                             model.DownloadFileType == DownloadFileType.CSV ? DownloadFileFormat.CSV : DownloadFileFormat.TAB,
                             DownloadEventType.NPD,
                             loggingBatchId,

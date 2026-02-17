@@ -210,7 +210,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         DownloadPupilPremiumFilesResponse result =
             await _downloadPupilPremiumDataForPupilsService.DownloadAsync(
                 pupilUpns: selectedPupils,
-                downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                 ctx);
 
         if (result.HasData)

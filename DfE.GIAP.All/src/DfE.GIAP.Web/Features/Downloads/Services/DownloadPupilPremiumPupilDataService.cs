@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
-using DownloadType = DfE.GIAP.Core.Common.CrossCutting.Logging.Events.DownloadType;
+using DownloadOperationType = DfE.GIAP.Core.Common.CrossCutting.Logging.Events.DownloadOperationType;
 
 namespace DfE.GIAP.Web.Features.Downloads.Services;
 
@@ -23,13 +23,13 @@ internal sealed class DownloadPupilPremiumPupilDataService : IDownloadPupilPremi
 
     public async Task<DownloadPupilPremiumFilesResponse> DownloadAsync(
         IEnumerable<string> pupilUpns,
-        DownloadType downloadEventType,
+        DownloadOperationType downloadEventType,
         CancellationToken ctx = default)
     {
         DownloadPupilDataRequest request = new(
           SelectedPupils: pupilUpns.Where(t => !string.IsNullOrWhiteSpace(t)),
           SelectedDatasets: [Core.Downloads.Application.Enums.Dataset.PP],
-          DownloadType: Core.Downloads.Application.Enums.DownloadType.PupilPremium,
+          DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.PupilPremium,
           FileFormat: FileFormat.Csv);
 
         DownloadPupilDataResponse response = await _downloadDataUseCase.HandleRequestAsync(request);

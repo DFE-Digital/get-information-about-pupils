@@ -366,7 +366,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
             pupilUpns: [selectedPupil],
-            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
             ctx);
 
         if (result.HasData)

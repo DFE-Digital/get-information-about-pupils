@@ -213,7 +213,7 @@ public class FELearnerNumberController : Controller
                 DownloadPupilDataRequest request = new(
                     SelectedPupils: selectedPupils,
                     SelectedDatasets: selectedDatasets,
-                    DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+                    DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
                     FileFormat: FileFormat.Csv);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
@@ -225,7 +225,7 @@ public class FELearnerNumberController : Controller
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                             DownloadFileFormat.CSV,
                             DownloadEventType.FE,
                             loggingBatchId,
@@ -281,7 +281,7 @@ public class FELearnerNumberController : Controller
         if (selectedPupils.Length < _appSettings.DownloadOptionsCheckLimit)
         {
             GetAvailableDatasetsForPupilsRequest request = new(
-            DownloadType: Core.Downloads.Application.Enums.DownloadType.FurtherEducation,
+            DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
             SelectedPupils: selectedPupils,
             AuthorisationContext: new HttpClaimsAuthorisationContext(User));
             GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);

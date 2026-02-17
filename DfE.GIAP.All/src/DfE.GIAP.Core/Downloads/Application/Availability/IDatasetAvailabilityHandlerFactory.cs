@@ -5,5 +5,5 @@ namespace DfE.GIAP.Core.Downloads.Application.Availability;
 
 public interface IDatasetAvailabilityHandlerFactory
 {
-    IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(DownloadType type);
+    IDatasetAvailabilityHandler GetDatasetAvailabilityHandler(PupilDownloadType type);
 }

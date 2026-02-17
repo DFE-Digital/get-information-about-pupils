@@ -64,7 +64,7 @@ public class DownloadMyPupilsPupilPremiumController : Controller
         DownloadPupilPremiumFilesResponse response = await
             _downloadPupilPremiumDataForPupilsService.DownloadAsync(
                 updatedPupils,
-                DownloadType.MyPupils,
+                DownloadOperationType.MyPupils,
                 ctx);
 
         if (response is null)

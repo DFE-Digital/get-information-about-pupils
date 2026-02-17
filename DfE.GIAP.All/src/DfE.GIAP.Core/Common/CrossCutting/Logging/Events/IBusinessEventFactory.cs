@@ -10,7 +10,7 @@ namespace DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 /// and auditing purposes. The created events can be used for logging, analytics, or compliance workflows.</remarks>
 public interface IBusinessEventFactory
 {
-    DownloadEvent CreateDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+    DownloadEvent CreateDownload(DownloadOperationType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null);
     SearchEvent CreateSearch(SearchIdentifierType searchIdentifierType, bool isCustomSearch, Dictionary<string, bool> filterFlags);
     SigninEvent CreateSignin(string userId, string sessionId, string orgUrn, string orgName, string orgCategory);

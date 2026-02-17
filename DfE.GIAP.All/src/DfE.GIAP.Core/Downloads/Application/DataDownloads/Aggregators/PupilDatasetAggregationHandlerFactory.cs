@@ -5,7 +5,7 @@ namespace DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
 
 public class PupilDatasetAggregationHandlerFactory : IPupilDatasetAggregatorFactory
 {
-    private readonly Dictionary<DownloadType, IPupilDatasetAggregationHandler> _handlers;
+    private readonly Dictionary<PupilDownloadType, IPupilDatasetAggregationHandler> _handlers;
 
     public PupilDatasetAggregationHandlerFactory(IEnumerable<IPupilDatasetAggregationHandler> handlers)
     {
@@ -15,7 +15,7 @@ public class PupilDatasetAggregationHandlerFactory : IPupilDatasetAggregatorFact
     }
 
     public Task<PupilDatasetCollection> AggregateAsync(
-        DownloadType downloadType,
+        PupilDownloadType downloadType,
         IEnumerable<string> pupilIds,
         IEnumerable<Dataset> selectedDatasets)
     {

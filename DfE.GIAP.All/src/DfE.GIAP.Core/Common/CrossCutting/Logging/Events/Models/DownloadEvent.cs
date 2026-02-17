@@ -35,7 +35,7 @@ public record DownloadEvent(
 /// batch.</param>
 /// <param name="Dataset">The dataset related to the download operation, if available. May be null if no dataset is associated.</param>
 public record DownloadPayload(
-    DownloadType DownloadType,
+    DownloadOperationType DownloadType,
     DownloadFileFormat DownloadFileFormat,
     DownloadEventType? DownloadEventType,
     string? BatchId,

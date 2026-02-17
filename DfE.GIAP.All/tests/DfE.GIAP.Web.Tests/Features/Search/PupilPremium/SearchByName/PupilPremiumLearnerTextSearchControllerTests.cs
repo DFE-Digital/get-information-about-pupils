@@ -1333,7 +1333,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
         downloadPupilPremiumDataServiceMock
             .Setup(service => service.DownloadAsync(
                 It.IsAny<IEnumerable<string>>(),
-                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadOperationType>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
 
