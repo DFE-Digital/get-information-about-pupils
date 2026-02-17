@@ -55,11 +55,19 @@ public class ReleaseTimetableViewComponent : ViewComponent
             [
                 new SchoolCensusYearViewModel
                 {
+                    AcademicYear = "2026-27",
+                    Available = new()
+                    {
+                        // Autumn, Spring, Summer, Disadvantage, SEN are false in source
+                    }
+                },
+                new SchoolCensusYearViewModel
+                {
                     AcademicYear = "2025-26",
                     Available = new()
                     {
-                        SchoolCensusType.PupilPremium
-                        // Autumn, Spring, Summer, Disadvantage, SEN are false in source
+                        SchoolCensusType.PupilPremium,
+                        SchoolCensusType.AutumnCensus
                     }
                 },
                 new SchoolCensusYearViewModel
@@ -183,7 +191,9 @@ public class ReleaseTimetableViewComponent : ViewComponent
                     {
                         AttainmentType.EYFSP,
                         AttainmentType.MTC,
-                        AttainmentType.KeyStage2
+                        AttainmentType.KeyStage2,
+                        AttainmentType.Phonics,
+                        AttainmentType.PhonicsAutumnY2
                     }
                 },
                 new AttainmentYearViewModel
