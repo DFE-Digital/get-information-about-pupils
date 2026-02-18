@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.ViewModels.Search;
 using Xunit;
 
-namespace DfE.GIAP.Common.Tests.Validation;
+namespace DfE.GIAP.Web.Tests.Helpers;
 
 public class SearchLearnerNumberValidationAttributeTests
 {

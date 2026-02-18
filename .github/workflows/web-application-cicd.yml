@@ -63,7 +63,6 @@ jobs:
         run: |
 
           for proj in \
-            ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Common.Tests/DfE.GIAP.Common.Tests.csproj \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj \
             ${{ env.SOLUTION_DIRECTORY }}/tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj
           do

@@ -3,7 +3,7 @@ using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Helpers;
 using Xunit;
 
-namespace DfE.GIAP.Common.Tests.Helpers;
+namespace DfE.GIAP.Web.Tests.Helpers;
 
 public class RbacHelperTests
 {
@@ -44,7 +44,7 @@ public class RbacHelperTests
         List<TestRbac> testData = GetTestList();
 
         // Act
-        List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 0, 0);
+        List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric(testData, 0, 0);
 
         // Assert
         foreach (TestRbac result in results)
@@ -60,7 +60,7 @@ public class RbacHelperTests
         List<TestRbac> testData = GetTestList();
 
         // Act
-        List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric<TestRbac>(testData, 3, 11, DateTime.Parse("01/10/2022", new CultureInfo("en-gb")));
+        List<TestRbac> results = RbacHelper.CheckRbacRulesGeneric(testData, 3, 11, DateTime.Parse("01/10/2022", new CultureInfo("en-gb")));
 
         // Assert
         Assert.Equal("*************", results[0].LearnerNumber);

@@ -1,7 +1,7 @@
 ﻿using DfE.GIAP.Web.Helpers;
 using Xunit;
 
-namespace DfE.GIAP.Common.Tests.Validation;
+namespace DfE.GIAP.Web.Tests.Helpers;
 
 public class ValidationHelperTests
 {
