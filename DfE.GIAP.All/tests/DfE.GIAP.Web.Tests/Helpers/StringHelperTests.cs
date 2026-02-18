@@ -2,7 +2,7 @@
 using DfE.GIAP.Web.Helpers;
 using Xunit;
 
-namespace DfE.GIAP.Common.Tests.Helpers;
+namespace DfE.GIAP.Web.Tests.Helpers;
 
 public sealed class StringHelperTests
 {
