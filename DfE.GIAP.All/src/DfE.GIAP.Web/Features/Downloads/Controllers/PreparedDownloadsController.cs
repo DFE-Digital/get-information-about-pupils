@@ -74,7 +74,7 @@ public class PreparedDownloadsController : Controller
         DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
             .HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(DownloadType.Prepared, DownloadFileFormat.CSV);
+        _eventLogger.LogDownload(DownloadOperationType.Prepared, DownloadFileFormat.CSV);
 
         return new FileStreamResult(response.FileStream, response.ContentType)
         {

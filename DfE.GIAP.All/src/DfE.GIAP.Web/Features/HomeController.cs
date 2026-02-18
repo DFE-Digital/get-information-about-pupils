@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Web.Constants;
+﻿using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
 using DfE.GIAP.Web.Middleware;

@@ -62,7 +62,7 @@ public sealed class DownloadPupilDataUseCaseTests
         DownloadPupilDataRequest request = new(
             SelectedPupils: ["A"],
             SelectedDatasets: [Dataset.FE_PP],
-            DownloadType: DownloadType.FurtherEducation,
+            DownloadType: PupilDownloadType.FurtherEducation,
             FileFormat: FileFormat.Csv);
 
         factory.Setup(f => f.AggregateAsync(
@@ -96,7 +96,7 @@ public sealed class DownloadPupilDataUseCaseTests
         DownloadPupilDataRequest request = new(
             SelectedPupils: ["A"],
             SelectedDatasets: [Dataset.FE_PP],
-            DownloadType: DownloadType.FurtherEducation,
+            DownloadType: PupilDownloadType.FurtherEducation,
             FileFormat: FileFormat.Csv);
 
         PupilDatasetCollection datasets = new();
@@ -140,7 +140,7 @@ public sealed class DownloadPupilDataUseCaseTests
         DownloadPupilDataRequest request = new(
             SelectedPupils: ["A"],
             SelectedDatasets: [Dataset.FE_PP, Dataset.SEN],
-            DownloadType: DownloadType.FurtherEducation,
+            DownloadType: PupilDownloadType.FurtherEducation,
             FileFormat: FileFormat.Csv);
 
         PupilDatasetCollection datasets = new();
@@ -186,7 +186,7 @@ public sealed class DownloadPupilDataUseCaseTests
         DownloadPupilDataRequest request = new(
             SelectedPupils: ["A"],
             SelectedDatasets: [Dataset.PP],
-            DownloadType: DownloadType.PupilPremium,
+            DownloadType: PupilDownloadType.PupilPremium,
             FileFormat: FileFormat.Csv);
 
         factory.Setup(f => f.AggregateAsync(

@@ -86,9 +86,9 @@ public class DownloadPupilDataUseCase : IUseCase<DownloadPupilDataRequest, Downl
 
         string zipName = request.DownloadType switch
         {
-            DownloadType.NPD => "npd_results.zip",
-            DownloadType.PupilPremium => "pp_results.zip",
-            DownloadType.FurtherEducation => "fe_results.zip",
+            PupilDownloadType.NPD => "npd_results.zip",
+            PupilDownloadType.PupilPremium => "pp_results.zip",
+            PupilDownloadType.FurtherEducation => "fe_results.zip",
             _ => $"{request.DownloadType.ToString().ToLower()}_results.zip"
         };
 

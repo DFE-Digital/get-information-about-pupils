@@ -8,7 +8,7 @@ namespace DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers
 
 public class FurtherEducationAggregationHandler : IPupilDatasetAggregationHandler
 {
-    public DownloadType SupportedDownloadType => DownloadType.FurtherEducation;
+    public PupilDownloadType SupportedDownloadType => PupilDownloadType.FurtherEducation;
 
     private readonly IFurtherEducationReadOnlyRepository _feReadRepository;
     private readonly IMapper<FurtherEducationPupil, IEnumerable<FurtherEducationPPOutputRecord>> _ppMapper;

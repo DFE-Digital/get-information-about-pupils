@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using DfE.GIAP.Common.Constants;
+using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 
 namespace DfE.GIAP.Web.Helpers;

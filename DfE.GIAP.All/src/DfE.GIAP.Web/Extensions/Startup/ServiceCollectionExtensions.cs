@@ -14,8 +14,6 @@ using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.Services.ApiProcessor;
-using DfE.GIAP.Web.Services.Download;
-using DfE.GIAP.Web.Services.Download.CTF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +38,6 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpClient<IApiService, ApiService>();
-        services.AddScoped<IDownloadCommonTransferFileService, DownloadCommonTransferFileService>();
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();

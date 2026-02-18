@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using DfE.GIAP.Common.Constants;
-using DfE.GIAP.Common.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -14,6 +12,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 using DfE.GIAP.Web.Constants;
+using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.PupilPremium.SearchByName;
@@ -808,7 +807,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
         StarredPupilConfirmationViewModel StarredPupilConfirmationViewModel = new()
         {
             SelectedPupil = _paginatedResultsFake.GetUpn(),
-            DownloadType = Common.Enums.DownloadType.PupilPremium,
+            DownloadType = Web.Enums.DownloadType.PupilPremium,
             ConfirmationGiven = false,
             ConfirmationError = true,
             ConfirmationReturnAction = Global.PPDownloadConfirmationReturnAction,
@@ -1334,7 +1333,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
         downloadPupilPremiumDataServiceMock
             .Setup(service => service.DownloadAsync(
                 It.IsAny<IEnumerable<string>>(),
-                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadType>(),
+                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadOperationType>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
 

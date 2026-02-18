@@ -29,7 +29,7 @@ public class BusinessEventFactory : IBusinessEventFactory
             Payload: payload);
     }
 
-    public DownloadEvent CreateDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+    public DownloadEvent CreateDownload(DownloadOperationType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null)
     {
         ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;

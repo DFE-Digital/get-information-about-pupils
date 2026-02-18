@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -211,7 +210,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         DownloadPupilPremiumFilesResponse result =
             await _downloadPupilPremiumDataForPupilsService.DownloadAsync(
                 pupilUpns: selectedPupils,
-                downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadType.Search,
+                downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
                 ctx);
 
         if (result.HasData)

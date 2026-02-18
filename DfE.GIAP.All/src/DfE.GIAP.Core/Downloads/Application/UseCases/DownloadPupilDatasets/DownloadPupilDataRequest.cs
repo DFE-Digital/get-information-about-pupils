@@ -6,5 +6,5 @@ namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 public record DownloadPupilDataRequest(
     IEnumerable<string> SelectedPupils,
     IEnumerable<Dataset> SelectedDatasets,
-    DownloadType DownloadType,
+    PupilDownloadType DownloadType,
     FileFormat FileFormat) : IUseCaseRequest<DownloadPupilDataResponse>;

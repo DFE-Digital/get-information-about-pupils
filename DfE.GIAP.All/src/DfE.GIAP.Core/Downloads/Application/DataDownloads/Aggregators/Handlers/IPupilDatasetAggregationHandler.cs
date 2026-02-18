@@ -5,7 +5,7 @@ namespace DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators.Handlers
 
 public interface IPupilDatasetAggregationHandler
 {
-    DownloadType SupportedDownloadType { get; }
+    PupilDownloadType SupportedDownloadType { get; }
 
     Task<PupilDatasetCollection> AggregateAsync(
         IEnumerable<string> pupilIds,

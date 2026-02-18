@@ -2,8 +2,6 @@
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
-using DfE.GIAP.Domain.Models.Common;
-using DfE.GIAP.Web.Extensions;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Services.ApiProcessor;
@@ -82,43 +80,5 @@ public class ApiService : IApiService
         }
 
         return response?.StatusCode ?? HttpStatusCode.BadRequest;
-    }
-
-    public async Task<TResponseModel> PostAsync<TRequestModel, TResponseModel>(Uri url, TRequestModel model, AzureFunctionHeaderDetails headerDetails)
-        where TRequestModel : class
-        where TResponseModel : class
-    {
-        HttpResponseMessage response = null;
-        try
-        {
-            using HttpRequestMessage request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = url,
-                Content = model != null ? new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, MediaTypeNames.Application.Json) : null
-            };
-
-            if (headerDetails != null)
-            {
-                _httpClient.ConfigureHeaders(headerDetails);
-            }
-
-            response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-
-            if (response.StatusCode != HttpStatusCode.NotFound)
-            {
-                response.EnsureSuccessStatusCode();
-            }
-
-            string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            TResponseModel responseModel = JsonConvert.DeserializeObject<TResponseModel>(responseContent);
-            return responseModel;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Exception getting data '{ex.Message}' from {url.AbsoluteUri}.");
-        }
-
-        return default;
     }
 }

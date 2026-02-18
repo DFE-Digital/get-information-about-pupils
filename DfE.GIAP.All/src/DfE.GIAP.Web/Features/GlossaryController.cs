@@ -67,7 +67,7 @@ public class GlossaryController : Controller
         DownloadPreparedFileResponse response = await _downloadPrePreparedFileUseCase
             .HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(DownloadType.Metadata, DownloadFileFormat.CSV);
+        _eventLogger.LogDownload(DownloadOperationType.Metadata, DownloadFileFormat.CSV);
 
         return new FileStreamResult(response.FileStream, response.ContentType)
         {

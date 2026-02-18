@@ -308,7 +308,7 @@ public sealed class NationalPupilDatabaseAggregationHandlerTests
                 phonics.Object,
                 eyfsp.Object);
 
-        Assert.Equal(DownloadType.NPD, handler.SupportedDownloadType);
+        Assert.Equal(PupilDownloadType.NPD, handler.SupportedDownloadType);
     }
 
 

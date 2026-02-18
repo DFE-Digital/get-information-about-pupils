@@ -21,13 +21,13 @@
     <None Include="wwwroot\js\accessible-autocomplete.min.js" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlSanitizer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
     <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
     <ProjectReference Include="..\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

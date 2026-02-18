@@ -1,13 +1,11 @@
-﻿using DfE.GIAP.Common.Enums;
-using DfE.GIAP.Domain.Models.Common;
+﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
 using DfE.GIAP.Web.Features.MyPupils.Messaging;
 using DfE.GIAP.Web.Features.MyPupils.Services.UpsertSelectedPupils;
-using DfE.GIAP.Web.Helpers.SearchDownload;
-using DfE.GIAP.Web.Services.Download.CTF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -16,20 +14,19 @@ namespace DfE.GIAP.Web.Features.MyPupils.Controllers.DownloadMyPupils;
 [Route(Routes.MyPupilList.MyPupilsBase)]
 public class DownloadMyPupilsCommonTransferFileController : Controller
 {
-    private readonly ILogger<DownloadMyPupilsNationalPupilDatabaseController> _logger;
     private readonly AzureAppSettings _azureAppSettings;
     private readonly IMyPupilsMessageSink _myPupilsLogSink;
-    private readonly IDownloadCommonTransferFileService _ctfService;
     private readonly IUpsertSelectedPupilsIdentifiersPresentationService _upsertSelectedPupilsPresentationService;
+    private readonly IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> _downloadPupilCtfUseCase;
+    private readonly IEventLogger _eventLogger;
 
-    public DownloadMyPupilsCommonTransferFileController(ILogger<DownloadMyPupilsNationalPupilDatabaseController> logger,
+    public DownloadMyPupilsCommonTransferFileController(
         IOptions<AzureAppSettings> azureAppSettings,
         IMyPupilsMessageSink myPupilsLogSink,
-        IDownloadCommonTransferFileService ctfService,
-        IUpsertSelectedPupilsIdentifiersPresentationService upsertSelectedPupilsPresentationService)
+        IUpsertSelectedPupilsIdentifiersPresentationService upsertSelectedPupilsPresentationService,
+        IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase,
+        IEventLogger eventLogger)
     {
-        ArgumentNullException.ThrowIfNull(logger);
-        _logger = logger;
 
         ArgumentNullException.ThrowIfNull(azureAppSettings);
         ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
@@ -38,11 +35,14 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
         ArgumentNullException.ThrowIfNull(myPupilsLogSink);
         _myPupilsLogSink = myPupilsLogSink;
 
-        ArgumentNullException.ThrowIfNull(ctfService);
-        _ctfService = ctfService;
-
         ArgumentNullException.ThrowIfNull(upsertSelectedPupilsPresentationService);
         _upsertSelectedPupilsPresentationService = upsertSelectedPupilsPresentationService;
+
+        ArgumentNullException.ThrowIfNull(downloadPupilCtfUseCase);
+        _downloadPupilCtfUseCase = downloadPupilCtfUseCase;
+
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     [HttpPost]
@@ -79,27 +79,19 @@ public class DownloadMyPupilsCommonTransferFileController : Controller
             return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
         }
 
-        ReturnFile downloadFile = await _ctfService.GetCommonTransferFile(
-            [.. updatedPupils],
-            [.. updatedPupils],
-            User.GetLocalAuthorityNumberForEstablishment(),
-            User.GetEstablishmentNumber(),
-            User.IsOrganisationEstablishment(),
-            AzureFunctionHeaderDetails.Create(
-                User.GetUserId(),
-                User.GetSessionId()),
-            ReturnRoute.MyPupilList);
+        DownloadPupilCtfRequest request = new(
+            SelectedPupils: [.. updatedPupils],
+            IsEstablishment: User.IsOrganisationEstablishment(),
+            LocalAuthoriyNumber: User.GetLocalAuthorityNumberForEstablishment(),
+            EstablishmentNumber: User.GetEstablishmentNumber());
 
-        if (downloadFile.Bytes != null)
-        {
-            return SearchDownloadHelper.DownloadFile(downloadFile);
-        }
+        DownloadPupilCtfResponse downloadPupilCtfResponse = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _myPupilsLogSink.AddMessage(
-            new MyPupilsMessage(
-                MessageLevel.Error,
-                Messages.Downloads.Errors.NoDataForSelectedPupils));
+        _eventLogger.LogDownload(DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
-        return MyPupilsRedirectHelpers.RedirectToGetMyPupils(query);
+        return File(
+            fileStream: downloadPupilCtfResponse.FileStream,
+            contentType: downloadPupilCtfResponse.ContentType,
+            fileDownloadName: downloadPupilCtfResponse.FileName);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using DfE.GIAP.Common.Constants;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features;
 

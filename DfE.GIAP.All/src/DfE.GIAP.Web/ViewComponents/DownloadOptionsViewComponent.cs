@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DfE.GIAP.Common.Enums;
+﻿using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using Microsoft.AspNetCore.Mvc;
 

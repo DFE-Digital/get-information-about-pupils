@@ -24,7 +24,7 @@ public class EventLogger : IEventLogger
         Dispatch(evt);
     }
 
-    public void LogDownload(DownloadType downloadType, DownloadFileFormat downloadFormat,
+    public void LogDownload(DownloadOperationType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null)
     {
         DownloadEvent evt = _businessEventFactory.CreateDownload(downloadType, downloadFormat, downloadEventType, batchId, dataset);
