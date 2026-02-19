@@ -15,7 +15,7 @@ env:
   BUILD_CONFIGURATION: Release
   SOLUTION_DIRECTORY: DfE.GIAP.All
   JAVA_VERSION: '17'
-  IMAGE_BASE: unused
+  IMAGE_BASE: _PLACEHOLDER_
 
 jobs:
   lint:
