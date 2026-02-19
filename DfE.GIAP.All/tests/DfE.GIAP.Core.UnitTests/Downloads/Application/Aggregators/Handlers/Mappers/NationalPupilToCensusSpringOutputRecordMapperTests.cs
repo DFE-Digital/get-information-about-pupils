@@ -135,7 +135,6 @@ public sealed class NationalPupilToCensusSpringOutputRecordMapperTests
     public void Map_IgnoresUnmappedFieldsInCensusSpringEntry()
     {
         // These fields exist on the entry but not on the output
-        Assert.Null(typeof(CensusSpringOutputRecord).GetProperty("Ethnicity"));
         Assert.Null(typeof(CensusSpringOutputRecord).GetProperty("Gender"));
     }
 }

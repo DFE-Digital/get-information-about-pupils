@@ -130,7 +130,6 @@ public sealed class NationalPupilToCensusSummerOutputRecordMapperTests
     public void Map_IgnoresUnmappedFieldsInCensusSummerEntry()
     {
         // These exist on the entry but not on the output
-        Assert.Null(typeof(CensusSummerOutputRecord).GetProperty("Ethnicity"));
         Assert.Null(typeof(CensusSummerOutputRecord).GetProperty("ServiceChild"));
         Assert.Null(typeof(CensusSummerOutputRecord).GetProperty("Gender"));
     }

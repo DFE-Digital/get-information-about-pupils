@@ -19,6 +19,7 @@ public class CensusSummerOutputRecord
     public string? FormerSurname { get; set; }
     public string? Sex { get; set; }
     public string? DOB { get; set; }
+    public string? Ethnicity { get; set; }
     public string? FSMeligible { get; set; }
     public string? FSM_protected { get; set; }
     public string? EVERFSM_6 { get; set; }

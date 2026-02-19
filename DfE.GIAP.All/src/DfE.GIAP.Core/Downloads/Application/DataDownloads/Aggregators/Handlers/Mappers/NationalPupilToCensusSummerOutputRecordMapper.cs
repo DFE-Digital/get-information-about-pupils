@@ -33,6 +33,7 @@ public class NationalPupilToCensusSummerOutputRecordMapper : IMapper<NationalPup
             FormerSurname = censusSummerEntry?.FormerSurname,
             Sex = censusSummerEntry?.Sex,
             DOB = censusSummerEntry?.DOB?.ToString(DateFormatting.StandardDateFormat, CultureInfo.InvariantCulture),
+            Ethnicity = censusSummerEntry?.Ethnicity,
             FSMeligible = censusSummerEntry?.FreeSchoolMealEligible,
             FSM_protected = censusSummerEntry?.FreeSchoolMealProtected,
             EVERFSM_6 = censusSummerEntry?.EVERFSM_6,
