@@ -31,10 +31,11 @@ ARG PROJECT_PATH="DfE.GIAP.All"
 # Copy only what's needed for restore so that it can be cached
 COPY ${PROJECT_PATH}/Directory.Build.props src/
 COPY ${PROJECT_PATH}/Directory.Packages.props src/
-
 COPY ${PROJECT_PATH}/src/DfE.GIAP.Common/DfE.GIAP.Common.csproj src/DfE.GIAP.Common/
 COPY ${PROJECT_PATH}/src/DfE.GIAP.Core/DfE.GIAP.Core.csproj src/DfE.GIAP.Core/
 COPY ${PROJECT_PATH}/src/DfE.GIAP.Web/DfE.GIAP.Web.csproj src/DfE.GIAP.Web/
+
+COPY ${PROJECT_PATH}/src src/
 
 # Use BuildKit to mount nuget.config and restore
 RUN --mount=type=secret,id=nuget_config \
