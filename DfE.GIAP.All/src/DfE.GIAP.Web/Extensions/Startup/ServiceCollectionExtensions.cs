@@ -4,7 +4,6 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Configuration;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
-using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
@@ -28,8 +27,7 @@ public static class ServiceCollectionExtensions
         services.Configure<AzureAppSettings>(configuration)
             .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
             .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName))
-            .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName)) // TODO: Move
-            .Configure<BlobStorageOptions>(configuration.GetSection(BlobStorageOptions.SectionName)); // TODO: Move
+            .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName)); // TODO: Move
 
         return services;
     }
