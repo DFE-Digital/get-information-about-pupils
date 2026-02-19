@@ -82,7 +82,7 @@ jobs:
           TAG="pr-${{ github.event.number }}-${{ github.sha }}"
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ghcr.io/${{ github.repository_owner }}/giap-web:${TAG} \
+            -t ${IMAGE_BASE}:${TAG} \
             --push .
 
   build-latest-image:
@@ -125,8 +125,8 @@ jobs:
         run: |
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ghcr.io/${{ github.repository_owner }}/giap-web:sha-${{ github.sha }} \
-            -t ghcr.io/${{ github.repository_owner }}/giap-web:latest \
+            -t ${IMAGE_BASE}:sha-${{ github.sha }} \
+            -t ${IMAGE_BASE}:latest \
             --push .
 
   build-release-image:
@@ -169,7 +169,7 @@ jobs:
         run: |
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ghcr.io/${{ github.repository_owner }}/giap-web:${{ github.ref_name }} \
+            -t ${IMAGE_BASE}:${{ github.ref_name }} \
             --push .
 
 
