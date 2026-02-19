@@ -5,7 +5,7 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Search.Documents" Version="11.7.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.26.0" />
-    <PackageVersion Include="Azure.Core" Version="1.49.0" />
+    <PackageVersion Include="Azure.Core" Version="1.51.1" />
     <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="Fare" Version="2.2.1" />
     <!-- FluentAssertions 8.x has a license requirement. -->
@@ -19,18 +19,18 @@
     <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.23.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.22" />
     <PackageVersion Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.54.1" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Azure.Cosmos" Version="3.57.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.3" />
     <PackageVersion Include="Microsoft.FeatureManagement.AspNetCore" Version="4.3.0" />
     <PackageVersion Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.14.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
