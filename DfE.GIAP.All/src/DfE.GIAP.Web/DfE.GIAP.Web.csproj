@@ -24,7 +24,6 @@
     <PackageReference Include="HtmlSanitizer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
-    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
   </ItemGroup>
   <ItemGroup>
