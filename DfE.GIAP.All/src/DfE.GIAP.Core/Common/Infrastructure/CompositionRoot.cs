@@ -5,28 +5,26 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.Common.Infrastructure;
+
 internal static class CompositionRoot
 {
     internal static IServiceCollection AddBlobStorageProvider(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.AddOptions<BlobStorageOptions>()
+            .BindConfiguration(BlobStorageOptions.SectionName)
+            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountName), "BlobStorage: AccountName is required")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountKey), "BlobStorage: AccountKey is required")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.ContainerName), "BlobStorage: ContainerName is required")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.EndpointSuffix), "BlobStorage: EndpointSuffix is required")
+            .ValidateOnStart();
+
         services.TryAddSingleton<IBlobStorageProvider>(sp =>
         {
             BlobStorageOptions options = sp.GetRequiredService<IOptions<BlobStorageOptions>>().Value;
+            BlobServiceClient blobServiceClient = new(options.ConnectionString);
 
-            ArgumentException.ThrowIfNullOrWhiteSpace(options.AccountName);
-            ArgumentException.ThrowIfNullOrWhiteSpace(options.AccountKey);
-            ArgumentException.ThrowIfNullOrWhiteSpace(options.ContainerName);
-            ArgumentException.ThrowIfNullOrWhiteSpace(options.EndpointSuffix);
-
-            string connectionString =
-            $"AccountName={options.AccountName};" +
-            $"AccountKey={options.AccountKey};" +
-            $"EndpointSuffix={options.EndpointSuffix};" +
-            $"DefaultEndpointsProtocol=https;";
-
-            BlobServiceClient blobServiceClient = new(connectionString);
             return new AzureBlobStorageProvider(blobServiceClient);
         });
 

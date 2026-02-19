@@ -7,4 +7,10 @@ public class BlobStorageOptions
     public string AccountKey { get; set; } = string.Empty;
     public string ContainerName { get; set; } = string.Empty;
     public string EndpointSuffix { get; set; } = string.Empty;
+
+    public string ConnectionString =>
+        $"AccountName={AccountName};" +
+        $"AccountKey={AccountKey};" +
+        $"EndpointSuffix={EndpointSuffix};" +
+        $"DefaultEndpointsProtocol=https;";
 }
