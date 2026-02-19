@@ -15,6 +15,7 @@ env:
   BUILD_CONFIGURATION: Release
   SOLUTION_DIRECTORY: DfE.GIAP.All
   JAVA_VERSION: '17'
+  IMAGE_BASE: unused
 
 jobs:
   lint:
@@ -73,12 +74,15 @@ jobs:
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
         run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
+      - uses: ./.github/actions/image-name
+      - run: echo "Pushing to ${IMAGE_BASE}"
+      
       - name: Build & push PR image
         run: |
           TAG="pr-${{ github.event.number }}-${{ github.sha }}"
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:${TAG} \
+            -t ghcr.io/${{ github.repository_owner }}/giap-web:${TAG} \
             --push .
 
   build-latest-image:
@@ -114,12 +118,15 @@ jobs:
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
         run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
       
+      - uses: ./.github/actions/image-name
+      - run: echo "Pushing to ${IMAGE_BASE}"
+      
       - name: Build & push main image
         run: |
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:sha-${{ github.sha }} \
-            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:latest \
+            -t ghcr.io/${{ github.repository_owner }}/giap-web:sha-${{ github.sha }} \
+            -t ghcr.io/${{ github.repository_owner }}/giap-web:latest \
             --push .
 
   build-release-image:
@@ -155,11 +162,14 @@ jobs:
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
         run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
+      - uses: ./.github/actions/image-name
+      - run: echo "Pushing to ${IMAGE_BASE}"
+      
       - name: Build & push release image
         run: |
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:${{ github.ref_name }} \
+            -t ghcr.io/${{ github.repository_owner }}/giap-web:${{ github.ref_name }} \
             --push .
 
 
