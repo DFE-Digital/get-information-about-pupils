@@ -33,6 +33,7 @@ public class NationalPupilToCensusSpringOutputRecordMapper : IMapper<NationalPup
             FormerUPN = censusSpringEntry?.FormerUniquePupilNumber,
             PreferredSurname = censusSpringEntry?.PreferredSurname,
             FormerSurname = censusSpringEntry?.FormerSurname,
+            Ethnicity = censusSpringEntry?.Ethnicity,
             FSMeligible = censusSpringEntry?.FreeSchoolMealEligible,
             FSM_protected = censusSpringEntry?.FreeSchoolMealProtected,
             EVERFSM_6 = censusSpringEntry?.EVERFSM_6,
