@@ -39,17 +39,14 @@ jobs:
           dotnet format ${{ env.SOLUTION_DIRECTORY }} \
             --verbosity detailed \
             --verify-no-changes
-
-  build_image:
+          
+  build-pr-image:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write # required to push to GHCR with GITHUB_TOKEN
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
       - name: Setup .NET SDK from global.json
         uses: actions/setup-dotnet@v5
 
@@ -69,41 +66,102 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
         run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
-          
-        # :pr-{pr-number}-{sha}
-        if: github.event_name == 'pull_request'
-      - name: build-and-push-docker-image
-        shell: bash        
+      
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Build & push PR image
         run: |
           TAG="pr-${{ github.event.number }}-${{ github.sha }}"
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            --tag ghcr.io/${{ github.repository_owner }}/$TAG \
+            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:${TAG} \
             --push .
 
-        # :latest
-        if: github.ref == 'refs/heads/main'
-      - name: build-and-push-docker-image-latest
-        shell: bash
-        run : |
-          docker buildx build \
-            --secret id=nuget_config,src=nuget.config \
-            -t ghcr.io/org/giapweb-web:sha-${{ github.sha }} \
-            -t ghcr.io/org/giapweb-web:latest \
-            --push .
+  build-latest-image:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # required to push to GHCR with GITHUB_TOKEN
+    steps:
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
 
-        # Release image :v*.*.*
-        if: startsWith(github.ref, 'refs/tags/v')
-      - name: build-and-push-docker-image-release
+      - name: Install NuGet tools
+        uses: NuGet/setup-nuget@v1
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
         shell: bash
+      
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Add DfE-Digital GitHub NuGet Feed Credentials
+        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
+      
+      - name: Build & push main image
         run: |
           docker buildx build \
-            --secret id=nuget_config,src=nuget.config \
-            -t ghcr.io/org/giapweb-web:${{ github.ref_name }} \
+            --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
+            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:sha-${{ github.sha }} \
+            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:latest \
             --push .
+
+  build-release-image:
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # required to push to GHCR with GITHUB_TOKEN
+    steps:
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
+
+      - name: Install NuGet tools
+        uses: NuGet/setup-nuget@v1
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+        shell: bash
+      
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Add DfE-Digital GitHub NuGet Feed Credentials
+        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
+
+      - name: Build & push release image
+        run: |
+          docker buildx build \
+            --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
+            -t ghcr.io/${{ github.repository_owner }}/giapweb-web:${{ github.ref_name }} \
+            --push .
+
 
   build_unittest_package:
     runs-on: ubuntu-latest
