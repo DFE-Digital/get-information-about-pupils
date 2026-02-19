@@ -79,10 +79,14 @@ jobs:
       
       - name: Build & push PR image
         run: |
-          TAG="pr-${{ github.event.number }}-${{ github.sha }}"
+        
+          # github.head_ref is the source branch for PRs, Normalize: lowercase, replace '/', spaces with '-'
+          BRANCH_SAFE="$(echo "${{ github.head_ref }}" | tr '[:upper:]' '[:lower:]' | sed -E 's#[^a-z0-9._-]#-#g')"
+          TAG_BRANCH="pr-${PR_NUM}-${BRANCH_SAFE}-${{ github.sha }}"
+
           docker buildx build \
             --secret id=nuget_config,src=DfE.GIAP.All/nuget.config \
-            -t ${IMAGE_BASE}:${TAG} \
+            -t "${IMAGE_BASE}:${TAG_BRANCH}" \
             --push .
 
   build-latest-image:
