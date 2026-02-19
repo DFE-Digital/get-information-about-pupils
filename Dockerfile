@@ -20,7 +20,7 @@ RUN cd /app/Web && npm i -g gulp && npm ci
 RUN gulp default --gulpfile /app/Web/gulpfile.js --cwd /app/Web
 
 # =====================================================
-# Stage 2: Build .NET project
+# Stage 2: Build Web project
 # =====================================================
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION}-noble AS build
 ARG BUILD_CONFIGURATION=Release
@@ -41,13 +41,18 @@ RUN --mount=type=secret,id=nuget_config \
     dotnet restore src/DfE.GIAP.Web/DfE.GIAP.Web.csproj \
     --configfile /run/secrets/nuget_config
 
-#### TODO split restore and build stages?
 RUN dotnet build src/DfE.GIAP.Web/DfE.GIAP.Web.csproj -c $BUILD_CONFIGURATION -o /app/build
 
+# =====================================================
+# Stage 3: Publish Web .DLL
+# =====================================================
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish src/DfE.GIAP.Web/DfE.GIAP.Web.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# =====================================================
+# Stage 4: Run Web
+# =====================================================
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-noble AS final
 WORKDIR /app
 
