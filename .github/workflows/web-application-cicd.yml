@@ -67,11 +67,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Add DfE-Digital GitHub NuGet Feed Credentials
-        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
-      
       - name: Checkout code
         uses: actions/checkout@v6
+      
+      - name: Add DfE-Digital GitHub NuGet Feed Credentials
+        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
 
       - name: Build & push PR image
         run: |
