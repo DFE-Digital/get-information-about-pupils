@@ -47,3 +47,18 @@ RUN dotnet build src/DfE.GIAP.Web/DfE.GIAP.Web.csproj -c $BUILD_CONFIGURATION -o
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish src/DfE.GIAP.Web/DfE.GIAP.Web.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-noble AS final
+WORKDIR /app
+
+ENV ASPNETCORE_URLS=http://+:5000
+
+COPY --from=publish /app/publish .
+
+COPY --from=assets /app/Web/wwwroot wwwroot/
+
+EXPOSE 5000
+
+USER $APP_UID
+
+ENTRYPOINT ["dotnet", "DfE.GIAP.Web.dll"]
