@@ -1,0 +1,8 @@
+﻿@if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+{
+    <li class="govuk-service-navigation__item">
+        <a class="govuk-service-navigation__link" asp-controller="GetMyPupils" asp-action="Index" id="header--mpl--link">
+            My pupils
+        </a>
+    </li>
+}

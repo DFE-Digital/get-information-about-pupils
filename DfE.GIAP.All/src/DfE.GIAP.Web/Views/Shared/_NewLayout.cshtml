@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="govuk-template app-html-class">
+
+<head>
+    <title>GOV.UK - Get information about pupils</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="blue">
+
+    <link rel="stylesheet" href="/css/govuk-frontend.min.css">
+    <link rel="icon" sizes="48x48" href="/assets/images/favicon.ico">
+    <link rel="icon" sizes="any" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="mask-icon" href="/assets/images/govuk-icon-mask.svg" color="blue">
+    <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png">
+    <link rel="manifest" href="/assets/manifest.json">
+</head>
+
+<body class="govuk-template__body app-body-class" data-test="My value" data-other="report:details">
+    <script>
+        document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    </script>
+
+    <partial name="Partials/_LayoutCookieBanner" />
+    <partial name="Partials/_LayoutHeader" />
+
+    <div class="govuk-width-container app-width-container">
+        <main class="govuk-main-wrapper app-main-class" id="main-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <partial name="Partials/_LayoutFooter" />
+    <partial name="Partials/_LayoutScripts" />
+</body>
+
+</html>

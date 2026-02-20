@@ -57,7 +57,7 @@ public class CookieProvider : ICookieProvider
         {
             option = new CookieOptions
             {
-                Expires = DateTime.Now.AddMinutes(expireTime.Value)
+                Expires = DateTime.Now.AddMinutes(expireTime.Value),
             };
         }
 

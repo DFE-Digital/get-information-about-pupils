@@ -1,0 +1,13 @@
+﻿@inject IAuthorizationService AuthorizationService
+
+@{
+    AuthorizationResult authResult = await AuthorizationService.AuthorizeAsync(User, Policy.RequiresManageContentAccess);
+    if (authResult.Succeeded)
+    {
+        <li class="govuk-service-navigation__item">
+            <a class="govuk-service-navigation__link" asp-controller="Content" asp-action="Index">
+                Content
+            </a>
+        </li>
+    }
+}

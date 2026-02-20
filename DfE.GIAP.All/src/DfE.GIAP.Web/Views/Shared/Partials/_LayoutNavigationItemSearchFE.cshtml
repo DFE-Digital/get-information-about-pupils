@@ -1,0 +1,13 @@
+﻿@{
+    if (User.IsAdmin() ||
+            User.IsOrganisationEstablishmentWithFurtherEducation() ||
+                User.IsEstablishmentWithAccessToULNPages() ||
+                    User.IsDfeUser())
+    {
+        <li class="govuk-service-navigation__item">
+            <a class="govuk-service-navigation__link" asp-controller="@Global.FELearnerNumberSearchController" asp-action="PupilUlnSearch" id="header--search-uln--link">
+                Search further education
+            </a>
+        </li>
+    }
+}

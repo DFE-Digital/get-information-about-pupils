@@ -1,39 +1,35 @@
 ﻿/// <binding AfterBuild='default' />
 
-var gulp = require('gulp');
-const sass = require('gulp-sass')(require('sass'));
-var uglify = require('gulp-uglify');
-var concat = require("gulp-concat");
+const gulp = require("gulp");
+const uglify = require("gulp-uglify");
 
-// Copy jQuery to wwwroot/lib/jquery
-gulp.task("copy-jquery", function () {
-    return gulp
-        .src(["./node_modules/jquery/dist/jquery.js", "./node_modules/jquery/dist/jquery.min.js", "./node_modules/jquery/dist/jquery.min.map"])
-        .pipe(gulp.dest("./wwwroot/lib/jquery/dist"));  // Ensure the folder exists
+// Correct GOV.UK Frontend v5+ paths
+const paths = {
+    css: "node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css",
+    js: "node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js",
+    assets: "node_modules/govuk-frontend/dist/govuk/assets/**/*"
+};
+
+// Copy GOV.UK CSS → wwwroot/css
+gulp.task("govuk-css", function () {
+    return gulp.src(paths.css)
+        .pipe(gulp.dest("wwwroot/css"));
 });
 
-// Minify and concatenate scripts
-gulp.task("copy-all-scripts", function () {
-    return gulp
-        .src(["./node_modules/govuk-frontend/dist/govuk/all.bundle.js", "./Scripts/**/*.js"])
-        .pipe(uglify())
-        .pipe(concat("giap.min.js"))
-        .pipe(gulp.dest("./wwwroot/js/"));
+// Copy GOV.UK JS → wwwroot/js
+gulp.task("govuk-js", function () {
+    return gulp.src(paths.js)
+        .pipe(gulp.dest("wwwroot/js"));
 });
 
-// Compile and minify SASS
-gulp.task('copy-and-compile-sass', function () {
-    return gulp
-        .src("./Styles/Master.scss")
-        .pipe(sass({
-            style: "compressed",
-            loadPaths: ["node_modules"],
-            quietDeps: true
-        })
-            .on('error', sass.logError))
-        .pipe(concat("giap.min.css")) // output filename
-        .pipe(gulp.dest('./wwwroot/css'));
+// Copy GOV.UK assets → wwwroot/assets/govuk
+gulp.task("govuk-assets", function () {
+    return gulp.src(paths.assets)
+        .pipe(gulp.dest("wwwroot/assets"));
 });
 
-// Default task (runs all tasks)
-gulp.task("default", gulp.series("copy-jquery", "copy-all-scripts", "copy-and-compile-sass"));
+// Build everything
+gulp.task("govuk", gulp.parallel("govuk-css", "govuk-js", "govuk-assets"));
+
+// Default task
+gulp.task("default", gulp.series("govuk"));
