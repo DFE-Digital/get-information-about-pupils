@@ -140,6 +140,45 @@
     </div>
 
     <div class="govuk-grid-column-one-quarter">
-        <partial name="Layout/_LayoutSideMenuPopularActivities" />
+        <h3 class="govuk-heading-m">Popular activities</h3>
+        <ul class="govuk-list govuk-list--spaced">
+            <li>
+                <a class="govuk-link" asp-controller="News" asp-action="Index">News</a>
+            </li>
+            @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+            {
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.NPDLearnerNumberSearchController" asp-action="NationalPupilDatabase">Search NPD by UPNs</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.NPDTextSearchController" asp-action="NonUpnNationalPupilDatabase">Search NPD by name</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.PPLearnerNumberSearchController" asp-action="PupilPremium">Search pupil premium by UPNs</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.PPTextSearchController" asp-action="NonUpnPupilPremiumDatabase">Search pupil premium by name</a>
+                </li>
+
+                <li>
+                    <a class="govuk-link" asp-controller="PreparedDownloads" asp-action="Index">Prepared downloads</a>
+                </li>
+            }
+
+            @if (User.IsOrganisationEstablishmentWithFurtherEducation() ||
+                        User.IsEstablishmentWithAccessToULNPages() ||
+                        User.IsDfeUser())
+            {
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.FELearnerNumberSearchController" asp-action="PupilUlnSearch">Search further education using ULNs</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.FELearnerTextSearchController" asp-action="FurtherEducationNonUlnSearch">Search further education by name</a>
+                </li>
+            }
+            <li>
+                <a class="govuk-link" href="/Glossary/#_TOC8">Metadata files</a>
+            </li>
+        </ul>
     </div>
 </div>
