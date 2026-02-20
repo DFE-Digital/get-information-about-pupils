@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <EnableScopedCss>true</EnableScopedCss>
     <UserSecretsId>d4e9d00c-c90a-4862-a2de-9e169b13be02</UserSecretsId>
     <!-- Note: this has been disabled because Web has ViewModels which consume from Common.Models that have [Required()] attributes on its ViewModel Properties.
         When nullable is enabled it causes different behaviour as ModelState.IsValid() will evaluate to false - as some properties are bound as null than "" and fail the ModelStateValidation-->
