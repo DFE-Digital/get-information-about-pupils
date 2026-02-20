@@ -14,12 +14,16 @@
     <link rel="mask-icon" href="/assets/images/govuk-icon-mask.svg" color="blue">
     <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png">
     <link rel="manifest" href="/assets/manifest.json">
+
+    <partial name="Partials/_LayoutHeadAnalytics" />
 </head>
 
 <body class="govuk-template__body app-body-class" data-test="My value" data-other="report:details">
     <script>
         document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
     </script>
+
+    <partial name="Partials/_LayoutBodyAnalytics" />
 
     <partial name="Partials/_LayoutCookieBanner" />
     <partial name="Partials/_LayoutHeader" />
