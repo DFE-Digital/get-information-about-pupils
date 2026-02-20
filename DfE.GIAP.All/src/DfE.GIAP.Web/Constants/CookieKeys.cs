@@ -3,7 +3,8 @@
 public static class CookieKeys
 {
     public const string GIAPSessionId = "GIAPSessionId";
-    public const string AspConsentCookie = ".AspNet.Consent";
+    public const string GiapCookieBannerSeen = "GiapCookieBannerSeen";
+    public const string GiapConsent = "GiapConsent";
     public const string GiapComms = "giapcomms";
     public const string GiapWebsiteUse = "giapwebsiteuse";
 }

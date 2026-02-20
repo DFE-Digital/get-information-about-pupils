@@ -37,32 +37,38 @@ public class CookiesController : Controller
     [Route("CookiePreferences")]
     public IActionResult CookiePreferences(CookieUseViewModel viewModel)
     {
-        if (!string.IsNullOrEmpty(viewModel.CookieWebsiteUse))
-        {
-            AppendCookie(CookieKeys.GiapWebsiteUse, viewModel.CookieWebsiteUse);
-        }
-
-        if (!string.IsNullOrEmpty(viewModel.CookieComms))
-        {
-            AppendCookie(CookieKeys.GiapComms, viewModel.CookieComms);
-        }
+        _cookieProvider.Set(CookieKeys.GiapWebsiteUse, viewModel.CookieWebsiteUse);
+        _cookieProvider.Set(CookieKeys.GiapComms, viewModel.CookieComms);
 
         return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Route("AcceptCookies")]
-    public IActionResult AcceptCookies([FromQuery] string returnUrl)
+    [Route("CookieBanner")]
+    public IActionResult CookieBanner(string analytics, string returnUrl)
     {
-        ITrackingConsentFeature consentTracker = HttpContext?.Features.Get<ITrackingConsentFeature>();
-        consentTracker?.GrantConsent();
+        ITrackingConsentFeature consent = HttpContext.Features.Get<ITrackingConsentFeature>();
 
-        int yearInMinutes = (int)(DateTime.Now.AddYears(1) - DateTime.Now).TotalMinutes;
-        _cookieProvider.Set(CookieKeys.AspConsentCookie, "yes", expireTime: yearInMinutes);
+        int expiryMinutes = (int)TimeSpan.FromDays(28).TotalMinutes;
+        _cookieProvider.Set(
+            key: CookieKeys.GiapCookieBannerSeen,
+            value: "yes",
+            expireTime: expiryMinutes,
+            isEssential: true);
 
-        return Redirect(returnUrl);
+        bool accepted = analytics is "yes";
+        if (accepted)
+            consent?.GrantConsent();
+        else
+            consent?.WithdrawConsent();
+
+        return string.IsNullOrWhiteSpace(returnUrl)
+            ? RedirectToAction("Index", "Home")
+            : Redirect(returnUrl);
     }
+
+
 
     private bool IsCookieEnabled(string cookieName)
     {
@@ -73,10 +79,9 @@ public class CookiesController : Controller
     {
         CookieOptions options = new()
         {
-            Expires = DateTime.Now.AddDays(28)
+            Expires = DateTime.Now.AddDays(28),
         };
 
         Response?.Cookies.Append(cookieName, cookieValue, options);
     }
-
 }

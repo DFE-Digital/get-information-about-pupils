@@ -17,8 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="appsettings.json" />
-    <None Include="wwwroot\css\accessible-autocomplete.min.css" />
-    <None Include="wwwroot\js\accessible-autocomplete.min.js" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" />
@@ -36,5 +34,8 @@
     <Content Update="logevents.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 </Project>
