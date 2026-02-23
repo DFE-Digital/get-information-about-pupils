@@ -12,23 +12,19 @@
 <table class="govuk-table">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Name</th>
-            <th scope="col" class="govuk-table__header">Date</th>
-            <th scope="col" class="govuk-table__header">Link</th>
+            <th scope="col" class="govuk-table__header">File</th>
+            <th scope="col" class="govuk-table__header">Added</th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
         @for (var i = 0; i < Model.PreparedDownloadFiles.Count(); i++)
         {
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayName)</td>
-                <td class="govuk-table__cell">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)</td>
                 <td class="govuk-table__cell">
                     <a class="govuk-link" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PreparedDownloadFiles[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)" download>@Html.Raw(Model.PreparedDownloadFiles[i].FileName)</a>
                 </td>
+                <td class="govuk-table__cell">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)</td>
             </tr>
         }
     </tbody>
 </table>
-
-<partial name="_MetadataFilesPartial" />
