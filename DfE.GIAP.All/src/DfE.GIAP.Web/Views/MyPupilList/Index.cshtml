@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = Model.PageHeading;
+    var pages = PaginationHelper.Build(Model.PageNumber, Model.MorePagesAvailable);
 }
 
 @if (Model.IsDeleteSuccessful)
@@ -261,91 +262,79 @@
                                     </tbody>
                                 </table>
                             </fieldset>
-                            <div>
-                                <ul class="pagination-list">
-                                    <!-- Previous page number -->
-                                    @if (Model.PageNumber > 1)
-                                    {
-                                        <li class="page-list-previous">
-                                            <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
-                                                    asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection"
-                                                    id="page-previous"
-                                                    type="submit">
-                                                &#60;&#60; Previous
-                                            </button>
-                                        </li>
-                                        <li class="page-list-first">
-                                            <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="1"
-                                                    asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection"
-                                                    id="page-first"
-                                                    type="submit">
-                                                1
-                                            </button>
-                                        </li>
-                                    }
 
-                                    @if (Model.PageNumber > 3)
-                                    {
-                                        <li class="page-list-number-separator">...</li>
-                                    }
+                            <nav class="govuk-pagination" aria-label="Pagination">
+                                @if (Model.PageNumber > 1)
+                                {
+                                    <div class="govuk-pagination__prev">
+                                        <a class="govuk-link govuk-pagination__link"
+                                           asp-controller="@Model.UpdateFormController"
+                                           asp-action="@Model.UpdateFormAction"
+                                           asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                           asp-route-sortField="@Model.SortField"
+                                           asp-route-sortDirection="@Model.SortDirection">
+                                            <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                                <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                                            </svg>
+                                            <span class="govuk-pagination__link-title">
+                                                Previous<span class="govuk-visually-hidden"> page</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                }
 
-                                    @if (Model.PageNumber > 2)
+                                <ul class="govuk-pagination__list">
+                                    @foreach (var item in pages)
                                     {
-                                        <li class="page-list-previous">
-                                            <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="@(Model.PageNumber - 1)"
-                                                    asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection"
-                                                    id="page-previous"
-                                                    type="submit">
-                                                @(Model.PageNumber - 1)
-                                            </button>
-                                        </li>
-                                    }
-
-                                    <!-- Current page number -->
-                                    <li>@Model.PageNumber</li>
-
-                                    <!-- Next page number -->
-                                    @if (Model.MorePagesAvailable)
-                                    {
-                                        <!-- Last page number available should either be
-                                        {current} {next} ... {lastPage}
-                                        {current} {next} {lastPage}
-                                        -->
-                                        <!-- Always display next page -->
-                                        <li class="page-list-next">
-                                            <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="@(Model.PageNumber + 1)"
-                                                    asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection"
-                                                    id="page-next-number"
-                                                    type="submit">
-                                                @(Model.PageNumber + 1)
-                                            </button>
-                                        </li>
-                                        <li class="page-list-next">
-                                            <button asp-controller="@Model.UpdateFormController"
-                                                    asp-action="@Model.UpdateFormAction"
-                                                    asp-route-pageNumber="@(Model.PageNumber + 1)"
-                                                    asp-route-sortField="@Model.SortField"
-                                                    asp-route-sortDirection="@Model.SortDirection"
-                                                    id="page-next"
-                                                    type="submit">
-                                                Next &#62;&#62;
-                                            </button>
-                                        </li>
+                                        if (item.IsEllipsis)
+                                        {
+                                            <li class="govuk-pagination__item govuk-pagination__item--ellipsis">
+                                                &ctdot;
+                                            </li>
+                                        }
+                                        else if (item.IsCurrent)
+                                        {
+                                            <li class="govuk-pagination__item govuk-pagination__item--current">
+                                                <a class="govuk-link govuk-pagination__link" href="" aria-label="Page 2" aria-current="page">
+                                                    @item.Page
+                                                </a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="govuk-pagination__item">
+                                                <a class="govuk-link govuk-pagination__link"
+                                                   asp-controller="@Model.UpdateFormController"
+                                                   asp-action="@Model.UpdateFormAction"
+                                                   asp-route-pageNumber="@item.Page"
+                                                   asp-route-sortField="@Model.SortField"
+                                                   asp-route-sortDirection="@Model.SortDirection">
+                                                    @item.Page
+                                                </a>
+                                            </li>
+                                        }
                                     }
                                 </ul>
-                            </div>
+
+                                @if (Model.MorePagesAvailable)
+                                {
+                                    <div class="govuk-pagination__next">
+                                        <a class="govuk-link govuk-pagination__link"
+                                           asp-controller="@Model.UpdateFormController"
+                                           asp-action="@Model.UpdateFormAction"
+                                           asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                           asp-route-sortField="@Model.SortField"
+                                           asp-route-sortDirection="@Model.SortDirection">
+                                            <span class="govuk-pagination__link-title">
+                                                Next<span class="govuk-visually-hidden"> page</span>
+                                            </span>
+                                            <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                                <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                }
+                            </nav>
                         </div>
                     </div>
                 </div>

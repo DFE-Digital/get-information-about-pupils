@@ -20,12 +20,12 @@
     text-underline-offset: .1em;
 }
 
-.webapp-button-as-link:hover {
-    text-decoration: underline;
-    color: colours.$govuk-link-hover-colour !important;
-    text-decoration-thickness: max(3px, .1875rem, .12em);
-    text-underline-offset: .1em;
-}
+    .webapp-button-as-link:hover {
+        text-decoration: underline;
+        color: colours.$govuk-link-hover-colour !important;
+        text-decoration-thickness: max(3px, .1875rem, .12em);
+        text-underline-offset: .1em;
+    }
 
 .webapp-checkboxes-searchresults {
     position: relative;
@@ -113,85 +113,28 @@
     text-underline-offset: .1em;
 }
 
-.pagination-list button:hover {
-    color: colours.$govuk-link-hover-colour;
-    text-decoration-thickness: max(3px, .1875rem, .12em);
-}
+    .pagination-list button:hover {
+        color: colours.$govuk-link-hover-colour;
+        text-decoration-thickness: max(3px, .1875rem, .12em);
+    }
 
 .sidebarNav .popularActivities {
     margin-bottom: 30px;
     border-top: 4px solid colours.$govuk-link-colour;
 }
 
-.sidebarNav .popularActivities h3 {
-    font-family: colours.$govuk-font-family;
-}
+    .sidebarNav .popularActivities h3 {
+        font-family: colours.$govuk-font-family;
+    }
 
-.sidebarNav .popularActivities ul {
-    padding-inline-start: 0px;
-}
+    .sidebarNav .popularActivities ul {
+        padding-inline-start: 0px;
+    }
 
-.sidebarNav .popularActivities li {
-    list-style: none;
-    margin-bottom: 20px;
-}
-
-[aria-sort=none] button:before {
-    content: " ▼";
-    position: absolute;
-    right: -1px;
-    top: 11px;
-    font-size: .5em;
-}
-
-[aria-sort=none] button:after {
-    content: " ▲";
-    position: absolute;
-    right: -1px;
-    top: 1px;
-    font-size: .5em;
-}
-
-[aria-sort] button, [aria-sort] button:hover {
-    background-color: transparent;
-    border-width: 0;
-    -webkit-box-shadow: 0 0 0 0;
-    -moz-box-shadow: 0 0 0 0;
-    box-shadow: 0 0 0 0;
-    color: #005ea5;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    padding: 0 18px 0 0;
-    position: relative;
-    text-align: inherit;
-    font-size: 1em;
-    margin: 0;
-}
-
-[aria-sort] button:focus {
-    background-color: #fd0;
-    color: #0b0c0c;
-    box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
-    outline: none;
-}
-
-[aria-sort=descending] button:after {
-    content: " ▼";
-    font-size: .8em;
-    position: absolute;
-    right: 0px;
-    top: 2px;
-}
-
-[aria-sort=ascending] button:after {
-    content: " ▲";
-    font-size: .8em;
-    position: absolute;
-    right: 0px;
-    top: 2px;
-}
+    .sidebarNav .popularActivities li {
+        list-style: none;
+        margin-bottom: 20px;
+    }
 
 .webapp-filter-item {
     font-family: colours.$govuk-font-family;
@@ -204,20 +147,20 @@
     padding: 10px;
 }
 
-.webapp-filter-item button {
-    margin-right: 5px;
-    vertical-align: top;
-    cursor: pointer;
-    border: none;
-    color: #888;
-    font-family: inherit;
-    font-size: inherit;
-    background-color: inherit;
-}
+    .webapp-filter-item button {
+        margin-right: 5px;
+        vertical-align: top;
+        cursor: pointer;
+        border: none;
+        color: #888;
+        font-family: inherit;
+        font-size: inherit;
+        background-color: inherit;
+    }
 
-.webapp-filter-item button:hover {
-    color: black;
-}
+        .webapp-filter-item button:hover {
+            color: black;
+        }
 
 .webapp-news-banner {
     background: colours.$webapp-banner-yellow;
