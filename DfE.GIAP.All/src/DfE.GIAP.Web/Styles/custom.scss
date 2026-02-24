@@ -5,6 +5,10 @@
     color: colours.$govuk-text-secondary;
 }
 
+.validation-summary-valid {
+    display: none;
+}
+
 // header CSS
 .app-header__user {
     padding-top: 10px;
@@ -148,6 +152,31 @@
             color: black;
         }
 
+
+.pagination-list li {
+    display: inline-block;
+    padding: 10px 10px;
+}
+
+.pagination-list button {
+    font-family: colours.$govuk-font-family;
+    background: none;
+    color: colours.$govuk-link-colour;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    text-decoration: underline;
+    text-underline-offset: .1em;
+}
+
+    .pagination-list button:hover {
+        color: colours.$govuk-link-hover-colour;
+        text-decoration-thickness: max(3px, .1875rem, .12em);
+    }
+
+
 // News CSS
 .app-news-banner-background {
     background: colours.$app-banner-yellow;
@@ -156,14 +185,8 @@
 
 
 
-
-
-
 // OLD STUFF, NEED TO CHECK WHAT IS AND ISN' USED:
-/*.validation-summary-valid {
-    display: none;
-}
-
+/*
 .webapp-checkboxes-searchresults {
     position: relative;
     vertical-align: middle
@@ -232,28 +255,6 @@
     font-style: italic
 }
 
-.pagination-list li {
-    display: inline-block;
-    padding: 10px 10px;
-}
-
-.pagination-list button {
-    font-family: colours.$govuk-font-family;
-    background: none;
-    color: colours.$govuk-link-colour;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    text-decoration: underline;
-    text-underline-offset: .1em;
-}
-
-    .pagination-list button:hover {
-        color: colours.$govuk-link-hover-colour;
-        text-decoration-thickness: max(3px, .1875rem, .12em);
-    }
 
 .sidebarNav .popularActivities {
     margin-bottom: 30px;

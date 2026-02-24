@@ -31,7 +31,7 @@
                         <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-learner-number--text">@(Model.LearnerNumberLabel)</th>
                         <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-dob--text" aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.DOB, Model.ActiveSortField, Model.ActiveSortDirection)">
                             <button id="search--sort-dob--button" asp-action="@Model.ControllerAction" asp-route-pageNumber="@Model.PageNumber" asp-route-sortField="@AzureSearchFields.DOB" asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.ActiveSortField, Model.ActiveSortDirection)">
-                                Date of birth
+                                DOB
                             </button>
                         </th>
                         <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-sex--text" aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.ActiveSortField, Model.ActiveSortDirection)">
@@ -39,7 +39,7 @@
                                 Sex
                             </button>
                         </th>
-                        
+
                         @if (Model.ShowPP)
                         {
                             <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
@@ -57,24 +57,24 @@
                             @if (Model.AllowMultipleSelection)
                             {
                                 <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
-                                @if (learner.LearnerNumberId != null)
-                                {
+                                    @if (learner.LearnerNumberId != null)
+                                    {
                                         <div class="govuk-checkboxes__item">
                                             <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumberId" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumberId" checked="@learner.Selected">
                                             <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumberId">
                                                 <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
                                             </label>
                                         </div>
-                                }
-                                else
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumber" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumber" checked="@learner.Selected">
-                                        <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumber">
-                                            <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
-                                        </label>
-                                    </div>
-                                }
+                                    }
+                                    else
+                                    {
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="search--search-pupils-data-select--chkbox-@learner.LearnerNumber" name="SelectedPupil" type="checkbox" value="@learner.LearnerNumber" checked="@learner.Selected">
+                                            <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@learner.LearnerNumber">
+                                                <span class="govuk-visually-hidden">@(Model.LearnerNumberLabel): @learner.LearnerNumber, Name: @learner.Forename @learner.Surname</span>
+                                            </label>
+                                        </div>
+                                    }
                                 </td>
 
                             }
@@ -144,49 +144,47 @@
         </fieldset>
         @if (Model.Learners.Any())
         {
-            <div>
-                <ul class="pagination-list">
-                    <li class="page-list-previous">
-                        @if (Model.ShowPrevious)
-                        {
-                            <button id="page-previous" asp-action="@Model.ControllerAction" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-sortField="@Model.ActiveSortField" asp-route-sortDirection="@Model.ActiveSortDirection">&#60;&#60; Previous</button>
-                        }
-                    </li>
-                    @foreach (var pageNumber in Model.AvailablePages)
+            <ul class="pagination-list">
+                <li class="page-list-previous">
+                    @if (Model.ShowPrevious)
                     {
-                        @if (pageNumber == int.MinValue)
+                        <button id="page-previous" asp-action="@Model.ControllerAction" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-sortField="@Model.ActiveSortField" asp-route-sortDirection="@Model.ActiveSortDirection">&#60;&#60; Previous</button>
+                    }
+                </li>
+                @foreach (var pageNumber in Model.AvailablePages)
+                {
+                    @if (pageNumber == int.MinValue)
+                    {
+                        <li class="page-list-number-separator">
+                            ...
+                        </li>
+                    }
+                    else
+                    {
+                        @if (Model.AvailablePages.Count > 1)
                         {
-                            <li class="page-list-number-separator">
-                                ...
+                            <li class="page-list-number">
+                                @if (pageNumber == Model.PageNumber)
+                                {
+                                    <span id="page-number-@(pageNumber + 1)">@(pageNumber + 1)</span>
+                                }
+                                else
+                                {
+                                    <button id="page-number-@(pageNumber + 1)" type="submit" asp-action="@Model.ControllerAction" asp-route-pageNumber="@pageNumber" asp-route-sortField="@Model.ActiveSortField" asp-route-sortDirection="@Model.ActiveSortDirection">@(pageNumber + 1) </button>
+                                }
                             </li>
                         }
-                        else
-                        {
-                            @if (Model.AvailablePages.Count > 1)
-                            {
-                                <li class="page-list-number">
-                                    @if (pageNumber == Model.PageNumber)
-                                    {
-                                        <span id="page-number-@(pageNumber + 1)">@(pageNumber + 1)</span>
-                                    }
-                                    else
-                                    {
-                                        <button id="page-number-@(pageNumber + 1)" type="submit" asp-action="@Model.ControllerAction" asp-route-pageNumber="@pageNumber" asp-route-sortField="@Model.ActiveSortField" asp-route-sortDirection="@Model.ActiveSortDirection">@(pageNumber + 1) </button>
-                                    }
-                                </li>
-                            }
-                        }
                     }
-                    <li class="page-list-next">
-                        @if (Model.ShowNext)
-                        {
-                            <button id="page-next" type="submit" asp-action="@Model.ControllerAction" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-sortField="@Model.ActiveSortField" asp-route-sortDirection="@Model.ActiveSortDirection">Next &#62;&#62;</button>
-                        }
-                    </li>
-                </ul>
+                }
+                <li class="page-list-next">
+                    @if (Model.ShowNext)
+                    {
+                        <button id="page-next" type="submit" asp-action="@Model.ControllerAction" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-sortField="@Model.ActiveSortField" asp-route-sortDirection="@Model.ActiveSortDirection">Next &#62;&#62;</button>
+                    }
+                </li>
+            </ul>
 
-                <input type="hidden" id="PageLearnerNumbers" name="PageLearnerNumbers" value="@Model.PageLearnerNumbers">
-            </div>
+            <input type="hidden" id="PageLearnerNumbers" name="PageLearnerNumbers" value="@Model.PageLearnerNumbers">
         }
     </div>
 </div>

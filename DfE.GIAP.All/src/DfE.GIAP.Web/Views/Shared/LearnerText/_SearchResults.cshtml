@@ -9,7 +9,7 @@
         <div class="govuk-width-container">
             <div class="govuk-error-summary">
                 <h2 class="govuk-error-summary__title" id="heading--errormessage">There is a problem</h2>
-                <span id="results--heading-errormessage" class="govuk-error-message">
+                <span class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span>
                     @Model.ErrorDetails
                 </span>
@@ -45,7 +45,7 @@
         <input name="ReturnRoute" type="hidden" value="@Model.ReturnRoute">
         @if (string.IsNullOrEmpty(Model.ErrorDetails) && Model.ItemAddedToMyPupilList && !Model.NoPupilSelected)
         {
-            <div class="govuk-inset-text">Pupils added to your 'My pupils list'</div>
+            <div class="govuk-inset-text">Pupil(s) added to your 'My pupils list'</div>
         }
         @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
         {
