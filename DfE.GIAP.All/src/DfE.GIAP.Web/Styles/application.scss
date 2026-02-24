@@ -5,10 +5,6 @@
     display: none;
 }
 
-.webapp-text-secondary {
-    color: colours.$govuk-text-secondary;
-}
-
 .webapp-button-as-link {
     background: none !important;
     border: none;
@@ -161,7 +157,3 @@
         .webapp-filter-item button:hover {
             color: black;
         }
-
-.webapp-news-banner {
-    background: colours.$webapp-banner-yellow;
-}

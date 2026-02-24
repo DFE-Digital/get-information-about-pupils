@@ -1,14 +1,14 @@
 ﻿@if (ViewData.ModelState.IsValid)
 {
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-button govuk-button--secondary" asp-action="ToDownloadSelectedPupilPremiumDataUPN" id="search--download-selected--pp--link" name="downloadPP" value="selected" type="submit">
+        <button class="govuk-button" asp-action="ToDownloadSelectedPupilPremiumDataUPN" name="downloadPP" value="selected" type="submit">
             @Model.DownloadSelectedLink
         </button>
     </div>
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-button govuk-button--secondary" asp-action="PPAddToMyPupilList" id="search--my-pupil--List--link" name="myPupilList" value="selected" type="submit">
+        <button class="govuk-button govuk-button--secondary" asp-action="PPAddToMyPupilList" name="myPupilList" value="selected" type="submit">
             @Model.AddSelectedToMyPupilListLink
         </button>
-     </div>
+    </div>
 }
 

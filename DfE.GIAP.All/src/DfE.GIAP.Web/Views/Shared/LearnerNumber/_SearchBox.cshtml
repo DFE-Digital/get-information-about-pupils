@@ -23,22 +23,7 @@
             Search
         </button>
 
-        <a id="link-search-again"
-            class="govuk-link"
-            asp-action="@Model.SearchAction"
-            asp-route-reset="true"
-            value="SearchAgain"
-            name="searchAgain">
-            Search again
-        </a>
-
-        <a id="search-searchwithout--link"
-            class="govuk-link"
-            asp-controller="@Model.FullTextLearnerSearchController"
-            asp-action="@Model.FullTextLearnerSearchAction"
-            value="SearchWithoutUpn"
-            name="searchWithoutUpn">
-           Search by name
-        </a>
+        <a class="govuk-link" asp-controller="@Model.FullTextLearnerSearchController" asp-action="@Model.FullTextLearnerSearchAction"
+           value="SearchWithoutUpn" name="searchWithoutUpn">Search by name</a>
     </div>
 </form>

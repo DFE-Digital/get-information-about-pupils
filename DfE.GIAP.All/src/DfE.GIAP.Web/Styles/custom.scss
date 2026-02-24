@@ -1,5 +1,24 @@
 ﻿@use 'colours';
 
+// Shared CSS
+.app-text-secondary {
+    color: colours.$govuk-text-secondary;
+}
+
+// header CSS
+.giap-header__user {
+    padding-top: 10px;
+    text-align: right;
+}
+
+@media (max-width: 640px) {
+    .giap-header__user {
+        padding-top: 2px;
+        text-align: left !important;
+    }
+}
+
+
 // Search filter CSS
 [aria-sort=none] button:before {
     content: " ▼";
@@ -56,4 +75,9 @@
     position: absolute;
     right: 0px;
     top: 2px;
+}
+
+// News CSS
+.news-banner-background {
+    background: colours.$app-banner-yellow;
 }

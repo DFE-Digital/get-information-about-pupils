@@ -7,27 +7,25 @@
 <div>
     @foreach (var article in Model.NewsArticles)
     {
-        <div id=@($"news--articles--container{index}")>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                    @if (article.Pinned)
-                    {
-                        <strong class="govuk-tag govuk-tag--green" id=@($"news--label--text{index}")>
-                            Pinned
-                        </strong>
-                    }
-                    <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word" id=@($"news--item-heading--text{index}")>
-                        @Html.Raw(article.Title)
-                        <br />
-                        <span class="govuk-body-s webapp-text-secondary" id=@($"news--item-modified--text{index}")>
-                            @Html.Raw(article.ModifiedDate.ToLongDateString())
-                        </span>
-                    </h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @if (article.Pinned)
+                {
+                    <strong class="govuk-tag govuk-tag--green">
+                        Pinned
+                    </strong>
+                }
+                <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word">
+                    @Html.Raw(article.Title)
+                    <br />
+                    <span class="govuk-body-s text-secondary">
+                        @Html.Raw(article.ModifiedDate.ToLongDateString())
+                    </span>
+                </h2>
 
-                    <p class="govuk-body govuk-!-text-break-word" id=@($"news--item-content--text{index}")>
-                        @Html.Raw(article.Body)
-                    </p>
-                </div>
+                <p class="govuk-body govuk-!-text-break-word" )>
+                    @Html.Raw(article.Body)
+                </p>
             </div>
         </div>
 
