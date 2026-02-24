@@ -143,200 +143,196 @@
             }
             else
             {
-                <div class="result-table">
-                    <div id="pupil--list--table">
-                        <div class="giap--pupil-list">
-                            <fieldset class="govuk-fieldset">
-                                <legend class="govuk-fieldset__legend govuk-visually-hidden">Do you want to select</legend>
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col"
-                                                class="govuk-table__header"
-                                                id="search--search-pupils-heading-select--chkbox">
-                                                <span class="govuk-visually-hidden">checkboxes</span>
-                                            </th>
-                                            <th scope="col"
-                                                class="govuk-table__header"
-                                                id="search--search-pupils-heading-firstname--text"
-                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)">
-                                                <button asp-controller="@Model.UpdateFormController"
-                                                        asp-action="@Model.UpdateFormAction"
-                                                        asp-route-pageNumber="@Model.PageNumber"
-                                                        asp-route-sortField="@AzureSearchFields.Forename"
-                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
-                                                        id="search--sort-firstname--button">
-                                                    First
-                                                </button>
-                                            </th>
-                                            <th scope="col"
-                                                class="govuk-table__header"
-                                                id="search--search-pupils-heading-surname--text"
-                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)">
-                                                <button asp-controller="@Model.UpdateFormController"
-                                                        asp-action="@Model.UpdateFormAction"
-                                                        asp-route-pageNumber="@Model.PageNumber"
-                                                        asp-route-sortField="@AzureSearchFields.Surname"
-                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
-                                                        id="search--sort-surname--button">
-                                                    Surname
-                                                </button>
-                                            </th>
-                                            <th scope="col"
-                                                class="govuk-table__header"
-                                                id="search--search-pupils-heading-learner-number--text">@(Model.UniquePupilNumberLabel)</th>
-                                            <th scope="col"
-                                                class="govuk-table__header"
-                                                id="search--search-pupils-heading-dob--text"
-                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)">
-                                                <button asp-controller="@Model.UpdateFormController"
-                                                        asp-action="@Model.UpdateFormAction"
-                                                        asp-route-pageNumber="@Model.PageNumber"
-                                                        asp-route-sortField="@AzureSearchFields.DOB"
-                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
-                                                        id="search--sort-dob--button">
-                                                    Date of birth
-                                                </button>
-                                            </th>
-                                            <th scope="col"
-                                                class="govuk-table__header"
-                                                id="search--search-pupils-heading-sex--text"
-                                                aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)">
-                                                <button asp-controller="@Model.UpdateFormController"
-                                                        asp-action="@Model.UpdateFormAction"
-                                                        asp-route-pageNumber="@Model.PageNumber"
-                                                        asp-route-sortField="@AzureSearchFields.Sex"
-                                                        asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
-                                                        id="search--sort-sex--button">
-                                                    Sex
-                                                </button>
-                                            </th>
-                                            <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
-                                            <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-local-authority--text">LA</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        @foreach (var pupil in Model.CurrentPageOfPupils.Values)
-                                        {
-                                            <tr class="govuk-table__row">
-                                                <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
-                                                    <div class="govuk-checkboxes__item">
-                                                        <input class="govuk-checkboxes__input"
-                                                               id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber"
-                                                               name="SelectedPupils"
-                                                               type="checkbox"
-                                                               value="@pupil.UniquePupilNumber"
-                                                               @(pupil.IsSelected ? "checked" : string.Empty) />
-
-                                                        <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
-                                                            <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                                <td class="govuk-table__cell search--search-pupils-data-firstname--text">
-                                                    @pupil.Forename
-                                                </td>
-
-                                                <td class="govuk-table__cell search--search-pupils-data-surname--text">
-                                                    @pupil.Surname
-                                                </td>
-                                                <td class="govuk-table__cell search--search-pupils-data-learner-number--text">
-                                                    @pupil.UniquePupilNumber
-                                                </td>
-                                                <td class="govuk-table__cell search--dob--cell search--search-pupils-data-dob--text">
-                                                    @pupil.DateOfBirth
-                                                </td>
-                                                <td class="govuk-table__cell search--search-pupils-data-sex--text">
-                                                    @pupil.Sex
-                                                </td>
-
-                                                <td class="govuk-table__cell search--search-pupils-pupilpremium--text">
-                                                    @pupil.PupilPremiumLabel
-                                                </td>
-
-                                                <td class="govuk-table__cell search--search-pupils-data-local-authority--text">
-                                                    @pupil.LocalAuthorityCode
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </fieldset>
-
-                            <nav class="govuk-pagination" aria-label="Pagination">
-                                @if (Model.PageNumber > 1)
+                <div>
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-visually-hidden">Do you want to select</legend>
+                        <table class="govuk-table">
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th scope="col"
+                                        class="govuk-table__header"
+                                        id="search--search-pupils-heading-select--chkbox">
+                                        <span class="govuk-visually-hidden">checkboxes</span>
+                                    </th>
+                                    <th scope="col"
+                                        class="govuk-table__header"
+                                        id="search--search-pupils-heading-firstname--text"
+                                        aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)">
+                                        <button asp-controller="@Model.UpdateFormController"
+                                                asp-action="@Model.UpdateFormAction"
+                                                asp-route-pageNumber="@Model.PageNumber"
+                                                asp-route-sortField="@AzureSearchFields.Forename"
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
+                                                id="search--sort-firstname--button">
+                                            First
+                                        </button>
+                                    </th>
+                                    <th scope="col"
+                                        class="govuk-table__header"
+                                        id="search--search-pupils-heading-surname--text"
+                                        aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)">
+                                        <button asp-controller="@Model.UpdateFormController"
+                                                asp-action="@Model.UpdateFormAction"
+                                                asp-route-pageNumber="@Model.PageNumber"
+                                                asp-route-sortField="@AzureSearchFields.Surname"
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
+                                                id="search--sort-surname--button">
+                                            Surname
+                                        </button>
+                                    </th>
+                                    <th scope="col"
+                                        class="govuk-table__header"
+                                        id="search--search-pupils-heading-learner-number--text">@(Model.UniquePupilNumberLabel)</th>
+                                    <th scope="col"
+                                        class="govuk-table__header"
+                                        id="search--search-pupils-heading-dob--text"
+                                        aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)">
+                                        <button asp-controller="@Model.UpdateFormController"
+                                                asp-action="@Model.UpdateFormAction"
+                                                asp-route-pageNumber="@Model.PageNumber"
+                                                asp-route-sortField="@AzureSearchFields.DOB"
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
+                                                id="search--sort-dob--button">
+                                            DOB
+                                        </button>
+                                    </th>
+                                    <th scope="col"
+                                        class="govuk-table__header"
+                                        id="search--search-pupils-heading-sex--text"
+                                        aria-sort="@SortHelper.DetermineAriaSort(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)">
+                                        <button asp-controller="@Model.UpdateFormController"
+                                                asp-action="@Model.UpdateFormAction"
+                                                asp-route-pageNumber="@Model.PageNumber"
+                                                asp-route-sortField="@AzureSearchFields.Sex"
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
+                                                id="search--sort-sex--button">
+                                            Sex
+                                        </button>
+                                    </th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-pupilpremium--text">Pupil premium</th>
+                                    <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-local-authority--text">LA</th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                @foreach (var pupil in Model.CurrentPageOfPupils.Values)
                                 {
-                                    <div class="govuk-pagination__prev">
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell govuk-checkboxes govuk-checkboxes--small">
+                                            <div class="govuk-checkboxes__item">
+                                                <input class="govuk-checkboxes__input"
+                                                       id="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber"
+                                                       name="SelectedPupils"
+                                                       type="checkbox"
+                                                       value="@pupil.UniquePupilNumber"
+                                                       @(pupil.IsSelected ? "checked" : string.Empty) />
+
+                                                <label class="govuk-label govuk-checkboxes__label" for="search--search-pupils-data-select--chkbox-@pupil.UniquePupilNumber">
+                                                    <span class="govuk-visually-hidden">@(Model.UniquePupilNumberLabel): @pupil.UniquePupilNumber, Name: @pupil.Forename @pupil.Surname</span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td class="govuk-table__cell search--search-pupils-data-firstname--text">
+                                            @pupil.Forename
+                                        </td>
+
+                                        <td class="govuk-table__cell search--search-pupils-data-surname--text">
+                                            @pupil.Surname
+                                        </td>
+                                        <td class="govuk-table__cell search--search-pupils-data-learner-number--text">
+                                            @pupil.UniquePupilNumber
+                                        </td>
+                                        <td class="govuk-table__cell search--dob--cell search--search-pupils-data-dob--text">
+                                            @pupil.DateOfBirth
+                                        </td>
+                                        <td class="govuk-table__cell search--search-pupils-data-sex--text">
+                                            @pupil.Sex
+                                        </td>
+
+                                        <td class="govuk-table__cell search--search-pupils-pupilpremium--text">
+                                            @pupil.PupilPremiumLabel
+                                        </td>
+
+                                        <td class="govuk-table__cell search--search-pupils-data-local-authority--text">
+                                            @pupil.LocalAuthorityCode
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </fieldset>
+
+                    <nav class="govuk-pagination" aria-label="Pagination">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <div class="govuk-pagination__prev">
+                                <a class="govuk-link govuk-pagination__link"
+                                   asp-controller="@Model.UpdateFormController"
+                                   asp-action="@Model.UpdateFormAction"
+                                   asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                   asp-route-sortField="@Model.SortField"
+                                   asp-route-sortDirection="@Model.SortDirection">
+                                    <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                        <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                                    </svg>
+                                    <span class="govuk-pagination__link-title">
+                                        Previous<span class="govuk-visually-hidden"> page</span>
+                                    </span>
+                                </a>
+                            </div>
+                        }
+
+                        <ul class="govuk-pagination__list">
+                            @foreach (var item in pages)
+                            {
+                                if (item.IsEllipsis)
+                                {
+                                    <li class="govuk-pagination__item govuk-pagination__item--ellipsis">
+                                        &ctdot;
+                                    </li>
+                                }
+                                else if (item.IsCurrent)
+                                {
+                                    <li class="govuk-pagination__item govuk-pagination__item--current">
+                                        <a class="govuk-link govuk-pagination__link" href="" aria-label="Page 2" aria-current="page">
+                                            @item.Page
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="govuk-pagination__item">
                                         <a class="govuk-link govuk-pagination__link"
                                            asp-controller="@Model.UpdateFormController"
                                            asp-action="@Model.UpdateFormAction"
-                                           asp-route-pageNumber="@(Model.PageNumber - 1)"
+                                           asp-route-pageNumber="@item.Page"
                                            asp-route-sortField="@Model.SortField"
                                            asp-route-sortDirection="@Model.SortDirection">
-                                            <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-                                                <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
-                                            </svg>
-                                            <span class="govuk-pagination__link-title">
-                                                Previous<span class="govuk-visually-hidden"> page</span>
-                                            </span>
+                                            @item.Page
                                         </a>
-                                    </div>
+                                    </li>
                                 }
+                            }
+                        </ul>
 
-                                <ul class="govuk-pagination__list">
-                                    @foreach (var item in pages)
-                                    {
-                                        if (item.IsEllipsis)
-                                        {
-                                            <li class="govuk-pagination__item govuk-pagination__item--ellipsis">
-                                                &ctdot;
-                                            </li>
-                                        }
-                                        else if (item.IsCurrent)
-                                        {
-                                            <li class="govuk-pagination__item govuk-pagination__item--current">
-                                                <a class="govuk-link govuk-pagination__link" href="" aria-label="Page 2" aria-current="page">
-                                                    @item.Page
-                                                </a>
-                                            </li>
-                                        }
-                                        else
-                                        {
-                                            <li class="govuk-pagination__item">
-                                                <a class="govuk-link govuk-pagination__link"
-                                                   asp-controller="@Model.UpdateFormController"
-                                                   asp-action="@Model.UpdateFormAction"
-                                                   asp-route-pageNumber="@item.Page"
-                                                   asp-route-sortField="@Model.SortField"
-                                                   asp-route-sortDirection="@Model.SortDirection">
-                                                    @item.Page
-                                                </a>
-                                            </li>
-                                        }
-                                    }
-                                </ul>
-
-                                @if (Model.MorePagesAvailable)
-                                {
-                                    <div class="govuk-pagination__next">
-                                        <a class="govuk-link govuk-pagination__link"
-                                           asp-controller="@Model.UpdateFormController"
-                                           asp-action="@Model.UpdateFormAction"
-                                           asp-route-pageNumber="@(Model.PageNumber + 1)"
-                                           asp-route-sortField="@Model.SortField"
-                                           asp-route-sortDirection="@Model.SortDirection">
-                                            <span class="govuk-pagination__link-title">
-                                                Next<span class="govuk-visually-hidden"> page</span>
-                                            </span>
-                                            <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
-                                                <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                }
-                            </nav>
-                        </div>
-                    </div>
+                        @if (Model.MorePagesAvailable)
+                        {
+                            <div class="govuk-pagination__next">
+                                <a class="govuk-link govuk-pagination__link"
+                                   asp-controller="@Model.UpdateFormController"
+                                   asp-action="@Model.UpdateFormAction"
+                                   asp-route-pageNumber="@(Model.PageNumber + 1)"
+                                   asp-route-sortField="@Model.SortField"
+                                   asp-route-sortDirection="@Model.SortDirection">
+                                    <span class="govuk-pagination__link-title">
+                                        Next<span class="govuk-visually-hidden"> page</span>
+                                    </span>
+                                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        }
+                    </nav>
                 </div>
             }
         </div>

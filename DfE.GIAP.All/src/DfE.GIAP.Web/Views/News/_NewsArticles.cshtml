@@ -19,7 +19,7 @@
                     @Html.Raw(article.Title)
                     <br />
                     <span class="govuk-body-s text-secondary">
-                        @Html.Raw(article.ModifiedDate.ToLongDateString())
+                        @Html.Raw(article.ModifiedDate.ToString("dddd, dd MMMM yyyy"))
                     </span>
                 </h2>
 

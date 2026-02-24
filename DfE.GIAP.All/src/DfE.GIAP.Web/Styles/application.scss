@@ -5,7 +5,7 @@
     display: none;
 }
 
-.webapp-button-as-link {
+.app-button-as-link {
     background: none !important;
     border: none;
     padding: 0 !important;
@@ -16,7 +16,7 @@
     text-underline-offset: .1em;
 }
 
-    .webapp-button-as-link:hover {
+    .app-button-as-link:hover {
         text-decoration: underline;
         color: colours.$govuk-link-hover-colour !important;
         text-decoration-thickness: max(3px, .1875rem, .12em);
