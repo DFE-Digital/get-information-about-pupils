@@ -13,10 +13,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="coverlet.collector" />
-	<PackageReference Include="coverlet.msbuild" />
+    <PackageReference Include="coverlet.msbuild" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
     <ProjectReference Include="..\..\src\DfE.GIAP.Web\DfE.GIAP.Web.csproj" />
   </ItemGroup>
