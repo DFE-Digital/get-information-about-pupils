@@ -52,7 +52,7 @@ public static class PaginationHelper
         //
         // 4. Main window
         //
-        for (var page = start; page <= end; page++)
+        for (int page = start; page <= end; page++)
         {
             yield return new PaginationItem(page, IsCurrent: page == current);
         }
