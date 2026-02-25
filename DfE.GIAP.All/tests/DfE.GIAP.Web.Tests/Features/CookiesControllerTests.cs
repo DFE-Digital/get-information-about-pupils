@@ -81,11 +81,11 @@ public class CookiesControllerTests
 
         // Assert – verify Set was still called, but with null/empty
         _mockCookieProvider.Verify(
-            x => x.Set(CookieKeys.GiapWebsiteUse, null),
+            x => x.Set(CookieKeys.GiapWebsiteUse, null, false, 20, null),
             Times.Once);
 
         _mockCookieProvider.Verify(
-            x => x.Set(CookieKeys.GiapComms, string.Empty),
+            x => x.Set(CookieKeys.GiapComms, string.Empty, false, 20, null),
             Times.Once);
 
         RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
