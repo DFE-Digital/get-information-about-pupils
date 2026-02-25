@@ -162,9 +162,8 @@
                                                 asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@Model.PageNumber"
                                                 asp-route-sortField="@AzureSearchFields.Forename"
-                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)"
-                                                id="search--sort-firstname--button">
-                                            First
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Forename, Model.SortField, Model.SortDirection)">
+                                            Forename
                                         </button>
                                     </th>
                                     <th scope="col"
@@ -175,8 +174,7 @@
                                                 asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@Model.PageNumber"
                                                 asp-route-sortField="@AzureSearchFields.Surname"
-                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)"
-                                                id="search--sort-surname--button">
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Surname, Model.SortField, Model.SortDirection)">
                                             Surname
                                         </button>
                                     </th>
@@ -191,8 +189,7 @@
                                                 asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@Model.PageNumber"
                                                 asp-route-sortField="@AzureSearchFields.DOB"
-                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)"
-                                                id="search--sort-dob--button">
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.DOB, Model.SortField, Model.SortDirection)">
                                             DOB
                                         </button>
                                     </th>
@@ -204,8 +201,7 @@
                                                 asp-action="@Model.UpdateFormAction"
                                                 asp-route-pageNumber="@Model.PageNumber"
                                                 asp-route-sortField="@AzureSearchFields.Sex"
-                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)"
-                                                id="search--sort-sex--button">
+                                                asp-route-sortDirection="@SortHelper.DetermineSortDirection(AzureSearchFields.Sex, Model.SortField, Model.SortDirection)">
                                             Sex
                                         </button>
                                     </th>
