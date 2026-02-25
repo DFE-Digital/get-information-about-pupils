@@ -51,11 +51,12 @@ public class CookiesControllerTests
 
         // Assert – verify calls to ICookieProvider
         _mockCookieProvider.Verify(
-            x => x.Set(CookieKeys.GiapWebsiteUse, Global.StatusTrue),
+            x => x.Set(CookieKeys.GiapWebsiteUse, Global.StatusTrue, false, 20, null),
             Times.Once);
 
+
         _mockCookieProvider.Verify(
-            x => x.Set(CookieKeys.GiapComms, Global.StatusFalse),
+            x => x.Set(CookieKeys.GiapComms, Global.StatusFalse, false, 20, null),
             Times.Once);
 
         RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
