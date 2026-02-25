@@ -74,14 +74,4 @@ public class CookiesController : Controller
     {
         return Request?.Cookies[cookieName] == Global.StatusTrue;
     }
-
-    private void AppendCookie(string cookieName, string cookieValue)
-    {
-        CookieOptions options = new()
-        {
-            Expires = DateTime.Now.AddDays(28),
-        };
-
-        Response?.Cookies.Append(cookieName, cookieValue, options);
-    }
 }

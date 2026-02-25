@@ -29,6 +29,7 @@ public class CookiesControllerTests
         // Assert
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         CookiePreferencesViewModel model = Assert.IsType<CookiePreferencesViewModel>(viewResult.Model);
+
         Assert.True(model.CookieUse.IsCookieWebsiteUse);
         Assert.False(model.CookieUse.IsCookieComms);
     }
@@ -38,29 +39,28 @@ public class CookiesControllerTests
     {
         // Arrange
         CookiesController controller = GetCookiesController();
-        CookieUseViewModel viewModel = new CookieUseViewModel
+
+        CookieUseViewModel viewModel = new()
         {
             CookieWebsiteUse = Global.StatusTrue,
             CookieComms = Global.StatusFalse
         };
 
-        Mock<IResponseCookies> responseCookies = Mock.Get(controller.ControllerContext.HttpContext.Response.Cookies);
-
         // Act
         IActionResult result = controller.CookiePreferences(viewModel);
 
-        // Assert
-        responseCookies.Verify(
-            c => c.Append(CookieKeys.GiapWebsiteUse, Global.StatusTrue, It.IsAny<CookieOptions>()),
+        // Assert – verify calls to ICookieProvider
+        _mockCookieProvider.Verify(
+            x => x.Set(CookieKeys.GiapWebsiteUse, Global.StatusTrue),
             Times.Once);
 
-        responseCookies.Verify(
-            c => c.Append(CookieKeys.GiapComms, Global.StatusFalse, It.IsAny<CookieOptions>()),
+        _mockCookieProvider.Verify(
+            x => x.Set(CookieKeys.GiapComms, Global.StatusFalse),
             Times.Once);
 
-        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal("Index", redirectResult.ActionName);
-        Assert.Equal("Home", redirectResult.ControllerName);
+        RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirect.ActionName);
+        Assert.Equal("Home", redirect.ControllerName);
     }
 
     [Fact]
@@ -68,56 +68,53 @@ public class CookiesControllerTests
     {
         // Arrange
         CookiesController controller = GetCookiesController();
-        CookieUseViewModel viewModel = new CookieUseViewModel
+
+        CookieUseViewModel viewModel = new()
         {
             CookieWebsiteUse = null,
             CookieComms = string.Empty
         };
 
-        Mock<IResponseCookies> responseCookies = Mock.Get(controller.ControllerContext.HttpContext.Response.Cookies);
-
         // Act
         IActionResult result = controller.CookiePreferences(viewModel);
 
-        // Assert
-        responseCookies.Verify(
-            c => c.Append(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieOptions>()),
-            Times.Never);
+        // Assert – verify Set was still called, but with null/empty
+        _mockCookieProvider.Verify(
+            x => x.Set(CookieKeys.GiapWebsiteUse, null),
+            Times.Once);
 
-        RedirectToActionResult redirectResult = Assert.IsType<RedirectToActionResult>(result);
-        Assert.Equal("Index", redirectResult.ActionName);
-        Assert.Equal("Home", redirectResult.ControllerName);
+        _mockCookieProvider.Verify(
+            x => x.Set(CookieKeys.GiapComms, string.Empty),
+            Times.Once);
+
+        RedirectToActionResult redirect = Assert.IsType<RedirectToActionResult>(result);
+        Assert.Equal("Index", redirect.ActionName);
+        Assert.Equal("Home", redirect.ControllerName);
     }
 
     private CookiesController GetCookiesController()
     {
         // Mock HttpContext
-        Mock<HttpContext> httpContext = new Mock<HttpContext>();
+        Mock<HttpContext> httpContext = new();
 
         // Mock Request Cookies
-        Mock<IRequestCookieCollection> requestCookies = new Mock<IRequestCookieCollection>();
+        Mock<IRequestCookieCollection> requestCookies = new();
         requestCookies.Setup(c => c[CookieKeys.GiapWebsiteUse]).Returns(Global.StatusTrue);
         requestCookies.Setup(c => c[CookieKeys.GiapComms]).Returns(Global.StatusFalse);
         httpContext.Setup(c => c.Request.Cookies).Returns(requestCookies.Object);
 
-        // Mock Response Cookies
-        Mock<IResponseCookies> responseCookies = new Mock<IResponseCookies>();
-        responseCookies
-            .Setup(c => c.Append(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieOptions>()))
-            .Verifiable();
-        Mock<HttpResponse> response = new Mock<HttpResponse>();
+        // Mock Response Cookies (not used by controller, but required for HttpContext)
+        Mock<IResponseCookies> responseCookies = new();
+        Mock<HttpResponse> response = new();
         response.Setup(r => r.Cookies).Returns(responseCookies.Object);
         httpContext.Setup(c => c.Response).Returns(response.Object);
 
-        // Set the mocked HttpContext
-        CookiesController controller = new CookiesController(_mockCookieProvider.Object)
+        return new CookiesController(_mockCookieProvider.Object)
         {
             ControllerContext = new ControllerContext
             {
                 HttpContext = httpContext.Object
             }
         };
-
-        return controller;
     }
 }
