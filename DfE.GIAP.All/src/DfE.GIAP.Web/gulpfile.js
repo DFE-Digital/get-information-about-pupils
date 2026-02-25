@@ -25,7 +25,7 @@ gulp.task("govuk-js", function() {
 
 // Copy GOV.UK assets → wwwroot/assets/govuk
 gulp.task("govuk-assets", function() {
-    return gulp.src(paths.assets)
+    return gulp.src(paths.assets, { encoding: false })
         .pipe(gulp.dest("wwwroot/assets"));
 });
 
