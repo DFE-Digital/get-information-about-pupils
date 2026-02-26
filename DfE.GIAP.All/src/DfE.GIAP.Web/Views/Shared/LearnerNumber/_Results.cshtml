@@ -3,7 +3,6 @@
 @if (Model.Learners.Any() || Model.NotFound.Any() || Model.Invalid.Any() || Model.Duplicates.Any())
 {
     <partial name="~/Views/Shared/LearnerNumber/_NoPupilSelectedError.cshtml" model="@Model" />
-    <h2 class="govuk-heading-l" id="results--heading">Results</h2>
     <partial name="_ValidationSummary" model="ViewData.ModelState" />
     <partial name="~/Views/Shared/LearnerNumber/_SearchResults.cshtml" model="@Model" />
 }

@@ -2,12 +2,12 @@
 
 @if (Model.ShowBanner && Model.ConsentGiven)
 {
-    <div class="govuk-phase-banner webapp-news-banner" id="news--banner--alert">
+    <div class="govuk-phase-banner app-news-banner-background">
         <div class="govuk-width-container">
             <p class="govuk-phase-banner__content">
-                <span class="govuk-phase-banner__text" id="news--banner-message--text">
-                    *You have new site news.
-                </span>
+                <b class="govuk-phase-banner__text">
+                    The news section has updates.
+                </b>
 
                 <a asp-controller="News"
                    asp-action="DismissNewsBanner"

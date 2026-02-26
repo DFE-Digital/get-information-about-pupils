@@ -21,12 +21,12 @@ public static class Messages
     {
         public static class Success
         {
-            public const string CreateTitle = "News article was created successfully";
-            public const string CreateBody = "Your news article was created successfully and your change will be reflected immediately";
-            public const string UpdateTitle = "News article was updated successfully";
-            public const string UpdateBody = "Your news article was updated successfully and your change will be reflected immediately";
-            public const string DeleteTitle = "News article was deleted successfully";
-            public const string DeleteBody = "Your news article was deleted successfully and your change will be reflected immediately";
+            public const string CreateTitle = "News article has been created";
+            public const string CreateBody = "Your news article has been created and your change will be reflected immediately";
+            public const string UpdateTitle = "News article has been updated";
+            public const string UpdateBody = "Your news article has been updated and your change will be reflected immediately";
+            public const string DeleteTitle = "News article has been deleted";
+            public const string DeleteBody = "Your news article has been deleted and your change will be reflected immediately";
         }
     }
 

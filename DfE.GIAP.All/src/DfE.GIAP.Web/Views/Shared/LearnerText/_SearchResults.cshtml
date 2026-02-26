@@ -2,8 +2,6 @@
 
 @if (Model.Learners != null && Model.Learners.Any())
 {
-    <h2 class="govuk-heading-m" id="results--heading">Results</h2>
-
     @if (!string.IsNullOrEmpty(Model.ErrorDetails) && !Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
     {
         <div class="govuk-width-container">
