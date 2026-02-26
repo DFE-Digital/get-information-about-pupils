@@ -1,0 +1,10 @@
+name: Compute image env
+description: Lowercase owner/repo and export IMAGE_BASE
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        OWNER_LC="$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')"
+        REPO_LC="$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')"
+        echo "IMAGE_BASE=ghcr.io/${OWNER_LC}/${REPO_LC}" >> "$GITHUB_ENV"
