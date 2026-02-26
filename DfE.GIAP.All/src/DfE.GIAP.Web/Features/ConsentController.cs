@@ -37,7 +37,7 @@ public class ConsentController : Controller
     public IActionResult Index()
     {
         if (_azureAppSettings.IsSessionIdStoredInCookie)
-            _cookieProvider.Set(CookieKeys.GIAPSessionId, User.GetSessionId());
+            _cookieProvider.Set(CookieKeys.GiapSessionId, User.GetSessionId());
 
         return View(new ConsentViewModel());
     }
