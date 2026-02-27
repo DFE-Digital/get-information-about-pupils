@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-dotnet@v5
 
       - name: Install NuGet tools
-        uses: NuGet/setup-nuget@v1
+        uses: NuGet/setup-nuget@v2
 
       - name: Restore dotnet tools
         run: dotnet tool restore
@@ -104,7 +104,7 @@ jobs:
         uses: actions/setup-dotnet@v5
 
       - name: Install NuGet tools
-        uses: NuGet/setup-nuget@v1
+        uses: NuGet/setup-nuget@v2
 
       - name: Restore dotnet tools
         run: dotnet tool restore
@@ -148,7 +148,7 @@ jobs:
         uses: actions/setup-dotnet@v5
 
       - name: Install NuGet tools
-        uses: NuGet/setup-nuget@v1
+        uses: NuGet/setup-nuget@v2
 
       - name: Restore dotnet tools
         run: dotnet tool restore
