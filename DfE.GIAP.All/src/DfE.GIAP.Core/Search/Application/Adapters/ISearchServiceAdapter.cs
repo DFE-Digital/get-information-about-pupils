@@ -1,6 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
-
-namespace DfE.GIAP.Core.Search.Application.Adapters;
+﻿namespace DfE.GIAP.Core.Search.Application.Adapters;
 
 /// <summary>
 /// Represents a generic interface for adapting search infrastructure to the <c>Dfe.Data.SearchPrototype</c> application.
@@ -24,10 +22,10 @@ public interface ISearchServiceAdapter<TSearchResult, TFacetResult>
     /// for the search operation.
     /// </param>
     /// <returns>
-    /// A <see cref="ISearchResults{TSearchResult, TFacetResult}"/> containing matched items and any associated facets
+    /// A <see cref="ISearchServiceAdaptorResponse{TSearchResult, TFacetResult}"/> containing matched items and any associated facets
     /// retrieved from the underlying search engine (e.g., Azure Cognitive Search).
     /// </returns>
-    Task<ISearchResults<TSearchResult, TFacetResult>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest);
+    Task<ISearchServiceAdaptorResponse<TSearchResult, TFacetResult>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest);
 
     // TODO CANCELLATION TOKEN
 }

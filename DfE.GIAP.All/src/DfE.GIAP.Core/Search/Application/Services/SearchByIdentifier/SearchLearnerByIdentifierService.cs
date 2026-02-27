@@ -32,7 +32,7 @@ internal sealed class SearchLearnerByIdentifierService<TResponse> : ISearchLearn
 
         try
         {
-            ISearchResults<TResponse, SearchFacets>? searchResults =
+            ISearchServiceAdaptorResponse<TResponse, SearchFacets>? searchResults =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
                         index: request.SearchCriteria.Index,
