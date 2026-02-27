@@ -63,11 +63,12 @@ public class CookiesController : Controller
         else
             consent?.WithdrawConsent();
 
-        return string.IsNullOrWhiteSpace(returnUrl)
-            ? RedirectToAction("Index", "Home")
-            : Redirect(returnUrl);
-    }
 
+
+        return string.IsNullOrWhiteSpace(returnUrl) || !Url.IsLocalUrl(returnUrl)
+            ? RedirectToAction("Index", "Home")
+            : LocalRedirect(returnUrl);
+    }
 
 
     private bool IsCookieEnabled(string cookieName)
