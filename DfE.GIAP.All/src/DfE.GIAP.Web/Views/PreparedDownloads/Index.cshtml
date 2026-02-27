@@ -5,26 +5,34 @@
 }
 
 <h1 class="govuk-heading-xl">Prepared downloads</h1>
-<p class="govuk-body">
-    These are pre-prepared by the DfE for your establishment or group.
-</p>
 
-<table class="govuk-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">File</th>
-            <th scope="col" class="govuk-table__header">Added</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        @for (var i = 0; i < Model.PreparedDownloadFiles.Count(); i++)
-        {
+@if (!Model.PreparedDownloadFiles.Any())
+{
+    <p class="govuk-body">You have no prepared files available</p>
+}
+else
+{
+    <p class="govuk-body">
+        These are pre-prepared by the DfE for your establishment or group.
+    </p>
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
-                    <a class="govuk-link govuk-link--no-underline" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PreparedDownloadFiles[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)" download>@Html.Raw(Model.PreparedDownloadFiles[i].FileName)</a>
-                </td>
-                <td class="govuk-table__cell">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)</td>
+                <th scope="col" class="govuk-table__header">File</th>
+                <th scope="col" class="govuk-table__header">Added</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody class="govuk-table__body">
+            @for (var i = 0; i < Model.PreparedDownloadFiles.Count(); i++)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-underline" asp-action="DownloadPrePreparedFile" asp-controller="PreparedDownloads" asp-route-name="@Html.Raw(Model.PreparedDownloadFiles[i].FileName)" asp-route-fileUploadedDate="@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)" download>@Html.Raw(Model.PreparedDownloadFiles[i].FileName)</a>
+                    </td>
+                    <td class="govuk-table__cell">@Html.Raw(Model.PreparedDownloadFiles[i].DisplayDate)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
