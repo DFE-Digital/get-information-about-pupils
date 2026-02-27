@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
@@ -81,7 +82,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         // Arrange
         Mock<ISearchLearnerByNameService<PupilPremiumLearners>> mockService = new();
 
-        ISearchResults<PupilPremiumLearners, SearchFacets> noResults =
+        ISearchServiceAdaptorResponse<PupilPremiumLearners, SearchFacets> noResults =
             PupilPremiumSearchResultsTestDoubles.StubWithNoResults();
 
         SearchServiceResponse<PupilPremiumLearners, SearchFacets> serviceResponse =
@@ -126,7 +127,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         SearchLearnerByNameRequest? captured = null;
 
         // Return a minimal successful response from the service
-        ISearchResults<PupilPremiumLearners, SearchFacets> stub = PupilPremiumSearchResultsTestDoubles.Stub();
+        ISearchServiceAdaptorResponse<PupilPremiumLearners, SearchFacets> stub = PupilPremiumSearchResultsTestDoubles.Stub();
         PupilPremiumLearners learners = stub.Results!;
         SearchFacets facets = stub.FacetResults!;
         int totalNumberOfResults = 42;
@@ -181,7 +182,7 @@ public sealed class PupilPremiumSearchByNameUseCaseTests
         Mock<ISearchLearnerByNameService<PupilPremiumLearners>> mockService = new();
 
         // Use the shared doubles to produce consistent structures for assertions
-        ISearchResults<PupilPremiumLearners, SearchFacets> stubResults =
+        ISearchServiceAdaptorResponse<PupilPremiumLearners, SearchFacets> stubResults =
             PupilPremiumSearchResultsTestDoubles.Stub();
 
         int totalNumberOfResults = 11;

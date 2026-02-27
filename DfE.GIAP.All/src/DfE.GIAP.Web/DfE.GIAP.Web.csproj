@@ -7,15 +7,6 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Views\Search\Download\**" />
-    <Content Remove="Views\Search\Download\**" />
-    <EmbeddedResource Remove="Views\Search\Download\**" />
-    <None Remove="Views\Search\Download\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Views\Shared\LearnerText\_Results.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="appsettings.json" />
   </ItemGroup>
   <ItemGroup>

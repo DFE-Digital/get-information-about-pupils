@@ -78,7 +78,7 @@ public sealed class SearchLearnerByNameServiceTests
 
         FakeLearnerSearchResponse fakeResponse = new(10);
 
-        SearchResults<FakeLearnerSearchResponse, SearchFacets> searchResults = new()
+        SearchServiceAdaptorResponse<FakeLearnerSearchResponse, SearchFacets> searchResults = new()
         {
             Results = fakeResponse,
             FacetResults = facets
@@ -107,7 +107,7 @@ public sealed class SearchLearnerByNameServiceTests
 
         FakeLearnerSearchResponse fakeResponse = new(count: 0);
 
-        SearchResults<FakeLearnerSearchResponse, SearchFacets> searchResults = new()
+        SearchServiceAdaptorResponse<FakeLearnerSearchResponse, SearchFacets> searchResults = new()
         {
             Results = fakeResponse,
             FacetResults = null
@@ -135,7 +135,7 @@ public sealed class SearchLearnerByNameServiceTests
         Mock<ISearchServiceAdapter<FakeLearnerSearchResponse, SearchFacets>> adapter = new();
         SearchLearnerByNameService<FakeLearnerSearchResponse> sut = new(adapter.Object);
 
-        ISearchResults<FakeLearnerSearchResponse, SearchFacets>? nullResults = null;
+        ISearchServiceAdaptorResponse<FakeLearnerSearchResponse, SearchFacets>? nullResults = null;
 
         adapter
             .Setup(a => a.SearchAsync(It.IsAny<SearchServiceAdapterRequest>()))
@@ -179,7 +179,7 @@ public sealed class SearchLearnerByNameServiceTests
 
         FakeLearnerSearchResponse resultsFake = new(100);
 
-        SearchResults<FakeLearnerSearchResponse, SearchFacets> searchResultsFake = new()
+        SearchServiceAdaptorResponse<FakeLearnerSearchResponse, SearchFacets> searchResultsFake = new()
         {
             Results = resultsFake,
             FacetResults = null

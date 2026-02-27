@@ -26,7 +26,7 @@ internal sealed class SearchLearnerByNameService<TSearchResponse> : ISearchLearn
 
         try
         {
-            ISearchResults<TSearchResponse, SearchFacets>? searchResults =
+            ISearchServiceAdaptorResponse<TSearchResponse, SearchFacets>? searchResults =
                 await _searchServiceAdapter.SearchAsync(
                     new SearchServiceAdapterRequest(
                         index: request.SearchCriteria.Index,

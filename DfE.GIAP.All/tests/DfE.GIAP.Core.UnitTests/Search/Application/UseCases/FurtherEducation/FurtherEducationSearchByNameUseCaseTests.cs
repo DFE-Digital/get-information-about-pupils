@@ -81,7 +81,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         // Arrange
         Mock<ISearchLearnerByNameService<FurtherEducationLearners>> mockService = new();
 
-        ISearchResults<FurtherEducationLearners, SearchFacets> noResults =
+        ISearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> noResults =
             FurtherEducationSearchResultsTestDoubles.StubWithNoResults();
 
         SearchServiceResponse<FurtherEducationLearners, SearchFacets> serviceResponse =
@@ -125,7 +125,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         SearchLearnerByNameRequest? captured = null;
 
         // Return a minimal successful response from the service
-        ISearchResults<FurtherEducationLearners, SearchFacets> stub = FurtherEducationSearchResultsTestDoubles.Stub();
+        ISearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> stub = FurtherEducationSearchResultsTestDoubles.Stub();
         FurtherEducationLearners learners = stub.Results!;
         SearchFacets facets = stub.FacetResults!;
         int totalNumberOfResults = 42;
@@ -181,7 +181,7 @@ public sealed class FurtherEducationSearchUseCaseTests
         Mock<ISearchLearnerByNameService<FurtherEducationLearners>> mockService = new();
 
         // Use the shared doubles to produce consistent structures for assertions
-        ISearchResults<FurtherEducationLearners, SearchFacets> stubResults =
+        ISearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> stubResults =
             FurtherEducationSearchResultsTestDoubles.Stub();
 
         int totalNumberOfResults = 11;

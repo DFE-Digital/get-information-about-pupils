@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using SessionOptions = DfE.GIAP.Web.Config.SessionOptions;
 
 namespace DfE.GIAP.Web.Extensions.Startup;
 
@@ -27,7 +28,8 @@ public static class ServiceCollectionExtensions
         services.Configure<AzureAppSettings>(configuration)
             .Configure<MicrosoftClarityOptions>(configuration.GetSection(MicrosoftClarityOptions.SectionName))
             .Configure<GoogleTagManagerOptions>(configuration.GetSection(GoogleTagManagerOptions.SectionName))
-            .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName)); // TODO: Move
+            .Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.SectionName)) // TODO: Move
+            .Configure<SessionOptions>(configuration.GetSection(SessionOptions.SectionName));
 
         return services;
     }
