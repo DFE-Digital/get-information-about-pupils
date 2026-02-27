@@ -20,8 +20,13 @@
     <partial name="Partials/Layout/_LayoutHeadAnalytics" />
 </head>
 
+@{
+            var cspNonce = Context.Items["CSPNonce"] as string;
+}
+
 <body class="govuk-template__body app-body-class">
-    <script>
+
+    <script nonce="@cspNonce">
         document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
     </script>
 
