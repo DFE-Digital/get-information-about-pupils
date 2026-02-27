@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
 namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
@@ -14,7 +13,7 @@ namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
 public static class SearchServiceAdapterTestDouble
 {
     public static Mock<ISearchServiceAdapter<TResults, SearchFacets>> MockFor<TResults>(
-        ISearchResults<TResults, SearchFacets> searchResults)
+        ISearchServiceAdaptorResponse<TResults, SearchFacets> searchResults)
     {
         Mock<ISearchServiceAdapter<TResults, SearchFacets>> mock = new();
 

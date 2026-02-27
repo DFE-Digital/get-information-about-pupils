@@ -2,7 +2,6 @@
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Options.Search;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
@@ -182,7 +181,7 @@ public sealed class AzureSearchServiceAdaptorTests
             SearchServiceAdapterRequestTestDouble.Stub(_mockIndexKey);
 
         // Act
-        ISearchResults<FurtherEducationLearners, SearchFacets> result =
+        ISearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> result =
             await sut.SearchAsync(request);
 
         // Assert
@@ -224,7 +223,7 @@ public sealed class AzureSearchServiceAdaptorTests
             SearchServiceAdapterRequestTestDouble.Stub(_mockIndexKey);
 
         // Act
-        ISearchResults<FurtherEducationLearners, SearchFacets> result =
+        ISearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> result =
             await sut.SearchAsync(request);
 
         // Assert

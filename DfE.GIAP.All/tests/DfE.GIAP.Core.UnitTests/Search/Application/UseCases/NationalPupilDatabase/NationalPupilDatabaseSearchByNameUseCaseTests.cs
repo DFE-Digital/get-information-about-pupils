@@ -1,4 +1,5 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Adapters;
+using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.Services;
 using DfE.GIAP.Core.Search.Application.Services.SearchByName;
@@ -83,7 +84,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         // Arrange
         Mock<ISearchLearnerByNameService<NationalPupilDatabaseLearners>> mockService = new();
 
-        ISearchResults<NationalPupilDatabaseLearners, SearchFacets> noResults =
+        ISearchServiceAdaptorResponse<NationalPupilDatabaseLearners, SearchFacets> noResults =
             NationalPupilDatabaseSearchResultsTestDoubles.StubWithNoResults();
 
         SearchServiceResponse<NationalPupilDatabaseLearners, SearchFacets> serviceResponse =
@@ -181,7 +182,7 @@ public sealed class NationalPupilDatabaseSearchByNameUseCaseTests
         Mock<ISearchLearnerByNameService<NationalPupilDatabaseLearners>> mockService = new();
 
         // Use the shared doubles to produce consistent structures for assertions
-        ISearchResults<NationalPupilDatabaseLearners, SearchFacets> stubResults =
+        ISearchServiceAdaptorResponse<NationalPupilDatabaseLearners, SearchFacets> stubResults =
             NationalPupilDatabaseSearchResultsTestDoubles.Stub();
 
         int totalNumberOfResults = 11;
