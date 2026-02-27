@@ -1,1 +1,10 @@
-﻿<script type="module" src="/js/govuk-init.js"></script>
+﻿@{
+    var cspNonce = Context.Items["CSPNonce"] as string;
+}
+
+<script type="module" src="/js/govuk-frontend.min.js" asp-append-version="true" nonce="@cspNonce"></script>
+
+<script type="module" asp-append-version="true" nonce="@cspNonce">
+    import { initAll } from '/js/govuk-frontend.min.js';
+    initAll();
+</script>
