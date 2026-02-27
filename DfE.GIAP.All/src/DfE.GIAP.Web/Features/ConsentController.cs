@@ -7,6 +7,7 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using SessionOptions = DfE.GIAP.Web.Config.SessionOptions;
 
 namespace DfE.GIAP.Web.Features;
 
@@ -15,19 +16,21 @@ public class ConsentController : Controller
 {
     private readonly ISessionProvider _sessionProvider;
     private readonly ICookieProvider _cookieProvider;
-    private readonly AzureAppSettings _azureAppSettings;
+    private readonly SessionOptions _sessionOptions;
 
     public ConsentController(
         ISessionProvider sessionProvider,
-        IOptions<AzureAppSettings> azureAppSettings,
+        IOptions<SessionOptions> sessionOptions,
         ICookieProvider cookieProvider)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
-        ArgumentNullException.ThrowIfNull(azureAppSettings);
-        ArgumentNullException.ThrowIfNull(azureAppSettings.Value);
-        ArgumentNullException.ThrowIfNull(cookieProvider);
         _sessionProvider = sessionProvider;
-        _azureAppSettings = azureAppSettings.Value;
+
+        ArgumentNullException.ThrowIfNull(sessionOptions);
+        ArgumentNullException.ThrowIfNull(sessionOptions.Value);
+        _sessionOptions = sessionOptions.Value;
+
+        ArgumentNullException.ThrowIfNull(cookieProvider);
         _cookieProvider = cookieProvider;
     }
 
@@ -36,9 +39,10 @@ public class ConsentController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        if (_azureAppSettings.IsSessionIdStoredInCookie)
+        if (_sessionOptions.IsSessionIdStoredInCookie)
+        {
             _cookieProvider.Set(CookieKeys.GIAPSessionId, User.GetSessionId());
-
+        }
         return View(new ConsentViewModel());
     }
 
