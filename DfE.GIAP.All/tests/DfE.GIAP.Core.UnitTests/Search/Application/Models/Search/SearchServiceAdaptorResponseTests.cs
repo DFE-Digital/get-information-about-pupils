@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Search;
+﻿using DfE.GIAP.Core.Search.Application.Adapters;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.UnitTests.Search.TestDoubles;
@@ -7,7 +7,7 @@ using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Application.Models.Search;
 
-public sealed class SearchResultsTests
+public sealed class SearchServiceAdaptorResponseTests
 {
     [Fact]
     public void Properties_CanBeInitializedViaObjectInitializer()
@@ -18,7 +18,7 @@ public sealed class SearchResultsTests
         SearchFacets facets = SearchFacetsTestDouble.Stub();
 
         // act
-        SearchResults<FurtherEducationLearners, SearchFacets> result =
+        SearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> result =
             new()
             {
                 Results = learners,
@@ -34,7 +34,7 @@ public sealed class SearchResultsTests
     public void Properties_WhenUninitialized_ShouldBeNull()
     {
         // act
-        SearchResults<FurtherEducationLearners, SearchFacets> result = new();
+        SearchServiceAdaptorResponse<FurtherEducationLearners, SearchFacets> result = new();
 
         // Assert
         result.Results.Should().BeNull();
@@ -53,7 +53,7 @@ public sealed class SearchResultsTests
         };
 
         // act
-        SearchResults<List<string>, Dictionary<string, int>> result = new()
+        SearchServiceAdaptorResponse<List<string>, Dictionary<string, int>> result = new()
         {
             Results = dummyResults,
             FacetResults = dummyFacets

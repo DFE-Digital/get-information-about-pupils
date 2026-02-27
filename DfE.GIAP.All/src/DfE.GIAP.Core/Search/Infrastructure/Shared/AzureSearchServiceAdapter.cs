@@ -3,7 +3,6 @@ using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Dfe.Data.Common.Infrastructure.CognitiveSearch.SearchByKeyword;
 using DfE.GIAP.Core.Search.Application.Adapters;
-using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 using DfE.GIAP.Core.Search.Infrastructure.Shared.Builders;
 using AzureFacetResult = Azure.Search.Documents.Models.FacetResult;
@@ -61,7 +60,7 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
     /// <exception cref="ApplicationException">
     /// Thrown when the Azure Search service fails to return valid results.
     /// </exception>
-    public async Task<ISearchResults<TResults, SearchFacets>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest)
+    public async Task<ISearchServiceAdaptorResponse<TResults, SearchFacets>> SearchAsync(SearchServiceAdapterRequest searchServiceAdapterRequest)
     {
         SearchOptions searchOptions =
             _searchOptionsBuilder
@@ -82,7 +81,7 @@ public sealed class AzureSearchServiceAdaptor<TResults, TDataTransferObject> : I
                 searchOptions) ?? throw new InvalidOperationException(
                         $"Unable to derive search results based on input {searchServiceAdapterRequest.SearchKeyword}.");
 
-        return new SearchResults<TResults, SearchFacets>
+        return new SearchServiceAdaptorResponse<TResults, SearchFacets>
         {
             Results = _dtoToOutputModelMapper.Map(searchResults.Value.GetResults()),
             FacetResults = searchResults.Value.Facets != null
