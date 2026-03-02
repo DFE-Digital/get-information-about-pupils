@@ -2,17 +2,7 @@
 
 @if (Model.Learners.Count() == 0)
 {
-    <div class="govuk-warning-text">
-        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-        <strong class="govuk-warning-text__text">
-            <span class="govuk-warning-text__assistive">There is a problem</span>
-            <span>
-                No results have been found in our database. 
-            </span>
-            <br/>
-            <span>
-                Please modify your search/filter criteria and try again.
-            </span>
-        </strong>
+    <div>
+        <p class="govuk-body-l">No results have been found in our database. Please modify your search/filter criteria and try again.</p>
     </div>
 }

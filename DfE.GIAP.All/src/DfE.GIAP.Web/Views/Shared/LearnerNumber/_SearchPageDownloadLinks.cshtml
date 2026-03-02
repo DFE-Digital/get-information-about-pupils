@@ -4,17 +4,17 @@
 {
     <input type="hidden" name="ReturnLearnerNumbers" value="@Model.LearnerNumber" />
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-button govuk-button--secondary" asp-action="DownloadCommonTransferFileData" id="search--download--as--CTF--link" name="downloadASCTF" value="selected" type="submit">
+        <button class="govuk-button" asp-action="DownloadCommonTransferFileData" name="downloadASCTF" value="selected" type="submit">
             @Model.DownloadSelectedASCTFLink
         </button>
     </div>
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-button govuk-list govuk-button--secondary" asp-action="ToDownloadSelectedNPDDataUPN" id="download--selected--npd--data--link" type="submit">
+        <button class="govuk-button" asp-action="ToDownloadSelectedNPDDataUPN" type="submit">
             @Model.DownloadSelectedLink
         </button>
     </div>
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-button govuk-list govuk-button--secondary" asp-action="NPDAddToMyPupilList" id="search--my-pupil--List--link" name="myPupilList" value="selected" type="submit">
+        <button class="govuk-button govuk-button--secondary" asp-action="NPDAddToMyPupilList" name="myPupilList" value="selected" type="submit">
             @Model.AddSelectedToMyPupilListLink
         </button>
     </div>

@@ -3,15 +3,15 @@
 @if (Model.Learners != null && Model.Learners.Any())
 {
     <div class="govuk-button-group">
-        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-controller="search" asp-action="npd-non-upn-download-ctf" id="search--download--as--CTF--link" name="downloadASCTF" value="selected">
+        <button type="submit" class="govuk-button" data-module="govuk-button" asp-controller="search" asp-action="npd-non-upn-download-ctf" name="downloadASCTF" value="selected">
             @Model.DownloadSelectedASCTFLink
         </button>
 
-        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-controller="search" asp-action=@Routes.NationalPupilDatabase.LearnerTextDataDownloadRequest id="download--selected--npd--data--link" value="selected">
+        <button type="submit" class="govuk-button" data-module="govuk-button" asp-controller="search" asp-action=@Routes.NationalPupilDatabase.LearnerTextDataDownloadRequest value="selected">
             @Model.DownloadSelectedLink
         </button>
 
-        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-controller="search" asp-action="add-npd-nonupn-to-my-pupil-list" id="search--learner-text--List--link" name="myPupilList" value="selected">
+        <button type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-controller="search" asp-action="add-npd-nonupn-to-my-pupil-list" name="myPupilList" value="selected">
             @Model.AddSelectedToMyPupilListLink
         </button>
     </div>

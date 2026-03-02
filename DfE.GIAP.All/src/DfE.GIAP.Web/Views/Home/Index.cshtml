@@ -2,6 +2,18 @@
     ViewData["Title"] = "Home";
 }
 <div class="govuk-grid-row">
+    <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                Important
+            </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+            <span class="govuk-body-l govuk-!-font-weight-bold">
+                We're modernising this service. You may notice small changes or brief interruptions while we carry out this work.
+            </span>
+        </div>
+    </div>
     <div class="govuk-grid-column-three-quarters">
         <h1 class="govuk-heading-xl" id="landing--heading--text">
             Get information about pupils (GIAP)
@@ -140,6 +152,45 @@
     </div>
 
     <div class="govuk-grid-column-one-quarter">
-        <partial name="Layout/_LayoutSideMenuPopularActivities" />
+        <h3 class="govuk-heading-m">Popular activities</h3>
+        <ul class="govuk-list govuk-list--spaced">
+            <li>
+                <a class="govuk-link" asp-controller="News" asp-action="Index">News</a>
+            </li>
+            @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+            {
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.NPDLearnerNumberSearchController" asp-action="NationalPupilDatabase">Search NPD by UPNs</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.NPDTextSearchController" asp-action="NonUpnNationalPupilDatabase">Search NPD by name</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.PPLearnerNumberSearchController" asp-action="PupilPremium">Search pupil premium by UPNs</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.PPTextSearchController" asp-action="NonUpnPupilPremiumDatabase">Search pupil premium by name</a>
+                </li>
+
+                <li>
+                    <a class="govuk-link" asp-controller="PreparedDownloads" asp-action="Index">Prepared downloads</a>
+                </li>
+            }
+
+            @if (User.IsOrganisationEstablishmentWithFurtherEducation() ||
+                        User.IsEstablishmentWithAccessToULNPages() ||
+                        User.IsDfeUser())
+            {
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.FELearnerNumberSearchController" asp-action="PupilUlnSearch">Search further education using ULNs</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="@Global.FELearnerTextSearchController" asp-action="FurtherEducationNonUlnSearch">Search further education by name</a>
+                </li>
+            }
+            <li>
+                <a class="govuk-link" href="/Glossary/#_TOC8">Metadata files</a>
+            </li>
+        </ul>
     </div>
 </div>
