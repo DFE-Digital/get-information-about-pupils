@@ -56,13 +56,12 @@ RUN dotnet publish src/DfE.GIAP.Web/DfE.GIAP.Web.csproj -c $BUILD_CONFIGURATION 
 FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION}-noble AS final
 WORKDIR /app
 
-ENV ASPNETCORE_URLS=http://+:5000
-
 COPY --from=publish /app/publish .
 
 COPY --from=assets /app/Web/wwwroot wwwroot/
 
-EXPOSE 5000
+# .NET 8+ container images no longer listen on Kestrel defaults (5000) but 8080
+EXPOSE 8080
 
 USER $APP_UID
 
