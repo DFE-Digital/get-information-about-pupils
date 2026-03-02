@@ -1,0 +1,48 @@
+﻿namespace DfE.GIAP.Core;
+public record PupilAuthorisationContext
+{
+    private readonly AgeLimit _authorisedAgeRange;
+    private readonly UserRole _userRole;
+
+    public PupilAuthorisationContext(
+        AgeLimit AgeRange,
+        UserRole role)
+    {
+        _authorisedAgeRange = AgeRange;
+        _userRole = role;
+    }
+
+    private bool IsAgeInRange(int age)
+        => age >= _authorisedAgeRange.Low &&
+            age <= _authorisedAgeRange.High;
+
+    public bool ShouldMaskPupil(Pupil pupil)
+    {
+        if (_userRole.IsAdministrator)
+        {
+            return false;
+        }
+
+        if (_authorisedAgeRange.IsDefaultLimit) // RBAC rules don't apply and should not be masked
+        {
+            return false;
+        }
+
+        if (!pupil.HasDateOfBirth)
+        {
+            return true;
+        }
+
+        if (!pupil.TryCalculateAge(out int? age) || age is null)
+        {
+            return true;
+        }
+
+        if (!IsAgeInRange(age.Value))
+        {
+            return true;
+        }
+
+        return false;
+    }
+}
