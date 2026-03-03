@@ -4,7 +4,7 @@
 }
 
 <div class="govuk-width-container">
-    <partial name="Layout/_LayoutHeaderBackButton" model="@Model.BackButton" />
+    <partial name="Partials/Layout/_LayoutBackButton" model="@Model.BackButton" />
 
     <h1 class="govuk-heading-xl">Edit news article</h1>
 
@@ -59,8 +59,8 @@
                 </div>
 
                 <div class="govuk-button-group">
-                    <button asp-controller="ManageNewsArticles" asp-action="DeleteNewsArticle" id="delete-document--button" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--secondary">Delete</button>
-                    <button asp-controller="ManageNewsArticles" asp-action="UpdateNewsArticle" id="update-document--button" name="update" value="Update" type="submit" class="govuk-button">Update</button>
+                    <button asp-controller="ManageNewsArticles" asp-action="UpdateNewsArticle" name="update" value="Update" type="submit" class="govuk-button">Update article</button>
+                    <button asp-controller="ManageNewsArticles" asp-action="DeleteNewsArticle" name="delete" value="Delete" type="submit" class="govuk-button govuk-button--warning">Delete article</button>
                 </div>
             </div>
         </form>

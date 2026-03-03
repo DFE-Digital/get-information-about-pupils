@@ -1,0 +1,276 @@
+﻿@use 'colours';
+
+// Shared CSS
+.app-text-secondary {
+    color: colours.$govuk-text-secondary;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+// header CSS
+.app-header__user {
+    padding-top: 10px;
+    text-align: right;
+}
+
+@media (max-width: 640px) {
+    .app-header__user {
+        padding-top: 2px;
+        text-align: left !important;
+    }
+}
+
+
+// Search filter CSS
+[aria-sort=none] button:before {
+    content: " ▼";
+    position: absolute;
+    right: -1px;
+    top: 11px;
+    font-size: .5em;
+}
+
+[aria-sort=none] button:after {
+    content: " ▲";
+    position: absolute;
+    right: -1px;
+    top: 1px;
+    font-size: .5em;
+}
+
+[aria-sort] button, [aria-sort] button:hover {
+    background-color: transparent;
+    border-width: 0;
+    -webkit-box-shadow: 0 0 0 0;
+    -moz-box-shadow: 0 0 0 0;
+    box-shadow: 0 0 0 0;
+    color: #005ea5;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0 18px 0 0;
+    position: relative;
+    text-align: inherit;
+    font-size: 1em;
+    margin: 0;
+}
+
+    [aria-sort] button:focus {
+        background-color: #fd0;
+        color: #0b0c0c;
+        box-shadow: 0 -2px #fd0, 0 4px #0b0c0c;
+        outline: none;
+    }
+
+[aria-sort=descending] button:after {
+    content: " ▼";
+    font-size: .8em;
+    position: absolute;
+    right: 0px;
+    top: 2px;
+}
+
+[aria-sort=ascending] button:after {
+    content: " ▲";
+    font-size: .8em;
+    position: absolute;
+    right: 0px;
+    top: 2px;
+}
+
+.app-button-as-link {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+    color: colours.$govuk-link-colour !important;
+    box-shadow: none;
+}
+
+    .app-button-as-link:hover {
+        text-decoration: underline;
+        color: colours.$govuk-link-hover-colour !important;
+        text-decoration-thickness: max(3px, .1875rem, .12em);
+    }
+
+#accordion-default-search-filters {
+    .webapp-facet-link {
+        padding-bottom: 5px !important;
+        font-size: 1.2rem;
+        text-decoration: none;
+    }
+
+    .search-filters .govuk-accordion__section {
+        padding-top: 0 !important;
+    }
+}
+
+.app-button-as-link {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+    color: colours.$govuk-link-colour !important;
+    box-shadow: none;
+    text-decoration: underline;
+    text-underline-offset: .1em;
+}
+
+    .app-button-as-link:hover {
+        text-decoration: underline;
+        color: colours.$govuk-link-hover-colour !important;
+        text-decoration-thickness: max(3px, .1875rem, .12em);
+        text-underline-offset: .1em;
+    }
+
+.webapp-filter-item {
+    font-family: colours.$govuk-font-family;
+    font-size: 1.1875rem;
+    background-color: #e4e4e4;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    display: inline-block;
+    margin-left: 5px;
+    padding: 10px;
+}
+
+    .webapp-filter-item button {
+        margin-right: 5px;
+        vertical-align: top;
+        cursor: pointer;
+        border: none;
+        color: #888;
+        font-family: inherit;
+        font-size: inherit;
+        background-color: inherit;
+    }
+
+        .webapp-filter-item button:hover {
+            color: black;
+        }
+
+
+.pagination-list li {
+    display: inline-block;
+    padding: 10px 10px;
+}
+
+.pagination-list button {
+    font-family: colours.$govuk-font-family;
+    background: none;
+    color: colours.$govuk-link-colour;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    text-decoration: underline;
+    text-underline-offset: .1em;
+}
+
+    .pagination-list button:hover {
+        color: colours.$govuk-link-hover-colour;
+        text-decoration-thickness: max(3px, .1875rem, .12em);
+    }
+
+
+// News CSS
+.app-news-banner-background {
+    background: colours.$app-banner-yellow;
+}
+
+
+
+
+// OLD STUFF, NEED TO CHECK WHAT IS BEING USED:
+/*
+.webapp-checkboxes-searchresults {
+    position: relative;
+    vertical-align: middle
+}
+
+.webapp-error-message {
+    border-left: 5px solid colours.$govuk-error-colour;
+    padding: 10px;
+}
+
+.webapp-header-link--active:hover, .webapp-header-link--active:link, .webapp-header-link--active:visited {
+    color: colours.$govuk-link-colour;
+    text-decoration: underline;
+    text-decoration-thickness: 5px;
+    text-underline-offset: .7em;
+}
+
+.webapp-formatted-text {
+    white-space: pre-wrap;
+    padding-bottom: 10px
+}
+
+.webapp-table-cell {
+    border-bottom: none
+}
+
+#selected-records--message {
+    padding: 13.5px 0px 0px 0px;
+    margin-bottom: 17.5px;
+}
+
+#accordion-default-search-filters {
+    .webapp-facet-link {
+        padding-bottom: 5px !important;
+        font-size: 1.2rem;
+        text-decoration: none;
+    }
+
+    .search-filters .govuk-accordion__section {
+        padding-top: 0 !important;
+    }
+}
+
+.hide-for-non-js, .display-none {
+    display: none;
+}
+
+.display-results {
+    display: block;
+}
+
+.govuk-panel--confirmation .govuk-table {
+    color: colours.$govuk-confirmation-colour
+}
+
+.bottom-margin-10 {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.autocomplete__menu {
+    font-family: colours.$govuk-font-family;
+}
+
+
+.sidebarNav .popularActivities {
+    margin-bottom: 30px;
+    border-top: 4px solid colours.$govuk-link-colour;
+}
+
+    .sidebarNav .popularActivities h3 {
+        font-family: colours.$govuk-font-family;
+    }
+
+    .sidebarNav .popularActivities ul {
+        padding-inline-start: 0px;
+    }
+
+    .sidebarNav .popularActivities li {
+        list-style: none;
+        margin-bottom: 20px;
+    }
+
+
+
+      
+*/

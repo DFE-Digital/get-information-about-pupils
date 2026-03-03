@@ -53,7 +53,7 @@
                 <td class="govuk-table__cell">24 Hours</td>
             </tr>
             <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">giapwebsiteuse</th>
+                <th scope="row" class="govuk-table__header">GiapWebsitUse</th>
                 <td class="govuk-table__cell">Remembers your website use cookie preference</td>
                 <td class="govuk-table__cell">28 Days</td>
             </tr>
@@ -199,7 +199,7 @@
         </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">giapcomms</th>
+                <th scope="row" class="govuk-table__header">GiapComms</th>
                 <td class="govuk-table__cell">Remembers your communications and marketing cookie preference</td>
                 <td class="govuk-table__cell">28 Days</td>
             </tr>
@@ -220,8 +220,8 @@
         </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">giaphidecookiesacceptedbanner</th>
-                <td class="govuk-table__cell">Remembers if you have hidden the grey cookies accepted banner</td>
+                <th scope="row" class="govuk-table__header">GiapCookieBannerSeen</th>
+                <td class="govuk-table__cell">Remembers that you dismissed the cookie banner so it does not show again until the cookie expires</td>
                 <td class="govuk-table__cell">28 Days</td>
             </tr>
         </tbody>
@@ -267,7 +267,6 @@
                                     @if (Model.CookieUse.IsCookieWebsiteUse)
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--website-use-on--radio-button"
                                                asp-for="CookieUse.CookieWebsiteUse"
                                                name="cookieWebsiteUse"
                                                type="radio"
@@ -280,7 +279,6 @@
                                     else
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--website-use-on--radio-button"
                                                asp-for="CookieUse.CookieWebsiteUse"
                                                name="cookieWebsiteUse"
                                                type="radio"
@@ -294,7 +292,6 @@
                                     @if (!Model.CookieUse.IsCookieWebsiteUse)
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--website-use-off--radio-button"
                                                asp-for="CookieUse.CookieWebsiteUse"
                                                name="cookieWebsiteUse"
                                                type="radio"
@@ -307,7 +304,6 @@
                                     else
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--website-use-off--radio-button"
                                                asp-for="CookieUse.CookieWebsiteUse"
                                                name="cookieWebsiteUse"
                                                type="radio"
@@ -333,7 +329,6 @@
                                     @if (Model.CookieUse.IsCookieComms)
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--comms-on--radio-button"
                                                asp-for="CookieUse.CookieComms"
                                                name="cookieComms"
                                                value="true"
@@ -346,7 +341,6 @@
                                     else
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--comms-on--radio-button"
                                                asp-for="CookieUse.CookieComms"
                                                name="cookieComms"
                                                value="true"
@@ -360,7 +354,6 @@
                                     @if (!Model.CookieUse.IsCookieComms)
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--comms-off--radio-button"
                                                asp-for="CookieUse.CookieComms"
                                                name="cookieComms"
                                                value="false"
@@ -373,7 +366,6 @@
                                     else
                                     {
                                         <input class="govuk-radios__input"
-                                               id="cookie-preferences--comms-off--radio-button"
                                                asp-for="CookieUse.CookieComms"
                                                name="cookieComms"
                                                value="false"

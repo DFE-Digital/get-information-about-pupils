@@ -8,8 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="appsettings.json" />
-    <None Include="wwwroot\css\accessible-autocomplete.min.css" />
-    <None Include="wwwroot\js\accessible-autocomplete.min.js" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" />

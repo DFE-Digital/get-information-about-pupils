@@ -3,43 +3,41 @@
     ViewData["Title"] = "Confirm pupil(s) will join establishment";
 }
 
-<h2 class="govuk-heading-l" id="confirm--heading">Confirm pupil(s) will join establishment</h2>
 <form method="POST" asp-controller="@Model.ConfirmationReturnController" asp-action="@Model.ConfirmationReturnAction">
     <input type="hidden" name="SelectedPupil" value="@Model.SelectedPupil" />
     <input type="hidden" name="DownloadType" value="@Model.DownloadType">
     <input type="hidden" name="LearnerNumbers" value="@Model.LearnerNumbers">
 
-    <div id="confirm--body">
-        <fieldset aria-describedby="consent--confirm--dialog">
-            <legend>
-                <span id="confirm--checkbox--legend" class="govuk-visually-hidden">
-                    Confirm checkbox
-                </span>
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Confirm pupil(s) will join establishment
+                </h1>
             </legend>
-            <div class="govuk-checkboxes">
+            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                @if (Model.ConfirmationError)
+                {
+                    <p class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> You must confirm you have read and understood the conditions before continuing
+                    </p>
+                }
                 <div class="govuk-checkboxes__item">
-                    @Html.CheckBoxFor(c => c.ConfirmationGiven, new { id = "confirm--continue--chkbox", Class = "govuk-checkboxes__input webapp-confirm-checkbox" })
-
-                    <label class="govuk-label webapp-confirm-label" for="confirm--continue--chkbox">
-                        The selected pupil(s) are outside of the statutory age for your establishment. In order to continue you need to confirm that they have, or will join this establishment.
+                    <input class="govuk-checkboxes__input" asp-for="ConfirmationGiven" name="ConfirmationGiven" type="checkbox">
+                    <label class="govuk-label govuk-checkboxes__label" for="waste">
+                        The selected pupil(s) are outside of the statutory age for your establishment. To continue, you need to confirm that they have, or will join this establishment.
                     </label>
-                    @if (Model.ConfirmationError)
-                    {
-                        <p id="confir--errormessage--text" class="govuk-error-message">
-                            <span class="govuk-visually-hidden">Error:</span> You must confirm you have read and understood the conditions before continuing
-                        </p>
-                    }
                 </div>
             </div>
         </fieldset>
 
-        <button id="confirm--continue--btn" type="submit" name="confirmButton" value="confirmButton" aria-label="Continue" class="govuk-button">
-            Continue
-        </button>
-        <button class="webapp-button-as-link" id="confirm--cancel--btn" asp-controller="@Model.CancelReturnController" asp-action="@Model.CancelReturnAction" type="submit" name="cancelButton" value="cancelButton" aria-label="Cancel">
-            Cancel
-        </button>
+        <div class="govuk-button-group">
+            <button type="submit" class="govuk-button" data-module="govuk-button" value="confirmButton">
+                Continue
+            </button>
+            <button class="govuk-button app-button-as-link" asp-controller="@Model.CancelReturnController" asp-action="@Model.CancelReturnAction" type="submit" name="cancelButton" value="cancelButton" aria-label="Cancel">
+                Cancel
+            </button>
+        </div>
     </div>
 </form>
-
-

@@ -1,7 +1,7 @@
 ﻿@model LearnerTextSearchViewModel
 
-<div class="govuk-grid-column-one-quarter">
-    <button class="govuk-button govuk-button--secondary" asp-action="ToDownloadSelectedFEDataULN" id="download--csv--link" name="downloadASCSV" value="selected" type="submit">
+<div class="govuk-button-group">
+    <button class="govuk-button" asp-action="ToDownloadSelectedFEDataULN" name="downloadASCSV" value="selected" type="submit">
         @Model.DownloadSelectedLink
     </button>
 </div>

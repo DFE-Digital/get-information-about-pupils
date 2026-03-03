@@ -11,15 +11,14 @@
             <input type="hidden" id="header--learner-text-database-name" asp-for="@Model.LearnerTextDatabaseName" />
         }
 
+        <partial name="~/Views/Shared/LearnerText/_SearchBox.cshtml" model="Model" />
+
         @if (Model.ShowStarredPupilConfirmation)
         {
-            <partial name="~/Views/Shared/LearnerText/_SearchBox.cshtml" model="Model" />
             <partial name="~/Views/Search/Common/_StarredPupilConfirmation.cshtml" model="Model.StarredPupilConfirmationViewModel" />
         }
         else
         {
-            <partial name="~/Views/Shared/LearnerText/_SearchBox.cshtml" model="Model" />
-
             <div class="govuk-grid-row">
                 @if (Model.Filters != null)
                 {
@@ -33,10 +32,9 @@
             </div>
         }
 
-        <p class="govuk-body">
-            <a href="/news" class="govuk-link" id="search-help--metadata--link">Release timetable</a> is available.
-        </p>
-
-        <partial name="_MetadataFilesPartial" />
+        <div class="govuk-button-group">
+            <partial name="~/Views/Shared/_ReleaseTimetablePartial.cshtml" />
+            <partial name="~/Views/Shared/_metadataFilesPartial.cshtml" />
+        </div>
     </div>
 </div>

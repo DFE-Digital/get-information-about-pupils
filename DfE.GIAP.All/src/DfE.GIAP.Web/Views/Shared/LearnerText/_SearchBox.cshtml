@@ -15,12 +15,15 @@
     </div>
 
     <div class="govuk-button-group">
-        <button type="submit" class="govuk-button" data-module="govuk-button" id="search--btn" type="submit" asp-controller="@Model.LearnerTextSearchController" asp-action="@Model.LearnerTextSearchAction" asp-route-reset="true">
+        <button type="submit" class="govuk-button"
+                data-module="govuk-button"
+                asp-controller="@Model.LearnerTextSearchController"
+                asp-action="@Model.LearnerTextSearchAction"
+                asp-route-reset="true">
             Search
         </button>
-        <a class="govuk-link" id="link-search-again" asp-controller="@Model.LearnerTextSearchController" asp-action="@Model.LearnerTextSearchAction" asp-route-reset="true"
-           value="SearchAgain" name="searchAgain">Search again</a>
-        <a class="govuk-link" id="search-learnernumber--link" asp-controller="@Routes.Application.Search" asp-action="@Model.LearnerNumberAction"
-           value="SearchLearnerNumber" name="SearchLearnerNumber">Search using @Model.LearnerNumberLabel only</a>
+
+        <a class="govuk-link" asp-controller="@Routes.Application.Search" asp-action="@Model.LearnerNumberAction"
+           value="SearchLearnerNumber" name="SearchLearnerNumber">Search using @Model.LearnerNumberLabel</a>
     </div>
 </form>

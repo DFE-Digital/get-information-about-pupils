@@ -434,7 +434,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
+        _eventLogger.LogDownload(DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return File(
             fileStream: response.FileStream,
@@ -509,6 +509,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         string selectedPupil,
         string searchText)
     {
+        string decodedPupil = PupilHelper.CheckIfStarredPupil(selectedPupil) ? RbacHelper.DecodeUpn(selectedPupil) : selectedPupil;
         LearnerDownloadViewModel searchDownloadViewModel = new()
         {
             SelectedPupils = selectedPupil,
@@ -529,8 +530,8 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         PopulateNavigation(searchDownloadViewModel.TextSearchViewModel);
 
         GetAvailableDatasetsForPupilsRequest request = new(
-           DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.NPD,
-           SelectedPupils: new List<string> { selectedPupil },
+           DownloadType: PupilDownloadType.NPD,
+           SelectedPupils: new List<string> { decodedPupil },
            AuthorisationContext: new HttpClaimsAuthorisationContext(User));
         GetAvailableDatasetsForPupilsResponse response = await _getAvailableDatasetsForPupilsUseCase.HandleRequestAsync(request);
 

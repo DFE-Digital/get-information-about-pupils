@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using DfE.GIAP.Core.Common.Application;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.Models;

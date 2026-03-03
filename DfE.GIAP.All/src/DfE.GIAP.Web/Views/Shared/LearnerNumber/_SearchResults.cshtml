@@ -9,7 +9,7 @@
 
     @if (string.IsNullOrEmpty(Model.ErrorDetails) && Model.ItemAddedToMyPupilList && !Model.NoPupilSelected)
     {
-        <div class="govuk-inset-text">@ApplicationLabels.SelectedAddedToMyPupilList</div>
+        <div class="govuk-inset-text">Pupil(s) added to your 'My pupils list'</div>
     }
     @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
     {
@@ -44,46 +44,35 @@
             }
         </noscript>
 
-        <div id="toggleCheckbox" class="govuk-checkboxes govuk-!-padding-bottom-5 hide-for-non-js">
+        <div class="govuk-checkboxes hide-for-non-js">
             <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="toggleErrors" name="toggleErrors" type="checkbox" data-val="true" value="true">
+                <input class="govuk-checkboxes__input" name="toggleErrors" type="checkbox" data-val="true" value="true">
                 <label for="toggleErrors" class="govuk-label govuk-checkboxes__label">
                     <span id="errors-show">Show @(Model.LearnerNumberLabel)s not found, invalid or duplicate</span>
                 </label>
             </div>
         </div>
-        <div class="webapp-results"></div>
     }
 
     @if (!Model.ShowErrors && (Model.Learners != null && Model.Learners.Any() && ViewData.ModelState.IsValid))
     {
-        <div class="download-block">
-            <div class="govuk-inset-text">
+        <div class="govuk-inset-text">
+            Please be aware that by selecting/de-selecting all pupils may take time to process
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-quarter">
                 @if (Model.ToggleSelectAll)
                 {
-                    <span>Please be aware that by pressing Deselect all pupils may take time to process</span>
+                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</button>
                 }
                 else
                 {
-                    <span>Please be aware that by pressing Select all pupils may take time to process</span>
+                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</button>
                 }
             </div>
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-one-quarter">
-
-                    @if (Model.ToggleSelectAll)
-                    {
-                        <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</button>
-                    }
-                    else
-                    {
-                        <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</button>
-                    }
-                </div>
-
-                <partial name="@Model.DownloadLinksPartial" />
-            </div>
+            <partial name="@Model.DownloadLinksPartial" />
         </div>
     }
     @if (Model.Invalid.Any() && (Model.Learners != null && Model.Learners.Any() && ViewData.ModelState.IsValid))

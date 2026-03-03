@@ -37,15 +37,11 @@
                     id="SelectedOption"
                     aria-describedby="SelectedOption-hint @(hasError ? "SelectedOption-error" : "")">
             </select>
+
+            <button type="submit" class="govuk-button" data-module="govuk-button">
+                Select
+            </button>
         </div>
 
-        <button type="submit" class="govuk-button" data-module="govuk-button">
-            Continue
-        </button>
-
     </form>
-
-    @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
-    }
 </div>

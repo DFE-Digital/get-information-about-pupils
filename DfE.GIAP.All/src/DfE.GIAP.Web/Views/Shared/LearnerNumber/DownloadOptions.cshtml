@@ -23,7 +23,7 @@
 
             <div class="govuk-grid-column-three-quarters">
                 <div class="govuk-form-group">
-                    <p class="govuk-body italic" id="selected-records--message">You have selected <span id="selected-records--count">@Model.SelectedPupilsCount</span> record<span id="selected-records--message-plural">@(Model.SelectedPupilsCount > 1 ? "s" : "")</span> to download</p>
+                    <p class="govuk-body">You have selected <b>@Model.SelectedPupilsCount</b> record<span>@(Model.SelectedPupilsCount > 1 ? "s" : "")</span> to download</p>
                     <h3 class="govuk-heading-m">Select data type</h3>
                     <input asp-for="SelectedPupilsCount" type="hidden" value="@Model.SelectedPupilsCount" />
 

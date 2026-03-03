@@ -3,7 +3,7 @@
 <div class="govuk-accordion__section ">
     <div class="govuk-accordion__section-header">
         <h4 class="govuk-accordion__section-heading">
-            <span class="govuk-accordion__section-button govuk-!-font-size-19 webapp-filter-accordion-title" id="header--middlename">
+            <span class="govuk-accordion__section-button">
                 Middle name
             </span>
         </h4>
@@ -40,7 +40,7 @@
                     foreach (var item in filter.Items)
                     {
                         <div>
-                            <button class="webapp-button-as-link webapp-facet-link" id="search--facet-middle-name--@item.Value" name="middlenameFilter" value="@item.Value" type="submit" data-module="govuk-button">
+                            <button class="app-button-as-link webapp-facet-link" id="search--facet-middle-name--@item.Value" name="middlenameFilter" value="@item.Value" type="submit" data-module="govuk-button">
                                 @item.Value (@item.Count)
                             </button>
                         </div>
