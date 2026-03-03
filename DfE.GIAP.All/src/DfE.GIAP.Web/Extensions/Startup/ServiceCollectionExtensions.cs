@@ -12,7 +12,6 @@ using DfE.GIAP.Web.Helpers.SelectionManager;
 using DfE.GIAP.Web.Helpers.TextSanitiser;
 using DfE.GIAP.Web.Providers.Cookie;
 using DfE.GIAP.Web.Providers.Session;
-using DfE.GIAP.Web.Services.ApiProcessor;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +36,6 @@ public static class ServiceCollectionExtensions
     internal static IServiceCollection AddAllServices(this IServiceCollection services)
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddHttpClient<IApiService, ApiService>();
         services.AddScoped<ISelectionManager, NotSelectedManager>();
         services.AddScoped<ITextSearchSelectionManager, TextSearchSelectionManager>();
         services.AddSingleton<ITextSanitiserHandler, HtmlTextSanitiser>();
