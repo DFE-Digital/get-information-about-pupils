@@ -434,7 +434,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 
         DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
+        _eventLogger.LogDownload(DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return File(
             fileStream: response.FileStream,
