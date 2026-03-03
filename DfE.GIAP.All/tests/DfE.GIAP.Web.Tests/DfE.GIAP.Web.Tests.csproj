@@ -16,7 +16,6 @@
 	<PackageReference Include="coverlet.msbuild" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DfE.GIAP.Common\DfE.GIAP.Common.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
     <ProjectReference Include="..\..\src\DfE.GIAP.Web\DfE.GIAP.Web.csproj" />
   </ItemGroup>
