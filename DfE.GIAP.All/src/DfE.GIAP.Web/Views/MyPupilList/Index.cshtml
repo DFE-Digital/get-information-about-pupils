@@ -102,13 +102,7 @@
                 ApplicationLabels.SearchMyPupilListNoPupilFound :
                 ApplicationLabels.MyPupilListNoMorePupils;
 
-                <div id="results--detail-warningmessage" class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        <span>@noPupilsMessage</span>
-                    </strong>
-                </div>
+                <p class="govuk-body">@noPupilsMessage</p>
                 <ul class="pagination-list">
                     <!-- [Previous] -->
                     @if (Model.PageNumber > 1)

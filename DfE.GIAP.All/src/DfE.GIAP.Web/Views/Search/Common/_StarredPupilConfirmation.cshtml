@@ -3,49 +3,6 @@
     ViewData["Title"] = "Confirm pupil(s) will join establishment";
 }
 
-<h2 class="govuk-heading-l" id="confirm--heading">Confirm pupil(s) will join establishment</h2>
-<form method="POST" asp-controller="@Model.ConfirmationReturnController" asp-action="@Model.ConfirmationReturnAction">
-    <input type="hidden" name="SelectedPupil" value="@Model.SelectedPupil" />
-    <input type="hidden" name="DownloadType" value="@Model.DownloadType">
-    <input type="hidden" name="LearnerNumbers" value="@Model.LearnerNumbers">
-
-    <div>
-        <fieldset aria-describedby="consent--confirm--dialog">
-            <legend>
-                <span class="govuk-visually-hidden">
-                    Confirm checkbox
-                </span>
-            </legend>
-            <div class="govuk-checkboxes">
-                <div class="govuk-checkboxes__item">
-                    @Html.CheckBoxFor(c => c.ConfirmationGiven, new { id = "confirm--continue--chkbox", Class = "govuk-checkboxes__input" })
-
-                    <label class="govuk-label webapp-confirm-label" for="confirm--continue--chkbox">
-                        The selected pupil(s) are outside of the statutory age for your establishment. In order to continue you need to confirm that they have, or will join this establishment.
-                    </label>
-                    @if (Model.ConfirmationError)
-                    {
-                        <p class="govuk-error-message">
-                            <span class="govuk-visually-hidden">Error:</span> You must confirm you have read and understood the conditions before continuing
-                        </p>
-                    }
-                </div>
-            </div>
-        </fieldset>
-
-        <div class="govuk-button-group">
-            <button type="submit" class="govuk-button" data-module="govuk-button" value="confirmButton">
-                Continue
-            </button>
-            <button class="app-button-as-link" asp-controller="@Model.CancelReturnController" asp-action="@Model.CancelReturnAction" type="submit" name="cancelButton" value="cancelButton" aria-label="Cancel">
-                Cancel
-            </button>
-        </div>
-    </div>
-</form>
-
-
-
 <form method="POST" asp-controller="@Model.ConfirmationReturnController" asp-action="@Model.ConfirmationReturnAction">
     <input type="hidden" name="SelectedPupil" value="@Model.SelectedPupil" />
     <input type="hidden" name="DownloadType" value="@Model.DownloadType">
@@ -84,5 +41,3 @@
         </div>
     </div>
 </form>
-
-
