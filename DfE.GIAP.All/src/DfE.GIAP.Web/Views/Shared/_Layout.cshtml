@@ -1,18 +1,15 @@
-@inject IOptions<MicrosoftClarityOptions> MicrosoftClarityOptions
-@inject IOptions<GoogleTagManagerOptions> GoogleTagManagerOptions
+﻿<!DOCTYPE html>
+<html lang="en" class="govuk-template app-html-class">
 
-@{
-    var CSPNonce = Context.Items["CSPNonce"] as string;
-}
-
-<!DOCTYPE html>
-<html lang="en" class="govuk-template">
 <head>
-    <partial name="_GDSTitle" />
+    <title>GOV.UK - Get information about pupils</title>
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="blue" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="blue">
+
+    <link rel="stylesheet" href="/css/govuk-frontend.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="/css/main.css" asp-append-version="true" />
 
     <link rel="icon" sizes="48x48" href="/assets/images/favicon.ico">
     <link rel="icon" sizes="any" href="/assets/images/favicon.svg" type="image/svg+xml">
@@ -20,53 +17,24 @@
     <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png">
     <link rel="manifest" href="/assets/manifest.json">
 
-    <link rel="stylesheet" href="~/css/giap.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/accessible-autocomplete.min.css" asp-append-version="false" />
-
-    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
-    <script src="~/js/axios.min.js" asp-append-version="true"></script>
-
-    @RenderSection("Head", required: false)
-    @if (!string.IsNullOrWhiteSpace(MicrosoftClarityOptions.Value.ProjectId))
-    {
-        <script nonce="@CSPNonce">
-            (function(c,l,a,r,i,t,y){
-                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "@MicrosoftClarityOptions.Value.ProjectId");
-        </script>
-    }
-
-    @if (!string.IsNullOrWhiteSpace(GoogleTagManagerOptions.Value.ContainerId))
-    {
-        <script nonce="@CSPNonce">
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                    })(window,document,'script','dataLayer','@GoogleTagManagerOptions.Value.ContainerId');</script>
-    }
+    <partial name="Partials/Layout/_LayoutHeadAnalytics" />
 </head>
+<body class="govuk-template__body js-enabled govuk-frontend-supported app-body-class">
 
-<body class="govuk-template__body govuk-frontend-supported">
+    <partial name="Partials/Layout/_LayoutBodyAnalytics" />
 
-    @if (!string.IsNullOrWhiteSpace(GoogleTagManagerOptions.Value.ContainerId))
-    {
-        <noscript>
-            <iframe src="https://www.googletagmanager.com/ns.html?id=@GoogleTagManagerOptions.Value.ContainerId" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-        </noscript>
-    }
-    <partial name="_CookieBannerPartial" />
-    <partial name="Layout/_LayoutHeader" />
+    <partial name="Partials/Layout/_LayoutCookieBanner" />
+    <partial name="Partials/Layout/_LayoutHeader" />
+    <partial name="Partials/Layout/_LayoutNewsBanner" />
 
-    <div class="govuk-width-container">
-        <main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="govuk-width-container app-width-container">
+        <main class="govuk-main-wrapper app-main-class" id="main-content">
             @RenderBody()
         </main>
     </div>
 
-    <partial name="Layout/_LayoutFooter" />
-    <script src="~/js/giap.min.js" asp-append-version="true"></script>
-
-    @RenderSection("Scripts", required: false)
+    <partial name="Partials/Layout/_LayoutFooter" />
+    <partial name="Partials/Layout/_LayoutScripts" />
 </body>
+
 </html>
