@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
-using DfE.GIAP.Core.Common.CrossCutting;
 using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Application.PostTokenHandlers;
@@ -21,7 +20,6 @@ public static class CompositionRoot
 {
     public static IServiceCollection AddAuthDependencies(this IServiceCollection services, IConfiguration config)
     {
-        // Bind strongly typed settings
         services.Configure<DsiOptions>(config.GetSection(DsiOptions.SectionName));
 
         // Core application services
@@ -124,7 +122,6 @@ public static class CompositionRoot
                 o.Scope.Clear();
                 o.Scope.Add("openid");
                 o.Scope.Add("email");
-                o.Scope.Add("profile"); // TODO: Remove as not pulled back?
                 o.Scope.Add("organisationid");
 
                 // Resolve handler from DI
