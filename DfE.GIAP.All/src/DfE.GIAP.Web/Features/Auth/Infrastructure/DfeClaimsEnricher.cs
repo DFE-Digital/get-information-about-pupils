@@ -29,6 +29,7 @@ public class DfeClaimsEnricher : IClaimsEnricher
 
         string userId = claimsPrincipal.FindFirst("sub")?.Value ?? string.Empty;
         string email = claimsPrincipal.FindFirst("email")?.Value ?? string.Empty;
+
         claims.Add(new Claim(AuthClaimTypes.SessionId, Guid.NewGuid().ToString()));
         claims.Add(new Claim(AuthClaimTypes.UserId, userId));
         claims.Add(new Claim(ClaimTypes.Email, email));
@@ -42,22 +43,18 @@ public class DfeClaimsEnricher : IClaimsEnricher
         UserAccess? userAccess = await _apiClient.GetUserInfo(_dsiOptions.ServiceId, orgId, userId);
         Organisation? organisation = await _apiClient.GetUserOrganisation(userId, orgId);
 
-        //TODO: Current process is to do the below, not sure if this is needed or what purpose it serves?
-        //if (userAccess is null)
-        //{
-        //    eventLogging.TrackEvent(2502, "User log in unsuccessful - user not associated with GIAP service", userId, sessionId, hostEnvironment.ContentRootPath);
-        //    ctx.Principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
-        //    ctx.HttpContext.Response.Redirect(Routes.Application.UserWithNoRole);
-        //    return;
-        //}
-
-        // Roles
-        if (userAccess?.Roles is not null)
+        bool noRoles = userAccess?.Roles is null || !userAccess.Roles.Any();
+        bool noOrganisation = organisation is null;
+        if (noRoles || noOrganisation)
         {
-            foreach (UserRole role in userAccess.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role.Code));
-            }
+            // User is authenticated but has no service access.
+            // Return principal with NO roles. Authorization will redirect to /user-with-no-role.
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, "DfE-SignIn"));
+        }
+
+        foreach (UserRole role in userAccess.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role.Code));
         }
 
         // Organisation claims
