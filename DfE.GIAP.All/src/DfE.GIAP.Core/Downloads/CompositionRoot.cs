@@ -1,5 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
-using DfE.GIAP.Core.Downloads.Application.Availability;
+﻿using DfE.GIAP.Core.Downloads.Application.Availability;
 using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Availability.Access.Rules;
 using DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
@@ -18,6 +17,7 @@ using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
+using DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Infrastructure.FileExports;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
