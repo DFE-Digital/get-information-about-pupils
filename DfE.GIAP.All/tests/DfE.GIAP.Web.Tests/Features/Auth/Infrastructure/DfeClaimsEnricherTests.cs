@@ -107,18 +107,18 @@ public class DfeClaimsEnricherTests
     }
 
     [Theory]
-    [InlineData(AuthClaimTypes.OrganisationId, "")]
-    [InlineData(AuthClaimTypes.OrganisationName, "")]
-    [InlineData(AuthClaimTypes.OrganisationCategoryId, "")]
-    [InlineData(AuthClaimTypes.OrganisationEstablishmentTypeId, "")]
-    [InlineData(AuthClaimTypes.OrganisationLowAge, "0")]
-    [InlineData(AuthClaimTypes.OrganisationHighAge, "0")]
-    [InlineData(AuthClaimTypes.EstablishmentNumber, "")]
-    [InlineData(AuthClaimTypes.LocalAuthorityNumber, "")]
-    [InlineData(AuthClaimTypes.UniqueReferenceNumber, "")]
-    [InlineData(AuthClaimTypes.UniqueIdentifier, "")]
-    [InlineData(AuthClaimTypes.UKProviderReferenceNumber, "")]
-    public async Task EnrichAsync_WhenOrganisationIsNull_ShouldSetExpectedClaimValue(string claimType, string expectedValue)
+    [InlineData(AuthClaimTypes.OrganisationId)]
+    [InlineData(AuthClaimTypes.OrganisationName)]
+    [InlineData(AuthClaimTypes.OrganisationCategoryId)]
+    [InlineData(AuthClaimTypes.OrganisationEstablishmentTypeId)]
+    [InlineData(AuthClaimTypes.OrganisationLowAge)]
+    [InlineData(AuthClaimTypes.OrganisationHighAge)]
+    [InlineData(AuthClaimTypes.EstablishmentNumber)]
+    [InlineData(AuthClaimTypes.LocalAuthorityNumber)]
+    [InlineData(AuthClaimTypes.UniqueReferenceNumber)]
+    [InlineData(AuthClaimTypes.UniqueIdentifier)]
+    [InlineData(AuthClaimTypes.UKProviderReferenceNumber)]
+    public async Task EnrichAsync_WhenOrganisationIsNull_ExpectedClaimsShouldBeNull(string claimType)
     {
         // Arrange
         string userId = "user-abc";
@@ -150,8 +150,7 @@ public class DfeClaimsEnricherTests
         ClaimsIdentity identity = (ClaimsIdentity)enrichedPrincipal.Identity!;
         Claim? claim = identity.FindFirst(claimType);
 
-        Assert.NotNull(claim);
-        Assert.Equal(expectedValue, claim!.Value);
+        Assert.Null(claim);
     }
 
 
