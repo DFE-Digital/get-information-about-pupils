@@ -1,6 +1,6 @@
 ﻿using Dfe.Data.Common.Infrastructure.Persistence.CosmosDb.Handlers.Query;
-using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Application.Models;
+using DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects;
 using DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 using DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;

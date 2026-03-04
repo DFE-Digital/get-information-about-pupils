@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects.Entries;
+namespace DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects.Entries;
 
 public class SpecialEducationalNeedsEntryDto
 {

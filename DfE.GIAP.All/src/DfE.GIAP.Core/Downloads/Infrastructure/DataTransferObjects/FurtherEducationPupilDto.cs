@@ -1,7 +1,7 @@
-﻿using DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects.Entries;
+﻿using DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects.Entries;
 using Newtonsoft.Json;
 
-namespace DfE.GIAP.Core.Common.Infrastructure.CosmosDb.DataTransferObjects;
+namespace DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects;
 
 public class FurtherEducationPupilDto
 {
