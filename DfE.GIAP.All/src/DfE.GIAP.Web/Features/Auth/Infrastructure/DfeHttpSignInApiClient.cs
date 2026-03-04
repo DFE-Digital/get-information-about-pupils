@@ -1,8 +1,6 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting;
-using DfE.GIAP.Web.Features.Auth.Application;
+﻿using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Infrastructure.DataTransferObjects;
-using DfE.GIAP.Web.Features.Auth.Infrastructure.Mappers;
 using Newtonsoft.Json;
 
 namespace DfE.GIAP.Web.Features.Auth.Infrastructure;
@@ -26,7 +24,10 @@ public class DfeHttpSignInApiClient : IDfeSignInApiClient
     {
         string url = $"/services/{serviceId}/organisations/{organisationId}/users/{userId}";
         HttpResponseMessage response = await _httpClient.GetAsync(url);
-        response.EnsureSuccessStatusCode();
+
+        if (!response.IsSuccessStatusCode)
+            return null;
+
         return await response.Content.ReadFromJsonAsync<UserAccess>();
     }
 
@@ -42,7 +43,9 @@ public class DfeHttpSignInApiClient : IDfeSignInApiClient
         string url = $"/users/{userId}/organisations";
 
         HttpResponseMessage response = await _httpClient.GetAsync(url);
-        response.EnsureSuccessStatusCode();
+
+        if (!response.IsSuccessStatusCode)
+            return new();
 
         string json = await response.Content.ReadAsStringAsync();
         List<OrganisationDto> organisationDtos = JsonConvert
