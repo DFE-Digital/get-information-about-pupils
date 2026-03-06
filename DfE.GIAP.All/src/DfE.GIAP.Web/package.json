@@ -9,7 +9,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "govuk-frontend": "^6.0.0"
+        "govuk-frontend": "^6.1.0"
     },
     "devDependencies": {
         "eslint": "^10.0.0",
