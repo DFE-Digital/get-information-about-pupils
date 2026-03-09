@@ -1,4 +1,6 @@
-﻿<section aria-label="Service information" class="govuk-service-navigation" data-module="govuk-service-navigation">
+﻿@inject IAuthorizationService AuthorizationService
+
+<section aria-label="Service information" class="govuk-service-navigation" data-module="govuk-service-navigation">
     <div class="govuk-width-container">
         <div class="govuk-service-navigation__container">
             <span class="govuk-service-navigation__service-name">
@@ -11,14 +13,77 @@
                     Menu
                 </button>
                 <ul class="govuk-service-navigation__list" id="navigation">
-                    <partial name="Partials/Layout/_LayoutNavigationItemNews" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemSearchNPD" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemSearchPP" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemSearchFE" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemDataDownloads" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemMyPupils" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemContent" />
-                    <partial name="Partials/Layout/_LayoutNavigationItemSignOut" />
+                    <li class="govuk-service-navigation__item">
+                        <a class="govuk-service-navigation__link" asp-controller="News" asp-action="Index">
+                            News
+                        </a>
+                    </li>
+
+                    @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+                    {
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link" asp-controller="@Global.NPDLearnerNumberSearchController" asp-action="NationalPupilDatabase" id="header--search-npd--link">
+                                Search NPD
+                            </a>
+                        </li>
+                    }
+
+                    @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+                    {
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link" asp-controller="@Global.PPLearnerNumberSearchController" asp-action="PupilPremium" id="header--search-pp--link">
+                                Search pupil premium
+                            </a>
+                        </li>
+                    }
+
+                    @if (User.IsAdmin() ||
+                                        User.IsOrganisationEstablishmentWithFurtherEducation() ||
+                                        User.IsEstablishmentWithAccessToULNPages() ||
+                                        User.IsDfeUser())
+                    {
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link" asp-controller="@Global.FELearnerNumberSearchController" asp-action="PupilUlnSearch" id="header--search-uln--link">
+                                Search further education
+                            </a>
+                        </li>
+                    }
+
+                    @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+                    {
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link" asp-controller="PreparedDownloads" asp-action="Index">
+                                Data downloads
+                            </a>
+                        </li>
+                    }
+
+                    @if (!User.IsOrganisationEstablishmentWithFurtherEducation())
+                    {
+                        <li class="govuk-service-navigation__item">
+                            <a class="govuk-service-navigation__link" asp-controller="GetMyPupils" asp-action="Index" id="header--mpl--link">
+                                My pupils
+                            </a>
+                        </li>
+                    }
+
+                    @{
+                        AuthorizationResult authResult = await AuthorizationService.AuthorizeAsync(User, Policy.RequiresManageContentAccess);
+                        if (authResult.Succeeded)
+                        {
+                            <li class="govuk-service-navigation__item">
+                                <a class="govuk-service-navigation__link" asp-controller="Content" asp-action="Index">
+                                    Content
+                                </a>
+                            </li>
+                        }
+                    }
+
+                    <li class="govuk-service-navigation__item">
+                        <a class="govuk-service-navigation__link" asp-controller="Authentication" asp-action="SignoutDsi">
+                            Sign out
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </div>
