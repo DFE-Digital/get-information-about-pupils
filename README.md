@@ -95,19 +95,36 @@ menu).
 
 
 
-### Architecture
+## Architecture
 
-GIAP-Web relies on a set of Azure Functions in the GIAP.AzureFunctions application, these then query Azure Cognitive Services/CosmosDB for data. The initial access is granted via [DSI](https://services.signin.education.gov.uk/) which provides authentication and authorisation to the application.
+GIAP‑Web authenticates users through DSI, which provides both authentication and authorisation.
+Once authenticated, the application interacts with the Core Project, which contains all feature logic and shared (common) functionality.
+
+The Core Project delegates work to feature‑specific Application/Infrastructure layers and shared Common services.
+Infrastructure components then communicate with Azure services such as Cosmos DB, Cognitive Search, and Blob Storage.
 
 ```mermaid
 graph TD
-X[DFE Sign-in] --> A
-A --> X
-A[GIAP Web] --- B[GIAP Azure Function]
-B --- E[Azure BLOB storage]
-B --- D[Azure Cognitive Search]
-B --- C[Azure CosmosDB]
-D --- C
+
+%% ENTRY POINT
+DSI[DSI Sign-in] --> UI[GIAP Web]
+UI --> CORE[Core Project]
+
+%% COMMON LAYER
+CORE --> COMMON[Common]
+COMMON --> CA[Common Application]
+COMMON --> CI[Common Infrastructure]
+
+CI --> BLOB[Azure Blob Storage]
+CI --> LOG[Logging Providers]
+
+%% FEATURE 1
+CORE --> FEATURE1[Feature 1]
+FEATURE1 --> F1_APP[Application]
+FEATURE1 --> F1_INFRA[Infrastructure]
+
+F1_INFRA --> COSMOS[Azure Cosmos DB]
+F1_INFRA --> SEARCH[Azure Cognitive Search]
 ```
 
 ### Project dependencies
@@ -163,60 +180,47 @@ An example is provided for reference, additionally a launchSettings.json is requ
 ### appsettings.local.json
 ```json
 {
-  "IsSessionIdStoredInCookie": true,
-  "MaximumNonUPNResults": 100,
-  "MaximumNonULNResults": 100,
-  "MaximumUPNsPerSearch": 4000,
-  "DsiClientId": "dsi-client-id",
-  "DsiClientSecret": "dsi-client-secret",
-  "DsiApiClientSecret": "dsi-api-client-secret",
-  "DsiMetadataAddress": "dsi-metadata-address",
-  "DsiAuthorisationUrl": "dsi-authorisation-url",
-  "DsiRedirectUrlAfterSignout": "dsi-redirect-url-after-signout",
-  "DsiServiceId": "dsi-service-id",
-  "DsiAudience": "dsi-audience",
-  "StorageAccountName": "account-name",
-  "StorageAccountKey": "account-key",
-  "StorageContainerName": "container-name",
-  "NonUpnPPLimit": 4000,
-  "NonUpnNPDMyPupilListLimit": 100,
-  "UpnPPMyPupilListLimit": 4000,
-  "UpnNPDMyPupilListLimit": 4000,
-  "MaximumULNsPerSearch": 4000,
-  "CommonTransferFileUPNLimit": 10,
-  "MetaDataDownloadListDirectory": "AllUsers/Metadata",
-  "DownloadOptionsCheckLimit": 500,
-  "UseLAColumn": true,
-  "NpdUseGender": true,
-  "PpUseGender": false,
-  "FeUseGender": false,
-  "FeatureManagement": {
-    "FurtherEducation": true
-  },
-  "GetUserProfileUrl": "http://localhost:7071/api/get-user-profile?code=",
-  "GetLatestNewsStatusUrl": "http://localhost:7071/api/get-latest-news-status?code=",
-  "DeleteNewsArticleUrl": "http://localhost:7071/api/delete-news-article?code=",
-  "DownloadPupilsByUPNsCSVUrl": "http://localhost:7071/api/download-pupils-by-upns-csv?code=",
-  "DownloadPupilsByUPNsTABUrl": "http://localhost:7071/api/download-pupils-by-upns-tab?code=",
-  "DownloadPupilPremiumByUPNFforCSVUrl": "http://localhost:7071/api/download-pupil-premium-by-upns-csv?code=",
-  "QueryLAByCodeUrl": "http://localhost:7071/api/get-la-by-code?code=",
-  "QueryLAGetAllUrl": "http://localhost:7071/api/get-la-all?code=",
-  "GetAcademiesURL": "http://localhost:7071/api/get-academies?code=",
-  "LoggingEventUrl": "http://localhost:7071/api/logging-event?code=",
-  "CreateOrUpdateUserProfileUrl": "http://localhost:7071/api/create-or-update-user-profile?code=",
-  "DownloadCommonTransferFileUrl": "http://localhost:7071/api/download-common-transfer-file?code=",
-  "DownloadSecurityReportByUpnUrl": "http://localhost:7071/api/download-security-report-by-upn-searches?code=",
-  "DownloadSecurityReportByUlnUrl": "http://localhost:7071/api/download-security-report-by-uln-searches?code=",
-  "DownloadSecurityReportDetailedSearchesUrl": "http://localhost:7071/api/download-detailed-searches?code=",
-  "DownloadSecurityReportLoginDetailsUrl": "http://localhost:7071/api/download-login-details?code=",
-  "DownloadPupilsByULNsUrl": "http://localhost:7071/api/download-further-education?code=",
-  "DownloadPrepreparedFilesUrl": "http://localhost:7071/api/pre-prepared-downloads?code=",
-  "PaginatedSearchUrl": "http://localhost:7071/api/get-page/{indexType}/{queryType}?code=",
-  "GetAllFurtherEducationURL": "http://localhost:7071/api/get-all-fe?code=",
-  "GetFurtherEducationByCodeURL": "http://localhost:7071/api/get-fe-by-code?code=",
-  "SetLatestNewsStatusUrl": "http://localhost:7071/api/set-latest-news-status?code=",
-  "FeatureFlagAppConfigUrl": "Endpoint="
+    "RepositoryOptions": {
+        "EndpointUri": "",
+        "PrimaryKey": "",
+    },
+    "BlobStorageOptions": {
+        "AccountName": "STORAGE_ACCOUNT_NAME",
+        "AccountKey": "STORAGE_ACCOUNT_KEY",
+        "ContainerName": "STORAGE_CONTAINER_NAME",
+        "EndpointSuffix": "ENDPOINT_SUFFIX"
+    },
+    "SearchIndexOptions": {
+        "Url": "https://s115d10-asearch-giap.search.windows.net",
+        "Key": "KEY_HERE",
+        "Indexes": {
+            "npd": {
+                "Name": "NPD-INDEX-NAME"
+            },
+            "pupil-premium": {
+                "Name": "PUPILPREMIUM-INDEX-NAME"
+            }
+        }
+    },
+    "AzureSearchConnectionOptions": {
+        "EndpointUri": "ENDPOINT_URI",
+        "Credentials": "CREDENTIAL_KEY"
+    },
+     "DsiOptions": {
+        "ServiceId": "SERVICE_ID",
+        "ClientId": "CLIENT_ID",
+        "ClientSecret": "CLIENT_SECRET",
+        "ApiClientSecret": "API_CLIENT_SECRET",
+        "Audience": "AUDIENCE",
+        "MetadataAddress": "DSI_METADATA_ADDRESS",
+        "AuthorisationUrl": "DSI_AUTHORISATION_URL",
+        "RedirectUrlAfterSignout": "REDIRECT_URL_AFTER_SIGNOUT",
+        "CallbackPath": "CALLBACK_PATH",
+        "SignedOutCallbackPath": "SIGNED_OUT_CALLBACK",
+        "SessionTimeoutMinutes": 10
+    },
 }
+
 ```
 
 ## Continual Integration (CI)
@@ -227,34 +231,12 @@ The solution depends on the DfEDigital GitHub Packages NuGet Feed.
 
 ## Logging
 
-GIAP uses Application Insights to log auditing, warnings, and errors.
+GIAP uses Application Insights for all auditing, warnings, and error logging.
 
-## Gulp Runner
-
-We have a Gulp task which combines the JS files and CSS files into a minified version. We’re using npm to install dependencies. We need to install Gulp globally. Assuming you have node and npm installed already.
-
-```sh
-npm install -g gulp
-```
-
-This installs it system wide as opposed to installing on a project-by-project basis. Gulp runner also compile Sass (for CSS styling) files into CSS. Unfortunately, SCSS won’t work out of the box. Some browsers don’t understand what SASS/SCSS syntax is, so we need to compile it down to a plain css file for them. The only library we need will be gulp-sass, so install it like this: 
-
-```sh
-npm install gulp-sass
-```
-
-You may notice you have a package.json and package-lock.json file. This process also creates a node_modules directory within the solution folder.
-
-gulp-sass: Sass is a preprocessor and to run in the browsers it needs to be compiled into css, that’s why we need gulp-sass, this gulp plugin will compile the Scss files into CSS.
-gulp-rename: this gulp plugin is useful if we want to change the extension file names.
-
-The Gulp task runs behind the scenes when you compile your project.
+This provides centralised telemetry across the application, making it easier to trace issues, monitor performance, and analyse user behaviour.
 
 ## License
 
 Unless stated otherwise, the codebase is released under the MIT License. This covers both the codebase and any sample code in the documentation.
 
 The documentation is © Crown copyright and available under the terms of the Open Government 3.0 licence
-
-
-
