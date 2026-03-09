@@ -24,65 +24,6 @@ public sealed class AuthenticationControllerTests
     }
 
     [Fact]
-    public void AuthenticationController_LoginDSI_SetDefaultRedirectURL_If_Not_Authenticated()
-    {
-        // Arrange
-        string? redirectUrl = null;
-        string expectedURL = "https://giapBaseDomain/";
-        ControllerContext context = new() { HttpContext = new DefaultHttpContext() };
-        AuthenticationController controller = GetAuthenticationController();
-
-        Mock<IUrlHelper> mockUrlHelper = new();
-        mockUrlHelper.Setup(x => x.Action(It.IsAny<UrlActionContext>())).Returns(expectedURL);
-
-        controller.Url = mockUrlHelper.Object;
-        controller.ControllerContext = context;
-
-        // Act
-        ChallengeResult? result = controller.LoginDsi(redirectUrl) as ChallengeResult;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(expectedURL, result.Properties!.RedirectUri);
-    }
-
-    [Fact]
-    public void AuthenticationController_LoginDSI_SetRedirectURL_If_Not_Authenticated()
-    {
-        // Arrange
-        ControllerContext context = new() { HttpContext = new DefaultHttpContext() };
-        AuthenticationController controller = GetAuthenticationController();
-        controller.ControllerContext = context;
-        string redirectUrl = "http://redirectToSomewhere.com";
-
-        // Act
-        ChallengeResult? result = controller.LoginDsi(redirectUrl) as ChallengeResult;
-
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(redirectUrl, result.Properties!.RedirectUri);
-    }
-
-    [Fact]
-    public void AuthenticationController_LoginDSI_Redirect_If_Authenticated()
-    {
-        // Arrange
-        ClaimsPrincipal user = UserClaimsPrincipalFake.GetUserClaimsPrincipal();
-        ControllerContext context = new() { HttpContext = new DefaultHttpContext() { User = user, Session = new SessionFake() } };
-        AuthenticationController controller = GetAuthenticationController();
-        controller.ControllerContext = context;
-        string redirectUrl = "http://redirectToSomewhere.com";
-
-        // Act
-        IActionResult result = controller.LoginDsi(redirectUrl);
-
-        // Assert
-        RedirectResult redirectResult = Assert.IsType<RedirectResult>(result);
-        Assert.NotNull(redirectResult);
-        Assert.Equal(redirectUrl, redirectResult.Url);
-    }
-
-    [Fact]
     public async Task AuthenticationController_SignoutDSI_And_Redirect()
     {
         // Arrange

@@ -21,25 +21,6 @@ public class AuthenticationController : Controller
         _dsiOptions = dsiOptions.Value;
     }
 
-    [AllowAnonymous]
-    [HttpGet(Routes.Authentication.LoginAction)]
-    public IActionResult LoginDsi(string returnUrl)
-    {
-        if (string.IsNullOrEmpty(returnUrl))
-        {
-            returnUrl = Url.Action("Index", "Home");
-        }
-
-        if (User.Identity.IsAuthenticated)
-        {
-            return Redirect(returnUrl);
-        }
-        else
-        {
-            return new ChallengeResult(new AuthenticationProperties() { RedirectUri = returnUrl });
-        }
-    }
-
     [AllowWithoutConsent]
     [AllowAnonymous]
     [HttpGet(Routes.Authentication.SignoutAction)]
