@@ -49,7 +49,6 @@
     color: #005ea5;
     cursor: pointer;
     font-family: inherit;
-    font-size: inherit;
     font-weight: inherit;
     padding: 0 18px 0 0;
     position: relative;
@@ -164,7 +163,6 @@
     color: colours.$govuk-link-colour;
     border: none;
     padding: 0;
-    font: inherit;
     cursor: pointer;
     outline: inherit;
     text-decoration: underline;
@@ -181,96 +179,3 @@
 .app-news-banner-background {
     background: colours.$app-banner-yellow;
 }
-
-
-
-
-// OLD STUFF, NEED TO CHECK WHAT IS BEING USED:
-/*
-.webapp-checkboxes-searchresults {
-    position: relative;
-    vertical-align: middle
-}
-
-.webapp-error-message {
-    border-left: 5px solid colours.$govuk-error-colour;
-    padding: 10px;
-}
-
-.webapp-header-link--active:hover, .webapp-header-link--active:link, .webapp-header-link--active:visited {
-    color: colours.$govuk-link-colour;
-    text-decoration: underline;
-    text-decoration-thickness: 5px;
-    text-underline-offset: .7em;
-}
-
-.webapp-formatted-text {
-    white-space: pre-wrap;
-    padding-bottom: 10px
-}
-
-.webapp-table-cell {
-    border-bottom: none
-}
-
-#selected-records--message {
-    padding: 13.5px 0px 0px 0px;
-    margin-bottom: 17.5px;
-}
-
-#accordion-default-search-filters {
-    .webapp-facet-link {
-        padding-bottom: 5px !important;
-        font-size: 1.2rem;
-        text-decoration: none;
-    }
-
-    .search-filters .govuk-accordion__section {
-        padding-top: 0 !important;
-    }
-}
-
-.hide-for-non-js, .display-none {
-    display: none;
-}
-
-.display-results {
-    display: block;
-}
-
-.govuk-panel--confirmation .govuk-table {
-    color: colours.$govuk-confirmation-colour
-}
-
-.bottom-margin-10 {
-    margin-bottom: 10px;
-    display: block;
-}
-
-.autocomplete__menu {
-    font-family: colours.$govuk-font-family;
-}
-
-
-.sidebarNav .popularActivities {
-    margin-bottom: 30px;
-    border-top: 4px solid colours.$govuk-link-colour;
-}
-
-    .sidebarNav .popularActivities h3 {
-        font-family: colours.$govuk-font-family;
-    }
-
-    .sidebarNav .popularActivities ul {
-        padding-inline-start: 0px;
-    }
-
-    .sidebarNav .popularActivities li {
-        list-style: none;
-        margin-bottom: 20px;
-    }
-
-
-
-      
-*/
