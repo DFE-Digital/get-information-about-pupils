@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using DfE.GIAP.Core.Downloads.Application.DataDownloads.Aggregators;
-using DfE.GIAP.Core.Downloads.Application.DataDownloads.FileExports;
 using DfE.GIAP.Core.Downloads.Application.Enums;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets.DataDownloads.Aggregators;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets.DataDownloads.FileExports;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.UseCases.DownloadPupilDatasets;
 

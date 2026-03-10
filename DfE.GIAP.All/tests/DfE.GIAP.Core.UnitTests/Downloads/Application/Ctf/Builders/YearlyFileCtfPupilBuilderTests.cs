@@ -1,8 +1,8 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
-using DfE.GIAP.Core.Downloads.Application.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Builders;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Builders;
 

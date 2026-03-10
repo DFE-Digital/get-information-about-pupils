@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Context;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Builders;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Context;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Builders;
 

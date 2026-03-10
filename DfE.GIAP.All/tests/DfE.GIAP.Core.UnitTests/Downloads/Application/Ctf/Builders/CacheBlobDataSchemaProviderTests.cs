@@ -1,8 +1,8 @@
 ﻿using System.Text;
 using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Options;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Builders;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Options;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Builders;

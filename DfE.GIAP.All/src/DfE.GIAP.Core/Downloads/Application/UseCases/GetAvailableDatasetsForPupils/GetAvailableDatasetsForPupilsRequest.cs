@@ -1,6 +1,6 @@
 ﻿using DfE.GIAP.Core.Common.Application;
-using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
 using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils.Availability.Access.Policies;
 
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils;
 
