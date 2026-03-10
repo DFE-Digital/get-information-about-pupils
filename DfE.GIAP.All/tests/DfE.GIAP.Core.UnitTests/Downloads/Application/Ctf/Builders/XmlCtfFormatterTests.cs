@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Formatters;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Models;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Formatters;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Builders;
 

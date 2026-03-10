@@ -1,6 +1,6 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
-using DfE.GIAP.Core.Downloads.Application.Availability.Access.Rules;
-using DfE.GIAP.Core.Downloads.Application.Enums;
+﻿using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils.Availability.Access.Policies;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils.Availability.Access.Rules;
 using DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Datasets.Access.Policies;

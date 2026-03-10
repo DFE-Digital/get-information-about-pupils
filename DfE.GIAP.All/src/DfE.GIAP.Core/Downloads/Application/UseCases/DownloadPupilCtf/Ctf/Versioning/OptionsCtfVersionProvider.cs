@@ -1,0 +1,17 @@
+﻿using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Options;
+using Microsoft.Extensions.Options;
+
+namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Versioning;
+
+public class OptionsCtfVersionProvider : ICtfVersionProvider
+{
+    private readonly CtfOptions _options;
+
+    public OptionsCtfVersionProvider(IOptions<CtfOptions> options)
+    {
+        _options = options.Value;
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(_options.Version);
+    }
+
+    public string GetVersion() => _options.Version;
+}

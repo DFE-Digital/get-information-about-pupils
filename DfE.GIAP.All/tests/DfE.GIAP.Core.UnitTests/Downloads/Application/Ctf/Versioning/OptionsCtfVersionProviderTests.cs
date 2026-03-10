@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Options;
-using DfE.GIAP.Core.Downloads.Application.Ctf.Versioning;
+﻿using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Options;
+using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Versioning;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Versioning;
