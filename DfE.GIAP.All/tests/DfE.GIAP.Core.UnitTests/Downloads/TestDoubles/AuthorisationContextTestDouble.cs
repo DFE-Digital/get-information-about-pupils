@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Availability.Access.Policies;
+﻿using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils.Availability.Access.Policies;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 

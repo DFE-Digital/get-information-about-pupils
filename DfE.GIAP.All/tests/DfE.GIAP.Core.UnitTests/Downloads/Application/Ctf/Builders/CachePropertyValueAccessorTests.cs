@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Ctf.Builders;
+﻿using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Builders;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Builders;
 

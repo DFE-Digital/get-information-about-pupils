@@ -1,5 +1,5 @@
-﻿using DfE.GIAP.Core.Downloads.Application.Availability.Handlers;
-using DfE.GIAP.Core.Downloads.Application.Enums;
+﻿using DfE.GIAP.Core.Downloads.Application.Enums;
+using DfE.GIAP.Core.Downloads.Application.UseCases.GetAvailableDatasetsForPupils.Availability.Handlers;
 
 namespace DfE.GIAP.Core.UnitTests.Downloads.TestDoubles;
 
