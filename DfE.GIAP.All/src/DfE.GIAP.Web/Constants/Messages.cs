@@ -6,8 +6,6 @@ public static class Messages
     {
         public static class Errors
         {
-            public const string NoAdminSelection = "You have not selected an admin option";
-            public const string NoContinueSelection = "Please select an option";
             public const string MyPupilListLimitExceeded = "You have reached the limit for my pupil list, please contact the Department for Education to increase this";
             public const string TitleLength = "Title must be must be 64 characters or fewer";
             public const string TitleRequired = "Title must be entered";
@@ -58,7 +56,6 @@ public static class Messages
             public const string NoDataForSelectedPupils = "No pupil data of the requested type exists for the selected pupils";
             public const string NoPupilSelected = "No pupil was selected to download";
             public const string NoLearnerSelected = "No learner was selected to download";
-            public const string UnknownDownloadType = "An unknown download data type was provided";
         }
     }
 }

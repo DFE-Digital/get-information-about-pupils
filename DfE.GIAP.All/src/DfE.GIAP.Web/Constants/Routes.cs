@@ -15,7 +15,6 @@ public static class Routes
         public const string UserWithNoRole = "user-with-no-role";
         public const string PupilPremium = "pupil-premium";
         public const string Search = "search";
-        public const string SimulateError = "simulate-error";
     }
 
     public static class Authentication
@@ -27,10 +26,6 @@ public static class Routes
     public static class DownloadCommonTransferFile
     {
         public const string DownloadCommonTransferFileAction = "download-ctf";
-        public const string DownloadCTFNoDataReturn = "DownloadCTFNoDataReturn";
-        public const string RedirectDownloadCTF = "download-ctf";
-        public const string DownloadCommonTransferFileDataNonUPN = "download-ctf-non-upn";
-        public const string DownloadNpdNonUpnCommonTransferFileAction = "npd-non-upn-download-ctf";
 
     }
 
@@ -45,11 +40,6 @@ public static class Routes
     {
         public const string PreparedDownloadsController = "data-download";
         public const string DownloadPrePreparedFileAction = "data-download";
-    }
-
-    public static class Admin
-    {
-        public const string AdminOptions = "admin/admin-options";
     }
 
     public static class MyPupilList
@@ -81,7 +71,6 @@ public static class Routes
     {
         public const string NationalPupilDatabaseLearnerNumber = "national-pupil-database";
         public const string NationalPupilDatabaseNonUPN = "npd-nonupn";
-        public const string NationalPupilDatabaseLearnerNumberWithPage = "national-pupil-database/{pageNumber:int?}";
         public const string LearnerNumberDownloadFile = "download-file";
         public const string LearnerNumberDownloadRequest = "download-upn";
         public const string LearnerTextDataDownloadRequest = "download-non-upn";
@@ -95,7 +84,6 @@ public static class Routes
         public const string NonUpnForenameFilter = "/search/npd-nonupn/forename-filter";
         public const string NonUpnMiddlenameFilter = "/search/npd-nonupn/middlename-filter";
         public const string NonUpnSurnameFilter = "/search/npd-nonupn/surname-filter";
-        public const string NonUpnNationalPupilDatabaseReturn = "NonUpnNationalPupilDatabaseReturn";
     }
 
     public static class PupilPremium
@@ -107,12 +95,9 @@ public static class Routes
         public const string NonUpnSexFilter = "/search/pp-nonupn/sex-filter";
         public const string NonUpnForenameFilter = "/search/pp-nonupn/forename-filter";
         public const string NonUpnMiddlenameFilter = "/search/pp-nonupn/middlename-filter";
-        public const string DownloadSelectedPupilPremiumDatabaseData = "download";
-        public const string DownloadSelectedPupilPremiumNonUpnDatabaseData = "download-pupilpremium-nonpun";
         public const string LearnerNumberDownloadRequest = "download-pp-upn";
         public const string LearnerTextDownloadRequest = "download-pp-nonupn";
         public const string DownloadPupilPremiumFile = "pp-download-file";
-        public const string NonUpnPupilPremiumDatabaseReturn = "NonUpnPupilPremiumDatabaseReturn";
         public const string DownloadNonUPNConfirmationReturn = "pp-nonupn-starred-pupil-confirmation";
         public const string DownloadCancellationReturn = "pp-nonupn-starred-pupil-cancellation";
     }
