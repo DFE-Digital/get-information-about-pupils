@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets.DataDownloads.DownloadOutputs;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets.DataDownloads.DownloadOutputs;
 
 public class MTCOutputRecord
 {
@@ -14,6 +16,7 @@ public class MTCOutputRecord
     public string? ESTAB { get; set; }
     public string? LAESTAB { get; set; }
     public string? URN { get; set; }
+    [Display(Name = "ToE_Code")]
     public string? ToECode { get; set; }
     public string? FormMark { get; set; }
     public string? PupilStatus { get; set; }
