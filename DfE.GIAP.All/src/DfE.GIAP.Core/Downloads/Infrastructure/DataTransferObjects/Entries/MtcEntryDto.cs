@@ -40,7 +40,7 @@ public class MtcEntryDto
     [JsonProperty("URN")]
     public string? URN { get; set; }
 
-    [JsonProperty("ToECode")]
+    [JsonProperty("ToE_Code")]
     public string? ToECode { get; set; }
 
     [JsonProperty("FormMark")]
