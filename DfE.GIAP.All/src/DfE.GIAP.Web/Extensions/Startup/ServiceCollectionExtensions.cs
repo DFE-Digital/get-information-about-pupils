@@ -107,6 +107,7 @@ public static class ServiceCollectionExtensions
         services.AddSession(options =>
         {
             options.Cookie.IsEssential = true;
+            options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
 
