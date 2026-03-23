@@ -106,9 +106,12 @@ public static class ServiceCollectionExtensions
     {
         services.AddSession(options =>
         {
+            options.IdleTimeout = TimeSpan.FromMinutes(10);
+            options.Cookie.MaxAge = TimeSpan.FromMinutes(10);
             options.Cookie.IsEssential = true;
             options.Cookie.HttpOnly = true;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.SameSite = SameSiteMode.Strict;
         });
 
         services.Configure<CookiePolicyOptions>(options =>
