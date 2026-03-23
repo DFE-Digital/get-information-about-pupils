@@ -1,9 +1,5 @@
 ﻿@model NewsViewModel
 
-@{
-    int index = 0;
-}
-
 <div>
     @foreach (var article in Model.NewsArticles)
     {
@@ -16,20 +12,19 @@
                     </strong>
                 }
                 <h2 class="govuk-heading-m govuk-!-margin-top-1 govuk-!-text-break-word">
-                    @Html.Raw(article.Title)
+                    @article.Title
                     <br />
                     <span class="govuk-body-s text-secondary">
-                        @Html.Raw(article.ModifiedDate.ToString("dddd, dd MMMM yyyy"))
+                        @article.ModifiedDate.ToString("dddd, dd MMMM yyyy")
                     </span>
                 </h2>
 
-                <p class="govuk-body govuk-!-text-break-word" )>
-                    @Html.Raw(article.Body)
+                <p class="govuk-body govuk-!-text-break-word">
+                    @article.Body
                 </p>
             </div>
         </div>
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        index++;
     }
 </div>

@@ -1,4 +1,5 @@
 ﻿using DfE.GIAP.Core.Common.Application;
+using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.NewsArticles.Application.Models;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Constants;
@@ -13,6 +14,7 @@ namespace DfE.GIAP.Web.Tests.Features;
 [Trait("Category", "News Controller Unit Tests")]
 public class NewsControllerTests
 {
+    private readonly Mock<ITextSanitiser> _sanitiserMock = new();
 
     [Fact]
     public async Task IndexReturnsAViewWithPublicationData()
@@ -42,7 +44,7 @@ public class NewsControllerTests
 
         ISessionProvider _sessionProvider = new Mock<ISessionProvider>().Object;
 
-        NewsController controller = new(_sessionProvider, mockGetNewsArticlesUseCase.Object);
+        NewsController controller = new(_sessionProvider, _sanitiserMock.Object, mockGetNewsArticlesUseCase.Object);
 
         // Act
         IActionResult result = await controller.Index();
@@ -65,7 +67,7 @@ public class NewsControllerTests
         Mock<ISessionProvider> sessionProvider = new Mock<ISessionProvider>();
         sessionProvider.Setup(x => x.ContainsSessionKey(SessionKeys.ShowNewsBannerKey)).Returns(true);
 
-        NewsController controller = new(sessionProvider.Object, useCase.Object);
+        NewsController controller = new(sessionProvider.Object, _sanitiserMock.Object, useCase.Object);
 
         // Act
         await controller.Index();
@@ -82,7 +84,7 @@ public class NewsControllerTests
         Mock<ISessionProvider> sessionProvider = new();
         sessionProvider.Setup(x => x.ContainsSessionKey(SessionKeys.ShowNewsBannerKey)).Returns(true);
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> useCase = new Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>();
-        NewsController controller = new(sessionProvider.Object, useCase.Object);
+        NewsController controller = new(sessionProvider.Object, _sanitiserMock.Object, useCase.Object);
 
         Mock<IUrlHelper> urlHelper = new Mock<IUrlHelper>();
         urlHelper.Setup(x => x.IsLocalUrl("/local")).Returns(true);
@@ -104,7 +106,7 @@ public class NewsControllerTests
         Mock<ISessionProvider> sessionProvider = new();
         sessionProvider.Setup(x => x.ContainsSessionKey(SessionKeys.ShowNewsBannerKey)).Returns(true);
         Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>> useCase = new Mock<IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse>>();
-        NewsController controller = new(sessionProvider.Object, useCase.Object);
+        NewsController controller = new(sessionProvider.Object, _sanitiserMock.Object, useCase.Object);
 
         Mock<IUrlHelper> urlHelper = new Mock<IUrlHelper>();
         urlHelper.Setup(x => x.IsLocalUrl(It.IsAny<string>())).Returns(false);
