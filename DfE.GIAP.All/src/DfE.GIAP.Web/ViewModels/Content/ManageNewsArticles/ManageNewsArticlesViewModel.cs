@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace DfE.GIAP.Web.ViewModels.Admin.ManageNewsArticles;
+namespace DfE.GIAP.Web.ViewModels.Content.ManageNewsArticles;
 
 public class ManageNewsArticlesViewModel
 {

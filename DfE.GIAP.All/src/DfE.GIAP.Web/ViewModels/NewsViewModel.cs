@@ -6,5 +6,5 @@ namespace DfE.GIAP.Web.ViewModels;
 [ExcludeFromCodeCoverage]
 public class NewsViewModel
 {
-    public IEnumerable<NewsArticle> NewsArticles { get; set; }
+    public IEnumerable<NewsArticleViewModel> NewsArticles { get; set; }
 }
