@@ -6,8 +6,6 @@ public static class ApplicationLabels
     public const string AddSelectedToMyPupilListLink = "Add to My pupil list";
     public const string RemoveSelectedToMyPupilListLink = "Remove from My pupil list";
 
-    public const string CSVDownloadFormat = "CSV";
-
     public const string DownloadSelectedNationalPupilDatabaseDataLink = "Download NPD data";
     public const string DownloadSelectedPupilPremiumDataLink = "Download pupil premium data";
     public const string DownloadSelectedFurtherEducationLink = "Download FE data";
@@ -24,6 +22,4 @@ public static class ApplicationLabels
     public const string SearchMyPupilListPageHeading = "My pupil list";
     public const string SearchMyPupilListNoPupilFound = "You have no pupils in your list yet";
     public const string MyPupilListNoMorePupils = "You have reached the end of your pupil list";
-
-    public const string TABDownloadFormat = "TAB";
 }
