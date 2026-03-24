@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.Common.Application;
+﻿using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 using DfE.GIAP.Core.NewsArticles.Application.Enums;
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
 using DfE.GIAP.Web.Constants;
@@ -12,14 +12,19 @@ namespace DfE.GIAP.Web.Features;
 public class NewsController : Controller
 {
     private readonly ISessionProvider _sessionProvider;
+    private readonly ITextSanitiser _textSanitiser;
     private readonly IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> _getNewsArticlesUseCase;
 
     public NewsController(
         ISessionProvider sessionProvider,
+        ITextSanitiser textSanitiser,
         IUseCase<GetNewsArticlesRequest, GetNewsArticlesResponse> getNewsArticleUseCase)
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
+
+        ArgumentNullException.ThrowIfNull(textSanitiser);
+        _textSanitiser = textSanitiser;
 
         ArgumentNullException.ThrowIfNull(getNewsArticleUseCase);
         _getNewsArticlesUseCase = getNewsArticleUseCase;
@@ -33,7 +38,16 @@ public class NewsController : Controller
 
         NewsViewModel model = new()
         {
-            NewsArticles = response.NewsArticles,
+            NewsArticles = response.NewsArticles.Select(n => new NewsArticleViewModel()
+            {
+                Id = n.Id.Value,
+                Title = _textSanitiser.Sanitise(n.Title).Value,
+                Body = _textSanitiser.Sanitise(n.Body).Value,
+                Pinned = n.Pinned,
+                Published = n.Published,
+                CreatedDate = n.CreatedDate,
+                ModifiedDate = n.ModifiedDate
+            })
         };
 
         if (_sessionProvider.ContainsSessionKey(SessionKeys.ShowNewsBannerKey))

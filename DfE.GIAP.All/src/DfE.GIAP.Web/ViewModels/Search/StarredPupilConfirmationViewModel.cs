@@ -6,7 +6,6 @@ namespace DfE.GIAP.Web.ViewModels.Search;
 [ExcludeFromCodeCoverage]
 public class StarredPupilConfirmationViewModel
 {
-    public string PageTitle { get; set; }
     public string SelectedPupil { get; set; }
     public DownloadType DownloadType { get; set; }
     public bool ConfirmationGiven { get; set; }
