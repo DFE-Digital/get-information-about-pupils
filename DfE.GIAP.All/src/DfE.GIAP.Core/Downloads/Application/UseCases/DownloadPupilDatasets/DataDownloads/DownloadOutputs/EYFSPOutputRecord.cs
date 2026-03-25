@@ -20,6 +20,23 @@ public class EYFSPOutputRecord
     public string? FSP_LLSOA11 { get; set; }
     public string? FSP_IDACISCORE { get; set; }
     public string? FSP_IDACIRANK { get; set; }
+    public string? FSP_COM_G01 { get; set; }
+    public string? FSP_COM_G02 { get; set; }
+    public string? FSP_COM_G03 { get; set; }
+    public string? FSP_PHY_G04 { get; set; }
+    public string? FSP_PHY_G05 { get; set; }
+    public string? FSP_PSE_G06 { get; set; }
+    public string? FSP_PSE_G07 { get; set; }
+    public string? FSP_PSE_G08 { get; set; }
+    public string? FSP_LIT_G09 { get; set; }
+    public string? FSP_LIT_G10 { get; set; }
+    public string? FSP_MAT_G11 { get; set; }
+    public string? FSP_MAT_G12 { get; set; }
+    public string? FSP_UTW_G13 { get; set; }
+    public string? FSP_UTW_G14 { get; set; }
+    public string? FSP_UTW_G15 { get; set; }
+    public string? FSP_EXP_G16 { get; set; }
+    public string? FSP_EXP_G17 { get; set; }
     public string? FSP_COM_E01 { get; set; }
     public string? FSP_COM_E02 { get; set; }
     public string? FSP_PSE_E03 { get; set; }
