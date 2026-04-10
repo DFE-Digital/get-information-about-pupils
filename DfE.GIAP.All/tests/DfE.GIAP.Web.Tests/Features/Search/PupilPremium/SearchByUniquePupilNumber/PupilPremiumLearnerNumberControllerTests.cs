@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
@@ -1410,9 +1411,10 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
         downloadPupilPremiumDataServiceMock
             .Setup(service => service.DownloadAsync(
                 It.IsAny<IEnumerable<string>>(),
-                It.IsAny<Core.Common.CrossCutting.Logging.Events.DownloadOperationType>(),
+                It.IsAny<DownloadOperationType>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
+        Mock<IEventLogger> mockEventLogger = new();
 
         return new PupilPremiumLearnerNumberSearchController(
             _mockLogger,
@@ -1424,7 +1426,8 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
             jsonSerializerMock.Object,
             downloadPupilPremiumDataServiceMock.Object,
             _searchindexOptionsProvider.Object,
-            _criteriaOptionsToCriteriaMock.Object)
+            _criteriaOptionsToCriteriaMock.Object,
+            mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {

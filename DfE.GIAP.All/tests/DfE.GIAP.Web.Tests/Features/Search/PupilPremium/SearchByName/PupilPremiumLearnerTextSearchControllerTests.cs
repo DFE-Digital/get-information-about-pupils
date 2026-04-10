@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -1337,6 +1338,7 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
 
+        Mock<IEventLogger> mockEventLogger = new();
 
         return new PupilPremiumLearnerTextSearchController(
             _mockLogger,
@@ -1350,7 +1352,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _sortOrderFactoryMock.Object,
             _mockFiltersRequestBuilder,
             _searchindexOptionsProvider.Object,
-            _criteriaOptionsToCriteriaMock.Object)
+            _criteriaOptionsToCriteriaMock.Object,
+            mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {
