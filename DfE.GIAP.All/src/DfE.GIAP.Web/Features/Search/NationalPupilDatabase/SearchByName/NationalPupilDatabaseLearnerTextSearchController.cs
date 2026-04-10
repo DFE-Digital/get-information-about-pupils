@@ -35,7 +35,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
 {
     private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-    private readonly ILogger<NationalPupilDatabaseLearnerTextSearchController> _logger;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
 
@@ -90,7 +89,7 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     private readonly ISearchIndexOptionsProvider _searchIndexOptionsProvider;
     private readonly IMapper<SearchCriteriaOptions, SearchCriteria> _criteriaOptionsToCriteriaMapper;
 
-    public NationalPupilDatabaseLearnerTextSearchController(ILogger<NationalPupilDatabaseLearnerTextSearchController> logger,
+    public NationalPupilDatabaseLearnerTextSearchController(
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
@@ -106,9 +105,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper,
         IUseCase<DownloadPupilCtfRequest, DownloadPupilCtfResponse> downloadPupilCtfUseCase)
     {
-        ArgumentNullException.ThrowIfNull(logger);
-        _logger = logger;
-
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
 
@@ -156,7 +152,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
     [HttpGet]
     public async Task<IActionResult> NonUpnNationalPupilDatabase(bool? returnToSearch)
     {
-        _logger.LogInformation("National pupil database NonUpn GET method called");
         return await Search(returnToSearch);
     }
 
@@ -172,7 +167,6 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        _logger.LogInformation("National pupil database NonUpn POST method called");
         model.ShowHiddenUPNWarningMessage = true;
 
         return await Search(
@@ -739,6 +733,11 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
         }
 
+        List<CurrentFilterDetail> currentFilters =
+           SetCurrentFilters(model, surnameFilter, middlenameFilter, forenameFilter, searchByRemove);
+        bool isCustomSearch = !string.IsNullOrWhiteSpace(model.SearchText);
+        Dictionary<string, bool> flags = ConvertFiltersToFlags(currentFilters);
+        _eventLogger.LogSearch(SearchIdentifierType.UPN, isCustomSearch, flags);
         return View(SearchView, model);
     }
 
@@ -1136,6 +1135,22 @@ public sealed class NationalPupilDatabaseLearnerTextSearchController : Controlle
             _selectionManager.Clear();
             _selectionManager.Add(selected);
         }
+    }
+
+    public static Dictionary<string, bool> ConvertFiltersToFlags(List<CurrentFilterDetail> filters)
+    {
+        Dictionary<string, bool> flags = new();
+
+        if (filters is null)
+            return flags;
+
+        foreach (CurrentFilterDetail filerDetails in filters)
+        {
+            // True if the filter has at least one value
+            flags[filerDetails.FilterType.ToString()] = true;
+        }
+
+        return flags;
     }
     #endregion
 }
