@@ -293,7 +293,7 @@ public class FELearnerTextSearchController : Controller
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
+                            DownloadOperationType.Search,
                             DownloadFileFormat.CSV,
                             DownloadEventType.FE,
                             loggingBatchId,
