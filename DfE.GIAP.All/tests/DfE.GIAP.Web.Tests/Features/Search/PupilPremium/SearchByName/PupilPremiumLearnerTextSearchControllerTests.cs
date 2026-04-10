@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilDatasets;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -25,7 +26,6 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
 
@@ -33,7 +33,6 @@ namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByName;
 
 public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
-    private readonly ILogger<PupilPremiumLearnerTextSearchController> _mockLogger = Substitute.For<ILogger<PupilPremiumLearnerTextSearchController>>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
@@ -1337,9 +1336,9 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(responseStubNoData);
 
+        Mock<IEventLogger> mockEventLogger = new();
 
         return new PupilPremiumLearnerTextSearchController(
-            _mockLogger,
             _mockSelectionManager,
             _mockSessionProvider.Object,
             new Mock<IUseCaseRequestOnly<AddPupilsToMyPupilsRequest>>().Object,
@@ -1350,7 +1349,8 @@ public sealed class PupilPremiumLearnerTextSearchControllerTests : IClassFixture
             _sortOrderFactoryMock.Object,
             _mockFiltersRequestBuilder,
             _searchindexOptionsProvider.Object,
-            _criteriaOptionsToCriteriaMock.Object)
+            _criteriaOptionsToCriteriaMock.Object,
+            mockEventLogger.Object)
         {
             ControllerContext = new ControllerContext()
             {
