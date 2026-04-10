@@ -44,7 +44,6 @@ public class FELearnerTextSearchController : Controller
     private readonly ISessionProvider _sessionProvider;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
-    private readonly ILogger<FELearnerTextSearchController> _logger;
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly IUseCase<
         FurtherEducationSearchByNameRequest,
@@ -81,7 +80,6 @@ public class FELearnerTextSearchController : Controller
             IList<FilterRequest>> filtersRequestMapper,
         ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestBuilder,
-        ILogger<FELearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
@@ -91,9 +89,6 @@ public class FELearnerTextSearchController : Controller
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
-
-        ArgumentNullException.ThrowIfNull(logger);
-        _logger = logger;
 
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
@@ -144,7 +139,6 @@ public class FELearnerTextSearchController : Controller
             return RedirectToAction("Error", "Home");
         }
 
-        _logger.LogInformation("Further education non ULN search GET method called");
         return await Search(returnToSearch);
     }
 
@@ -160,7 +154,6 @@ public class FELearnerTextSearchController : Controller
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        _logger.LogInformation("Further education non ULN search POST method called");
         model.ShowHiddenUPNWarningMessage = false;
 
         return await Search(
@@ -281,7 +274,7 @@ public class FELearnerTextSearchController : Controller
                 DownloadPupilDataRequest request = new(
                     SelectedPupils: selectedPupils,
                     SelectedDatasets: selectedDatasets,
-                    DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
+                    DownloadType: PupilDownloadType.FurtherEducation,
                     FileFormat: FileFormat.Csv);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
@@ -293,7 +286,7 @@ public class FELearnerTextSearchController : Controller
                     if (Enum.TryParse(dataset, out Core.Common.CrossCutting.Logging.Events.Dataset datasetEnum))
                     {
                         _eventLogger.LogDownload(
-                            Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
+                            DownloadOperationType.Search,
                             DownloadFileFormat.CSV,
                             DownloadEventType.FE,
                             loggingBatchId,

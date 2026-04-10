@@ -25,7 +25,6 @@ using DfE.GIAP.Web.ViewModels.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
 
@@ -34,7 +33,6 @@ namespace DfE.GIAP.Web.Tests.Features.Search.FurtherEducation.SearchByName;
 public sealed class FELearnerTextSearchControllerTests : IClassFixture<PaginatedResultsFake>, IClassFixture<SearchFiltersFakeData>
 {
     private readonly ISessionProvider _sessionProvider = Substitute.For<ISessionProvider>();
-    private readonly ILogger<FELearnerTextSearchController> _mockLogger = Substitute.For<ILogger<FELearnerTextSearchController>>();
     private readonly ITextSearchSelectionManager _mockSelectionManager = Substitute.For<ITextSearchSelectionManager>();
     private readonly ITempDataProvider _mockTempDataProvider = Substitute.For<ITempDataProvider>();
     private readonly SessionFake _mockSession = new();
@@ -1191,7 +1189,6 @@ public sealed class FELearnerTextSearchControllerTests : IClassFixture<Paginated
             _mockFiltersRequestMapper,
             _sortOrderFactoryMock.Object,
             _mockFiltersRequestBuilder,
-            _mockLogger,
             _mockSelectionManager,
             mockEventLogger.Object,
             mockGetAvailableDatasetsForPupilsUseCase.Object,
