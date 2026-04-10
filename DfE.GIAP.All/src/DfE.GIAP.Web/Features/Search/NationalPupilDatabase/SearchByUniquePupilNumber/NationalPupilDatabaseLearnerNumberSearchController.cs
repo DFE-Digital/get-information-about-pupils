@@ -130,7 +130,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     [HttpGet]
     public async Task<IActionResult> NationalPupilDatabase(bool? returnToSearch)
     {
-        _logger.LogInformation("National pupil database Upn GET method called");
         return await Search(returnToSearch);
     }
 
@@ -144,7 +143,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        _logger.LogInformation("National pupil database Upn POST method called");
 
         return await Search(
             model,
@@ -244,7 +242,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
         DownloadPupilCtfResponse response = await _downloadPupilCtfUseCase.HandleRequestAsync(request);
 
-        _eventLogger.LogDownload(Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
+        _eventLogger.LogDownload(DownloadOperationType.Search, DownloadFileFormat.XML, DownloadEventType.CTF);
 
         return File(
             fileStream: response.FileStream,
@@ -428,7 +426,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
 
     private async Task<IActionResult> Search(LearnerNumberSearchViewModel model, int pageNumber, string sortField = "", string sortDirection = "", bool hasQueryItem = false, bool calledByController = false, bool resetSelections = false)
     {
-        _logger.LogInformation("BaseLearnerNumberController POST method called");
         if (resetSelections)
         {
             _selectionManager.Clear();
@@ -491,9 +488,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         }
 
         HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);
-
-        _logger.LogInformation("BaseLearnerNumberController POST search method invoked");
-
+        _eventLogger.LogSearch(SearchIdentifierType.UPN, false, new()); 
         return View(Global.SearchView, model);
     }
 
