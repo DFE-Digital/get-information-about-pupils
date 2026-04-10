@@ -31,7 +31,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 {
     private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-    private readonly ILogger<PupilPremiumLearnerTextSearchController> _logger;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
@@ -75,7 +74,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
     private readonly IEventLogger _eventLogger;
 
     public PupilPremiumLearnerTextSearchController(
-        ILogger<PupilPremiumLearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -89,9 +87,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper,
         IEventLogger eventLogger)
     {
-        ArgumentNullException.ThrowIfNull(logger);
-        _logger = logger;
-
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
 

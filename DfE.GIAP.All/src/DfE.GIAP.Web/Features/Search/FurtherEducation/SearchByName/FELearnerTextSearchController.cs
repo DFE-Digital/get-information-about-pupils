@@ -44,7 +44,6 @@ public class FELearnerTextSearchController : Controller
     private readonly ISessionProvider _sessionProvider;
     private readonly IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> _getAvailableDatasetsForPupilsUseCase;
     private readonly IEventLogger _eventLogger;
-    private readonly ILogger<FELearnerTextSearchController> _logger;
     protected readonly ITextSearchSelectionManager _selectionManager;
     private readonly IUseCase<
         FurtherEducationSearchByNameRequest,
@@ -81,7 +80,6 @@ public class FELearnerTextSearchController : Controller
             IList<FilterRequest>> filtersRequestMapper,
         ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestBuilder,
-        ILogger<FELearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
         IEventLogger eventLogger,
         IUseCase<GetAvailableDatasetsForPupilsRequest, GetAvailableDatasetsForPupilsResponse> getAvailableDatasetsForPupilsUseCase,
@@ -91,9 +89,6 @@ public class FELearnerTextSearchController : Controller
     {
         ArgumentNullException.ThrowIfNull(sessionProvider);
         _sessionProvider = sessionProvider;
-
-        ArgumentNullException.ThrowIfNull(logger);
-        _logger = logger;
 
         ArgumentNullException.ThrowIfNull(furtherEducationSearchUseCase);
         _furtherEducationSearchUseCase = furtherEducationSearchUseCase;
