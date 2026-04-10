@@ -29,7 +29,7 @@ internal sealed class DownloadPupilPremiumPupilDataService : IDownloadPupilPremi
         DownloadPupilDataRequest request = new(
           SelectedPupils: pupilUpns.Where(t => !string.IsNullOrWhiteSpace(t)),
           SelectedDatasets: [Core.Downloads.Application.Enums.Dataset.PP],
-          DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.PupilPremium,
+          DownloadType: PupilDownloadType.PupilPremium,
           FileFormat: FileFormat.Csv);
 
         DownloadPupilDataResponse response = await _downloadDataUseCase.HandleRequestAsync(request);

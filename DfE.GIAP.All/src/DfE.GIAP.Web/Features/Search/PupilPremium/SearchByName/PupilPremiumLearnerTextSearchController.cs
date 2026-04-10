@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Filter;
@@ -30,7 +31,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 {
     private const int PAGESIZE = 20;
     private const string PersistedSelectedSexFiltersKey = "PersistedSelectedSexFilters";
-    private readonly ILogger<PupilPremiumLearnerTextSearchController> _logger;
     private readonly ITextSearchSelectionManager _selectionManager;
     private readonly ISessionProvider _sessionProvider;
     private readonly IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> _addPupilsToMyPupilsUseCase;
@@ -71,9 +71,9 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
     public string SearchAction => Global.PPNonUpnAction;
     public string SearchController => Global.PPTextSearchController;
+    private readonly IEventLogger _eventLogger;
 
     public PupilPremiumLearnerTextSearchController(
-        ILogger<PupilPremiumLearnerTextSearchController> logger,
         ITextSearchSelectionManager selectionManager,
         ISessionProvider sessionProvider,
         IUseCaseRequestOnly<AddPupilsToMyPupilsRequest> addPupilsToMyPupilsUseCase,
@@ -84,11 +84,9 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         ISortOrderFactory sortOrderFactory,
         IFiltersRequestFactory filtersRequestFactory,
         ISearchIndexOptionsProvider searchIndexOptionsProvider,
-        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper,
+        IEventLogger eventLogger)
     {
-        ArgumentNullException.ThrowIfNull(logger);
-        _logger = logger;
-
         ArgumentNullException.ThrowIfNull(selectionManager);
         _selectionManager = selectionManager;
 
@@ -121,13 +119,15 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(criteriaOptionsToCriteriaMapper);
         _criteriaOptionsToCriteriaMapper = criteriaOptionsToCriteriaMapper;
+
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
     [Route(Routes.PupilPremium.NonUPN)]
     [HttpGet]
     public async Task<IActionResult> NonUpnPupilPremiumDatabase(bool? returnToSearch)
     {
-        _logger.LogInformation("Pupil Premium NonUpn GET method called");
         return await Search(returnToSearch);
     }
 
@@ -142,7 +142,6 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
         [FromQuery] string sortField,
         [FromQuery] string sortDirection)
     {
-        _logger.LogInformation("Pupil Premium NonUpn POST method called");
         model.ShowHiddenUPNWarningMessage = true;
         return await Search(
             model,
@@ -366,7 +365,7 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         DownloadPupilPremiumFilesResponse result = await _downloadPupilPremiumDataForPupils.DownloadAsync(
             pupilUpns: [selectedPupil],
-            downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
+            downloadEventType: DownloadOperationType.Search,
             ctx);
 
         if (result.HasData)
@@ -563,11 +562,16 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         _sessionProvider.SetSessionValue(SearchSessionKey, model.SearchText);
 
-        if (model.SearchFilters != null)
+        if (model.SearchFilters is not null)
         {
             _sessionProvider.SetSessionValue(SearchFiltersSessionKey, model.SearchFilters);
         }
 
+        List<CurrentFilterDetail> currentFilters =
+           SetCurrentFilters(model, surnameFilter, middlenameFilter, forenameFilter, searchByRemove);
+        bool isCustomSearch = !string.IsNullOrWhiteSpace(model.SearchText);
+        Dictionary<string, bool> flags = ConvertFiltersToFlags(currentFilters);
+        _eventLogger.LogSearch(SearchIdentifierType.UPN, isCustomSearch, flags);
         return View(SearchView, model);
     }
 
@@ -1009,6 +1013,22 @@ public sealed class PupilPremiumLearnerTextSearchController : Controller
 
         }
 
+    }
+
+    public static Dictionary<string, bool> ConvertFiltersToFlags(List<CurrentFilterDetail> filters)
+    {
+        Dictionary<string, bool> flags = new();
+
+        if (filters is null)
+            return flags;
+
+        foreach (CurrentFilterDetail filerDetails in filters)
+        {
+            // True if the filter has at least one value
+            flags[filerDetails.FilterType.ToString()] = true;
+        }
+
+        return flags;
     }
 
     #endregion
