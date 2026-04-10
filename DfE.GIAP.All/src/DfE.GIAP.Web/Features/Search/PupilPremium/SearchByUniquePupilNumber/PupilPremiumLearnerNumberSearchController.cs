@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
 using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.Search.Application.Models.Search;
@@ -54,6 +55,8 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     public string SearchSessionSortField => "SearchPPUPN_SearchTextSortField";
     public string SearchSessionSortDirection => "SearchPPUPN_SearchTextSortDirection";
 
+    private readonly IEventLogger _eventLogger;
+
     public PupilPremiumLearnerNumberSearchController(
         ILogger<PupilPremiumLearnerNumberSearchController> logger,
         IUseCase<
@@ -68,7 +71,8 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         IJsonSerializer jsonSerializer,
         IDownloadPupilPremiumPupilDataService downloadPupilPremiumDataForPupilsService,
         ISearchIndexOptionsProvider searchIndexOptionsProvider,
-        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper)
+        IMapper<SearchCriteriaOptions, SearchCriteria> criteriaOptionsToCriteriaMapper,
+        IEventLogger eventLogger)
     {
         ArgumentNullException.ThrowIfNull(logger);
         _logger = logger;
@@ -99,6 +103,9 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
         ArgumentNullException.ThrowIfNull(learnerNumericSearchResponseToViewModelMapper);
         _learnerNumericSearchResponseToViewModelMapper = learnerNumericSearchResponseToViewModelMapper;
+
+        ArgumentNullException.ThrowIfNull(eventLogger);
+        _eventLogger = eventLogger;
     }
 
 
@@ -106,7 +113,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
     [HttpGet]
     public async Task<IActionResult> PupilPremium(bool? returnToSearch)
     {
-        _logger.LogInformation("Pupil Premium Upn GET method called");
         return await Search(returnToSearch);
     }
 
@@ -120,7 +126,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        _logger.LogInformation("Pupil Premium Upn POST method called");
         return await Search(
             model,
             pageNumber,
@@ -210,7 +215,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         DownloadPupilPremiumFilesResponse result =
             await _downloadPupilPremiumDataForPupilsService.DownloadAsync(
                 pupilUpns: selectedPupils,
-                downloadEventType: Core.Common.CrossCutting.Logging.Events.DownloadOperationType.Search,
+                downloadEventType: DownloadOperationType.Search,
                 ctx);
 
         if (result.HasData)
@@ -270,7 +275,6 @@ public class PupilPremiumLearnerNumberSearchController : Controller
 
     private async Task<IActionResult> Search(LearnerNumberSearchViewModel model, int pageNumber, string sortField = "", string sortDirection = "", bool hasQueryItem = false, bool calledByController = false, bool resetSelections = false)
     {
-        _logger.LogInformation("PupilPremium Search method called");
         if (resetSelections)
         {
             _selectionManager.Clear();
@@ -335,9 +339,7 @@ public class PupilPremiumLearnerNumberSearchController : Controller
         }
 
         HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);
-
-        _logger.LogInformation("PupilPremium Search method finished");
-
+        _eventLogger.LogSearch(SearchIdentifierType.UPN, false, new());
         return View(Global.SearchView, model);
     }
 

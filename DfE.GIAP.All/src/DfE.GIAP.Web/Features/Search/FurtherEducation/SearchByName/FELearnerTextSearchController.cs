@@ -144,7 +144,6 @@ public class FELearnerTextSearchController : Controller
             return RedirectToAction("Error", "Home");
         }
 
-        _logger.LogInformation("Further education non ULN search GET method called");
         return await Search(returnToSearch);
     }
 
@@ -160,7 +159,6 @@ public class FELearnerTextSearchController : Controller
         [FromQuery] string sortDirection,
         bool calledByController = false)
     {
-        _logger.LogInformation("Further education non ULN search POST method called");
         model.ShowHiddenUPNWarningMessage = false;
 
         return await Search(
@@ -281,7 +279,7 @@ public class FELearnerTextSearchController : Controller
                 DownloadPupilDataRequest request = new(
                     SelectedPupils: selectedPupils,
                     SelectedDatasets: selectedDatasets,
-                    DownloadType: Core.Downloads.Application.Enums.PupilDownloadType.FurtherEducation,
+                    DownloadType: PupilDownloadType.FurtherEducation,
                     FileFormat: FileFormat.Csv);
 
                 DownloadPupilDataResponse response = await _downloadPupilDataUseCase.HandleRequestAsync(request);
