@@ -488,7 +488,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         }
 
         HttpContext.Session.SetString(SearchSessionKey, model.LearnerNumber);
-        _eventLogger.LogSearch(SearchIdentifierType.UPN, false, new()); 
+        _eventLogger.LogSearch(SearchIdentifierType.UPN, false, new());
         return View(Global.SearchView, model);
     }
 

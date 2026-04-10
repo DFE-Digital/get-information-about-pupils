@@ -38,7 +38,7 @@ public sealed class PupilPremiumLearnerNumberControllerTests : IClassFixture<Pag
         PupilPremiumSearchByUniquePupilNumberRequest, SearchResponse<PupilPremiumLearners>>> _mockUseCase = new();
     private readonly SessionFake _mockSession = new();
     private readonly PaginatedResultsFake _paginatedResultsFake;
-
+    private readonly Mock<IEventLogger> _mockEventLogger = new();
     private readonly Mock<
         IMapper<
             PupilPremiumLearnerNumericSearchMappingContext, LearnerNumberSearchViewModel>> _mockLearnerNumberSearchResponseToViewModelMapper = new();
