@@ -359,55 +359,38 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches all history so SonarCloud can find the `main` branch
+          fetch-depth: 0
 
       - name: Download merged coverage report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: merged-coverage-report
           path: merged-coverage-reports
 
-      - name: Setup .NET SDK from global.json
-        uses: actions/setup-dotnet@v5
-
-      - name: Restore dotnet tools
-        run: dotnet tool restore
-        shell: bash
-
-      - name: Setup Java ${{ env.JAVA_VERSION }} # for sonarcloud
-        uses: actions/setup-java@v5
-        with:
-          distribution: "zulu"
-          java-version: ${{ env.JAVA_VERSION }}
-
-      - name: Begin SonarCloud analysis
-        # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
-        if: github.actor != 'dependabot[bot]'
-        shell: bash
+      - name: Add DfE NuGet Feed
         run: |
-          dotnet tool run dotnet-sonarscanner begin \
-            /k:"DFE-Digital_get-information-about-pupils" \
-            /o:"dfe-digital" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.coverageReportPaths=merged-coverage-reports/SonarQube.xml \
-            /d:sonar.coverage.exclusions=**/*.html,**/*.json,**/*.sql,**/*.js,**/*.ts,**/*.scss,**/wwwroot/**,**/Migrations/** \
-            /d:sonar.exclusions=**/*.html,**/*.json,**/wwwroot/**,**/Migrations/**,**/bin/**,**/obj/** \
-            /d:sonar.scanner.skipJreProvisioning=true \
-            /d:sonar.scanner.scanAll=false
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
 
-      - name: Build
-        uses: ./.github/actions/build
+      - name: Restore NuGet packages
+        run: dotnet restore ./DfE.GIAP.All/*.sln --configfile ./DfE.GIAP.All/nuget.config
+
+      - name: SonarCloud scan
+        if: github.actor != 'dependabot[bot]'
+        uses: aahmed-dfe/github-actions/sonarscan-dotnet@aa/sonar-scanner
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: End SonarCloud Scanner
-        # TODO fix in https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
-        if: ${{ github.actor != 'dependabot[bot]' && always() }}
-        shell: bash
-        run: dotnet tool run dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          sonarcloud-project-key: DFE-Digital_get-information-about-pupils
+          sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
+          use-global-json: true
+          coverage-report-path: merged-coverage-reports/SonarQube.xml
+          sonarscan-args: >
+            /d:sonar.scanner.scanAll=false
+          build-command: dotnet build ./DfE.GIAP.All/*.sln --no-restore --no-incremental
 
 
   ## Below are the "deployment" jobs.
