@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 using DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.Mappers;
+
 internal sealed class NationalPupilDatabaseLearnerDataTransferObjectToNationalPupilDatabaseLearnerMapper
     : IMapperWithResult<NationalPupilDatabaseLearnerDataTransferObject, NationalPupilDatabaseLearner>
 {

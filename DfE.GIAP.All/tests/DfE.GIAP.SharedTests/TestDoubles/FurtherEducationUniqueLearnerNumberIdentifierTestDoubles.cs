@@ -1,6 +1,7 @@
 ﻿using Bogus;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
+
 public static class FurtherEducationUniqueLearnerNumberIdentifierTestDoubles
 {
     /// <summary>

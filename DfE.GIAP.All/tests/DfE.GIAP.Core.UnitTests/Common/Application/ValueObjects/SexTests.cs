@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
+
 public sealed class SexTests
 {
     [Theory]

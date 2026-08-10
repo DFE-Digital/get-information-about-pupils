@@ -7,6 +7,7 @@ using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.PupilPremium;
+
 public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
 {
     private readonly PageablePupilPremiumSearchResultsToLearnerResultsMapper _searchResultsMapper;

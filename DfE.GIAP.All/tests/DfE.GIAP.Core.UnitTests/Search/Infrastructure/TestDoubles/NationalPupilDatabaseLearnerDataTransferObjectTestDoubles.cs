@@ -6,6 +6,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using DfE.GIAP.SharedTests.TestDoubles.Learner;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
+
 public static class NationalPupilDatabaseLearnerDataTransferObjectTestDoubles
 {
     public static NationalPupilDatabaseLearnerDataTransferObject Stub()

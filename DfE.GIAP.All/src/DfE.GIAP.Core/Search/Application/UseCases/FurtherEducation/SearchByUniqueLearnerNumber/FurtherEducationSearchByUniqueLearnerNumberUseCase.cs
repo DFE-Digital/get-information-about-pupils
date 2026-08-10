@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.SearchByUniqueLearnerNumber;
+
 internal sealed class FurtherEducationSearchByUniqueLearnerNumberUseCase : IUseCase<FurtherEducationSearchByUniqueLearnerNumberRequest, SearchResponse<FurtherEducationLearners>>
 {
     private readonly ISearchLearnersByIdentifierService<FurtherEducationLearners> _searchLearnerByIdentifierService;

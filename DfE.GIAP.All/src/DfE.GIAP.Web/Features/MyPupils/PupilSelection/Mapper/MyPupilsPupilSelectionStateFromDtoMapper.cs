@@ -2,6 +2,7 @@
 using DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper.DataTransferObjects;
 
 namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.Mapper;
+
 public sealed class MyPupilsPupilSelectionStateFromDtoMapper
     : IMapper<MyPupilsPupilSelectionStateDto, MyPupilsPupilSelectionState>
 {

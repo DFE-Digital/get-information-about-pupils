@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+
 internal static class IMyPupilsReadOnlyRepositoryTestDoubles
 {
     internal static Mock<IMyPupilsReadOnlyRepository> Default() => new();

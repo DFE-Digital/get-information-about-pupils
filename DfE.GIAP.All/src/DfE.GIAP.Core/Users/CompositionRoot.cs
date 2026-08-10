@@ -11,6 +11,7 @@ using DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.Users;
+
 public static class CompositionRoot
 {
     public static IServiceCollection AddUserDependencies(this IServiceCollection services)

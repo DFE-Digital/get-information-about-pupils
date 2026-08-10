@@ -3,6 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 
 namespace DfE.GIAP.Web.Features.MyPupils.Services.GetPupils.Mapper;
+
 internal sealed class MyPupilModelToMyPupilsPresentationPupilModelMapper : IMapper<MyPupilsModel, MyPupilsPresentationPupilModel>
 {
     public MyPupilsPresentationPupilModel Map(MyPupilsModel input)

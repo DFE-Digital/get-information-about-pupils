@@ -5,6 +5,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using User = DfE.GIAP.Core.Users.Application.Models.User;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories.Mappers;
+
 public sealed class UserDtoToUserMapperTests
 {
     [Fact]

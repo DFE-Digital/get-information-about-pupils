@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
 using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 
 namespace DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
+
 public sealed class MyPupilDtoBuilder
 {
     private const string DATE_OF_BIRTH_FORMAT = "yyyy-MM-dd";

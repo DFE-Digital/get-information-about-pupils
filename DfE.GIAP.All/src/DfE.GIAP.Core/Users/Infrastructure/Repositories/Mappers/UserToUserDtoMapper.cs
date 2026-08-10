@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Users.Application.Models;
 using DfE.GIAP.Core.Users.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.Users.Infrastructure.Repositories.Mappers;
+
 public sealed class UserToUserDtoMapper : IMapper<User, UserDto>
 {
     public UserDto Map(User input)

@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
+
 internal sealed class PaginatePupilsHandler : IPaginatePupilsHandler
 {
     public IEnumerable<Pupil> PaginatePupils(IEnumerable<Pupil> pupils, PaginationOptions options)

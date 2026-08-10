@@ -6,6 +6,7 @@ using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Infrastructure.BlobStorage;
+
 public sealed class AzureBlobStorageProviderTests
 {
     [Fact]

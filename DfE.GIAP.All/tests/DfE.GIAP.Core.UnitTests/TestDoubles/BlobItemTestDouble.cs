@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs.Models;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+
 public static class BlobItemTestDouble
 {
     public static BlobItem CreateItemWith(string name, string? contentType = null)

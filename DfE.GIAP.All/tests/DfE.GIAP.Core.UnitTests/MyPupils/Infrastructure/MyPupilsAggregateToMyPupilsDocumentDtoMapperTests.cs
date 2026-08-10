@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
+
 public sealed class MyPupilsAggregateToMyPupilsDocumentDtoMapperTests
 {
     [Fact]

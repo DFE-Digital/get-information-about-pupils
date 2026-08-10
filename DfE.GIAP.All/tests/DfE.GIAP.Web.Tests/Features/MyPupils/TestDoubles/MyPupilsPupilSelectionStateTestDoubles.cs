@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Web.Features.MyPupils.PupilSelection;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+
 public static class MyPupilsPupilSelectionStateTestDoubles
 {
     public static MyPupilsPupilSelectionState WithSelectedPupils(

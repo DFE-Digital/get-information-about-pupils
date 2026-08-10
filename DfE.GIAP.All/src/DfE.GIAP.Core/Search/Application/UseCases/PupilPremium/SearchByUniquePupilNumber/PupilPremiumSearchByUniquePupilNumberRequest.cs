@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByUniquePupilNumber;
+
 public record PupilPremiumSearchByUniquePupilNumberRequest : IUseCaseRequest<SearchResponse<PupilPremiumLearners>>
 {
     public string[]? UniquePupilNumbers { get; init; }

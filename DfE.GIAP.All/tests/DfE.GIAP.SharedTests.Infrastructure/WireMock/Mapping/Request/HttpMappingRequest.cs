@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
+
 public record HttpMappingRequest
 {
     public HttpMappingRequest(IEnumerable<HttpMappingFile> httpMappingFiles)

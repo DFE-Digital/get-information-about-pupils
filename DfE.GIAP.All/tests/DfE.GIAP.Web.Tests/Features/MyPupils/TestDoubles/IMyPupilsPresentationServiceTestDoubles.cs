@@ -3,6 +3,7 @@ using DfE.GIAP.Web.Features.MyPupils.Services.GetPupils;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
+
 internal static class IMyPupilsPresentationServiceTestDoubles
 {
     internal static Mock<IGetMyPupilsPresentationService> DefaultMock() => new();

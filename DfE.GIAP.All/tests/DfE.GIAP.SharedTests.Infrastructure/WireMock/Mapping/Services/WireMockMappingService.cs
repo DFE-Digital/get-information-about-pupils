@@ -3,6 +3,7 @@ using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
 using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
+
 internal sealed class WireMockMappingService : IWireMockMappingService
 {
     private readonly IWireMockHost _server;

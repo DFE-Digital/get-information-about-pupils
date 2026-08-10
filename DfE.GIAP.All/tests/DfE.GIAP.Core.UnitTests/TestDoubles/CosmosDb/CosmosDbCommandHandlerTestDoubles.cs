@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles.CosmosDb;
+
 internal static class CosmosDbCommandHandlerTestDoubles
 {
     internal static Mock<ICosmosDbCommandHandler> Default() => new();

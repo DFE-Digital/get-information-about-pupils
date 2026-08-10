@@ -7,6 +7,7 @@ using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.SharedTests.Common;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Application.ValueObjects;
+
 public sealed class DateOfBirthTests
 {
     [Fact]

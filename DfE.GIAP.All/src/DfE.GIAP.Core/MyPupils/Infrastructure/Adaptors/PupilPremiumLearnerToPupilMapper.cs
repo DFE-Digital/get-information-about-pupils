@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Adaptors;
+
 internal sealed class PupilPremiumLearnerToPupilMapper : IMapper<PupilPremiumLearner, Pupil>
 {
     public Pupil Map(PupilPremiumLearner input)

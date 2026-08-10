@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
+
 public record CosmosDbContainerOptions
 {
     public string ContainerName { get; }

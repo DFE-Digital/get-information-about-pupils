@@ -13,6 +13,7 @@ using DfE.GIAP.SharedTests.Features.MyPupils.Application;
 using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
+
 public sealed class GetMyPupilsUseCaseTests
 {
     [Fact]

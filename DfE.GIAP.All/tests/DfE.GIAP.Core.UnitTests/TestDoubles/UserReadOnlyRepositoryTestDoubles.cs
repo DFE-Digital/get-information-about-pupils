@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Users.Application.Repositories;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+
 internal static class UserReadOnlyRepositoryTestDoubles
 {
     internal static Mock<IUserReadOnlyRepository> Default() => new();

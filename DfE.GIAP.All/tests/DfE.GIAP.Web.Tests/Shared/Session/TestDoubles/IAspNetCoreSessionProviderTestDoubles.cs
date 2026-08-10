@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
+
 internal static class IAspNetCoreSessionProviderTestDoubles
 {
     internal static Mock<IAspNetCoreSessionProvider> Default() => new();

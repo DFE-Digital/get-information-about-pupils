@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Core.Common;
+
 public static class CompositionRoot
 {
     public static IServiceCollection AddFeaturesSharedDependencies(this IServiceCollection services)

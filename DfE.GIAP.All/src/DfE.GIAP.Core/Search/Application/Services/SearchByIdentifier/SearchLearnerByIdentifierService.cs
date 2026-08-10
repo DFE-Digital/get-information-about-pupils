@@ -4,6 +4,7 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
 namespace DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
+
 internal sealed class SearchLearnerByIdentifierService<TResponse> : ISearchLearnersByIdentifierService<TResponse>
     where TResponse : IHasSearchResults
 {

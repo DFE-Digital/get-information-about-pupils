@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
 namespace DfE.GIAP.Core.Search.Application.Models.Search;
+
 public sealed class SearchResponse<TResponse> where TResponse : class
 {
     public SearchResponse(TResponse response, SearchFacets? facets = null, int? totalResults = null)

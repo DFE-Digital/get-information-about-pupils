@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
+
 public sealed class GetMyPupilsControllerTests
 {
     [Fact]

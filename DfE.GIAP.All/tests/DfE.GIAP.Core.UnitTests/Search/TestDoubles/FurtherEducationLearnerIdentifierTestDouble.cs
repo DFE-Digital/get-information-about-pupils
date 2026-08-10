@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 
 namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+
 public static class FurtherEducationLearnerIdentifierTestDouble
 {
     /// <summary>

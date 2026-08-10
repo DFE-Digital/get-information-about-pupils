@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
+
 internal sealed class MappingResolver
 {
     private readonly string _rootDirectory;

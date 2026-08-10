@@ -3,6 +3,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 
 namespace DfE.GIAP.Core.MyPupils.Application.Services.AggregatePupilsForMyPupils.Handlers;
+
 internal sealed class OrderPupilsHandler : IOrderPupilsHandler
 {
     private static readonly Dictionary<string, Expression<Func<Pupil, IComparable>>> _sortKeyToExpression = new()

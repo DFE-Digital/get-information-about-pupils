@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
+
 public sealed class PaginationOptions
 {
     public PaginationOptions(int page, int resultsSize)

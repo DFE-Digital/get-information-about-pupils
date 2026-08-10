@@ -4,6 +4,7 @@ using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 using DfE.GIAP.Web.Features.Search.NationalPupilDatabase;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.NationalPupilDatabase;
+
 public sealed class NationalPupilDatabaseLearnerToLearnerMapperTests
 {
     [Fact]

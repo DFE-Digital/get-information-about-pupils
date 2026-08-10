@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+
 public static class MyPupilsQueryModelTestDoubles
 {
     public static MyPupilsQueryModel Create(string sortKey)

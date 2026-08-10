@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java.DataTransferObjects;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java;
+
 internal sealed class WireMockJavaRemoteClient : IWireMockRemoteClient
 {
     private readonly HttpClient _client;

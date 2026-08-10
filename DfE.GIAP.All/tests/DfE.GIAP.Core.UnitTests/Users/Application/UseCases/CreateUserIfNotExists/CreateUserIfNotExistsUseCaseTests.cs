@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Users.Application.UseCases.CreateUserIfNotExists;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Application.UseCases.CreateUserIfNotExists;
+
 public sealed class CreateUserIfNotExistsUseCaseTests
 {
     [Fact]
