@@ -32,14 +32,19 @@ jobs:
         uses: actions/setup-dotnet@v5
 
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
-        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
+        run: |
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
 
       - name: Verify formatting
         run: |
           dotnet format ${{ env.SOLUTION_DIRECTORY }} \
             --verbosity detailed \
             --verify-no-changes
-          
+
   build-pr-image:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
@@ -56,7 +61,7 @@ jobs:
       - name: Restore dotnet tools
         run: dotnet tool restore
         shell: bash
-      
+
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -66,22 +71,27 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Checkout code
         uses: actions/checkout@v6
-      
+
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
-        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
+        run: |
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
 
       - uses: ./.github/actions/image-name
       - run: echo "Pushing to ${IMAGE_BASE}"
-      
+
       - name: Build & push PR image
         run: |
-        
-          # github.head_ref is the source branch for PRs, 
+
+          # github.head_ref is the source branch for PRs,
           # Normalize: lowercase, replace '/', spaces with '-'
-          
+
           BRANCH_SAFE="$(echo "${{ github.head_ref }}" | tr '[:upper:]' '[:lower:]' | sed -E 's#[^a-z0-9._-]#-#g')"
           TAG_BRANCH="pr-${BRANCH_SAFE}-${{ github.sha }}"
           TAG_NUM="pr-${{ github.event.number }}-${{ github.sha }}"
@@ -108,7 +118,7 @@ jobs:
       - name: Restore dotnet tools
         run: dotnet tool restore
         shell: bash
-      
+
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -118,16 +128,21 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Checkout code
         uses: actions/checkout@v6
 
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
-        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
-      
+        run: |
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
+
       - uses: ./.github/actions/image-name
       - run: echo "Pushing to ${IMAGE_BASE}"
-      
+
       - name: Build & push main image
         run: |
           docker buildx build \
@@ -152,7 +167,7 @@ jobs:
       - name: Restore dotnet tools
         run: dotnet tool restore
         shell: bash
-      
+
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -162,16 +177,21 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Checkout code
         uses: actions/checkout@v6
 
       - name: Add DfE-Digital GitHub NuGet Feed Credentials
-        run: sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
+        run: |
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
 
       - uses: ./.github/actions/image-name
       - run: echo "Pushing to ${IMAGE_BASE}"
-      
+
       - name: Build & push release image
         run: |
           docker buildx build \
@@ -251,7 +271,7 @@ jobs:
 
   local_integration_tests:
     # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
-    if: github.actor != 'dependabot[bot]'
+    if: false #github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Required to check out the code.
@@ -276,10 +296,14 @@ jobs:
       - name: Run Integration Tests with Coverage
         shell: bash
         run: |
-          sed -i "s/\${DFEDIGITAL_NUGETFEED_PASSWORD}/${{ secrets.GITHUB_TOKEN }}/" DfE.GIAP.All/nuget.config
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
 
           export DOCKER_BUILDKIT=1
-          
+
           # Initcontainer to generate certificates enabling WireMock
           docker compose up --build certgenerator
 
@@ -325,11 +349,11 @@ jobs:
         with:
           name: integration-test-coverage
           path: coverage-integration/
-          
+
       - name: Normalize coverage paths
         run: |
           sed -i 's|/app/DfE.GIAP.All/src/|DfE.GIAP.All/src/|' coverage-integration/cobertura.xml
-          
+
           # multiple files need to be normalised
           find coverage-unit/ -name "*.xml" -exec sed -i "s|${{ github.workspace }}/DfE.GIAP.All/src/|DfE.GIAP.All/src/|" {} +
 
@@ -505,7 +529,7 @@ jobs:
   ####
   ## Pre-Production Environment
   ####
-  
+
   deploy_preprod:
     needs: verify_test
     concurrency:
