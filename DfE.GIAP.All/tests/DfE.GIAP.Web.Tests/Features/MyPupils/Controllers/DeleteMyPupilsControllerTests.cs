@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
+
 public sealed class DeleteMyPupilsControllerTests
 {
     [Fact]

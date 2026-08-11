@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.Mapper;
+
 public sealed class UniquePupilNumberMapperTests
 {
     [Fact]

@@ -9,6 +9,7 @@ using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
 namespace DfE.GIAP.Core.UnitTests.Common.CrossCutting.Logging.Application.Sinks;
+
 public class AzureAppInsightTraceSinkTests
 {
     private static (AzureAppInsightTraceSink sink, StubTelemetryChannel channel) CreateSink()

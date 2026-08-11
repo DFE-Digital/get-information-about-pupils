@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
+
 public sealed class NationalPupilDatabaseLearner : Entity<UniquePupilNumber>
 {
     public NationalPupilDatabaseLearner(

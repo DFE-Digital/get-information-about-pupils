@@ -5,6 +5,7 @@ using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
+
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly GiapCosmosDbFixture _cosmosDbFixture;

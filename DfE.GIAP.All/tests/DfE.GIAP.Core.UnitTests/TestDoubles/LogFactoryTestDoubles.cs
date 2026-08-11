@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Application.Models;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+
 public static class LogFactoryTestDoubles
 {
     public static Log<TracePayload> CreateDefaultTraceLog(

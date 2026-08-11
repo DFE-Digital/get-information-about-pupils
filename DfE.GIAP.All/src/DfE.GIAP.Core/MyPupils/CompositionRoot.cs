@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Core.MyPupils;
+
 public static class CompositionRoot
 {
     public static IServiceCollection AddMyPupilsCore(this IServiceCollection services)

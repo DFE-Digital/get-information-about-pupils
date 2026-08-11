@@ -5,6 +5,7 @@ using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.PreparedDownloads;
+
 public static class CompositionRoot
 {
     public static IServiceCollection AddPrePreparedDownloadsDependencies(this IServiceCollection services)

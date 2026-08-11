@@ -3,6 +3,7 @@ using DfE.GIAP.Web.Tests.Shared.HttpContext;
 using Microsoft.AspNetCore.Http;
 
 namespace DfE.GIAP.Web.Tests.Shared.Session;
+
 public sealed class AspNetCoreSessionProviderTests
 {
     [Fact]

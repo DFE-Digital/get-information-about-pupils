@@ -4,6 +4,7 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
 
 namespace DfE.GIAP.Core.Search.Application.Services.SearchByName;
+
 public record SearchLearnerByNameRequest
 {
     public SearchLearnerByNameRequest(

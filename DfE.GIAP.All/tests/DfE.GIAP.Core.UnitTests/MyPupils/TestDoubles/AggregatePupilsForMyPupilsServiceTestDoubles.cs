@@ -4,6 +4,7 @@ using DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils.QueryModel;
 using DfE.GIAP.Core.MyPupils.Domain.Entities;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+
 internal static class AggregatePupilsForMyPupilsServiceTestDoubles
 {
     internal static Mock<IAggregatePupilsForMyPupilsApplicationService> Default() => new();

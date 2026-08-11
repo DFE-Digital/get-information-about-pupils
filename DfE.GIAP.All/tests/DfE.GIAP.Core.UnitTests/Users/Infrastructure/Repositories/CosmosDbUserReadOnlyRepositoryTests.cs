@@ -11,6 +11,7 @@ using Microsoft.Azure.Cosmos;
 using User = DfE.GIAP.Core.Users.Application.Models.User;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Infrastructure.Repositories;
+
 public sealed class CosmosDbUserReadOnlyRepositoryTests
 {
     private readonly InMemoryLoggerService _mockLogger;

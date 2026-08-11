@@ -4,6 +4,7 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
+
 public sealed class PupilPremiumSearchByNameRequest : IUseCaseRequest<SearchResponse<PupilPremiumLearners>>
 {
     public string? SearchKeywords { get; init; }

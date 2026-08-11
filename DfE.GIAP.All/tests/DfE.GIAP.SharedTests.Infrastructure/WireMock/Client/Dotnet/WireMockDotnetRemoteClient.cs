@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Dotnet;
+
 public sealed class WireMockDotNetRemoteClient : IWireMockRemoteClient
 {
     private readonly HttpClient _client;

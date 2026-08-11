@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
+
 public static class LearnerCharacteristicsTestDouble
 {
     /// <summary>

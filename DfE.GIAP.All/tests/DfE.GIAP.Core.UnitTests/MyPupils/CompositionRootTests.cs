@@ -20,6 +20,7 @@ using Microsoft.Extensions.Options;
 using CompositionRoot = DfE.GIAP.Core.MyPupils.CompositionRoot;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
+
 public sealed class CompositionRootTests
 {
     [Fact]

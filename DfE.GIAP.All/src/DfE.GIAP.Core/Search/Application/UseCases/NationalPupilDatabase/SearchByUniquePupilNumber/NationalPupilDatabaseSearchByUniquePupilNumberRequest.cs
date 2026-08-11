@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
+
 public record NationalPupilDatabaseSearchByUniquePupilNumberRequest : IUseCaseRequest<SearchResponse<NationalPupilDatabaseLearners>>
 {
     public string[]? UniquePupilNumbers { get; init; }

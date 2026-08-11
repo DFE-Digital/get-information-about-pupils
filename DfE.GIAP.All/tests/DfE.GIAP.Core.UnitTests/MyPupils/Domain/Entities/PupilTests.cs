@@ -6,6 +6,7 @@ using DfE.GIAP.SharedTests.Common;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Domain.Entities;
+
 public sealed class PupilTests
 {
     [Fact]

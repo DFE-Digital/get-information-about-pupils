@@ -8,6 +8,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
+
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly GiapCosmosDbFixture _cosmosDbFixture;

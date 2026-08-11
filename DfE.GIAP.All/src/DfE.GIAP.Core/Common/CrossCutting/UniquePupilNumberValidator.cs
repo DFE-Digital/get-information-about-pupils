@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
 namespace DfE.GIAP.Core.Common.CrossCutting;
+
 public static class UniquePupilNumberValidator
 {
     // see GOV.UK spec

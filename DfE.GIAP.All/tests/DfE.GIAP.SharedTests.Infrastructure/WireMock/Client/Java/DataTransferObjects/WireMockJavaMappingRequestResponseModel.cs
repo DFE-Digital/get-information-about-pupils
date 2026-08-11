@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java.DataTransferObjects;
+
 public record WireMockJavaMappingRequestResponseModel
 {
     public int status { get; set; }

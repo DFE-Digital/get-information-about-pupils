@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Application.TextSanitiser;
+
 public sealed class TextSanitiserInvokerTests
 {
 

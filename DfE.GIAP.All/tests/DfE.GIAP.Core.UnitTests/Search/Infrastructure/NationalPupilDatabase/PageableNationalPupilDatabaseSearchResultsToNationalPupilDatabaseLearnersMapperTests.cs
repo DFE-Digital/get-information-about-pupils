@@ -11,6 +11,7 @@ using DfE.GIAP.Core.UnitTests.Search.Infrastructure.TestDoubles;
 using FluentAssertions;
 
 namespace DfE.GIAP.Core.UnitTests.Search.Infrastructure.NationalPupilDatabase;
+
 public sealed class PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapperTests
 {
     private readonly PageableNationalPupilDatabaseSearchResultsToNationalPupilDatabaseLearnersMapper _sut;

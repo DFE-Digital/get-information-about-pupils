@@ -16,6 +16,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Infrastructure;
+
 public sealed class CosmosMyPupilsReadOnlyRepositoryTests
 {
     [Fact]

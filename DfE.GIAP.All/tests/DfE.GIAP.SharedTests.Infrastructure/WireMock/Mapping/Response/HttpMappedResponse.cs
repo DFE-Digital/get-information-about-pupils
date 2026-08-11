@@ -1,6 +1,7 @@
 ﻿using System.Net;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
+
 public record HttpMappedResponse
 {
     private readonly string _body;

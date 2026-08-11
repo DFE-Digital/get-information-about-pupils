@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search.Facets;
 
 namespace DfE.GIAP.Core.Search.Application.Services.SearchByName;
+
 internal sealed class SearchLearnerByNameService<TSearchResponse> : ISearchLearnerByNameService<TSearchResponse>
     where TSearchResponse : IHasSearchResults
 {

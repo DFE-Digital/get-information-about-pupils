@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
+
 public sealed class PupilPremiumLearnerDataTransferObject
 {
     public string? UPN { get; set; }

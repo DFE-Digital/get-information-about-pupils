@@ -2,6 +2,7 @@
 using Xunit;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.Application.UseCases.GetMyPupils;
+
 public sealed class MyPupilsQueryModelTests
 {
     [Fact]

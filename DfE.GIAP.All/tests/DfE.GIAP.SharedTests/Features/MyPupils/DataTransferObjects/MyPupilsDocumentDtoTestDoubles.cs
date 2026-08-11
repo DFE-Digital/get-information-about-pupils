@@ -5,6 +5,7 @@ using DfE.GIAP.SharedTests.Features.MyPupils.Domain;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.Features.MyPupils.DataTransferObjects;
+
 public static class MyPupilsDocumentDtoTestDoubles
 {
     public static MyPupilsDocumentDto Create(MyPupilsId id, UniquePupilNumbers upns)

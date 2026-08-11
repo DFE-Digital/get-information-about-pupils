@@ -2,6 +2,7 @@
 using DfE.GIAP.SharedTests.Common;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
+
 public static class AzureNpdSearchResponseDtoTestDoubles
 {
     private static readonly string[] ValidSexes = ["M", "F"];

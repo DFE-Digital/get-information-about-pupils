@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Search.Application.Services;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+
 public record PupilPremiumLearners : IHasSearchResults
 {
     /// <summary>

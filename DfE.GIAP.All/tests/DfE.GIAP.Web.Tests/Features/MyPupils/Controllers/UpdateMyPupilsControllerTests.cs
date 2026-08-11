@@ -6,6 +6,7 @@ using DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Controllers;
+
 public sealed class UpdateMyPupilsControllerTests
 {
     [Fact]

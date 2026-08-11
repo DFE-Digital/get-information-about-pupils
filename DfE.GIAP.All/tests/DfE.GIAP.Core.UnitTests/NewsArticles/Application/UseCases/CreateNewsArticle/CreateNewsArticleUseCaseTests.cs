@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases.CreateNewsArticle;
+
 public sealed class CreateNewsArticleUseCaseTests
 {
     [Fact]

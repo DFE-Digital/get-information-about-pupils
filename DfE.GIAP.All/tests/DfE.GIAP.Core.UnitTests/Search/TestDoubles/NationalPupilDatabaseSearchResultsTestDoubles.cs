@@ -5,6 +5,7 @@ using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.UnitTests.Search.TestDoubles;
+
 internal static class NationalPupilDatabaseSearchResultsTestDoubles
 {
     public static SearchServiceAdaptorResponse<NationalPupilDatabaseLearners, SearchFacets> Stub() =>

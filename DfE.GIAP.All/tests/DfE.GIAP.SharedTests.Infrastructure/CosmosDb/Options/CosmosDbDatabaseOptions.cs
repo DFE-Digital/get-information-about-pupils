@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
+
 public record CosmosDbDatabaseOptions
 {
     public string DatabaseName { get; }

@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Users.Application.Models;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
+
 public static class UserTestDoubles
 {
     public static User Default()

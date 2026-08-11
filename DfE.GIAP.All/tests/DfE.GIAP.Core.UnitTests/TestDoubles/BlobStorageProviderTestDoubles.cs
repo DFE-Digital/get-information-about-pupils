@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Infrastructure.BlobStorage;
 
 namespace DfE.GIAP.Core.UnitTests.TestDoubles;
+
 internal static class BlobStorageProviderTestDoubles
 {
     internal static Mock<IBlobStorageProvider> Default() => new();
