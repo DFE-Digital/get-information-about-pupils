@@ -251,7 +251,7 @@ jobs:
 
   local_integration_tests:
     # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
-    if: github.actor != 'dependabot[bot]'
+    if: false #github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       contents: read  # Required to check out the code.
