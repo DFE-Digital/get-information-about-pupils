@@ -8,30 +8,40 @@ namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 /// Implements <see cref="IAsyncLifetime"/> so that xUnit will call
 /// <see cref="InitializeAsync"/> before tests run and <see cref="DisposeAsync"/> after.
 /// Provides a shared DI container setup and scoped resolution of services.
+/// <para>
+/// Deliberately carries no <c>[Collection]</c> attribute: tests that need the Cosmos DB emulator
+/// opt in with <see cref="CosmosDbIntegrationTestCollectionMarker"/>, so tests that stub everything
+/// in-process require no infrastructure.
+/// </para>
 /// </summary>
-[Collection(IntegrationTestCollectionMarker.Name)]
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     private readonly IServiceCollection _serviceDescriptors;
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
+    private readonly GiapCosmosDbFixture? _cosmosDbFixture;
     private IServiceScope? _servicesScope; // Holds the lifetime scope for test services (created once per test class).
 
     /// <summary>
     /// Constructor initializes the service collection with default test doubles.
     /// </summary>
     /// <param name="cosmosDbFixture">Fixture owning the emulator container. The application under
-    /// test is pointed at it, so both the seeding and the application read the same instance.</param>
-    protected BaseIntegrationTest(GiapCosmosDbFixture cosmosDbFixture)
+    /// test is pointed at it, so both the seeding and the application read the same instance.
+    /// Omit it for tests that stub every dependency in-process and never open a connection - they
+    /// then need no emulator, and must stay out of
+    /// <see cref="CosmosDbIntegrationTestCollectionMarker"/>.</param>
+    protected BaseIntegrationTest(GiapCosmosDbFixture? cosmosDbFixture = null)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
         _cosmosDbFixture = cosmosDbFixture;
         _serviceDescriptors = ServiceCollectionTestDoubles.Default();
     }
 
     /// <summary>
-    /// The emulator container shared by every test in the integration test collection.
+    /// The emulator container shared by every test in the Cosmos DB integration test collection.
     /// </summary>
-    protected GiapCosmosDbFixture CosmosDb => _cosmosDbFixture;
+    protected GiapCosmosDbFixture CosmosDb =>
+        _cosmosDbFixture ?? throw new InvalidOperationException(
+            $"This test did not take a {nameof(GiapCosmosDbFixture)}. Apply " +
+            $"[Collection({nameof(CosmosDbIntegrationTestCollectionMarker)}.Name)] and pass the " +
+            "fixture to the base constructor.");
 
     /// <summary>
     /// Called by xUnit before any tests run.
@@ -40,11 +50,20 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     /// </summary>
     public async Task InitializeAsync()
     {
-        _serviceDescriptors
-            .AddAspNetCoreRuntimeProvidedServices(
+        // Without a fixture the placeholder Cosmos DB settings are left in place: the registration
+        // graph still resolves, but nothing connects.
+        if (_cosmosDbFixture is null)
+        {
+            _serviceDescriptors.AddAspNetCoreRuntimeProvidedServices();
+        }
+        else
+        {
+            _serviceDescriptors.AddAspNetCoreRuntimeProvidedServices(
                 cosmosDbEndpointUri: _cosmosDbFixture.Connection.Endpoint,
-                cosmosDbPrimaryKey: _cosmosDbFixture.Connection.Key)
-            .AddFeaturesSharedServices();
+                cosmosDbPrimaryKey: _cosmosDbFixture.Connection.Key);
+        }
+
+        _serviceDescriptors.AddFeaturesSharedServices();
 
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize
 

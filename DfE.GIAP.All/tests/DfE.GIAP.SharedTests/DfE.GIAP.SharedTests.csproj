@@ -7,15 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Search.Documents" />
     <PackageReference Include="Bogus" />
+    <PackageReference Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" />
     <PackageReference Include="Fare" />
     <PackageReference Include="Microsoft.Azure.Cosmos" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Moq" />
-    <PackageReference Include="WireMock.Net" />
-    <PackageReference Include="WireMock.Net.Abstractions" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="xunit" />
   </ItemGroup>
 

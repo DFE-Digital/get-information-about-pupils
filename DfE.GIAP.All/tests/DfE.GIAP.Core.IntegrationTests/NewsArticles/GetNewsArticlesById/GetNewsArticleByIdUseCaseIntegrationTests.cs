@@ -6,6 +6,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 
+[Collection(CosmosDbIntegrationTestCollectionMarker.Name)]
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
 

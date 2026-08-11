@@ -14,13 +14,19 @@ The tests
 ## Related documentation
 
 - [CosmosDb emulator](./cosmosdb-docker-emulator.md)
-- [Wiremock](./wiremock.md)
+- [Search index stub](./search-index-stub.md)
 
 ## Running the tests
 
-Currently the method to execute the tests uses `docker compose`
+Tests that stub their dependencies in-process — such as the search tests — need no infrastructure
+at all:
 
-Follow the steps in [CI](../../.github/workflows/web-application-cicd.yml)
+```sh
+dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --filter "FullyQualifiedName~SearchByKeyWords"
+```
+
+Tests in the `CosmosDbIntegrationTests` collection need the Cosmos DB emulator, which runs via
+`docker compose`. Follow the steps in [CI](../../.github/workflows/web-application-cicd.yml)
 
 1) Update the nuget.config in src with a valid NUGET_USERNAME and NUGET_PAT
 2) docker build the test-runner image

@@ -24,7 +24,7 @@
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>
 
-  <!--WireMock stubs-->
+  <!--Stubbed search index response payloads, served by AzureSearchIndexStub-->
   <ItemGroup>
     <None Include="contracts\**\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

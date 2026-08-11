@@ -5,6 +5,7 @@ using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
 
+[Collection(CosmosDbIntegrationTestCollectionMarker.Name)]
 public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
 
