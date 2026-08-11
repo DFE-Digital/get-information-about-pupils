@@ -13,7 +13,7 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "chore"
-    labels: 
+    labels:
     - "dependencies-javascript"
 
   - package-ecosystem: "nuget"
@@ -24,25 +24,13 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "chore"
-    labels: 
-    - "dependencies .NET"    
+    labels:
+    - "dependencies .NET"
     ignore:
     # FluentAssertions V8 requires a commercial license
       - dependency-name: FluentAssertions
         versions:
           - ">=8.0.0"
-
-
-  - package-ecosystem: "dotnet-sdk"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major" # updates to the major .NET version should be planned
-    labels: 
-    - "dependencies-dotnet_sdk_package_manager"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -50,5 +38,5 @@ updates:
       interval: "daily"
     commit-message:
       prefix: "chore"
-    labels: 
+    labels:
     - "dependencies-github_actions"
