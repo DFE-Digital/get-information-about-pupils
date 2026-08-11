@@ -144,38 +144,7 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 There are a number of key settings contained in the `appsettings.json` file.
 It is recommended to create an `appsettings.local.json` file to store values as they won't be checked into source control as `.gitignore`.
 
-An example is provided for reference, additionally a launchSettings.json is required in Properties.
-
-### launchSettings.json
-```json
-{
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "https://localhost:44378",
-      "sslPort": 44378
-    }
-  },
-  "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
-      }
-    },
-    "DfE.GIAP.Web": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Local"
-      },
-      "applicationUrl": "https://localhost:44378;http://localhost:5000"
-    }
-  }
-}
-```
+An example is provided for reference.
 
 ### appsettings.local.json
 ```json
