@@ -1,7 +1,6 @@
 name: Package application
 
 on:
-  workflow_dispatch: 
   workflow_call:
     outputs:
       artifact_name:
