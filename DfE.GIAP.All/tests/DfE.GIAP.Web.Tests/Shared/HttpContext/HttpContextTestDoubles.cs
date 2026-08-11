@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 
 namespace DfE.GIAP.Web.Tests.Shared.HttpContext;
+
 internal static class HttpContextTestDoubles
 {
     internal static Microsoft.AspNetCore.Http.HttpContext Stub() => new DefaultHttpContext();

@@ -2,6 +2,7 @@
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.SharedTests.Features.MyPupils.Domain;
+
 public static class MyPupilsIdTestDoubles
 {
     public static MyPupilsId Default() => new(userId: UserIdTestDoubles.Default());

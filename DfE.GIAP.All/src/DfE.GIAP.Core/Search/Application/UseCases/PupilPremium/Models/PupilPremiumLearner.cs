@@ -1,6 +1,7 @@
 ﻿using DfE.GIAP.Core.Common.Application.ValueObjects;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
+
 public sealed class PupilPremiumLearner : Entity<UniquePupilNumber>
 {
     public PupilPremiumLearner(

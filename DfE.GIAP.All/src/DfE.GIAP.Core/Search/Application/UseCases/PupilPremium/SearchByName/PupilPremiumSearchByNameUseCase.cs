@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Search.Application.Services.SearchByName;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.SearchByName;
+
 internal sealed class PupilPremiumSearchByNameUseCase : IUseCase<PupilPremiumSearchByNameRequest, SearchResponse<PupilPremiumLearners>>
 {
     private readonly ISearchLearnerByNameService<PupilPremiumLearners> _searchForLearnerByNameService;

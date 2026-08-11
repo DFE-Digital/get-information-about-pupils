@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 
 namespace DfE.GIAP.Web.Tests.Shared.HttpContext;
+
 internal static class IHttpContextAccessorTestDoubles
 {
     internal static Mock<IHttpContextAccessor> Default() => new();

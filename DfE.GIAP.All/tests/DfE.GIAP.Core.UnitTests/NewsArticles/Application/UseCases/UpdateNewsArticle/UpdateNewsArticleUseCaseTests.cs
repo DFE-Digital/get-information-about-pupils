@@ -5,6 +5,7 @@ using DfE.GIAP.Core.UnitTests.TestDoubles;
 using DfE.GIAP.SharedTests.Common;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases.UpdateNewsArticle;
+
 public sealed class UpdateNewsArticleUseCaseTests
 {
     [Theory]

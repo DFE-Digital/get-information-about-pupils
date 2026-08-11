@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
+
 public sealed class AzureNpdSearchResponseDto
 {
     [JsonProperty("@search.score")]

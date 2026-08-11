@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace DfE.GIAP.Core.Search.Extensions;
+
 internal static class PupilPremiumSearchCompositionRootExtensions
 {
     public static IServiceCollection AddPupilPremiumSearchByName(this IServiceCollection services)

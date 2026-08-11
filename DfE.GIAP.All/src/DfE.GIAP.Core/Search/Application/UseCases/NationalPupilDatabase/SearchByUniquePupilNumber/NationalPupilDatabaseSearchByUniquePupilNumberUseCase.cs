@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Search.Application.Services.SearchByIdentifier;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByUniquePupilNumber;
+
 internal sealed class NationalPupilDatabaseSearchByUniquePupilNumberUseCase : IUseCase<NationalPupilDatabaseSearchByUniquePupilNumberRequest, SearchResponse<NationalPupilDatabaseLearners>>
 {
     private readonly ISearchLearnersByIdentifierService<NationalPupilDatabaseLearners> _searchLearnersByIdentifierService;

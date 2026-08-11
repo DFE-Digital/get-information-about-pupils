@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Search.Infrastructure.NationalPupilDatabase.DataTransferObjects;
+
 public record NationalPupilDatabaseLearnerDataTransferObject
 {
     public string? UPN { get; set; }

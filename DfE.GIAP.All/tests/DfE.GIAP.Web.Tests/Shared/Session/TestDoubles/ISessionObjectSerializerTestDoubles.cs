@@ -2,6 +2,7 @@
 using Moq;
 
 namespace DfE.GIAP.Web.Tests.Shared.Session.TestDoubles;
+
 internal static class ISessionObjectSerializerTestDoubles
 {
     internal static Mock<ISessionObjectSerializer<TSessionObject>> Default<TSessionObject>() where TSessionObject : class => new();

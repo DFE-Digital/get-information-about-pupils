@@ -3,6 +3,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Entities;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils.TestDoubles;
+
 internal sealed class PupilBuilder
 {
     private readonly UniquePupilNumber _upn;

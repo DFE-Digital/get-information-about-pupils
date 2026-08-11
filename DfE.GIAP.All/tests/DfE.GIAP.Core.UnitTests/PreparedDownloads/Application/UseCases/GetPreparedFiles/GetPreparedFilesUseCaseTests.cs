@@ -6,6 +6,7 @@ using DfE.GIAP.Core.PreparedDownloads.Application.UseCases.GetPreparedFiles;
 using DfE.GIAP.Core.UnitTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.PreparedDownloads.Application.UseCases.GetPreparedFiles;
+
 public sealed class GetPreparedFilesUseCaseTests
 {
     [Fact]

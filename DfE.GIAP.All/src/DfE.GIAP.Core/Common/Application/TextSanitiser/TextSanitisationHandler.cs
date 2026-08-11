@@ -1,6 +1,7 @@
 using DfE.GIAP.Core.Common.Application.TextSanitiser.Handlers;
 
 namespace DfE.GIAP.Core.Common.Application.TextSanitiser.Invoker;
+
 internal sealed class TextSanitiser : ITextSanitiser
 {
     private readonly List<ITextSanitiserHandler> _sanitisers;

@@ -5,6 +5,7 @@ using DfE.GIAP.Web.Tests.Features.MyPupils.TestDoubles;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.Mapper;
+
 public sealed class MyPupilsPupilSelectionStateToDtoMapperTests
 {
     [Fact]

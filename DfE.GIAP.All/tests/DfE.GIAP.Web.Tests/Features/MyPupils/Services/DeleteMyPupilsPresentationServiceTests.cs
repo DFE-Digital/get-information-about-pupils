@@ -7,6 +7,7 @@ using Moq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Services;
+
 public sealed class DeleteMyPupilsPresentationServiceTests
 {
     [Theory]

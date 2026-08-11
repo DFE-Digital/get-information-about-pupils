@@ -6,6 +6,7 @@ using Moq;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Shared.Session;
+
 public sealed class MappedToDataTransferObjectSessionObjectSerializerTests
 {
     [Fact]

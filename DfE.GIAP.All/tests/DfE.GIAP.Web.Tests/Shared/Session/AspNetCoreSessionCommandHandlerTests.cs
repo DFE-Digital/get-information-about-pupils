@@ -5,6 +5,7 @@ using DfE.GIAP.Web.Shared.Session.Infrastructure.Command;
 using Microsoft.AspNetCore.Http;
 
 namespace DfE.GIAP.Web.Tests.Shared.Session;
+
 public sealed class AspNetCoreSessionCommandHandlerTests
 {
     [Fact]

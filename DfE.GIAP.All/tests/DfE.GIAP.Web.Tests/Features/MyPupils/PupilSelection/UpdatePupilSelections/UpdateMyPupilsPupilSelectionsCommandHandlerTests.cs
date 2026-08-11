@@ -8,6 +8,7 @@ using DfE.GIAP.Web.Shared.Session.Abstraction;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.PupilSelection.UpdatePupilSelections;
+
 public sealed class UpdateMyPupilsPupilSelectionsCommandHandlerTests
 {
     [Fact]

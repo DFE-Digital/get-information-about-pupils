@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
+
 public record CosmosDbOptions
 {
     private readonly IReadOnlyList<CosmosDbDatabaseOptions> _databases;

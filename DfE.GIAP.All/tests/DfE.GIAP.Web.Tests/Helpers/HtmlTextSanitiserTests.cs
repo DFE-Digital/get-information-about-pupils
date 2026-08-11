@@ -3,6 +3,7 @@ using DfE.GIAP.Web.Helpers.TextSanitiser;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Helpers;
+
 public sealed class HtmlTextSanitiserTests
 {
     private readonly HtmlTextSanitiser _sanitiser;

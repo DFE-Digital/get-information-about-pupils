@@ -1,6 +1,7 @@
 using System.Globalization;
 
 namespace DfE.GIAP.Core.MyPupils.Application.UseCases.GetMyPupils;
+
 public record MyPupilsModel
 {
     public required string UniquePupilNumber { get; init; }

@@ -21,7 +21,8 @@ public sealed class SearchIndexOptionsProvider : ISearchIndexOptionsProvider
         if (!_searchOptions.Indexes.TryGetValue(key, out SearchIndexOptions? options))
         {
             throw new ArgumentException($"Unable to find key {key} in SearchOptions");
-        };
+        }
+        ;
 
         if (options is null)
         {

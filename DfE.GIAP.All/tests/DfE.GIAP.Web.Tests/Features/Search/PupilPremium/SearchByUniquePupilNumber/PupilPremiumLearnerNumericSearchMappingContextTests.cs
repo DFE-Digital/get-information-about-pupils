@@ -11,6 +11,7 @@ using DfE.GIAP.Web.Tests.Features.Search.Shared.TestDoubles;
 using DfE.GIAP.Web.ViewModels.Search;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium.SearchByUniquePupilNumber;
+
 public sealed class PupilPremiumLearnerNumericSearchMappingContextTests
 {
 

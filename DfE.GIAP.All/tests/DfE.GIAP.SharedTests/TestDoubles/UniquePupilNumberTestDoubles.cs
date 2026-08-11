@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.CrossCutting;
 using Fare;
 
 namespace DfE.GIAP.SharedTests.TestDoubles;
+
 public static class UniquePupilNumberTestDoubles
 {
     public static UniquePupilNumber Generate() => Generate(1).Single();

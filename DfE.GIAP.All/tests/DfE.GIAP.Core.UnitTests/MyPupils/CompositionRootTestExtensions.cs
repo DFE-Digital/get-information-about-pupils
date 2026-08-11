@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.UnitTests.MyPupils;
+
 internal static class CompositionRootTestExtensions
 {
     internal static IServiceCollection AddMyPupilsCoreFakeAdaptors(this IServiceCollection services)

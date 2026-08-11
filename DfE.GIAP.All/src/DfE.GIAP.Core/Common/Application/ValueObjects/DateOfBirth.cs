@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.Common.Application.ValueObjects;
+
 public sealed class DateOfBirth : ValueObject<DateOfBirth>
 {
     // TODO leap years

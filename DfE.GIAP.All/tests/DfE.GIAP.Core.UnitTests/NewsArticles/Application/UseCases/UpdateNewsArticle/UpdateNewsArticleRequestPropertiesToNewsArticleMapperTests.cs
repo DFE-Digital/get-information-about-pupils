@@ -2,6 +2,7 @@
 using DfE.GIAP.Core.NewsArticles.Application.UseCases.UpdateNewsArticle;
 
 namespace DfE.GIAP.Core.UnitTests.NewsArticles.Application.UseCases.UpdateNewsArticle;
+
 public sealed class UpdateNewsArticleRequestPropertiesToNewsArticleMapperTests
 {
     [Fact]

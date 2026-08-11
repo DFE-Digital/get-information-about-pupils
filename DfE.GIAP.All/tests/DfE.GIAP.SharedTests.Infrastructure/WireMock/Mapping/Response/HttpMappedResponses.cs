@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
+
 public record HttpMappedResponses
 {
     private readonly List<HttpMappedResponse> _responses;

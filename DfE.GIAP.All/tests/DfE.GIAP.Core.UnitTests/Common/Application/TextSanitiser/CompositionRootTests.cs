@@ -5,6 +5,7 @@ using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DfE.GIAP.Core.UnitTests.Common.Application.TextSanitiser;
+
 public sealed class CompositionRootTests
 {
     [Fact]

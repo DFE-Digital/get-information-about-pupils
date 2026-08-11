@@ -5,6 +5,7 @@ using DfE.GIAP.SharedTests.TestDoubles.Learner;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
 
 namespace DfE.GIAP.Web.Tests.Features.Search.PupilPremium;
+
 public static class LearnerFakePupilPremiumTestDoubles
 {
     public static Learner Fake()

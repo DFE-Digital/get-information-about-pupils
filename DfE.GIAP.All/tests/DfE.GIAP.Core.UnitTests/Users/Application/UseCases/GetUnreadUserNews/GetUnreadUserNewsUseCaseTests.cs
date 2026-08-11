@@ -5,6 +5,7 @@ using DfE.GIAP.Core.Users.Application.UseCases.GetUnreadUserNews;
 using DfE.GIAP.SharedTests.TestDoubles;
 
 namespace DfE.GIAP.Core.UnitTests.Users.Application.UseCases.GetUnreadUserNews;
+
 public sealed class GetUnreadUserNewsUseCaseTests
 {
     [Fact]

@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 
 namespace DfE.GIAP.SharedTests.TestDoubles.Learner;
+
 public static class PupilPremiumLearnerTestDoubles
 {
     public static List<PupilPremiumLearner> FakeMany(int count = 10)

@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.DeletePupilsFromMyPupils;
+
 public record DeletePupilsFromMyPupilsRequest : IUseCaseRequest
 {
     public DeletePupilsFromMyPupilsRequest(string userId, IEnumerable<string> deletePupilUpns)

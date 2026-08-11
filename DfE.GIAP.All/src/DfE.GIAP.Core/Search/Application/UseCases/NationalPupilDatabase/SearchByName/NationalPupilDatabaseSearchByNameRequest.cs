@@ -4,6 +4,7 @@ using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.Models;
 
 namespace DfE.GIAP.Core.Search.Application.UseCases.NationalPupilDatabase.SearchByName;
+
 public record NationalPupilDatabaseSearchByNameRequest : IUseCaseRequest<SearchResponse<NationalPupilDatabaseLearners>>
 {
     public string? SearchKeywords { get; init; }

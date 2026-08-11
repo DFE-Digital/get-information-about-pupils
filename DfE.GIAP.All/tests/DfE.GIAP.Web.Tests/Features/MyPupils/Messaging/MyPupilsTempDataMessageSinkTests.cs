@@ -13,6 +13,7 @@ using NSubstitute;
 using Xunit;
 
 namespace DfE.GIAP.Web.Tests.Features.MyPupils.Messaging;
+
 public sealed class MyPupilsTempDataMessageSinkTests
 {
 

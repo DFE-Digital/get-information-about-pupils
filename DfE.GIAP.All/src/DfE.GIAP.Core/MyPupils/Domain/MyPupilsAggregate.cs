@@ -3,6 +3,7 @@ using DfE.GIAP.Core.MyPupils.Domain.Exceptions;
 using DfE.GIAP.Core.MyPupils.Domain.ValueObjects;
 
 namespace DfE.GIAP.Core.MyPupils.Domain;
+
 public sealed class MyPupilsAggregate : AggregateRoot<MyPupilsId>
 {
     private readonly UniquePupilNumbers _pupils;

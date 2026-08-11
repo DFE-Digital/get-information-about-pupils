@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Application.Options;
+
 public sealed class MyPupilsOptions
 {
     public int PageSize { get; set; } = 20;

@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.Core.MyPupils.Application.UseCases.AddPupilsToMyPupils;
+
 public record AddPupilsToMyPupilsRequest : IUseCaseRequest
 {
     public AddPupilsToMyPupilsRequest(

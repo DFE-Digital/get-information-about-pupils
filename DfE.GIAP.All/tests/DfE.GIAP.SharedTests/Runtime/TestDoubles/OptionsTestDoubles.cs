@@ -1,6 +1,7 @@
 ﻿using Moq;
 
 namespace DfE.GIAP.SharedTests.Runtime.TestDoubles;
+
 public static class OptionsTestDoubles
 {
     public static IOptions<T> Default<T>() where T : class, new()

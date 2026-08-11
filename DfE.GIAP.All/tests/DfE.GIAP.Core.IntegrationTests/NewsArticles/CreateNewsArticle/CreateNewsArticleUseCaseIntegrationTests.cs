@@ -4,6 +4,7 @@ using DfE.GIAP.Core.NewsArticles.Application.UseCases.CreateNewsArticle;
 using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
+
 public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
     private readonly GiapCosmosDbFixture _cosmosDbFixture;

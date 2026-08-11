@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Host;
+
 public sealed class RemoteWireMockHostServerOptions
 {
     public RemoteWireMockHostServerOptions(Uri serverAddress)

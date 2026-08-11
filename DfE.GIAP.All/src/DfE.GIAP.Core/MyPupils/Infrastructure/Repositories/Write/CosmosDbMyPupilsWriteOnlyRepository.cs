@@ -4,6 +4,7 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
 
 namespace DfE.GIAP.Core.MyPupils.Infrastructure.Repositories.Write;
+
 internal sealed class CosmosDbMyPupilsWriteOnlyRepository : IMyPupilsWriteOnlyRepository
 {
     private readonly ILogger<CosmosDbMyPupilsWriteOnlyRepository> _logger;

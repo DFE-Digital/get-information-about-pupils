@@ -1,4 +1,5 @@
 ﻿namespace DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Services;
+
 public record MappingRequest
 {
     public MappingRequest(MappingKey id, MappingModel model)
