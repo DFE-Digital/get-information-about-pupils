@@ -13,15 +13,25 @@ namespace DfE.GIAP.Core.IntegrationTests.TestHarness;
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     private readonly IServiceCollection _serviceDescriptors;
+    private readonly GiapCosmosDbFixture _cosmosDbFixture;
     private IServiceScope? _servicesScope; // Holds the lifetime scope for test services (created once per test class).
 
     /// <summary>
     /// Constructor initializes the service collection with default test doubles.
     /// </summary>
-    protected BaseIntegrationTest()
+    /// <param name="cosmosDbFixture">Fixture owning the emulator container. The application under
+    /// test is pointed at it, so both the seeding and the application read the same instance.</param>
+    protected BaseIntegrationTest(GiapCosmosDbFixture cosmosDbFixture)
     {
+        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
+        _cosmosDbFixture = cosmosDbFixture;
         _serviceDescriptors = ServiceCollectionTestDoubles.Default();
     }
+
+    /// <summary>
+    /// The emulator container shared by every test in the integration test collection.
+    /// </summary>
+    protected GiapCosmosDbFixture CosmosDb => _cosmosDbFixture;
 
     /// <summary>
     /// Called by xUnit before any tests run.
@@ -31,7 +41,9 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _serviceDescriptors
-            .AddAspNetCoreRuntimeProvidedServices()
+            .AddAspNetCoreRuntimeProvidedServices(
+                cosmosDbEndpointUri: _cosmosDbFixture.Connection.Endpoint,
+                cosmosDbPrimaryKey: _cosmosDbFixture.Connection.Key)
             .AddFeaturesSharedServices();
 
         await OnInitializeAsync(_serviceDescriptors); // Allow derived classes to customize

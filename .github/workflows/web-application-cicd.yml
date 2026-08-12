@@ -307,8 +307,9 @@ jobs:
           # Initcontainer to generate certificates enabling WireMock
           docker compose up --build certgenerator
 
-          # Run tests
-          docker compose up cosmosdb wiremock integration-tests \
+          # Run tests. The Cosmos DB emulator is started by Testcontainers from within
+          # the test container, using the mounted host Docker socket.
+          docker compose up wiremock integration-tests \
             --build \
             --abort-on-container-exit \
             --exit-code-from integration-tests

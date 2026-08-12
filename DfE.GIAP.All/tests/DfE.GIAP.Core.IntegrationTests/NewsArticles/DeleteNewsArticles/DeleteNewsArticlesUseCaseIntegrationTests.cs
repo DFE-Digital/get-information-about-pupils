@@ -7,18 +7,16 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.DeleteNewsArticles;
 
 public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
     public DeleteNewsArticlesUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
+        : base(cosmosDbFixture)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
-        _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName, (client) => client.ClearDatabaseAsync());
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName, (client) => client.ClearDatabaseAsync());
 
         services.AddNewsArticleDependencies();
     }
@@ -32,8 +30,8 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
         // Seed articles
         const int countGenerated = 10;
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate(countGenerated);
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteManyAsync(containerName: "news", seededArticles));
 
         NewsArticleDto targetDeleteArticle = seededArticles[0];
@@ -46,8 +44,8 @@ public sealed class DeleteNewsArticlesUseCaseIntegrationTests : BaseIntegrationT
         IEnumerable<NewsArticleDto> newsArticleDtosShouldReturn = seededArticles.Where(t => t.id != targetDeleteArticle.id);
 
         List<NewsArticleDto> queriedArticles =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<NewsArticleDto>(containerName: "news"));
 
         Assert.Equivalent(newsArticleDtosShouldReturn, queriedArticles);

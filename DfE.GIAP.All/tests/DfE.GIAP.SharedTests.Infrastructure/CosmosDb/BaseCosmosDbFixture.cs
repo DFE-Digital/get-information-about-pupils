@@ -1,30 +1,43 @@
-﻿using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
+using DfE.GIAP.SharedTests.Infrastructure.CosmosDb.Options;
 
 namespace DfE.GIAP.SharedTests.Infrastructure.CosmosDb;
 
-// Note: Limitation that XUnit does not have native dependency resolution for fixtures. This prevents us creating constructors with dependencies e.g Options. So clients must override Options with their options and apply ICollectionFixture<DerivedFixture>
+// Note: Limitation that XUnit does not have native dependency resolution for fixtures. This prevents us creating constructors with dependencies e.g Options. So clients must override Databases with their options and apply ICollectionFixture<DerivedFixture>
 // IAsyncLifetime is called by XUnit when applied through a fixture
 
 public abstract class BaseCosmosDbFixture : IAsyncLifetime
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    protected abstract CosmosDbOptions Options { get; }
+    private readonly CosmosDbEmulator _emulator = new();
     private IReadOnlyDictionary<string, CosmosDbDatabaseClient>? _dbClients = null;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
+    /// <summary>
+    /// The databases (and their containers) to create in the emulator before tests run.
+    /// </summary>
+    protected abstract IEnumerable<CosmosDbDatabaseOptions> Databases { get; }
+
+    /// <summary>
+    /// Connection details for the emulator this fixture started. Only valid once
+    /// <see cref="InitializeAsync"/> has completed - the host port is not known before then.
+    /// </summary>
+    public CosmosDbConnection Connection { get; private set; } = CosmosDbConnection.NotStarted;
 
     public async Task InitializeAsync()
     {
+        await _emulator.StartAsync();
+
+        Connection = new CosmosDbConnection(_emulator.Endpoint, _emulator.Key);
+
+        CosmosDbOptions options = new(_emulator.Endpoint, _emulator.Key, Databases);
+
         Dictionary<string, CosmosDbDatabaseClient> clients = [];
 
-        Guard.ThrowIfNull(Options, nameof(CosmosDbOptions));
-
-        foreach (string databaseName in Options.DatabaseNames)
+        foreach (string databaseName in options.DatabaseNames)
         {
             CosmosDbDatabaseClient dbClient =
                 new(
-                    Options.Uri,
-                    Options.Key,
-                    Options.GetDatabaseOptionsByName(databaseName));
+                    options.Uri,
+                    options.Key,
+                    options.GetDatabaseOptionsByName(databaseName));
 
             await dbClient.CreateAsync();
             await dbClient.ClearDatabaseAsync();
@@ -51,6 +64,8 @@ public abstract class BaseCosmosDbFixture : IAsyncLifetime
             await OnDisposeAsync(item.Value);
             await item.Value.DisposeAsync();
         }
+
+        await _emulator.DisposeAsync();
     }
 
     protected virtual Task OnInitialiseAsync(CosmosDbDatabaseClient client) => Task.CompletedTask;

@@ -7,18 +7,16 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
 
 public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
     public CreateNewsArticleUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
+        : base(cosmosDbFixture)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
-        _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.ClearDatabaseAsync());
         services.AddNewsArticleDependencies();
     }
@@ -49,8 +47,8 @@ public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
 
         // Assert
         List<NewsArticleDto> enumerable =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<NewsArticleDto>(containerName: "news"));
 
         NewsArticleDto newsArticleDto = Assert.Single(enumerable);

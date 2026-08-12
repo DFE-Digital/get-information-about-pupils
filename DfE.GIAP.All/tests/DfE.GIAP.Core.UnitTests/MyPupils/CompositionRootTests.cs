@@ -41,7 +41,7 @@ public sealed class CompositionRootTests
 
         IServiceCollection services =
             ServiceCollectionTestDoubles.Default()
-                .AddAspNetCoreRuntimeProvidedServices(configuration)
+                .AddAspNetCoreRuntimeProvidedServices(customConfiguration: configuration)
                 .AddFeaturesSharedServices()
                 .AddMyPupilsCoreFakeAdaptors();
 

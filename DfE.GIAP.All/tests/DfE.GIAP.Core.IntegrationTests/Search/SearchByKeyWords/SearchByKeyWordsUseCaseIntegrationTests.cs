@@ -12,7 +12,8 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
 {
     private readonly WireMockServerFixture _searchIndexFixture;
 
-    public SearchByKeyWordsUseCaseIntegrationTests(WireMockServerFixture searchIndexFixture)
+    public SearchByKeyWordsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
+        : base(cosmosDbFixture)
     {
         ArgumentNullException.ThrowIfNull(searchIndexFixture);
         _searchIndexFixture = searchIndexFixture;

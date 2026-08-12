@@ -16,14 +16,12 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
     private readonly WireMockServerFixture _searchIndexFixture;
     private const string MyPupilsContainerName = "mypupils";
 
     public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
+        : base(cosmosDbFixture)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
-        _cosmosDbFixture = cosmosDbFixture;
 
         ArgumentNullException.ThrowIfNull(searchIndexFixture);
         _searchIndexFixture = searchIndexFixture;
@@ -31,8 +29,8 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
         IConfiguration indexConfiguration =
@@ -92,8 +90,8 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             myPupilsId,
             upns: UniquePupilNumbers.Create(allPupilUpns));
 
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, myPupilsDocument));
 
         // Act
@@ -155,8 +153,8 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
                 myPupilsId,
                 upns: UniquePupilNumbers.Create(uniquePupilNumbers: []));
 
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, document));
 
         // Act
