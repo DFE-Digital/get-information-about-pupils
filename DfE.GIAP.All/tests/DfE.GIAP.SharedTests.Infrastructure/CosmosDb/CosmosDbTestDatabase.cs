@@ -28,7 +28,8 @@ public class CosmosDbDatabaseClient : IAsyncDisposable
             authKeyOrResourceToken: cosmosAuthKey ?? string.Empty,
             clientOptions: new CosmosClientOptions()
             {
-                ConnectionMode = ConnectionMode.Direct
+                // The Linux (vNext) emulator only serves gateway mode.
+                ConnectionMode = ConnectionMode.Gateway
                 // Consider in future if necessary - requires better control of docker emulator args, performance cost
                 // ConsistencyLevel = ConsistencyLevel.Strong
             });

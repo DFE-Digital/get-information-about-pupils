@@ -10,6 +10,7 @@
     <PackageReference Include="Bogus" />
     <PackageReference Include="Microsoft.Azure.Cosmos" />
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Testcontainers.CosmosDb" />
     <PackageReference Include="WireMock.Net" />
     <PackageReference Include="xunit" />
   </ItemGroup>

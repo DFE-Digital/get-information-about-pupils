@@ -8,18 +8,16 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticles;
 
 public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
     public GetNewsArticlesUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
+        : base(cosmosDbFixture)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
-        _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.ClearDatabaseAsync());
         services.AddNewsArticleDependencies();
     }
@@ -35,8 +33,8 @@ public sealed class GetNewsArticlesUseCaseIntegrationTests : BaseIntegrationTest
             _ => throw new NotImplementedException()
         });
 
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteManyAsync(containerName: "news", seededDTOs));
 
         GetNewsArticlesRequest request = new(newsArticleSearchFilter: filter);

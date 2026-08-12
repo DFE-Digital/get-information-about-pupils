@@ -9,16 +9,10 @@ services:
       environment:
       - WIREMOCK_KEYSTORE_STOREPASSWORD=${WIREMOCK_KEYSTORE_STOREPASSWORD}
       - WIREMOCK_KEYSTORE_KEYPASSWORD=${WIREMOCK_KEYSTORE_KEYPASSWORD}
-  cosmosdb:
-    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest@sha256:53724d515b65a93238113a8f981df62ce238a93685fd2061cfb60444f881e2cf
-    ports:
-      - 8081:8081
-      - 10250-10255:10250-10255
-    environment:
-      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 5
-      AZURE_COSMOS_EMULATOR_ENABLE_CERT_AUTH: true
-    network_mode: host
-  wiremock: 
+  # Note: there is no cosmosdb service - the integration tests start their own emulator
+  # container through Testcontainers (see CosmosDbEmulator), which is why the test
+  # container below is given the Docker socket.
+  wiremock:
     image: sheyenrath/wiremock.net@sha256:1f33b682c19dfc36795be33df0820f017e6ad0e1e10bbd6e13cf63fb325c2f5a
     ports: 
     - "8443:8443"
@@ -66,12 +60,13 @@ services:
       secrets:
         - nuget_config
     depends_on:
-      - cosmosdb
       - wiremock
     network_mode: host
     volumes:
       # Mount CA enabling WireMock
       - ${SHARED_CERTIFICATES}:/usr/local/share/ca-certificates/shared-certs:ro
+      # Testcontainers starts the Cosmos DB emulator as a sibling container on the host daemon
+      - /var/run/docker.sock:/var/run/docker.sock
       # Test coverage reports
       - type: bind
         source: coverage-integration/

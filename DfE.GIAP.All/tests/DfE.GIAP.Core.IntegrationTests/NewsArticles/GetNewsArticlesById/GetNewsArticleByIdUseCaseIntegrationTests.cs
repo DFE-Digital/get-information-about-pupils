@@ -8,19 +8,17 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.GetNewsArticlesById;
 
 public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
     public GetNewsArticleByIdUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
+        : base(cosmosDbFixture)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
-        _cosmosDbFixture = cosmosDbFixture;
     }
 
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
         services.AddNewsArticleDependencies();
@@ -35,8 +33,8 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
 
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteManyAsync(containerName: "news", seededArticles));
 
         NewsArticleDto targetArticle = seededArticles[0];
@@ -62,8 +60,8 @@ public sealed class GetNewsArticleByIdUseCaseIntegrationTests : BaseIntegrationT
         // Seed articles
         List<NewsArticleDto> seededArticles = NewsArticleDtoTestDoubles.Generate();
 
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteManyAsync(containerName: "news", seededArticles));
 
         GetNewsArticleByIdRequest request = new(Id: NewsArticleIdentifier.New());

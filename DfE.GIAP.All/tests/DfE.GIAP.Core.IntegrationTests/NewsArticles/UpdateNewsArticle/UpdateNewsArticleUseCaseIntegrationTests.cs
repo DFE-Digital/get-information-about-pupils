@@ -11,18 +11,16 @@ namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
 
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
 
     public UpdateNewsArticleUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
+        : base(cosmosDbFixture)
     {
-        ArgumentNullException.ThrowIfNull(cosmosDbFixture);
-        _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
         services
@@ -51,8 +49,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
     public async Task UpdateNullableRecordSuccessfully(NewsArticleDto seededArticle, bool requestPinned, bool requestPublished)
     {
         // Arrange
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteItemAsync(containerName: "news", seededArticle));
 
         DateTime beforeRequestCreationDateTimeUtc = DateTime.UtcNow;
@@ -79,8 +77,8 @@ public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTe
         List<string> updatedArticleIdentifier = [seededArticle.id];
 
         List<NewsArticleDto> articles =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<NewsArticleDto>(
                     containerName: "news",
                     updatedArticleIdentifier));

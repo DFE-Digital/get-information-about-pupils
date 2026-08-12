@@ -84,13 +84,17 @@ public static class ConfigurationTestDoubles
         return builder;
     }
 
-    public static IConfigurationBuilder WithLocalCosmosDbOptions(this IConfigurationBuilder builder)
+    /// <param name="endpointUri">Gateway endpoint of the emulator started for this test run. The
+    /// host port is assigned at container start, so it cannot be hard coded here.</param>
+    /// <param name="primaryKey">Account key the emulator accepts.</param>
+    public static IConfigurationBuilder WithLocalCosmosDbOptions(this IConfigurationBuilder builder, string endpointUri, string primaryKey)
     {
         Dictionary<string, string?> configurationOptions = new()
         {
-            ["RepositoryOptions:ConnectionMode"] = "1",
-            ["RepositoryOptions:EndpointUri"] = "https://localhost:8081",
-            ["RepositoryOptions:PrimaryKey"] = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+            // Gateway (0): the Linux emulator does not serve direct mode.
+            ["RepositoryOptions:ConnectionMode"] = "0",
+            ["RepositoryOptions:EndpointUri"] = endpointUri,
+            ["RepositoryOptions:PrimaryKey"] = primaryKey,
             ["RepositoryOptions:DatabaseId"] = "giapsearch"
         };
 

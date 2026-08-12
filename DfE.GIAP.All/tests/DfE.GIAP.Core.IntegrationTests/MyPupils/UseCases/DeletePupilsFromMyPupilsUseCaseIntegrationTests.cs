@@ -13,19 +13,18 @@ namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly GiapCosmosDbFixture _cosmosDbFixture;
     private const string MyPupilsContainerName = "mypupils";
 
     private MyPupilsTestContext? _testContext;
     public DeletePupilsFromMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
+        : base(cosmosDbFixture)
     {
-        _cosmosDbFixture = cosmosDbFixture;
     }
 
     protected async override Task OnInitializeAsync(IServiceCollection services)
     {
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.ClearDatabaseAsync());
 
         services.AddMyPupilsCore();
@@ -47,8 +46,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
                 UniquePupilNumbers.Create(
                     myPupilsUpns.Select(t => new UniquePupilNumber(t!))));
 
-        await _cosmosDbFixture.InvokeAsync(
-            databaseName: _cosmosDbFixture.DatabaseName,
+        await CosmosDb.InvokeAsync(
+            databaseName: CosmosDb.DatabaseName,
             (client) => client.WriteItemAsync(containerName: MyPupilsContainerName, myPupilsDocument));
 
         _testContext = new MyPupilsTestContext(myPupilId.Value, myPupilsUpns!);
@@ -74,8 +73,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         // Assert
         IEnumerable<MyPupilsDocumentDto> users =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: MyPupilsContainerName));
 
         List<string> remainingUpnsAfterDelete =
@@ -111,8 +110,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         // Assert
         IEnumerable<MyPupilsDocumentDto> users =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<MyPupilsDocumentDto>(MyPupilsContainerName));
 
         List<string> remainingUpnsAfterDelete =
@@ -149,8 +148,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         // Assert
         IEnumerable<MyPupilsDocumentDto> myPupilsDocument =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: MyPupilsContainerName));
 
         List<string> remainingUpnsAfterDelete =
@@ -187,8 +186,8 @@ public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegr
 
         // Assert
         IEnumerable<MyPupilsDocumentDto> myPupilsDocument =
-            await _cosmosDbFixture.InvokeAsync(
-                databaseName: _cosmosDbFixture.DatabaseName,
+            await CosmosDb.InvokeAsync(
+                databaseName: CosmosDb.DatabaseName,
                 (client) => client.ReadManyAsync<MyPupilsDocumentDto>(containerName: MyPupilsContainerName));
 
         List<string> remainingUpnsAfterDelete =

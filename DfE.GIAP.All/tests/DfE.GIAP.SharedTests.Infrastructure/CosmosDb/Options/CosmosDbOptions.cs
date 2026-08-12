@@ -16,15 +16,6 @@ public record CosmosDbOptions
             .ToList()
             .AsReadOnly();
 
-    public CosmosDbOptions(IEnumerable<CosmosDbDatabaseOptions> databaseOptions)
-        : this(
-              "https://localhost:8081",
-              "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-              databaseOptions)
-    {
-
-    }
-
     public CosmosDbOptions(string uri, string? key, IEnumerable<CosmosDbDatabaseOptions> databaseOptions)
     {
         Guard.ThrowIfNullOrWhiteSpace(uri, nameof(uri));
