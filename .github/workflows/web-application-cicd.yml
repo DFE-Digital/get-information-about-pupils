@@ -295,21 +295,21 @@ jobs:
             --password ${{ secrets.GITHUB_TOKEN }} \
             --store-password-in-clear-text
 
-          export DOCKER_BUILDKIT=1
-
-          # Run tests. The Cosmos DB emulator is started by Testcontainers from within
-          # the test container, using the mounted host Docker socket. The search index is
-          # stubbed in-process, so nothing else needs to be stood up.
-          docker compose up integration-tests \
-            --build \
-            --abort-on-container-exit \
-            --exit-code-from integration-tests
+          dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj \
+            --nologo \
+            --no-restore \
+            --logger "console;verbosity=diagnostic" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutputFormat=cobertura \
+            -p:Exclude="[DfE.GIAP.SharedTests*]*" \
+            -p:CoverletOutput="$GITHUB_WORKSPACE/coverage-integration/cobertura.xml"
 
       - name: Upload integration test coverage report
         uses: actions/upload-artifact@v6
         with:
           name: integration-test-coverage
           path: coverage-integration/cobertura.xml
+          if-no-files-found: error
 
   merge_coverage_reports:
     runs-on: ubuntu-latest
