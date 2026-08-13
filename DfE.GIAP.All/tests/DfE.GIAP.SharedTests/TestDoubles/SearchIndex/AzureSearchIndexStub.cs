@@ -35,6 +35,11 @@ public sealed class AzureSearchIndexStub
         ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
 
+        if (Path.IsPathRooted(fileName))
+        {
+            throw new ArgumentException("File name must be a relative path under the contracts directory.", nameof(fileName));
+        }
+
         string resolvedPath = Path.Combine(ContractsDirectory, fileName);
 
         if (!File.Exists(resolvedPath))
