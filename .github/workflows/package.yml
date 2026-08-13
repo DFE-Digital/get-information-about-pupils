@@ -1,0 +1,25 @@
+name: Package application
+
+on:
+  workflow_call:
+    outputs:
+      artifact_name:
+        value: web_package
+
+jobs:
+  package:
+    name: Build & package
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # Pinned at v4.0.0
+
+      - run: just package -c Release -o
+
+      - uses: actions/upload-artifact@v7
+        id: upload_app
+        with:
+          name: web_package
+          path: DfE.GIAP.All/src/DfE.GIAP.Web/bin/Release/net8.0/publish/
