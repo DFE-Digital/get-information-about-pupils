@@ -11,6 +11,7 @@ using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
+[Collection(CosmosDbIntegrationTestCollectionMarker.Name)]
 public sealed class DeletePupilsFromMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
     private const string MyPupilsContainerName = "mypupils";

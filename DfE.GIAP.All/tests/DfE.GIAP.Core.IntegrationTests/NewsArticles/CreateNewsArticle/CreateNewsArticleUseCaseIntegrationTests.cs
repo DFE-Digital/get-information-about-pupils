@@ -5,6 +5,7 @@ using DfE.GIAP.Core.NewsArticles.Infrastructure.Repositories.DataTransferObjects
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.CreateNewsArticle;
 
+[Collection(CosmosDbIntegrationTestCollectionMarker.Name)]
 public sealed class CreateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
 

@@ -34,8 +34,10 @@ public static class ConfigurationTestDoubles
     {
         Dictionary<string, string?> searchConnectionStubConfig = new()
         {
-            // AzureSearchConnectionOptions: Connection details for Azure Search
-            ["AzureSearchConnectionOptions:EndpointUri"] = "https://localhost:8443",
+            // AzureSearchConnectionOptions: Connection details for Azure Search.
+            // The Azure Search SDK rejects a non-https endpoint, but nothing is listening here -
+            // requests are served in-memory by AzureSearchIndexStub.
+            ["AzureSearchConnectionOptions:EndpointUri"] = "https://localhost",
             ["AzureSearchConnectionOptions:Credentials"] = "SEFSOFOIWSJFSO"
         };
 

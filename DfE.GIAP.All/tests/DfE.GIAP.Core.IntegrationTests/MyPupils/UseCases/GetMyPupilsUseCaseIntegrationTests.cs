@@ -14,17 +14,25 @@ using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.MyPupils.UseCases;
 
+[Collection(CosmosDbIntegrationTestCollectionMarker.Name)]
 public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly WireMockServerFixture _searchIndexFixture;
     private const string MyPupilsContainerName = "mypupils";
+    private const string NpdIndexName = "NPD_INDEX_NAME";
+    private const string PupilPremiumIndexName = "PUPIL_PREMIUM_INDEX_NAME";
 
-    public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
+    private readonly AzureSearchIndexStub _searchIndexStub =
+        AzureSearchIndexStub.Create()
+            .WithIndexResponseFromFile(
+                indexName: NpdIndexName,
+                fileName: "npd_searchindex_returns_many_pupils.json")
+            .WithIndexResponseFromFile(
+                indexName: PupilPremiumIndexName,
+                fileName: "pupilpremium_searchindex_returns_many_pupils.json");
+
+    public GetMyPupilsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture)
         : base(cosmosDbFixture)
     {
-
-        ArgumentNullException.ThrowIfNull(searchIndexFixture);
-        _searchIndexFixture = searchIndexFixture;
     }
 
     protected override async Task OnInitializeAsync(IServiceCollection services)
@@ -46,6 +54,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
             .Bind(indexConfiguration.GetSection(nameof(AzureSearchConnectionOptions)));
 
         services
+            .AddStubbedSearchIndex(_searchIndexStub)
             .AddSearchCore(indexConfiguration)
             .AddMyPupilsCore();
     }
@@ -53,30 +62,12 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task GetMyPupils_HasPupils_In_MyPupils_Returns_Npd_And_PupilPremium_Pupils()
     {
-        HttpMappingRequest request = HttpMappingRequest.Create(
-            httpMappingFiles: [
-                new HttpMappingFile(
-                    key: "get-indexnames",
-                    fileName: "get_searchindex_names.json"),
-                new HttpMappingFile(
-                    key: "npd",
-                    fileName: "npd_searchindex_returns_many_pupils.json"),
-                new HttpMappingFile(
-                    key: "pupil-premium",
-                    fileName: "pupilpremium_searchindex_returns_many_pupils.json")
-            ]);
-
-        HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
-
+        // Arrange
         AzureSearchPostDto npdResponse =
-            stubbedResponses
-                .GetResponseByKey("npd")
-                .GetResponseBody<AzureSearchPostDto>()!;
+            _searchIndexStub.GetStubbedResponseFor<AzureSearchPostDto>(NpdIndexName);
 
         AzureSearchPostDto pupilPremiumResponse =
-            stubbedResponses
-                .GetResponseByKey("pupil-premium")
-                .GetResponseBody<AzureSearchPostDto>()!;
+            _searchIndexStub.GetStubbedResponseFor<AzureSearchPostDto>(PupilPremiumIndexName);
 
         List<UniquePupilNumber> allPupilUpns = npdResponse.value!
             .Select(t => t.UPN)
@@ -137,15 +128,6 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
     public async Task GetMyPupils_NoPupils_Returns_Empty_And_DoesNot_Call_SearchIndexes()
     {
         // Arrange
-
-        HttpMappingRequest request = HttpMappingRequest.Create(
-            httpMappingFiles: [
-                new HttpMappingFile(
-                    key: "get-indexnames",
-                    fileName: "get_searchindex_names.json") ]);
-
-        HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(request);
-
         MyPupilsId myPupilsId = MyPupilsIdTestDoubles.Default();
 
         MyPupilsDocumentDto document =
@@ -169,6 +151,7 @@ public sealed class GetMyPupilsUseCaseIntegrationTests : BaseIntegrationTest
         Assert.NotNull(getMyPupilsResponse);
         Assert.NotNull(getMyPupilsResponse.MyPupils);
         Assert.Empty(getMyPupilsResponse.MyPupils.Values);
+        Assert.Empty(_searchIndexStub.ReceivedRequests);
     }
 
     private sealed class MapAzureSearchIndexDtosToPupilDtos : IMapper<AzureNpdSearchResponseDto, MyPupilsModel>

@@ -9,6 +9,7 @@ using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.IntegrationTests.NewsArticles.UpdateNewsArticle;
 
+[Collection(CosmosDbIntegrationTestCollectionMarker.Name)]
 public sealed class UpdateNewsArticleUseCaseIntegrationTests : BaseIntegrationTest
 {
 

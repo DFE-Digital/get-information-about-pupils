@@ -9,9 +9,10 @@
     <PackageReference Include="Azure.Core" />
     <PackageReference Include="Bogus" />
     <PackageReference Include="Microsoft.Azure.Cosmos" />
+    <!-- Required by the 'dynamic' queries in CosmosDbTestDatabase on netstandard2.0 -->
+    <PackageReference Include="Microsoft.CSharp" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Testcontainers.CosmosDb" />
-    <PackageReference Include="WireMock.Net" />
     <PackageReference Include="xunit" />
   </ItemGroup>
 </Project>

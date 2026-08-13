@@ -1,57 +1,8 @@
 services:
-  certgenerator:
-      image: wiremock-certgenerator
-      build:
-        context: .
-        dockerfile: Dockerfile.CertGenerator
-      volumes:
-        - ${SHARED_CERTIFICATES}:/certs
-      environment:
-      - WIREMOCK_KEYSTORE_STOREPASSWORD=${WIREMOCK_KEYSTORE_STOREPASSWORD}
-      - WIREMOCK_KEYSTORE_KEYPASSWORD=${WIREMOCK_KEYSTORE_KEYPASSWORD}
-  # Note: there is no cosmosdb service - the integration tests start their own emulator
-  # container through Testcontainers (see CosmosDbEmulator), which is why the test
-  # container below is given the Docker socket.
-  wiremock:
-    image: sheyenrath/wiremock.net@sha256:1f33b682c19dfc36795be33df0820f017e6ad0e1e10bbd6e13cf63fb325c2f5a
-    ports: 
-    - "8443:8443"
-    volumes:
-    - ${SHARED_CERTIFICATES}:/certs:ro
-    # TODO can I comment out below
-    entrypoint:
-      - "dotnet"
-      - "./wiremock-net.dll"
-    command:
-      - "--WireMockLogger"
-      - "WireMockConsoleLogger"
-      - "--Urls"
-      - "https://*:8443"
-      - "--X509CertificateFilePath"
-      - "/certs/wiremock-cert.pfx"
-      - --X509CertificatePassword
-      - "yourpassword"
-
-  # wiremock:
-  #   image: wiremock/wiremock:3.3.1
-  #   ports:
-  #     - "8443:8443"
-  #   volumes:
-  #     - ${SHARED_CERTIFICATES}:/certs:ro
-  #   entrypoint:
-  #     - /docker-entrypoint.sh
-  #     - --https-port
-  #     - "8443"
-  #     - --https-keystore
-  #     - /certs/wiremock-keystore.jks
-  #     - --keystore-password
-  #     - ${WIREMOCK_KEYSTORE_STOREPASSWORD}
-  #     - --keystore-type
-  #     - JKS  
-  #     - --key-manager-password
-  #     - ${WIREMOCK_KEYSTORE_KEYPASSWORD}
-  #     - --verbose
-  #   restart: unless-stopped
+  # Note: there are no backing services here. The Cosmos DB emulator is started per test run
+  # through Testcontainers (see CosmosDbEmulator), which is why the test container below is
+  # given the Docker socket. The Azure Search index is stubbed in-process (see
+  # AzureSearchIndexStub), so it needs no container and no certificate.
   integration-tests:
     image: giapweb-core-integration-tests:latest
     build:
@@ -59,12 +10,8 @@ services:
       dockerfile: Dockerfile.IntegrationTests
       secrets:
         - nuget_config
-    depends_on:
-      - wiremock
     network_mode: host
     volumes:
-      # Mount CA enabling WireMock
-      - ${SHARED_CERTIFICATES}:/usr/local/share/ca-certificates/shared-certs:ro
       # Testcontainers starts the Cosmos DB emulator as a sibling container on the host daemon
       - /var/run/docker.sock:/var/run/docker.sock
       # Test coverage reports

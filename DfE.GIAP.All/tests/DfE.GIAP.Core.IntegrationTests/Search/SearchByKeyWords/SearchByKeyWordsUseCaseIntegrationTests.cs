@@ -1,4 +1,4 @@
-﻿using DfE.GIAP.Core.IntegrationTests.TestHarness;
+using DfE.GIAP.Core.IntegrationTests.TestHarness;
 using DfE.GIAP.Core.Search;
 using DfE.GIAP.Core.Search.Application.Models.Search;
 using DfE.GIAP.Core.Search.Application.Models.Sort;
@@ -8,17 +8,19 @@ using Microsoft.Extensions.Configuration;
 
 namespace DfE.GIAP.Core.IntegrationTests.Search.SearchByKeyWords;
 
+/// <summary>
+/// Exercises the search use case against a stubbed index. The Azure Search SDK pipeline is real -
+/// only its transport is replaced - so no emulator, server or certificate is needed.
+/// </summary>
 public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTest
 {
-    private readonly WireMockServerFixture _searchIndexFixture;
+    private const string FurtherEducationIndexName = "FE_INDEX_NAME";
 
-    public SearchByKeyWordsUseCaseIntegrationTests(GiapCosmosDbFixture cosmosDbFixture, WireMockServerFixture searchIndexFixture)
-        : base(cosmosDbFixture)
-    {
-        ArgumentNullException.ThrowIfNull(searchIndexFixture);
-        _searchIndexFixture = searchIndexFixture;
-
-    }
+    private readonly AzureSearchIndexStub _searchIndexStub =
+        AzureSearchIndexStub.Create()
+            .WithIndexResponseFromFile(
+                indexName: FurtherEducationIndexName,
+                fileName: "fe_searchindex_returns_many_pupils.json");
 
     protected override Task OnInitializeAsync(IServiceCollection services)
     {
@@ -31,25 +33,16 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
                 .Build();
 
         services
+            .AddStubbedSearchIndex(_searchIndexStub)
             .AddSearchCore(searchConfiguration);
+
         return Task.CompletedTask;
     }
 
     [Fact]
     public async Task SearchByKeyWordsUseCase_Returns_Results_When_HandleRequest()
     {
-        HttpMappingRequest httpRequest = HttpMappingRequest.Create(
-            httpMappingFiles: [
-                new HttpMappingFile(
-                    key: "index-names",
-                    fileName: "get_searchindex_names.json"),
-                new HttpMappingFile(
-                    key: "further-education",
-                    fileName: "fe_searchindex_returns_many_pupils.json")
-            ]);
-
-        HttpMappedResponses stubbedResponses = await _searchIndexFixture.RegisterHttpMapping(httpRequest);
-
+        // Arrange
         IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>> sut =
             ResolveApplicationType<IUseCase<FurtherEducationSearchByNameRequest, SearchResponse<FurtherEducationLearners>>>()!;
 
@@ -60,7 +53,7 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
 
         SearchCriteria searchCriteria = new()
         {
-            Index = "FE_INDEX_NAME",
+            Index = FurtherEducationIndexName,
             SearchFields = ["field1"],
             Size = 20
         };
@@ -72,12 +65,15 @@ public sealed class SearchByKeyWordsUseCaseIntegrationTests : BaseIntegrationTes
             SortOrder = sortOrder
         };
 
-        // act
+        // Act
         SearchResponse<FurtherEducationLearners> response = await sut.HandleRequestAsync(request);
 
-        // assert
+        // Assert
         Assert.NotNull(response);
         Assert.NotNull(response.LearnerSearchResults);
         Assert.Equal(10, response.TotalNumberOfResults);
+
+        RecordedSearchRequest searchRequest = Assert.Single(_searchIndexStub.ReceivedRequests);
+        Assert.Equal(FurtherEducationIndexName, searchRequest.IndexName);
     }
 }

@@ -1,133 +1,114 @@
 {
-    "Request": {
-        "Path": {
-            "Matchers": [
-                {
-                    "Name": "WildcardMatcher",
-                    "Pattern": "/indexes('PUPIL_PREMIUM_INDEX_NAME')/docs/search.post.search",
-                    "IgnoreCase": true
-                }
-            ]
-        }
-    },
-    "Response": {
-        "StatusCode": 200,
-        "Headers": {
-            "Content-Type": "application/json"
+    "value": [
+        {
+            "@search.score": 0.6479843685510199,
+            "UPN": "K220670832876",
+            "Surname": "Lesch",
+            "Forename": "Della",
+            "Sex": "M",
+            "Gender": "F",
+            "DOB": "2015-11-10",
+            "LocalAuthority": "373",
+            "id": "01c2edab-2069-411e-b551-a4b7667ef99c"
         },
-        "BodyAsJson": {
-            "value": [
-                {
-                    "@search.score": 0.6479843685510199,
-                    "UPN": "K220670832876",
-                    "Surname": "Lesch",
-                    "Forename": "Della",
-                    "Sex": "M",
-                    "Gender": "F",
-                    "DOB": "2015-11-10",
-                    "LocalAuthority": "373",
-                    "id": "01c2edab-2069-411e-b551-a4b7667ef99c"
-                },
-                {
-                    "@search.score": 0.8518097677975438,
-                    "UPN": "D911233567199",
-                    "Surname": "Cormier",
-                    "Forename": "Eugenia",
-                    "Sex": "M",
-                    "Gender": "M",
-                    "DOB": "2019-11-10",
-                    "LocalAuthority": "392",
-                    "id": "06952095-c6d3-cd31-d3c0-9311b02c7f59"
-                },
-                {
-                    "@search.score": 0.2701747244140499,
-                    "UPN": "B318213801340",
-                    "Surname": "Anderson",
-                    "Forename": "Aileen",
-                    "Sex": "M",
-                    "Gender": "F",
-                    "DOB": "2021-11-10",
-                    "LocalAuthority": "305",
-                    "id": "6b44ff9d-87da-b05c-58a1-c7f31d98f5f4"
-                },
-                {
-                    "@search.score": 0.9794031874831569,
-                    "UPN": "R455480689382",
-                    "Surname": "Lang",
-                    "Forename": "Ken",
-                    "Sex": "F",
-                    "Gender": "M",
-                    "DOB": "2023-11-10",
-                    "LocalAuthority": "756",
-                    "id": "5423a220-97e0-1df6-35fd-d6359263b37e"
-                },
-                {
-                    "@search.score": 0.8377436924603046,
-                    "UPN": "P048048027436",
-                    "Surname": "Padberg",
-                    "Forename": "Frank",
-                    "Sex": "F",
-                    "Gender": "F",
-                    "DOB": "2020-11-10",
-                    "LocalAuthority": "568",
-                    "id": "58b1243c-5fe8-5af2-f42d-11a7f1fcca14"
-                },
-                {
-                    "@search.score": 0.35715512482255707,
-                    "UPN": "B525162908668",
-                    "Surname": "Collins",
-                    "Forename": "Nelson",
-                    "Sex": "M",
-                    "Gender": "M",
-                    "DOB": "2008-11-10",
-                    "LocalAuthority": "557",
-                    "id": "63d27bae-f348-8105-e411-52d21be7b485"
-                },
-                {
-                    "@search.score": 0.7277320367909687,
-                    "UPN": "M295474680700",
-                    "Surname": "Cartwright",
-                    "Forename": "Brandt",
-                    "Sex": "M",
-                    "Gender": "M",
-                    "DOB": "2009-11-10",
-                    "LocalAuthority": "301",
-                    "id": "200b490b-ecdb-7140-6bcc-c666f242fb93"
-                },
-                {
-                    "@search.score": 0.12200353666081876,
-                    "UPN": "Q245247798301",
-                    "Surname": "Grimes",
-                    "Forename": "Zachery",
-                    "Sex": "F",
-                    "Gender": "M",
-                    "DOB": "2022-11-10",
-                    "LocalAuthority": "557",
-                    "id": "33e5eb8e-9dd5-bf8e-eb1b-e8f8690565c1"
-                },
-                {
-                    "@search.score": 0.2680766174021514,
-                    "UPN": "G118683607310",
-                    "Surname": "Ondricka",
-                    "Forename": "Easton",
-                    "Sex": "F",
-                    "Gender": "F",
-                    "DOB": "2007-11-10",
-                    "LocalAuthority": "324",
-                    "id": "740c2085-d96b-e5e2-b8f7-7e8551df7349"
-                },
-                {
-                    "@search.score": 0.4724895528311901,
-                    "UPN": "K161307410556",
-                    "Surname": "Shields",
-                    "Forename": "Rosalind",
-                    "Sex": "M",
-                    "Gender": "F",
-                    "DOB": "2013-11-10",
-                    "LocalAuthority": "259",
-                    "id": "6b73ba95-1e4b-6335-8227-a5916e04ba09"
-                }
-            ]
+        {
+            "@search.score": 0.8518097677975438,
+            "UPN": "D911233567199",
+            "Surname": "Cormier",
+            "Forename": "Eugenia",
+            "Sex": "M",
+            "Gender": "M",
+            "DOB": "2019-11-10",
+            "LocalAuthority": "392",
+            "id": "06952095-c6d3-cd31-d3c0-9311b02c7f59"
+        },
+        {
+            "@search.score": 0.2701747244140499,
+            "UPN": "B318213801340",
+            "Surname": "Anderson",
+            "Forename": "Aileen",
+            "Sex": "M",
+            "Gender": "F",
+            "DOB": "2021-11-10",
+            "LocalAuthority": "305",
+            "id": "6b44ff9d-87da-b05c-58a1-c7f31d98f5f4"
+        },
+        {
+            "@search.score": 0.9794031874831569,
+            "UPN": "R455480689382",
+            "Surname": "Lang",
+            "Forename": "Ken",
+            "Sex": "F",
+            "Gender": "M",
+            "DOB": "2023-11-10",
+            "LocalAuthority": "756",
+            "id": "5423a220-97e0-1df6-35fd-d6359263b37e"
+        },
+        {
+            "@search.score": 0.8377436924603046,
+            "UPN": "P048048027436",
+            "Surname": "Padberg",
+            "Forename": "Frank",
+            "Sex": "F",
+            "Gender": "F",
+            "DOB": "2020-11-10",
+            "LocalAuthority": "568",
+            "id": "58b1243c-5fe8-5af2-f42d-11a7f1fcca14"
+        },
+        {
+            "@search.score": 0.35715512482255707,
+            "UPN": "B525162908668",
+            "Surname": "Collins",
+            "Forename": "Nelson",
+            "Sex": "M",
+            "Gender": "M",
+            "DOB": "2008-11-10",
+            "LocalAuthority": "557",
+            "id": "63d27bae-f348-8105-e411-52d21be7b485"
+        },
+        {
+            "@search.score": 0.7277320367909687,
+            "UPN": "M295474680700",
+            "Surname": "Cartwright",
+            "Forename": "Brandt",
+            "Sex": "M",
+            "Gender": "M",
+            "DOB": "2009-11-10",
+            "LocalAuthority": "301",
+            "id": "200b490b-ecdb-7140-6bcc-c666f242fb93"
+        },
+        {
+            "@search.score": 0.12200353666081876,
+            "UPN": "Q245247798301",
+            "Surname": "Grimes",
+            "Forename": "Zachery",
+            "Sex": "F",
+            "Gender": "M",
+            "DOB": "2022-11-10",
+            "LocalAuthority": "557",
+            "id": "33e5eb8e-9dd5-bf8e-eb1b-e8f8690565c1"
+        },
+        {
+            "@search.score": 0.2680766174021514,
+            "UPN": "G118683607310",
+            "Surname": "Ondricka",
+            "Forename": "Easton",
+            "Sex": "F",
+            "Gender": "F",
+            "DOB": "2007-11-10",
+            "LocalAuthority": "324",
+            "id": "740c2085-d96b-e5e2-b8f7-7e8551df7349"
+        },
+        {
+            "@search.score": 0.4724895528311901,
+            "UPN": "K161307410556",
+            "Surname": "Shields",
+            "Forename": "Rosalind",
+            "Sex": "M",
+            "Gender": "F",
+            "DOB": "2013-11-10",
+            "LocalAuthority": "259",
+            "id": "6b73ba95-1e4b-6335-8227-a5916e04ba09"
         }
-    }
+    ]
 }

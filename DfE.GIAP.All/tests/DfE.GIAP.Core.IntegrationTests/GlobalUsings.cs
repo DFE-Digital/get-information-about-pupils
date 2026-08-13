@@ -1,11 +1,7 @@
-﻿global using DfE.CleanArchitecture.Common.Application;
+global using DfE.CleanArchitecture.Common.Application;
 global using DfE.GIAP.Core.NewsArticles;
 global using DfE.GIAP.Core.NewsArticles.Application.Models;
 global using DfE.GIAP.Core.NewsArticles.Application.UseCases.GetNewsArticles;
-global using DfE.GIAP.SharedTests.Infrastructure.WireMock;
-global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Client.Java;
-global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Request;
-global using DfE.GIAP.SharedTests.Infrastructure.WireMock.Mapping.Response;
 global using DfE.GIAP.SharedTests.Runtime.TestDoubles;
 global using DfE.GIAP.SharedTests.TestDoubles.SearchIndex;
 global using Microsoft.Extensions.DependencyInjection;

@@ -1,9 +1,8 @@
 #!/bin/sh
 set -e
 
-# Note: the Cosmos DB emulator is started per test run by Testcontainers and served over
-# plain HTTP, so it needs no certificate handling here. Only WireMock's CA is installed.
-update-ca-certificates
+# Note: no certificate handling is needed. The Cosmos DB emulator is started per test run by
+# Testcontainers and served over plain HTTP, and the Azure Search index is stubbed in-process.
 
 # Note: coverlet code-coverage requires a build - source mapping
 dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj \
