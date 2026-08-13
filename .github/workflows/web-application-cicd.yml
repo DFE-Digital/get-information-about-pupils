@@ -401,6 +401,10 @@ jobs:
         with:
           sonarcloud-project-key: DFE-Digital_get-information-about-pupils
           sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
+          # The shared action hardcodes sonar.scanner.skipJreProvisioning=true, so the
+          # scanner engine runs on JAVA_HOME. SonarQube Cloud now requires Java 21+;
+          # the action's default of 17 makes the engine die on startup.
+          java-version: 21
           use-global-json: true
           coverage-report-path: merged-coverage-reports/SonarQube.xml
           sonarscan-args: >
