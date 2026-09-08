@@ -6,8 +6,6 @@ public record MyPupilsMessage
     public MyPupilsMessage(string? id, MessageLevel level, string message)
     {
         Id = string.IsNullOrWhiteSpace(id) ? string.Empty : id.Trim();
-
-        ArgumentNullException.ThrowIfNull(level);
         Level = level;
 
         Message = message?.Trim() ?? string.Empty;

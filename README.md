@@ -46,7 +46,7 @@ Read the [GIAP wiki](https://github.com/DFE-Digital/get-information-about-pupils
 
 Prerequisites
 - [Git](https://git-scm.com/downloads) (for getting a copy of the source code and contributing changes)
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) (for building and running the C#/.NET web
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) (for building and running the C#/.NET web
 application)
 - [Node.js](https://nodejs.org/en/download/) (for building web artefacts: (S)CSS, JS, etc.)
 - IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
@@ -131,7 +131,7 @@ F1_INFRA --> SEARCH[Azure Cognitive Search]
 
 GIAP web has a number of dependancies listed below, some are closed source, others are open.
 
-- .NET 8
+- .NET 10
 - node
 - gulp
 - DSI (DfE sign-in)

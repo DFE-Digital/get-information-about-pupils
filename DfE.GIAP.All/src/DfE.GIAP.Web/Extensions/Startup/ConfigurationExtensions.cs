@@ -9,6 +9,7 @@ public static class ConfigurationExtensions
         builder
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
+            .AddUserSecrets<Program>(optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
 
         return builder;
