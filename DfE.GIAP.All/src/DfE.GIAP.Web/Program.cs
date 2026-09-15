@@ -39,6 +39,8 @@ builder.Services
     .AddMyPupils(configuration)
     .AddSearch(configuration);
 
+builder.Services.AddHealthChecks();
+
 builder.Services
     .AddRoutingConfiguration()
     .AddHstsConfiguration()
@@ -77,8 +79,12 @@ app.UseSecurityHeadersMiddleware(configuration);
 app.UseMiddleware<SessionCorrelationIdMiddleware>();
 
 // Endpoint configuration
+app.MapHealthChecks("/status").WithMetadata(new AllowWithoutConsentAttribute());
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+public partial class Program { }
