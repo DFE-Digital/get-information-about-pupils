@@ -15,13 +15,16 @@ jobs:
   package:
     name: Package application
     uses: ./.github/workflows/package.yml
-    secrets: inherit
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfEDigital NuGet feed.
 
   deploy:
     name: Deploy to Azure App Service
     needs: package
     runs-on: ubuntu-latest
-    permissions: {}
+    permissions:
+      id-token: write # Required for OIDC authentication with Azure
     concurrency: deploy_${{ inputs.environment }}
 
     environment:
@@ -29,7 +32,7 @@ jobs:
       url: ${{ steps.deploy_app_service.outputs.webapp-url }}
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: ${{ needs.package.outputs.artifact_name }}
           path: ./app-package
@@ -45,5 +48,5 @@ jobs:
         id: deploy_app_service
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ env.AZURE_APP_NAME }}
+          app-name: ${{ vars.AZURE_APP_NAME }}
           package: ./app-package

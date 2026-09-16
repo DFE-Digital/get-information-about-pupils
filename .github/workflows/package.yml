@@ -11,15 +11,31 @@ jobs:
     name: Build & package
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfEDigital NuGet feed.
+
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
 
       - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # Pinned at v4.0.0
 
-      - run: just package -c Release -o
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
 
-      - uses: actions/upload-artifact@v7
+      - name: Add DfEDigital NuGet Feed Credentials
+        run: |
+          dotnet nuget update source dfedigital \
+            --configfile ./DfE.GIAP.All/nuget.config \
+            --username USERNAME \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text
+
+      - run: just package -c Release -o ${{ github.workspace }}/publish
+
+      - uses: actions/upload-artifact@v6
         id: upload_app
         with:
           name: web_package
-          path: DfE.GIAP.All/src/DfE.GIAP.Web/bin/Release/net8.0/publish/
+          path: publish
+          if-no-files-found: error
