@@ -17,6 +17,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure" />
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
