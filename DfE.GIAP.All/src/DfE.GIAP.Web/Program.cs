@@ -49,6 +49,8 @@ builder.Services
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration();
 
+builder.Services.AddHealthChecks();
+
 WebApplication app = builder.Build();
 
 // Error handling
@@ -81,4 +83,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHealthChecks("/status").WithMetadata(new AllowWithoutConsentAttribute());
+
 app.Run();
+
+public partial class Program { }

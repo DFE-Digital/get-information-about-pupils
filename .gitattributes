@@ -1,3 +1,16 @@
 * text eol=auto
 
 *.sh text=auto eol=lf
+
+# Binary files - do not perform any line ending / encoding conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.svg binary
