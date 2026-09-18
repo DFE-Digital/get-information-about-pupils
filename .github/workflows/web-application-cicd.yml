@@ -329,7 +329,7 @@ jobs:
         shell: bash
 
       - name: Download unit test coverage reports
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: unit-test-coverage
           path: coverage-unit/
@@ -337,7 +337,7 @@ jobs:
       - name: Download integration test coverage report
       # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
         if: github.actor != 'dependabot[bot]'
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: integration-test-coverage
           path: coverage-integration/
@@ -379,7 +379,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download merged coverage report
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: merged-coverage-report
           path: merged-coverage-reports
