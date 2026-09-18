@@ -157,6 +157,8 @@ public static class CompositionRoot
         services.AddScoped<IMapper<NationalPupilDto, NationalPupil>, NationalPupilDtoToEntityMapper>();
         services.AddScoped<IMapper<PupilPremiumPupilDto, PupilPremiumPupil>, PupilPremiumDtoToEntityMapper>();
 
+        services.AddScoped<IMapper<RawCosmosDocument, NationalPupil>, RawNationalPupilMapper>();
+
         return services;
     }
 
