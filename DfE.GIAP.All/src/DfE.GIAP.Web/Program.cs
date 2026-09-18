@@ -86,5 +86,3 @@ app.MapControllerRoute(
 app.MapHealthChecks("/status").WithMetadata(new AllowWithoutConsentAttribute());
 
 app.Run();
-
-public partial class Program { }
