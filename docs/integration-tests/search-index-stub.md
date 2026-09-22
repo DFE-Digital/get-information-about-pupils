@@ -1,7 +1,7 @@
 # 🧪 Search Index Stub for Integration Testing
 
-Our `UseCase` tests interact with Azure Search. Unlike [CosmosDB](./cosmosdb-docker-emulator.md),
-Azure Search has **no local emulator**, so it has to be stubbed.
+Our `UseCase` tests interact with Azure Search. Unlike CosmosDB, which has an emulator the test
+fixture starts in a container, Azure Search has **no local emulator**, so it has to be stubbed.
 
 The stub is **in-process**. It requires no container, no server, no port and no certificate, so the
 search integration tests run anywhere `dotnet test` runs.
