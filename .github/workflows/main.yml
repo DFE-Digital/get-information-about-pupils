@@ -1,21 +1,8 @@
 name: Build & deploy main
 
-## Every environment is deployed from the same package, in sequence, so nothing reaches
-## an environment that the one before it failed on. The production environment requires
-## a review from the get-information-about-pupils-admin team before its job starts.
-##
-## Notes:
-## - Concurrency is defined per environment, so a deployment plus its smoke test finishes
-##   before a later queued run of the same environment starts.
-## - Permissions are explicit on each job, granting only the minimum required.
-## - Smoke tests are deliberately extremely lightweight: they check the app is deployed
-##   and running at all, not that it is running correctly.
-
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
   workflow_dispatch:
 
 permissions:
