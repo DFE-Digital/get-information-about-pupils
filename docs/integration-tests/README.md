@@ -13,7 +13,6 @@ The tests
 
 ## Related documentation
 
-- [CosmosDb emulator](./cosmosdb-docker-emulator.md)
 - [Search index stub](./search-index-stub.md)
 
 ## Running the tests
@@ -25,12 +24,14 @@ at all:
 dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --filter "FullyQualifiedName~SearchByKeyWords"
 ```
 
-Tests in the `CosmosDbIntegrationTests` collection need the Cosmos DB emulator, which runs via
-`docker compose`. Follow the steps in [CI](../../.github/workflows/web-application-cicd.yml)
+Tests in the `CosmosDbIntegrationTests` collection need the Cosmos DB emulator. The test fixture
+starts it on demand via [Testcontainers](https://dotnet.testcontainers.org/), so the only
+prerequisite is a running container engine (Docker Desktop, Colima, Podman) reachable by the
+current user. `dotnet test` then runs the whole suite as usual:
 
-1) Update the nuget.config in src with a valid NUGET_USERNAME and NUGET_PAT
-2) docker build the test-runner image
-3) docker-compose up services and runs the tests
+```sh
+dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj
+```
 
 ## Note: Restoring from the private DFE-DIGITAL feed
 
@@ -40,17 +41,5 @@ We also must provide a `package-source mapping` else restoring in CI fails. // *
 
 This means we have to provide a `nuget.config` than using `dotnet nuget source` part of the `dotnet cli` to achieve a restore
 
-This is shown in the building of the docker-image when restoring packages by
-
-- Mounting a secret in using docker buildkit with `docker build`
-- Passing `--config-file` to the nuget.config when needing to `dotnet restore`
-
-## Issue: Using git bash for Windows and `docker exec -it /bin/bash`
-
-When using [`git for windows`](https://github.com/git-for-windows/git) it rewrites linux paths to Windows. So commands passing linux paths `/bin/sh` as below fail;
-
-```sh
- docker exec -it /bin/sh 8444
-```
-
-Use Powershell instead for these specfic commands
+This means passing `--configfile` to point at the nuget.config whenever we `dotnet restore`, as
+[CI](../../.github/workflows/web-application-cicd.yml) does.
