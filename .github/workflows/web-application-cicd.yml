@@ -249,12 +249,6 @@ jobs:
           name: unit-test-coverage
           path: coverage-unit/
 
-      - name: Run gulp
-        run: |
-          npm install -g gulp
-          gulp default --gulpfile src/DfE.GIAP.Web/gulpfile.js --cwd src/DfE.GIAP.Web
-        working-directory: ${{ env.SOLUTION_DIRECTORY }}
-
       - name: Publish application
         run: dotnet publish src/DfE.GIAP.Web/DfE.GIAP.Web.csproj --configuration ${{ env.BUILD_CONFIGURATION }} --output ${{ github.workspace }}/publish
         working-directory: ${{ env.SOLUTION_DIRECTORY }}

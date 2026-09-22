@@ -31,11 +31,6 @@ Dockerfile*
 vscode/
 idea/
 
-# Ignore package manager files
-node_modules/
-*.npmrc
-package-lock.json
-
 # Ignore configuration and secrets
 **/*appsettings.Development.json
 **/*appsettings.local.json

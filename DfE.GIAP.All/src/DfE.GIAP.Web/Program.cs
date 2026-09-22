@@ -14,6 +14,7 @@ using DfE.GIAP.Web.Middleware;
 using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
+using GovUk.Frontend.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,14 @@ builder.Services
 
 builder.Services.AddHealthChecks();
 
+builder.Services.AddGovUkFrontend();
+
+if (builder.Environment.IsLocal())
+{
+    // Watches Styles/*.scss and recompiles wwwroot/css/app.css while the app is running.
+    builder.Services.AddSassCompiler();
+}
+
 WebApplication app = builder.Build();
 
 // Error handling
@@ -68,6 +77,7 @@ app.UseHsts();
 // Middleware pipeline
 app.UseStatusCodePagesWithReExecute("/error/{0}");
 app.UseHttpsRedirection();
+app.UseGovUkFrontend();
 app.UseStaticFiles();
 app.UseCookiePolicy();
 app.UseSession();

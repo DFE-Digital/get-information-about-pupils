@@ -1,0 +1,8 @@
+@use "sass:meta";
+@use "govuk-frontend-aspnetcore";
+@use "govuk-frontend" as * with (
+  $govuk-font-url-function: meta.get-function("versioned-font-url", $module: "govuk-frontend-aspnetcore"),
+  $govuk-image-url-function: meta.get-function("versioned-image-url", $module: "govuk-frontend-aspnetcore")
+);
+
+@use "custom";
