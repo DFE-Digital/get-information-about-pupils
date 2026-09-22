@@ -1,9 +1,12 @@
 name: Deploy to Azure
-description: Deploy the application to an Azure Web App.
+description: Deploy a packaged application to an Azure App Service and smoke test it.
 
 inputs:
   app_name:
     description: Name of the Azure Web App.
+    required: true
+  artifact_name:
+    description: Name of the artifact holding the packaged application.
     required: true
   azure_client_id:
     description: Azure Client ID.
@@ -17,16 +20,17 @@ inputs:
 
 outputs:
   app_url:
-    description: "The URL of the deployed application."
-    value: ${{ steps.deploy_step.outputs.webapp-url }}
+    description: The URL of the deployed application.
+    value: ${{ steps.deploy_app_service.outputs.webapp-url }}
 
 runs:
-  using: "composite"
+  using: composite
+
   steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v4
+    - name: Download the packaged application
+      uses: actions/download-artifact@v7
       with:
-        name: packaged_app_for_deployment
+        name: ${{ inputs.artifact_name }}
         path: ./app-package
 
     - name: Login to Azure
@@ -36,11 +40,16 @@ runs:
         tenant-id: ${{ inputs.azure_tenant_id }}
         subscription-id: ${{ inputs.azure_subscription_id }}
 
-      ## In future, this can be replaced with deploying container images etc.
     - name: Deploy to Azure Web App
-      id: deploy_step
+      id: deploy_app_service
       uses: azure/webapps-deploy@v3
       with:
         app-name: ${{ inputs.app_name }}
         package: ./app-package
 
+    ## Deliberately lightweight - checks the app is deployed and running at all,
+    ## not that it is running correctly.
+    - name: Run smoke tests
+      uses: ./.github/actions/smoke-test
+      with:
+        url: ${{ steps.deploy_app_service.outputs.webapp-url }}/status
