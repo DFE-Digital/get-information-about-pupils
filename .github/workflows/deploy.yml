@@ -59,4 +59,4 @@ jobs:
       - name: Run smoke tests
         uses: ./.github/actions/smoke-test
         with:
-          url: ${{ steps.deploy_app_service.outputs.webapp-url }}
+          url: ${{ steps.deploy_app_service.outputs.webapp-url }}/status
