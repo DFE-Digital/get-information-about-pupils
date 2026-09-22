@@ -3,11 +3,13 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="AspNetCore.SassCompiler" Version="1.103.0" />
     <PackageVersion Include="Azure.Search.Documents" Version="11.7.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.26.0" />
     <PackageVersion Include="Azure.Core" Version="1.51.1" />
     <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="Fare" Version="2.2.1" />
+    <PackageVersion Include="GovUk.Frontend.AspNetCore" Version="4.4.0" />
     <!-- FluentAssertions 8.x has a license requirement. -->
     <PackageVersion Include="FluentAssertions" Version="[7.2.0]" />
     <PackageVersion Include="DfE.CleanArchitecture.Common.Application" Version="0.0.1-5" />

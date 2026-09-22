@@ -10,7 +10,6 @@
 |--------|------------|-------|
 | GitHub | <https://www.githubstatus.com> | Source code, GitHub actions for CI/CD |
 | Azure | <https://status.azure.com> | CIP Infrastructure |
-| npm | <https://status.npmjs.org> | `npm` package restore |
 | NuGet | <https://status.nuget.org> | `dotnet` package restore |
 
 # Get Information About Pupils
@@ -48,7 +47,6 @@ Prerequisites
 - [Git](https://git-scm.com/downloads) (for getting a copy of the source code and contributing changes)
 - [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) (for building and running the C#/.NET web
 application)
-- [Node.js](https://nodejs.org/en/download/) (for building web artefacts: (S)CSS, JS, etc.)
 - IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
 - Local environment configured to authenticate to the GitHub NuGet feed
     - Create a classic [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `read:packages` scope from your GitHub account (fine-grained tokens [do not support package scopes](https://github.com/github/roadmap/issues/558)).
@@ -60,19 +58,15 @@ Clone the repository
 ```sh
 git clone https://github.com/DFE-Digital/get-information-about-pupils
 ```
-Install node dependencies, then build and package the web artefacts (JS, CSS, etc.)
-```sh
-## DfE.GIAP.All/DfE.GIAP.Web/
-npm install
-npm run gulp
-```
-
-If you have `gulp` installed globally (`npm install -g gulp`), you can run `gulp` directly:
-```sh
-## DfE.GIAP.All/DfE.GIAP.Web/
-gulp
-```
 Build the C#/.NET solution
+
+The web artefacts (CSS, JS, fonts and images) are produced as part of the .NET build, so no
+separate front-end tooling is required. [GovUk.Frontend.AspNetCore](https://github.com/x-govuk/govuk-frontend-aspnetcore)
+restores the GOV.UK Frontend assets into `wwwroot/` and `lib/`, and
+[AspNetCore.SassCompiler](https://github.com/koenvzeijl/AspNetCore.SassCompiler) compiles
+`Styles/app.scss` into `wwwroot/css/app.css` (configured in `sasscompiler.json`). When running
+in the `Local` environment the compiler also watches `Styles/*.scss` and recompiles on change.
+
 ```sh
 ## cd DfE.GIAP.All/
 dotnet build
@@ -132,8 +126,8 @@ F1_INFRA --> SEARCH[Azure Cognitive Search]
 GIAP web has a number of dependancies listed below, some are closed source, others are open.
 
 - .NET 10
-- node
-- gulp
+- [GOV.UK Frontend for ASP.NET Core](https://github.com/x-govuk/govuk-frontend-aspnetcore) (GOV.UK Frontend assets)
+- [AspNetCore.SassCompiler](https://github.com/koenvzeijl/AspNetCore.SassCompiler) (SCSS compilation)
 - DSI (DfE sign-in)
 - [Azure CosmosDb library](https://github.com/DFE-Digital/infrastructure-persistence-cosmosdb)
 - [Azure AISearch library](https://github.com/DFE-Digital/infrastructure-cognitive-search)

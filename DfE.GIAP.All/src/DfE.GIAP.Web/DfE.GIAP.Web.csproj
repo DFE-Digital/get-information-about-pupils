@@ -6,10 +6,21 @@
         When nullable is enabled it causes different behaviour as ModelState.IsValid() will evaluate to false - as some properties are bound as null than "" and fail the ModelStateValidation-->
     <Nullable>disable</Nullable>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- GOV.UK Frontend assets are restored by the GovUk.Frontend.AspNetCore build targets.
+        The pre-built stylesheet is not restored because Styles/app.scss compiles govuk-frontend
+        from source (via the restored NPM and support packages under lib/). -->
+    <EnableGovUkFrontendSupport>true</EnableGovUkFrontendSupport>
+    <RestoreGovUkFrontendStylesheet>false</RestoreGovUkFrontendStylesheet>
+    <RestoreGovUkFrontendNpmPackage>true</RestoreGovUkFrontendNpmPackage>
+    <RestoreGovUkFrontendSupportPackage>true</RestoreGovUkFrontendSupportPackage>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="appsettings.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AspNetCore.SassCompiler" />
+    <PackageReference Include="GovUk.Frontend.AspNetCore" />
     <PackageReference Include="HtmlSanitizer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
@@ -20,6 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DfE.GIAP.Web.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="sasscompiler.json" />
+    <None Include="sasscompiler.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="logevents.json">

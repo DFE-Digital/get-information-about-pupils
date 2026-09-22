@@ -9,11 +9,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '24'
-
     - name: Setup .NET SDK from global.json
       uses: actions/setup-dotnet@v4
 
@@ -29,11 +24,6 @@ runs:
       with:
         version: latest
         cache-binary: true
-
-    - name: npm ci
-      run: npm ci
-      shell: bash
-      working-directory: ./DfE.GIAP.All/src/DfE.GIAP.Web
 
     - name: Add DfEDigital NuGet Feed
       run: | 
@@ -59,14 +49,6 @@ runs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
         restore-keys: |
           ${{ runner.os }}-nuget-
-
-    - name: Cache npm
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
 
     - name: Cache .NET tools
       uses: actions/cache@v4

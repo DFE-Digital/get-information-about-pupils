@@ -7,15 +7,6 @@ registries:
     token: ${{ secrets.DEPENDABOT_DFEDIGITAL_NUGETFEED_TOKEN }}
 
 updates:
-  - package-ecosystem: "npm"
-    directory: "DfE.GIAP.All/src/DfE.GIAP.Web"
-    schedule:
-      interval: "daily"
-    commit-message:
-      prefix: "chore"
-    labels:
-    - "dependencies-javascript"
-
   - package-ecosystem: "nuget"
     directory: "DfE.GIAP.All/"
     registries:
