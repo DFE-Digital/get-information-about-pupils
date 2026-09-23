@@ -1,0 +1,51 @@
+name: Set up the build
+description: >
+  Installs the .NET SDK pinned in global.json, authenticates the private DfE-Digital
+  NuGet feed and restores the solution's packages.
+
+inputs:
+  github_token:
+    required: true
+    description: Token used to authenticate against the DfE-Digital NuGet feed.
+
+runs:
+  using: composite
+
+  steps:
+    - uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # Pinned at v4.0.0
+
+    - name: Setup .NET SDK from global.json
+      uses: actions/setup-dotnet@v5
+
+    # Restored before the NuGet restore rather than after it, so that a warm cache
+    # actually saves the downloads.
+    - name: Restore cached NuGet packages
+      id: cache_packages
+      uses: actions/cache/restore@v4
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ runner.os }}-${{ hashFiles('**/Directory.Packages.props', '**/*.csproj') }}
+        restore-keys: |
+          nuget-${{ runner.os }}-
+
+    # DfE.* packages come from the private DfE-Digital GitHub feed, which the package
+    # source mapping in nuget.config points at; the restore fails without credentials.
+    - name: Add DfE-Digital NuGet feed credentials
+      shell: bash
+      run: |
+        dotnet nuget update source dfedigital \
+          --configfile ./DfE.GIAP.All/nuget.config \
+          --username USERNAME \
+          --password ${{ inputs.github_token }} \
+          --store-password-in-clear-text
+
+    - name: Restore
+      shell: bash
+      run: just restore
+
+    - name: Cache NuGet packages
+      if: steps.cache_packages.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ steps.cache_packages.outputs.cache-primary-key }}

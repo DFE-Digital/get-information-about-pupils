@@ -1,0 +1,252 @@
+name: Pull request build
+
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  SOLUTION_DIRECTORY: DfE.GIAP.All
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  NUGET_XMLDOC_MODE: skip
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfE-Digital NuGet feed.
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify formatting
+        run: |
+          dotnet format ${{ env.SOLUTION_DIRECTORY }} \
+            --no-restore \
+            --verbosity detailed \
+            --verify-no-changes
+
+  unit_tests:
+    name: Unit tests (${{ matrix.project }})
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfE-Digital NuGet feed.
+
+    strategy:
+      # One failing suite shouldn't hide the results of the others.
+      fail-fast: false
+      matrix:
+        project: [Core.UnitTests, Web.Tests]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run tests
+        uses: ./.github/actions/test
+        with:
+          project: ${{ matrix.project }}
+
+  integration_tests:
+    name: Integration tests
+    # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+    if: github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfE-Digital NuGet feed.
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run tests
+        uses: ./.github/actions/test
+        with:
+          project: Core.IntegrationTests
+          # The shared test infrastructure only exists to support the suites; counting
+          # its own coverage would distort the figure for the code under test.
+          dotnet_test_args: -p:Exclude="[DfE.GIAP.SharedTests*]*"
+        timeout-minutes: 30
+
+  coverage:
+    name: Coverage report
+    runs-on: ubuntu-latest
+    needs: [unit_tests, integration_tests]
+    # The integration tests are skipped for Dependabot, which still leaves the unit test
+    # coverage worth reporting on.
+    if: ${{ !cancelled() && needs.unit_tests.result == 'success' && needs.integration_tests.result != 'failure' }}
+
+    permissions:
+      contents: read  # Required to check out the code.
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET SDK from global.json
+        uses: actions/setup-dotnet@v5
+
+      - name: Restore dotnet tools
+        run: dotnet tool restore
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v7
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+          path: coverage
+
+      - name: Normalise coverage paths
+        # Coverlet writes an absolute <sources> base into each report. Stripping the
+        # workspace prefix leaves it as DfE.GIAP.All/, so the paths reportgenerator
+        # writes into SonarQube.xml are relative to the repository root and Sonar can
+        # match them to the files it analysed.
+        run: |
+          shopt -s nullglob
+          reports=(coverage/*.xml)
+
+          if [ ${#reports[@]} -eq 0 ]; then
+            echo "::error::No coverage reports were produced by the test jobs"
+            exit 1
+          fi
+
+          sed -i "s|$GITHUB_WORKSPACE/||g" "${reports[@]}"
+
+      - name: Merge coverage reports
+        run: |
+          dotnet tool run reportgenerator \
+            -sourcedirs:"." \
+            -reports:"coverage/*.xml" \
+            -reporttypes:"SonarQube;MarkdownSummaryGithub;HtmlInline" \
+            -targetdir:"merged-coverage" \
+            -assemblyfilters:"-DfE.GIAP.Web.Views"
+
+      - name: Add the coverage summary to the run summary
+        run: cat merged-coverage/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload merged coverage report
+        uses: actions/upload-artifact@v6
+        with:
+          name: merged-coverage-report
+          path: merged-coverage
+          if-no-files-found: error
+
+  report_test_results:
+    name: Test results
+    runs-on: ubuntu-latest
+    needs: [unit_tests, integration_tests]
+    # Publishing a check run needs a writable token, which pull requests from forks and
+    # from Dependabot do not get; the console output in the test jobs stands in for them.
+    if: always() && github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.full_name == github.repository
+
+    permissions:
+      contents: read  # Required to check out the code.
+      checks: write   # Required to publish the test results as a check run.
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: test-results-*
+          merge-multiple: true
+          path: test-results
+
+      - uses: dorny/test-reporter@v3
+        with:
+          name: Test results
+          path: test-results/*.trx
+          reporter: dotnet-trx
+          # A job that fell over before running any tests has no .trx to report on; the
+          # failure itself is the signal, so don't add a second one on top of it.
+          fail-on-empty: false
+
+  sonar:
+    name: SonarQube Cloud scan
+    runs-on: ubuntu-latest
+    needs: [coverage]
+    # TODO Dependabot does not have access to secrets - https://github.com/DFE-Digital/get-information-about-pupils/issues/17#issuecomment-2994486283
+    if: github.actor != 'dependabot[bot]'
+
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfE-Digital NuGet feed.
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Sonar needs the full history to attribute issues to new code.
+
+      - uses: ./.github/actions/setup
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download merged coverage report
+        uses: actions/download-artifact@v7
+        with:
+          name: merged-coverage-report
+          path: merged-coverage
+
+      - name: SonarQube Cloud scan
+        uses: DFE-Digital/github-actions/sonarscan-dotnet@fb860bd4a4ec0741de4858926f9379f50d542ff8
+        with:
+          sonarcloud-project-key: DFE-Digital_get-information-about-pupils
+          sonarcloud-token: ${{ secrets.SONAR_TOKEN }}
+          # The shared action hardcodes sonar.scanner.skipJreProvisioning=true, so the
+          # scanner engine runs on JAVA_HOME. SonarQube Cloud now requires Java 21+;
+          # the action's default of 17 makes the engine die on startup.
+          java-version: 21
+          use-global-json: true
+          coverage-report-path: merged-coverage/SonarQube.xml
+          sonarscan-args: >
+            /d:sonar.scanner.scanAll=false
+          build-command: dotnet build ./DfE.GIAP.All/*.sln --no-restore --no-incremental
+
+  package:
+    name: Package application
+    uses: ./.github/workflows/package.yml
+    permissions:
+      contents: read  # Required to check out the code.
+      packages: read  # Required to access the DfE-Digital NuGet feed.
+
+  check_results:
+    name: Pull request build
+    runs-on: ubuntu-latest
+    needs: [lint, unit_tests, integration_tests, coverage, report_test_results, sonar, package]
+    if: always()
+
+    steps:
+      # A single check that every other job reported in, so branch protection has one
+      # stable name to require rather than one entry per test project.
+      - name: Check job results
+        run: |
+          # Skipped is not a failure: the jobs needing secrets are skipped for Dependabot.
+          if [[ "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "::error::One or more jobs in the pull request build did not succeed"
+            exit 1
+          fi
