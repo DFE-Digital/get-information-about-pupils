@@ -30,33 +30,17 @@ jobs:
 
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ steps.deploy_app_service.outputs.webapp-url }}
+      url: ${{ steps.deploy.outputs.app_url }}
 
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/download-artifact@v7
+      - name: Deploy to Azure
+        id: deploy
+        uses: ./.github/actions/deploy
         with:
-          name: ${{ needs.package.outputs.artifact_name }}
-          path: ./app-package
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Deploy to Azure Web App
-        id: deploy_app_service
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ vars.AZURE_APP_NAME }}
-          package: ./app-package
-
-      ## Deliberately lightweight - checks the app is deployed and running at all,
-      ## not that it is running correctly.
-      - name: Run smoke tests
-        uses: ./.github/actions/smoke-test
-        with:
-          url: ${{ steps.deploy_app_service.outputs.webapp-url }}/status
+          app_name: ${{ vars.AZURE_APP_NAME }}
+          artifact_name: ${{ needs.package.outputs.artifact_name }}
+          azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+          azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

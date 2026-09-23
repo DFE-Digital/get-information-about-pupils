@@ -42,4 +42,4 @@ We also must provide a `package-source mapping` else restoring in CI fails. // *
 This means we have to provide a `nuget.config` than using `dotnet nuget source` part of the `dotnet cli` to achieve a restore
 
 This means passing `--configfile` to point at the nuget.config whenever we `dotnet restore`, as
-[CI](../../.github/workflows/web-application-cicd.yml) does.
+[CI](../../.github/actions/setup/action.yml) does.

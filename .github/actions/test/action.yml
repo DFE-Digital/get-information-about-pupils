@@ -1,0 +1,65 @@
+name: Run tests
+description: >
+  Builds and runs a test project, collecting a Cobertura coverage report and a TRX
+  test report, and uploads both as artifacts.
+
+inputs:
+  project:
+    description: Test project name without the DfE.GIAP. prefix, e.g. Core.UnitTests.
+    required: true
+  configuration:
+    description: Build configuration to compile and run the tests in.
+    required: false
+    default: Release
+  dotnet_test_args:
+    description: Additional arguments to pass to dotnet test.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+
+  steps:
+    - name: Build ${{ inputs.project }}
+      shell: bash
+      run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
+      working-directory: DfE.GIAP.All/tests/DfE.GIAP.${{ inputs.project }}
+
+    # The coverage and results paths are absolute: left relative, coverlet and the TRX
+    # logger write into each project's own build directory, where the uploads below
+    # cannot collect them.
+    - name: Run ${{ inputs.project }}
+      shell: bash
+      run: |
+        dotnet test \
+          --no-build \
+          --nologo \
+          --configuration ${{ inputs.configuration }} \
+          --results-directory "$GITHUB_WORKSPACE/test-results" \
+          --logger "console;verbosity=normal" \
+          --logger "trx;LogFileName=${{ inputs.project }}.trx" \
+          -p:CollectCoverage=true \
+          -p:CoverletOutputFormat=cobertura \
+          -p:CoverletOutput="$GITHUB_WORKSPACE/coverage/${{ inputs.project }}.cobertura.xml" \
+          ${{ inputs.dotnet_test_args }}
+      working-directory: DfE.GIAP.All/tests/DfE.GIAP.${{ inputs.project }}
+
+    # A run that fell over before producing a report has nothing to upload; the failure
+    # itself is the signal, so don't add a second, more confusing one on top of it. The
+    # coverage job fails if no report reaches it at all.
+    - name: Upload coverage report
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: coverage-${{ inputs.project }}
+        path: coverage/${{ inputs.project }}.cobertura.xml
+        if-no-files-found: warn
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: test-results-${{ inputs.project }}
+        path: test-results/${{ inputs.project }}.trx
+        if-no-files-found: warn
+        retention-days: 7
