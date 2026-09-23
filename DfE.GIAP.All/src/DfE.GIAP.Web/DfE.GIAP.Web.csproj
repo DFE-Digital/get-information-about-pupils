@@ -24,9 +24,6 @@
     <PackageReference Include="HtmlSanitizer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
-    <PackageReference Include="NuGet.Packaging" PrivateAssets="all" />
-    <PackageReference Include="NuGet.Protocol" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
