@@ -56,7 +56,7 @@ public class ConsentController : Controller
             return Redirect(Routes.Application.Home);
         }
 
-        viewModel.HasError = true;
+        ModelState.AddModelError(nameof(ConsentViewModel.ConsentGiven), "Select if you have read and understood the conditions");
         return View(viewModel);
     }
 }

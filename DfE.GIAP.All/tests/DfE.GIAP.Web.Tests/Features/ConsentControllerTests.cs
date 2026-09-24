@@ -8,6 +8,7 @@ using DfE.GIAP.Web.Providers.Session;
 using DfE.GIAP.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 
 namespace DfE.GIAP.Web.Tests.Features;
@@ -180,7 +181,11 @@ public sealed class ConsentControllerTests
         ConsentViewModel viewModel = Assert.IsType<ConsentViewModel>(viewResult.Model);
         Assert.NotNull(viewModel);
         Assert.False(viewModel.ConsentGiven);
-        Assert.True(viewModel.HasError);
+
+        Assert.False(controller.ModelState.IsValid);
+        Assert.True(controller.ModelState.TryGetValue(nameof(ConsentViewModel.ConsentGiven), out ModelStateEntry? entry));
+        ModelError error = Assert.Single(entry!.Errors);
+        Assert.Equal("Select if you have read and understood the conditions", error.ErrorMessage);
 
         // Ensure session is not set
         mockSessionProvider.Verify(

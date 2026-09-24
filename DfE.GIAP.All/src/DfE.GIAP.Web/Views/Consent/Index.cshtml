@@ -18,28 +18,12 @@
 </ul>
 <p class="govuk-body">For full terms of use, please use the link in the footer below.</p>
 
-<form asp-controller="Consent" asp-action="Index" method="POST">
-    <div class="govuk-form-group @(Model.HasError ? "govuk-form-group--error" : "")">
-        <fieldset class="govuk-fieldset">
-            @if (Model.HasError)
-            {
-                <p id="consent--errormessage--text" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Select if you have read and understood the conditions
-                </p>
-            }
+<form asp-controller="Consent" asp-action="Index" method="post">
+    <govuk-checkboxes for="ConsentGiven">
+        <govuk-checkboxes-item value="true" checked="@Model.ConsentGiven">
+            I confirm that I have read and understood the conditions
+        </govuk-checkboxes-item>
+    </govuk-checkboxes>
 
-            <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" asp-for="ConsentGiven" name="ConsentGiven" type="checkbox">
-                    <label class="govuk-label govuk-checkboxes__label" for="consent--confirm--chkbox">
-                        I confirm that I have read and understood the conditions
-                    </label>
-                </div>
-            </div>
-        </fieldset>
-    </div>
-
-    <button class="govuk-button" data-module="govuk-button" type="submit">
-        Continue
-    </button>
+    <govuk-button type="submit">Continue</govuk-button>
 </form>

@@ -6,5 +6,4 @@ namespace DfE.GIAP.Web.ViewModels;
 public class ConsentViewModel
 {
     public bool ConsentGiven { get; set; }
-    public bool HasError { get; set; }
 }
