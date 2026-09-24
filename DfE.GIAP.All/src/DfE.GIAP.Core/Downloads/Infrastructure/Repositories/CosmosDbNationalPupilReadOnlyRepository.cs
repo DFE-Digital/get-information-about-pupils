@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.CrossCutting.Logging.Application;
 using DfE.GIAP.Core.Downloads.Application.Models;
 using DfE.GIAP.Core.Downloads.Application.Repositories;
 using DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects;
+using DfE.GIAP.Core.Downloads.Infrastructure.Repositories.Mappers;
 using Microsoft.Azure.Cosmos;
 
 namespace DfE.GIAP.Core.Downloads.Infrastructure.Repositories;
@@ -12,12 +13,12 @@ public class CosmosDbNationalPupilReadOnlyRepository : INationalPupilReadOnlyRep
     private const string ContainerKey = "pupil-noskill"; // This must match the key in the container options.
     private readonly IApplicationLoggerService _logger;
     private readonly ICosmosDbQueryHandler _cosmosDbQueryHandler;
-    private readonly IMapper<NationalPupilDto, NationalPupil> _dtoToEntityMapper;
+    private readonly IMapper<RawCosmosDocument, NationalPupil> _dtoToEntityMapper;
 
     public CosmosDbNationalPupilReadOnlyRepository(
         IApplicationLoggerService logger,
         ICosmosDbQueryHandler cosmosDbQueryHandler,
-        IMapper<NationalPupilDto, NationalPupil> dtoToEntityMapper)
+        IMapper<RawCosmosDocument, NationalPupil> dtoToEntityMapper)
     {
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(cosmosDbQueryHandler);
@@ -39,7 +40,7 @@ public class CosmosDbNationalPupilReadOnlyRepository : INationalPupilReadOnlyRep
             string query = $"SELECT * FROM c " +
                  $"WHERE c.UPN IN ({string.Join(",", formattedIds)}) " +
                  $"ORDER BY c.UPN ASC";
-            IEnumerable<NationalPupilDto> queryResult = await _cosmosDbQueryHandler.ReadItemsAsync<NationalPupilDto>(ContainerKey, query);
+            IEnumerable<RawCosmosDocument> queryResult = await _cosmosDbQueryHandler.ReadItemsAsync<RawCosmosDocument>(ContainerKey, query);
 
             IEnumerable<NationalPupil> mappedResponse = queryResult.Select(_dtoToEntityMapper.Map);
             return mappedResponse;
