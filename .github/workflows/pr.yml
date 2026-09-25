@@ -225,7 +225,7 @@ jobs:
           coverage-report-path: merged-coverage/SonarQube.xml
           sonarscan-args: >
             /d:sonar.scanner.scanAll=false
-          build-command: dotnet build ./app/GetInformationAboutPupils.sln --no-restore --no-incremental
+          build-command: dotnet build ./app/GetInformationAboutPupils.slnx --no-restore --no-incremental
 
   package:
     name: Package application

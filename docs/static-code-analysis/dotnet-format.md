@@ -7,7 +7,7 @@ You can use [dotnet format](https://learn.microsoft.com/en-us/dotnet/core/tools/
 It is part of the `dotnet sdk` so does not require separated install or versioning
 
 ```sh
-# in the same folder as the .sln
+# in the same folder as the .slnx
 dotnet format
 ```
 
