@@ -34,7 +34,7 @@ runs:
       shell: bash
       run: |
         dotnet nuget update source dfedigital \
-          --configfile ./DfE.GIAP.All/nuget.config \
+          --configfile ./app/nuget.config \
           --username USERNAME \
           --password ${{ inputs.github_token }} \
           --store-password-in-clear-text

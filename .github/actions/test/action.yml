@@ -23,7 +23,7 @@ runs:
     - name: Build ${{ inputs.project }}
       shell: bash
       run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
-      working-directory: DfE.GIAP.All/tests/DfE.GIAP.${{ inputs.project }}
+      working-directory: app/tests/DfE.GIAP.${{ inputs.project }}
 
     # The coverage and results paths are absolute: left relative, coverlet and the TRX
     # logger write into each project's own build directory, where the uploads below
@@ -42,7 +42,7 @@ runs:
           -p:CoverletOutputFormat=cobertura \
           -p:CoverletOutput="$GITHUB_WORKSPACE/coverage/${{ inputs.project }}.cobertura.xml" \
           ${{ inputs.dotnet_test_args }}
-      working-directory: DfE.GIAP.All/tests/DfE.GIAP.${{ inputs.project }}
+      working-directory: app/tests/DfE.GIAP.${{ inputs.project }}
 
     # A run that fell over before producing a report has nothing to upload; the failure
     # itself is the signal, so don't add a second, more confusing one on top of it. The

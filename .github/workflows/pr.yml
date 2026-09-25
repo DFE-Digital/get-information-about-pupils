@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  SOLUTION_DIRECTORY: DfE.GIAP.All
+  SOLUTION_DIRECTORY: app
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   NUGET_XMLDOC_MODE: skip
@@ -123,7 +123,7 @@ jobs:
 
       - name: Normalise coverage paths
         # Coverlet writes an absolute <sources> base into each report. Stripping the
-        # workspace prefix leaves it as DfE.GIAP.All/, so the paths reportgenerator
+        # workspace prefix leaves it as app/, so the paths reportgenerator
         # writes into SonarQube.xml are relative to the repository root and Sonar can
         # match them to the files it analysed.
         run: |
@@ -225,7 +225,7 @@ jobs:
           coverage-report-path: merged-coverage/SonarQube.xml
           sonarscan-args: >
             /d:sonar.scanner.scanAll=false
-          build-command: dotnet build ./DfE.GIAP.All/*.sln --no-restore --no-incremental
+          build-command: dotnet build ./app/GetInformationAboutPupils.sln --no-restore --no-incremental
 
   package:
     name: Package application
