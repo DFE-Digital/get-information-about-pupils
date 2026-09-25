@@ -68,19 +68,19 @@ restores the GOV.UK Frontend assets into `wwwroot/` and `lib/`, and
 in the `Local` environment the compiler also watches `Styles/*.scss` and recompiles on change.
 
 ```sh
-## cd DfE.GIAP.All/
+## cd app/
 dotnet build
 ```
 
 Confirm tests are passing locally
 ```sh
-## cd DfE.GIAP.All/
+## cd app/
 dotnet test
 ```
 
 Run the application
 ```sh
-## cd DfE.GIAP.All/DfE.GIAP.Web/
+## cd app/src/DfE.GIAP.Web/
 dotnet run
 ```
 

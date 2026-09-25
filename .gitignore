@@ -341,11 +341,11 @@ ASALocalRun/
 
 
 # Restored by the GovUk.Frontend.AspNetCore build targets and compiled by AspNetCore.SassCompiler
-/DfE.GIAP.All/src/DfE.GIAP.Web/lib/govuk-frontend/
-/DfE.GIAP.All/src/DfE.GIAP.Web/lib/govuk-frontend-aspnetcore/
-/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/assets/
-/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/css/app.css*
-/DfE.GIAP.All/src/DfE.GIAP.Web/wwwroot/govuk-frontend.min.js
-/DfE.GIAP.All/src/DfE.GIAP.Web/appsettings.local.json
-/DfE.GIAP.All/src/DfE.GIAP.Web/appsettings.development.json
-/DfE.GIAP.All/nuget.config
+/app/src/DfE.GIAP.Web/lib/govuk-frontend/
+/app/src/DfE.GIAP.Web/lib/govuk-frontend-aspnetcore/
+/app/src/DfE.GIAP.Web/wwwroot/assets/
+/app/src/DfE.GIAP.Web/wwwroot/css/app.css*
+/app/src/DfE.GIAP.Web/wwwroot/govuk-frontend.min.js
+/app/src/DfE.GIAP.Web/appsettings.local.json
+/app/src/DfE.GIAP.Web/appsettings.development.json
+/app/nuget.config

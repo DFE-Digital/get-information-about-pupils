@@ -21,7 +21,7 @@ Tests that stub their dependencies in-process — such as the search tests — n
 at all:
 
 ```sh
-dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --filter "FullyQualifiedName~SearchByKeyWords"
+dotnet test app/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj --filter "FullyQualifiedName~SearchByKeyWords"
 ```
 
 Tests in the `CosmosDbIntegrationTests` collection need the Cosmos DB emulator. The test fixture
@@ -30,7 +30,7 @@ prerequisite is a running container engine (Docker Desktop, Colima, Podman) reac
 current user. `dotnet test` then runs the whole suite as usual:
 
 ```sh
-dotnet test DfE.GIAP.All/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj
+dotnet test app/tests/DfE.GIAP.Core.IntegrationTests/DfE.GIAP.Core.IntegrationTests.csproj
 ```
 
 ## Note: Restoring from the private DFE-DIGITAL feed

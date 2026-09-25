@@ -8,7 +8,7 @@ registries:
 
 updates:
   - package-ecosystem: "nuget"
-    directory: "DfE.GIAP.All/"
+    directory: "app/"
     registries:
       - github-nuget
     schedule:
