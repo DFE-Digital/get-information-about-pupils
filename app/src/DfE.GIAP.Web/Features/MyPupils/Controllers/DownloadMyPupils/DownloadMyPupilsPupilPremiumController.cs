@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿#nullable enable
+
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Web.Constants;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Downloads.Services;

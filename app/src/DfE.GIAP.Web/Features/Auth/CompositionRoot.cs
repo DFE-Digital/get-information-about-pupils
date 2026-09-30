@@ -1,4 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿#nullable enable
+
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Models;

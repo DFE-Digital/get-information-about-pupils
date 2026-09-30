@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿#nullable enable
+
+using System.Security.Claims;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Common.CrossCutting.Logging.Events.Models;
 using DfE.GIAP.Web.Extensions;
@@ -16,7 +18,8 @@ public class BusinessEventFactory : IBusinessEventFactory
 
     public SearchEvent CreateSearch(SearchIdentifierType searchIdentifierType, bool isCustomSearch, Dictionary<string, bool> filterFlags)
     {
-        ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
+        ClaimsPrincipal user = _httpContextAccessor.HttpContext?.User
+            ?? throw new InvalidOperationException("An active HTTP context is required to create a search event.");
         SearchPayload payload = new(searchIdentifierType, isCustomSearch, filterFlags);
 
         return new SearchEvent(
@@ -32,7 +35,8 @@ public class BusinessEventFactory : IBusinessEventFactory
     public DownloadEvent CreateDownload(DownloadOperationType downloadType, DownloadFileFormat downloadFormat,
         DownloadEventType? downloadEventType = null, string? batchId = null, Dataset? dataset = null)
     {
-        ClaimsPrincipal user = _httpContextAccessor.HttpContext.User;
+        ClaimsPrincipal user = _httpContextAccessor.HttpContext?.User
+            ?? throw new InvalidOperationException("An active HTTP context is required to create a download event.");
         DownloadPayload payload = new(downloadType, downloadFormat, downloadEventType, batchId, dataset);
 
         return new DownloadEvent(
@@ -59,4 +63,3 @@ public class BusinessEventFactory : IBusinessEventFactory
             Payload: payload);
     }
 }
-

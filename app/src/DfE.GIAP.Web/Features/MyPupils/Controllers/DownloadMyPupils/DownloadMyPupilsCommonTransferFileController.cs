@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
+﻿#nullable enable
+
+using DfE.GIAP.Core.Common.CrossCutting.Logging.Events;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf;
 using DfE.GIAP.Web.Config;
 using DfE.GIAP.Web.Constants;

@@ -33,7 +33,7 @@ public class SearchLearnerNumberValidationAttributeTests
         ValidationResult? validationResult = customValidationAttribute.GetValidationResult(null, new ValidationContext(vm));
 
         // Assert
-        Assert.False(validationResult == ValidationResult.Success);
+        Assert.NotNull(validationResult);
         Assert.Equal($"You have not entered any {vm.LearnerNumberLabel}s", validationResult.ErrorMessage);
     }
 }

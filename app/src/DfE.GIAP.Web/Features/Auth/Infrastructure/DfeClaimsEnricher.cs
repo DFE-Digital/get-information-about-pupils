@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿#nullable enable
+
+using System.Security.Claims;
 using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Claims;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
@@ -43,9 +45,7 @@ public class DfeClaimsEnricher : IClaimsEnricher
         UserAccess? userAccess = await _apiClient.GetUserInfo(_dsiOptions.ServiceId, orgId, userId);
         Organisation? organisation = await _apiClient.GetUserOrganisation(userId, orgId);
 
-        bool noRoles = userAccess?.Roles is null || !userAccess.Roles.Any();
-        bool noOrganisation = organisation is null;
-        if (noRoles || noOrganisation)
+        if (userAccess?.Roles is null || !userAccess.Roles.Any() || organisation is null)
         {
             // User is authenticated but has no service access.
             // Return principal with NO roles. Authorization will redirect to /user-with-no-role.

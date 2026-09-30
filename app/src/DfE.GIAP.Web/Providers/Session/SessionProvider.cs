@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿#nullable enable
+
+using System.Text.Json;
 
 namespace DfE.GIAP.Web.Providers.Session;
 
@@ -36,7 +38,7 @@ public class SessionProvider : ISessionProvider
 
     public T? GetSessionValueOrDefault<T>(string key)
     {
-        string json = GetSessionValue(key);
+        string? json = GetSessionValue(key);
         return json == null ? default(T) : JsonSerializer.Deserialize<T>(json);
     }
 

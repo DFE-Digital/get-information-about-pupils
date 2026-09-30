@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Web.Features.Auth.Application;
+﻿#nullable enable
+
+using DfE.GIAP.Web.Features.Auth.Application;
 using DfE.GIAP.Web.Features.Auth.Application.Models;
 using DfE.GIAP.Web.Features.Auth.Infrastructure.DataTransferObjects;
 using Newtonsoft.Json;

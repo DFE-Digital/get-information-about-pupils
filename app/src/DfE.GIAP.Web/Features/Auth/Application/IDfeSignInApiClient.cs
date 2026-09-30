@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Web.Features.Auth.Application.Models;
+﻿#nullable enable
+
+using DfE.GIAP.Web.Features.Auth.Application.Models;
 
 namespace DfE.GIAP.Web.Features.Auth.Application;
 
