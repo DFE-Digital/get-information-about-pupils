@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Shared.Session.Abstraction.Query;
+﻿#nullable enable
+
+namespace DfE.GIAP.Web.Shared.Session.Abstraction.Query;
 
 public record SessionQueryResponse<TValue>
 {

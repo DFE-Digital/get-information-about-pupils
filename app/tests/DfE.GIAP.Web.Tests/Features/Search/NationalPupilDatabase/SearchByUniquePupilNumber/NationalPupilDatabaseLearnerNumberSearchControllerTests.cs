@@ -189,8 +189,10 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         Assert.True(model.SelectedPupil.SequenceEqual(_paginatedResultsFake.GetUpns().FormatLearnerNumbers()));
     }
 
-    [Fact]
-    public async Task NationalPupilDatabase_returns_another_page_of_results_when_navigated_to()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task NationalPupilDatabase_returns_another_page_of_results_when_navigated_to(bool missingSessionValue)
     {
         // arrange
         string upns = _paginatedResultsFake.GetUpns();
@@ -209,6 +211,15 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
 
         _mockSession.SetString(sut.SearchSessionKey, _paginatedResultsFake.GetUpns());
 
+        sut.HttpContext.Request.QueryString = new QueryString("?pageNumber=1");
+        _mockSession.SetString(NationalPupilDatabaseLearnerNumberSearchController.TOTAL_SEARCH_RESULTS, "1");
+
+        if (missingSessionValue)
+        {
+            // Model a missing session value; SessionFake otherwise returns empty bytes.
+            _mockSession.Values[NationalPupilDatabaseLearnerNumberSearchController.MISSING_LEARNER_NUMBERS_KEY] = null!;
+        }
+
         IActionResult result = await sut.NationalPupilDatabase(inputModel, 1, "", "");
 
         // assert
@@ -216,6 +227,11 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         Assert.Equal(Global.SearchView, viewResult.ViewName);
 
         LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(viewResult.Model);
+        if (missingSessionValue)
+        {
+            Assert.Empty(model.NotFound);
+        }
+
         AssertAbstractValues(sut, model);
         Assert.Equal(model.LearnerNumber, SecurityHelper.SanitizeText(_paginatedResultsFake.GetUpns()));
         Assert.Equal(1, model.PageNumber);

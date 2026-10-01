@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Features.Auth.Application.Models;
+﻿#nullable enable
+
+namespace DfE.GIAP.Web.Features.Auth.Application.Models;
 
 /// <summary>
 /// Represents the access rights a user has to a service and organisation.

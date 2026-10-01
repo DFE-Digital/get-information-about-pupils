@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Providers.Session;
+﻿#nullable enable
+
+namespace DfE.GIAP.Web.Providers.Session;
 
 public interface ISessionProvider
 {

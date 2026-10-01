@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Enums;
 using DfE.GIAP.Web.Extensions;
 using DfE.GIAP.Web.Features.Search.LegacyModels;
 using DfE.GIAP.Web.Features.Search.LegacyModels.Learner;
+using DfE.GIAP.Web.Features.Search.Shared;
 using DfE.GIAP.Web.Features.Search.Shared.Sort;
 using DfE.GIAP.Web.Helpers;
 using DfE.GIAP.Web.Helpers.Search;
@@ -564,10 +565,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         {
             model.Total = Convert.ToInt32(HttpContext.Session.GetString(TOTAL_SEARCH_RESULTS));
         }
-#nullable enable
-        _jsonSerializer.TryDeserialize(HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY), out List<string>? notFound);
-        model.NotFound = notFound;
-#nullable restore
+        model.NotFound = LearnerNumberSearchSession.GetMissingLearnerNumbers(HttpContext.Session, _jsonSerializer, MISSING_LEARNER_NUMBERS_KEY);
 
         List<string> duplicateLearnerNumbers = ValidationHelper.GetDuplicates([.. learnerNumberArray]);
 
@@ -646,7 +644,7 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
     private HashSet<string> GetSelected(string[] available)
     {
         // ensure we remove the missing items
-        List<string> missing = JsonConvert.DeserializeObject<List<string>>(HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY));
+        List<string> missing = JsonConvert.DeserializeObject<List<string>>(HttpContext.Session.GetString(MISSING_LEARNER_NUMBERS_KEY) ?? "[]");
 
         if (missing != null)
         {

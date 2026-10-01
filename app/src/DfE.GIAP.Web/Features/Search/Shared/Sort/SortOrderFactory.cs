@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
+﻿#nullable enable
+
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
 
 namespace DfE.GIAP.Web.Features.Search.Shared.Sort;
@@ -13,7 +15,7 @@ internal sealed class SortOrderFactory : ISortOrderFactory
 
         List<string> validSortFields = [];
         validSortFields.Add(defaultDirection);
-        validSortFields.AddRange(options.Fields);
+        validSortFields.AddRange(options.Fields ?? []);
 
         return SortOrder.Create(
             field: string.IsNullOrWhiteSpace(sort.field) ? defaultField : sort.field,

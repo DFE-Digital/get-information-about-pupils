@@ -41,6 +41,24 @@ public class BusinessEventFactoryTests
     }
 
     [Fact]
+    public void CreateSearch_WhenHttpContextIsMissing_ThrowsInvalidOperationException()
+    {
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext?)null);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            _sut.CreateSearch(SearchIdentifierType.UPN, false, new Dictionary<string, bool>()));
+    }
+
+    [Fact]
+    public void CreateDownload_WhenHttpContextIsMissing_ThrowsInvalidOperationException()
+    {
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext?)null);
+
+        Assert.Throws<InvalidOperationException>(() =>
+            _sut.CreateDownload(DownloadOperationType.Search, DownloadFileFormat.CSV));
+    }
+
+    [Fact]
     public void CreateSearch_Returns_Model_With_PassedInData()
     {
         // Arrange

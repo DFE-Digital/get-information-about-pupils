@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Shared.Serializer;
+﻿#nullable enable
+
+namespace DfE.GIAP.Web.Shared.Serializer;
 
 public interface IJsonSerializer
 {

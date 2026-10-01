@@ -1,4 +1,6 @@
-﻿using DfE.GIAP.Core.Search.Application.Models.Sort;
+﻿#nullable enable
+
+using DfE.GIAP.Core.Search.Application.Models.Sort;
 using DfE.GIAP.Core.Search.Application.Options.Sort;
 
 namespace DfE.GIAP.Web.Features.Search.Shared.Sort;

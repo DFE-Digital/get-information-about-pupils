@@ -106,7 +106,7 @@ public class RbacHelperTests
     private class TestRbac : IRbac
     {
         public DateTime? DOB { get; set; }
-        public string LearnerNumber { get; set; }
-        public string LearnerNumberId { get; set; }
+        public required string LearnerNumber { get; set; }
+        public required string LearnerNumberId { get; set; }
     }
 }
