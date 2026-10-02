@@ -31,6 +31,9 @@ public class CtfPupil
     public string DOB { get; set; } = string.Empty; // Parse as: yyyy-MM-dd
     public string? Sex { get; set; }
 
+    public CtfNawDetails? NawDetails { get; set; }
+    public List<CtfFsmInstance>? FsmHistory { get; set; }
+
     public List<CtfKeyStageAssessment> Assessments { get; set; } = new();
 }
 

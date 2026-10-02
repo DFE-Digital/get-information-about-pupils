@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using System.Xml;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
 
@@ -69,6 +70,8 @@ public class XmlCtfFormatter : ICtfFormatter
             await WriteElementIfNotNullAsync(writer, "DOB", pupil.DOB);
             await WriteElementIfNotNullAsync(writer, "Sex", pupil.Sex);
 
+            await WriteFsmHistoryAsync(writer, pupil.FsmHistory);
+            await WriteNawDetailsAsync(writer, pupil.NawDetails);
             await WriteAssessmentsAsync(writer, pupil.Assessments);
 
             await writer.WriteEndElementAsync(); // Pupil
@@ -76,6 +79,71 @@ public class XmlCtfFormatter : ICtfFormatter
 
         await writer.WriteEndElementAsync(); // CTFpupilData
     }
+
+    private static async Task WriteFsmHistoryAsync(XmlWriter writer, List<CtfFsmInstance>? history)
+    {
+        if (history is not { Count: > 0 })
+            return;
+
+        await writer.WriteStartElementAsync(null, "FSMhistory", null);
+        foreach (CtfFsmInstance instance in history)
+        {
+            await writer.WriteStartElementAsync(null, "FSMinstance", null);
+            await WriteElementIfNotNullAsync(writer, "FSMstartDate", FormatDate(instance.FSMstartDate));
+            await WriteElementIfNotNullAsync(writer, "FSMEligibilityVerificationDate", FormatDate(instance.FSMEligibilityVerificationDate));
+            await WriteElementIfNotNullAsync(writer, "FSMendDate", FormatDate(instance.FSMendDate));
+            await WriteElementIfNotNullAsync(writer, "UKcountry", instance.UKcountry);
+            await WriteElementIfNotNullAsync(writer, "FSMCategory", instance.FSMCategory);
+            await writer.WriteEndElementAsync(); // FSMinstance
+        }
+        await writer.WriteEndElementAsync(); // FSMhistory
+    }
+
+    private static async Task WriteNawDetailsAsync(XmlWriter writer, CtfNawDetails? details)
+    {
+        if (details is null)
+            return;
+
+        await writer.WriteStartElementAsync(null, "NAWdetails", null);
+        await WriteElementIfNotNullAsync(writer, "SpeakWelsh", details.SpeakWelsh);
+        await WriteElementIfNotNullAsync(writer, "HomeWelsh", details.HomeWelsh);
+        await WriteElementIfNotNullAsync(writer, "NationalIdentity", details.NationalIdentity);
+        await WriteElementIfNotNullAsync(writer, "EthnicitySource", details.EthnicitySource);
+        await WriteElementIfNotNullAsync(writer, "WelshSource", details.WelshSource);
+        await WriteElementIfNotNullAsync(writer, "EALAcquisition", details.EALAcquisition);
+        await WriteElementIfNotNullAsync(writer, "LanguageSource", details.LanguageSource);
+        await WriteElementIfNotNullAsync(writer, "SENCurriculumandTeachingMethods", details.SENCurriculumandTeachingMethods);
+        await WriteElementIfNotNullAsync(writer, "SENGroupingandSupport", details.SENGroupingandSupport);
+        await WriteElementIfNotNullAsync(writer, "SENSpecialisedResources", details.SENSpecialisedResources);
+        await WriteElementIfNotNullAsync(writer, "SENAdviceandAssessment", details.SENAdviceandAssessment);
+        await WriteElementIfNotNullAsync(writer, "DateEntry", FormatDate(details.DateEntry));
+        await WriteElementIfNotNullAsync(writer, "FSMTransitionalProtection", FormatBoolean(details.FSMTransitionalProtection));
+        await WriteElementIfNotNullAsync(writer, "ALNDecisionOutcome", details.ALNDecisionOutcome);
+        await WriteElementIfNotNullAsync(writer, "ALNDecisionBody", details.ALNDecisionBody);
+        await WriteElementIfNotNullAsync(writer, "ALNSupportPlan", details.ALNSupportPlan);
+        await WriteCodesAsync(writer, "ALNAreasOfNeed", "ALNAreaOfNeed", details.ALNAreasOfNeed);
+        await WriteCodesAsync(writer, "ALNneeds", "ALNType", details.ALNneeds);
+        await WriteElementIfNotNullAsync(writer, "ALNLocalHealthBoardProvision", FormatBoolean(details.ALNLocalHealthBoardProvision));
+        await WriteElementIfNotNullAsync(writer, "IDPReviewDate", FormatDate(details.IDPReviewDate));
+        await writer.WriteEndElementAsync(); // NAWdetails
+    }
+
+    private static async Task WriteCodesAsync(XmlWriter writer, string container, string element, List<string>? codes)
+    {
+        if (codes is not { Count: > 0 })
+            return;
+
+        await writer.WriteStartElementAsync(null, container, null);
+        foreach (string code in codes)
+            await WriteElementIfNotNullAsync(writer, element, code);
+        await writer.WriteEndElementAsync();
+    }
+
+    private static string? FormatDate(DateTime? date) =>
+        date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    private static string? FormatBoolean(bool? value) =>
+        value.HasValue ? XmlConvert.ToString(value.Value) : null;
 
     private static async Task WriteAssessmentsAsync(XmlWriter writer, IEnumerable<CtfKeyStageAssessment> assessments)
     {
