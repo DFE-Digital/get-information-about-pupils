@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text;
 using System.Xml;
+using DfE.GIAP.Core.Downloads.Application.Models.Entries;
 using DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
 
 namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Formatters;
@@ -80,13 +81,13 @@ public class XmlCtfFormatter : ICtfFormatter
         await writer.WriteEndElementAsync(); // CTFpupilData
     }
 
-    private static async Task WriteFsmHistoryAsync(XmlWriter writer, List<CtfFsmInstance>? history)
+    private static async Task WriteFsmHistoryAsync(XmlWriter writer, List<FsmInstanceEntry>? history)
     {
         if (history is not { Count: > 0 })
             return;
 
         await writer.WriteStartElementAsync(null, "FSMhistory", null);
-        foreach (CtfFsmInstance instance in history)
+        foreach (FsmInstanceEntry instance in history)
         {
             await writer.WriteStartElementAsync(null, "FSMinstance", null);
             await WriteElementIfNotNullAsync(writer, "FSMstartDate", FormatDate(instance.FSMstartDate));
@@ -99,7 +100,7 @@ public class XmlCtfFormatter : ICtfFormatter
         await writer.WriteEndElementAsync(); // FSMhistory
     }
 
-    private static async Task WriteNawDetailsAsync(XmlWriter writer, CtfNawDetails? details)
+    private static async Task WriteNawDetailsAsync(XmlWriter writer, NawDetailsEntry? details)
     {
         if (details is null)
             return;

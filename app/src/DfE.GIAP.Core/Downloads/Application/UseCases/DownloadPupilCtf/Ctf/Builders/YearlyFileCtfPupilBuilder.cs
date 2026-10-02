@@ -55,37 +55,8 @@ public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
             Forename = pupil.Forename ?? "",
             DOB = pupil.DOB.ToString("yyyy-MM-dd"),
             Sex = pupil.Sex,
-            NawDetails = pupil.NawDetails is null ? null : new CtfNawDetails
-            {
-                SpeakWelsh = pupil.NawDetails.SpeakWelsh,
-                HomeWelsh = pupil.NawDetails.HomeWelsh,
-                NationalIdentity = pupil.NawDetails.NationalIdentity,
-                EthnicitySource = pupil.NawDetails.EthnicitySource,
-                WelshSource = pupil.NawDetails.WelshSource,
-                EALAcquisition = pupil.NawDetails.EALAcquisition,
-                LanguageSource = pupil.NawDetails.LanguageSource,
-                SENCurriculumandTeachingMethods = pupil.NawDetails.SENCurriculumandTeachingMethods,
-                SENGroupingandSupport = pupil.NawDetails.SENGroupingandSupport,
-                SENSpecialisedResources = pupil.NawDetails.SENSpecialisedResources,
-                SENAdviceandAssessment = pupil.NawDetails.SENAdviceandAssessment,
-                DateEntry = pupil.NawDetails.DateEntry,
-                FSMTransitionalProtection = pupil.NawDetails.FSMTransitionalProtection,
-                ALNDecisionOutcome = pupil.NawDetails.ALNDecisionOutcome,
-                ALNDecisionBody = pupil.NawDetails.ALNDecisionBody,
-                ALNSupportPlan = pupil.NawDetails.ALNSupportPlan,
-                ALNAreasOfNeed = pupil.NawDetails.ALNAreasOfNeed?.ToList(),
-                ALNneeds = pupil.NawDetails.ALNneeds?.ToList(),
-                ALNLocalHealthBoardProvision = pupil.NawDetails.ALNLocalHealthBoardProvision,
-                IDPReviewDate = pupil.NawDetails.IDPReviewDate,
-            },
-            FsmHistory = pupil.FsmHistory?.Select(entry => new CtfFsmInstance
-            {
-                FSMstartDate = entry.FSMstartDate,
-                FSMEligibilityVerificationDate = entry.FSMEligibilityVerificationDate,
-                FSMendDate = entry.FSMendDate,
-                UKcountry = entry.UKcountry,
-                FSMCategory = entry.FSMCategory,
-            }).ToList()
+            NawDetails = pupil.NawDetails,
+            FsmHistory = pupil.FsmHistory
         };
     }
 

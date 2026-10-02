@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
+﻿using DfE.GIAP.Core.Downloads.Application.Models.Entries;
+
+namespace DfE.GIAP.Core.Downloads.Application.UseCases.DownloadPupilCtf.Ctf.Models;
 
 public record CtfFile(CtfHeader Header, IEnumerable<CtfPupil> Pupils);
 
@@ -31,8 +33,8 @@ public class CtfPupil
     public string DOB { get; set; } = string.Empty; // Parse as: yyyy-MM-dd
     public string? Sex { get; set; }
 
-    public CtfNawDetails? NawDetails { get; set; }
-    public List<CtfFsmInstance>? FsmHistory { get; set; }
+    public NawDetailsEntry? NawDetails { get; set; }
+    public List<FsmInstanceEntry>? FsmHistory { get; set; }
 
     public List<CtfKeyStageAssessment> Assessments { get; set; } = new();
 }

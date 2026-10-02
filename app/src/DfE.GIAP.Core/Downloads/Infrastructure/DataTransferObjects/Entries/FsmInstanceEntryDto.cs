@@ -4,18 +4,18 @@ namespace DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects.Entries;
 
 public class FsmInstanceEntryDto
 {
-    [JsonProperty("FSMstartDate")]
+    [JsonProperty(nameof(FSMstartDate))]
     public DateTime? FSMstartDate { get; set; }
 
-    [JsonProperty("FSMEligibilityVerificationDate")]
+    [JsonProperty(nameof(FSMEligibilityVerificationDate))]
     public DateTime? FSMEligibilityVerificationDate { get; set; }
 
-    [JsonProperty("FSMendDate")]
+    [JsonProperty(nameof(FSMendDate))]
     public DateTime? FSMendDate { get; set; }
 
-    [JsonProperty("UKcountry")]
+    [JsonProperty(nameof(UKcountry))]
     public string? UKcountry { get; set; }
 
-    [JsonProperty("FSMCategory")]
+    [JsonProperty(nameof(FSMCategory))]
     public string? FSMCategory { get; set; }
 }

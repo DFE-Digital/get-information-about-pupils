@@ -4,63 +4,63 @@ namespace DfE.GIAP.Core.Downloads.Infrastructure.DataTransferObjects.Entries;
 
 public class NawDetailsEntryDto
 {
-    [JsonProperty("SpeakWelsh")]
+    [JsonProperty(nameof(SpeakWelsh))]
     public string? SpeakWelsh { get; set; }
 
-    [JsonProperty("HomeWelsh")]
+    [JsonProperty(nameof(HomeWelsh))]
     public string? HomeWelsh { get; set; }
 
-    [JsonProperty("NationalIdentity")]
+    [JsonProperty(nameof(NationalIdentity))]
     public string? NationalIdentity { get; set; }
 
-    [JsonProperty("EthnicitySource")]
+    [JsonProperty(nameof(EthnicitySource))]
     public string? EthnicitySource { get; set; }
 
-    [JsonProperty("WelshSource")]
+    [JsonProperty(nameof(WelshSource))]
     public string? WelshSource { get; set; }
 
-    [JsonProperty("EALAcquisition")]
+    [JsonProperty(nameof(EALAcquisition))]
     public string? EALAcquisition { get; set; }
 
-    [JsonProperty("LanguageSource")]
+    [JsonProperty(nameof(LanguageSource))]
     public string? LanguageSource { get; set; }
 
-    [JsonProperty("SENCurriculumandTeachingMethods")]
+    [JsonProperty(nameof(SENCurriculumandTeachingMethods))]
     public string? SENCurriculumandTeachingMethods { get; set; }
 
-    [JsonProperty("SENGroupingandSupport")]
+    [JsonProperty(nameof(SENGroupingandSupport))]
     public string? SENGroupingandSupport { get; set; }
 
-    [JsonProperty("SENSpecialisedResources")]
+    [JsonProperty(nameof(SENSpecialisedResources))]
     public string? SENSpecialisedResources { get; set; }
 
-    [JsonProperty("SENAdviceandAssessment")]
+    [JsonProperty(nameof(SENAdviceandAssessment))]
     public string? SENAdviceandAssessment { get; set; }
 
-    [JsonProperty("DateEntry")]
+    [JsonProperty(nameof(DateEntry))]
     public DateTime? DateEntry { get; set; }
 
-    [JsonProperty("FSMTransitionalProtection")]
+    [JsonProperty(nameof(FSMTransitionalProtection))]
     public bool? FSMTransitionalProtection { get; set; }
 
-    [JsonProperty("ALNDecisionOutcome")]
+    [JsonProperty(nameof(ALNDecisionOutcome))]
     public string? ALNDecisionOutcome { get; set; }
 
-    [JsonProperty("ALNDecisionBody")]
+    [JsonProperty(nameof(ALNDecisionBody))]
     public string? ALNDecisionBody { get; set; }
 
-    [JsonProperty("ALNSupportPlan")]
+    [JsonProperty(nameof(ALNSupportPlan))]
     public string? ALNSupportPlan { get; set; }
 
-    [JsonProperty("ALNAreasOfNeed")]
+    [JsonProperty(nameof(ALNAreasOfNeed))]
     public List<string>? ALNAreasOfNeed { get; set; }
 
-    [JsonProperty("ALNneeds")]
+    [JsonProperty(nameof(ALNneeds))]
     public List<string>? ALNneeds { get; set; }
 
-    [JsonProperty("ALNLocalHealthBoardProvision")]
+    [JsonProperty(nameof(ALNLocalHealthBoardProvision))]
     public bool? ALNLocalHealthBoardProvision { get; set; }
 
-    [JsonProperty("IDPReviewDate")]
+    [JsonProperty(nameof(IDPReviewDate))]
     public DateTime? IDPReviewDate { get; set; }
 }

@@ -14,7 +14,10 @@ namespace DfE.GIAP.Core.UnitTests.Downloads.Application.Ctf.Builders;
 
 public class CtfAdditionalPupilDataTests
 {
-    // Documents the assumed Cosmos contract and exercises deserialization, both mappings
+    private static readonly string[] ExpectedPupilElements =
+        ["UPN", "Surname", "Forename", "DOB", "Sex", "FSMhistory", "NAWdetails", "StageAssessments"];
+
+    // Documents the assumed Cosmos contract and exercises deserialization, mapping
     // and XML serialization together, so a missing assignment cannot silently drop data.
     private const string PupilJson = """
         {
@@ -48,7 +51,7 @@ public class CtfAdditionalPupilDataTests
     {
         XElement pupil = await ExportPupilAsync(PupilJson);
 
-        Assert.Equal(new[] { "UPN", "Surname", "Forename", "DOB", "Sex", "FSMhistory", "NAWdetails", "StageAssessments" },
+        Assert.Equal(ExpectedPupilElements,
             pupil.Elements().Select(e => e.Name.LocalName));
         XElement expectedFsm = XElement.Parse("""
             <FSMhistory>
