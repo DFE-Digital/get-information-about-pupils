@@ -41,6 +41,14 @@ public class NationalPupilDto
     [JsonProperty("DOB")]
     public DateTime DOB { get; set; }
 
+    // Cosmos contract: NAWdetails is an object with ALNAreasOfNeed/ALNneeds string arrays;
+    // FSMhistory is an array of eligibility periods, following the other dataset collections.
+    [JsonProperty("NAWdetails")]
+    public NawDetailsEntryDto? NawDetails { get; set; }
+
+    [JsonProperty("FSMhistory")]
+    public List<FsmInstanceEntryDto>? FsmHistory { get; set; }
+
     [JsonProperty("Census_Autumn")]
     public List<CensusAutumnEntryDto>? CensusAutumn { get; set; }
 

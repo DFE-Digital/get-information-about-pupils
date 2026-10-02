@@ -45,6 +45,8 @@ public static class NationalPupilDtoTestDoubles
             .RuleFor(p => p.Gender, f => f.PickRandom('M', 'F'))
             .RuleFor(p => p.Sex, (f, _) => f.PickRandom(new[] { "M", "F" }))
             .RuleFor(p => p.DOB, f => f.Date.Past(16, DateTime.Today.AddYears(-10)))
+            .RuleFor(p => p.NawDetails, f => (NawDetailsEntryDto?)null)
+            .RuleFor(p => p.FsmHistory, f => new List<FsmInstanceEntryDto>())
             .RuleFor(p => p.CensusAutumn, f => new List<CensusAutumnEntryDto>())
             .RuleFor(p => p.CensusSpring, f => new List<CensusSpringEntryDto>())
             .RuleFor(p => p.CensusSummer, f => new List<CensusSummerEntryDto>())

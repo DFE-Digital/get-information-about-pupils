@@ -17,6 +17,9 @@ public class NationalPupil
     public string? Sex { get; set; }
     public DateTime DOB { get; set; }
 
+    public NawDetailsEntry? NawDetails { get; set; }
+    public List<FsmInstanceEntry>? FsmHistory { get; set; }
+
     public List<CensusAutumnEntry>? CensusAutumn { get; set; }
     public List<CensusSpringEntry>? CensusSpring { get; set; }
     public List<CensusSummerEntry>? CensusSummer { get; set; }
