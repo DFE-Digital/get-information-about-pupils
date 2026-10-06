@@ -1,4 +1,6 @@
-﻿namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
+﻿using DfE.GIAP.Web.Features.MyPupils.Controllers.UpdateForm;
+
+namespace DfE.GIAP.Web.Features.MyPupils.PupilSelection.UpdatePupilSelections.Handlers;
 
 internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandler<UpdateMyPupilsSelectionStateRequest>
 {
@@ -7,6 +9,11 @@ internal sealed class ManualSelectPupilsCommandHandler : IEvaluationHandler<Upda
         if (input is null)
         {
             return HandlerResultValueTaskFactory.FailedWithNullArgument(nameof(input));
+        }
+
+        if (input.UpdateRequest.SelectAllState != MyPupilsPupilSelectionModeRequestDto.ManualSelection)
+        {
+            return HandlerResultValueTaskFactory.Skipped();
         }
 
         List<string> selectedPupilsOnPage = input.UpdateRequest.SelectedPupils?.ToList() ?? [];
