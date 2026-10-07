@@ -84,6 +84,21 @@ Run the application
 dotnet run
 ```
 
+Build the container image from the repository root using the authenticated NuGet
+config from the prerequisites above. The config is passed to Docker as a build secret:
+
+```sh
+docker build app --file app/Dockerfile \
+  --secret id=nuget_config,src="$HOME/.nuget/NuGet/NuGet.Config" \
+  --build-arg GIT_SHA="$(git rev-parse HEAD)" \
+  --tag giap:local
+```
+
+The packaging workflow builds this image alongside the existing web package, pushes
+it to `ghcr.io/dfe-digital/get-information-about-pupils:<commit-sha>`, and verifies
+that GHCR serves the tag. Fork and Dependabot pull requests build without pushing.
+The image is not deployed to AKS.
+
 If using Visual Studio, ensure the `DfE.GIAP.Web` project is set as the startup project and run it (F5 or use the
 menu).
 

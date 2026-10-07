@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/.idea/
+**/appsettings.local.json
+**/appsettings.development.json
+src/DfE.GIAP.Web/lib/govuk-frontend/
+src/DfE.GIAP.Web/lib/govuk-frontend-aspnetcore/
+src/DfE.GIAP.Web/wwwroot/assets/
+src/DfE.GIAP.Web/wwwroot/css/app.css*
+src/DfE.GIAP.Web/wwwroot/govuk-frontend.min.js
+nuget.config
+tests/
