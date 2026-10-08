@@ -17,7 +17,7 @@ jobs:
     uses: ./.github/workflows/package.yml
     permissions:
       contents: read  # Required to check out the code.
-      packages: read  # Required to access the DfEDigital NuGet feed.
+      packages: write # Required to restore private packages and push to GHCR.
 
   deploy:
     name: Deploy to Azure App Service
