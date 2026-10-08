@@ -62,12 +62,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: |
-          docker build app \
-            --file app/Dockerfile \
-            --secret id=nuget_config,src=app/nuget.config \
-            --build-arg GIT_SHA="$GITHUB_SHA" \
-            --tag "$TAG"
+        run: just docker-build --build-arg "GIT_SHA=$GITHUB_SHA" --tag "$TAG"
         env:
           TAG: ${{ steps.image_tags.outputs.tag }}
 

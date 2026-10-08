@@ -85,11 +85,12 @@ dotnet run
 ```
 
 Build the container image from the repository root using the authenticated NuGet
-config from the prerequisites above. The config is passed to Docker as a build secret:
+config from the prerequisites above. The `docker-build` recipe passes the config to
+Docker as a build secret. The default `app/nuget.config` has no credentials, so set
+`DOCKER_NUGET_CONFIG` to your authenticated config for a local build:
 
 ```sh
-docker build app --file app/Dockerfile \
-  --secret id=nuget_config,src="$HOME/.nuget/NuGet/NuGet.Config" \
+DOCKER_NUGET_CONFIG="$HOME/.nuget/NuGet/NuGet.Config" just docker-build \
   --build-arg GIT_SHA="$(git rev-parse HEAD)" \
   --tag giap:local
 ```
