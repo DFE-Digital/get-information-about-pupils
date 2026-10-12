@@ -7,6 +7,7 @@ using DfE.GIAP.Web.Extensions.Startup;
 using DfE.GIAP.Web.Features.Auth;
 using DfE.GIAP.Web.Features.Downloads.Services;
 using DfE.GIAP.Web.Features.Logging.Middleware;
+using DfE.GIAP.Web.Features.Logging.Sentry;
 using DfE.GIAP.Web.Features.MyPupils;
 using DfE.GIAP.Web.Features.Search;
 using DfE.GIAP.Web.Helpers.HostEnvironment;
@@ -23,6 +24,18 @@ builder.Configuration
     .ConfigureSettings();
 
 ConfigurationManager configuration = builder.Configuration;
+
+if (builder.Environment.IsProduction())
+{
+    string sentryDsn = configuration["Sentry:Dsn"];
+    if (string.IsNullOrWhiteSpace(sentryDsn))
+    {
+        throw new InvalidOperationException("Sentry:Dsn must be configured in Production.");
+    }
+
+    builder.WebHost.UseSentry(dsn: sentryDsn);
+    builder.Services.AddSingleton<Sentry.Extensibility.ISentryEventProcessor, RemoveRequestUrlEventProcessor>();
+}
 
 // Services configuration
 builder.Services

@@ -9,14 +9,15 @@ namespace DfE.GIAP.Web.Tests.Features;
 
 public class StatusEndpointTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
 {
-    private static readonly string[] s_dsiEnvironmentVariableNames =
+    private static readonly string[] s_environmentVariableNames =
     [
+        "ASPNETCORE_ENVIRONMENT",
         "DsiOptions__CallbackPath",
         "DsiOptions__SignedOutCallbackPath",
         "DsiOptions__MetadataAddress",
     ];
 
-    private readonly Dictionary<string, string?> _originalDsiEnvironmentVariables;
+    private readonly Dictionary<string, string?> _originalEnvironmentVariables;
     private readonly WebApplicationFactory<Program> _factory;
 
     public StatusEndpointTests(WebApplicationFactory<Program> factory)
@@ -33,9 +34,10 @@ public class StatusEndpointTests : IClassFixture<WebApplicationFactory<Program>>
         //
         // These are process-wide, so we capture whatever was there beforehand and restore it in
         // Dispose(), rather than assuming it's safe to simply clear the variable afterwards.
-        _originalDsiEnvironmentVariables = s_dsiEnvironmentVariableNames
+        _originalEnvironmentVariables = s_environmentVariableNames
             .ToDictionary(name => name, Environment.GetEnvironmentVariable);
 
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Local");
         Environment.SetEnvironmentVariable("DsiOptions__CallbackPath", "/signin-oidc");
         Environment.SetEnvironmentVariable("DsiOptions__SignedOutCallbackPath", "/signout-callback-oidc");
         Environment.SetEnvironmentVariable("DsiOptions__MetadataAddress", "https://integrationtest.example/.well-known/openid-configuration");
@@ -52,7 +54,7 @@ public class StatusEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 
     public void Dispose()
     {
-        foreach (KeyValuePair<string, string?> original in _originalDsiEnvironmentVariables)
+        foreach (KeyValuePair<string, string?> original in _originalEnvironmentVariables)
         {
             Environment.SetEnvironmentVariable(original.Key, original.Value);
         }

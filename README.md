@@ -84,6 +84,12 @@ Run the application
 dotnet run
 ```
 
+### Sentry error logging
+
+Set `Sentry__Dsn` as an Azure App Service setting for Production. The app requires it at startup in that environment. Sentry captures unhandled request exceptions and error logs from `ILogger`; Application Insights remains enabled. Sentry request body capture is disabled, and the request URL and query string fields are cleared because they can contain pupil data. Default PII collection and performance tracing are disabled.
+
+Set `SENTRY_ENVIRONMENT` to distinguish deployments. The container image sets `SENTRY_RELEASE` from its `GIT_SHA` build argument; for App Service deployments, set `SENTRY_RELEASE` to the deployed commit SHA in the App Service settings if release tracking is needed.
+
 Build the container image from the repository root using the authenticated NuGet
 config from the prerequisites above. The `docker-build` recipe passes the config to
 Docker as a build secret. The default `app/nuget.config` has no credentials, so set
