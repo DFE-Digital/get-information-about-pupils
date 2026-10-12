@@ -18,6 +18,7 @@ COPY --from=build /publish/ .
 RUN apk add --no-cache tzdata icu-data-full icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV GIT_SHA=${GIT_SHA}
+ENV SENTRY_RELEASE=${GIT_SHA}
 ENV ASPNETCORE_HTTP_PORTS=3000
 
 USER $APP_UID
