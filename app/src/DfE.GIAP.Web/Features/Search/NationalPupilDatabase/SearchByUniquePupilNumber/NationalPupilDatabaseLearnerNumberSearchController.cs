@@ -590,9 +590,6 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
                     model.Invalid.Add(learnerNumber);
                 }
             }
-
-            _logger.LogError("Some of the LearnerNumber(s) have not been found in our database");
-            //result.Reverse(); // TODO: why is this here?
         }
 
         // ensure that the selections are set appropriately
