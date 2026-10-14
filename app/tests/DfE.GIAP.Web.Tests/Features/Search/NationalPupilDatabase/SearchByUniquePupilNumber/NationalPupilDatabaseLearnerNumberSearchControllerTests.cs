@@ -382,6 +382,28 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchControllerTests : IC
         Assert.Equal(Messages.Search.Errors.EnterUPNs, model.SearchBoxErrorMessage);
     }
 
+    [Theory]
+    [InlineData(1500, true)]
+    [InlineData(1501, false)]
+    public async Task NationalPupilDatabase_limits_search_to_1500_UPNs(int upnCount, bool shouldSearch)
+    {
+        LearnerNumberSearchViewModel inputModel = new()
+        {
+            LearnerNumber = string.Join("\n", Enumerable.Range(0, upnCount).Select(i => $"A{i:000000000000}"))
+        };
+        NationalPupilDatabaseLearnerNumberSearchController sut = GetController();
+        _mockSelectionManager.GetSelected(Arg.Any<string[]>()).Returns(new HashSet<string>());
+
+        ViewResult result = Assert.IsType<ViewResult>(await sut.NationalPupilDatabase(inputModel, 0, "", ""));
+        LearnerNumberSearchViewModel model = Assert.IsType<LearnerNumberSearchViewModel>(result.Model);
+
+        Assert.Equal(shouldSearch, sut.ModelState.IsValid);
+        Assert.Equal(shouldSearch ? null : Messages.Search.Errors.TooManyUPNs, model.SearchBoxErrorMessage);
+        _mockUseCase.Verify(
+            useCase => useCase.HandleRequestAsync(It.IsAny<NationalPupilDatabaseSearchByUniquePupilNumberRequest>()),
+            shouldSearch ? Times.Once : Times.Never);
+    }
+
     [Fact]
     public async Task NationalPupilDatabase_shows_invalid_UPNs_on_search_if_they_exist()
     {

@@ -34,6 +34,7 @@ namespace DfE.GIAP.Web.Features.Search.NationalPupilDatabase.SearchByUniquePupil
 public sealed class NationalPupilDatabaseLearnerNumberSearchController : Controller
 {
     private const int PAGESIZE = 20;
+    private const int MAX_UPNS_PER_SEARCH = 1500;
     public const string MISSING_LEARNER_NUMBERS_KEY = "missingLearnerNumbers";
     public const string TOTAL_SEARCH_RESULTS = "totalSearch";
 
@@ -440,6 +441,11 @@ public sealed class NationalPupilDatabaseLearnerNumberSearchController : Control
         if (!string.IsNullOrEmpty(model.LearnerNumber))
         {
             model.LearnerNumber = Regex.Replace(model.LearnerNumber, @"[ \t]", "");
+
+            if (model.LearnerNumber.FormatLearnerNumbers().Length > MAX_UPNS_PER_SEARCH)
+            {
+                ModelState.AddModelError(nameof(model.LearnerNumber), Messages.Search.Errors.TooManyUPNs);
+            }
         }
 
         bool notPaged = hasQueryItem && !calledByController;

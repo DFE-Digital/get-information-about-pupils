@@ -44,7 +44,8 @@ public static class PupilHelper
                     errorMessage = Messages.Search.Errors.EnterUPNs;
                 }
                 else if (error.ErrorMessage.Contains("<span style='display:none'>2</span>")
-                    || error.ErrorMessage.Contains($"UPNs have been entered, please review and reduce to the maximum of"))
+                    || error.ErrorMessage.Contains($"UPNs have been entered, please review and reduce to the maximum of")
+                    || error.ErrorMessage == Messages.Search.Errors.TooManyUPNs)
                 {
                     errorMessage = Messages.Search.Errors.TooManyUPNs;
                 }
