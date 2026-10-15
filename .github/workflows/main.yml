@@ -128,5 +128,11 @@ jobs:
     name: Deploy to AKS
     needs: [package]
     uses: ./.github/workflows/build-and-deploy.yml
+    
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      pull-requests: write    
     with:
       docker-image-tag: ${{ github.sha }}
