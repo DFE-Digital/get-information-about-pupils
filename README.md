@@ -47,6 +47,7 @@ Prerequisites
 - [Git](https://git-scm.com/downloads) (for getting a copy of the source code and contributing changes)
 - [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) (for building and running the C#/.NET web
 application)
+- [just](https://just.systems/man/en/) (for the repository's development commands)
 - IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
 - Local environment configured to authenticate to the GitHub NuGet feed
     - Create a classic [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `read:packages` scope from your GitHub account (fine-grained tokens [do not support package scopes](https://github.com/github/roadmap/issues/558)).
@@ -83,6 +84,9 @@ Run the application
 ## cd app/src/DfE.GIAP.Web/
 dotnet run
 ```
+
+To run it with automatic rebuilds while editing, use `just watch-giap-web` from the
+repository root. The command uses the web project's launch profile (`Local`).
 
 ### Sentry error logging
 
@@ -157,56 +161,37 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 
 ### Settings
 
-There are a number of key settings contained in the `appsettings.json` file.
-It is recommended to create an `appsettings.local.json` file to store values as they won't be checked into source control as `.gitignore`.
+Non-sensitive defaults are in `app/src/DfE.GIAP.Web/appsettings.json`. For local development,
+store credentials and any environment-specific overrides in [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-10.0)
+using the web project's `UserSecretsId`. From the repository root, run `just set-secret`
+with a configuration key and its value. Set the values you need for your local environment:
 
-An example is provided for reference.
-
-### appsettings.local.json
-```json
-{
-    "RepositoryOptions": {
-        "EndpointUri": "",
-        "PrimaryKey": "",
-    },
-    "BlobStorageOptions": {
-        "AccountName": "STORAGE_ACCOUNT_NAME",
-        "AccountKey": "STORAGE_ACCOUNT_KEY",
-        "ContainerName": "STORAGE_CONTAINER_NAME",
-        "EndpointSuffix": "ENDPOINT_SUFFIX"
-    },
-    "SearchIndexOptions": {
-        "Url": "https://s115d10-asearch-giap.search.windows.net",
-        "Key": "KEY_HERE",
-        "Indexes": {
-            "npd": {
-                "Name": "NPD-INDEX-NAME"
-            },
-            "pupil-premium": {
-                "Name": "PUPILPREMIUM-INDEX-NAME"
-            }
-        }
-    },
-    "AzureSearchConnectionOptions": {
-        "EndpointUri": "ENDPOINT_URI",
-        "Credentials": "CREDENTIAL_KEY"
-    },
-     "DsiOptions": {
-        "ServiceId": "SERVICE_ID",
-        "ClientId": "CLIENT_ID",
-        "ClientSecret": "CLIENT_SECRET",
-        "ApiClientSecret": "API_CLIENT_SECRET",
-        "Audience": "AUDIENCE",
-        "MetadataAddress": "DSI_METADATA_ADDRESS",
-        "AuthorisationUrl": "DSI_AUTHORISATION_URL",
-        "RedirectUrlAfterSignout": "REDIRECT_URL_AFTER_SIGNOUT",
-        "CallbackPath": "CALLBACK_PATH",
-        "SignedOutCallbackPath": "SIGNED_OUT_CALLBACK",
-        "SessionTimeoutMinutes": 10
-    },
-}
-
+```sh
+just set-secret RepositoryOptions:EndpointUri "<local Cosmos DB endpoint URI>"
+just set-secret RepositoryOptions:PrimaryKey "<local Cosmos DB key>"
+just set-secret AzureSearchConnectionOptions:EndpointUri "<local search endpoint URI>"
+just set-secret AzureSearchConnectionOptions:Credentials "<local search key>"
+just set-secret BlobStorageOptions:AccountKey "<local storage key>"
+just set-secret DsiOptions:ServiceId "<local DSI service ID>"
+just set-secret DsiOptions:ClientId "<local DSI client ID>"
+just set-secret DsiOptions:ClientSecret "<local DSI client secret>"
+just set-secret DsiOptions:ApiClientSecret "<local DSI API client secret>"
+just set-secret DsiOptions:Audience "<local DSI audience>"
+just set-secret DsiOptions:MetadataAddress "<local DSI metadata address>"
+just set-secret DsiOptions:AuthorisationUrl "<local DSI authorisation URL>"
+just set-secret DsiOptions:RedirectUrlAfterSignout "<local sign-out redirect URL>"
+just set-secret DsiOptions:CallbackPath "<local sign-in callback path>"
+just set-secret DsiOptions:SignedOutCallbackPath "<local sign-out callback path>"
+just set-secret DsiOptions:SessionTimeoutMinutes "10"
 ```
+
+Get the local values from the team through the [onboarding runbook](https://github.com/DFE-Digital/get-information-about-pupils-wiki/blob/main/runbooks/onboarding.md).
+The command accepts any configuration key if another local setting needs an override.
+`Local` and `Development` load User Secrets after JSON settings; environment variables override both.
+For example, the environment variable for `DsiOptions:ClientSecret` is `DsiOptions__ClientSecret`.
+Production uses Azure App Service settings. User Secrets are stored outside the repository but are
+not encrypted; avoid putting real values in documentation or sharing your local secrets file.
+Values supplied on a command line may also be retained in shell history.
 
 ## Continual Integration (CI)
 
