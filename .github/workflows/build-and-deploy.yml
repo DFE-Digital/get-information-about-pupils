@@ -116,7 +116,7 @@ jobs:
     - name: tests
       shell: bash
       run: |
-        running for ${{ matrix.environment }} sha ${{ inputs.docker-image-tag }}
+        echo "running for ${{ matrix.environment }} sha ${{ inputs.docker-image-tag }}"
 
   manual_deploy:
     name: Manual deploy
