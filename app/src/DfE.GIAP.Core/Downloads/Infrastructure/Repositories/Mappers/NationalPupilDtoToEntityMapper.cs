@@ -33,6 +33,37 @@ internal class NationalPupilDtoToEntityMapper : IMapper<NationalPupilDto, Nation
             Gender = input.Gender,
             Sex = input.Sex,
             DOB = input.DOB,
+            NawDetails = input.NawDetails is null ? null : new NawDetailsEntry
+            {
+                SpeakWelsh = input.NawDetails.SpeakWelsh,
+                HomeWelsh = input.NawDetails.HomeWelsh,
+                NationalIdentity = input.NawDetails.NationalIdentity,
+                EthnicitySource = input.NawDetails.EthnicitySource,
+                WelshSource = input.NawDetails.WelshSource,
+                EALAcquisition = input.NawDetails.EALAcquisition,
+                LanguageSource = input.NawDetails.LanguageSource,
+                SENCurriculumandTeachingMethods = input.NawDetails.SENCurriculumandTeachingMethods,
+                SENGroupingandSupport = input.NawDetails.SENGroupingandSupport,
+                SENSpecialisedResources = input.NawDetails.SENSpecialisedResources,
+                SENAdviceandAssessment = input.NawDetails.SENAdviceandAssessment,
+                DateEntry = input.NawDetails.DateEntry,
+                FSMTransitionalProtection = input.NawDetails.FSMTransitionalProtection,
+                ALNDecisionOutcome = input.NawDetails.ALNDecisionOutcome,
+                ALNDecisionBody = input.NawDetails.ALNDecisionBody,
+                ALNSupportPlan = input.NawDetails.ALNSupportPlan,
+                ALNAreasOfNeed = input.NawDetails.ALNAreasOfNeed?.ToList(),
+                ALNneeds = input.NawDetails.ALNneeds?.ToList(),
+                ALNLocalHealthBoardProvision = input.NawDetails.ALNLocalHealthBoardProvision,
+                IDPReviewDate = input.NawDetails.IDPReviewDate,
+            },
+            FsmHistory = input.FsmHistory?.Select(dto => new FsmInstanceEntry
+            {
+                FSMstartDate = dto.FSMstartDate,
+                FSMEligibilityVerificationDate = dto.FSMEligibilityVerificationDate,
+                FSMendDate = dto.FSMendDate,
+                UKcountry = dto.UKcountry,
+                FSMCategory = dto.FSMCategory,
+            }).ToList(),
             CensusAutumn = input.CensusAutumn?.Select(dto => new CensusAutumnEntry
             {
                 PupilMatchingRef = input.PupilMatchingRef,
