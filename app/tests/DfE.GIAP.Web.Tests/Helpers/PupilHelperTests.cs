@@ -102,6 +102,7 @@ public sealed class PupilHelperTests
     [InlineData("You have not entered any UPNs", Messages.Search.Errors.EnterUPNs)]
     [InlineData("<span style='display:none'>2</span>", Messages.Search.Errors.TooManyUPNs)]
     [InlineData("UPNs have been entered, please review and reduce to the maximum of", Messages.Search.Errors.TooManyUPNs)]
+    [InlineData(Messages.Search.Errors.TooManyUPNs, Messages.Search.Errors.TooManyUPNs)]
     [InlineData("<span style='display:none'>3</span>", Messages.Search.Errors.UPNLength)]
     [InlineData("<span style='display:none'>4</span>", Messages.Search.Errors.UPNFormat)]
     [InlineData("<span style='display:none'>5</span>", Messages.Search.Errors.UPNMustBeUnique)]

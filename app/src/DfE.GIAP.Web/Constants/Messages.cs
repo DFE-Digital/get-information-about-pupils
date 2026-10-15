@@ -38,7 +38,7 @@ public static class Messages
             public const string SelectFileType = "Select the file type to download";
             public const string EnterUPNs = "Enter one or more UPNs";
             public const string EnterULNs = "Enter one or more ULNs";
-            public const string TooManyUPNs = "Too many UPNs";
+            public const string TooManyUPNs = "Too many UPNS, enter no more than 1500 UPNS at a time";
             public const string TooManyULNs = "Too many ULNs";
             public const string UPNLength = "The UPN must be 13 characters";
             public const string UPNFormat = "The UPN must be in the correct format";
