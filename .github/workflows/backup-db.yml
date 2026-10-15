@@ -50,8 +50,8 @@ jobs:
 
     - uses: azure/login@v3
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
 
     - name: Set environment variables
@@ -82,8 +82,8 @@ jobs:
         app-name: giap-${{ env.DEPLOY_ENV }}
         namespace: ${{ env.NAMESPACE }}
         cluster: ${{ env.CLUSTER }}
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         backup-file: ${{ env.BACKUP_FILE }}.sql
         db-server-name: ${{ inputs.db-server }}
