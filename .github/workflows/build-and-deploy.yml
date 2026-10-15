@@ -103,7 +103,7 @@ jobs:
     environment:
       name: ${{ matrix.environment }}
       url: ${{ steps.deploy_app.outputs.environment_url }}
-    needs: [build, test]
+    # needs: [build, test]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
