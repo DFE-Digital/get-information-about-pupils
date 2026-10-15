@@ -1,0 +1,21 @@
+name: Build & deploy main
+
+on:
+  push:
+    branches: 3135-*
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy_aks:
+    name: Deploy to AKS    
+    uses: ./.github/workflows/build-and-deploy.yml
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      pull-requests: write
+    with:
+      docker-image-tag: 9dacb9747b601f8bdcbd557dd88bb4b90be24e22
