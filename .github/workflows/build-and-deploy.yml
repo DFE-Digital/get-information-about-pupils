@@ -122,7 +122,7 @@ jobs:
         azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         environment: ${{ matrix.environment }}
-        sha: ${{ needs.build.outputs.docker-image-tag }}
+        sha: ${{ inputs.docker-image-tag }}
         terraform-base: ${{ env.TERRAFORM_BASE }}
         healthcheck: ${{ env.HEALTHCHECK_CMD }}
         teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
