@@ -118,8 +118,8 @@ jobs:
       id: deploy_app
       uses: DFE-Digital/github-actions/deploy-to-aks@master
       with:
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         environment: ${{ matrix.environment }}
         sha: ${{ inputs.docker-image-tag }}
@@ -147,8 +147,8 @@ jobs:
       id: deploy_manual
       uses: DFE-Digital/github-actions/deploy-to-aks@master
       with:
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
         azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         environment: ${{ inputs.environment }}
         pr-number: ${{ inputs.pull-request-number }}
@@ -177,9 +177,9 @@ jobs:
   #    - name: Deploy Domains Infrastructure
   #      uses: DFE-Digital/github-actions/deploy-domains-infra@master
   #      with:
-  #        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID  }}
+  #        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID_AKS  }}
   #        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
-  #        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID   }}
+  #        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS   }}
   #        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
   #        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
 
@@ -202,9 +202,9 @@ jobs:
   #    - name: Deploy Domains Environment
   #      uses: DFE-Digital/github-actions/deploy-domains-env@master
   #      with:
-  #        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID  }}
+  #        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID_AKS  }}
   #        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
-  #        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID   }}
+  #        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS   }}
   #        environment: ${{ matrix.domain_environment }}
   #        healthcheck: ${{ env.HEALTHCHECK_CMD }}
   #        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
