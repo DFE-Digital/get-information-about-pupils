@@ -16,8 +16,8 @@ on:
         type: choice
         default: development
         options:
-        - development
-        - test
+          - development
+          - test
         #- staging
         #- production
       docker-image-tag:
@@ -38,7 +38,7 @@ on:
 
 env:
   TERRAFORM_BASE: terraform/application
-  HEALTHCHECK_CMD: 'health'
+  HEALTHCHECK_CMD: "health"
 
 jobs:
   # build:
@@ -76,7 +76,7 @@ jobs:
   #       docker-repository: ${{ env.DOCKER_REPOSITORY }}
   #       max-cache: true
   #       reuse-cache: true
-  #       snyk-token: ${{ secrets.SNYK_TOKEN }}        
+  #       snyk-token: ${{ secrets.SNYK_TOKEN }}
   #       secret-files: nuget_config=./app/nuget.config
 
   # test:
@@ -111,25 +111,35 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        environment: [development,test]
+        environment: [development, test]
 
     steps:
-    - name: Deploy app to ${{ matrix.environment }}
-      id: deploy_app
-      uses: DFE-Digital/github-actions/deploy-to-aks@master
-      with:
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
-        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        environment: ${{ matrix.environment }}
-        sha: ${{ inputs.docker-image-tag }}
-        terraform-base: ${{ env.TERRAFORM_BASE }}
-        healthcheck: ${{ env.HEALTHCHECK_CMD }}
-        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
-        smoke-test: true
-        gcp-wip: ${{ vars.GCP_WIP }}
-        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+      - name: Debug Azure secrets
+        run: |
+          echo "CLIENT length: ${#CLIENT}"
+          echo "SUB length: ${#SUB}"
+          echo "TENANT length: ${#TENANT}"
+        env:
+          CLIENT: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          SUB: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          TENANT: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Deploy app to ${{ matrix.environment }}
+        id: deploy_app
+        uses: DFE-Digital/github-actions/deploy-to-aks@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          environment: ${{ matrix.environment }}
+          sha: ${{ inputs.docker-image-tag }}
+          terraform-base: ${{ env.TERRAFORM_BASE }}
+          healthcheck: ${{ env.HEALTHCHECK_CMD }}
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          smoke-test: true
+          gcp-wip: ${{ vars.GCP_WIP }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
   manual_deploy:
     name: Manual deploy
@@ -143,24 +153,34 @@ jobs:
       pull-requests: write
 
     steps:
-    - name: Deploy app to ${{ inputs.environment }}
-      id: deploy_manual
-      uses: DFE-Digital/github-actions/deploy-to-aks@master
-      with:
-        azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
-        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
-        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        environment: ${{ inputs.environment }}
-        pr-number: ${{ inputs.pull-request-number }}
-        sha: ${{ inputs.docker-image-tag }}
-        terraform-base: ${{ env.TERRAFORM_BASE }}
-        healthcheck: ${{ env.HEALTHCHECK_CMD }}
-        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
-        smoke-test: true
-        db-seed: ${{ inputs.environment == 'review' && 'true' || 'false' }}
-        gcp-wip: ${{ vars.GCP_WIP }}
-        gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+      - name: Debug Azure secrets manual deploy
+        run: |
+          echo "CLIENT length: ${#CLIENT}"
+          echo "SUB length: ${#SUB}"
+          echo "TENANT length: ${#TENANT}"
+        env:
+          CLIENT: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          SUB: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          TENANT: ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Deploy app to ${{ inputs.environment }}
+        id: deploy_manual
+        uses: DFE-Digital/github-actions/deploy-to-aks@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          environment: ${{ inputs.environment }}
+          pr-number: ${{ inputs.pull-request-number }}
+          sha: ${{ inputs.docker-image-tag }}
+          terraform-base: ${{ env.TERRAFORM_BASE }}
+          healthcheck: ${{ env.HEALTHCHECK_CMD }}
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          smoke-test: true
+          db-seed: ${{ inputs.environment == 'review' && 'true' || 'false' }}
+          gcp-wip: ${{ vars.GCP_WIP }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
   #  deploy_domains_infra:
   #    name: Deploy Domains Infrastructure
