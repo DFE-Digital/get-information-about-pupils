@@ -121,16 +121,6 @@ jobs:
         environment: [development, test]
 
     steps:
-      - name: Debug Azure secrets
-        run: |
-          echo "CLIENT length: ${#CLIENT}"
-          echo "SUB length: ${#SUB}"
-          echo "TENANT length: ${#TENANT}"
-        env:
-          CLIENT: ${{ secrets.AZURE_CLIENT_ID_AKS }}
-          SUB: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
-          TENANT: ${{ secrets.AZURE_TENANT_ID }}
-
       - name: Deploy app to ${{ matrix.environment }}
         id: deploy_app
         uses: DFE-Digital/github-actions/deploy-to-aks@master
@@ -160,16 +150,6 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Debug Azure secrets manual deploy
-        run: |
-          echo "CLIENT length: ${#CLIENT}"
-          echo "SUB length: ${#SUB}"
-          echo "TENANT length: ${#TENANT}"
-        env:
-          CLIENT: ${{ secrets.AZURE_CLIENT_ID_AKS }}
-          SUB: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
-          TENANT: ${{ secrets.AZURE_TENANT_ID }}
-
       - name: Deploy app to ${{ inputs.environment }}
         id: deploy_manual
         uses: DFE-Digital/github-actions/deploy-to-aks@master
