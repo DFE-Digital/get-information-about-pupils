@@ -8,6 +8,13 @@ on:
         description: "Docker image tag to deploy"
         required: true
         type: string
+    secrets:
+      AZURE_CLIENT_ID_AKS:
+        required: true
+      AZURE_SUBSCRIPTION_ID_AKS:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
   workflow_dispatch:
     inputs:
       environment:
