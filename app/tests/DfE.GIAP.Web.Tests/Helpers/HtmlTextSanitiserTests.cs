@@ -54,6 +54,20 @@ public sealed class HtmlTextSanitiserTests
         Assert.Equal("<p>Click me</p>", result.Value);
     }
 
+    [Fact]
+    public void Sanitise_PreservesNewsTableAndRemovesUnsafeMarkup()
+    {
+        string input = "<p>Release timetable</p><table class='govuk-table'><thead><tr><th scope='col'>Month</th></tr></thead><tbody><tr><td class='govuk-table__cell'>April 2025</td></tr></tbody></table><img src='x' onerror='alert(1)'><script>alert(1)</script>";
+
+        SanitisedText result = _sanitiser.Handle(input);
+
+        Assert.Contains("<table class=\"govuk-table\">", result.Value);
+        Assert.Contains("<th scope=\"col\">Month</th>", result.Value);
+        Assert.Contains("<td class=\"govuk-table__cell\">April 2025</td>", result.Value);
+        Assert.DoesNotContain("onerror", result.Value, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("<script", result.Value, StringComparison.OrdinalIgnoreCase);
+    }
+
     [Theory]
     [InlineData("\r\n")]
     [InlineData("     \r   \n ")]

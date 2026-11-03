@@ -19,9 +19,9 @@
                     </span>
                 </h2>
 
-                <p class="govuk-body govuk-!-text-break-word">
-                    @article.Body
-                </p>
+                <div class="govuk-body govuk-!-text-break-word">
+                    @Html.Raw(article.Body)
+                </div>
             </div>
         </div>
 
