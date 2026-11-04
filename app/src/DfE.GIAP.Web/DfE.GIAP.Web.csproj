@@ -10,7 +10,6 @@
     <!-- GOV.UK Frontend assets are restored by the GovUk.Frontend.AspNetCore build targets.
         The pre-built stylesheet is not restored because Styles/app.scss compiles govuk-frontend
         from source (via the restored NPM and support packages under lib/). -->
-    <EnableGovUkFrontendSupport>true</EnableGovUkFrontendSupport>
     <RestoreGovUkFrontendStylesheet>false</RestoreGovUkFrontendStylesheet>
     <RestoreGovUkFrontendNpmPackage>true</RestoreGovUkFrontendNpmPackage>
     <RestoreGovUkFrontendSupportPackage>true</RestoreGovUkFrontendSupportPackage>
