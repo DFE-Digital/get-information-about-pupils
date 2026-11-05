@@ -169,50 +169,50 @@ jobs:
           gcp-wip: ${{ vars.GCP_WIP }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
 
-  #  deploy_domains_infra:
-  #    name: Deploy Domains Infrastructure
-  #    runs-on: ubuntu-latest
-  #    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #    concurrency: deploy_domains_infra
-  #    needs: [deploy]
-  #    environment:
-  #      name: production
-  #    permissions:
-  #      id-token: write
+  deploy_domains_infra:
+    name: Deploy Domains Infrastructure
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    concurrency: deploy_domains_infra
+    needs: [deploy]
+    environment:
+      name: production
+    permissions:
+      id-token: write
 
-  #    steps:
-  #    - name: Deploy Domains Infrastructure
-  #      uses: DFE-Digital/github-actions/deploy-domains-infra@master
-  #      with:
-  #        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID_AKS  }}
-  #        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
-  #        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS   }}
-  #        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-  #        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+    steps:
+    - name: Deploy Domains Infrastructure
+      uses: DFE-Digital/github-actions/deploy-domains-infra@master
+      with:
+        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID_AKS  }}
+        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
+        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS   }}
+        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
 
-  #  deploy_domains_env:
-  #    name: Deploy Domains to ${{ matrix.domain_environment }} environment
-  #    runs-on: ubuntu-latest
-  #    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #    concurrency: deploy_domains_${{ matrix.domain_environment }}
-  #    needs: [deploy_domains_infra]
-  #    strategy:
-  #      max-parallel: 1
-  #      matrix:
-  #        domain_environment: [development, production]
-  #    environment:
-  #      name: production
-  #    permissions:
-  #      id-token: write
+  deploy_domains_env:
+    name: Deploy Domains to ${{ matrix.domain_environment }} environment
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    concurrency: deploy_domains_${{ matrix.domain_environment }}
+    needs: [deploy_domains_infra]
+    strategy:
+      max-parallel: 1
+      matrix:
+        domain_environment: [development, production]
+    environment:
+      name: production
+    permissions:
+      id-token: write
 
-  #    steps:
-  #    - name: Deploy Domains Environment
-  #      uses: DFE-Digital/github-actions/deploy-domains-env@master
-  #      with:
-  #        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID_AKS  }}
-  #        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
-  #        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS   }}
-  #        environment: ${{ matrix.domain_environment }}
-  #        healthcheck: ${{ env.HEALTHCHECK_CMD }}
-  #        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-  #        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+    steps:
+    - name: Deploy Domains Environment
+      uses: DFE-Digital/github-actions/deploy-domains-env@master
+      with:
+        azure-client-id:  ${{ secrets.AZURE_CLIENT_ID_AKS  }}
+        azure-tenant-id:  ${{ secrets.AZURE_TENANT_ID   }}
+        azure-subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS   }}
+        environment: ${{ matrix.domain_environment }}
+        healthcheck: ${{ env.HEALTHCHECK_CMD }}
+        teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
