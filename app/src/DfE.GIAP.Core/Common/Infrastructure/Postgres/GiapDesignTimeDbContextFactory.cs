@@ -7,11 +7,11 @@ public class GiapDesignTimeDbContextFactory : IDesignTimeDbContextFactory<GiapDb
 {
     public GiapDbContext CreateDbContext(string[] args)
     {
-        var configuration = new ConfigurationBuilder()
+        IConfigurationRoot configuration = new ConfigurationBuilder()
             .AddUserSecrets<GiapDesignTimeDbContextFactory>(optional: true)  // Optional for CI
             .Build();
 
-        var connectionString = configuration.GetValue<string>($"ConnectionStrings:{GiapDbContext.ConnectionName}");
+        string? connectionString = configuration.GetValue<string>($"ConnectionStrings:{GiapDbContext.ConnectionName}");
 
         return GiapDbContext.Create(connectionString);
     }

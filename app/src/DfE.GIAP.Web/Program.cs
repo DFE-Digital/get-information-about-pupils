@@ -64,13 +64,13 @@ builder.Services
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration();
 
-var healthCheckBuilder = builder.Services.AddHealthChecks();
+IHealthChecksBuilder healthCheckBuilder = builder.Services.AddHealthChecks();
 
 builder.Services.AddGovUkFrontend();
 
 if (builder.Environment.IsLocal() || builder.Environment.IsK8s())
 {
-    var postgresConnectionString = builder.Configuration.GetConnectionString(GiapDbContext.ConnectionName) ??
+    string postgresConnectionString = builder.Configuration.GetConnectionString(GiapDbContext.ConnectionName) ??
         throw new InvalidOperationException($"Connection string '{GiapDbContext.ConnectionName}' not found.");
 
     builder.Services

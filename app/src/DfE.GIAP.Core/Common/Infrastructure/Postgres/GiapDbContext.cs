@@ -31,7 +31,7 @@ public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(
 
     private static DbContextOptions<GiapDbContext> CreateOptions(string? connectionString, int? commandTimeout)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<GiapDbContext>();
+        DbContextOptionsBuilder<GiapDbContext> optionsBuilder = new DbContextOptionsBuilder<GiapDbContext>();
         ConfigureOptions(optionsBuilder, connectionString, commandTimeout);
         return optionsBuilder.Options;
     }
