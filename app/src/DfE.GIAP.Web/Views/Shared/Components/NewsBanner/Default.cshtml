@@ -1,29 +1,13 @@
-﻿@model NewsBannerViewModel
+@model NewsBannerViewModel
 
 @if (Model.ShowBanner && Model.ConsentGiven)
 {
-    <div class="govuk-phase-banner app-news-banner-background">
-        <div class="govuk-width-container">
-            <p class="govuk-phase-banner__content">
-                <b class="govuk-phase-banner__text">
-                    The news section has updates.
-                </b>
-
-                <a asp-controller="News"
-                   asp-action="DismissNewsBanner"
-                   asp-route-returnUrl="@ViewContext.HttpContext.Request.Path"
-                   class="govuk-link govuk-link--no-underline govuk-!-margin-left-8"
-                   id="news--banner-dismiss--link">
-                    Dismiss
-                </a>
-
-                <a asp-controller="News"
-                   asp-action="Index"
-                   class="govuk-link govuk-link--no-underline govuk-!-margin-left-8"
-                   id="news--banner-read--link">
-                    Read
-                </a>
-            </p>
-        </div>
-    </div>
+    <govuk-notification-banner>
+        <notification-banner-title>News</notification-banner-title>
+        <p class="govuk-notification-banner__heading">The news section has updates.</p>
+        <p class="govuk-body">
+            <a asp-controller="News" asp-action="Index" class="govuk-notification-banner__link" id="news--banner-read--link">Read</a>
+            <a asp-controller="News" asp-action="DismissNewsBanner" asp-route-returnUrl="@ViewContext.HttpContext.Request.Path" class="govuk-notification-banner__link govuk-!-margin-left-4" id="news--banner-dismiss--link">Dismiss</a>
+        </p>
+    </govuk-notification-banner>
 }

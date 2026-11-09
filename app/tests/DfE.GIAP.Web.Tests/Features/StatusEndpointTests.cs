@@ -82,4 +82,18 @@ public class StatusEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 
         Assert.Equal("Healthy", content);
     }
+
+    [Fact]
+    public async Task ExceptionPage_UsesGovUkTemplateAndPageTitle()
+    {
+        using HttpClient client = _factory.CreateClient();
+        client.BaseAddress = new Uri("https://localhost");
+
+        string content = await client.GetStringAsync("/Home/Exception");
+
+        Assert.Contains("<title>Error: There is a problem with the service - Get information about pupils - GOV.UK</title>", content);
+        Assert.Contains("govuk-skip-link", content);
+        Assert.Contains("govuk-service-navigation", content);
+        Assert.Contains("govuk-footer", content);
+    }
 }

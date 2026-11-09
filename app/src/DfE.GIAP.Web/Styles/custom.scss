@@ -11,15 +11,7 @@
 
 // header CSS
 .app-header__user {
-    padding-top: 10px;
-    text-align: right;
-}
-
-@media (max-width: 640px) {
-    .app-header__user {
-        padding-top: 2px;
-        text-align: left !important;
-    }
+    overflow-wrap: anywhere;
 }
 
 
@@ -173,9 +165,3 @@
         color: colours.$govuk-link-hover-colour;
         text-decoration-thickness: max(3px, .1875rem, .12em);
     }
-
-
-// News CSS
-.app-news-banner-background {
-    background: colours.$app-banner-yellow;
-}
