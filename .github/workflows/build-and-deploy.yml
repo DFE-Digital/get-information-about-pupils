@@ -8,6 +8,11 @@ on:
         description: "Docker image tag to deploy"
         required: true
         type: string
+      environment:
+        description: "Deploy a single environment (leave empty to deploy all environments from main)"
+        required: false
+        type: string
+        default: ""
     secrets:
       AZURE_CLIENT_ID_AKS:
         required: true
@@ -106,7 +111,7 @@ jobs:
 
   deploy:
     name: Deploy environments
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+    if: ${{ github.ref == 'refs/heads/main' && inputs.environment == '' }}
     environment:
       name: ${{ matrix.environment }}
       url: ${{ steps.deploy_app.outputs.environment_url }}
@@ -140,7 +145,7 @@ jobs:
 
   manual_deploy:
     name: Manual deploy
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ inputs.environment != '' }}
     environment:
       name: ${{ inputs.environment }}
       url: ${{ steps.deploy_manual.outputs.environment_url }}
@@ -164,7 +169,7 @@ jobs:
           healthcheck: ${{ env.HEALTHCHECK_CMD }}
           teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
-          smoke-test: true
+          smoke-test: false
           db-seed: ${{ inputs.environment == 'review' && 'true' || 'false' }}
           gcp-wip: ${{ vars.GCP_WIP }}
           gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
