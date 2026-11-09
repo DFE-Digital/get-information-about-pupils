@@ -48,7 +48,7 @@ Prerequisites
 - [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) (for building and running the C#/.NET web
 application)
 - [just](https://just.systems/man/en/) (for the repository's development commands)
-- [Docker](https://docs.docker.com/get-started/get-docker/) (for running a local PostgreSQL database)
+- A local [PostgreSQL](https://www.postgresql.org/download/) instance (deployed environments use PostgreSQL 18)
 - IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
 - Local environment configured to authenticate to the GitHub NuGet feed
     - Create a classic [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `read:packages` scope from your GitHub account (fine-grained tokens [do not support package scopes](https://github.com/github/roadmap/issues/558)).
@@ -80,49 +80,58 @@ Confirm tests are passing locally
 dotnet test
 ```
 
-Set up the local database
+### Database setup
 
 The application uses PostgreSQL through Entity Framework Core (`GiapDbContext` in
-`DfE.GIAP.Core/Common/Infrastructure/Postgres`). In the `Local` environment the app needs a
-`ConnectionStrings:GiapDb` connection string at startup.
+`app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/`). In the `Local` environment the app
+requires the `ConnectionStrings:GiapDb` connection string at startup.
 
 Install the local .NET tools (including `dotnet-ef`):
 ```sh
 just install-tools
 ```
 
-Start a PostgreSQL 18 container (the version deployed by Terraform):
+Install PostgreSQL, then set the connection string in User Secrets. All projects share the
+`UserSecretsId` set in `app/Directory.Build.props`, so the app and the EF Core tools read the same value.
+
+e.g.
 ```sh
-docker run --name giap-postgres --detach --publish 5432:5432 \
-  --env POSTGRES_PASSWORD=postgres --volume giap-postgres:/var/lib/postgresql \
-  postgres:18
+just set-secret ConnectionStrings:GiapDb "Host=localhost;Username=postgres;Password=your_postgres_password;Database=giap"
 ```
 
-Store the connection string in User Secrets. All projects share the `UserSecretsId` set in `app/Directory.Build.props`,
-so the same value is used when running the app and the EF Core tools:
-```sh
-just set-secret ConnectionStrings:GiapDb "Host=localhost;Port=5432;Database=giap;Username=postgres;Password=postgres"
-```
-
-Create the database and apply migrations:
+To create the local `giap` database and its schema, run:
 ```sh
 just ef database update
 ```
 
-When you change the model, add a migration and apply it:
+The app does not apply migrations at startup, so run this again whenever new migrations are added.
+
+#### Database migrations
+
+To change the database schema, update the model in `GiapDbContext`, then add a migration:
 ```sh
 just ef migrations add <MigrationName>
+```
+where the migration name is a short title-case description of the change, e.g. `AddPupilListTable`.
+Migrations are created in `app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/Migrations/`.
+
+Then apply it to your local database:
+```sh
 just ef database update
 ```
 
-Migrations live in `app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/Migrations`.
-The app does not apply migrations at startup.
+To roll back, pass the name of the migration to end on; the database is left in the state just after
+that migration was applied:
+```sh
+just ef database update <MigrationName>
+```
 
 In deployed AKS environments the database is an Azure PostgreSQL flexible server created by the
 `postgres` module in `terraform/application/database.tf`. Terraform passes its connection string to
 the app as the `ConnectionStrings__GiapDb` secret.
 
-Run the application
+### Run the application
+
 ```sh
 ## cd app/src/DfE.GIAP.Web/
 dotnet run
