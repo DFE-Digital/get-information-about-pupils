@@ -2,8 +2,6 @@
   <PropertyGroup>
     <RootNamespace>DfE.GIAP.Core</RootNamespace>
     <TargetFramework>net10.0</TargetFramework>
-    <!-- Shared with DfE.GIAP.Web so the EF Core design-time factory reads the same connection string -->
-    <UserSecretsId>d4e9d00c-c90a-4862-a2de-9e169b13be02</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

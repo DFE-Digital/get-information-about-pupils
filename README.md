@@ -98,7 +98,7 @@ docker run --name giap-postgres --detach --publish 5432:5432 \
   postgres:18
 ```
 
-Store the connection string in User Secrets. The web and Core projects share a `UserSecretsId`,
+Store the connection string in User Secrets. All projects share the `UserSecretsId` set in `app/Directory.Build.props`,
 so the same value is used when running the app and the EF Core tools:
 ```sh
 just set-secret ConnectionStrings:GiapDb "Host=localhost;Port=5432;Database=giap;Username=postgres;Password=postgres"
@@ -206,7 +206,7 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 
 Non-sensitive defaults are in `app/src/DfE.GIAP.Web/appsettings.json`. For local development,
 store credentials and any environment-specific overrides in [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-10.0)
-using the web project's `UserSecretsId`. From the repository root, run `just set-secret`
+using the shared `UserSecretsId` in `app/Directory.Build.props`. From the repository root, run `just set-secret`
 with a configuration key and its value. Set the values you need for your local environment:
 
 ```sh

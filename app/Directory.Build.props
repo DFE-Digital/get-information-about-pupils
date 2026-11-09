@@ -10,6 +10,9 @@
     <!-- Enable implicit usings (or GlobalUsings) across all projects-->
     <ImplicitUsings>enable</ImplicitUsings>
 
+    <!-- Share one User Secrets store so the web app and the EF Core tools read the same local settings -->
+    <UserSecretsId>d4e9d00c-c90a-4862-a2de-9e169b13be02</UserSecretsId>
+
     <!-- Set common assembly info -->
     <Authors>Department for Education (DfE)</Authors>
     <Company>Department for Education (DfE)</Company>
