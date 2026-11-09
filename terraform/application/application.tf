@@ -14,7 +14,7 @@ module "application_configuration" {
     PGSSLMODE        = local.postgres_ssl_mode
   }
   secret_variables = {
-    #DATABASE_URL = module.postgres.url
+    ConnectionStrings__GiapDb = module.postgres.dotnet_connection_string
   }
 }
 
