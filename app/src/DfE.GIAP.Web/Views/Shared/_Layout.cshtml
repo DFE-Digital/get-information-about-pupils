@@ -1,24 +1,10 @@
 @{
     Layout = "_GovUkPageTemplate";
 
-    var pageTitle = ViewData["Title"]?.ToString();
-    if (!string.IsNullOrEmpty(pageTitle))
-    {
-        if (!ViewData.ModelState.IsValid && !pageTitle.StartsWith("Error: "))
-        {
-            pageTitle = "Error: " + pageTitle;
-        }
-        else if (Context.Request.Method == "POST" && !pageTitle.StartsWith("Results: "))
-        {
-            pageTitle = "Results: " + pageTitle;
-        }
-
-        ViewData["Title"] = $"{pageTitle} - Get information about pupils - GOV.UK";
-    }
-    else
-    {
-        ViewData["Title"] = "Get information about pupils - GOV.UK";
-    }
+    ViewData["Title"] = PageTitleFormatter.Format(
+        ViewData["Title"],
+        ViewData.ModelState.IsValid,
+        Context.Request.Method == "POST");
 
     ViewData["HtmlClasses"] = "app-html-class";
     ViewData["BodyClasses"] = "app-body-class";

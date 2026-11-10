@@ -1,5 +1,4 @@
 @inject IAuthorizationService AuthorizationService
-@using GovUk.Frontend.AspNetCore
 
 <govuk-service-navigation service-name="Get information about pupils" service-url="/">
     <nav aria-label="Menu">
@@ -35,7 +34,4 @@
 
         <nav-item asp-controller="Authentication" asp-action="SignoutDsi">Sign out</nav-item>
     </nav>
-    <end align="ServiceNavigationEndSlotAlign.Inline">
-        <span class="govuk-body-s app-header__user">@User.GetUserEmail()</span>
-    </end>
 </govuk-service-navigation>

@@ -1,1 +1,6 @@
-<govuk-header home-page-url="/" />
+<div class="app-header">
+    <govuk-header home-page-url="/" />
+    <div class="govuk-width-container app-header__user-container">
+        <span class="app-header__user">@User.GetUserEmail()</span>
+    </div>
+</div>
