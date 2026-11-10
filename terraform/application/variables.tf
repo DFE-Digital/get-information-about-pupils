@@ -89,9 +89,30 @@ locals {
 }
 
 
-variable "postgres_flexible_server_sku" { default = "B_Standard_B1ms" }
-variable "postgres_enable_high_availability" { default = false }
-variable "postgres_server_version" { default = "18" }
+variable "postgres_flexible_server_sku" {
+  type        = string
+  default     = "B_Standard_B1ms"
+  description = "SKU of the Azure PostgreSQL flexible server"
+}
+variable "postgres_enable_high_availability" {
+  type        = bool
+  default     = false
+  description = "Enable zone-redundant high availability. Not supported on Burstable (B_) SKUs"
+}
+variable "postgres_server_version" {
+  type        = string
+  default     = "18"
+  description = "PostgreSQL major version"
+}
+variable "azure_maintenance_window" {
+  type = object({
+    day_of_week  = optional(number)
+    start_hour   = optional(number)
+    start_minute = optional(number)
+  })
+  default     = null
+  description = "Maintenance window for the Azure PostgreSQL flexible server"
+}
 variable "redis_cache_capacity" { default = 1 }
 variable "redis_cache_family" { default = "C" }
 variable "redis_cache_sku_name" { default = "Standard" }
