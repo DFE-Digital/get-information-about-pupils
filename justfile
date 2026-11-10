@@ -35,3 +35,8 @@ package *ARGS:
 # Build the Docker image using an authenticated NuGet config
 docker-build *ARGS:
   @docker build app --file app/Dockerfile --secret "id=nuget_config,src={{docker-nuget-config}}" {{ARGS}}
+
+# Run the EF Core Command-line Tools for the Core project
+[working-directory: 'app/src/DfE.GIAP.Core']
+ef *ARGS:
+  @dotnet dotnet-ef {{ARGS}}

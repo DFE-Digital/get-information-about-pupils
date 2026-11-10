@@ -1,4 +1,5 @@
 using DfE.GIAP.Core.Common;
+using DfE.GIAP.Core.Common.Infrastructure.Postgres;
 using DfE.GIAP.Core.Downloads;
 using DfE.GIAP.Core.NewsArticles;
 using DfE.GIAP.Core.PreparedDownloads;
@@ -63,9 +64,27 @@ builder.Services
     .AddAuthConfiguration()
     .AddCookieAndSessionConfiguration();
 
-builder.Services.AddHealthChecks();
+IHealthChecksBuilder healthCheckBuilder = builder.Services.AddHealthChecks();
 
 builder.Services.AddGovUkFrontend();
+
+if (builder.Environment.IsLocal() || builder.Environment.IsK8s())
+{
+    string postgresConnectionString = builder.Configuration.GetConnectionString(GiapDbContext.ConnectionName) ??
+        throw new InvalidOperationException($"Connection string '{GiapDbContext.ConnectionName}' not found.");
+
+    builder.Services
+        .AddDbContext<GiapDbContext>(
+            options => GiapDbContext.ConfigureOptions(options, postgresConnectionString),
+            contextLifetime: ServiceLifetime.Scoped,
+            optionsLifetime: ServiceLifetime.Singleton)
+        .AddDbContextFactory<GiapDbContext>(
+            options => GiapDbContext.ConfigureOptions(options, postgresConnectionString),
+            lifetime: ServiceLifetime.Singleton);
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+    healthCheckBuilder.AddNpgSql(postgresConnectionString);
+}
 
 if (builder.Environment.IsLocal())
 {

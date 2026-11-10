@@ -48,6 +48,7 @@ Prerequisites
 - [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) (for building and running the C#/.NET web
 application)
 - [just](https://just.systems/man/en/) (for the repository's development commands)
+- A local [PostgreSQL](https://www.postgresql.org/download/) instance (deployed environments use PostgreSQL 18)
 - IDE/Editor of choice (e.g., Visual Studio, Visual Studio Code, JetBrains Rider, etc.)
 - Local environment configured to authenticate to the GitHub NuGet feed
     - Create a classic [personal access token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with `read:packages` scope from your GitHub account (fine-grained tokens [do not support package scopes](https://github.com/github/roadmap/issues/558)).
@@ -79,7 +80,58 @@ Confirm tests are passing locally
 dotnet test
 ```
 
-Run the application
+### Database setup
+
+The application uses PostgreSQL through Entity Framework Core (`GiapDbContext` in
+`app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/`). In the `Local` environment the app
+requires the `ConnectionStrings:GiapDb` connection string at startup.
+
+Install the local .NET tools (including `dotnet-ef`):
+```sh
+just install-tools
+```
+
+Install PostgreSQL, then set the connection string in User Secrets. All projects share the
+`UserSecretsId` set in `app/Directory.Build.props`, so the app and the EF Core tools read the same value.
+
+e.g.
+```sh
+just set-secret ConnectionStrings:GiapDb "Host=localhost;Username=postgres;Password=your_postgres_password;Database=giap"
+```
+
+To create the local `giap` database and its schema, run:
+```sh
+just ef database update
+```
+
+The app does not apply migrations at startup, so run this again whenever new migrations are added.
+
+#### Database migrations
+
+To change the database schema, update the model in `GiapDbContext`, then add a migration:
+```sh
+just ef migrations add <MigrationName>
+```
+where the migration name is a short title-case description of the change, e.g. `AddPupilListTable`.
+Migrations are created in `app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/Migrations/`.
+
+Then apply it to your local database:
+```sh
+just ef database update
+```
+
+To roll back, pass the name of the migration to end on; the database is left in the state just after
+that migration was applied:
+```sh
+just ef database update <MigrationName>
+```
+
+In deployed AKS environments the database is an Azure PostgreSQL flexible server created by the
+`postgres` module in `terraform/application/database.tf`. Terraform passes its connection string to
+the app as the `ConnectionStrings__GiapDb` secret.
+
+### Run the application
+
 ```sh
 ## cd app/src/DfE.GIAP.Web/
 dotnet run
@@ -163,10 +215,11 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 
 Non-sensitive defaults are in `app/src/DfE.GIAP.Web/appsettings.json`. For local development,
 store credentials and any environment-specific overrides in [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-10.0)
-using the web project's `UserSecretsId`. From the repository root, run `just set-secret`
+using the shared `UserSecretsId` in `app/Directory.Build.props`. From the repository root, run `just set-secret`
 with a configuration key and its value. Set the values you need for your local environment:
 
 ```sh
+just set-secret ConnectionStrings:GiapDb "<local PostgreSQL connection string>"
 just set-secret RepositoryOptions:EndpointUri "<local Cosmos DB endpoint URI>"
 just set-secret RepositoryOptions:PrimaryKey "<local Cosmos DB key>"
 just set-secret AzureSearchConnectionOptions:EndpointUri "<local search endpoint URI>"
