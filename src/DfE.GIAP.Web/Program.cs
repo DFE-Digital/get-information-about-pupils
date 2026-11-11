@@ -105,6 +105,11 @@ if (builder.Environment.IsK8s())
 
 WebApplication app = builder.Build();
 
+if (app.Environment.IsK8s())
+{
+    app.UseForwardedHeaders();
+}
+
 // Error handling
 if (app.Environment.IsLocal())
 {
