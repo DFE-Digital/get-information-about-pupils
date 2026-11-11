@@ -92,6 +92,16 @@ if (builder.Environment.IsLocal())
     builder.Services.AddSassCompiler();
 }
 
+if (builder.Environment.IsK8s())
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.All;
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+    });
+}
+
 WebApplication app = builder.Build();
 
 // Error handling
