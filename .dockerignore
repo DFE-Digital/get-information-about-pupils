@@ -10,3 +10,11 @@ src/DfE.GIAP.Web/wwwroot/css/app.css*
 src/DfE.GIAP.Web/wwwroot/govuk-frontend.min.js
 nuget.config
 tests/
+.git/
+.github/
+.config/
+docs/
+global_config/
+maintenance_page/
+scripts/
+terraform/
