@@ -13,6 +13,7 @@ tests/
 .git/
 .github/
 .config/
+!.config/dotnet-tools.json
 docs/
 global_config/
 maintenance_page/

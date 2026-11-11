@@ -128,6 +128,10 @@ In deployed AKS environments the database is an Azure PostgreSQL flexible server
 `postgres` module in `terraform/application/database.tf`. Terraform passes its connection string to
 the app as the `ConnectionStrings__GiapDb` secret.
 
+Migrations are applied on deployment by a Kubernetes job (`terraform/application/migrations.tf`) that runs
+the EF Core migrations bundle (`/app/efbundle`) built into the Docker image. The web application is only
+rolled out once the job has completed successfully.
+
 ### Run the application
 
 ```sh
