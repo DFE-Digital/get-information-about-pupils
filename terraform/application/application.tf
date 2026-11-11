@@ -21,6 +21,8 @@ module "application_configuration" {
 module "web_application" {
   source = "./vendor/modules/aks//aks/application"
 
+  depends_on = [module.migrations]
+
   is_web = true
 
   namespace    = var.namespace
