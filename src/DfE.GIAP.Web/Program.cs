@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
 using GovUk.Frontend.AspNetCore;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -95,6 +96,11 @@ if (builder.Environment.IsLocal())
 
 if (builder.Environment.IsK8s())
 {
+    // Azure App Service persists data protection keys automatically; in Kubernetes they must be
+    // shared across pods and survive restarts, so store them in the database.
+    builder.Services.AddDataProtection()
+        .PersistKeysToDbContext<GiapDbContext>();
+
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
         options.ForwardedHeaders = ForwardedHeaders.All;

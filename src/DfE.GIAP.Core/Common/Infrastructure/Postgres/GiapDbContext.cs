@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DfE.GIAP.Core.Common.Infrastructure.Postgres;
 
-public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(options)
+public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(options), IDataProtectionKeyContext
 {
     public const string ConnectionName = "GiapDb";
+
+    public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
 
     public static GiapDbContext Create(string? connectionString, int? commandTimeout = null) => new(CreateOptions(connectionString, commandTimeout));
 
