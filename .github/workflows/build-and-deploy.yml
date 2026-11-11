@@ -68,7 +68,7 @@ jobs:
   #   - name: Add DfEDigital NuGet Feed Credentials
   #     run: |
   #       dotnet nuget update source dfedigital \
-  #         --configfile ./app/nuget.config \
+  #         --configfile ./nuget.config \
   #         --username USERNAME \
   #         --password ${{ secrets.GITHUB_TOKEN }} \
   #         --store-password-in-clear-text
@@ -78,13 +78,13 @@ jobs:
   #     uses: DFE-Digital/github-actions/build-docker-image@master
   #     with:
   #       github-token: ${{ secrets.GITHUB_TOKEN }}
-  #       context: ./app
-  #       dockerfile-path: ./app/Dockerfile
+  #       context: .
+  #       dockerfile-path: ./Dockerfile
   #       docker-repository: ${{ env.DOCKER_REPOSITORY }}
   #       max-cache: true
   #       reuse-cache: true
   #       snyk-token: ${{ secrets.SNYK_TOKEN }}
-  #       secret-files: nuget_config=./app/nuget.config
+  #       secret-files: nuget_config=./nuget.config
 
   # test:
   #   name: Run tests

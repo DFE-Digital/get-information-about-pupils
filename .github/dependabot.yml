@@ -8,7 +8,7 @@ registries:
 
 updates:
   - package-ecosystem: "nuget"
-    directory: "app/"
+    directory: "/"
     registries:
       - github-nuget
     schedule:

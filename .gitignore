@@ -341,14 +341,14 @@ ASALocalRun/
 
 
 # Restored by the GovUk.Frontend.AspNetCore build targets and compiled by AspNetCore.SassCompiler
-/app/src/DfE.GIAP.Web/lib/govuk-frontend/
-/app/src/DfE.GIAP.Web/lib/govuk-frontend-aspnetcore/
-/app/src/DfE.GIAP.Web/wwwroot/assets/
-/app/src/DfE.GIAP.Web/wwwroot/css/app.css*
-/app/src/DfE.GIAP.Web/wwwroot/govuk-frontend.min.js
-/app/src/DfE.GIAP.Web/appsettings.local.json
-/app/src/DfE.GIAP.Web/appsettings.development.json
-/app/nuget.config
+/src/DfE.GIAP.Web/lib/govuk-frontend/
+/src/DfE.GIAP.Web/lib/govuk-frontend-aspnetcore/
+/src/DfE.GIAP.Web/wwwroot/assets/
+/src/DfE.GIAP.Web/wwwroot/css/app.css*
+/src/DfE.GIAP.Web/wwwroot/govuk-frontend.min.js
+/src/DfE.GIAP.Web/appsettings.local.json
+/src/DfE.GIAP.Web/appsettings.development.json
+/nuget.config
 
 # Terraform
 .terraform

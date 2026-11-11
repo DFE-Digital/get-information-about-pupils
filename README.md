@@ -70,20 +70,18 @@ restores the GOV.UK Frontend assets into `wwwroot/` and `lib/`, and
 in the `Local` environment the compiler also watches `Styles/*.scss` and recompiles on change.
 
 ```sh
-## cd app/
 dotnet build
 ```
 
 Confirm tests are passing locally
 ```sh
-## cd app/
 dotnet test
 ```
 
 ### Database setup
 
 The application uses PostgreSQL through Entity Framework Core (`GiapDbContext` in
-`app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/`). In the `Local` environment the app
+`src/DfE.GIAP.Core/Common/Infrastructure/Postgres/`). In the `Local` environment the app
 requires the `ConnectionStrings:GiapDb` connection string at startup.
 
 Install the local .NET tools (including `dotnet-ef`):
@@ -92,7 +90,7 @@ just install-tools
 ```
 
 Install PostgreSQL, then set the connection string in User Secrets. All projects share the
-`UserSecretsId` set in `app/Directory.Build.props`, so the app and the EF Core tools read the same value.
+`UserSecretsId` set in `Directory.Build.props`, so the app and the EF Core tools read the same value.
 
 e.g.
 ```sh
@@ -113,7 +111,7 @@ To change the database schema, update the model in `GiapDbContext`, then add a m
 just ef migrations add <MigrationName>
 ```
 where the migration name is a short title-case description of the change, e.g. `AddPupilListTable`.
-Migrations are created in `app/src/DfE.GIAP.Core/Common/Infrastructure/Postgres/Migrations/`.
+Migrations are created in `src/DfE.GIAP.Core/Common/Infrastructure/Postgres/Migrations/`.
 
 Then apply it to your local database:
 ```sh
@@ -133,7 +131,7 @@ the app as the `ConnectionStrings__GiapDb` secret.
 ### Run the application
 
 ```sh
-## cd app/src/DfE.GIAP.Web/
+## cd src/DfE.GIAP.Web/
 dotnet run
 ```
 
@@ -148,7 +146,7 @@ Set `SENTRY_ENVIRONMENT` to distinguish deployments. The container image sets `S
 
 Build the container image from the repository root using the authenticated NuGet
 config from the prerequisites above. The `docker-build` recipe passes the config to
-Docker as a build secret. The default `app/nuget.config` has no credentials, so set
+Docker as a build secret. The default `nuget.config` has no credentials, so set
 `DOCKER_NUGET_CONFIG` to your authenticated config for a local build:
 
 ```sh
@@ -213,9 +211,9 @@ GIAP web has a number of dependancies listed below, some are closed source, othe
 
 ### Settings
 
-Non-sensitive defaults are in `app/src/DfE.GIAP.Web/appsettings.json`. For local development,
+Non-sensitive defaults are in `src/DfE.GIAP.Web/appsettings.json`. For local development,
 store credentials and any environment-specific overrides in [.NET User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-10.0)
-using the shared `UserSecretsId` in `app/Directory.Build.props`. From the repository root, run `just set-secret`
+using the shared `UserSecretsId` in `Directory.Build.props`. From the repository root, run `just set-secret`
 with a configuration key and its value. Set the values you need for your local environment:
 
 ```sh
