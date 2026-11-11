@@ -17,6 +17,7 @@ using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
 using GovUk.Frontend.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
