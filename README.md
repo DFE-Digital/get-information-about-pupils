@@ -167,6 +167,25 @@ The image is not deployed to AKS.
 If using Visual Studio, ensure the `DfE.GIAP.Web` project is set as the startup project and run it (F5 or use the
 menu).
 
+### Run the Worker
+
+Background jobs run in a separate Worker app (`src/DfE.GIAP.Worker`) using [Hangfire](https://www.hangfire.io/).
+Hangfire stores its jobs in the GIAP database (`ConnectionStrings:GiapDb`) in its own `hangfire` schema, which it
+creates on startup; the schema isn't managed by EF Core migrations. Recurring jobs are registered in
+`Jobs/RecurringJobsRegistrar.cs`.
+
+```sh
+## cd src/DfE.GIAP.Worker/
+dotnet run
+```
+
+To run it with automatic rebuilds while editing, use `just watch-giap-worker` from the repository root. The command
+uses the Worker project's launch profile (`Local`), which reads the same User Secrets as the web app.
+
+In AKS the Worker is deployed by `module.worker_application` in `terraform/application/application.tf`. It runs from
+the web app's Docker image (published to `/app/worker`) with the same configuration and secrets as the web app.
+Sentry is configured the same way as the web app, capturing error logs.
+
 
 
 ## Architecture

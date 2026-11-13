@@ -6,9 +6,12 @@ RUN apk add --no-cache gcompat
 COPY . ./
 RUN dotnet tool restore
 RUN --mount=type=secret,id=nuget_config,target=/source/nuget.config,required=true \
-    dotnet restore src/DfE.GIAP.Web/DfE.GIAP.Web.csproj --configfile /source/nuget.config
+    dotnet restore src/DfE.GIAP.Web/DfE.GIAP.Web.csproj --configfile /source/nuget.config && \
+    dotnet restore src/DfE.GIAP.Worker/DfE.GIAP.Worker.csproj --configfile /source/nuget.config
 RUN dotnet publish src/DfE.GIAP.Web/DfE.GIAP.Web.csproj \
     --no-restore --configuration Release --output /publish
+RUN dotnet publish src/DfE.GIAP.Worker/DfE.GIAP.Worker.csproj \
+    --no-restore --configuration Release --output /publish-worker
 RUN --mount=type=secret,id=nuget_config,target=/source/nuget.config,required=true \
     dotnet ef migrations bundle --project src/DfE.GIAP.Core/DfE.GIAP.Core.csproj \
     --configuration Release --context GiapDbContext --output /efbundle
@@ -18,6 +21,8 @@ ARG GIT_SHA
 WORKDIR /app
 
 COPY --from=build /publish/ .
+# The Worker runs from the same image; see worker_application in terraform/application
+COPY --from=build /publish-worker/ ./worker/
 COPY --from=build /efbundle ./efbundle
 
 RUN apk add --no-cache tzdata icu-data-full icu-libs

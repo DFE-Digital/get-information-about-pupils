@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" />
+    <PackageReference Include="Hangfire.NetCore" />
+    <PackageReference Include="Hangfire.PostgreSql" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Sentry.Extensions.Logging" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
+  </ItemGroup>
+</Project>

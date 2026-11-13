@@ -40,3 +40,25 @@ module "web_application" {
 
   send_traffic_to_maintenance_page = var.send_traffic_to_maintenance_page
 }
+
+module "worker_application" {
+  source = "./vendor/modules/aks//aks/application"
+
+  depends_on = [module.migrations]
+
+  name   = "worker"
+  is_web = false
+
+  namespace    = var.namespace
+  environment  = var.environment
+  service_name = var.service_name
+
+  cluster_configuration_map  = module.cluster_data.configuration_map
+  kubernetes_config_map_name = module.application_configuration.kubernetes_config_map_name
+  kubernetes_secret_name     = module.application_configuration.kubernetes_secret_name
+
+  docker_image = var.docker_image
+  command      = ["dotnet", "/app/worker/DfE.GIAP.Worker.dll"]
+  replicas     = 1
+  enable_logit = true
+}
