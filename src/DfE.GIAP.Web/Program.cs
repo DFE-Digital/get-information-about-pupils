@@ -76,14 +76,8 @@ if (builder.Environment.IsLocal() || builder.Environment.IsK8s())
         throw new InvalidOperationException($"Connection string '{GiapDbContext.ConnectionName}' not found.");
 
     builder.Services
-        .AddDbContext<GiapDbContext>(
-            options => GiapDbContext.ConfigureOptions(options, postgresConnectionString),
-            contextLifetime: ServiceLifetime.Scoped,
-            optionsLifetime: ServiceLifetime.Singleton)
-        .AddDbContextFactory<GiapDbContext>(
-            options => GiapDbContext.ConfigureOptions(options, postgresConnectionString),
-            lifetime: ServiceLifetime.Singleton);
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+        .AddGiapDbContext(postgresConnectionString)
+        .AddDatabaseDeveloperPageExceptionFilter();
 
     healthCheckBuilder.AddNpgSql(postgresConnectionString);
 }
