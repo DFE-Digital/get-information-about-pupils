@@ -36,6 +36,7 @@ module "web_application" {
   probe_path = var.probe_path
 
   docker_image = var.docker_image
+  command      = ["/bin/ash", "-c", "cd /apps/web/; exec dotnet DfE.GIAP.Web.dll"]
   enable_logit = true
 
   send_traffic_to_maintenance_page = var.send_traffic_to_maintenance_page
@@ -58,7 +59,7 @@ module "worker_application" {
   kubernetes_secret_name     = module.application_configuration.kubernetes_secret_name
 
   docker_image = var.docker_image
-  command      = ["dotnet", "/app/worker/DfE.GIAP.Worker.dll"]
+  command      = ["/bin/ash", "-c", "cd /apps/worker/; exec dotnet DfE.GIAP.Worker.dll"]
   replicas     = 1
   enable_logit = true
 }

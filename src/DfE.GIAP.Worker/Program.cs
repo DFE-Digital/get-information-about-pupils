@@ -4,13 +4,7 @@ using DfE.GIAP.Worker.Jobs;
 using Hangfire;
 using Hangfire.PostgreSql;
 
-HostApplicationBuilder builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
-{
-    Args = args,
-    // The Worker is published to a subdirectory of the web app's Docker image; load the Worker's
-    // appsettings from its own directory rather than the web app's from the working directory.
-    ContentRootPath = AppContext.BaseDirectory
-});
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 if (builder.Environment.IsEnvironment("Local"))
 {

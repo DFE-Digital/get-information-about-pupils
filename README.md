@@ -129,7 +129,7 @@ In deployed AKS environments the database is an Azure PostgreSQL flexible server
 the app as the `ConnectionStrings__GiapDb` secret.
 
 Migrations are applied on deployment by a Kubernetes job (`terraform/application/migrations.tf`) that runs
-the EF Core migrations bundle (`/app/efbundle`) built into the Docker image. The web application is only
+the EF Core migrations bundle (`/apps/efbundle`) built into the Docker image. The web application is only
 rolled out once the job has completed successfully.
 
 ### Run the application
@@ -183,7 +183,7 @@ To run it with automatic rebuilds while editing, use `just watch-giap-worker` fr
 uses the Worker project's launch profile (`Local`), which reads the same User Secrets as the web app.
 
 In AKS the Worker is deployed by `module.worker_application` in `terraform/application/application.tf`. It runs from
-the web app's Docker image (published to `/app/worker`) with the same configuration and secrets as the web app.
+the same Docker image as the web app (published to `/apps/worker`, alongside the web app in `/apps/web`) with the same configuration and secrets as the web app.
 Sentry is configured the same way as the web app, capturing error logs.
 
 
