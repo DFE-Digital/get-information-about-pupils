@@ -24,7 +24,7 @@ module "migrations" {
   environment  = var.environment
   service_name = var.service_name
   docker_image = var.docker_image
-  commands     = ["/app/efbundle"]
+  commands     = ["/apps/efbundle"]
   arguments    = ["--connection", "$(CONNECTION_STRING)"]
   job_name     = "migrations"
   enable_logit = var.enable_logit
