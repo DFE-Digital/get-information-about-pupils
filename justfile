@@ -23,6 +23,11 @@ restore:
 watch-giap-web:
   @dotnet watch
 
+# Run the GIAP Worker project and watch for file changes
+[working-directory: 'src/DfE.GIAP.Worker']
+watch-giap-worker:
+  @dotnet watch
+
 # Set a configuration entry in user secrets for the web application
 set-secret key value:
   @dotnet user-secrets set "{{key}}" "{{value}}" --id {{user-secrets-id}}

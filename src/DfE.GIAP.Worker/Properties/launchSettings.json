@@ -1,0 +1,10 @@
+{
+    "profiles": {
+        "DfE.GIAP.Worker": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Local"
+            }
+        }
+    }
+}
