@@ -149,7 +149,7 @@ if (app.Environment.IsLocal())
 {
     // Registered ahead of the consent check and security headers so the dashboard isn't redirected to the consent
     // page and its scripts aren't blocked by the CSP. Hangfire only allows local requests by default.
-    app.UseHangfireDashboard();
+    app.UseHangfireDashboard("/_hangfire");
 }
 
 app.UseConsentCheck();

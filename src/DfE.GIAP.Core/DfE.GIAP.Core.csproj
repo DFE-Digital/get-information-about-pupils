@@ -13,6 +13,7 @@
     <PackageReference Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" />
     <PackageReference Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" />
     <PackageReference Include="EFCore.NamingConventions" />
+    <PackageReference Include="Hangfire.Core" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" />
