@@ -9,13 +9,8 @@
 
     @if (string.IsNullOrEmpty(Model.ErrorDetails) && Model.ItemAddedToMyPupilList && !Model.NoPupilSelected)
     {
-        <div class="govuk-inset-text">Pupil(s) added to your 'My pupils list'</div>
+        <govuk-inset-text>Pupil(s) added to your 'My pupils list'</govuk-inset-text>
     }
-    @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Common.Errors.MyPupilListLimitExceeded))
-    {
-        <partial name="~/Views/MyPupilList/_AddToMyPupilListError.cshtml" />
-    }
-
     @if (!string.IsNullOrEmpty(Model.ErrorDetails) && Model.ErrorDetails.ToString().Equals(Messages.Downloads.Errors.UPNLimitExceeded))
     {
         <partial name="~/Views\Shared\_CTFLimitError.cshtml" />
@@ -23,131 +18,62 @@
 
     @if (Model.Invalid.Any() || Model.Duplicates.Any() || Model.NotFound.Any())
     {
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                <span>
-                    One or more @(Model.LearnerNumberLabel)(s) have not been found or are duplicate. Only those @(Model.LearnerNumberLabel)(s) found will be shown.
-                </span>
-            </strong>
-        </div>
+        <govuk-warning-text>
+            One or more @(Model.LearnerNumberLabel)(s) have not been found or are duplicate. Only those @(Model.LearnerNumberLabel)(s) found will be shown.
+        </govuk-warning-text>
 
         <noscript>
             @if (Model.ShowErrors)
             {
-                <button class="govuk-button govuk-button--secondary" type="submit" name="ShowErrors" value="false">Show valid @(Model.LearnerNumberLabel)s</button>
+                <govuk-button class="govuk-button--secondary" type="submit" name="ShowErrors" value="false">Show valid @(Model.LearnerNumberLabel)s</govuk-button>
             }
             else
             {
-                <button class="govuk-button govuk-button--secondary" type="submit" name="ShowErrors" value="true">Show @(Model.LearnerNumberLabel)s not found, invalid or duplicate</button>
+                <govuk-button class="govuk-button--secondary" type="submit" name="ShowErrors" value="true">Show @(Model.LearnerNumberLabel)s not found, invalid or duplicate</govuk-button>
             }
         </noscript>
 
-        <div class="govuk-checkboxes hide-for-non-js">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" name="toggleErrors" type="checkbox" data-val="true" value="true">
-                <label for="toggleErrors" class="govuk-label govuk-checkboxes__label">
-                    <span id="errors-show">Show @(Model.LearnerNumberLabel)s not found, invalid or duplicate</span>
-                </label>
-            </div>
-        </div>
+        <govuk-checkboxes name="toggleErrors" class="hide-for-non-js">
+            <govuk-checkboxes-item value="true" id="toggleErrors">
+                <span id="errors-show">Show @(Model.LearnerNumberLabel)s not found, invalid or duplicate</span>
+            </govuk-checkboxes-item>
+        </govuk-checkboxes>
     }
 
     @if (!Model.ShowErrors && (Model.Learners != null && Model.Learners.Any() && ViewData.ModelState.IsValid))
     {
-        <div class="govuk-inset-text">
+        <govuk-inset-text>
             Please be aware that by selecting/de-selecting all pupils may take time to process
-        </div>
+        </govuk-inset-text>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-quarter">
                 @if (Model.ToggleSelectAll)
                 {
-                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</button>
+                    <govuk-button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="false">Deselect all pupils</govuk-button>
                 }
                 else
                 {
-                    <button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</button>
+                    <govuk-button asp-action="@Model.SearchAction" asp-route-pageNumber="@Model.PageNumber" class="govuk-button--secondary" type="submit" name="SelectAllNoJsChecked" value="true">Select all pupils</govuk-button>
                 }
             </div>
 
             <partial name="@Model.DownloadLinksPartial" />
         </div>
     }
-    @if (Model.Invalid.Any() && (Model.Learners != null && Model.Learners.Any() && ViewData.ModelState.IsValid))
+    @if (Model.Invalid.Any() && Model.Learners.Any() && ViewData.ModelState.IsValid)
     {
-        <div class="error-table hide-for-non-js @(Model.ShowErrors ? "display-results" : "")">
-            <div id="pupil--list--table">
-                <div class="giap--pupil-list">
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-not-found--text">Invalid @(Model.LearnerNumberLabel)s</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            @foreach (var upn in Model.Invalid)
-                            {
-                                <tr>
-                                    <td class="govuk-table__cell" id="search--search-pupils-not-found-data-upn--">@upn</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <partial name="~/Views/Shared/LearnerNumber/_ErrorTable.cshtml" model='new LearnerNumberErrorTableViewModel($"Invalid {Model.LearnerNumberLabel}s", Model.Invalid, "invalid", Model.ShowErrors)' />
     }
 
     @if (Model.NotFound.Any())
     {
-        <div class="error-table hide-for-non-js @(Model.ShowErrors ? "display-results" : "")">
-            <div id="pupil--list--table">
-                <div class="giap--pupil-list">
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-not-found--text">@(Model.LearnerNumberLabel)s not found</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            @foreach (var upn in Model.NotFound)
-                            {
-                                <tr>
-                                    <td class="govuk-table__cell" id="search--search-pupils-not-found-data-upn--">@upn</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <partial name="~/Views/Shared/LearnerNumber/_ErrorTable.cshtml" model='new LearnerNumberErrorTableViewModel($"{Model.LearnerNumberLabel}s not found", Model.NotFound, "not-found", Model.ShowErrors)' />
     }
 
     @if (Model.Duplicates.Any())
     {
-        <div class="error-table hide-for-non-js @(Model.ShowErrors ? "display-results" : "")">
-            <div id="pupil--list--table">
-                <div class="giap--pupil-list">
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header" id="search--search-pupils-heading-not-found--text">Duplicate @(Model.LearnerNumberLabel)s</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            @foreach (var upn in Model.Duplicates)
-                            {
-                                <tr>
-                                    <td class="govuk-table__cell" id="search--search-pupils-not-found-data-upn--">@upn</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <partial name="~/Views/Shared/LearnerNumber/_ErrorTable.cshtml" model='new LearnerNumberErrorTableViewModel($"Duplicate {Model.LearnerNumberLabel}s", Model.Duplicates, "duplicates", Model.ShowErrors)' />
     }
 
     @if (Model.Learners != null && Model.Learners.Any() && ViewData.ModelState.IsValid)

@@ -7,6 +7,7 @@
     <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-xl" id="search-type--text">@Model.PageHeading</h1>
 
+        <partial name="~/Views/Shared/LearnerNumber/_SearchErrorSummary.cshtml" model="Model" />
         <partial name="~/Views/Shared/LearnerNumber/_SearchBox.cshtml" model="Model" />
         <partial name="~/Views/Shared/LearnerNumber/_Results.cshtml" model="Model" />
 

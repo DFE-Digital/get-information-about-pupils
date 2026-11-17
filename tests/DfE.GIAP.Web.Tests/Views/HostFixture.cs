@@ -34,6 +34,14 @@ public sealed class HostFixture : IAsyncLifetime
     public async Task<IHtmlDocument> RenderViewAsync<TModel>(string viewPath, Action<TModel> configureModel)
         where TModel : new()
     {
+        TModel model = new();
+        configureModel(model);
+        return await RenderViewAsync(viewPath, model);
+    }
+
+    public async Task<IHtmlDocument> RenderViewAsync<TModel>(
+        string viewPath, TModel model, Action<ModelStateDictionary>? configureModelState = null)
+    {
         using IServiceScope scope = Services.CreateScope();
         DefaultHttpContext httpContext = new() { RequestServices = scope.ServiceProvider };
         httpContext.Request.Scheme = "https";
@@ -45,9 +53,9 @@ public sealed class HostFixture : IAsyncLifetime
         ViewEngineResult viewResult = viewEngine.GetView(null, viewPath, isMainPage: false);
         Assert.True(viewResult.Success, $"Could not find view {viewPath}");
 
-        TModel model = new();
-        configureModel(model);
-        ViewDataDictionary<TModel> viewData = new(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+        ModelStateDictionary modelState = new();
+        configureModelState?.Invoke(modelState);
+        ViewDataDictionary<TModel> viewData = new(new EmptyModelMetadataProvider(), modelState)
         {
             Model = model
         };

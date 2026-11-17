@@ -5,12 +5,15 @@
 <form method="POST">
     <input type="hidden" id="LearnerNumberLabel" name="LearnerNumberLabel" value="@Model.LearnerNumberLabel">
 
-    <div class="govuk-form-group">
-        <label class="govuk-label" for="search--textarea" id="lbl-search-box">@($"Enter single, or multiple {@Model.LearnerNumberLabel}s on separate lines.")</label>
-        <partial name="~/Views/Shared/LearnerNumber/_SearchBoxErrorMessage.cshtml" model="@Model" />
-        <textarea class="govuk-textarea @(!ViewData.ModelState.IsValid ? "govuk-textarea--error" : "")" name="@Html.NameFor(m => m.LearnerNumber)" id="search--textarea" rows="8" maxlength="56014">@Model.LearnerNumber</textarea>
-    </div>
-    <button asp-action="@Model.SearchAction" asp-route-reset="false" id="search--btn" value="Select" name="select" class="govuk-button">Search</button>
+    <govuk-textarea for="LearnerNumber" id="search--textarea" rows="8" textarea-attributes="@(new Dictionary<string, object> { ["maxlength"] = 56014 })" ignore-model-state-errors="true">
+        <govuk-textarea-label id="lbl-search-box">@($"Enter single, or multiple {Model.LearnerNumberLabel}s on separate lines.")</govuk-textarea-label>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <govuk-textarea-error-message>@Model.SearchBoxErrorMessage</govuk-textarea-error-message>
+        }
+        <govuk-textarea-value>@Model.LearnerNumber</govuk-textarea-value>
+    </govuk-textarea>
+    <govuk-button asp-action="@Model.SearchAction" asp-route-reset="false" id="search--btn" value="Select" name="select">Search</govuk-button>
 
     <ul class="govuk-list">
         <li>
