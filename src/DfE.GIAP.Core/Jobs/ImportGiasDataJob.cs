@@ -1,7 +1,7 @@
 using DfE.GIAP.Core.Gias;
 using Hangfire;
 
-namespace DfE.GIAP.Worker.Jobs;
+namespace DfE.GIAP.Core.Jobs;
 
 /// <remarks>
 /// If the job fails, the existing data is left untouched and Hangfire retries it; failures are logged as errors
