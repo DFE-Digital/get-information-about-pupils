@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.PupilPremium.Models;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.PupilPremium.Mappers;
@@ -46,14 +47,11 @@ public sealed class PageablePupilPremiumSearchResultsToLearnerResultsMapperTests
                     .Find(learner =>
                         learner.Identifier.Value.ToString().Trim() == searchResult.Document.UPN);
 
-            learner!.Name.FirstName
-                .Should().Be(searchResult.Document.Forename);
-
-            learner!.Name.MiddleNames
-                .Should().Be(searchResult.Document.Middlenames);
-
-            learner!.Name.Surname
-                .Should().Be(searchResult.Document.Surname);
+            learner!.Name
+                .Should().Be(new LearnerName(
+                    searchResult.Document.Forename!,
+                    searchResult.Document.Middlenames,
+                    searchResult.Document.Surname!));
 
             (Convert.ToDateTime(learner.Characteristics.BirthDate))
                 .Should().Be(searchResult.Document.DOB);

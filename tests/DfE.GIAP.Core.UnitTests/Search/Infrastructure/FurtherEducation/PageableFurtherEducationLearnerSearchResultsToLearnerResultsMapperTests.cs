@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Models;
+using DfE.GIAP.Core.Common.Application.ValueObjects;
 using DfE.GIAP.Core.Search.Application.UseCases.FurtherEducation.Models;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.DataTransferObjects;
 using DfE.GIAP.Core.Search.Infrastructure.FurtherEducation.Mappers;
@@ -47,10 +48,8 @@ public sealed class PageableFurtherEducationLearnerSearchResultsToLearnerResults
                     .Find(learner =>
                         learner.Identifier.UniqueLearnerNumber.ToString().Trim() == searchResult.Document.ULN);
 
-            learner!.Name.FirstName
-                .Should().Be(searchResult.Document.Forename);
-            learner!.Name.Surname
-                .Should().Be(searchResult.Document.Surname);
+            learner!.Name
+                .Should().Be(new LearnerName(searchResult.Document.Forename!, searchResult.Document.Surname!));
         }
     }
 
