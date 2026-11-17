@@ -17,6 +17,8 @@ using DfE.GIAP.Web.Shared.Serializer;
 using DfE.GIAP.Web.Shared.Session;
 using DfE.GIAP.Web.Shared.TempData;
 using GovUk.Frontend.AspNetCore;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -86,6 +88,16 @@ if (builder.Environment.IsLocal())
 {
     // Watches Styles/*.scss and recompiles wwwroot/css/app.css while the app is running.
     builder.Services.AddSassCompiler();
+
+    // Storage for the Hangfire dashboard only; jobs are processed by the Worker, so no server is added here.
+    // The schema name must match the one used by the Worker.
+    builder.Services.AddHangfire(hangfireConfiguration => hangfireConfiguration
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UsePostgreSqlStorage(
+            options => options.UseNpgsqlConnection(builder.Configuration.GetConnectionString(GiapDbContext.ConnectionName)),
+            new PostgreSqlStorageOptions { SchemaName = "hangfire" }));
 }
 
 if (builder.Environment.IsK8s())
@@ -132,6 +144,14 @@ app.UseSession();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+if (app.Environment.IsLocal())
+{
+    // Registered ahead of the consent check and security headers so the dashboard isn't redirected to the consent
+    // page and its scripts aren't blocked by the CSP. Hangfire only allows local requests by default.
+    app.UseHangfireDashboard();
+}
+
 app.UseConsentCheck();
 app.UseSecurityHeadersMiddleware(configuration);
 app.UseMiddleware<SessionCorrelationIdMiddleware>();

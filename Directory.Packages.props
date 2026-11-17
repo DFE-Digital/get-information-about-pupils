@@ -19,6 +19,7 @@
     <PackageVersion Include="DfE.CleanArchitecture.Common.Domain" Version="0.0.1-5" />
     <PackageVersion Include="Dfe.Data.Common.Infrastructure.Persistence.CosmosDb" Version="2.0.0-0" />
     <PackageVersion Include="Dfe.Data.Common.Infrastructure.CognitiveSearch" Version="1.0.2-92" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.25" />
     <PackageVersion Include="Hangfire.Core" Version="1.8.25" />
     <PackageVersion Include="Hangfire.NetCore" Version="1.8.25" />
     <PackageVersion Include="Hangfire.PostgreSql" Version="1.21.1" />
