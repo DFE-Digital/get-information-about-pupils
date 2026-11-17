@@ -1,5 +1,6 @@
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.Infrastructure.Postgres;
+using DfE.GIAP.Core.Gias;
 using DfE.GIAP.Worker.Jobs;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -25,7 +26,9 @@ if (builder.Environment.IsProduction())
 string postgresConnectionString = builder.Configuration.GetConnectionString(GiapDbContext.ConnectionName) ??
     throw new InvalidOperationException($"Connection string '{GiapDbContext.ConnectionName}' not found.");
 
-builder.Services.AddGiapDbContext(postgresConnectionString);
+builder.Services
+    .AddGiapDbContext(postgresConnectionString)
+    .AddGiasDependencies();
 
 builder.Services
     .AddHangfire(configuration => configuration

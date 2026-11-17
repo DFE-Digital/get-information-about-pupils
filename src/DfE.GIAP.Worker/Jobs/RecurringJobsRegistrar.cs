@@ -18,6 +18,11 @@ public sealed class RecurringJobsRegistrar(IRecurringJobManager recurringJobMana
             job => job.ExecuteAsync(CancellationToken.None),
             HeartbeatJob.Schedule);
 
+        recurringJobManager.AddOrUpdate<ImportGiasDataJob>(
+            ImportGiasDataJob.JobId,
+            job => job.ExecuteAsync(CancellationToken.None),
+            ImportGiasDataJob.Schedule);
+
         return Task.CompletedTask;
     }
 
