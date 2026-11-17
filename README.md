@@ -174,6 +174,9 @@ Hangfire stores its jobs in the GIAP database (`ConnectionStrings:GiapDb`) in it
 creates on startup; the schema isn't managed by EF Core migrations. Recurring jobs are registered in
 `Jobs/RecurringJobsRegistrar.cs`.
 
+Job classes live in `src/DfE.GIAP.Core/Jobs` rather than the Worker, so that the web app's local Hangfire dashboard can
+load them when a job is triggered from it.
+
 ```sh
 ## cd src/DfE.GIAP.Worker/
 dotnet run

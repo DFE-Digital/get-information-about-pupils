@@ -1,3 +1,4 @@
+using DfE.GIAP.Core.Jobs;
 using Hangfire;
 
 namespace DfE.GIAP.Worker.Jobs;

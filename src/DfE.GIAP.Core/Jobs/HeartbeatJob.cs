@@ -1,6 +1,7 @@
 using Hangfire;
+using Microsoft.Extensions.Logging;
 
-namespace DfE.GIAP.Worker.Jobs;
+namespace DfE.GIAP.Core.Jobs;
 
 /// <summary>
 /// Placeholder recurring job that proves jobs are being scheduled and run in each environment.
