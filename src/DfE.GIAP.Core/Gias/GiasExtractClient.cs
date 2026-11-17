@@ -4,6 +4,8 @@ namespace DfE.GIAP.Core.Gias;
 
 public class GiasExtractClient(HttpClient httpClient)
 {
+    public const string BaseUrl = "https://ea-edubase-api-prod.azurewebsites.net/edubase/downloads/public/";
+
     /// <returns>A stream over the response body; the caller is responsible for disposing it.</returns>
     public virtual async Task<Stream> GetExtractAsync(GiasExtractType extractType, DateOnly date, CancellationToken cancellationToken = default)
     {
