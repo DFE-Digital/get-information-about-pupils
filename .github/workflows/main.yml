@@ -125,19 +125,89 @@ jobs:
           azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   deploy_aks:
-    name: Deploy to AKS
+    name: Deploy ${{ matrix.environment }} environment to AKS
     needs: [package]
-    uses: ./.github/workflows/build-and-deploy.yml
+    runs-on: ubuntu-latest
+    concurrency: deploy_aks_${{ matrix.environment }}
 
-    secrets:
-      AZURE_CLIENT_ID_AKS: ${{ secrets.AZURE_CLIENT_ID_AKS }}
-      AZURE_SUBSCRIPTION_ID_AKS: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-    
     permissions:
-      id-token: write
-      contents: read
-      packages: write
-      pull-requests: write
-    with:
-      docker-image-tag: ${{ github.sha }}
+      contents: read  # Required to check out the code.
+      id-token: write # Required for OIDC authentication with Azure.
+
+    strategy:
+      max-parallel: 1
+      matrix:
+        environment: [development, test]
+
+    environment:
+      name: ${{ matrix.environment }}
+      url: ${{ steps.deploy.outputs.environment_url }}
+
+    steps:
+      - name: Deploy to AKS
+        id: deploy
+        uses: DFE-Digital/github-actions/deploy-to-aks@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          environment: ${{ matrix.environment }}
+          sha: ${{ github.sha }}
+          terraform-base: terraform/application
+          healthcheck: health
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+          smoke-test: false
+          gcp-wip: ${{ vars.GCP_WIP }}
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+
+  deploy_domains_infra:
+    name: Deploy domains infrastructure
+    needs: [deploy_aks]
+    runs-on: ubuntu-latest
+    concurrency: deploy_domains_infra
+
+    permissions:
+      id-token: write # Required for OIDC authentication with Azure.
+
+    environment:
+      name: production
+
+    steps:
+      - name: Deploy domains infrastructure
+        uses: DFE-Digital/github-actions/deploy-domains-infra@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
+
+  deploy_domains_env:
+    name: Deploy domains to ${{ matrix.domain_environment }} environment
+    needs: [deploy_domains_infra]
+    runs-on: ubuntu-latest
+    concurrency: deploy_domains_${{ matrix.domain_environment }}
+
+    permissions:
+      id-token: write # Required for OIDC authentication with Azure.
+
+    strategy:
+      max-parallel: 1
+      matrix:
+        domain_environment: [development, production]
+
+    environment:
+      name: production
+
+    steps:
+      - name: Deploy domains environment
+        uses: DFE-Digital/github-actions/deploy-domains-env@master
+        with:
+          azure-client-id: ${{ secrets.AZURE_CLIENT_ID_AKS }}
+          azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_AKS }}
+          environment: ${{ matrix.domain_environment }}
+          healthcheck: health
+          teams-webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          service: ${{ vars.TEAMS_MSG_SERVICE_NAME }}
