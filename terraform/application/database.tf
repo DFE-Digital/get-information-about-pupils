@@ -15,6 +15,7 @@ module "postgres" {
   azure_sku_name                 = var.postgres_flexible_server_sku
   azure_enable_high_availability = var.postgres_enable_high_availability
   azure_maintenance_window       = var.azure_maintenance_window
+  azure_extensions               = ["pg_trgm"]
   use_airbyte                    = false
 }
 

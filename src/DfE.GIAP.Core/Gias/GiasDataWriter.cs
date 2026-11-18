@@ -1,9 +1,7 @@
 using DfE.GIAP.Core.Common.Infrastructure.Postgres;
 using DfE.GIAP.Core.Common.Infrastructure.Postgres.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
-using Npgsql;
 
 namespace DfE.GIAP.Core.Gias;
 
@@ -31,7 +29,6 @@ public class GiasDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
 
         await using GiapDbContext dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         await using IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
-        NpgsqlConnection connection = (NpgsqlConnection)dbContext.Database.GetDbConnection();
 
         await dbContext.Database.ExecuteSqlAsync($"SELECT pg_advisory_xact_lock({AdvisoryLockKey})", cancellationToken);
 
@@ -48,10 +45,10 @@ public class GiasDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
         await dbContext.LocalAuthorities.ExecuteDeleteAsync(cancellationToken);
 
         // Parents before children
-        await CopyAsync(dbContext, connection, establishments.LocalAuthorities, cancellationToken);
-        await CopyAsync(dbContext, connection, establishments.Establishments, cancellationToken);
-        await CopyAsync(dbContext, connection, groupLinks.Groups, cancellationToken);
-        await CopyAsync(dbContext, connection, groupLinks.Links, cancellationToken);
+        await BinaryCopy.CopyAsync(dbContext, establishments.LocalAuthorities, cancellationToken: cancellationToken);
+        await BinaryCopy.CopyAsync(dbContext, establishments.Establishments, cancellationToken: cancellationToken);
+        await BinaryCopy.CopyAsync(dbContext, groupLinks.Groups, cancellationToken: cancellationToken);
+        await BinaryCopy.CopyAsync(dbContext, groupLinks.Links, cancellationToken: cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
 
@@ -72,44 +69,6 @@ public class GiasDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
         }
     }
 
-    // Writes the rows with a binary COPY, taking the table and columns from the EF Core model
-    private static async Task CopyAsync<T>(
-        GiapDbContext dbContext,
-        NpgsqlConnection connection,
-        IEnumerable<T> rows,
-        CancellationToken cancellationToken)
-        where T : class
-    {
-        IEntityType entityType = dbContext.Model.FindEntityType(typeof(T))!;
-        StoreObjectIdentifier table = StoreObjectIdentifier.Table(entityType.GetTableName()!, entityType.GetSchema());
-        IProperty[] properties = [.. entityType.GetProperties()];
-
-        string columnList = string.Join(", ", properties.Select(p => p.GetColumnName(table)));
-        string copyCommand = $"COPY {table.DisplayName()} ({columnList}) FROM STDIN (FORMAT BINARY)";
-
-        await using NpgsqlBinaryImporter importer = await connection.BeginBinaryImportAsync(copyCommand, cancellationToken);
-
-        foreach (T row in rows)
-        {
-            await importer.StartRowAsync(cancellationToken);
-
-            foreach (IProperty property in properties)
-            {
-                object? value = property.GetGetter().GetClrValueUsingContainingEntity(row);
-
-                if (value is null)
-                {
-                    await importer.WriteNullAsync(cancellationToken);
-                }
-                else
-                {
-                    await importer.WriteAsync(value, property.GetColumnType(), cancellationToken);
-                }
-            }
-        }
-
-        await importer.CompleteAsync(cancellationToken);
-    }
 }
 
 public sealed record GiasImportResult(int LocalAuthorityCount, int EstablishmentCount, int GroupCount, int GroupLinkCount);
