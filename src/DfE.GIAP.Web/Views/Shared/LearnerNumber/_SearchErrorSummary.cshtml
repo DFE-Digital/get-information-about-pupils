@@ -1,0 +1,24 @@
+﻿@model DfE.GIAP.Web.ViewModels.Search.LearnerNumberSearchViewModel
+
+@if (Model.NoPupilSelected || !ViewData.ModelState.IsValid || Model.ErrorDetails == Messages.Common.Errors.MyPupilListLimitExceeded)
+{
+    <div class="govuk-error-summary" data-module="govuk-error-summary" role="alert" tabindex="-1" aria-labelledby="search-error-summary-title">
+        <h2 class="govuk-error-summary__title" id="search-error-summary-title">There is a problem</h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <li><a href="#search--textarea">@Model.SearchBoxErrorMessage</a></li>
+                }
+                @if (Model.NoPupilSelected)
+                {
+                    <li><a href="#pupil--list--table">You have not selected any pupils</a></li>
+                }
+                @if (Model.ErrorDetails == Messages.Common.Errors.MyPupilListLimitExceeded)
+                {
+                    <li><a href="#pupil--list--table">@Model.ErrorDetails</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}

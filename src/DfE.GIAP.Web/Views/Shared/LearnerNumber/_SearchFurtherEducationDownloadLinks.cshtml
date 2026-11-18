@@ -4,8 +4,8 @@
 {
     <input type="hidden" name="ReturnLearnerNumbers" value="@Model.LearnerNumber" />
     <div class="govuk-grid-column-one-quarter">
-        <button class="govuk-button" asp-action="ToDownloadSelectedULNData" id="download--csv--link" name="downloadASCSV" value="selected" type="submit">
+        <govuk-button asp-action="ToDownloadSelectedULNData" id="download--csv--link" name="downloadASCSV" value="selected" type="submit">
             @Model.DownloadSelectedLink
-        </button>
+        </govuk-button>
     </div>
 }

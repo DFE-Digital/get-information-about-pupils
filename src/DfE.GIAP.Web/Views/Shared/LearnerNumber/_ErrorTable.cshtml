@@ -1,0 +1,19 @@
+@model DfE.GIAP.Web.ViewModels.Search.LearnerNumberErrorTableViewModel
+
+<div class="error-table hide-for-non-js @(Model.ShowErrors ? "display-results" : "")">
+    <div id="pupil--list--table-@Model.Id">
+        <div class="giap--pupil-list">
+            <govuk-table>
+                <govuk-table-head>
+                    <govuk-table-head-cell>@Model.Heading</govuk-table-head-cell>
+                </govuk-table-head>
+                @foreach (var number in Model.Numbers)
+                {
+                    <govuk-table-row>
+                        <govuk-table-cell>@number</govuk-table-cell>
+                    </govuk-table-row>
+                }
+            </govuk-table>
+        </div>
+    </div>
+</div>

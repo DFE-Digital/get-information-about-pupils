@@ -3,25 +3,19 @@
 <form method="POST">
     <input type="hidden" id="LearnerNumberLabel" name="LearnerNumberLabel" value="@Model.LearnerNumberLabel">
 
-    <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
-        <label class="govuk-label" id="lbl-search-box">
-            @($"Enter single, or multiple {@Model.LearnerNumberLabel}s on separate lines.")
-        </label>
-
+    <govuk-textarea for="LearnerNumber" id="search--textarea" rows="5" textarea-attributes="@(new Dictionary<string, object> { ["maxlength"] = 56014 })" ignore-model-state-errors="true">
+        <govuk-textarea-label id="lbl-search-box">@($"Enter single, or multiple {Model.LearnerNumberLabel}s on separate lines.")</govuk-textarea-label>
         @if (!ViewData.ModelState.IsValid)
         {
-            <p id="more-detail-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> @Model.SearchBoxErrorMessage
-            </p>
+            <govuk-textarea-error-message>@Model.SearchBoxErrorMessage</govuk-textarea-error-message>
         }
-
-        <textarea class="govuk-textarea @(!ViewData.ModelState.IsValid ? "govuk-textarea--error" : "")" name="@Html.NameFor(m => m.LearnerNumber)" id="search--textarea" rows="5" maxlength="56014">@Model.LearnerNumber</textarea>
-    </div>
+        <govuk-textarea-value>@Model.LearnerNumber</govuk-textarea-value>
+    </govuk-textarea>
 
     <div class="govuk-button-group">
-        <button type="submit" class="govuk-button" data-module="govuk-button" asp-action="@Model.SearchAction" asp-route-reset="true" id="search--btn" value="Select" name="select">
+        <govuk-button type="submit" asp-action="@Model.SearchAction" asp-route-reset="true" id="search--btn" value="Select" name="select">
             Search
-        </button>
+        </govuk-button>
 
         <a class="govuk-link" asp-controller="@Model.FullTextLearnerSearchController" asp-action="@Model.FullTextLearnerSearchAction"
            value="SearchWithoutUpn" name="searchWithoutUpn">Search by name</a>

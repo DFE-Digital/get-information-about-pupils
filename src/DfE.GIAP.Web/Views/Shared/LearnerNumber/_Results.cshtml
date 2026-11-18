@@ -2,8 +2,6 @@
 
 @if (Model.Learners.Any() || Model.NotFound.Any() || Model.Invalid.Any() || Model.Duplicates.Any())
 {
-    <partial name="~/Views/Shared/LearnerNumber/_NoPupilSelectedError.cshtml" model="@Model" />
-    <partial name="_ValidationSummary" model="ViewData.ModelState" />
     <partial name="~/Views/Shared/LearnerNumber/_SearchResults.cshtml" model="@Model" />
 }
 else
