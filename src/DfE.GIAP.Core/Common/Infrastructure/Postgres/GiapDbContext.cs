@@ -18,6 +18,16 @@ public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(
 
     public DbSet<EstablishmentGroupLink> EstablishmentGroupLinks => Set<EstablishmentGroupLink>();
 
+    public DbSet<NpdPupil> NpdPupils => Set<NpdPupil>();
+
+    public DbSet<NpdPupilRecord> NpdPupilRecords => Set<NpdPupilRecord>();
+
+    public DbSet<PupilPremiumPupil> PupilPremiumPupils => Set<PupilPremiumPupil>();
+
+    public DbSet<FurtherEducationLearner> FurtherEducationLearners => Set<FurtherEducationLearner>();
+
+    public DbSet<FurtherEducationLearnerRecord> FurtherEducationLearnerRecords => Set<FurtherEducationLearnerRecord>();
+
     public static GiapDbContext Create(string? connectionString, int? commandTimeout = null) => new(CreateOptions(connectionString, commandTimeout));
 
     public static void ConfigureOptions(DbContextOptionsBuilder builder, string? connectionString = null, int? commandTimeout = null) =>
@@ -27,8 +37,11 @@ public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(
             .UseSeeding((context, _) => ((GiapDbContext)context).SeedData())
             .UseAsyncSeeding((context, _, cancellationToken) => ((GiapDbContext)context).SeedDataAsync(cancellationToken));
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasPostgresExtension("pg_trgm");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(GiapDbContext).Assembly);
+    }
 
 #pragma warning disable CA1822  // Method can be static
     private void SeedData()

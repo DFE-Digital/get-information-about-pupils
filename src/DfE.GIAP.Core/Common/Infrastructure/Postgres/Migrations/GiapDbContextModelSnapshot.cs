@@ -20,6 +20,7 @@ namespace DfE.GIAP.Core.Common.Infrastructure.Postgres.Migrations
                 .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.Establishment", b =>
@@ -164,6 +165,96 @@ namespace DfE.GIAP.Core.Common.Infrastructure.Postgres.Migrations
                     b.ToTable("establishment_group_links", (string)null);
                 });
 
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.FurtherEducationLearner", b =>
+                {
+                    b.Property<string>("Uln")
+                        .HasColumnType("text")
+                        .HasColumnName("uln");
+
+                    b.Property<DateOnly?>("Dob")
+                        .HasColumnType("date")
+                        .HasColumnName("dob");
+
+                    b.Property<string>("Forename")
+                        .HasColumnType("text")
+                        .HasColumnName("forename");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text")
+                        .HasColumnName("sex");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text")
+                        .HasColumnName("surname");
+
+                    b.HasKey("Uln")
+                        .HasName("pk_further_education_learners");
+
+                    b.HasIndex("Dob")
+                        .HasDatabaseName("ix_further_education_learners_dob");
+
+                    b.HasIndex("Forename")
+                        .HasDatabaseName("ix_further_education_learners_forename");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Forename"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Forename"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("Surname")
+                        .HasDatabaseName("ix_further_education_learners_surname");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Surname"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Surname"), new[] { "gin_trgm_ops" });
+
+                    b.ToTable("further_education_learners", (string)null);
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.FurtherEducationLearnerRecord", b =>
+                {
+                    b.Property<string>("Uln")
+                        .HasColumnType("text")
+                        .HasColumnName("uln");
+
+                    b.Property<string>("Dataset")
+                        .HasColumnType("text")
+                        .HasColumnName("dataset");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("text")
+                        .HasColumnName("academic_year");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("data");
+
+                    b.Property<DateOnly?>("Dob")
+                        .HasColumnType("date")
+                        .HasColumnName("dob");
+
+                    b.Property<string>("Forename")
+                        .HasColumnType("text")
+                        .HasColumnName("forename");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text")
+                        .HasColumnName("sex");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text")
+                        .HasColumnName("surname");
+
+                    b.HasKey("Uln", "Dataset", "AcademicYear")
+                        .HasName("pk_further_education_learner_records");
+
+                    b.ToTable("further_education_learner_records", (string)null);
+                });
+
             modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.LocalAuthority", b =>
                 {
                     b.Property<int>("LaCode")
@@ -179,6 +270,236 @@ namespace DfE.GIAP.Core.Common.Infrastructure.Postgres.Migrations
                         .HasName("pk_local_authorities");
 
                     b.ToTable("local_authorities", (string)null);
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.NpdPupil", b =>
+                {
+                    b.Property<string>("PupilMatchingRef")
+                        .HasColumnType("text")
+                        .HasColumnName("pupil_matching_ref");
+
+                    b.Property<DateOnly?>("Dob")
+                        .HasColumnType("date")
+                        .HasColumnName("dob");
+
+                    b.Property<int?>("EstablishmentNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("establishment_number");
+
+                    b.Property<string>("Forename")
+                        .HasColumnType("text")
+                        .HasColumnName("forename");
+
+                    b.Property<int?>("LaCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("la_code");
+
+                    b.Property<string>("MiddleNames")
+                        .HasColumnType("text")
+                        .HasColumnName("middle_names");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text")
+                        .HasColumnName("sex");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text")
+                        .HasColumnName("surname");
+
+                    b.Property<string>("Upn")
+                        .HasColumnType("text")
+                        .HasColumnName("upn");
+
+                    b.Property<int?>("Urn")
+                        .HasColumnType("integer")
+                        .HasColumnName("urn");
+
+                    b.HasKey("PupilMatchingRef")
+                        .HasName("pk_npd_pupils");
+
+                    b.HasIndex("Dob")
+                        .HasDatabaseName("ix_npd_pupils_dob");
+
+                    b.HasIndex("Forename")
+                        .HasDatabaseName("ix_npd_pupils_forename");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Forename"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Forename"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("MiddleNames")
+                        .HasDatabaseName("ix_npd_pupils_middle_names");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("MiddleNames"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("MiddleNames"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("Surname")
+                        .HasDatabaseName("ix_npd_pupils_surname");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Surname"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Surname"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("Upn")
+                        .HasDatabaseName("ix_npd_pupils_upn");
+
+                    b.ToTable("npd_pupils", (string)null);
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.NpdPupilRecord", b =>
+                {
+                    b.Property<string>("PupilMatchingRef")
+                        .HasColumnType("text")
+                        .HasColumnName("pupil_matching_ref");
+
+                    b.Property<string>("Dataset")
+                        .HasColumnType("text")
+                        .HasColumnName("dataset");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("text")
+                        .HasColumnName("academic_year");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("data");
+
+                    b.Property<DateOnly?>("Dob")
+                        .HasColumnType("date")
+                        .HasColumnName("dob");
+
+                    b.Property<int?>("EstablishmentNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("establishment_number");
+
+                    b.Property<string>("Forename")
+                        .HasColumnType("text")
+                        .HasColumnName("forename");
+
+                    b.Property<short>("IngestVersion")
+                        .HasColumnType("smallint")
+                        .HasColumnName("ingest_version");
+
+                    b.Property<int?>("LaCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("la_code");
+
+                    b.Property<string>("MiddleNames")
+                        .HasColumnType("text")
+                        .HasColumnName("middle_names");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text")
+                        .HasColumnName("sex");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text")
+                        .HasColumnName("surname");
+
+                    b.Property<string>("Upn")
+                        .HasColumnType("text")
+                        .HasColumnName("upn");
+
+                    b.Property<int?>("Urn")
+                        .HasColumnType("integer")
+                        .HasColumnName("urn");
+
+                    b.HasKey("PupilMatchingRef", "Dataset", "AcademicYear")
+                        .HasName("pk_npd_pupil_records");
+
+                    b.HasIndex("Dataset", "AcademicYear")
+                        .HasDatabaseName("ix_npd_pupil_records_dataset_academic_year");
+
+                    b.ToTable("npd_pupil_records", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_npd_pupil_records_ingest_version", "ingest_version BETWEEN 0 AND 2");
+                        });
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.PupilPremiumPupil", b =>
+                {
+                    b.Property<string>("PupilMatchingRef")
+                        .HasColumnType("text")
+                        .HasColumnName("pupil_matching_ref");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("data");
+
+                    b.Property<DateOnly?>("Dob")
+                        .HasColumnType("date")
+                        .HasColumnName("dob");
+
+                    b.Property<int?>("EstablishmentNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("establishment_number");
+
+                    b.Property<string>("Forename")
+                        .HasColumnType("text")
+                        .HasColumnName("forename");
+
+                    b.Property<int?>("LaCode")
+                        .HasColumnType("integer")
+                        .HasColumnName("la_code");
+
+                    b.Property<string>("MiddleNames")
+                        .HasColumnType("text")
+                        .HasColumnName("middle_names");
+
+                    b.Property<string>("Sex")
+                        .HasColumnType("text")
+                        .HasColumnName("sex");
+
+                    b.Property<string>("SourceFlag")
+                        .HasColumnType("text")
+                        .HasColumnName("source_flag");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text")
+                        .HasColumnName("surname");
+
+                    b.Property<string>("Upn")
+                        .HasColumnType("text")
+                        .HasColumnName("upn");
+
+                    b.Property<int?>("Urn")
+                        .HasColumnType("integer")
+                        .HasColumnName("urn");
+
+                    b.HasKey("PupilMatchingRef")
+                        .HasName("pk_pupil_premium_pupils");
+
+                    b.HasIndex("Dob")
+                        .HasDatabaseName("ix_pupil_premium_pupils_dob");
+
+                    b.HasIndex("Forename")
+                        .HasDatabaseName("ix_pupil_premium_pupils_forename");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Forename"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Forename"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("MiddleNames")
+                        .HasDatabaseName("ix_pupil_premium_pupils_middle_names");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("MiddleNames"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("MiddleNames"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("Surname")
+                        .HasDatabaseName("ix_pupil_premium_pupils_surname");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Surname"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("Surname"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("Upn")
+                        .HasDatabaseName("ix_pupil_premium_pupils_upn");
+
+                    b.ToTable("pupil_premium_pupils", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -222,6 +543,26 @@ namespace DfE.GIAP.Core.Common.Infrastructure.Postgres.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_establishment_group_links_establishment_groups_group_uid");
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.FurtherEducationLearnerRecord", b =>
+                {
+                    b.HasOne("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.FurtherEducationLearner", null)
+                        .WithMany()
+                        .HasForeignKey("Uln")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_further_education_learner_records_further_education_learner");
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.NpdPupilRecord", b =>
+                {
+                    b.HasOne("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.NpdPupil", null)
+                        .WithMany()
+                        .HasForeignKey("PupilMatchingRef")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_npd_pupil_records_npd_pupils_pupil_matching_ref");
                 });
 #pragma warning restore 612, 618
         }
