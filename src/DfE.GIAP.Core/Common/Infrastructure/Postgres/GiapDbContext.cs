@@ -1,3 +1,4 @@
+using DfE.GIAP.Core.Common.Infrastructure.Postgres.Models;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,14 @@ public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(
 
     public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
 
+    public DbSet<LocalAuthority> LocalAuthorities => Set<LocalAuthority>();
+
+    public DbSet<Establishment> Establishments => Set<Establishment>();
+
+    public DbSet<EstablishmentGroup> EstablishmentGroups => Set<EstablishmentGroup>();
+
+    public DbSet<EstablishmentGroupLink> EstablishmentGroupLinks => Set<EstablishmentGroupLink>();
+
     public static GiapDbContext Create(string? connectionString, int? commandTimeout = null) => new(CreateOptions(connectionString, commandTimeout));
 
     public static void ConfigureOptions(DbContextOptionsBuilder builder, string? connectionString = null, int? commandTimeout = null) =>
@@ -17,6 +26,9 @@ public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(
             .UseSnakeCaseNamingConvention()
             .UseSeeding((context, _) => ((GiapDbContext)context).SeedData())
             .UseAsyncSeeding((context, _, cancellationToken) => ((GiapDbContext)context).SeedDataAsync(cancellationToken));
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GiapDbContext).Assembly);
 
 #pragma warning disable CA1822  // Method can be static
     private void SeedData()
