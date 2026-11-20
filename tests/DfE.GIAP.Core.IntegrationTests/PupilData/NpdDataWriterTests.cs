@@ -26,9 +26,9 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_WritesRecordsAndPupils()
     {
-        NpdPupilRecord record = CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Final, data: """[{"KS2_MAT": "110"}]""");
+        NpdFileRow row = CreateRow(1, "P1", data: """{"KS2_MAT": "110"}""");
 
-        NpdFileWriteResult result = await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, record);
+        NpdFileWriteResult result = await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, row);
 
         Assert.Equal(new NpdFileWriteResult(RecordsWritten: 1, RecordsRemoved: 0), result);
         await using GiapDbContext dbContext = postgres.CreateDbContext();
@@ -36,20 +36,20 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
         Assert.Equivalent(
             new
             {
-                record.PupilMatchingRef,
-                record.Dataset,
-                record.AcademicYear,
-                record.IngestVersion,
-                record.Upn,
-                record.LaCode,
-                record.EstablishmentNumber,
-                record.Urn,
-                record.Surname,
-                record.Forename,
-                record.MiddleNames,
-                record.Sex,
-                record.Dob,
-                record.Data
+                row.PupilMatchingRef,
+                Dataset = NpdDataset.Ks2,
+                AcademicYear,
+                IngestVersion = IngestVersion.Final,
+                row.Upn,
+                row.LaCode,
+                row.EstablishmentNumber,
+                row.Urn,
+                row.Surname,
+                row.Forename,
+                row.MiddleNames,
+                row.Sex,
+                row.Dob,
+                Data = """[{"KS2_MAT": "110"}]"""
             },
             await dbContext.NpdPupilRecords.SingleAsync());
         Assert.Equivalent(
@@ -69,15 +69,32 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
             await dbContext.NpdPupils.SingleAsync());
     }
 
+    [Fact]
+    public async Task WriteFileAsync_PupilWithMoreThanOneRow_CombinesRowsInFileOrderWithFieldsFromFirstRow()
+    {
+        NpdFileWriteResult result = await WriteFileAsync(
+            NpdDataset.CensusAutumn,
+            IngestVersion.Final,
+            CreateRow(1, "P1", surname: "First", data: """{"URN": "1"}"""),
+            CreateRow(2, "P2", data: """{"URN": "2"}"""),
+            CreateRow(3, "P1", surname: "Second", data: """{"URN": "3"}"""));
+
+        Assert.Equal(new NpdFileWriteResult(RecordsWritten: 2, RecordsRemoved: 0), result);
+        await using GiapDbContext dbContext = postgres.CreateDbContext();
+        NpdPupilRecord record = await dbContext.NpdPupilRecords.SingleAsync(r => r.PupilMatchingRef == "P1");
+        Assert.Equal("First", record.Surname);
+        Assert.Equal("""[{"URN": "1"}, {"URN": "3"}]""", record.Data);
+    }
+
     [Theory]
     [InlineData(IngestVersion.Unamended, IngestVersion.Amended)]
     [InlineData(IngestVersion.Amended, IngestVersion.Final)]
     [InlineData(IngestVersion.Amended, IngestVersion.Amended)]
     public async Task WriteFileAsync_EquallyOrMoreMatureFile_ReplacesStoredRecords(IngestVersion storedVersion, IngestVersion incomingVersion)
     {
-        await WriteFileAsync(NpdDataset.Ks2, storedVersion, CreateRecord("P1", NpdDataset.Ks2, storedVersion, data: """[{"KS2_MAT": "100"}]"""));
+        await WriteFileAsync(NpdDataset.Ks2, storedVersion, CreateRow(1, "P1", data: """{"KS2_MAT": "100"}"""));
 
-        await WriteFileAsync(NpdDataset.Ks2, incomingVersion, CreateRecord("P1", NpdDataset.Ks2, incomingVersion, data: """[{"KS2_MAT": "110"}]"""));
+        await WriteFileAsync(NpdDataset.Ks2, incomingVersion, CreateRow(1, "P1", data: """{"KS2_MAT": "110"}"""));
 
         await using GiapDbContext dbContext = postgres.CreateDbContext();
         NpdPupilRecord stored = await dbContext.NpdPupilRecords.SingleAsync();
@@ -90,10 +107,10 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [InlineData(IngestVersion.Final, IngestVersion.Amended)]
     public async Task WriteFileAsync_LessMatureFile_ThrowsAndLeavesStoredRecords(IngestVersion storedVersion, IngestVersion incomingVersion)
     {
-        await WriteFileAsync(NpdDataset.Ks2, storedVersion, CreateRecord("P1", NpdDataset.Ks2, storedVersion));
+        await WriteFileAsync(NpdDataset.Ks2, storedVersion, CreateRow(1, "P1"));
 
         NpdFileVersionException exception = await Assert.ThrowsAsync<NpdFileVersionException>(
-            () => WriteFileAsync(NpdDataset.Ks2, incomingVersion, CreateRecord("P1", NpdDataset.Ks2, incomingVersion), CreateRecord("P2", NpdDataset.Ks2, incomingVersion)));
+            () => WriteFileAsync(NpdDataset.Ks2, incomingVersion, CreateRow(1, "P1"), CreateRow(2, "P2")));
 
         Assert.Equal(storedVersion, exception.StoredIngestVersion);
         await using GiapDbContext dbContext = postgres.CreateDbContext();
@@ -104,13 +121,9 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_LessMatureFileForAnotherYear_IsWritten()
     {
-        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Final));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRow(1, "P1"));
 
-        await _writer.WriteFileAsync(
-            NpdDataset.Ks2,
-            "2024/2025",
-            IngestVersion.Unamended,
-            [CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Unamended, academicYear: "2024/2025")]);
+        await _writer.WriteFileAsync(NpdDataset.Ks2, "2024/2025", IngestVersion.Unamended, ToAsync(CreateRow(1, "P1")));
 
         await using GiapDbContext dbContext = postgres.CreateDbContext();
         Assert.Equal(2, await dbContext.NpdPupilRecords.CountAsync());
@@ -119,14 +132,10 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_PupilMissingFromNewFile_LosesRecordForThatDatasetAndYearOnly()
     {
-        await WriteFileAsync(NpdDataset.CensusSpring, IngestVersion.Final, CreateRecord("P1", NpdDataset.CensusSpring, IngestVersion.Final));
-        await WriteFileAsync(
-            NpdDataset.Ks2,
-            IngestVersion.Unamended,
-            CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Unamended),
-            CreateRecord("P2", NpdDataset.Ks2, IngestVersion.Unamended));
+        await WriteFileAsync(NpdDataset.CensusSpring, IngestVersion.Final, CreateRow(1, "P1"));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Unamended, CreateRow(1, "P1"), CreateRow(2, "P2"));
 
-        NpdFileWriteResult result = await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Amended, CreateRecord("P3", NpdDataset.Ks2, IngestVersion.Amended));
+        NpdFileWriteResult result = await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Amended, CreateRow(1, "P3"));
 
         Assert.Equal(new NpdFileWriteResult(RecordsWritten: 1, RecordsRemoved: 2), result);
         await using GiapDbContext dbContext = postgres.CreateDbContext();
@@ -140,12 +149,8 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_PupilFields_ComeFromCensusRecordBeforeLaterRecords()
     {
-        await WriteFileAsync(NpdDataset.CensusSpring, IngestVersion.Final, CreateRecord("P1", NpdDataset.CensusSpring, IngestVersion.Final, surname: "Census"));
-        await _writer.WriteFileAsync(
-            NpdDataset.Ks4,
-            "2024/2025",
-            IngestVersion.Final,
-            [CreateRecord("P1", NpdDataset.Ks4, IngestVersion.Final, academicYear: "2024/2025", surname: "Ks4")]);
+        await WriteFileAsync(NpdDataset.CensusSpring, IngestVersion.Final, CreateRow(1, "P1", surname: "Census"));
+        await _writer.WriteFileAsync(NpdDataset.Ks4, "2024/2025", IngestVersion.Final, ToAsync(CreateRow(1, "P1", surname: "Ks4")));
 
         await using GiapDbContext dbContext = postgres.CreateDbContext();
         Assert.Equal("Census", (await dbContext.NpdPupils.SingleAsync()).Surname);
@@ -154,12 +159,8 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_PupilFields_ComeFromLatestAcademicYear()
     {
-        await _writer.WriteFileAsync(
-            NpdDataset.Ks4,
-            "2024/2025",
-            IngestVersion.Final,
-            [CreateRecord("P1", NpdDataset.Ks4, IngestVersion.Final, academicYear: "2024/2025", surname: "Later")]);
-        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Final, surname: "Earlier"));
+        await _writer.WriteFileAsync(NpdDataset.Ks4, "2024/2025", IngestVersion.Final, ToAsync(CreateRow(1, "P1", surname: "Later")));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRow(1, "P1", surname: "Earlier"));
 
         await using GiapDbContext dbContext = postgres.CreateDbContext();
         Assert.Equal("Later", (await dbContext.NpdPupils.SingleAsync()).Surname);
@@ -168,8 +169,8 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_PupilFields_ComeFromFirstLoadedRecordWhenOtherwiseTied()
     {
-        await WriteFileAsync(NpdDataset.CensusSummer, IngestVersion.Final, CreateRecord("P1", NpdDataset.CensusSummer, IngestVersion.Final, surname: "First"));
-        await WriteFileAsync(NpdDataset.CensusAutumn, IngestVersion.Final, CreateRecord("P1", NpdDataset.CensusAutumn, IngestVersion.Final, surname: "Second"));
+        await WriteFileAsync(NpdDataset.CensusSummer, IngestVersion.Final, CreateRow(1, "P1", surname: "First"));
+        await WriteFileAsync(NpdDataset.CensusAutumn, IngestVersion.Final, CreateRow(1, "P1", surname: "Second"));
 
         await using GiapDbContext dbContext = postgres.CreateDbContext();
         Assert.Equal("First", (await dbContext.NpdPupils.SingleAsync()).Surname);
@@ -178,13 +179,13 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     [Fact]
     public async Task WriteFileAsync_ReprocessedFile_KeepsCreatedAt()
     {
-        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Amended, CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Amended));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Amended, CreateRow(1, "P1"));
         DateTime createdAt = await GetCreatedAtAsync();
 
-        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Amended, CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Amended));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Amended, CreateRow(1, "P1"));
         Assert.Equal(createdAt, await GetCreatedAtAsync());
 
-        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRecord("P1", NpdDataset.Ks2, IngestVersion.Final));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRow(1, "P1"));
         Assert.True(await GetCreatedAtAsync() > createdAt);
 
         async Task<DateTime> GetCreatedAtAsync()
@@ -195,37 +196,40 @@ public sealed class NpdDataWriterTests(GiapPostgresFixture postgres) : IAsyncLif
     }
 
     [Fact]
-    public async Task WriteFileAsync_RecordWithAnotherDataset_Throws()
+    public async Task WriteFileAsync_NoRows_ThrowsAndLeavesStoredRecords()
     {
-        await Assert.ThrowsAsync<ArgumentException>(
-            () => WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRecord("P1", NpdDataset.Ks4, IngestVersion.Final)));
+        await WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final, CreateRow(1, "P1"));
+
+        await Assert.ThrowsAsync<ArgumentException>(() => WriteFileAsync(NpdDataset.Ks2, IngestVersion.Final));
+
+        await using GiapDbContext dbContext = postgres.CreateDbContext();
+        Assert.Equal(1, await dbContext.NpdPupilRecords.CountAsync());
     }
 
-    private Task<NpdFileWriteResult> WriteFileAsync(NpdDataset dataset, IngestVersion ingestVersion, params NpdPupilRecord[] records) =>
-        _writer.WriteFileAsync(dataset, AcademicYear, ingestVersion, records);
+    private Task<NpdFileWriteResult> WriteFileAsync(NpdDataset dataset, IngestVersion ingestVersion, params NpdFileRow[] rows) =>
+        _writer.WriteFileAsync(dataset, AcademicYear, ingestVersion, ToAsync(rows));
 
-    private static NpdPupilRecord CreateRecord(
-        string pupilMatchingRef,
-        NpdDataset dataset,
-        IngestVersion ingestVersion,
-        string academicYear = AcademicYear,
-        string surname = "Smith",
-        string data = "[]") =>
-        new()
+    private static async IAsyncEnumerable<NpdFileRow> ToAsync(params NpdFileRow[] rows)
+    {
+        foreach (NpdFileRow row in rows)
         {
-            PupilMatchingRef = pupilMatchingRef,
-            Dataset = dataset,
-            AcademicYear = academicYear,
-            IngestVersion = ingestVersion,
-            Upn = "A123456789012",
-            LaCode = 201,
-            EstablishmentNumber = 3614,
-            Urn = 100000,
-            Surname = surname,
-            Forename = "Alex",
-            MiddleNames = null,
-            Sex = "M",
-            Dob = new DateOnly(2013, 9, 1),
-            Data = data
-        };
+            await Task.Yield();
+            yield return row;
+        }
+    }
+
+    private static NpdFileRow CreateRow(int rowNumber, string pupilMatchingRef, string surname = "Smith", string data = "{}") =>
+        new(
+            rowNumber,
+            pupilMatchingRef,
+            Upn: "A123456789012",
+            LaCode: 201,
+            EstablishmentNumber: 3614,
+            Urn: 100000,
+            Surname: surname,
+            Forename: "Alex",
+            MiddleNames: null,
+            Sex: "M",
+            Dob: new DateOnly(2013, 9, 1),
+            Data: data);
 }

@@ -2,6 +2,8 @@ using DfE.GIAP.Core.Common.Infrastructure.Postgres;
 using DfE.GIAP.Core.Common.Infrastructure.Postgres.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace DfE.GIAP.Core.PupilData;
 
@@ -14,14 +16,17 @@ public class NpdDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
         [nameof(NpdDataset.CensusAutumn), nameof(NpdDataset.CensusSpring), nameof(NpdDataset.CensusSummer)];
 
     /// <summary>
-    /// Writes the records from an NPD file, replacing all the records for its dataset and academic year,
-    /// then updates the affected <see cref="NpdPupil"/>s.
+    /// Writes the rows from an NPD file, replacing all the records for its dataset and academic year, then updates the
+    /// affected <see cref="NpdPupil"/>s.
     /// </summary>
     /// <remarks>
+    /// A pupil's rows are combined into one record whose <see cref="NpdPupilRecord.Data"/> is an array of the rows in
+    /// file order, and whose identifying fields come from the first row.
     /// This matches the old pipeline: pupils that have a record for the dataset and year but aren't in the file lose
     /// that record, and a pupil left with no records is removed.
     /// </remarks>
     /// <param name="academicYear">The academic year from the file's name, e.g. <c>2024/2025</c>.</param>
+    /// <param name="rows">Streamed into the database, so the file is never held in memory.</param>
     /// <exception cref="NpdFileVersionException">
     /// The records already stored for the dataset and academic year are from a more mature file. Nothing is changed.
     /// </exception>
@@ -29,21 +34,11 @@ public class NpdDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
         NpdDataset dataset,
         string academicYear,
         IngestVersion ingestVersion,
-        IReadOnlyCollection<NpdPupilRecord> records,
+        IAsyncEnumerable<NpdFileRow> rows,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(academicYear);
-        ArgumentNullException.ThrowIfNull(records);
-
-        if (records.Count == 0)
-        {
-            throw new ArgumentException("There must be at least one record.", nameof(records));
-        }
-
-        if (records.Any(r => r.Dataset != dataset || r.IngestVersion != ingestVersion))
-        {
-            throw new ArgumentException("Every record must have the file's dataset and ingest version.", nameof(records));
-        }
+        ArgumentNullException.ThrowIfNull(rows);
 
         string datasetName = dataset.ToString();
 
@@ -61,11 +56,51 @@ public class NpdDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
             throw new NpdFileVersionException(dataset, academicYear, ingestVersion, storedVersion.Value);
         }
 
+        await dbContext.Database.ExecuteSqlRawAsync(
+            """
+            CREATE TEMP TABLE npd_file_rows (
+                row_number integer NOT NULL,
+                pupil_matching_ref text NOT NULL,
+                upn text,
+                la_code integer,
+                establishment_number integer,
+                urn integer,
+                surname text,
+                forename text,
+                middle_names text,
+                sex text,
+                dob date,
+                data jsonb NOT NULL
+            ) ON COMMIT DROP
+            """,
+            cancellationToken);
+
+        if (await CopyRowsAsync(dbContext, rows, cancellationToken) == 0)
+        {
+            throw new ArgumentException("There must be at least one row.", nameof(rows));
+        }
+
+        // Temp tables aren't analyzed automatically, and the planner needs their statistics for the grouping below
+        await dbContext.Database.ExecuteSqlRawAsync("ANALYZE npd_file_rows", cancellationToken);
+
         // INCLUDING DEFAULTS so that created_at is set to the transaction's start time
         await dbContext.Database.ExecuteSqlRawAsync(
             "CREATE TEMP TABLE npd_file_staging (LIKE npd_pupil_records INCLUDING DEFAULTS) ON COMMIT DROP",
             cancellationToken);
-        await BinaryCopy.CopyAsync(dbContext, records, "npd_file_staging", cancellationToken);
+        await dbContext.Database.ExecuteSqlAsync(
+            $"""
+            INSERT INTO npd_file_staging (pupil_matching_ref, dataset, academic_year, ingest_version, upn, la_code, establishment_number, urn, surname, forename, middle_names, sex, dob, data)
+            SELECT DISTINCT ON (f.pupil_matching_ref)
+                f.pupil_matching_ref, {datasetName}, {academicYear}, {(short)ingestVersion}, f.upn, f.la_code, f.establishment_number, f.urn, f.surname, f.forename, f.middle_names, f.sex, f.dob, d.data
+            FROM npd_file_rows f
+            JOIN (
+                SELECT pupil_matching_ref, jsonb_agg(data ORDER BY row_number) AS data
+                FROM npd_file_rows
+                GROUP BY pupil_matching_ref
+            ) d ON d.pupil_matching_ref = f.pupil_matching_ref
+            ORDER BY f.pupil_matching_ref, f.row_number
+            """,
+            cancellationToken);
 
         // The pupils in the file, and the pupils that will lose their record for this dataset and year
         await dbContext.Database.ExecuteSqlAsync(
@@ -94,9 +129,7 @@ public class NpdDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
             """,
             cancellationToken);
 
-        // A record keeps its created_at when it's replaced by the same version (i.e. the file is reprocessed).
-        // The WHERE only matters for a record whose academic year differs from the file's; the version check above
-        // covers the rest.
+        // A record keeps its created_at when it's replaced by the same version (i.e. the file is reprocessed)
         int recordsWritten = await dbContext.Database.ExecuteSqlRawAsync(
             """
             INSERT INTO npd_pupil_records
@@ -115,7 +148,6 @@ public class NpdDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
                 data = excluded.data,
                 created_at = CASE WHEN npd_pupil_records.ingest_version = excluded.ingest_version
                     THEN npd_pupil_records.created_at ELSE excluded.created_at END
-            WHERE excluded.ingest_version >= npd_pupil_records.ingest_version
             """,
             cancellationToken);
 
@@ -154,6 +186,50 @@ public class NpdDataWriter(IDbContextFactory<GiapDbContext> dbContextFactory)
         await transaction.CommitAsync(cancellationToken);
 
         return new NpdFileWriteResult(RecordsWritten: recordsWritten, RecordsRemoved: recordsRemoved);
+    }
+
+    private static async Task<int> CopyRowsAsync(GiapDbContext dbContext, IAsyncEnumerable<NpdFileRow> rows, CancellationToken cancellationToken)
+    {
+        NpgsqlConnection connection = (NpgsqlConnection)dbContext.Database.GetDbConnection();
+        int count = 0;
+
+        await using NpgsqlBinaryImporter importer = await connection.BeginBinaryImportAsync(
+            "COPY npd_file_rows (row_number, pupil_matching_ref, upn, la_code, establishment_number, urn, surname, forename, middle_names, sex, dob, data) FROM STDIN (FORMAT BINARY)",
+            cancellationToken);
+
+        await foreach (NpdFileRow row in rows.WithCancellation(cancellationToken))
+        {
+            await importer.StartRowAsync(cancellationToken);
+            await importer.WriteAsync(row.RowNumber, NpgsqlDbType.Integer, cancellationToken);
+            await importer.WriteAsync(row.PupilMatchingRef, NpgsqlDbType.Text, cancellationToken);
+            await WriteNullableAsync(row.Upn, NpgsqlDbType.Text);
+            await WriteNullableAsync(row.LaCode, NpgsqlDbType.Integer);
+            await WriteNullableAsync(row.EstablishmentNumber, NpgsqlDbType.Integer);
+            await WriteNullableAsync(row.Urn, NpgsqlDbType.Integer);
+            await WriteNullableAsync(row.Surname, NpgsqlDbType.Text);
+            await WriteNullableAsync(row.Forename, NpgsqlDbType.Text);
+            await WriteNullableAsync(row.MiddleNames, NpgsqlDbType.Text);
+            await WriteNullableAsync(row.Sex, NpgsqlDbType.Text);
+            await WriteNullableAsync(row.Dob, NpgsqlDbType.Date);
+            await importer.WriteAsync(row.Data, NpgsqlDbType.Jsonb, cancellationToken);
+            count++;
+        }
+
+        await importer.CompleteAsync(cancellationToken);
+
+        return count;
+
+        async Task WriteNullableAsync<T>(T? value, NpgsqlDbType type)
+        {
+            if (value is null)
+            {
+                await importer.WriteNullAsync(cancellationToken);
+            }
+            else
+            {
+                await importer.WriteAsync(value, type, cancellationToken);
+            }
+        }
     }
 }
 
