@@ -169,6 +169,52 @@ A data file replaces all the records for its dataset and academic year:
 The rows are streamed into a temporary table and combined in Postgres, so a whole census file is never held in memory.
 Writing the same file again leaves the same data, so replaying a file is safe.
 
+## Pupil premium
+
+`PupilPremiumDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes pupil premium data files. It replaces the
+old pipeline's `processPupilPremiumFile` notebook, and writes to `pupil_premium_pupils` through
+`PupilPremiumDataWriter`.
+
+A pupil premium file's name has the academic year, like a census file's: `NPD_pupil-premium_FFD_CLA_2425_U.txt` is
+for 2024/2025. Its maturity must be `U` (or none) or `F`.
+
+### Reading the file
+
+Files are read as for [NPD datasets](#reading-the-file): tab-separated UTF-8, with every column stored as a trimmed
+string in the pupil's `data`, dots in column names replaced with underscores, and `DOB` parsed day-first and written
+as `yyyy-MM-ddT00:00:00.000Z`. The file must have the old pipeline's columns: `PupilMatchingRef`, `LA`, `Estab`,
+`URN`, `UPN`, `Surname`, `Forename`, `Middlenames`, `Sex`, `DOB`, `Source` and `Adopted`. In `data`, `Adopted` is
+renamed to `AdoptedfromCarePremium`, as the old pipeline did.
+
+A pupil with more than one row gets a single record whose `data` is an array of their rows in file order. The
+record's identifying fields come from their first row, and its `source_flag` is the rows' `Source`, or `Both` if they
+have more than one.
+
+### Rejected rows and failed files
+
+| Problem | Outcome |
+| --- | --- |
+| The file's maturity is `A` | The data file fails |
+| The file is empty, is missing one of the columns above, or has two columns with the same name | The data file fails |
+| A row has no PupilMatchingRef | The row is rejected |
+| A row's DOB isn't a valid date | The row is rejected |
+| A row's `Adopted` is `1` | The row is rejected; pupils adopted from care aren't loaded |
+| Every row is rejected, or there are no rows | The data file fails, with the first rejected row's reasons |
+| The stored data is from a more recent file | The data file fails |
+
+The old pipeline dropped adopted pupils' rows without recording them, and also dropped rows with an empty `Adopted`.
+They're now recorded as rejected rows, and rows with an empty `Adopted` are kept.
+
+### Writing the records
+
+Only the latest pupil premium file is kept: a data file replaces every pupil in `pupil_premium_pupils`, and a pupil
+that isn't in the file is removed. If a zip has more than one pupil premium data file, the last one wins.
+
+A file is only written if it's at least as recent as the stored data: a later academic year, or the same year and at
+least as mature (`U`, then `F`). The stored data is from the last pupil premium data file that succeeded, according to
+`ingest_runs`. The old pipeline had no such check, so uploading a historical file would have replaced the current
+data.
+
 ## Replaying files
 
 Processing a file again reprocesses every data file in it from wherever the zip is now. A zip that succeeds is moved
