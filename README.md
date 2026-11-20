@@ -194,8 +194,15 @@ environment:
 just set-secret ConnectionStrings:IngestStorage "UseDevelopmentStorage=true"
 ```
 
-It also requires the same `BlobStorageOptions` as the web app, as the file ingestion job publishes metadata documents
-to the downloads container.
+It also requires `BlobStorageOptions` for the downloads storage account, as the file ingestion job publishes metadata
+documents to it. The Worker has no defaults for these, so set all of them:
+
+```sh
+just set-secret BlobStorageOptions:AccountName "<local storage account name>"
+just set-secret BlobStorageOptions:AccountKey "<local storage key>"
+just set-secret BlobStorageOptions:ContainerName "giapdownloads"
+just set-secret BlobStorageOptions:EndpointSuffix "core.windows.net"
+```
 
 #### File ingestion
 
