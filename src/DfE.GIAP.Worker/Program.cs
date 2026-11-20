@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Infrastructure.Postgres;
 using DfE.GIAP.Core.Gias;
 using DfE.GIAP.Core.Ingest;
 using DfE.GIAP.Core.Jobs;
+using DfE.GIAP.Core.PupilData;
 using DfE.GIAP.Worker.Jobs;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -34,7 +35,8 @@ string ingestStorageConnectionString = builder.Configuration.GetConnectionString
 builder.Services
     .AddGiapDbContext(postgresConnectionString)
     .AddGiasDependencies()
-    .AddIngestDependencies(ingestStorageConnectionString);
+    .AddIngestDependencies(ingestStorageConnectionString)
+    .AddPupilDataDependencies();
 
 builder.Services
     .AddHangfire(configuration => configuration
@@ -64,8 +66,9 @@ IHost host = builder.Build();
 
 if (builder.Environment.IsEnvironment("Local"))
 {
-    // The container is created by Terraform in deployed environments
+    // The containers are created by Terraform in deployed environments
     await host.Services.GetRequiredService<IngestStorage>().CreateContainerIfNotExistsAsync();
+    await host.Services.GetRequiredService<IngestMetadataPublisher>().CreateContainerIfNotExistsAsync();
 }
 
 await host.RunAsync();

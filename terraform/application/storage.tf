@@ -26,3 +26,10 @@ resource "azurerm_storage_container" "ingest" {
   storage_account_id    = azurerm_storage_account.ingest.id
   container_access_type = "private"
 }
+
+# Holds the metadata documents published from ingested zips
+resource "azurerm_storage_container" "metadata" {
+  name                  = "metadata"
+  storage_account_id    = azurerm_storage_account.ingest.id
+  container_access_type = "private"
+}

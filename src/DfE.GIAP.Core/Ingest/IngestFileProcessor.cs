@@ -9,15 +9,18 @@ namespace DfE.GIAP.Core.Ingest;
 
 /// <summary>
 /// Processes an uploaded zip: routes each data file in it to the <see cref="IIngestDatasetProcessor"/> for its
-/// dataset, then moves the zip to <c>processed/</c>, or to <c>error/</c> if anything failed.
+/// dataset, publishes its metadata documents, then moves the zip to <c>processed/</c>, or to <c>error/</c> if anything
+/// failed.
 /// </summary>
 /// <remarks>
 /// Every data file is processed and committed on its own, even if another file in the zip fails; each one gets an
-/// <see cref="IngestRun"/>. Processing a zip again (e.g. replaying it) processes all of its data files again.
+/// <see cref="IngestRun"/>. The metadata documents are only published once every data file has succeeded.
+/// Processing a zip again (e.g. replaying it) processes all of its data files again.
 /// </remarks>
 public class IngestFileProcessor(
     IngestStorage storage,
     IngestDatasetProcessorRegistry processorRegistry,
+    IngestMetadataPublisher metadataPublisher,
     IDbContextFactory<GiapDbContext> dbContextFactory,
     TimeProvider timeProvider,
     ILogger<IngestFileProcessor> logger)
@@ -140,16 +143,49 @@ public class IngestFileProcessor(
                 }
             }
 
-            return failed == 0 ? null : $"{failed} of the {dataFiles.Length} data files in the zip failed.";
+            if (failed > 0)
+            {
+                return $"{failed} of the {dataFiles.Length} data files in the zip failed.";
+            }
+
+            return await PublishMetadataDocumentsAsync(file, archive, cancellationToken);
         }
     }
 
-    // Skips folders, metadata documents and hidden files such as macOS's __MACOSX/ and ._ files
+    // Returns why publishing failed, or null if it succeeded
+    private async Task<string?> PublishMetadataDocumentsAsync(IngestFile file, ZipArchive archive, CancellationToken cancellationToken)
+    {
+        foreach (ZipArchiveEntry document in archive.Entries.Where(IsMetadataDocument))
+        {
+            try
+            {
+                await using Stream content = await document.OpenAsync(cancellationToken);
+                await metadataPublisher.PublishAsync(document.Name, content, cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                logger.LogError(ex, "Failed to publish {DocumentName} from {Path}.", document.FullName, file.Path);
+
+                return $"Publishing the metadata document {document.FullName} failed: {ex.Message}";
+            }
+
+            logger.LogInformation("Published {DocumentName} from {Path}.", document.FullName, file.Path);
+        }
+
+        return null;
+    }
+
     private static bool IsDataFile(ZipArchiveEntry entry) =>
-        entry.Name.Length > 0
-        && !entry.Name.StartsWith('.')
-        && !entry.FullName.StartsWith("__MACOSX/", StringComparison.Ordinal)
-        && !IngestDataFileName.IsMetadataDocument(entry.Name);
+        !IsHiddenOrFolder(entry) && !IngestDataFileName.IsMetadataDocument(entry.Name);
+
+    private static bool IsMetadataDocument(ZipArchiveEntry entry) =>
+        !IsHiddenOrFolder(entry) && IngestDataFileName.IsMetadataDocument(entry.Name);
+
+    // Hidden files include macOS's __MACOSX/ and ._ files
+    private static bool IsHiddenOrFolder(ZipArchiveEntry entry) =>
+        entry.Name.Length == 0
+        || entry.Name.StartsWith('.')
+        || entry.FullName.StartsWith("__MACOSX/", StringComparison.Ordinal);
 
     private async Task<IngestRun> ProcessDataFileAsync(
         GiapDbContext dbContext,
