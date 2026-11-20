@@ -10,7 +10,8 @@ The file ingestion job processes the zips of data files uploaded to the `ingest`
 ## Container layout
 
 Each dataset has a folder, matching the old pipeline's: `census`, `eyfsp`, `ks1`, `ks2`, `ks4`, `mtc`, `phonics`,
-`pupil-premium`, `fe_pp` and `fe_sen`. Each folder has:
+`pupil-premium`, `fe_pp`, `fe_sen`, `cla-ks2` and `cla-ks4` (the old pipeline's `cla/ks2` and `cla/ks4`). Each
+folder has:
 
 | Folder | Contents |
 | --- | --- |
@@ -149,7 +150,7 @@ These are the deliberate differences from the old pipeline, which wrote the file
 
 - Rows are in data file order; Spark wrote them in whatever order its partitions came back in.
 - Values aren't converted to the types Spark inferred. E.g. a value with leading zeros keeps them, and a date that
-  isn't reformatted (see below) is written as it is in the file, not as a Spark timestamp.
+  isn't reformatted is written as it is in the data file.
 - Rows with no key are left out, rather than written to a `__HIVE_DEFAULT_PARTITION__` folder.
 
 ## NPD datasets
@@ -355,6 +356,33 @@ a file could cover more than one academic year; every row must now be for the fi
 
 There's no check against the stored data: any FE file is written, even one for an earlier academic year. Writing the
 same file again leaves the same data, so replaying a file is safe.
+
+## Children looked after
+
+`ChildrenLookedAfterDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes the KS2 and KS4 children looked
+after (CLA) data files. It replaces the old pipeline's `giapKS2CLASplit` and `giapKS4CLASplit` pipelines and
+`create_partitions_cla` notebook. Nothing is written to Postgres; the files are only split into
+[prepared downloads](#prepared-downloads) for LAs.
+
+Zips are uploaded to `cla-ks2/upload/` or `cla-ks4/upload/`, and their names must start with `GIAP_CLA_KS2_` or
+`GIAP_CLA_KS4_`. A CLA data file's name must contain `CLA` and `KS2` or `KS4`, and the calendar year the academic year
+ends in, e.g. `GIAP_CLA_KS4_2025.txt` is for 2024/2025. Its maturity is ignored.
+
+Files are read as for [NPD datasets](#reading-the-file): tab-separated UTF-8, with values trimmed. The file must have
+the old pipeline's columns: `CLA_LA`, `CLA_CHILD_LA_CODE`, `CLA_SEX`, `CLA_DOB`, `CLA_AGE_AUG`, `CLA_UPN`,
+`CLA_ETHNIC` and `CLA_12_MONTHS`. The old pipeline used the KS4 columns for KS2 files too.
+
+Each LA's rows are written to `LA/<CLA_LA>/<ks2 or ks4>_<year>_cla.csv`, e.g. `LA/201/ks4_2025_cla.csv`, with every
+column in the data file, in the order they're in the file. A row with no `CLA_LA` isn't written, and isn't counted in
+the run's records written.
+
+| Problem | Outcome |
+| --- | --- |
+| The file is empty, is missing one of the columns above, or has two columns with the same name | The data file fails |
+| There are no rows | The data file fails |
+
+The [differences for every prepared download](#prepared-downloads) apply; in particular, `CLA_DOB` is written as it
+is in the data file, rather than in whatever form Spark inferred for it.
 
 ## Replaying files
 
