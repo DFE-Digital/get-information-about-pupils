@@ -185,8 +185,24 @@ dotnet run
 To run it with automatic rebuilds while editing, use `just watch-giap-worker` from the repository root. The command
 uses the Worker project's launch profile (`Local`), which reads the same User Secrets as the web app.
 
+The Worker also requires the `ConnectionStrings:IngestStorage` connection string, for the blob storage that the file
+ingestion job reads uploads from. Locally, run [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite)
+and use its well-known connection string; the Worker creates the `ingest` container on startup in the `Local`
+environment:
+
+```sh
+just set-secret ConnectionStrings:IngestStorage "UseDevelopmentStorage=true"
+```
+
+#### File ingestion
+
+The file ingestion job processes zips of data files uploaded to `<dataset>/upload/` in the `ingest` container. See
+[docs/file-ingestion.md](docs/file-ingestion.md) for how it works and how to replay files.
+
 In AKS the Worker is deployed by `module.worker_application` in `terraform/application/application.tf`. It runs from
 the same Docker image as the web app (published to `/apps/worker`, alongside the web app in `/apps/web`) with the same configuration and secrets as the web app.
+The ingest storage account is created in `terraform/application/storage.tf`, and its connection string is passed to
+the app as the `ConnectionStrings__IngestStorage` secret.
 Sentry is configured the same way as the web app, capturing error logs.
 
 

@@ -23,6 +23,16 @@ public sealed class RecurringJobsRegistrar(IRecurringJobManager recurringJobMana
             job => job.ExecuteAsync(CancellationToken.None),
             ImportGiasDataJob.Schedule);
 
+        recurringJobManager.AddOrUpdate<PollIngestUploadsJob>(
+            PollIngestUploadsJob.JobId,
+            job => job.ExecuteAsync(CancellationToken.None),
+            PollIngestUploadsJob.Schedule);
+
+        recurringJobManager.AddOrUpdate<RequeueFailedIngestFilesJob>(
+            RequeueFailedIngestFilesJob.JobId,
+            job => job.ExecuteAsync(CancellationToken.None),
+            RequeueFailedIngestFilesJob.Schedule);
+
         return Task.CompletedTask;
     }
 

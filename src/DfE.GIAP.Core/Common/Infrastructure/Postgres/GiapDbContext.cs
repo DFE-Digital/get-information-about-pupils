@@ -28,6 +28,12 @@ public class GiapDbContext(DbContextOptions<GiapDbContext> options) : DbContext(
 
     public DbSet<FurtherEducationLearnerRecord> FurtherEducationLearnerRecords => Set<FurtherEducationLearnerRecord>();
 
+    public DbSet<IngestFile> IngestFiles => Set<IngestFile>();
+
+    public DbSet<IngestRun> IngestRuns => Set<IngestRun>();
+
+    public DbSet<IngestRejectedRow> IngestRejectedRows => Set<IngestRejectedRow>();
+
     public static GiapDbContext Create(string? connectionString, int? commandTimeout = null) => new(CreateOptions(connectionString, commandTimeout));
 
     public static void ConfigureOptions(DbContextOptionsBuilder builder, string? connectionString = null, int? commandTimeout = null) =>

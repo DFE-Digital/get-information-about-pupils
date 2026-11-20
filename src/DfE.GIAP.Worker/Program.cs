@@ -1,6 +1,8 @@
 using DfE.GIAP.Core.Common;
 using DfE.GIAP.Core.Common.Infrastructure.Postgres;
 using DfE.GIAP.Core.Gias;
+using DfE.GIAP.Core.Ingest;
+using DfE.GIAP.Core.Jobs;
 using DfE.GIAP.Worker.Jobs;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -26,9 +28,13 @@ if (builder.Environment.IsProduction())
 string postgresConnectionString = builder.Configuration.GetConnectionString(GiapDbContext.ConnectionName) ??
     throw new InvalidOperationException($"Connection string '{GiapDbContext.ConnectionName}' not found.");
 
+string ingestStorageConnectionString = builder.Configuration.GetConnectionString(IngestStorage.ConnectionName) ??
+    throw new InvalidOperationException($"Connection string '{IngestStorage.ConnectionName}' not found.");
+
 builder.Services
     .AddGiapDbContext(postgresConnectionString)
-    .AddGiasDependencies();
+    .AddGiasDependencies()
+    .AddIngestDependencies(ingestStorageConnectionString);
 
 builder.Services
     .AddHangfire(configuration => configuration
@@ -46,8 +52,20 @@ builder.Services
                 UseSlidingInvisibilityTimeout = true
             }))
     .AddHostedService<RecurringJobsRegistrar>()
-    .AddHangfireServer();
+    .AddHangfireServer()
+    // A single worker, so that ingest files are processed one at a time
+    .AddHangfireServer(options =>
+    {
+        options.Queues = [ProcessIngestFileJob.Queue];
+        options.WorkerCount = 1;
+    });
 
 IHost host = builder.Build();
+
+if (builder.Environment.IsEnvironment("Local"))
+{
+    // The container is created by Terraform in deployed environments
+    await host.Services.GetRequiredService<IngestStorage>().CreateContainerIfNotExistsAsync();
+}
 
 await host.RunAsync();

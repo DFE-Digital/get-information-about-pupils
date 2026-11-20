@@ -14,7 +14,8 @@ module "application_configuration" {
     PGSSLMODE        = local.postgres_ssl_mode
   }
   secret_variables = {
-    ConnectionStrings__GiapDb = module.postgres.dotnet_connection_string
+    ConnectionStrings__GiapDb        = module.postgres.dotnet_connection_string
+    ConnectionStrings__IngestStorage = azurerm_storage_account.ingest.primary_connection_string
   }
 }
 
