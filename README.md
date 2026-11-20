@@ -194,6 +194,9 @@ environment:
 just set-secret ConnectionStrings:IngestStorage "UseDevelopmentStorage=true"
 ```
 
+It also requires the same `BlobStorageOptions` as the web app, as the file ingestion job publishes metadata documents
+to the downloads container.
+
 #### File ingestion
 
 The file ingestion job processes zips of data files uploaded to `<dataset>/upload/` in the `ingest` container. See
