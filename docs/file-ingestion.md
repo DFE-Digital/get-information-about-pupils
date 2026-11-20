@@ -1,5 +1,9 @@
 # File ingestion
 
+> [!WARNING]
+> The pipeline documented here isn't live in production yet. Until the switch-over, data files are still processed
+> by the old Data Factory and Databricks pipeline.
+
 The file ingestion job processes the zips of data files uploaded to the `ingest` blob container. It runs in the Worker
 (`src/DfE.GIAP.Worker`) as Hangfire jobs; the code is in `src/DfE.GIAP.Core/Ingest` and `src/DfE.GIAP.Core/Jobs`.
 
