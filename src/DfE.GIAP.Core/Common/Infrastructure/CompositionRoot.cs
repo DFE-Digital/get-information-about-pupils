@@ -12,13 +12,7 @@ internal static class CompositionRoot
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.AddOptions<BlobStorageOptions>()
-            .BindConfiguration(BlobStorageOptions.SectionName)
-            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountName), "BlobStorage: AccountName is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountKey), "BlobStorage: AccountKey is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.ContainerName), "BlobStorage: ContainerName is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.EndpointSuffix), "BlobStorage: EndpointSuffix is required")
-            .ValidateOnStart();
+        services.AddBlobStorageOptions();
 
         services.TryAddSingleton<IBlobStorageProvider>(sp =>
         {
@@ -27,6 +21,21 @@ internal static class CompositionRoot
 
             return new AzureBlobStorageProvider(blobServiceClient);
         });
+
+        return services;
+    }
+
+    internal static IServiceCollection AddBlobStorageOptions(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddOptions<BlobStorageOptions>()
+            .BindConfiguration(BlobStorageOptions.SectionName)
+            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountName), "BlobStorage: AccountName is required")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountKey), "BlobStorage: AccountKey is required")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.ContainerName), "BlobStorage: ContainerName is required")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.EndpointSuffix), "BlobStorage: EndpointSuffix is required")
+            .ValidateOnStart();
 
         return services;
     }

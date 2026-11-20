@@ -27,6 +27,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
 
     private readonly GiapPostgresFixture _postgres;
     private readonly BlobContainerClient _containerClient;
+    private readonly BlobContainerClient _downloadsContainerClient;
     private readonly FakeTimeProvider _timeProvider = new(new DateTimeOffset(2026, 11, 20, 10, 15, 0, TimeSpan.Zero));
     private readonly FakeDatasetProcessor _ks2Processor = new(IngestDataset.Ks2);
     private readonly FakeDatasetProcessor _censusProcessor = new(IngestDataset.CensusAutumn, IngestDataset.CensusSpring, IngestDataset.CensusSummer);
@@ -38,6 +39,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
     {
         _postgres = postgres;
         _containerClient = new BlobContainerClient(azurite.ConnectionString, IngestStorage.ContainerName);
+        _downloadsContainerClient = new BlobContainerClient(azurite.ConnectionString, IngestMetadataPublisher.ContainerName);
 
         IngestStorage storage = new(_containerClient, _timeProvider);
         GiapPostgresDbContextFactory dbContextFactory = new(postgres);
@@ -51,6 +53,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         _processor = new IngestFileProcessor(
             storage,
             new IngestDatasetProcessorRegistry([_ks2Processor, _censusProcessor]),
+            new IngestMetadataPublisher(_downloadsContainerClient),
             dbContextFactory,
             _timeProvider,
             NullLogger<IngestFileProcessor>.Instance);
@@ -60,6 +63,8 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
     {
         await _containerClient.DeleteIfExistsAsync();
         await _containerClient.CreateAsync();
+        await _downloadsContainerClient.DeleteIfExistsAsync();
+        await _downloadsContainerClient.CreateAsync();
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         await dbContext.IngestRejectedRows.ExecuteDeleteAsync();
@@ -116,6 +121,54 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
             },
             run);
         Assert.NotNull(run.FinishedAt);
+    }
+
+    [Fact]
+    public async Task ProcessAsync_PublishesMetadataDocuments()
+    {
+        await _downloadsContainerClient.UploadBlobAsync("AllUsers/Metadata/KS2 metadata.xlsx", BinaryData.FromString("old metadata"));
+        await UploadZipAsync(
+            "ks2",
+            Ks2ZipName,
+            (Ks2DataFileName, "data"),
+            ("docs/KS2 metadata.xlsx", "new metadata"),
+            ("KS2 guidance.docx", "guidance"),
+            ("__MACOSX/docs/._KS2 metadata.xlsx", "resource fork"),
+            ("._KS2 guidance.docx", "resource fork"));
+
+        await ScanAndProcessAsync();
+
+        Assert.Equal(["AllUsers/Metadata/KS2 guidance.docx", "AllUsers/Metadata/KS2 metadata.xlsx"], await ListBlobsAsync(_downloadsContainerClient));
+        Assert.Equal("new metadata", (await _downloadsContainerClient.GetBlobClient("AllUsers/Metadata/KS2 metadata.xlsx").DownloadContentAsync()).Value.Content.ToString());
+        Assert.Equal([MovedBlobName("ks2/processed/", Ks2ZipName, FirstTimestamp)], await ListBlobsAsync());
+    }
+
+    [Fact]
+    public async Task ProcessAsync_DataFileFails_DoesNotPublishMetadataDocuments()
+    {
+        _ks2Processor.FailOn = Ks2DataFileName;
+        await UploadZipAsync("ks2", Ks2ZipName, (Ks2DataFileName, "data"), ("KS2 metadata.xlsx", "metadata"));
+
+        await ScanAndProcessAsync();
+
+        Assert.Empty(await ListBlobsAsync(_downloadsContainerClient));
+    }
+
+    [Fact]
+    public async Task ProcessAsync_PublishingMetadataFails_FailsAndMovesToError()
+    {
+        await _downloadsContainerClient.DeleteAsync();
+        await UploadZipAsync("ks2", Ks2ZipName, (Ks2DataFileName, "data"), ("KS2 metadata.xlsx", "metadata"));
+
+        await ScanAndProcessAsync();
+
+        Assert.Single(_ks2Processor.Processed);
+        Assert.Equal([MovedBlobName("ks2/error/", Ks2ZipName, FirstTimestamp)], await ListBlobsAsync());
+
+        await using GiapDbContext dbContext = _postgres.CreateDbContext();
+        IngestFile file = await dbContext.IngestFiles.SingleAsync();
+        Assert.Equal(IngestFileStatus.Failed, file.Status);
+        Assert.StartsWith("Publishing the metadata document KS2 metadata.xlsx failed:", file.Error);
     }
 
     [Fact]
@@ -436,11 +489,13 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
     private Task UploadBlobAsync(string blobName, string content) =>
         _containerClient.UploadBlobAsync(blobName, BinaryData.FromString(content));
 
-    private async Task<List<string>> ListBlobsAsync()
+    private Task<List<string>> ListBlobsAsync() => ListBlobsAsync(_containerClient);
+
+    private static async Task<List<string>> ListBlobsAsync(BlobContainerClient containerClient)
     {
         List<string> names = [];
 
-        await foreach (Azure.Storage.Blobs.Models.BlobItem blob in _containerClient.GetBlobsAsync())
+        await foreach (Azure.Storage.Blobs.Models.BlobItem blob in containerClient.GetBlobsAsync())
         {
             names.Add(blob.Name);
         }
