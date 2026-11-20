@@ -15,7 +15,8 @@ public class IngestDataFileNameTests
     [InlineData("npd_ks4_2025_final_kts.tsv", IngestDataset.Ks4, "2024/2025", IngestVersion.Final)]
     [InlineData("NPD_MTC_2025_U_KtS.txt", IngestDataset.Mtc, "2024/2025", IngestVersion.Unamended)]
     [InlineData("NPD_PHONICS_2018_F_KtS.txt", IngestDataset.Phonics, "2017/2018", IngestVersion.Final)]
-    [InlineData("NPD_pupil-premium_2025_U.csv", IngestDataset.PupilPremium, "2024/2025", IngestVersion.Unamended)]
+    [InlineData("NPD_pupil-premium_2425_U.csv", IngestDataset.PupilPremium, "2024/2025", IngestVersion.Unamended)]
+    [InlineData("NPD_pupil-premium_FFD_CLA_1920_F.txt", IngestDataset.PupilPremium, "2019/2020", IngestVersion.Final)]
     [InlineData("FE_PP_2025.csv", IngestDataset.FurtherEducationPupilPremium, "2024/2025", IngestVersion.Unamended)]
     [InlineData("FE SEN 2025.csv", IngestDataset.FurtherEducationSpecialEducationalNeeds, "2024/2025", IngestVersion.Unamended)]
     public void Parse_ValidName_ReturnsAttributes(string fileName, IngestDataset dataset, string academicYear, IngestVersion ingestVersion)
@@ -35,6 +36,7 @@ public class IngestDataFileNameTests
     [InlineData("NPD_Census_2425_KtS.txt")]
     [InlineData("NPD_Census_2425_Autumn_Spring.txt")]
     [InlineData("NPD_Census_2426_Autumn.txt")]
+    [InlineData("NPD_pupil-premium_2025_U.txt")]
     [InlineData("FE_2025.csv")]
     [InlineData("NPD_KS2_U_KtS.txt")]
     [InlineData("NPD_KS2_2024_2025_U.txt")]

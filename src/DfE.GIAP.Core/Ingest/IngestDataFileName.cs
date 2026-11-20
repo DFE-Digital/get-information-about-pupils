@@ -115,8 +115,8 @@ public static class IngestDataFileName
             : throw new IngestDataFileNameException(fileName, $"The name must contain exactly one {description}.");
     }
 
-    // A census file's year is the academic year, e.g. 2425 for 2024/2025; for every other dataset it's the
-    // calendar year the academic year ends in, e.g. 2025 for 2024/2025
+    // A census or pupil premium file's year is the academic year, e.g. 2425 for 2024/2025; for every other dataset
+    // it's the calendar year the academic year ends in, e.g. 2025 for 2024/2025
     private static string ParseAcademicYear(string fileName, IngestDataset dataset, HashSet<string> words)
     {
         string[] numbers = [.. words.Where(w => w.All(char.IsAsciiDigit))];
@@ -128,14 +128,14 @@ public static class IngestDataFileName
 
         int year = int.Parse(numbers[0], CultureInfo.InvariantCulture);
 
-        if (dataset is IngestDataset.CensusAutumn or IngestDataset.CensusSpring or IngestDataset.CensusSummer)
+        if (dataset is IngestDataset.CensusAutumn or IngestDataset.CensusSpring or IngestDataset.CensusSummer or IngestDataset.PupilPremium)
         {
             int startYear = year / 100;
             int endYear = year % 100;
 
             if (endYear != (startYear + 1) % 100)
             {
-                throw new IngestDataFileNameException(fileName, "A census file's year must be two consecutive 2-digit years, e.g. 2425.");
+                throw new IngestDataFileNameException(fileName, $"A {(dataset is IngestDataset.PupilPremium ? "pupil premium" : "census")} file's year must be two consecutive 2-digit years, e.g. 2425.");
             }
 
             return $"20{startYear:00}/20{endYear:00}";
