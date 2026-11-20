@@ -1,0 +1,18 @@
+@model NewsArticleViewModel
+
+<div class="govuk-!-margin-bottom-4">
+    <govuk-checkboxes for="Pinned">
+        <govuk-checkboxes-item value="true">Pinned</govuk-checkboxes-item>
+    </govuk-checkboxes>
+    <govuk-checkboxes for="Published">
+        <govuk-checkboxes-item value="true">Published</govuk-checkboxes-item>
+    </govuk-checkboxes>
+</div>
+
+<govuk-character-count for="Title" max-length="64">
+    <govuk-character-count-label>Title</govuk-character-count-label>
+</govuk-character-count>
+
+<govuk-textarea for="Body" rows="5">
+    <govuk-textarea-label>Body</govuk-textarea-label>
+</govuk-textarea>

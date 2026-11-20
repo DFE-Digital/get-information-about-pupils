@@ -99,6 +99,8 @@ public class ManageNewsArticlesControllerTests
         Assert.Equal(string.Empty, model.SelectedNewsId);
         Assert.NotNull(model.NewsArticleList);
         Assert.Equal(2, model.NewsArticleList.Count());
+        Assert.Contains(model.NewsArticleList, item => item.Value == "id1" && item.Text.StartsWith("Title 1 |"));
+        Assert.Contains(model.NewsArticleList, item => item.Value == "id2" && item.Text.StartsWith("Title 2 |"));
         Assert.NotNull(model.BackButton);
         Assert.True(model.BackButton.IsBackButtonEnabled);
         Assert.Equal("content", model.BackButton.PreviousController);
@@ -149,11 +151,17 @@ public class ManageNewsArticlesControllerTests
 
         IActionResult result = await controller.CreateNewsArticle(model);
 
-        _createMock.Verify(x => x.HandleRequestAsync(It.IsAny<CreateNewsArticleRequest>()), Times.Once);
+        _createMock.Verify(x => x.HandleRequestAsync(It.Is<CreateNewsArticleRequest>(request =>
+            request.Title == "Test Title" &&
+            request.Body == "Test Body" &&
+            request.Published &&
+            !request.Pinned)), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Content/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
-        Assert.IsType<ConfirmationViewModel>(viewResult.Model);
+        ConfirmationViewModel confirmation = Assert.IsType<ConfirmationViewModel>(viewResult.Model);
+        Assert.Equal(Messages.NewsArticle.Success.CreateTitle, confirmation.Title);
+        Assert.Equal(Messages.NewsArticle.Success.CreateBody, confirmation.Body);
     }
 
     [Fact]
@@ -164,10 +172,14 @@ public class ManageNewsArticlesControllerTests
 
         IActionResult result = await controller.DeleteNewsArticle(model);
 
-        _deleteMock.Verify(x => x.HandleRequestAsync(It.IsAny<DeleteNewsArticleRequest>()), Times.Once);
+        _deleteMock.Verify(x => x.HandleRequestAsync(It.Is<DeleteNewsArticleRequest>(request =>
+            request.Id.Value == "123")), Times.Once);
 
         ViewResult viewResult = Assert.IsType<ViewResult>(result);
         Assert.Equal("../Content/ManageNewsArticles/NewsArticleConfirmation", viewResult.ViewName);
+        ConfirmationViewModel confirmation = Assert.IsType<ConfirmationViewModel>(viewResult.Model);
+        Assert.Equal(Messages.NewsArticle.Success.DeleteTitle, confirmation.Title);
+        Assert.Equal(Messages.NewsArticle.Success.DeleteBody, confirmation.Body);
     }
 
     [Fact]
