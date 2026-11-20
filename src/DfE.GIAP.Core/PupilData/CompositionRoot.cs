@@ -13,6 +13,7 @@ public static class CompositionRoot
         services.TryAddTransient<NpdDataWriter>();
         services.TryAddEnumerable(ServiceDescriptor.Transient<IIngestDatasetProcessor, NpdDatasetProcessor>());
         services.TryAddTransient<PupilPremiumDataWriter>();
+        services.TryAddTransient<PupilPremiumPreparedDownloads>();
         services.TryAddEnumerable(ServiceDescriptor.Transient<IIngestDatasetProcessor, PupilPremiumDatasetProcessor>());
         services.TryAddTransient<FurtherEducationDataWriter>();
         services.TryAddEnumerable(ServiceDescriptor.Transient<IIngestDatasetProcessor, FurtherEducationDatasetProcessor>());
