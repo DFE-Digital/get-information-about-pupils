@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DfE.GIAP.Web.Constants;
+using GovUk.Frontend.AspNetCore.Validation;
 
 namespace DfE.GIAP.Web.ViewModels;
 
@@ -8,7 +9,7 @@ public class NewsArticleViewModel
     public string Id { get; set; }
 
     [Required(ErrorMessage = Messages.Common.Errors.TitleRequired)]
-    [MaxLength(64, ErrorMessage = Messages.Common.Errors.TitleLength)]
+    [CharacterCount(64, ErrorMessage = Messages.Common.Errors.TitleLength)]
     public string Title { get; set; }
 
     [Required(ErrorMessage = Messages.Common.Errors.BodyRequired)]

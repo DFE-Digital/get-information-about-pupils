@@ -2,6 +2,6 @@
 
 public class CreateNewsArticleViewModel
 {
-    public NewsArticleViewModel NewsArticle { get; set; }
+    public NewsArticleViewModel NewsArticle { get; set; } = new();
     public BackButtonViewModel BackButton { get; set; }
 }
