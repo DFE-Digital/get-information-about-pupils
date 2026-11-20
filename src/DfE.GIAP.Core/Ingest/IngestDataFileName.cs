@@ -7,8 +7,8 @@ namespace DfE.GIAP.Core.Ingest;
 public sealed record IngestDataFileAttributes(IngestDataset Dataset, string AcademicYear, IngestVersion IngestVersion);
 
 /// <summary>
-/// Reads the attributes of a data file from its name, e.g. <c>NPD_KS2_2025_U_KtS.txt</c> or
-/// <c>NPD_Census_2425_KtS_Autumn.txt</c>.
+/// Reads the attributes of a data file from its name, e.g. <c>NPD_KS2_2025_U_KtS.txt</c>,
+/// <c>NPD_Census_2425_KtS_Autumn.txt</c> or <c>GIAP_CLA_KS4_2025.txt</c>.
 /// </summary>
 /// <remarks>
 /// Ported from the old pipeline's <c>parse_file_characteristics_from_name</c>. The name is split into words on
@@ -87,14 +87,17 @@ public static class IngestDataFileName
             throw new IngestDataFileNameException(fileName, "The name must contain exactly one dataset.");
         }
 
+        // Pupil premium file names also contain CLA, but not a key stage
+        bool childrenLookedAfter = words.Contains("cla");
+
         return datasetWords[0] switch
         {
             "census" => ParseQualifier(fileName, words, _censusTerms, "census term"),
             "fe" => ParseQualifier(fileName, words, _furtherEducationTypes, "further education type"),
             "eyfsp" => IngestDataset.Eyfsp,
             "ks1" => IngestDataset.Ks1,
-            "ks2" => IngestDataset.Ks2,
-            "ks4" => IngestDataset.Ks4,
+            "ks2" => childrenLookedAfter ? IngestDataset.ChildrenLookedAfterKs2 : IngestDataset.Ks2,
+            "ks4" => childrenLookedAfter ? IngestDataset.ChildrenLookedAfterKs4 : IngestDataset.Ks4,
             "mtc" => IngestDataset.Mtc,
             "phonics" => IngestDataset.Phonics,
             "pupil-premium" => IngestDataset.PupilPremium,

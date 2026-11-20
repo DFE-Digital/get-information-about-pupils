@@ -19,6 +19,8 @@ public class IngestDataFileNameTests
     [InlineData("NPD_pupil-premium_FFD_CLA_1920_F.txt", IngestDataset.PupilPremium, "2019/2020", IngestVersion.Final)]
     [InlineData("FE_PP_2025.csv", IngestDataset.FurtherEducationPupilPremium, "2024/2025", IngestVersion.Unamended)]
     [InlineData("FE SEN 2025.csv", IngestDataset.FurtherEducationSpecialEducationalNeeds, "2024/2025", IngestVersion.Unamended)]
+    [InlineData("GIAP_CLA_KS2_2025.txt", IngestDataset.ChildrenLookedAfterKs2, "2024/2025", IngestVersion.Unamended)]
+    [InlineData("GIAP_CLA_KS4_2025_F.csv", IngestDataset.ChildrenLookedAfterKs4, "2024/2025", IngestVersion.Final)]
     public void Parse_ValidName_ReturnsAttributes(string fileName, IngestDataset dataset, string academicYear, IngestVersion ingestVersion)
     {
         IngestDataFileAttributes attributes = IngestDataFileName.Parse(fileName);
@@ -32,6 +34,8 @@ public class IngestDataFileNameTests
     [InlineData("NPD_KS2_2025_U_KtS")]
     [InlineData("NPD_2025_U_KtS.txt")]
     [InlineData("NPD_KS2_KS4_2025_U.txt")]
+    [InlineData("GIAP_CLA_KS2_KS4_2025.txt")]
+    [InlineData("GIAP_CLA_2025.txt")]
     [InlineData("NPD_KS5_2025_U.txt")]
     [InlineData("NPD_Census_2425_KtS.txt")]
     [InlineData("NPD_Census_2425_Autumn_Spring.txt")]
