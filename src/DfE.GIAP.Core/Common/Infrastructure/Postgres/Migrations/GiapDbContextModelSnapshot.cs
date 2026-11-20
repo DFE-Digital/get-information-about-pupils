@@ -255,6 +255,147 @@ namespace DfE.GIAP.Core.Common.Infrastructure.Postgres.Migrations
                     b.ToTable("further_education_learner_records", (string)null);
                 });
 
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestFile", b =>
+                {
+                    b.Property<string>("Path")
+                        .HasColumnType("text")
+                        .HasColumnName("path");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempts");
+
+                    b.Property<string>("BlobName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("blob_name");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text")
+                        .HasColumnName("error");
+
+                    b.Property<DateTime>("FirstSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_seen_at");
+
+                    b.Property<DateTime?>("LastProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_processed_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.HasKey("Path")
+                        .HasName("pk_ingest_files");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_ingest_files_status");
+
+                    b.ToTable("ingest_files", (string)null);
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestRejectedRow", b =>
+                {
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("run_id");
+
+                    b.Property<int>("RowNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("row_number");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("data");
+
+                    b.PrimitiveCollection<string[]>("Reasons")
+                        .IsRequired()
+                        .HasColumnType("text[]")
+                        .HasColumnName("reasons");
+
+                    b.HasKey("RunId", "RowNumber")
+                        .HasName("pk_ingest_rejected_rows");
+
+                    b.ToTable("ingest_rejected_rows", (string)null);
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AcademicYear")
+                        .HasColumnType("text")
+                        .HasColumnName("academic_year");
+
+                    b.Property<int>("Attempt")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempt");
+
+                    b.Property<string>("DataFileName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("data_file_name");
+
+                    b.Property<string>("Dataset")
+                        .HasColumnType("text")
+                        .HasColumnName("dataset");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text")
+                        .HasColumnName("error");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_path");
+
+                    b.Property<DateTime?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("finished_at");
+
+                    b.Property<short?>("IngestVersion")
+                        .HasColumnType("smallint")
+                        .HasColumnName("ingest_version");
+
+                    b.Property<int?>("RecordsRead")
+                        .HasColumnType("integer")
+                        .HasColumnName("records_read");
+
+                    b.Property<int?>("RecordsRejected")
+                        .HasColumnType("integer")
+                        .HasColumnName("records_rejected");
+
+                    b.Property<int?>("RecordsRemoved")
+                        .HasColumnType("integer")
+                        .HasColumnName("records_removed");
+
+                    b.Property<int?>("RecordsWritten")
+                        .HasColumnType("integer")
+                        .HasColumnName("records_written");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ingest_runs");
+
+                    b.HasIndex("FilePath", "Attempt")
+                        .HasDatabaseName("ix_ingest_runs_file_path_attempt");
+
+                    b.ToTable("ingest_runs", (string)null);
+                });
+
             modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.LocalAuthority", b =>
                 {
                     b.Property<int>("LaCode")
@@ -553,6 +694,26 @@ namespace DfE.GIAP.Core.Common.Infrastructure.Postgres.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_further_education_learner_records_further_education_learner");
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestRejectedRow", b =>
+                {
+                    b.HasOne("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestRun", null)
+                        .WithMany()
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_ingest_rejected_rows_ingest_runs_run_id");
+                });
+
+            modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestRun", b =>
+                {
+                    b.HasOne("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.IngestFile", null)
+                        .WithMany()
+                        .HasForeignKey("FilePath")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_ingest_runs_ingest_files_file_path");
                 });
 
             modelBuilder.Entity("DfE.GIAP.Core.Common.Infrastructure.Postgres.Models.NpdPupilRecord", b =>
