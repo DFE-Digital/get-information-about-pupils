@@ -18,8 +18,8 @@ Each dataset has a folder, matching the old pipeline's: `census`, `eyfsp`, `ks1`
 | `<dataset>/processed/` | Zips that were processed successfully |
 | `<dataset>/error/` | Zips that failed, and duplicate uploads |
 
-A blob is never overwritten when it's moved. If the name is already taken, a UTC timestamp is added, e.g.
-`NPD_KS2_2025_U.20261120T101500Z.zip`.
+When a zip is moved, the UTC time it was moved is added to its name, e.g. `NPD_KS2_2025_U.20261120T101500Z.zip`, so
+every upload of a zip is kept. A blob is never overwritten.
 
 A zip is identified by its folder and name, e.g. `ks2/NPD_KS2_2025_U.zip`. This is the key of `ingest_files`.
 

@@ -21,6 +21,10 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
     private const string Ks2ZipName = "NPD_KS2_2025_U.zip";
     private const string Ks2FilePath = "ks2/" + Ks2ZipName;
 
+    // The time of the first and second ScanAndProcessAsync, as added to the names of the zips they move
+    private const string FirstTimestamp = "20261120T101500Z";
+    private const string SecondTimestamp = "20261120T101600Z";
+
     private readonly GiapPostgresFixture _postgres;
     private readonly BlobContainerClient _containerClient;
     private readonly FakeTimeProvider _timeProvider = new(new DateTimeOffset(2026, 11, 20, 10, 15, 0, TimeSpan.Zero));
@@ -78,7 +82,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         Assert.Equal(new IngestDataFileAttributes(IngestDataset.Ks2, "2024/2025", IngestVersion.Unamended), processed.Attributes);
         Assert.Equal("data", processed.Content);
 
-        Assert.Equal(["ks2/processed/" + Ks2ZipName], await ListBlobsAsync());
+        Assert.Equal([MovedBlobName("ks2/processed/", Ks2ZipName, FirstTimestamp)], await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -86,7 +90,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
             new
             {
                 Path = Ks2FilePath,
-                BlobName = "ks2/processed/" + Ks2ZipName,
+                BlobName = MovedBlobName("ks2/processed/", Ks2ZipName, FirstTimestamp),
                 Status = IngestFileStatus.Succeeded,
                 Error = (string?)null,
                 Attempts = 1
@@ -144,7 +148,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         await ScanAndProcessAsync();
 
         Assert.Empty(_ks2Processor.Processed);
-        Assert.Equal(["ks2/error/NPD_KS4_2025_U.zip"], await ListBlobsAsync());
+        Assert.Equal([MovedBlobName("ks2/error/", "NPD_KS4_2025_U.zip", FirstTimestamp)], await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -164,7 +168,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
         Assert.Equal(IngestFileStatus.Failed, file.Status);
         Assert.Equal("The file isn't a valid zip.", file.Error);
-        Assert.Equal(["ks2/error/" + Ks2ZipName], await ListBlobsAsync());
+        Assert.Equal([MovedBlobName("ks2/error/", Ks2ZipName, FirstTimestamp)], await ListBlobsAsync());
     }
 
     [Fact]
@@ -196,7 +200,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         Assert.Equal(
             ["NPD_Census_2425_KtS_Autumn.txt", "NPD_Census_2425_KtS_Spring.txt", "NPD_Census_2425_KtS_Summer.txt"],
             _censusProcessor.Processed.Select(p => p.Name));
-        Assert.Equal(["census/error/NPD_Census_2425.zip"], await ListBlobsAsync());
+        Assert.Equal([MovedBlobName("census/error/", "NPD_Census_2425.zip", FirstTimestamp)], await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -261,7 +265,9 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         await ScanAndProcessAsync();
 
         Assert.Single(_ks2Processor.Processed);
-        Assert.Equal(["ks2/error/" + Ks2ZipName, "ks2/processed/" + Ks2ZipName], await ListBlobsAsync());
+        Assert.Equal(
+            [MovedBlobName("ks2/error/", Ks2ZipName, SecondTimestamp), MovedBlobName("ks2/processed/", Ks2ZipName, FirstTimestamp)],
+            await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -281,7 +287,9 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         await ScanAndProcessAsync();
 
         Assert.Equal(["data", "fixed data"], _ks2Processor.Processed.Select(p => p.Content));
-        Assert.Equal(["ks2/error/" + Ks2ZipName, "ks2/processed/" + Ks2ZipName], await ListBlobsAsync());
+        Assert.Equal(
+            [MovedBlobName("ks2/error/", Ks2ZipName, FirstTimestamp), MovedBlobName("ks2/processed/", Ks2ZipName, SecondTimestamp)],
+            await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -293,7 +301,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
     }
 
     [Fact]
-    public async Task ProcessAsync_TargetAlreadyExists_AddsTimestampInsteadOfOverwriting()
+    public async Task ProcessAsync_SameZipMovedTwice_KeepsBothCopies()
     {
         _ks2Processor.FailOn = Ks2DataFileName;
         await UploadZipAsync("ks2", Ks2ZipName, (Ks2DataFileName, "data"));
@@ -302,12 +310,14 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         await UploadZipAsync("ks2", Ks2ZipName, (Ks2DataFileName, "still broken"));
         await ScanAndProcessAsync();
 
-        Assert.Equal(["ks2/error/NPD_KS2_2025_U.20261120T101500Z.zip", "ks2/error/" + Ks2ZipName], await ListBlobsAsync());
-        Assert.Equal("data", await ReadZipEntryAsync("ks2/error/" + Ks2ZipName));
-        Assert.Equal("still broken", await ReadZipEntryAsync("ks2/error/NPD_KS2_2025_U.20261120T101500Z.zip"));
+        Assert.Equal(
+            ["ks2/error/NPD_KS2_2025_U.20261120T101500Z.zip", "ks2/error/NPD_KS2_2025_U.20261120T101600Z.zip"],
+            await ListBlobsAsync());
+        Assert.Equal("data", await ReadZipEntryAsync("ks2/error/NPD_KS2_2025_U.20261120T101500Z.zip"));
+        Assert.Equal("still broken", await ReadZipEntryAsync("ks2/error/NPD_KS2_2025_U.20261120T101600Z.zip"));
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
-        Assert.Equal("ks2/error/NPD_KS2_2025_U.20261120T101500Z.zip", (await dbContext.IngestFiles.SingleAsync()).BlobName);
+        Assert.Equal("ks2/error/NPD_KS2_2025_U.20261120T101600Z.zip", (await dbContext.IngestFiles.SingleAsync()).BlobName);
     }
 
     [Fact]
@@ -319,7 +329,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         await _processor.ProcessAsync(Ks2FilePath);
 
         Assert.Equal(2, _ks2Processor.Processed.Count);
-        Assert.Equal(["ks2/processed/" + Ks2ZipName], await ListBlobsAsync());
+        Assert.Equal([MovedBlobName("ks2/processed/", Ks2ZipName, FirstTimestamp)], await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -338,7 +348,7 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         _ks2Processor.FailOn = null;
         await _processor.ProcessAsync(Ks2FilePath);
 
-        Assert.Equal(["ks2/processed/" + Ks2ZipName], await ListBlobsAsync());
+        Assert.Equal([MovedBlobName("ks2/processed/", Ks2ZipName, SecondTimestamp)], await ListBlobsAsync());
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestFile file = await dbContext.IngestFiles.SingleAsync();
@@ -400,7 +410,11 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
         }
 
         _backgroundJobClient.EnqueuedPaths.Clear();
+        _timeProvider.Advance(TimeSpan.FromMinutes(1));
     }
+
+    private static string MovedBlobName(string folder, string zipName, string timestamp) =>
+        folder + Path.GetFileNameWithoutExtension(zipName) + "." + timestamp + ".zip";
 
     private async Task UploadZipAsync(string folderName, string zipName, params (string Name, string Content)[] entries)
     {
@@ -483,6 +497,8 @@ public sealed class IngestTests : IClassFixture<AzuriteFixture>, IAsyncLifetime
 
     private sealed class FakeTimeProvider(DateTimeOffset utcNow) : TimeProvider
     {
+        public void Advance(TimeSpan duration) => utcNow += duration;
+
         public override DateTimeOffset GetUtcNow() => utcNow;
     }
 }

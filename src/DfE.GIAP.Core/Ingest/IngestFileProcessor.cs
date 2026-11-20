@@ -61,6 +61,7 @@ public class IngestFileProcessor(
             file.BlobName = await storage.MoveAsync(
                 file.BlobName,
                 folder,
+                zipName,
                 error is null ? IngestFolder.ProcessedFolderName : IngestFolder.ErrorFolderName,
                 cancellationToken);
         }

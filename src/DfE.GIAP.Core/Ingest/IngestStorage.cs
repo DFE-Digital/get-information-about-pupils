@@ -55,13 +55,16 @@ public class IngestStorage(BlobContainerClient containerClient, TimeProvider tim
     /// <summary>
     /// Moves a zip into its folder's <paramref name="targetFolderName"/> folder, and returns its new blob name.
     /// </summary>
+    /// <param name="zipName">The zip's name as it was uploaded; the new blob name is based on this, not
+    /// <paramref name="blobName"/>, so a zip moved again isn't given a second timestamp.</param>
     /// <remarks>
-    /// A blob that's already there is never overwritten; the zip is given a UTC timestamp suffix instead, e.g.
-    /// <c>NPD_KS2_2025_U.20261120T101500Z.zip</c>. A zip that's already in the target folder isn't moved.
+    /// The zip is given a suffix of the UTC time it was moved, e.g. <c>NPD_KS2_2025_U.20261120T101500Z.zip</c>, and a
+    /// blob that's already there is never overwritten. A zip that's already in the target folder isn't moved.
     /// </remarks>
     public async Task<string> MoveAsync(
         string blobName,
         IngestFolder folder,
+        string zipName,
         string targetFolderName,
         CancellationToken cancellationToken = default)
     {
@@ -73,19 +76,13 @@ public class IngestStorage(BlobContainerClient containerClient, TimeProvider tim
         }
 
         BlobClient source = containerClient.GetBlobClient(blobName);
-        string zipName = blobName[(blobName.LastIndexOf('/') + 1)..];
 
-        string targetBlobName = targetPrefix + zipName;
+        string timestamp = timeProvider.GetUtcNow().ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
+        string targetBlobName = targetPrefix + Path.GetFileNameWithoutExtension(zipName) + "." + timestamp + Path.GetExtension(zipName);
 
         if (!await TryCopyAsync(source, targetBlobName, cancellationToken))
         {
-            string timestamp = timeProvider.GetUtcNow().ToString("yyyyMMdd'T'HHmmss'Z'", CultureInfo.InvariantCulture);
-            targetBlobName = targetPrefix + Path.GetFileNameWithoutExtension(zipName) + "." + timestamp + Path.GetExtension(zipName);
-
-            if (!await TryCopyAsync(source, targetBlobName, cancellationToken))
-            {
-                throw new InvalidOperationException($"Can't move '{blobName}' because '{targetBlobName}' already exists.");
-            }
+            throw new InvalidOperationException($"Can't move '{blobName}' because '{targetBlobName}' already exists.");
         }
 
         await source.DeleteAsync(cancellationToken: cancellationToken);

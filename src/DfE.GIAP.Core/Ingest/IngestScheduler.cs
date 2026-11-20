@@ -73,7 +73,7 @@ public class IngestScheduler(
             }
             else if (file.Status == IngestFileStatus.Succeeded)
             {
-                string errorBlobName = await storage.MoveAsync(upload.BlobName, upload.Folder, IngestFolder.ErrorFolderName, cancellationToken);
+                string errorBlobName = await storage.MoveAsync(upload.BlobName, upload.Folder, upload.ZipName, IngestFolder.ErrorFolderName, cancellationToken);
 
                 logger.LogWarning(
                     "{Path} was uploaded again after it was processed successfully, so it has been moved to {BlobName} without being processed. Replay the file to process it again.",
