@@ -215,6 +215,57 @@ least as mature (`U`, then `F`). The stored data is from the last pupil premium 
 `ingest_runs`. The old pipeline had no such check, so uploading a historical file would have replaced the current
 data.
 
+## Further education
+
+`FurtherEducationDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes the FE pupil premium and FE SEN data
+files. It replaces the old pipeline's `fe_data_update_pipeline` notebook, and writes to
+`further_education_learner_records` and `further_education_learners` through `FurtherEducationDataWriter`.
+
+An FE file's name has the calendar year the academic year ends in, like an NPD file's: `FE_SEN_2026.txt` is for
+2025/2026. Its maturity is ignored; as in the old pipeline, FE files have no maturity rule.
+
+### Reading the file
+
+Files are read as for [NPD datasets](#reading-the-file): tab-separated UTF-8, with every column stored as a trimmed
+string in the record's `data`, dots in column names replaced with underscores, and `DOB` parsed day-first and written
+as `yyyy-MM-ddT00:00:00.000Z`. The file must have the old pipeline's columns: `ULN`, `Surname`, `Forename`, `Sex`,
+`DOB` and `ACAD_YEAR`. (The old pipeline's FE pupil premium columns had `Sex` misspelt as `Sec`.)
+
+A learner with more than one row gets a single record whose `data` is an array of their rows in file order. The
+record's identifying fields come from their first row.
+
+FE files write `ACAD_YEAR` as e.g. `2025/26`; `2025/2026` is also accepted. Records are stored under the file's
+academic year in full, e.g. `2025/2026`, but `data` keeps `ACAD_YEAR` as it is in the file. A row with no academic year
+keeps `null` in `data`, but its record is stored under the file's academic year.
+
+### Rejected rows and failed files
+
+| Problem | Outcome |
+| --- | --- |
+| The file is empty, is missing one of the columns above, or has two columns with the same name | The data file fails |
+| A row has no ULN | The row is rejected |
+| A row's DOB isn't a valid date | The row is rejected |
+| A row's `ACAD_YEAR` isn't the one in the file's name, as `2025/26` or `2025/2026` | The row is rejected |
+| Every row is rejected, or there are no rows | The data file fails, with the first rejected row's reasons |
+
+The ULN's format isn't checked, as in the old pipeline. The old pipeline stored each row under its own `ACAD_YEAR`, so
+a file could cover more than one academic year; every row must now be for the file's academic year.
+
+### Writing the records
+
+- An FE pupil premium file replaces **all** FE data, SEN included, as the old pipeline emptied the container before
+  each one. Afterwards, `further_education_learners` has exactly the learners in the file. Any SEN files need to be
+  uploaded again after it.
+- An FE SEN file replaces the SEN records for its academic year. A learner that has a SEN record for the year but
+  isn't in the file loses it; the old pipeline merged SEN files into the stored data, so they kept it.
+- A learner left with no records is removed.
+- The identifying fields on `further_education_learners` come from a pupil premium record if the learner has one, then
+  from the latest academic year, then from the record that was loaded first. The old pipeline meant to prefer pupil
+  premium records, but its check never matched.
+
+There's no check against the stored data: any FE file is written, even one for an earlier academic year. Writing the
+same file again leaves the same data, so replaying a file is safe.
+
 ## Replaying files
 
 Processing a file again reprocesses every data file in it from wherever the zip is now. A zip that succeeds is moved
