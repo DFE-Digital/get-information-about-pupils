@@ -186,9 +186,9 @@ To run it with automatic rebuilds while editing, use `just watch-giap-worker` fr
 uses the Worker project's launch profile (`Local`), which reads the same User Secrets as the web app.
 
 The Worker also requires the `ConnectionStrings:IngestStorage` connection string, for the blob storage that the file
-ingestion job reads uploads from and publishes metadata documents to. Locally, run [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite)
-and use its well-known connection string; the Worker creates the `ingest` and `metadata` containers on startup in the
-`Local` environment:
+ingestion job reads uploads from and publishes metadata documents and prepared downloads to. Locally, run
+[Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite) and use its well-known connection
+string; the Worker creates the `ingest`, `metadata` and `downloads` containers on startup in the `Local` environment:
 
 ```sh
 just set-secret ConnectionStrings:IngestStorage "UseDevelopmentStorage=true"

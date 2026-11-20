@@ -17,6 +17,9 @@ public static class CompositionRoot
             sp.GetRequiredService<TimeProvider>()));
         services.TryAddSingleton(new IngestMetadataPublisher(
             new BlobContainerClient(storageConnectionString, IngestMetadataPublisher.ContainerName)));
+        services.TryAddSingleton(new PreparedDownloadPublisher(
+            new BlobContainerClient(storageConnectionString, PreparedDownloadPublisher.ContainerName)));
+        services.TryAddTransient<PreparedDownloadWriter>();
         services.TryAddSingleton<IngestDatasetProcessorRegistry>();
         services.TryAddTransient<IngestScheduler>();
         services.TryAddTransient<IngestFileProcessor>();

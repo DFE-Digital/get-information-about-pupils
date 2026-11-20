@@ -33,3 +33,10 @@ resource "azurerm_storage_container" "metadata" {
   storage_account_id    = azurerm_storage_account.ingest.id
   container_access_type = "private"
 }
+
+# Holds the prepared downloads written from ingested data files
+resource "azurerm_storage_container" "downloads" {
+  name                  = "downloads"
+  storage_account_id    = azurerm_storage_account.ingest.id
+  container_access_type = "private"
+}
