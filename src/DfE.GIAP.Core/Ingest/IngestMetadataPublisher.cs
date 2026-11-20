@@ -3,15 +3,19 @@ using Azure.Storage.Blobs;
 namespace DfE.GIAP.Core.Ingest;
 
 /// <summary>
-/// Publishes the metadata documents shipped in uploaded zips to the downloads container, where the Glossary page lists
-/// them for users to download.
+/// Publishes the metadata documents shipped in uploaded zips to the <c>metadata</c> container, in the same storage
+/// account as the <c>ingest</c> container.
 /// </summary>
-public class IngestMetadataPublisher(BlobContainerClient downloadsContainerClient)
+/// <remarks>
+/// The Glossary page still lists the documents the old pipeline publishes to the old downloads storage account; it will
+/// read from this container once the new pipeline is live.
+/// </remarks>
+public class IngestMetadataPublisher(BlobContainerClient containerClient)
 {
-    public const string ContainerName = "giapdownloads";
+    public const string ContainerName = "metadata";
 
-    // The folder the Glossary page lists; see BlobStoragePathContext
-    public const string FolderPath = "AllUsers/Metadata/";
+    public Task CreateContainerIfNotExistsAsync(CancellationToken cancellationToken = default) =>
+        containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
     /// <summary>
     /// Uploads a metadata document, replacing any document that's already there with the same name.
@@ -21,6 +25,6 @@ public class IngestMetadataPublisher(BlobContainerClient downloadsContainerClien
         ArgumentException.ThrowIfNullOrEmpty(name);
         ArgumentNullException.ThrowIfNull(content);
 
-        await downloadsContainerClient.GetBlobClient(FolderPath + name).UploadAsync(content, overwrite: true, cancellationToken);
+        await containerClient.GetBlobClient(name).UploadAsync(content, overwrite: true, cancellationToken);
     }
 }

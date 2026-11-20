@@ -186,22 +186,12 @@ To run it with automatic rebuilds while editing, use `just watch-giap-worker` fr
 uses the Worker project's launch profile (`Local`), which reads the same User Secrets as the web app.
 
 The Worker also requires the `ConnectionStrings:IngestStorage` connection string, for the blob storage that the file
-ingestion job reads uploads from. Locally, run [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite)
-and use its well-known connection string; the Worker creates the `ingest` container on startup in the `Local`
-environment:
+ingestion job reads uploads from and publishes metadata documents to. Locally, run [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite)
+and use its well-known connection string; the Worker creates the `ingest` and `metadata` containers on startup in the
+`Local` environment:
 
 ```sh
 just set-secret ConnectionStrings:IngestStorage "UseDevelopmentStorage=true"
-```
-
-It also requires `BlobStorageOptions` for the downloads storage account, as the file ingestion job publishes metadata
-documents to it. The Worker has no defaults for these, so set all of them:
-
-```sh
-just set-secret BlobStorageOptions:AccountName "<local storage account name>"
-just set-secret BlobStorageOptions:AccountKey "<local storage key>"
-just set-secret BlobStorageOptions:ContainerName "giapdownloads"
-just set-secret BlobStorageOptions:EndpointSuffix "core.windows.net"
 ```
 
 #### File ingestion

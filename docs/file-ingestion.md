@@ -81,7 +81,7 @@ flowchart TD
     next -- Yes --> entries
     next -- No --> anyfailed{Did any run fail?}
     anyfailed -- Yes --> zipfail
-    anyfailed -- No --> publish[Publish the zip's metadata documents to the downloads container]
+    anyfailed -- No --> publish[Publish the zip's metadata documents to the metadata container]
     publish -- fails --> zipfail
     publish --> succeeded[Move the zip to processed/ and mark the file Succeeded]
     succeeded --> done([Job succeeds])
@@ -97,14 +97,15 @@ Each data file is committed separately. A zip whose data files partly fail still
 Zips usually contain documents alongside the data files that describe the dataset, such as its columns and the codes
 used in them. Any `.xlsx`, `.doc` or `.docx` file in a zip is a metadata document; it isn't processed as a data file.
 
-Users read these documents on the Glossary page (`GlossaryController`), which lists everything in `AllUsers/Metadata/`
-in the `giapdownloads` container of the downloads storage account (the account in `BlobStorageOptions`), newest first,
-and lets users download them.
+Users read these documents on the Glossary page (`GlossaryController`), which lists them newest first and lets users
+download them. It currently lists the documents the old pipeline publishes to `AllUsers/Metadata/` in the
+`giapdownloads` container of the old downloads storage account. When the new pipeline goes live, the Glossary page
+will need to read from the new pipeline's `metadata` container instead.
 
-Once every data file in a zip has succeeded, `IngestMetadataPublisher` copies the zip's metadata documents to
-`AllUsers/Metadata/`, named as they are in the zip without any folders. A document with the same name as one that's
-already there replaces it, as it did in the old pipeline. Hidden files such as macOS's `__MACOSX/` and `._` files are
-skipped.
+Once every data file in a zip has succeeded, `IngestMetadataPublisher` copies the zip's metadata documents to the
+`metadata` container, in the same storage account as the `ingest` container. They're named as they are in the zip,
+without any folders. A document with the same name as one that's already there replaces it, as it did in the old
+pipeline. Hidden files such as macOS's `__MACOSX/` and `._` files are skipped.
 
 - A zip with a failed data file doesn't publish its documents.
 - If publishing a document fails, the zip fails and is moved to `error/`. The data files have already been committed.

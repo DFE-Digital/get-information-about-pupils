@@ -20,21 +20,21 @@ public sealed class NpdIngestTests : IClassFixture<AzuriteFixture>, IAsyncLifeti
 
     private readonly GiapPostgresFixture _postgres;
     private readonly BlobContainerClient _containerClient;
-    private readonly BlobContainerClient _downloadsContainerClient;
+    private readonly BlobContainerClient _metadataContainerClient;
     private readonly IngestFileProcessor _processor;
 
     public NpdIngestTests(GiapPostgresFixture postgres, AzuriteFixture azurite)
     {
         _postgres = postgres;
         _containerClient = new BlobContainerClient(azurite.ConnectionString, IngestStorage.ContainerName);
-        _downloadsContainerClient = new BlobContainerClient(azurite.ConnectionString, IngestMetadataPublisher.ContainerName);
+        _metadataContainerClient = new BlobContainerClient(azurite.ConnectionString, IngestMetadataPublisher.ContainerName);
 
         GiapPostgresDbContextFactory dbContextFactory = new(postgres);
 
         _processor = new IngestFileProcessor(
             new IngestStorage(_containerClient, TimeProvider.System),
             new IngestDatasetProcessorRegistry([new NpdDatasetProcessor(new NpdDataWriter(dbContextFactory))]),
-            new IngestMetadataPublisher(_downloadsContainerClient),
+            new IngestMetadataPublisher(_metadataContainerClient),
             dbContextFactory,
             TimeProvider.System,
             NullLogger<IngestFileProcessor>.Instance);
@@ -44,8 +44,8 @@ public sealed class NpdIngestTests : IClassFixture<AzuriteFixture>, IAsyncLifeti
     {
         await _containerClient.DeleteIfExistsAsync();
         await _containerClient.CreateAsync();
-        await _downloadsContainerClient.DeleteIfExistsAsync();
-        await _downloadsContainerClient.CreateAsync();
+        await _metadataContainerClient.DeleteIfExistsAsync();
+        await _metadataContainerClient.CreateAsync();
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         await dbContext.IngestRejectedRows.ExecuteDeleteAsync();
@@ -95,7 +95,7 @@ public sealed class NpdIngestTests : IClassFixture<AzuriteFixture>, IAsyncLifeti
             JsonNode.Parse(record.Data)));
         Assert.Equal("P1", (await dbContext.NpdPupils.SingleAsync()).PupilMatchingRef);
 
-        Assert.True(await _downloadsContainerClient.GetBlobClient("AllUsers/Metadata/Census metadata.xlsx").ExistsAsync());
+        Assert.True(await _metadataContainerClient.GetBlobClient("Census metadata.xlsx").ExistsAsync());
     }
 
     [Fact]

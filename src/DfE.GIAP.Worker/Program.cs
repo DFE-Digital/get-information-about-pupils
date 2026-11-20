@@ -66,8 +66,9 @@ IHost host = builder.Build();
 
 if (builder.Environment.IsEnvironment("Local"))
 {
-    // The container is created by Terraform in deployed environments
+    // The containers are created by Terraform in deployed environments
     await host.Services.GetRequiredService<IngestStorage>().CreateContainerIfNotExistsAsync();
+    await host.Services.GetRequiredService<IngestMetadataPublisher>().CreateContainerIfNotExistsAsync();
 }
 
 await host.RunAsync();
