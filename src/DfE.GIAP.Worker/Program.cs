@@ -3,6 +3,7 @@ using DfE.GIAP.Core.Common.Infrastructure.Postgres;
 using DfE.GIAP.Core.Gias;
 using DfE.GIAP.Core.Ingest;
 using DfE.GIAP.Core.Jobs;
+using DfE.GIAP.Core.PupilData;
 using DfE.GIAP.Worker.Jobs;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -34,7 +35,8 @@ string ingestStorageConnectionString = builder.Configuration.GetConnectionString
 builder.Services
     .AddGiapDbContext(postgresConnectionString)
     .AddGiasDependencies()
-    .AddIngestDependencies(ingestStorageConnectionString);
+    .AddIngestDependencies(ingestStorageConnectionString)
+    .AddPupilDataDependencies();
 
 builder.Services
     .AddHangfire(configuration => configuration
