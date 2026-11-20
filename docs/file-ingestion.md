@@ -111,6 +111,47 @@ pipeline. Hidden files such as macOS's `__MACOSX/` and `._` files are skipped.
 - If publishing a document fails, the zip fails and is moved to `error/`. The data files have already been committed.
 - Replaying a zip publishes its documents again.
 
+## Prepared downloads
+
+Some datasets are also split into a CSV file for each LA, school or trust, which users download from the Prepared
+Downloads page (`PreparedDownloadsController`). The page maps the user's organisation to a folder
+(`BlobStoragePathContext`), lists the files in it and shows each one's last modified time as its date. It currently
+lists the files the old pipeline writes to the `giapdownloads` container of the old downloads storage account. When the
+new pipeline goes live, the page will need to read from the new pipeline's `downloads` container instead, and the
+files already in `giapdownloads` will need to be copied across so users keep their history.
+
+`PreparedDownloadWriter` writes the files to the `downloads` container, in the same storage account as the `ingest`
+container, with the old pipeline's layout:
+
+| Folder | Contents |
+| --- | --- |
+| `LA/<LA code>/` | Files for an LA |
+| `School/<URN>/` | Files for a school |
+| `MAT/<group UID>/` | Files for a multi-academy trust |
+| `SAT/<group UID>/` | Files for a single-academy trust |
+
+A file replaces any file with the same name, so replaying a data file writes the same files again. Files with other
+names, such as earlier years, are kept, so each folder is a history of the files the organisation has been sent. A
+file is never deleted, even if a later data file has no rows for its organisation.
+
+The rows are streamed into a temporary table and grouped into files in Postgres, so a data file is never held in
+memory. A trust's rows are found by joining each row's URN to the GIAS data in `establishment_groups` and
+`establishment_group_links`, as it is when the data file is processed: a trust is an open group (`GroupStatusCode`
+`OPEN`) of type 6 (MAT) or 10 (SAT), and its rows are those of every establishment linked to it. An establishment
+linked to more than one trust is in each trust's file.
+
+Files are UTF-8 without a BOM, with `\n` line endings. Values are written as they are in the data file (trimmed), and
+only quoted if they contain a comma, quote or line break; an empty value is empty. A file's rows are in the order
+they're in the data file. A row with no LA, URN or other key isn't written to that kind of file, and a warning with
+the number of rows is logged.
+
+These are the deliberate differences from the old pipeline, which wrote the files with Spark:
+
+- Rows are in data file order; Spark wrote them in whatever order its partitions came back in.
+- Values aren't converted to the types Spark inferred. E.g. a value with leading zeros keeps them, and a date that
+  isn't reformatted (see below) is written as it is in the file, not as a Spark timestamp.
+- Rows with no key are left out, rather than written to a `__HIVE_DEFAULT_PARTITION__` folder.
+
 ## NPD datasets
 
 `NpdDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes the NPD data files: census (autumn, spring and

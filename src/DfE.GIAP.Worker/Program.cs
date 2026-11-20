@@ -69,6 +69,7 @@ if (builder.Environment.IsEnvironment("Local"))
     // The containers are created by Terraform in deployed environments
     await host.Services.GetRequiredService<IngestStorage>().CreateContainerIfNotExistsAsync();
     await host.Services.GetRequiredService<IngestMetadataPublisher>().CreateContainerIfNotExistsAsync();
+    await host.Services.GetRequiredService<PreparedDownloadPublisher>().CreateContainerIfNotExistsAsync();
 }
 
 await host.RunAsync();
