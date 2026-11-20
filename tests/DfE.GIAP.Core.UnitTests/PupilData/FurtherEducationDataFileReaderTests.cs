@@ -7,7 +7,7 @@ namespace DfE.GIAP.Core.UnitTests.PupilData;
 
 public class FurtherEducationDataFileReaderTests
 {
-    private const string AcademicYear = "2024/2025";
+    private const string AcademicYear = "2025/2026";
     private const string Header = "ULN\tSurname\tForename\tSex\tDOB\tACAD_YEAR";
 
     [Fact]
@@ -16,7 +16,7 @@ public class FurtherEducationDataFileReaderTests
         // The columns are in a different order to the old pipeline's, and lower case
         (FurtherEducationFileRow[] rows, _) = await ReadAsync(
             "acad_year\tdob\tsex\tforename\tsurname\tuln\tNCYear\n" +
-            "2024/2025\t01/02/2005\tM\tAlex\tSmith\t1234567890\t12");
+            "2025/26\t01/02/2005\tM\tAlex\tSmith\t1234567890\t12");
 
         FurtherEducationFileRow row = Assert.Single(rows);
         Assert.Equal(
@@ -32,7 +32,7 @@ public class FurtherEducationDataFileReaderTests
         Assert.True(JsonNode.DeepEquals(
             JsonNode.Parse(
                 """
-                {"acad_year": "2024/2025", "dob": "2005-02-01T00:00:00.000Z", "sex": "M", "forename": "Alex", "surname": "Smith", "uln": "1234567890", "NCYear": "12"}
+                {"acad_year": "2025/26", "dob": "2005-02-01T00:00:00.000Z", "sex": "M", "forename": "Alex", "surname": "Smith", "uln": "1234567890", "NCYear": "12"}
                 """),
             JsonNode.Parse(row.Data)));
     }
@@ -67,7 +67,7 @@ public class FurtherEducationDataFileReaderTests
     public async Task ReadRowsAsync_NoUln_RejectsRowWithEveryReason()
     {
         (FurtherEducationFileRow[] rows, FurtherEducationDataFileReader reader) = await ReadAsync(
-            Header + "\n" + Row(" ", dob: "31/02/2005", academicYear: "2023/2024") + "\n" + Row("2"));
+            Header + "\n" + Row(" ", dob: "31/02/2005", academicYear: "2024/25") + "\n" + Row("2"));
 
         Assert.Equal(["2"], rows.Select(r => r.Uln));
         Assert.Equal(2, reader.RowsRead);
@@ -77,10 +77,36 @@ public class FurtherEducationDataFileReaderTests
             [
                 "ULN is missing.",
                 "DOB isn't a valid date: '31/02/2005'.",
-                "ACAD_YEAR '2023/2024' doesn't match the file's academic year, 2024/2025."
+                "ACAD_YEAR '2024/25' doesn't match the file's academic year, 2025/2026."
             ],
             rejection.Reasons);
-        Assert.Equal("2023/2024", rejection.Row["ACAD_YEAR"]);
+        Assert.Equal("2024/25", rejection.Row["ACAD_YEAR"]);
+    }
+
+    [Theory]
+    [InlineData("2025/26")]
+    [InlineData("2025/2026")]
+    public async Task ReadRowsAsync_FilesAcademicYear_IsWrittenAsItIsInData(string academicYear)
+    {
+        (FurtherEducationFileRow[] rows, _) = await ReadAsync(Header + "\n" + Row(academicYear: academicYear));
+
+        Assert.Equal(academicYear, JsonNode.Parse(Assert.Single(rows).Data)!["ACAD_YEAR"]!.GetValue<string>());
+    }
+
+    [Theory]
+    [InlineData("2025/27")]
+    [InlineData("2026/27")]
+    [InlineData("25/26")]
+    [InlineData("2526")]
+    public async Task ReadRowsAsync_OtherAcademicYear_RejectsRow(string academicYear)
+    {
+        (FurtherEducationFileRow[] rows, FurtherEducationDataFileReader reader) = await ReadAsync(
+            Header + "\n" + Row(academicYear: academicYear));
+
+        Assert.Empty(rows);
+        Assert.Equal(
+            [$"ACAD_YEAR '{academicYear}' doesn't match the file's academic year, 2025/2026."],
+            Assert.Single(reader.RejectedRows).Reasons);
     }
 
     [Fact]
@@ -111,7 +137,7 @@ public class FurtherEducationDataFileReaderTests
         Assert.Equal("0.5", data["FTE"]!.GetValue<string>());
     }
 
-    private static string Row(string uln = "1", string dob = "2005-02-01", string academicYear = AcademicYear) =>
+    private static string Row(string uln = "1", string dob = "2005-02-01", string academicYear = "2025/26") =>
         $"{uln}\tSmith\tAlex\tM\t{dob}\t{academicYear}";
 
     private static async Task<(FurtherEducationFileRow[] Rows, FurtherEducationDataFileReader Reader)> ReadAsync(string content)

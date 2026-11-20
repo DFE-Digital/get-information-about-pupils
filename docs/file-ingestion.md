@@ -221,8 +221,8 @@ data.
 files. It replaces the old pipeline's `fe_data_update_pipeline` notebook, and writes to
 `further_education_learner_records` and `further_education_learners` through `FurtherEducationDataWriter`.
 
-An FE file's name has the calendar year the academic year ends in, like an NPD file's: `FE_PP_2025.txt` is for
-2024/2025. Its maturity is ignored; as in the old pipeline, FE files have no maturity rule.
+An FE file's name has the calendar year the academic year ends in, like an NPD file's: `FE_SEN_2026.txt` is for
+2025/2026. Its maturity is ignored; as in the old pipeline, FE files have no maturity rule.
 
 ### Reading the file
 
@@ -232,8 +232,11 @@ as `yyyy-MM-ddT00:00:00.000Z`. The file must have the old pipeline's columns: `U
 `DOB` and `ACAD_YEAR`. (The old pipeline's FE pupil premium columns had `Sex` misspelt as `Sec`.)
 
 A learner with more than one row gets a single record whose `data` is an array of their rows in file order. The
-record's identifying fields come from their first row. A row with no academic year keeps `null` in `data`, but its
-record is stored under the file's academic year.
+record's identifying fields come from their first row.
+
+FE files write `ACAD_YEAR` as e.g. `2025/26`; `2025/2026` is also accepted. Records are stored under the file's
+academic year in full, e.g. `2025/2026`, but `data` keeps `ACAD_YEAR` as it is in the file. A row with no academic year
+keeps `null` in `data`, but its record is stored under the file's academic year.
 
 ### Rejected rows and failed files
 
@@ -242,7 +245,7 @@ record is stored under the file's academic year.
 | The file is empty, is missing one of the columns above, or has two columns with the same name | The data file fails |
 | A row has no ULN | The row is rejected |
 | A row's DOB isn't a valid date | The row is rejected |
-| A row's `ACAD_YEAR` isn't the one in the file's name | The row is rejected |
+| A row's `ACAD_YEAR` isn't the one in the file's name, as `2025/26` or `2025/2026` | The row is rejected |
 | Every row is rejected, or there are no rows | The data file fails, with the first rejected row's reasons |
 
 The ULN's format isn't checked, as in the old pipeline. The old pipeline stored each row under its own `ACAD_YEAR`, so

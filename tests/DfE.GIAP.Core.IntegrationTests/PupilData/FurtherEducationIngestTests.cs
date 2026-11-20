@@ -62,11 +62,11 @@ public sealed class FurtherEducationIngestTests : IClassFixture<AzuriteFixture>,
     {
         await UploadAndProcessAsync(
             "fe_pp",
-            "FE_PP_2025.zip",
-            ("FE_PP_2025.txt",
+            "FE_PP_2026.zip",
+            ("FE_PP_2026.txt",
                 Header + "\tFTE\n" +
-                "1\tSmith\tAlex\tM\t01/02/2005\t2024/2025\t1\n" +
-                "2\tJones\tSam\tF\t2005-03-01\t2023/2024\t1\n" +
+                "1\tSmith\tAlex\tM\t01/02/2005\t2025/26\t1\n" +
+                "2\tJones\tSam\tF\t2005-03-01\t2024/25\t1\n" +
                 "1\tSmith\tAlex\tM\t01/02/2005\t\t0.5\n"),
             ("FE pupil premium metadata.xlsx", "metadata"));
 
@@ -75,23 +75,23 @@ public sealed class FurtherEducationIngestTests : IClassFixture<AzuriteFixture>,
 
         IngestRun run = await dbContext.IngestRuns.SingleAsync();
         Assert.Equal(
-            (IngestDataset.FurtherEducationPupilPremium, "2024/2025", IngestVersion.Unamended),
+            (IngestDataset.FurtherEducationPupilPremium, "2025/2026", IngestVersion.Unamended),
             (run.Dataset, run.AcademicYear, run.IngestVersion));
         Assert.Equal((3, 1, 0, 1), (run.RecordsRead, run.RecordsWritten, run.RecordsRemoved, run.RecordsRejected));
 
         IngestRejectedRow rejected = await dbContext.IngestRejectedRows.SingleAsync();
         Assert.Equal(2, rejected.RowNumber);
-        Assert.Equal(["ACAD_YEAR '2023/2024' doesn't match the file's academic year, 2024/2025."], rejected.Reasons);
+        Assert.Equal(["ACAD_YEAR '2024/25' doesn't match the file's academic year, 2025/2026."], rejected.Reasons);
 
         FurtherEducationLearnerRecord record = await dbContext.FurtherEducationLearnerRecords.SingleAsync();
         Assert.Equal(
-            ("1", FurtherEducationDataset.PupilPremium, "2024/2025", new DateOnly(2005, 2, 1)),
+            ("1", FurtherEducationDataset.PupilPremium, "2025/2026", new DateOnly(2005, 2, 1)),
             (record.Uln, record.Dataset, record.AcademicYear, record.Dob));
         Assert.True(JsonNode.DeepEquals(
             JsonNode.Parse(
                 """
                 [
-                    {"ULN": "1", "Surname": "Smith", "Forename": "Alex", "Sex": "M", "DOB": "2005-02-01T00:00:00.000Z", "ACAD_YEAR": "2024/2025", "FTE": "1"},
+                    {"ULN": "1", "Surname": "Smith", "Forename": "Alex", "Sex": "M", "DOB": "2005-02-01T00:00:00.000Z", "ACAD_YEAR": "2025/26", "FTE": "1"},
                     {"ULN": "1", "Surname": "Smith", "Forename": "Alex", "Sex": "M", "DOB": "2005-02-01T00:00:00.000Z", "ACAD_YEAR": null, "FTE": "0.5"}
                 ]
                 """),
@@ -104,20 +104,20 @@ public sealed class FurtherEducationIngestTests : IClassFixture<AzuriteFixture>,
     [Fact]
     public async Task ProcessAsync_SenZip_WritesRecords()
     {
-        await UploadAndProcessAsync("fe_sen", "FE_SEN_2025.zip", ("FE_SEN_2025.txt", Header + "\n" + Row("1")));
+        await UploadAndProcessAsync("fe_sen", "FE_SEN_2026.zip", ("FE_SEN_2026.txt", Header + "\n" + Row("1")));
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         FurtherEducationLearnerRecord record = await dbContext.FurtherEducationLearnerRecords.SingleAsync();
         Assert.Equal(
-            ("1", FurtherEducationDataset.SpecialEducationalNeeds, "2024/2025"),
+            ("1", FurtherEducationDataset.SpecialEducationalNeeds, "2025/2026"),
             (record.Uln, record.Dataset, record.AcademicYear));
     }
 
     [Fact]
     public async Task ProcessAsync_LessMatureFile_IsWritten()
     {
-        await UploadAndProcessAsync("fe_sen", "FE_SEN_2025_F.zip", ("FE_SEN_2025_F.txt", Header + "\n" + Row("1")));
-        await UploadAndProcessAsync("fe_sen", "FE_SEN_2025_U.zip", ("FE_SEN_2025_U.txt", Header + "\n" + Row("2")));
+        await UploadAndProcessAsync("fe_sen", "FE_SEN_2026_F.zip", ("FE_SEN_2026_F.txt", Header + "\n" + Row("1")));
+        await UploadAndProcessAsync("fe_sen", "FE_SEN_2026_U.zip", ("FE_SEN_2026_U.txt", Header + "\n" + Row("2")));
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         Assert.All(await dbContext.IngestRuns.ToListAsync(), r => Assert.Equal(IngestRunStatus.Succeeded, r.Status));
@@ -127,7 +127,7 @@ public sealed class FurtherEducationIngestTests : IClassFixture<AzuriteFixture>,
     [Fact]
     public async Task ProcessAsync_EveryRowRejected_FailsDataFile()
     {
-        await UploadAndProcessAsync("fe_pp", "FE_PP_2025.zip", ("FE_PP_2025.txt", Header + "\n" + Row("")));
+        await UploadAndProcessAsync("fe_pp", "FE_PP_2026.zip", ("FE_PP_2026.txt", Header + "\n" + Row("")));
 
         await using GiapDbContext dbContext = _postgres.CreateDbContext();
         IngestRun run = await dbContext.IngestRuns.SingleAsync();
@@ -139,10 +139,10 @@ public sealed class FurtherEducationIngestTests : IClassFixture<AzuriteFixture>,
     [Fact]
     public async Task ProcessAsync_Replay_LeavesTheSameData()
     {
-        await UploadAndProcessAsync("fe_pp", "FE_PP_2025.zip", ("FE_PP_2025.txt", Header + "\n" + Row("1")));
+        await UploadAndProcessAsync("fe_pp", "FE_PP_2026.zip", ("FE_PP_2026.txt", Header + "\n" + Row("1")));
         FurtherEducationLearnerRecord before = await GetRecordAsync();
 
-        await _processor.ProcessAsync("fe_pp/FE_PP_2025.zip");
+        await _processor.ProcessAsync("fe_pp/FE_PP_2026.zip");
 
         Assert.Equivalent(before, await GetRecordAsync());
 
@@ -153,7 +153,7 @@ public sealed class FurtherEducationIngestTests : IClassFixture<AzuriteFixture>,
         }
     }
 
-    private static string Row(string uln) => $"{uln}\tSmith\tAlex\tM\t2005-02-01\t2024/2025";
+    private static string Row(string uln) => $"{uln}\tSmith\tAlex\tM\t2005-02-01\t2025/26";
 
     private async Task UploadAndProcessAsync(string folder, string zipName, params (string Name, string Content)[] entries)
     {

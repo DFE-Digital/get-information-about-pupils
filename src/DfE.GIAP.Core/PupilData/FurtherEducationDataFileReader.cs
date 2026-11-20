@@ -8,8 +8,9 @@ namespace DfE.GIAP.Core.PupilData;
 /// </summary>
 /// <remarks>
 /// Matches the old pipeline's reading and quality checks; see <see cref="DataFileReader"/> for how the file is read.
-/// A row is rejected if its ULN is empty, its DOB isn't a valid date or its academic year isn't the file's. A row
-/// with no academic year is given the file's, but its <see cref="FurtherEducationFileRow.Data"/> is left as it is.
+/// A row is rejected if its ULN is empty, its DOB isn't a valid date or its academic year isn't the file's, written
+/// as e.g. <c>2025/26</c> or <c>2025/2026</c>. A row with no academic year is given the file's. A row's
+/// <see cref="FurtherEducationFileRow.Data"/> keeps its academic year as it is.
 /// </remarks>
 public sealed class FurtherEducationDataFileReader : IDisposable
 {
@@ -26,6 +27,9 @@ public sealed class FurtherEducationDataFileReader : IDisposable
 
     private readonly DataFileReader _reader;
     private readonly string _academicYear;
+
+    // FE files write academic years as e.g. 2025/26
+    private readonly string _shortAcademicYear;
     private readonly int _uln;
     private readonly int _surname;
     private readonly int _forename;
@@ -37,6 +41,7 @@ public sealed class FurtherEducationDataFileReader : IDisposable
     {
         _reader = reader;
         _academicYear = academicYear;
+        _shortAcademicYear = $"{academicYear[..5]}{academicYear[^2..]}";
         _uln = reader.GetColumn(UlnColumn);
         _surname = reader.GetColumn(SurnameColumn);
         _forename = reader.GetColumn(ForenameColumn);
@@ -108,7 +113,7 @@ public sealed class FurtherEducationDataFileReader : IDisposable
         }
 
         string? academicYear = values[_academicYearIndex];
-        if (academicYear is not null && academicYear != _academicYear)
+        if (academicYear is not null && academicYear != _shortAcademicYear && academicYear != _academicYear)
         {
             reasons.Add($"{_reader.Header[_academicYearIndex]} '{academicYear}' doesn't match the file's academic year, {_academicYear}.");
         }
