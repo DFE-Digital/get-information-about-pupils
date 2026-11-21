@@ -33,7 +33,10 @@ public sealed class IngestFolder
         new("phonics", "NPD_PHONICS_", IngestDataset.Phonics),
         new("pupil-premium", "NPD_pupil-premium_", IngestDataset.PupilPremium),
         new("fe_pp", "FE_PP_", IngestDataset.FurtherEducationPupilPremium),
-        new("fe_sen", "FE_SEN_", IngestDataset.FurtherEducationSpecialEducationalNeeds)
+        new("fe_sen", "FE_SEN_", IngestDataset.FurtherEducationSpecialEducationalNeeds),
+        // The old pipeline's cla/ks2 and cla/ks4 folders; a folder name can't contain a /
+        new("cla-ks2", "GIAP_CLA_KS2_", IngestDataset.ChildrenLookedAfterKs2),
+        new("cla-ks4", "GIAP_CLA_KS4_", IngestDataset.ChildrenLookedAfterKs4)
     ];
 
     public string Name { get; }

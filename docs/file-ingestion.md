@@ -10,7 +10,8 @@ The file ingestion job processes the zips of data files uploaded to the `ingest`
 ## Container layout
 
 Each dataset has a folder, matching the old pipeline's: `census`, `eyfsp`, `ks1`, `ks2`, `ks4`, `mtc`, `phonics`,
-`pupil-premium`, `fe_pp` and `fe_sen`. Each folder has:
+`pupil-premium`, `fe_pp`, `fe_sen`, `cla-ks2` and `cla-ks4` (the old pipeline's `cla/ks2` and `cla/ks4`). Each
+folder has:
 
 | Folder | Contents |
 | --- | --- |
@@ -111,6 +112,47 @@ pipeline. Hidden files such as macOS's `__MACOSX/` and `._` files are skipped.
 - If publishing a document fails, the zip fails and is moved to `error/`. The data files have already been committed.
 - Replaying a zip publishes its documents again.
 
+## Prepared downloads
+
+Some datasets are also split into a CSV file for each LA, school or trust, which users download from the Prepared
+Downloads page (`PreparedDownloadsController`). The page maps the user's organisation to a folder
+(`BlobStoragePathContext`), lists the files in it and shows each one's last modified time as its date. It currently
+lists the files the old pipeline writes to the `giapdownloads` container of the old downloads storage account. When the
+new pipeline goes live, the page will need to read from the new pipeline's `downloads` container instead, and the
+files already in `giapdownloads` will need to be copied across so users keep their history.
+
+`PreparedDownloadWriter` writes the files to the `downloads` container, in the same storage account as the `ingest`
+container, with the old pipeline's layout:
+
+| Folder | Contents |
+| --- | --- |
+| `LA/<LA code>/` | Files for an LA |
+| `School/<URN>/` | Files for a school |
+| `MAT/<group UID>/` | Files for a multi-academy trust |
+| `SAT/<group UID>/` | Files for a single-academy trust |
+
+A file replaces any file with the same name, so replaying a data file writes the same files again. Files with other
+names, such as earlier years, are kept, so each folder is a history of the files the organisation has been sent. A
+file is never deleted, even if a later data file has no rows for its organisation.
+
+The rows are streamed into a temporary table and grouped into files in Postgres, so a data file is never held in
+memory. A trust's rows are found by joining each row's URN to the GIAS data in `establishment_groups` and
+`establishment_group_links`, as it is when the data file is processed: a trust is an open group (`GroupStatusCode`
+`OPEN`) of type 6 (MAT) or 10 (SAT), and its rows are those of every establishment linked to it. An establishment
+linked to more than one trust is in each trust's file.
+
+Files are UTF-8 without a BOM, with `\n` line endings. Values are written as they are in the data file (trimmed), and
+only quoted if they contain a comma, quote or line break; an empty value is empty. A file's rows are in the order
+they're in the data file. A row with no LA, URN or other key isn't written to that kind of file, and a warning with
+the number of rows is logged.
+
+These are the deliberate differences from the old pipeline, which wrote the files with Spark:
+
+- Rows are in data file order; Spark wrote them in whatever order its partitions came back in.
+- Values aren't converted to the types Spark inferred. E.g. a value with leading zeros keeps them, and a date that
+  isn't reformatted is written as it is in the data file.
+- Rows with no key are left out, rather than written to a `__HIVE_DEFAULT_PARTITION__` folder.
+
 ## NPD datasets
 
 `NpdDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes the NPD data files: census (autumn, spring and
@@ -173,7 +215,8 @@ Writing the same file again leaves the same data, so replaying a file is safe.
 
 `PupilPremiumDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes pupil premium data files. It replaces the
 old pipeline's `processPupilPremiumFile` notebook, and writes to `pupil_premium_pupils` through
-`PupilPremiumDataWriter`.
+`PupilPremiumDataWriter`. It then writes the [prepared downloads](#pupil-premium-prepared-downloads), replacing the
+old pipeline's `giapPupilPremiumSplit` pipeline and `create_partitions` notebook.
 
 A pupil premium file's name has the academic year, like a census file's: `NPD_pupil-premium_FFD_CLA_2425_U.txt` is
 for 2024/2025. Its maturity must be `U` (or none) or `F`.
@@ -184,7 +227,8 @@ Files are read as for [NPD datasets](#reading-the-file): tab-separated UTF-8, wi
 string in the pupil's `data`, dots in column names replaced with underscores, and `DOB` parsed day-first and written
 as `yyyy-MM-ddT00:00:00.000Z`. The file must have the old pipeline's columns: `PupilMatchingRef`, `LA`, `Estab`,
 `URN`, `UPN`, `Surname`, `Forename`, `Middlenames`, `Sex`, `DOB`, `Source` and `Adopted`. In `data`, `Adopted` is
-renamed to `AdoptedfromCarePremium`, as the old pipeline did.
+renamed to `AdoptedfromCarePremium`, as the old pipeline did. The file must also have the columns the
+[prepared downloads](#pupil-premium-prepared-downloads) need.
 
 A pupil with more than one row gets a single record whose `data` is an array of their rows in file order. The
 record's identifying fields come from their first row, and its `source_flag` is the rows' `Source`, or `Both` if they
@@ -195,7 +239,7 @@ have more than one.
 | Problem | Outcome |
 | --- | --- |
 | The file's maturity is `A` | The data file fails |
-| The file is empty, is missing one of the columns above, or has two columns with the same name | The data file fails |
+| The file is empty, is missing one of the columns above or one the prepared downloads need, or has two columns with the same name | The data file fails, and nothing is written |
 | A row has no PupilMatchingRef | The row is rejected |
 | A row's DOB isn't a valid date | The row is rejected |
 | A row's `Adopted` is `1` | The row is rejected; pupils adopted from care aren't loaded |
@@ -214,6 +258,53 @@ A file is only written if it's at least as recent as the stored data: a later ac
 least as mature (`U`, then `F`). The stored data is from the last pupil premium data file that succeeded, according to
 `ingest_runs`. The old pipeline had no such check, so uploading a historical file would have replaced the current
 data.
+
+### Pupil premium prepared downloads
+
+Once the pupils have been written, `PupilPremiumPreparedDownloads` writes the
+[prepared downloads](#prepared-downloads). A data file that fails before then, e.g. because the stored data is from a
+more recent file, writes none. If writing them fails, the data file fails; the pupils have already been written, and
+replaying the zip writes the prepared downloads again.
+
+Every row in the data file is used, as in the old pipeline, including the rows that are rejected from
+`pupil_premium_pupils`, such as pupils adopted from care. A row's `Source` decides which files it's in:
+
+| File | Rows | Columns |
+| --- | --- | --- |
+| `LA/<LA>/pp<year>_<LA>_<n>.csv` | `Source` `C` | `LA`, `Estab`, then the pupil columns |
+| `School/<URN>/pp<year>_<LAEstab>_<n>.csv` | `Source` `C` | The pupil columns |
+| `MAT/<group UID>/pp<year>_<group UID>_<n>.csv` | `Source` `C`, at schools in the MAT | `GroupUID`, `LA`, `Estab`, then the pupil columns |
+| `SAT/<group UID>/pp<year>_<group UID>_<n>.csv` | `Source` `C`, at schools in the SAT | `GroupUID`, `LA`, `Estab`, then the pupil columns |
+| `LA/<LA>/pp<year>_<LA>_AP_<n>.csv` | `Source` `A` | `LA`, `AlternativeProvision` (always `ALT`), then the pupil columns |
+
+`<year>` is the academic year as in the data file's name, e.g. `2425`, and `<n>` is `1` for a `U` file and `2` for an
+`F` file. A school's file is named by the `LAEstab` of its first row; if that's empty, the school's file isn't written.
+
+The pupil columns are `UPN`, `Surname`, `Forename`, `Sex`, `DOB`, `NCYear`, `Deprivation Pupil Premium`,
+`Service Child Premium`, `Adopted from Care Premium`, `Looked After Premium`, `PupilPremiumFTE`,
+`PupilPremiumCashAmount`, `PupilPremiumFYStartDate`, `PupilPremiumFYEndDate` and `LastFSM`. They come from the data
+file's columns of the same name, without the spaces, except:
+
+- `Adopted from Care Premium` is the data file's `Adopted`.
+- `Service Child Premium` is `CENSUSSERVICEEVER6`. In a school's file, it's `1` if `MODSERVICE` is `1` and
+  `CENSUSSERVICEEVER6` is `0`.
+- `DOB`, `PupilPremiumFYStartDate` and `PupilPremiumFYEndDate` are written as `yyyy-MM-dd`, read as for
+  [NPD datasets](#dates). A value that isn't a valid date is empty.
+
+The data file must have every one of these columns (and `LAEstab`, `MODSERVICE` and `CENSUSSERVICEEVER6`). This is
+checked before anything is written, so a file the prepared downloads can't be written from doesn't replace the
+pupils.
+
+As in the old pipeline, files from earlier data files are kept, so an LA's folder has a `_1` and a `_2` file for each
+year. The old pipeline's `RemoveOldPupilPremiumFiles` notebook, which deleted every pupil premium file, hasn't been
+replaced.
+
+Apart from the [differences for every prepared download](#prepared-downloads), these are the deliberate differences
+from the old pipeline:
+
+- School files no longer have the artefacts of being rewritten by pandas, e.g. `1.0` for `1` in a column with an empty
+  value.
+- Dates are read as for [NPD datasets](#dates), so slashed dates are read day-first.
 
 ## Further education
 
@@ -265,6 +356,33 @@ a file could cover more than one academic year; every row must now be for the fi
 
 There's no check against the stored data: any FE file is written, even one for an earlier academic year. Writing the
 same file again leaves the same data, so replaying a file is safe.
+
+## Children looked after
+
+`ChildrenLookedAfterDatasetProcessor` (in `src/DfE.GIAP.Core/PupilData`) processes the KS2 and KS4 children looked
+after (CLA) data files. It replaces the old pipeline's `giapKS2CLASplit` and `giapKS4CLASplit` pipelines and
+`create_partitions_cla` notebook. Nothing is written to Postgres; the files are only split into
+[prepared downloads](#prepared-downloads) for LAs.
+
+Zips are uploaded to `cla-ks2/upload/` or `cla-ks4/upload/`, and their names must start with `GIAP_CLA_KS2_` or
+`GIAP_CLA_KS4_`. A CLA data file's name must contain `CLA` and `KS2` or `KS4`, and the calendar year the academic year
+ends in, e.g. `GIAP_CLA_KS4_2025.txt` is for 2024/2025. Its maturity is ignored.
+
+Files are read as for [NPD datasets](#reading-the-file): tab-separated UTF-8, with values trimmed. The file must have
+the old pipeline's columns: `CLA_LA`, `CLA_CHILD_LA_CODE`, `CLA_SEX`, `CLA_DOB`, `CLA_AGE_AUG`, `CLA_UPN`,
+`CLA_ETHNIC` and `CLA_12_MONTHS`. The old pipeline used the KS4 columns for KS2 files too.
+
+Each LA's rows are written to `LA/<CLA_LA>/<ks2 or ks4>_<year>_cla.csv`, e.g. `LA/201/ks4_2025_cla.csv`, with every
+column in the data file, in the order they're in the file. A row with no `CLA_LA` isn't written, and isn't counted in
+the run's records written.
+
+| Problem | Outcome |
+| --- | --- |
+| The file is empty, is missing one of the columns above, or has two columns with the same name | The data file fails |
+| There are no rows | The data file fails |
+
+The [differences for every prepared download](#prepared-downloads) apply; in particular, `CLA_DOB` is written as it
+is in the data file, rather than in whatever form Spark inferred for it.
 
 ## Replaying files
 
