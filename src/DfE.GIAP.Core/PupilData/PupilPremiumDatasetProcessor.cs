@@ -4,9 +4,14 @@ using DfE.GIAP.Core.Ingest;
 namespace DfE.GIAP.Core.PupilData;
 
 /// <summary>
-/// Writes pupil premium data files.
+/// Writes pupil premium data files, then their prepared downloads.
 /// </summary>
-public sealed class PupilPremiumDatasetProcessor(PupilPremiumDataWriter writer) : IIngestDatasetProcessor
+/// <remarks>
+/// The data file is copied to a temp file, since it's read more than once. The prepared downloads are only written once
+/// the pupils have been, so a file that fails (e.g. one older than the stored data) writes none.
+/// </remarks>
+public sealed class PupilPremiumDatasetProcessor(PupilPremiumDataWriter writer, PupilPremiumPreparedDownloads preparedDownloads)
+    : IIngestDatasetProcessor
 {
     public IReadOnlyCollection<IngestDataset> Datasets { get; } = [IngestDataset.PupilPremium];
 
@@ -20,7 +25,39 @@ public sealed class PupilPremiumDatasetProcessor(PupilPremiumDataWriter writer) 
             throw new IngestDataFileException($"A pupil premium file must be U or F, not {file.Attributes.IngestVersion}.");
         }
 
-        using PupilPremiumDataFileReader reader = await PupilPremiumDataFileReader.OpenAsync(file.Content, cancellationToken);
+        string tempPath = Path.GetTempFileName();
+
+        try
+        {
+            await using (FileStream copy = new(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true))
+            {
+                await file.Content.CopyToAsync(copy, cancellationToken);
+            }
+
+            IngestDataFileResult result = await WritePupilsAsync(file, tempPath, cancellationToken);
+
+            await using (FileStream content = OpenRead(tempPath))
+            {
+                await preparedDownloads.WriteAsync(content, file.Attributes, cancellationToken);
+            }
+
+            return result;
+        }
+        finally
+        {
+            File.Delete(tempPath);
+        }
+    }
+
+    private async Task<IngestDataFileResult> WritePupilsAsync(IngestDataFile file, string path, CancellationToken cancellationToken)
+    {
+        using PupilPremiumDataFileReader reader = await PupilPremiumDataFileReader.OpenAsync(OpenRead(path), cancellationToken);
+
+        // Before anything is written, so a file the prepared downloads can't be written from doesn't replace the pupils
+        await using (FileStream content = OpenRead(path))
+        {
+            await PupilPremiumPreparedDownloads.ValidateColumnsAsync(content, cancellationToken);
+        }
 
         // Find the first valid row before writing, so a file with none fails with the reason
         await using IAsyncEnumerator<PupilPremiumFileRow> rows = reader.ReadRowsAsync(cancellationToken).GetAsyncEnumerator(cancellationToken);
@@ -45,6 +82,9 @@ public sealed class PupilPremiumDatasetProcessor(PupilPremiumDataWriter writer) 
             RecordsRemoved: result.RecordsRemoved,
             RejectedRows: reader.RejectedRows);
     }
+
+    private static FileStream OpenRead(string path) =>
+        new(path, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 81920, FileOptions.Asynchronous | FileOptions.SequentialScan);
 
     private static async IAsyncEnumerable<PupilPremiumFileRow> ReadRemainingAsync(IAsyncEnumerator<PupilPremiumFileRow> rows)
     {

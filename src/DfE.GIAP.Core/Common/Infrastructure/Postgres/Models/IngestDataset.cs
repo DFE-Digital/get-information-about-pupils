@@ -16,5 +16,7 @@ public enum IngestDataset
     Phonics,
     PupilPremium,
     FurtherEducationPupilPremium,
-    FurtherEducationSpecialEducationalNeeds
+    FurtherEducationSpecialEducationalNeeds,
+    ChildrenLookedAfterKs2,
+    ChildrenLookedAfterKs4
 }
