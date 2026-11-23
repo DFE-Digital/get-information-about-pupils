@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DfE.GIAP.Core\DfE.GIAP.Core.csproj" />
+    <ProjectReference Include="..\..\src\DfE.GIAP.Verification\DfE.GIAP.Verification.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests.Infrastructure\DfE.GIAP.SharedTests.Infrastructure.csproj" />
     <ProjectReference Include="..\DfE.GIAP.SharedTests\DfE.GIAP.SharedTests.csproj" />
   </ItemGroup>

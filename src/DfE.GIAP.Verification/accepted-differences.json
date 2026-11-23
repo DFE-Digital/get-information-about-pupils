@@ -1,0 +1,23 @@
+{
+    // Each rule accepts a kind of difference that's been explained. See docs/verification.md.
+    "rules": [
+        {
+            "kind": "row-order",
+            "comparison": "downloads",
+            "reason": "Rows are in data file order; Spark wrote them in whatever order its partitions came back in.",
+            "docs": "docs/file-ingestion.md#prepared-downloads"
+        },
+        {
+            "kind": "number-equivalent",
+            "comparison": "downloads",
+            "reason": "Values aren't converted to the types Spark inferred, e.g. a value with leading zeros keeps them.",
+            "docs": "docs/file-ingestion.md#prepared-downloads"
+        },
+        {
+            "kind": "date-equivalent",
+            "comparison": "downloads",
+            "reason": "A date that isn't reformatted is written as it is in the data file, rather than as Spark formatted it.",
+            "docs": "docs/file-ingestion.md#prepared-downloads"
+        }
+    ]
+}

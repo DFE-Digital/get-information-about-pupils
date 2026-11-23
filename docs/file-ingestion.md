@@ -7,6 +7,9 @@
 The file ingestion job processes the zips of data files uploaded to the `ingest` blob container. It runs in the Worker
 (`src/DfE.GIAP.Worker`) as Hangfire jobs; the code is in `src/DfE.GIAP.Core/Ingest` and `src/DfE.GIAP.Core/Jobs`.
 
+What the new pipeline writes is compared with what the old pipeline writes by the [verification tool](verification.md).
+A deliberate difference documented here also needs an accepted difference rule there that links to it.
+
 ## Container layout
 
 Each dataset has a folder, matching the old pipeline's: `census`, `eyfsp`, `ks1`, `ks2`, `ks4`, `mtc`, `phonics`,

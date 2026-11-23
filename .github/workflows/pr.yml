@@ -54,7 +54,7 @@ jobs:
       # One failing suite shouldn't hide the results of the others.
       fail-fast: false
       matrix:
-        project: [Core.UnitTests, Web.Tests]
+        project: [Core.UnitTests, Verification.Tests, Web.Tests]
 
     steps:
       - uses: actions/checkout@v6
