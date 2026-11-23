@@ -40,3 +40,10 @@ resource "azurerm_storage_container" "downloads" {
   storage_account_id    = azurerm_storage_account.ingest.id
   container_access_type = "private"
 }
+
+# Holds the verification tool's reports, and the anonymised files it's run against in test
+resource "azurerm_storage_container" "verification" {
+  name                  = "verification"
+  storage_account_id    = azurerm_storage_account.ingest.id
+  container_access_type = "private"
+}

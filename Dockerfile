@@ -7,11 +7,14 @@ COPY . ./
 RUN dotnet tool restore
 RUN --mount=type=secret,id=nuget_config,target=/source/nuget.config,required=true \
     dotnet restore src/DfE.GIAP.Web/DfE.GIAP.Web.csproj --configfile /source/nuget.config && \
-    dotnet restore src/DfE.GIAP.Worker/DfE.GIAP.Worker.csproj --configfile /source/nuget.config
+    dotnet restore src/DfE.GIAP.Worker/DfE.GIAP.Worker.csproj --configfile /source/nuget.config && \
+    dotnet restore src/DfE.GIAP.Verification/DfE.GIAP.Verification.csproj --configfile /source/nuget.config
 RUN dotnet publish src/DfE.GIAP.Web/DfE.GIAP.Web.csproj \
     --no-restore --configuration Release --output /publish
 RUN dotnet publish src/DfE.GIAP.Worker/DfE.GIAP.Worker.csproj \
     --no-restore --configuration Release --output /publish-worker
+RUN dotnet publish src/DfE.GIAP.Verification/DfE.GIAP.Verification.csproj \
+    --no-restore --configuration Release --output /publish-verify
 RUN --mount=type=secret,id=nuget_config,target=/source/nuget.config,required=true \
     dotnet ef migrations bundle --project src/DfE.GIAP.Core/DfE.GIAP.Core.csproj \
     --configuration Release --context GiapDbContext --output /efbundle
@@ -21,6 +24,7 @@ ARG GIT_SHA
 
 COPY --from=build /publish/ /apps/web/
 COPY --from=build /publish-worker/ /apps/worker/
+COPY --from=build /publish-verify/ /apps/verify/
 COPY --from=build /efbundle /apps/efbundle
 
 RUN apk add --no-cache tzdata icu-data-full icu-libs

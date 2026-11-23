@@ -175,7 +175,10 @@ public class IngestFileProcessor(
         return null;
     }
 
-    private static bool IsDataFile(ZipArchiveEntry entry) =>
+    /// <summary>
+    /// Whether a zip entry is one of the zip's data files, rather than a metadata document, hidden file or folder.
+    /// </summary>
+    public static bool IsDataFile(ZipArchiveEntry entry) =>
         !IsHiddenOrFolder(entry) && !IngestDataFileName.IsMetadataDocument(entry.Name);
 
     private static bool IsMetadataDocument(ZipArchiveEntry entry) =>

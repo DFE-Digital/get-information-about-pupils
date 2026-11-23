@@ -7,6 +7,7 @@
   <Folder Name="/src/">
     <Project Path="src/DfE.GIAP.Core/DfE.GIAP.Core.csproj" />
     <Project Path="src/DfE.GIAP.Web/DfE.GIAP.Web.csproj" />
+    <Project Path="src/DfE.GIAP.Verification/DfE.GIAP.Verification.csproj" />
     <Project Path="src/DfE.GIAP.Worker/DfE.GIAP.Worker.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -14,6 +15,7 @@
     <Project Path="tests/DfE.GIAP.Core.UnitTests/DfE.GIAP.Core.UnitTests.csproj" />
     <Project Path="tests/DfE.GIAP.SharedTests.Infrastructure/DfE.GIAP.SharedTests.Infrastructure.csproj" />
     <Project Path="tests/DfE.GIAP.SharedTests/DfE.GIAP.SharedTests.csproj" />
+    <Project Path="tests/DfE.GIAP.Verification.Tests/DfE.GIAP.Verification.Tests.csproj" />
     <Project Path="tests/DfE.GIAP.Web.Tests/DfE.GIAP.Web.Tests.csproj" />
   </Folder>
 </Solution>

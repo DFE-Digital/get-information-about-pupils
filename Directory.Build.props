@@ -26,7 +26,9 @@
   <PropertyGroup Condition="'$(MSBuildProjectName)' == 'DfE.GIAP.Core' 
                                     Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.UnitTests' 
                                     Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.IntegrationTests'
-                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.SharedTests'">
+                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Core.SharedTests'
+                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Verification'
+                                    Or '$(MSBuildProjectName)' == 'DfE.GIAP.Verification.Tests'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 </Project>
