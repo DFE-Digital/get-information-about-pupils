@@ -260,7 +260,7 @@ public static class CompareCommand
             ? "Verification of everything"
             : $"Verification of {string.Join(", ", options.Files.Select(f => $"`{f}`"))}";
 
-    private static CosmosClient CreateCosmosClient(IConfiguration configuration) =>
+    internal static CosmosClient CreateCosmosClient(IConfiguration configuration) =>
         new(
             GetRequired(configuration["RepositoryOptions:EndpointUri"], "RepositoryOptions:EndpointUri"),
             GetRequired(configuration["RepositoryOptions:PrimaryKey"], "RepositoryOptions:PrimaryKey"),
@@ -272,7 +272,7 @@ public static class CompareCommand
                 MaxRetryWaitTimeOnRateLimitedRequests = TimeSpan.FromMinutes(5)
             });
 
-    private static Container GetContainer(Database database, IConfiguration configuration, string key) =>
+    internal static Container GetContainer(Database database, IConfiguration configuration, string key) =>
         database.GetContainer(GetRequired(configuration[$"RepositoryOptions:Containers:{key}:ContainerName"], $"RepositoryOptions:Containers:{key}:ContainerName"));
 
     // The web app's BlobStorageOptions in deployed environments; a connection string can be given instead, e.g. for Azurite
@@ -299,6 +299,6 @@ public static class CompareCommand
             : new BlobContainerClient(value, "giapdataprocessing");
     }
 
-    private static string GetRequired(string? value, string key) =>
+    internal static string GetRequired(string? value, string key) =>
         string.IsNullOrWhiteSpace(value) ? throw new InvalidOperationException($"{key} isn't configured.") : value;
 }

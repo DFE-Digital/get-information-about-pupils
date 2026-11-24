@@ -8,6 +8,8 @@
     <PackageVersion Include="Azure.Search.Documents" Version="11.7.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.26.0" />
     <PackageVersion Include="Azure.Core" Version="1.51.1" />
+    <PackageVersion Include="Azure.Identity" Version="1.17.2" />
+    <PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.6.0" />
     <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
     <PackageVersion Include="Fare" Version="2.2.1" />

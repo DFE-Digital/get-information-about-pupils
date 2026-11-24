@@ -111,7 +111,110 @@ compareCommand.SetAction(async (parseResult, cancellationToken) =>
     }
 });
 
-RootCommand rootCommand = new("Verifies the new data pipeline against the old one.") { compareCommand };
+Option<string?> keyVaultOption = new("--key-vault")
+{
+    Description = "The production app Key Vault to read the secrets from with your Azure CLI login, e.g. s189p01-giap-pd-app-kv. Without it, they're read from configuration, which only works with Azurite."
+};
+
+Option<string> manifestOption = new("--manifest")
+{
+    Description = "The manifest of zips to anonymise.",
+    Required = true
+};
+Option<bool> listColumnsOption = new("--list-columns")
+{
+    Description = "Describe the zips' data files, without any of their values, rather than anonymise them."
+};
+Option<bool> overwriteOption = new("--overwrite")
+{
+    Description = "Replace anonymised zips that are already there."
+};
+Option<string?> classificationOption = new("--classification")
+{
+    Description = "The classification to use instead of the one shipped with the tool."
+};
+
+Command anonymiseCommand = new("anonymise", "Anonymise real zips from production into the test environment's verification container.")
+{
+    manifestOption,
+    keyVaultOption,
+    listColumnsOption,
+    overwriteOption,
+    classificationOption
+};
+
+anonymiseCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    try
+    {
+        AnonymiseOptions options = new(
+            parseResult.GetValue(manifestOption)!,
+            parseResult.GetValue(keyVaultOption),
+            parseResult.GetValue(listColumnsOption),
+            parseResult.GetValue(overwriteOption),
+            parseResult.GetValue(classificationOption));
+
+        return await AnonymiseCommand.RunAsync(options, builder.Configuration, Console.Out, Console.Error, cancellationToken);
+    }
+    catch (Exception ex) when (ex is not OperationCanceledException)
+    {
+        await Console.Error.WriteLineAsync(ex.ToString());
+        return CompareCommand.ErrorExitCode;
+    }
+});
+
+Option<string[]> folderOption = new("--folder")
+{
+    Description = "Only list this ingest folder, e.g. ks2. Can be repeated.",
+    Arity = ArgumentArity.ZeroOrMore
+};
+
+Command listSourcesCommand = new("list-sources", "List the zips in the old pipeline's raw/ and processed/ folders, to choose the manifest from.")
+{
+    keyVaultOption,
+    folderOption
+};
+
+listSourcesCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    try
+    {
+        return await AnonymiseCommand.ListSourcesAsync(
+            builder.Configuration,
+            parseResult.GetValue(keyVaultOption),
+            parseResult.GetValue(folderOption) ?? [],
+            Console.Out,
+            cancellationToken);
+    }
+    catch (Exception ex) when (ex is not OperationCanceledException)
+    {
+        await Console.Error.WriteLineAsync(ex.ToString());
+        return CompareCommand.ErrorExitCode;
+    }
+});
+
+Command checkCollisionsCommand = new("check-collisions", "Find the fake keys in the anonymised zips that are already in the test environment.");
+
+checkCollisionsCommand.SetAction(async (parseResult, cancellationToken) =>
+{
+    try
+    {
+        return await CheckCollisionsCommand.RunAsync(builder.Configuration, Console.Out, Console.Error, cancellationToken);
+    }
+    catch (Exception ex) when (ex is not OperationCanceledException)
+    {
+        await Console.Error.WriteLineAsync(ex.ToString());
+        return CompareCommand.ErrorExitCode;
+    }
+});
+
+RootCommand rootCommand = new("Verifies the new data pipeline against the old one.")
+{
+    compareCommand,
+    anonymiseCommand,
+    listSourcesCommand,
+    checkCollisionsCommand
+};
 
 return await rootCommand.Parse(args).InvokeAsync();
 
