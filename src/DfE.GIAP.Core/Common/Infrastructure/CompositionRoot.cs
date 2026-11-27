@@ -14,10 +14,7 @@ internal static class CompositionRoot
 
         services.AddOptions<BlobStorageOptions>()
             .BindConfiguration(BlobStorageOptions.SectionName)
-            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountName), "BlobStorage: AccountName is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.AccountKey), "BlobStorage: AccountKey is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.ContainerName), "BlobStorage: ContainerName is required")
-            .Validate(o => !string.IsNullOrWhiteSpace(o.EndpointSuffix), "BlobStorage: EndpointSuffix is required")
+            .ValidateDataAnnotations()
             .ValidateOnStart();
 
         services.TryAddSingleton<IBlobStorageProvider>(sp =>
