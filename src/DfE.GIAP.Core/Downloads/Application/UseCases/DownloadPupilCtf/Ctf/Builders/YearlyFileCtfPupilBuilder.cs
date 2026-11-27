@@ -54,7 +54,9 @@ public class YearlyFileCtfPupilBuilder : ICtfPupilBuilder
             Surname = pupil.Surname ?? "",
             Forename = pupil.Forename ?? "",
             DOB = pupil.DOB.ToString("yyyy-MM-dd"),
-            Sex = pupil.Sex
+            Sex = pupil.Sex,
+            NawDetails = pupil.NawDetails,
+            FsmHistory = pupil.FsmHistory
         };
     }
 
